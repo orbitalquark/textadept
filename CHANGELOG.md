@@ -9,10 +9,61 @@
 [donate]: http://gum.co/textadept
 [book]: MEDIA.html#Book
 
-## 11.0 alpha (31 Mar 2020)
+## 11.0 alpha 2 (01 Jun 2020)
 
 Please see the [10 to 11 migration guide][] for upgrading from Textadept 10 to
 Textadept 11.
+
+* [Textadept 11.0 alpha 2 -- Win32][] | [PGP -- 11.0 alpha 2 Win32][]
+* [Textadept 11.0 alpha 2 -- Mac OSX 10.6+][] | [PGP -- 11.0 alpha 2 OSX][]
+* [Textadept 11.0 alpha 2 -- Linux][] | [PGP -- 11.0 alpha 2 Linux][]
+* [Textadept 11.0 alpha 2 -- Linux x86_64][] | [PGP -- 11.0 alpha 2 Linux x86_64][]
+* [Textadept 11.0 alpha 2 -- Modules][] | [PGP -- 11.0 alpha 2 Modules][]
+
+Bugfixes:
+
+* Fixed some drive letter case issues on Windows resulting in duplicate open
+  files.
+* Fixed `os.spawn` exit callback and `spawn_proc:wait()` inconsistencies.
+* Restore prior key mode after running the command entry.
+* Fixed regression with word completion not respecting
+  `buffer.auto_c_ignore_case`.
+* Scintilla: Fixed display of windowed IME on Wayland.
+
+Changes:
+
+* Views can be used as buffers in most places, resulting in new
+  [API suggestions][] for `buffer` and `view`.
+* Scintilla: Added [`buffer:marker_handle_from_line()`][] and
+  [`buffer:marker_number_from_line()`][] for iterating through the marker
+  handles and marker numbers on a line.
+* Scintilla: Deprecated `lexer.delimited_range()` and `lexer.nested_pair()` in
+  favor of [`lexer.range()`][], and added [`lexer.to_eol()`][] and
+  [`lexer.number`][].
+* Scintilla: Automatically scroll text while dragging.
+* Scintilla: Improved behavior of IME.
+* Updated to [Scintilla][] 3.20.0.
+
+[10 to 11 migration guide]: manual.html#Textadept.10.to.11
+[Textadept 11.0 alpha 2 -- Win32]: download/textadept_11.0_alpha_2.win32.zip
+[Textadept 11.0 alpha 2 -- Mac OSX 10.6+]: download/textadept_11.0_alpha_2.osx.zip
+[Textadept 11.0 alpha 2 -- Linux]: download/textadept_11.0_alpha_2.i386.tgz
+[Textadept 11.0 alpha 2 -- Linux x86_64]: download/textadept_11.0_alpha_2.x86_64.tgz
+[Textadept 11.0 alpha 2 -- Modules]: download/textadept_11.0_alpha_2.modules.zip
+[PGP -- 11.0 alpha 2 Win32]: download/textadept_11.0_alpha_2.win32.zip.asc
+[PGP -- 11.0 alpha 2 OSX]: download/textadept_11.0_alpha_2.osx.zip.asc
+[PGP -- 11.0 alpha 2 Linux]: download/textadept_11.0_alpha_2.i386.tgz.asc
+[PGP -- 11.0 alpha 2 Linux x86_64]: download/textadept_11.0_alpha_2.x86_64.tgz.asc
+[PGP -- 11.0 alpha 2 Modules]: download/textadept_11.0_alpha_2.modules.zip.asc
+[API suggestions]: manual.html#View.API.Additions.and.Buffer.API.Changes
+[`buffer:marker_handle_from_line()`]: api.html#buffer.marker_handle_from_line
+[`buffer:marker_number_from_line()`]: api.html#buffer.marker_number_from_line
+[`lexer.range()`]: api.html#lexer.range
+[`lexer.to_eol()`]: api.html#lexer.to_eol
+[`lexer.number`]: api.html#lexer.number
+[Scintilla]: https://scintilla.org
+
+## 11.0 alpha (31 Mar 2020)
 
 * [Textadept 11.0 alpha -- Win32][] | [PGP -- 11.0 alpha Win32][]
 * [Textadept 11.0 alpha -- Mac OSX 10.6+][] | [PGP -- 11.0 alpha OSX][]
@@ -90,7 +141,6 @@ Changes:
 * Experimental set of "standard" modules is provided in the modules archive
   instead of just language modules.
 
-[10 to 11 migration guide]: manual.html#Textadept.10.to.11
 [Textadept 11.0 alpha -- Win32]: download/textadept_11.0_alpha.win32.zip
 [Textadept 11.0 alpha -- Mac OSX 10.6+]: download/textadept_11.0_alpha.osx.zip
 [Textadept 11.0 alpha -- Linux]: download/textadept_11.0_alpha.i386.tgz
