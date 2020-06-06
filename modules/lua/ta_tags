@@ -287,7 +287,7 @@ STYLE_KEYWORD	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_LABEL	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_LINENUMBER	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 STYLE_LINENUMBER	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-STYLE_MAX	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+STYLE_MAX	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 STYLE_NUMBER	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_OPERATOR	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 STYLE_PREPROCESSOR	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
@@ -1004,7 +1004,7 @@ set_selection	_HOME/core/.buffer.luadoc	/^function set_selection(buffer, end_pos
 set_styling	_HOME/core/.buffer.luadoc	/^function set_styling(buffer, length, style) end$/;"	f	class:buffer
 set_target_range	_HOME/core/.buffer.luadoc	/^function set_target_range(buffer, start_pos, end_pos) end$/;"	f	class:buffer
 set_text	_HOME/core/.buffer.luadoc	/^function set_text(buffer, text) end$/;"	f	class:buffer
-set_theme	_HOME/core/.buffer.luadoc	/^function set_theme(buffer, name, props) end$/;"	f	class:buffer
+set_theme	_HOME/core/.view.luadoc	/^function set_theme(view, name, props) end$/;"	f	class:view
 set_visible_policy	_HOME/core/.view.luadoc	/^function set_visible_policy(view, policy, y) end$/;"	f	class:view
 set_watch	_HOME/modules/debugger/init.lua	/^function M.set_watch(expr)$/;"	f	class:debugger
 set_whitespace_back	_HOME/core/.view.luadoc	/^function set_whitespace_back(view, use_setting, color) end$/;"	f	class:view
