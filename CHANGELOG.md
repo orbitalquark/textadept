@@ -582,7 +582,7 @@ Bugfixes:
 * Fixed markdown lexer lists and C# lexer keywords.
 * Fixed child lexers that embed themselves into parents and fixed proxy lexers.
 * Fixed handling of custom fold functions in legacy lexers.
-* Fixed [`buffer:set_theme()`][] for lexers that have their own styles.
+* Fixed `buffer:set_theme()` for lexers that have their own styles.
 * Scintilla: Fixed potential crash with newer versions of ncurses.
 * Scintilla: Fixed some regex searching corner-cases.
 
@@ -606,7 +606,6 @@ Changes:
 [PGP -- 10.0 Linux]: download/textadept_10.0.i386.tgz.asc
 [PGP -- 10.0 Linux x86_64]: download/textadept_10.0.x86_64.tgz.asc
 [PGP -- 10.0 Modules]: download/textadept_10.0.modules.zip.asc
-[`buffer:set_theme()`]: api.html#buffer.set_theme
 [Scintilla]: http://scintilla.org
 [Lua]: http://lua.org
 
@@ -704,7 +703,7 @@ Changes:
   dependencies.
 * Emacs-style `^K` for OSX and the terminal version joins lines at EOL.
 * Pasted text reindents an extra level after a fold header.
-* [`buffer.set_theme()`][] now takes an initial buffer argument like all other
+* `buffer.set_theme()` now takes an initial buffer argument like all other
   buffer functions and does not have any call restrictions.
 * Scintilla: Added [`events.AUTO_C_SELECTION_CHANGE`][] event.
 * Updated to [Scintilla][] 3.8.0.
@@ -719,7 +718,6 @@ Changes:
 [PGP -- 10.0 alpha 3 Linux]: download/textadept_10.0_alpha_3.i386.tgz.asc
 [PGP -- 10.0 alpha 3 Linux x86_64]: download/textadept_10.0_alpha_3.x86_64.tgz.asc
 [PGP -- 10.0 alpha 3 Modules]: download/textadept_10.0_alpha_3.modules.zip.asc
-[`buffer.set_theme()`]: api.html#buffer.set_theme
 [`events.AUTO_C_SELECTION_CHANGE`]: api.html#events.AUTO_C_SELECTION_CHANGE
 [Scintilla]: http://scintilla.org
 
@@ -800,7 +798,7 @@ Changes:
   "Select in ..." menu items.
 * Removed the need for *~/.textadept/properties.lua*. All `buffer` settings set
   in *~/.textadept/init.lua* will apply to the first and subsequent buffers.
-* Renamed `ui.set_theme()` to [`buffer.set_theme()`][].
+* Renamed `ui.set_theme()` to `buffer.set_theme()`.
 * Enforce extra argument to [`buffer.brace_match()`][] added back in Scintilla
   3.7.0.
 * Added [`events.ZOOM`][].
@@ -817,7 +815,6 @@ Changes:
 [PGP -- 10.0 alpha Linux x86_64]: download/textadept_10.0_alpha.x86_64.tgz.asc
 [PGP -- 10.0 alpha Modules]: download/textadept_10.0_alpha.modules.zip.asc
 [`textadept.editing.select_enclosed()`]: api.html#textadept.editing.select_enclosed
-[`buffer.set_theme()`]: api.html#buffer.set_theme
 [`buffer.brace_match()`]: api.html#buffer.brace_match
 [`events.ZOOM`]: api.html#events.ZOOM
 [create lexers]: api.html#lexer
@@ -2637,7 +2634,7 @@ Bugfixes:
 
 Changes:
 
-* Changed [`ui.set_theme()`][] API to accept a table of property assignments.
+* Changed `ui.set_theme()` API to accept a table of property assignments.
 * Added Nimrod lexer and compile and run commands.
 * Use [`textadept.editing.INDIC_BRACEMATCH`][] indicator for brace highlighting
   instead of styles.
@@ -2660,7 +2657,6 @@ Changes:
 [PGP -- 7.0 beta 5 Linux]: download/textadept_7.0_beta_5.i386.tgz.asc
 [PGP -- 7.0 beta 5 Linux x86_64]: download/textadept_7.0_beta_5.x86_64.tgz.asc
 [PGP -- 7.0 beta 5 Modules]: download/textadept_7.0_beta_5.modules.zip.asc
-[`ui.set_theme()`]: api.html#ui.set_theme
 [`textadept.editing.INDIC_BRACEMATCH`]: api.html#textadept.editing.INDIC_BRACEMATCH
 [`buffer`]: api.html#buffer
 [`lexer.load()`]: api.html#lexer.load
@@ -2808,7 +2804,7 @@ Download:
 Bugfixes:
 
 * Fixed bug with theme loading when resetting.
-* Fixed bug with property settings in [`gui.set_theme()`][] not persisting.
+* Fixed bug with property settings in `gui.set_theme()` not persisting.
 * Scintilla: fixed some instances of case conversions.
 * Scintilla: fixed some instances of word wrapping and improved performance.
 * Scintilla: fixed minor memory leak.
@@ -2830,7 +2826,6 @@ Changes:
 [PGP -- 7.0 beta 2 Linux]: download/textadept_7.0_beta_2.i386.tgz.asc
 [PGP -- 7.0 beta 2 Linux x86_64]: download/textadept_7.0_beta_2.x86_64.tgz.asc
 [PGP -- 7.0 beta 2 Modules]: download/textadept_7.0_beta_2.modules.zip.asc
-[`gui.set_theme()`]: api.html#ui.set_theme
 [`gui.maximized`]: api.html#ui.maximized
 [`lexer._tokenstyles`]: api.html#lexer.Token.Styles
 [Scintilla]: http://scintilla.org
@@ -2899,7 +2894,7 @@ Changes:
 * [`_M.textadept.editing.block_comment()`][] supports block comment delimiters.
 * Block comments for languages is now built-in. The supplemental ones on the
   wiki are no longer needed.
-* [`gui.set_theme()`][] accepts key-value argument pairs for overriding theme
+* `gui.set_theme()` accepts key-value argument pairs for overriding theme
   properties.
 * Removed `gui.select_theme()` since selected themes do not persist.
 * Removed `_G.RESETTING` flag.
@@ -2920,7 +2915,6 @@ Changes:
 [PGP -- 7.0 alpha 2 Modules]: download/textadept_7.0_alpha_2.modules.zip.asc
 [compiling]: manual.html#Compiling
 [`_M.textadept.editing.block_comment()`]: api.html#textadept.editing.block_comment
-[`gui.set_theme()`]: api.html#ui.set_theme
 [`_M.textadept.bookmarks.goto_mark()`]: api.html#textadept.bookmarks.goto_mark
 [LuaJIT]: http://luajit.org
 [nightly builds]: README.html#Download
@@ -3943,7 +3937,7 @@ Bugfixes:
 
 Changes:
 
-* Added on-the-fly [theme switching][].
+* Added on-the-fly theme switching.
 * All new `light` and `dark` themes.
 * Removed `_m.textadept.editing.select_style()`.
 * Simplify theming via [gtkrc][] by naming `GtkWindow` only.
@@ -3962,7 +3956,6 @@ Changes:
 [PGP -- 4.3 Linux x86_64]: download/textadept_4.3.x86_64.tgz.asc
 [PGP -- 4.3 Source]: download/textadept_4.3.src.zip.asc
 [PGP -- 4.3 Modules]: download/textadept_4.3.modules.zip.asc
-[theme switching]: api.html#ui.set_theme
 [gtkrc]: manual.html#GUI.Theme
 [`lexer.REGEX`]: api.html#lexer.REGEX
 [`lexer.LABEL`]: api.html#lexer.LABEL

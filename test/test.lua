@@ -2955,12 +2955,45 @@ function test_view_split_resize_unsplit()
   assert_equal(#_VIEWS, 1)
 end
 
+function test_view_split_refresh_styles()
+  io.open_file(_HOME .. '/init.lua')
+  local GETNAMEDSTYLE = _SCINTILLA.properties.named_styles[1]
+  local style = buffer:private_lexer_call(GETNAMEDSTYLE, 'library')
+  assert(style > 1, 'cannot retrieve number of library style')
+  local color = view.style_fore[style]
+  assert(color ~= view.style_fore[view.STYLE_DEFAULT], 'library style not set')
+  view:split()
+  for _, view in ipairs(_VIEWS) do
+    local view_style = buffer:private_lexer_call(GETNAMEDSTYLE, 'library')
+    assert_equal(view_style, style)
+    local view_color = view.style_fore[view_style]
+    assert_equal(view_color, color)
+  end
+  view:unsplit()
+  buffer:close(true)
+end
+
 function test_buffer_read_write_only_properties()
   assert_raises(function() view.all_lines_visible = false end, 'read-only property')
   assert_raises(function() return buffer.auto_c_fill_ups end, 'write-only property')
   assert_raises(function() buffer.annotation_text = {} end, 'read-only property')
   assert_raises(function() buffer.char_at[POS(1)] = string.byte(' ') end, 'read-only property')
   assert_raises(function() return view.marker_alpha[INDEX(1)] end, 'write-only property')
+end
+
+function test_set_theme()
+  local current_theme = view.style_fore[view.STYLE_DEFAULT]
+  view:split()
+  io.open_file(_HOME .. '/init.lua')
+  view:split(true)
+  io.open_file(_HOME .. '/src/textadept.c')
+  _VIEWS[2]:set_theme('dark')
+  _VIEWS[3]:set_theme('light')
+  assert(_VIEWS[2].style_fore[view.STYLE_DEFAULT] ~= _VIEWS[3].style_fore[view.STYLE_DEFAULT], 'same default styles')
+  buffer:close(true)
+  buffer:close(true)
+  ui.goto_view(_VIEWS[1])
+  view:unsplit()
 end
 
 -- TODO: test init.lua's buffer settings

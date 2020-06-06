@@ -18,34 +18,35 @@ end
 
 textadept = require('textadept')
 
--- Temporary compatibility.
-setmetatable(_L, {__index = function(t, k) return rawget(t, k:gsub('_', '')) or 'No Localization:'..k end})
-setmetatable(textadept.snippets, {__index = function(t, k) return rawget(t, k:gsub('^_', '')) end})
-
--- Documentation is in core/.buffer.luadoc.
-local function set_theme(buffer, name, props)
+-- Documentation is in core/.view.luadoc.
+local function set_theme(view, name, props)
   if not assert_type(name, 'string', 2):find('[/\\]') then
     name = package.searchpath(name, string.format(
       '%s/themes/?.lua;%s/themes/?.lua', _USERHOME, _HOME))
   end
   if not name or not lfs.attributes(name) then return end
   if not assert_type(props, 'table/nil', 3) then props = {} end
-  local orig_buffer = _G.buffer -- may not be equivalent to buffer argument
-  _G.buffer = buffer
+  local orig_view = _G.view
+  if view ~= orig_view then ui.goto_view(view) end
   dofile(name)
-  _G.buffer = orig_buffer
   for prop, value in pairs(props) do buffer.property[prop] = value end
   -- Force reload of all styles since the current lexer may have defined its own
   -- styles. (The LPeg lexer has only refreshed default lexer styles.)
   -- Note: cannot use `buffer.set_lexer()` because it may not exist yet.
   local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
   buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'text')
+  if view ~= orig_view then ui.goto_view(orig_view) end
 end
-events.connect(events.BUFFER_NEW, function() buffer.set_theme = set_theme end)
-buffer.set_theme = set_theme -- needed for the first buffer
+events.connect(events.VIEW_NEW, function() view.set_theme = set_theme end)
+view.set_theme = set_theme -- needed for the first view
 -- On reset, _LOADED['lexer'] is removed. Force a reload in order for set_theme
 -- to work properly.
 if not arg then view:goto_buffer(buffer) end
+
+-- Temporary compatibility.
+setmetatable(_L, {__index = function(t, k) return rawget(t, k:gsub('_', '')) or 'No Localization:'..k end})
+setmetatable(textadept.snippets, {__index = function(t, k) return rawget(t, k:gsub('^_', '')) end})
+buffer.set_theme = function(...) view:set_theme(select(2, ...)); events.connect(events.INITIALIZED, function() ui.dialogs.msgbox{title='Compatibility issue',text='Please change your use of "buffer:set_theme()" to "view:set_theme()"'} end) end
 
 -- The remainder of this file defines default buffer properties and applies them
 -- to subsequent buffers. Normally, a setting like `buffer.use_tabs = false`
@@ -94,7 +95,7 @@ end
 -- Default buffer and view settings.
 
 local buffer, view = buffer, view
-buffer:set_theme(not CURSES and 'light' or 'term')
+view:set_theme(not CURSES and 'light' or 'term')
 
 -- Multiple Selection and Virtual Space
 buffer.multiple_selection = true
@@ -296,6 +297,8 @@ for _, mt in ipairs{buffer_mt, view_mt} do
   mt.__index, mt.__newindex = mt.__orig_index, mt.__orig_newindex
 end
 
+local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
+
 -- Sets default properties for a Scintilla document.
 events.connect(events.BUFFER_NEW, function()
   local buffer = _G.buffer
@@ -303,7 +306,6 @@ events.connect(events.BUFFER_NEW, function()
   local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
   local SETLUASTATE = _SCINTILLA.functions.change_lexer_state[1]
   local LOADLEXERLIBRARY = _SCINTILLA.functions.load_lexer_library[1]
-  local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
   buffer.lexer_language = 'lpeg'
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
@@ -342,5 +344,6 @@ events.connect(events.VIEW_NEW, function()
   -- 'style.default' references. Styles are now stale and need refreshing. This
   -- is not an issue in BUFFER_NEW since a lexer is set immediately afterwards,
   -- which refreshes styles.
-  buffer:set_lexer(buffer._lexer or 'text')
+  -- Note: `buffer:set_lexer()` is insufficient for some reason.
+  buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'text')
 end, 1)
