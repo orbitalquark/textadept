@@ -2,8 +2,8 @@
 -- Light theme for Textadept.
 -- Contributions by Ana Balan.
 
-local buffer, view = buffer, view
-local property, property_int = buffer.property, buffer.property_int
+local view = view
+local property, property_int = view.property, view.property_int
 
 -- Greyscale colors.
 property['color.dark_black'] = 0x000000

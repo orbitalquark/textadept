@@ -29,7 +29,7 @@ local function set_theme(view, name, props)
   local orig_view = _G.view
   if view ~= orig_view then ui.goto_view(view) end
   dofile(name)
-  for prop, value in pairs(props) do buffer.property[prop] = value end
+  for prop, value in pairs(props) do view.property[prop] = value end
   -- Force reload of all styles since the current lexer may have defined its own
   -- styles. (The LPeg lexer has only refreshed default lexer styles.)
   -- Note: cannot use `buffer.set_lexer()` because it may not exist yet.
@@ -262,13 +262,13 @@ view.call_tip_use_style = buffer.tab_width *
 --view.call_tip_position = true
 
 -- Folding.
-buffer.property['fold'] = '1'
---buffer.property['fold.by.indentation'] = '1'
---buffer.property['fold.line.comments'] = '1'
---buffer.property['fold.on.zero.sum.lines'] = '1'
---buffer.property['fold.compact'] = '1'
-buffer.automatic_fold = buffer.AUTOMATICFOLD_SHOW | buffer.AUTOMATICFOLD_CLICK |
-  buffer.AUTOMATICFOLD_CHANGE
+view.property['fold'] = '1'
+--view.property['fold.by.indentation'] = '1'
+--view.property['fold.line.comments'] = '1'
+--view.property['fold.on.zero.sum.lines'] = '1'
+--view.property['fold.compact'] = '1'
+view.automatic_fold = view.AUTOMATICFOLD_SHOW | view.AUTOMATICFOLD_CLICK |
+  view.AUTOMATICFOLD_CHANGE
 view.fold_flags = not CURSES and view.FOLDFLAG_LINEAFTER_CONTRACTED or 0
 view.fold_display_text_style = view.FOLDDISPLAYTEXT_BOXED
 
@@ -338,9 +338,9 @@ events.connect(events.VIEW_NEW, function()
   if #_VIEWS == 1 then return end
   load_settings()
   -- Refresh styles since the user may have altered style settings.
-  -- When load_settings() calls `buffer.property['style.default'] = ...`, the
+  -- When load_settings() calls `view.property['style.default'] = ...`, the
   -- LPeg lexer resets all styles to that default. However, load_settings() may
-  -- later call a user's `buffer.property['fontsize'] = ...`, which
+  -- later call a user's `view.property['fontsize'] = ...`, which
   -- 'style.default' references. Styles are now stale and need refreshing. This
   -- is not an issue in BUFFER_NEW since a lexer is set immediately afterwards,
   -- which refreshes styles.
