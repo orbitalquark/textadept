@@ -2,8 +2,8 @@
 -- Terminal theme for Textadept.
 -- Contributions by Ana Balan.
 
-local buffer, view = buffer, view
-local property, property_int = buffer.property, buffer.property_int
+local view = view
+local property, property_int = view.property, view.property_int
 
 -- Normal colors.
 property['color.black'] = 0x000000
