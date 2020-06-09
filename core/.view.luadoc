@@ -936,8 +936,8 @@ local buffer
 -- using the `'style.bracebad'` style.
 -- Removes highlighting when *pos* is `-1`.
 -- @param view A view.
--- @param pos The position in *buffer* to highlight, or `-1` to remove the
---   highlight.
+-- @param pos The position in *view*'s buffer to highlight, or `-1` to remove
+--   the highlight.
 function brace_bad_light(view, pos) end
 
 ---
@@ -955,8 +955,8 @@ function brace_bad_light_indicator(view, use_indicator, indicator) end
 -- If indent guides are enabled, locates the column with `buffer.column` and
 -- sets `view.highlight_guide` in order to highlight the indent guide.
 -- @param view A view.
--- @param pos1 The first position in *buffer* to highlight.
--- @param pos2 The second position in *buffer* to highlight.
+-- @param pos1 The first position in *view*'s buffer to highlight.
+-- @param pos2 The second position in *view*'s buffer to highlight.
 function brace_highlight(view, pos1, pos2) end
 
 ---
@@ -1021,7 +1021,7 @@ function clear_representation(view, char) end
 -- Returns the line number of the next contracted fold point starting from line
 -- number *line*, or `-1` if none exists.
 -- @param view A view.
--- @param line The line number in *buffer* to start at.
+-- @param line The line number in *view* to start at.
 -- @return number
 function contracted_fold_next(view, line) end
 
@@ -1039,7 +1039,7 @@ function doc_line_from_visible(view, display_line) end
 ---
 -- Ensures line number *line* is visible by expanding any fold points hiding it.
 -- @param view A view.
--- @param line The line number in *buffer* to ensure visible.
+-- @param line The line number in *view* to ensure visible.
 function ensure_visible(view, line) end
 
 ---
@@ -1047,7 +1047,7 @@ function ensure_visible(view, line) end
 -- based on the vertical caret policy previously defined in
 -- `view.set_visible_policy()`.
 -- @param view A view.
--- @param line The line number in *buffer* to ensure visible.
+-- @param line The line number in *view* to ensure visible.
 function ensure_visible_enforce_policy(view, line) end
 
 ---
@@ -1065,7 +1065,7 @@ function fold_all(view, action) end
 -- Contracts, expands, or toggles the fold point on line number *line*, as well
 -- as all of its children, depending on *action*.
 -- @param view A view.
--- @param line The line number in *buffer* to set the fold states for.
+-- @param line The line number in *view* to set the fold states for.
 -- @param action The fold action to perform. Valid values are:
 --   * `view.FOLDACTION_CONTRACT`
 --   * `view.FOLDACTION_EXPAND`
@@ -1076,7 +1076,7 @@ function fold_children(view, line, action) end
 -- Contracts, expands, or toggles the fold point on line number *line*,
 -- depending on *action*.
 -- @param view A view.
--- @param line The line number in *buffer* to set the fold state for.
+-- @param line The line number in *view* to set the fold state for.
 -- @param action The fold action to perform. Valid values are:
 --   * `view.FOLDACTION_CONTRACT`
 --   * `view.FOLDACTION_EXPAND`
@@ -1093,8 +1093,8 @@ function get_default_fold_display_text(view) end
 -- This has no effect on fold levels or fold flags and the first line cannot be
 -- hidden.
 -- @param view A view.
--- @param start_line The start line of the range of lines in *buffer* to hide.
--- @param end_line The end line of the range of lines in *buffer* to hide.
+-- @param start_line The start line of the range of lines in *view* to hide.
+-- @param end_line The end line of the range of lines in *view* to hide.
 function hide_lines(view, start_line, end_line) end
 
 ---
@@ -1331,8 +1331,8 @@ function set_y_caret_policy(view, policy, y) end
 -- This has no effect on fold levels or fold flags and the first line cannot be
 -- hidden.
 -- @param view A view.
--- @param start_line The start line of the range of lines in *buffer* to show.
--- @param end_line The end line of the range of lines in *buffer* to show.
+-- @param start_line The start line of the range of lines in *view* to show.
+-- @param end_line The end line of the range of lines in *view* to show.
 function show_lines(view, start_line, end_line) end
 
 ---
@@ -1348,7 +1348,7 @@ function style_reset_default(view) end
 ---
 -- Returns the pixel height of line number *line*.
 -- @param view A view.
--- @param line The line number in *buffer* to get the pixel height of.
+-- @param line The line number in *view* to get the pixel height of.
 -- @return number
 function text_height(view, line) end
 
@@ -1366,7 +1366,7 @@ function text_width(view, style_num, text) end
 -- its child lines are displayed) and contracted (where all of its child lines
 -- are hidden).
 -- @param view A view.
--- @param line The line number in *buffer* to toggle the fold on.
+-- @param line The line number in *view* to toggle the fold on.
 -- @see set_default_fold_display_text
 function toggle_fold(view, line) end
 
@@ -1376,7 +1376,7 @@ function toggle_fold(view, line) end
 -- are hidden), and shows string *text* after the line.
 -- *text* is drawn with style number `view.STYLE_FOLDDISPLAYTEXT`.
 -- @param view A view.
--- @param line The line number in *buffer* to toggle the fold on and display
+-- @param line The line number in *view* to toggle the fold on and display
 --   *text* after.
 -- @param text The text to display after the line.
 function toggle_fold_show_text(view, line, text) end
@@ -1392,7 +1392,7 @@ function vertical_centre_caret(view) end
 -- buffer.
 -- Lines can occupy more than one display line if they wrap.
 -- @param view A view.
--- @param line The line number in *buffer* to use.
+-- @param line The line number in *view* to use.
 -- @return number
 function visible_from_doc_line(view, line) end
 
@@ -1400,7 +1400,7 @@ function visible_from_doc_line(view, line) end
 -- Returns the number of wrapped lines needed to fully display line number
 -- *line*.
 -- @param view A view.
--- @param line The line number in *buffer* to use.
+-- @param line The line number in *view* to use.
 -- @return number
 function wrap_count(view, line) end
 
