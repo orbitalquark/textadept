@@ -2444,7 +2444,7 @@ Changes:
 * Updated LaTeX and Go lexers.
 * Scintilla: added [`buffer:drop_selection_n()`][] for dropping a multiple
   selection.
-* Scintilla: added [`buffer.call_tip_pos_start`][] for altering call tip
+* Scintilla: added `buffer.call_tip_pos_start` for altering call tip
   backspace behavior.
 * Scintilla: added `buffer.MARK_BOOKMARK` marker symbol.
 * Scintilla: better marker drawing.
@@ -2462,7 +2462,6 @@ Changes:
 [PGP -- 7.2 beta Modules]: download/textadept_7.2_beta.modules.zip.asc
 [inputdialogs]: api.html#ui.dialogs.inputbox
 [`buffer:drop_selection_n()`]: api.html#buffer.drop_selection_n
-[`buffer.call_tip_pos_start`]: api.html#buffer.call_tip_pos_start
 [Scintilla]: http://scintilla.org
 
 ## 7.2 alpha (01 Jan 2014)

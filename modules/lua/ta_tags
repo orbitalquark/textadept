@@ -449,14 +449,14 @@ buffer	_HOME/core/init.lua	/^local buffer$/;"	t
 bufstatusbar_text	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
 build	_HOME/modules/textadept/run.lua	/^function M.build(root_directory)$/;"	f	class:textadept.run
 build_commands	_HOME/modules/textadept/run.lua	/^M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='docker build .',--[[Make]]Makefile='make',GNUmakefile='make',makefile='make',--[[Maven]]['pom.xml']='mvn',--[[Ruby]]Rakefile='rake'}$/;"	t	class:textadept.run
-call_tip_active	_HOME/core/.buffer.luadoc	/^function call_tip_active(buffer) end$/;"	f	class:buffer
-call_tip_cancel	_HOME/core/.buffer.luadoc	/^function call_tip_cancel(buffer) end$/;"	f	class:buffer
+call_tip_active	_HOME/core/.view.luadoc	/^function call_tip_active(view) end$/;"	f	class:view
+call_tip_cancel	_HOME/core/.view.luadoc	/^function call_tip_cancel(view) end$/;"	f	class:view
 call_tip_fore_hlt	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
-call_tip_pos_start	_HOME/core/.buffer.luadoc	/^function call_tip_pos_start(buffer) end$/;"	f	class:buffer
-call_tip_pos_start	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+call_tip_pos_start	_HOME/core/.view.luadoc	/^function call_tip_pos_start(view) end$/;"	f	class:view
+call_tip_pos_start	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 call_tip_position	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 call_tip_set_hlt	_HOME/core/.view.luadoc	/^function call_tip_set_hlt(view, start_pos, end_pos) end$/;"	f	class:view
-call_tip_show	_HOME/core/.buffer.luadoc	/^function call_tip_show(buffer, pos, text) end$/;"	f	class:buffer
+call_tip_show	_HOME/core/.view.luadoc	/^function call_tip_show(view, pos, text) end$/;"	f	class:view
 call_tip_use_style	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 can_redo	_HOME/core/.buffer.luadoc	/^function can_redo(buffer) end$/;"	f	class:buffer
 can_undo	_HOME/core/.buffer.luadoc	/^function can_undo(buffer) end$/;"	f	class:buffer

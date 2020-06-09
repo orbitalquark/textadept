@@ -688,7 +688,7 @@ local api_docs
 -- @see api_files
 -- @see buffer.word_chars
 function M.show_documentation(pos, case_insensitive)
-  if buffer:call_tip_active() then events.emit(events.CALL_TIP_CLICK) return end
+  if view:call_tip_active() then events.emit(events.CALL_TIP_CLICK) return end
   local api_files = M.api_files[buffer:get_lexer(true)]
   if not api_files then return end
   if not assert_type(pos, 'number/nil', 1) then pos = buffer.current_pos end
@@ -738,7 +738,7 @@ function M.show_documentation(pos, case_insensitive)
     end
     api_docs[i] = doc
   end
-  buffer:call_tip_show(pos, api_docs[api_docs.i])
+  view:call_tip_show(pos, api_docs[api_docs.i])
 end
 -- Cycle through apidoc calltips.
 events.connect(events.CALL_TIP_CLICK, function(position)
@@ -749,7 +749,7 @@ events.connect(events.CALL_TIP_CLICK, function(position)
   elseif api_docs.i < 1 then
     api_docs.i = #api_docs
   end
-  buffer:call_tip_show(api_docs.pos, api_docs[api_docs.i])
+  view:call_tip_show(api_docs.pos, api_docs[api_docs.i])
 end)
 
 return M

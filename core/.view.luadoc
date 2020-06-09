@@ -58,6 +58,8 @@
 --   longest item.
 -- @field call_tip_fore_hlt (number, Write-only)
 --   A call tip's highlighted text foreground color, in "0xBBGGRR" format.
+-- @field call_tip_pos_start (number, Write-only)
+--   The position in which backspacing beyond it hides a visible call tip.
 -- @field call_tip_position (boolean)
 --   Display a call tip above the current line instead of below it.
 --   The default value is `false`.
@@ -967,12 +969,40 @@ function brace_highlight(view, pos1, pos2) end
 function brace_highlight_indicator(view, use_indicator, indicator) end
 
 ---
+-- Returns whether or not a call tip is visible.
+-- @param view A view.
+-- @return bool
+function call_tip_active(view) end
+
+---
+-- Removes a call tip from view.
+-- @param view A view.
+function call_tip_cancel(view) end
+
+---
+-- Returns a call tip's display position.
+-- @param view A view.
+-- @return number
+function call_tip_pos_start(view) end
+
+---
 -- Highlights a call tip's text between positions *start_pos* to *end_pos* with
 -- the color `view.call_tip_fore_hlt`.
 -- @param view A view.
 -- @param start_pos The start position in a call tip text to highlight.
 -- @param end_pos The end position in a call tip text to highlight.
 function call_tip_set_hlt(view, start_pos, end_pos) end
+
+---
+-- Displays a call tip at position *pos* with string *text* as the call tip's
+-- contents.
+-- Any "\001" or "\002" bytes in *text* are replaced by clickable up or down
+-- arrow visuals, respectively. These may be used to indicate that a symbol has
+-- more than one call tip, for example.
+-- @param view A view.
+-- @param pos The position in *view*'s buffer to show a call tip at.
+-- @param text The call tip text to show.
+function call_tip_show(view, pos, text) end
 
 ---
 -- Clears all images registered using `view.register_image()` and
