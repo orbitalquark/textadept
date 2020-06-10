@@ -1095,7 +1095,7 @@ Changes:
 * Scintilla: Added [`buffer.EDGE_MULTILINE`][],
   [`buffer:multi_edge_add_line()`][], and [`buffer:multi_edge_clear_all()`][]
   for multiple edge lines.
-* Scintilla: Added [`buffer.MARGIN_COLOUR`][] and [`buffer.margin_back_n`][] for
+* Scintilla: Added `buffer.MARGIN_COLOUR` and [`buffer.margin_back_n`][] for
   setting arbitrary margin background colors.
 * Scintilla: Added [`buffer.margins`][] for more margins.
 * Scintilla: Added accessibility support for GTK on Linux.
@@ -1122,7 +1122,6 @@ Changes:
 [`buffer.EDGE_MULTILINE`]: api.html#buffer.EDGE_MULTILINE
 [`buffer:multi_edge_add_line()`]: api.html#buffer.multi_edge_add_line
 [`buffer:multi_edge_clear_all()`]: api.html#buffer.multi_edge_clear_all
-[`buffer.MARGIN_COLOUR`]: api.html#buffer.MARGIN_COLOUR
 [`buffer.margin_back_n`]: api.html#buffer.margin_back_n
 [`buffer.margins`]: api.html#buffer.margins
 [`buffer:toggle_fold_display_text()`]: api.html#buffer.toggle_fold_display_text
@@ -3655,7 +3654,7 @@ Changes:
 * Textadept is [single-instance][] by default on Linux and Mac OSX.
 * Textadept requires [GTK][] 2.18 or higher now instead of 2.16.
 * The provided Textadept binaries [require][] [GLib][] 2.28 or higher.
-* Scintilla: added [`buffer.auto_c_case_insensitive_behaviour`][] for
+* Scintilla: added `buffer.auto_c_case_insensitive_behaviour` for
   controlling case sensitivity in autocompletion lists.
 * Scintilla: `\0` in regex replacements represents the full found text.
 * Updated to [Scintilla][] 3.1.0.
@@ -3676,7 +3675,6 @@ Changes:
 [GTK]: http://gtk.org
 [require]: manual.html#Requirements
 [GLib]: http://gtk.org/download/linux.php
-[`buffer.auto_c_case_insensitive_behaviour`]: api.html#buffer.auto_c_case_insensitive_behaviour
 [Scintilla]: http://scintilla.org
 
 ## 5.2 (01 Apr 2012)
@@ -4658,7 +4656,7 @@ Changes:
 * Added `search-column` and `output-column` options for filteredlist dialogs.
 * Scintilla: added [`buffer:contracted_fold_next()`][] for retrieving fold
   states.
-* Scintilla: added [`buffer:vertical_centre_caret()`][].
+* Scintilla: added `buffer:vertical_centre_caret()`.
 * Updated to [Scintilla][] 2.22.
 * Renamed `_G.MAC` to [`_G.OSX`][].
 
@@ -4682,7 +4680,6 @@ Changes:
 [`_G.timeout()`]: api.html#timeout
 [find API]: api.html#ui.find.find_in_files
 [`buffer:contracted_fold_next()`]: api.html#buffer.contracted_fold_next
-[`buffer:vertical_centre_caret()`]: api.html#buffer.vertical_centre_caret
 [Scintilla]: http://scintilla.org
 [`_G.OSX`]: api.html#OSX
 

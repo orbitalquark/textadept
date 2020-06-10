@@ -1477,7 +1477,7 @@ function test_editing_paste_reindent_tabs_to_spaces()
   buffer:add_text('function quux()')
   buffer:new_line()
   buffer:insert_text(-1, 'end')
-  buffer:colourise(POS(1), -1) -- first line should be a fold header
+  buffer:colorize(POS(1), -1) -- first line should be a fold header
   textadept.editing.paste_reindent()
   assert_equal(buffer:get_text(), table.concat({
     'function quux()',
@@ -1885,7 +1885,7 @@ function test_file_types_get_lexer()
     'h1 {}',
     '</style></head></html>'
   }, '\n'))
-  buffer:colourise(POS(1), -1)
+  buffer:colorize(POS(1), -1)
   buffer:goto_pos(buffer:position_from_line(LINE(2)))
   assert_equal(buffer:get_lexer(), 'html')
   assert_equal(buffer:get_lexer(true), 'css')
@@ -2310,7 +2310,7 @@ function test_menu_menu_functions()
   assert_equal(view.size, size)
   view:unsplit()
   buffer:set_text('if foo then\n  bar\nend')
-  buffer:colourise(POS(1), -1)
+  buffer:colorize(POS(1), -1)
   textadept.menu.menubar[_L['View']][_L['Toggle Current Fold']][2]()
   assert_equal(view.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
   local indentation_guides = view.indentation_guides
@@ -2843,7 +2843,7 @@ function test_lexer_api()
     'baz'
   }, '\n'))
   buffer:set_lexer('lua')
-  buffer:colourise(POS(1), -1)
+  buffer:colorize(POS(1), -1)
   local lexer = require('lexer')
   assert(lexer.fold_level[LINE(1)] & lexer.FOLD_HEADER > 0, 'not a fold header')
   assert_equal(lexer.fold_level[LINE(2)], lexer.fold_level[LINE(3)])

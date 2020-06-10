@@ -36,16 +36,16 @@
 --   autocompletion started (instead of before the word being completed).
 --   This option has no effect for a user list.
 --   The default value is `true`.
--- @field auto_c_case_insensitive_behaviour (number)
+-- @field auto_c_case_insensitive_behavior (number)
 --   The behavior mode for a case insensitive autocompletion or user list when
 --   [`buffer.auto_c_ignore_case`]() is `true`.
 --
---   * `buffer.CASEINSENSITIVEBEHAVIOUR_RESPECTCASE`
+--   * `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`
 --     Prefer to select case-sensitive matches.
---   * `buffer.CASEINSENSITIVEBEHAVIOUR_IGNORECASE`
+--   * `buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE`
 --     No preference.
 --
---   The default value is `buffer.CASEINSENSITIVEBEHAVIOUR_RESPECTCASE`.
+--   The default value is `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`.
 -- @field auto_c_choose_single (bool)
 --   Automatically choose the item in a single-item autocompletion list.
 --   This option has no effect for a user list.
@@ -370,9 +370,9 @@
 --
 -- @field CARETSTICKY_WHITESPACE (number, Read-only)
 --
--- @field CASEINSENSITIVEBEHAVIOUR_IGNORECASE (number, Read-only)
+-- @field CASEINSENSITIVEBEHAVIOR_IGNORECASE (number, Read-only)
 --
--- @field CASEINSENSITIVEBEHAVIOUR_RESPECTCASE (number, Read-only)
+-- @field CASEINSENSITIVEBEHAVIOR_RESPECTCASE (number, Read-only)
 --
 -- @field EOL_CR (number, Read-only)
 --
@@ -632,7 +632,7 @@ function clear_selections(buffer) end
 --   process.
 -- @param end_pos The end position of the range of text in *buffer* to process,
 --   or `-1` to process from *start_pos* to the end of *buffer*.
-function colourise(buffer, start_pos, end_pos) end
+function colorize(buffer, start_pos, end_pos) end
 
 ---
 -- Converts all end of line characters to those in end of line mode *mode*.
@@ -1886,7 +1886,7 @@ function set_lexer(buffer, lexer) end
 --   * phases_draw
 --   * position_cache
 --   * primary_style_from_style
---   * print_colour_mode
+--   * print_color_mode
 --   * print_magnification
 --   * print_wrap_mode
 --   * status

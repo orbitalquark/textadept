@@ -102,8 +102,8 @@ view.caret_line_back = property_int['color.dark_white']
 --view.caret_line_back_alpha =
 
 -- Fold Margin.
-view:set_fold_margin_colour(true, property_int['color.white'])
-view:set_fold_margin_hi_colour(true, property_int['color.white'])
+view:set_fold_margin_color(true, property_int['color.white'])
+view:set_fold_margin_hi_color(true, property_int['color.white'])
 
 -- Markers.
 local MARK_BOOKMARK, t_run = textadept.bookmarks.MARK_BOOKMARK, textadept.run
@@ -134,4 +134,4 @@ view.indic_fore[INDIC_PLACEHOLDER] = property_int['color.grey_black']
 view.call_tip_fore_hlt = property_int['color.light_blue']
 
 -- Long Lines.
-view.edge_colour = property_int['color.grey']
+view.edge_color = property_int['color.grey']

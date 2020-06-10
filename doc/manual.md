@@ -2003,42 +2003,50 @@ terminal's constraints:
 
 #### API Changes
 
-Old API                 |Change  |New API
-------------------------|:------:|-------
-**buffer**              |        |
-set_theme()             |Renamed |[view:set_theme()][]
-style_name[n]           |Replaced|[buffer:name_of_style][](n)
-**events**              |        |
-N/A                     |Added   |[events.SESSION_SAVE][]
-N/A                     |Added   |[events.SESSION_LOAD][]
-**io**                  |        |
-reload_file()           |Renamed |[buffer:reload()][]
-save_file()             |Renamed |[buffer:save()][]
-save_file_as()          |Renamed |[buffer:save_as()][]
-close_buffer()          |Renamed |[buffer:close()][]
-**keys**                |        |
-MODE                    |Renamed |[mode][]
-**lexer**               |        |
-N/A                     |Added   |[to_eol()][]
-delimited\_range()      |Replaced|[range()][]
-nested\_pair()          |Replaced|[range()][]
-N/A                     |Added   |[number][]
-**lfs**                 |        |
-dir\_foreach()          |Replaced|for filename in [`lfs.walk()`][] do ... end
-**textadept.bookmarks** |        |
-toggle(line, on)        |Changed |[toggle()][]
-**textadept.file_types**|        |
-lexers                  |Removed |N/A<sup>a</sup>
-**textadept.snippets**  |        |
-\_insert()              |Renamed |[insert()][]
-\_previous()            |Renamed |[previous()][]
-\_cancel_current()      |Renamed |[cancel_current()][]
-\_select()              |Renamed |[select()][]
-\_paths                 |Renamed |[paths][]
-**ui.find**             |        |
-find\_in\_files\_timeout|Removed |N/A
-**view**                |        |
-N/A                     |Added   |_buffer functions and fields_<sup>b</sup>
+Old API                    |Change  |New API
+---------------------------|:------:|-------
+**buffer**                 |        |
+set_theme()                |Renamed |[view:set_theme()][]
+style_name[n]              |Replaced|[buffer:name_of_style][](n)
+CASEINSENSITIVEBEHAVIOUR\_*|Renamed |CASEINSENSITIVEBEHAVIOR\_*
+INDIC\_GRADIENTCENTRE      |Renamed |INDIC\_GRADIENTCENTER
+MARGIN\_COLOUR             |Renamed |MARGIN\_COLOR
+auto\_c\_case_insensitive\_behaviour|Renamed|auto\_c\_case\_insensitive\_behavior
+colourise                  |Renamed |colorize
+edge\_colour               |Renamed |edge\_color
+set\_fold\_margin\_\*colour|Renamed |set\_fold\_margin\_\*color
+vertical\_centre\_caret    |Renamed |vertical\_center\_caret
+**events**                 |        |
+N/A                        |Added   |[events.SESSION_SAVE][]
+N/A                        |Added   |[events.SESSION_LOAD][]
+**io**                     |        |
+reload_file()              |Renamed |[buffer:reload()][]
+save_file()                |Renamed |[buffer:save()][]
+save_file_as()             |Renamed |[buffer:save_as()][]
+close_buffer()             |Renamed |[buffer:close()][]
+**keys**                   |        |
+MODE                       |Renamed |[mode][]
+**lexer**                  |        |
+N/A                        |Added   |[to_eol()][]
+delimited\_range()         |Replaced|[range()][]
+nested\_pair()             |Replaced|[range()][]
+N/A                        |Added   |[number][]
+**lfs**                    |        |
+dir\_foreach()             |Replaced|for filename in [`lfs.walk()`][] do ... end
+**textadept.bookmarks**    |        |
+toggle(line, on)           |Changed |[toggle()][]
+**textadept.file_types**   |        |
+lexers                     |Removed |N/A<sup>a</sup>
+**textadept.snippets**     |        |
+\_insert()                 |Renamed |[insert()][]
+\_previous()               |Renamed |[previous()][]
+\_cancel_current()         |Renamed |[cancel_current()][]
+\_select()                 |Renamed |[select()][]
+\_paths                    |Renamed |[paths][]
+**ui.find**                |        |
+find\_in\_files\_timeout   |Removed |N/A
+**view**                   |        |
+N/A                        |Added   |_buffer functions and fields_<sup>b</sup>
 
 <sup>a</sup>Use `for name in buffer:private_lexer_call(_SCINTILLA.functions.property_names[1]):gmatch('[^\n]+') do ... end`.
 <sup>b</sup>Most buffer functions and fields are available in views now. See

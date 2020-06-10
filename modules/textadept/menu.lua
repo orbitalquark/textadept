@@ -304,7 +304,7 @@ local default_menubar = {
     end},
     SEPARATOR,
     {_L['Select Lexer...'], textadept.file_types.select_lexer},
-    {_L['Refresh Syntax Highlighting'], function() buffer:colourise(1, -1) end}
+    {_L['Refresh Syntax Highlighting'], function() buffer:colorize(1, -1) end}
   },
   {
     title = _L['View'],
