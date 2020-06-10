@@ -2023,6 +2023,8 @@ N/A                     |Added   |[to_eol()][]
 delimited\_range()      |Replaced|[range()][]
 nested\_pair()          |Replaced|[range()][]
 N/A                     |Added   |[number][]
+**lfs**                 |        |
+dir\_foreach()          |Replaced|for filename in [`lfs.walk()`][] do ... end
 **textadept.bookmarks** |        |
 toggle(line, on)        |Changed |[toggle()][]
 **textadept.file_types**|        |
@@ -2054,6 +2056,7 @@ section below.
 [to_eol()]: api.html#lexer.to_eol
 [range()]: api.html#lexer.range
 [number]: api.html#lexer.number
+[`lfs.walk()`]: api.html#lfs.walk
 [toggle()]: api.html#textadept.bookmarks.toggle
 [insert()]: api.html#textadept.snippets.insert
 [previous()]: api.html#textadept.snippets.previous

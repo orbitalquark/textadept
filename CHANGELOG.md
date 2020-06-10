@@ -467,7 +467,6 @@ Changes:
 [`os.spawn()`]: api.html#os.spawn
 [`textadept.editing.show_documentation()`]: api.html#textadept.editing.show_documentation
 [`textadept.editing.highlight_word()`]: api.html#textadept.editing.highlight_word
-[file filter]: api.html#lfs.dir_foreach
 [PDCurses]: https://pdcurses.sourceforge.io/
 
 ## 10.2 (01 Nov 2018)
@@ -1227,7 +1226,7 @@ Download:
 Bugfixes:
 
 * Check range bounds for [`buffer:text_range()`][].
-* Fixed inability to properly halt [`lfs.dir_foreach()`][].
+* Fixed inability to properly halt `lfs.dir_foreach()`.
 
 Changes:
 
@@ -1246,7 +1245,6 @@ Changes:
 [PGP -- 9.0 alpha 2 Linux x86_64]: download/textadept_9.0_alpha_2.x86_64.tgz.asc
 [PGP -- 9.0 alpha 2 Modules]: download/textadept_9.0_alpha_2.modules.zip.asc
 [`buffer:text_range()`]: api.html#buffer.text_range
-[`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
 [regular expressions]: manual.html#Regular.Expressions
 
 ## 9.0 alpha (01 Jul 2016)
@@ -1279,7 +1277,7 @@ Changes:
 * Key and menu commands [must be Lua functions][]; the table syntax is no longer
   recognized.
 * Renamed `lfs.FILTER` to [`lfs.default_filter`][] and tweaked arguments to
-  [`lfs.dir_foreach()`][].
+  `lfs.dir_foreach()`.
 * Locale files can optionally use `#` for comments instead of `%`.
 * Renamed `ui.SILENT_PRINT` to [`ui.silent_print`][].
 * Renamed all [`textadept.editing`]`.[A-Z]+` options to their lower-case
@@ -1323,7 +1321,6 @@ Changes:
 [`io.quick_open_filters`]: api.html#io.quick_open_filters
 [must be Lua functions]: manual.html#Key.and.Menu.Command.Changes
 [`lfs.default_filter`]: api.html#lfs.default_filter
-[`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
 [`ui.silent_print`]: api.html#ui.silent_print
 [`textadept.editing`]: api.html#textadept.editing
 [`textadept.editing.brace_matches`]: api.html#textadept.editing.brace_matches
@@ -1759,7 +1756,7 @@ Bugfixes:
 Changes:
 
 * Added `symlink` filter option for ignoring symlinked files and folders to
-  [`io.snapopen()`][], [`lfs.dir_foreach()`][], and [`ui.find.FILTER`][].
+  [`io.snapopen()`][], `lfs.dir_foreach()`, and [`ui.find.FILTER`][].
 * Added [`_FOLDBYINDENTATION`][] field for lexers that fold by indentation.
 * Updated to [Scintilla][] 3.5.5.
 
@@ -1774,7 +1771,6 @@ Changes:
 [PGP -- 8.0 beta Linux x86_64]: download/textadept_8.0_beta.x86_64.tgz.asc
 [PGP -- 8.0 beta Modules]: download/textadept_8.0_beta.modules.zip.asc
 [`io.snapopen()`]: api.html#io.quick_open
-[`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
 [`ui.find.FILTER`]: api.html#ui.find.find_in_files_filter
 [`_FOLDBYINDENTATION`]: api.html#lexer.Fold.by.Indentation
 [Scintilla]: http://scintilla.org
@@ -2016,8 +2012,7 @@ Bugfixes:
 * Ensure "find in files" is off when activating normal find.
 * Fixed return values from [`ui.dialogs.optionselect()`][].
 * The command entry does not hide when the window loses focus.
-* Fixed '//' bug when iterating over root directory with
-  [`lfs.dir_foreach()`][].
+* Fixed '//' bug when iterating over root directory with `lfs.dir_foreach()`.
 * Fixed bug in jumping to compile/run errors and clear annotations before
   building projects.
 * Fixed memory leaks in [`ui.dialog()`][].
@@ -2063,7 +2058,6 @@ Changes:
 [`_G.BSD`]: api.html#BSD
 [Rectangular selections]: manual.html#Rectangular.Selection
 [`ui.dialogs.optionselect()`]: api.html#ui.dialogs.optionselect
-[`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
 [`_SCINTILLA.next_image_type()`]: api.html#_SCINTILLA.next_image_type
 
 ## 7.7 (01 Oct 2014)
@@ -2124,7 +2118,7 @@ Changes:
 * Added Linux .desktop files for menus and launchers.
 * Indicate presence of a BOM in the statusbar.
 * Switch to previous buffer after closing a buffer.
-* More options for [`lfs.dir_foreach()`][].
+* More options for `lfs.dir_foreach()`.
 * Updated to [Scintilla][] 3.5.0.
 
 [Textadept 7.6 -- Win32]: download/textadept_7.6.win32.zip
@@ -2139,7 +2133,6 @@ Changes:
 [PGP -- 7.6 Modules]: download/textadept_7.6.modules.zip.asc
 [`buffer:del_word_right()`]: api.html#buffer.del_word_right
 [`os.spawn()`]: api.html#os.spawn
-[`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
 [Scintilla]: http://scintilla.org
 
 ## 7.5 (11 Jul 2014)
@@ -3101,7 +3094,7 @@ Bugfixes:
 Changes:
 
 * Reset Lua state after selecting a new theme.
-* Added [`lfs.dir_foreach()`][].
+* Added `lfs.dir_foreach()`.
 * Added file and directory [filtering][] for Find in Files.
 * Moved `_M.textadept.snapopen` into [`io`][].
 * Renamed some [`lexer` constants][].
@@ -3124,7 +3117,6 @@ Changes:
 [PGP -- 6.5 Modules]: download/textadept_6.5.modules.zip.asc
 [`buffer:visible_from_doc_line()`]: api.html#buffer.visible_from_doc_line
 [`buffer:line_scroll()`]: api.html#buffer.line_scroll
-[`lfs.dir_foreach()`]: api.html#lfs.dir_foreach
 [filtering]: api.html#ui.find.find_in_files_filter
 [`io`]: api.html#io.quick_open
 [`lexer` constants]: api.html#lexer.FOLD_BASE

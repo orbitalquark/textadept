@@ -9,8 +9,8 @@ module('lfs')]]
 ---
 -- The filter table containing common binary file extensions and version control
 -- directories to exclude when iterating over files and directories using
--- `dir_foreach`.
--- @see dir_foreach
+-- `walk`.
+-- @see walk
 -- @class table
 -- @name default_filter
 lfs.default_filter = {
@@ -22,36 +22,10 @@ lfs.default_filter = {
   '!/%.bzr$', '!/%.git$', '!/%.hg$', '!/%.svn$', '!/node_modules$',
 }
 
----
--- Iterates over all files and sub-directories (up to *n* levels deep) in
--- directory *dir*, calling function *f* with each file found.
--- String or list *filter* determines which files to pass through to *f*, with
--- the default filter being `lfs.default_filter`. A filter consists of Lua
--- patterns that match file and directory paths to include or exclude. Exclusive
--- patterns begin with a '!'. If no inclusive patterns are given, any path is
--- initially considered. As a convenience, file extensions can be specified
--- literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/'
--- also matches the Windows directory separator ('[/\\]' is not needed).
--- @param dir The directory path to iterate over.
--- @param f Function to call with each full file path found. If *f* returns
---   `false` explicitly, iteration ceases.
--- @param filter Optional filter for files and directories to include and
---   exclude. The default value is `lfs.default_filter`.
--- @param n Optional maximum number of directory levels to descend into.
---   The default value is `nil`, which indicates no limit.
--- @param include_dirs Optional flag indicating whether or not to call *f* with
---   directory names too. Directory names are passed with a trailing '/' or '\',
---   depending on the current platform.
---   The default value is `false`.
+-- Documentation is in `lfs.walk()`.
 -- @param level Utility value indicating the directory level this function is
---   at. This value is used and set internally, and should not be set otherwise.
--- @see filter
--- @name dir_foreach
-function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
-  assert_type(dir, 'string', 1)
-  assert_type(f, 'function', 2)
-  assert_type(filter, 'string/table/nil', 3)
-  assert_type(n, 'number/nil', 4)
+--   at.
+local function walk(dir, filter, n, include_dirs, level)
   if not level then
     -- Convert filter to a table from nil or string arguments.
     if not filter then filter = lfs.default_filter end
@@ -101,16 +75,43 @@ function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)
     local sep = not WIN32 and '/' or '\\'
     local os_filename = not WIN32 and filename or filename:gsub('/', sep)
     if include and mode == 'directory' then
-      if include_dirs and f(os_filename .. sep) == false then return false end
+      if include_dirs then coroutine.yield(os_filename .. sep) end
       if n and (level or 0) >= n then goto continue end
-      local halt = lfs.dir_foreach(
-        filename, f, filter, n, include_dirs, (level or 0) + 1) == false
-      if halt then return false end
+      walk(filename, filter, n, include_dirs, (level or 0) + 1)
     elseif include and mode == 'file' then
-      if f(os_filename) == false then return false end
+      coroutine.yield(os_filename)
     end
     ::continue::
   end
+end
+
+---
+-- Returns an iterator that iterates over all files and sub-directories (up to
+-- *n* levels deep) in directory *dir* and yields each file found.
+-- String or list *filter* determines which files to yield, with the default
+-- filter being `lfs.default_filter`. A filter consists of Lua patterns that
+-- match file and directory paths to include or exclude. Exclusive patterns
+-- begin with a '!'. If no inclusive patterns are given, any path is initially
+-- considered. As a convenience, file extensions can be specified literally
+-- instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/' also matches
+-- the Windows directory separator ('[/\\]' is not needed).
+-- @param dir The directory path to iterate over.
+-- @param filter Optional filter for files and directories to include and
+--   exclude. The default value is `lfs.default_filter`.
+-- @param n Optional maximum number of directory levels to descend into.
+--   The default value is `nil`, which indicates no limit.
+-- @param include_dirs Optional flag indicating whether or not to yield
+--   directory names too. Directory names are passed with a trailing '/' or '\',
+--   depending on the current platform.
+--   The default value is `false`.
+-- @see filter
+-- @name walk
+function lfs.walk(dir, filter, n, include_dirs)
+  assert_type(dir, 'string', 1)
+  assert_type(filter, 'string/table/nil', 2)
+  assert_type(n, 'number/nil', 3)
+  local co = coroutine.create(function() walk(dir, filter, n, include_dirs) end)
+  return function() return select(2, coroutine.resume(co)) end
 end
 
 ---
