@@ -223,11 +223,11 @@ local LOCALE_DIR = _HOME .. '/core/locales'
 
 function test_locale_load()
   local L = load_locale(LOCALE_CONF)
-  lfs.dir_foreach(LOCALE_DIR, function(locale_conf)
+  for locale_conf in lfs.walk(LOCALE_DIR) do
     local l = load_locale(locale_conf)
     for id in pairs(L) do assert(l[id], 'locale missing id "%s"', id) end
     for id in pairs(l) do assert(L[id], 'locale has extra id "%s"', id) end
-  end)
+  end
 end
 
 function test_locale_use_core()
@@ -235,30 +235,35 @@ function test_locale_use_core()
   local ta_dirs = {'core', 'modules/ansi_c', 'modules/lua', 'modules/textadept'}
   for _, dir in ipairs(ta_dirs) do
     dir = _HOME .. '/' .. dir
-    lfs.dir_foreach(
-      dir, function(filename) check_localizations(filename, L) end, '.lua')
+    for filename in lfs.walk(dir, '.lua') do
+      check_localizations(filename, L)
+    end
   end
   check_localizations(_HOME .. '/init.lua', L)
 end
 
 function test_locale_use_extra()
   local L = load_locale(LOCALE_CONF)
-  lfs.dir_foreach(
-    _HOME, function(filename) load_extra_localizations(filename, L) end, '.lua')
-  lfs.dir_foreach(
-    _HOME, function(filename) check_localizations(filename, L) end, '.lua')
+  for filename in lfs.walk(_HOME, '.lua') do
+    load_extra_localizations(filename, L)
+  end
+  for filename in lfs.walk(_HOME, '.lua') do
+    check_localizations(filename, L)
+  end
 end
 
 function test_locale_use_userhome()
   local L = load_locale(LOCALE_CONF)
-  lfs.dir_foreach(
-    _HOME, function(filename) load_extra_localizations(filename, L) end, '.lua')
-  lfs.dir_foreach(_USERHOME, function(filename)
+  for filename in lfs.walk(_HOME, '.lua') do
     load_extra_localizations(filename, L)
-  end, '.lua')
+  end
+  for filename in lfs.walk(_USERHOME, '.lua') do
+    load_extra_localizations(filename, L)
+  end
   L['%1'] = true -- snippet
-  lfs.dir_foreach(
-    _USERHOME, function(filename) check_localizations(filename, L) end, '.lua')
+  for filename in lfs.walk(_USERHOME, '.lua') do
+    check_localizations(filename, L)
+  end
 end
 
 function test_file_io_open_file_detect_encoding()
@@ -622,97 +627,95 @@ function test_keys_modes()
   buffer:close()
 end
 
-function test_lfs_ext_dir_foreach()
+function test_lfs_ext_walk()
   local files, directories = 0, 0
-  lfs.dir_foreach(_HOME .. '/core', function(filename)
+  for filename in lfs.walk(_HOME .. '/core', nil, nil, true) do
     if not filename:find('/$') then
       files = files + 1
     else
       directories = directories + 1
     end
-  end, nil, nil, true)
+  end
   assert(files > 0, 'no files found')
   assert(directories > 0, 'no directories found')
 
-  assert_raises(function() lfs.dir_foreach() end, 'string expected, got nil')
-  assert_raises(function() lfs.dir_foreach(_HOME) end, 'function expected, got nil')
-  assert_raises(function() lfs.dir_foreach(_HOME, function() end, 1) end, 'string/table/nil expected, got number')
-  assert_raises(function() lfs.dir_foreach(_HOME, function() end, nil, true) end, 'number/nil expected, got boolean')
+  assert_raises(function() lfs.walk() end, 'string expected, got nil')
+  assert_raises(function() lfs.walk(_HOME, 1) end, 'string/table/nil expected, got number')
+  assert_raises(function() lfs.walk(_HOME, nil, true) end, 'number/nil expected, got boolean')
 end
 
-function test_lfs_ext_dir_foreach_filter_lua()
+function test_lfs_ext_walk_filter_lua()
   local count = 0
-  lfs.dir_foreach(_HOME .. '/core', function(filename)
+  for filename in lfs.walk(_HOME .. '/core', '.lua') do
     assert(filename:find('%.lua$'), '"%s" not a Lua file', filename)
     count = count + 1
-  end, '.lua')
+  end
   assert(count > 0, 'no Lua files found')
 end
 
-function test_lfs_ext_dir_foreach_filter_exclusive()
+function test_lfs_ext_walk_filter_exclusive()
   local count = 0
-  lfs.dir_foreach(_HOME .. '/core', function(filename)
+  for filename in lfs.walk(_HOME .. '/core', '!.lua') do
     assert(not filename:find('%.lua$'), '"%s" is a Lua file', filename)
     count = count + 1
-  end, '!.lua')
+  end
   assert(count > 0, 'no non-Lua files found')
 end
 
-function test_lfs_ext_dir_foreach_filter_dir()
+function test_lfs_ext_walk_filter_dir()
   local count = 0
-  lfs.dir_foreach(_HOME, function(filename)
+  for filename in lfs.walk(_HOME, '/core') do
     assert(filename:find('/core/'), '"%s" is not in core/', filename)
     count = count + 1
-  end, '/core')
+  end
   assert(count > 0, 'no core files found')
 end
-expected_failure(test_lfs_ext_dir_foreach_filter_dir)
+expected_failure(test_lfs_ext_walk_filter_dir)
 
-function test_lfs_ext_dir_foreach_filter_mixed()
+function test_lfs_ext_walk_filter_mixed()
   local count = 0
-  lfs.dir_foreach(_HOME .. '/core', function(filename)
+  for filename in lfs.walk(_HOME .. '/core', {'!/locales', '.lua'}) do
     assert(not filename:find('/locales/') and filename:find('%.lua$'), '"%s" should not match', filename)
     count = count + 1
-  end, {'!/locales', '.lua'})
+  end
   assert(count > 0, 'no matching files found')
 end
 
-function test_lfs_ext_dir_foreach_max_depth()
+function test_lfs_ext_walk_max_depth()
   local count = 0
-  lfs.dir_foreach(
-    _HOME, function(filename) count = count + 1 end, '.lua', 0)
+  for filename in lfs.walk(_HOME, '.lua', 0) do count = count + 1 end
   assert_equal(count, 1) -- init.lua
 end
 
-function test_lfs_ext_dir_foreach_halt()
+function test_lfs_ext_walk_halt()
   local count, count_at_halt = 0, 0
-  lfs.dir_foreach(_HOME .. '/core', function(filename)
+  for filename in lfs.walk(_HOME .. '/core') do
     count = count + 1
     if filename:find('/locales/.') then
       count_at_halt = count
-      return false
+      break
     end
-  end)
+  end
   assert_equal(count, count_at_halt)
 
-  lfs.dir_foreach(_HOME .. '/core', function(filename)
+  for filename in lfs.walk(_HOME .. '/core', nil, nil, true) do
     count = count + 1
     if filename:find('[/\\]$') then
       count_at_halt = count
-      return false
+      break
     end
-  end, nil, nil, true)
+  end
   assert_equal(count, count_at_halt)
 end
 
-function test_lfs_ext_dir_foreach_win32()
+function test_lfs_ext_walk_win32()
   local win32 = _G.WIN32
   _G.WIN32 = true
   local count = 0
-  lfs.dir_foreach(_HOME, function(filename)
+  for filename in lfs.walk(_HOME, {'/core'}) do
     assert(not filename:find('/'), '"%s" has /', filename)
     if filename:find('\\core') then count = count + 1 end
-  end, {'/core'})
+  end
   assert(count > 0, 'no core files found')
   _G.WIN32 = win32 -- reset just in case
 end
@@ -2097,6 +2100,8 @@ function test_ui_find_find_in_files()
   view:unsplit()
   buffer:close()
   -- TODO: ui.find.find_in_files() -- no param
+
+  assert_raises(function() ui.find.find_in_files('', 1) end, 'string/table/nil expected, got number')
 end
 
 function test_ui_find_replace()
@@ -3052,9 +3057,9 @@ function test_buffer_view_usage()
     '!/modules/lua/lua.luadoc', '!/modules/debugger/lua/mobdebug.lua',
     '!/modules/yaml/lyaml.lua', '!/scripts', '!/src'
   }
-  lfs.dir_foreach(_HOME, function(filename)
+  for filename in lfs.walk(_HOME, filter) do
     check_property_usage(filename, buffer_props, view_props)
-  end, filter)
+  end
 end
 
 --------------------------------------------------------------------------------

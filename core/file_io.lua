@@ -426,10 +426,10 @@ function io.quick_open(paths, filter, opts)
   assert_type(opts, 'table/nil', 3)
   local utf8_list = {}
   for i = 1, #paths do
-    lfs.dir_foreach(paths[i], function(filename)
+    for filename in lfs.walk(paths[i], filter or lfs.default_filter) do
       if #utf8_list >= io.quick_open_max then return false end
       utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
-    end, filter or lfs.default_filter)
+    end
   end
   if #utf8_list >= io.quick_open_max then
     ui.dialogs.msgbox{

@@ -546,7 +546,6 @@ dialog	_HOME/core/ui.lua	/^local dialog$/;"	f	class:ui
 dialogs	_HOME/core/.ui.dialogs.luadoc	/^module('ui.dialogs')$/;"	m	class:ui
 diff	_HOME/modules/file_diff/init.lua	/^function _G.diff(text1, text2) end$/;"	f	
 digit	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-dir_foreach	_HOME/core/lfs_ext.lua	/^function lfs.dir_foreach(dir, f, filter, n, include_dirs, level)$/;"	f	class:lfs
 disable_listening	_HOME/modules/history/init.lua	/^function M.disable_listening()$/;"	f	class:history
 disconnect	_HOME/core/events.lua	/^function M.disconnect(event, f)$/;"	f	class:events
 doc_line_from_visible	_HOME/core/.view.luadoc	/^function doc_line_from_visible(view, display_line) end$/;"	f	class:view
@@ -1148,6 +1147,7 @@ view_ws	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 virtual_space_options	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 visible_from_doc_line	_HOME/core/.view.luadoc	/^function visible_from_doc_line(view, line) end$/;"	f	class:view
 wait	_HOME/core/.os.luadoc	/^function spawn_proc:wait() end$/;"	f	class:spawn_proc
+walk	_HOME/core/lfs_ext.lua	/^function lfs.walk(dir, filter, n, include_dirs)$/;"	f	class:lfs
 whitespace_chars	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 whitespace_size	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 whole_word	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find

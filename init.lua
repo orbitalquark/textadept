@@ -44,6 +44,7 @@ view.set_theme = set_theme -- needed for the first view
 if not arg then view:goto_buffer(buffer) end
 
 -- Temporary compatibility.
+function lfs.dir_foreach(dir, f, filter, n, include_dirs) ui.dialogs.msgbox{text='Compatibility issue',text='Please change your use of "lfs.dir_foreach()" to "for filename in lfs.walk()"'}; for filename in lfs.walk(dir, filter, n, include_dirs) do if f(filename) == false then return end end end
 setmetatable(_L, {__index = function(t, k) return rawget(t, k:gsub('_', '')) or 'No Localization:'..k end})
 setmetatable(textadept.snippets, {__index = function(t, k) return rawget(t, k:gsub('^_', '')) end})
 buffer.set_theme = function(...) view:set_theme(select(2, ...)); events.connect(events.INITIALIZED, function() ui.dialogs.msgbox{title='Compatibility issue',text='Please change your use of "buffer:set_theme()" to "view:set_theme()"'} end) end

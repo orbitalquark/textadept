@@ -255,6 +255,9 @@ function M.find_in_files(dir, filter)
     }
     if not dir then return end
   end
+  if not assert_type(filter, 'string/table/nil', 2) then
+    filter = M.find_in_files_filters[dir] or lfs.default_filter
+  end
 
   if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
   ui.silent_print = false
@@ -265,10 +268,10 @@ function M.find_in_files(dir, filter)
 
   -- Determine which files to search.
   local filenames, utf8_filenames = {}, {}
-  lfs.dir_foreach(dir, function(filename)
+  for filename in lfs.walk(dir, filter) do
     filenames[#filenames + 1] = filename
     utf8_filenames[#utf8_filenames + 1] = filename:iconv('UTF-8', _CHARSET)
-  end, filter or M.find_in_files_filters[dir] or lfs.default_filter)
+  end
 
   -- Perform the search in a temporary buffer and print results.
   local orig_buffer, buffer = buffer, buffer.new()
