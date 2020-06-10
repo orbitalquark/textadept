@@ -512,7 +512,7 @@ if OSX then
     buffer:line_end_extend()
     if not buffer.selection_empty then buffer:cut() else buffer:clear() end
   end
-  keys.cl = view.vertical_centre_caret
+  keys.cl = view.vertical_center_caret
   -- GTK-OSX reports Fn-key as a single keycode which confuses Scintilla. Do
   -- not propagate it.
   keys.fn = function() return true end

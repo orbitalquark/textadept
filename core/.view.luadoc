@@ -125,7 +125,7 @@
 --     The reversed arrow cursor.
 --
 --   The default value is `view.CURSORNORMAL`.
--- @field edge_colour (number)
+-- @field edge_color (number)
 --   The color, in "0xBBGGRR" format, of the single edge or background for long
 --   lines according to `view.edge_mode`.
 -- @field edge_column (number)
@@ -136,11 +136,11 @@
 --   * `view.EDGE_NONE`
 --     Long lines are not marked.
 --   * `view.EDGE_LINE`
---     Draw a single vertical line whose color is [`view.edge_colour`]() at
+--     Draw a single vertical line whose color is [`view.edge_color`]() at
 --     column [`view.edge_column`]().
 --   * `view.EDGE_BACKGROUND`
 --     Change the background color of text after column [`view.edge_column`]()
---     to [`view.edge_colour`]().
+--     to [`view.edge_color`]().
 --   * `view.EDGE_MULTILINE`
 --     Draw vertical lines whose colors and columns are defined by calls to
 --     [`view:multi_edge_add_line()`]().
@@ -306,12 +306,12 @@
 --   * `view.INDIC_POINT`
 --     A triangle below the start of the indicator range.
 --   * `view.INDIC_POINTCHARACTER`
---     A triangle below the centre of the first character of the indicator
+--     A triangle below the center of the first character of the indicator
 --     range.
 --   * `view.INDIC_GRADIENT`
 --     A box with a vertical gradient from solid on top to transparent on
 --     bottom.
---   * `view.INDIC_GRADIENTCENTRE`
+--   * `view.INDIC_GRADIENTCENTER`
 --     A box with a centered gradient from solid in the middle to transparent on
 --     the top and bottom.
 --
@@ -333,7 +333,7 @@
 -- @field margin_back_n (table)
 --   Table of background colors, in "0xBBGGRR" format, of margin numbers from
 --   `1` to `view.margins` (`5` by default).
---   Only affects margins of type `view.MARGIN_COLOUR`.
+--   Only affects margins of type `view.MARGIN_COLOR`.
 -- @field margin_cursor_n (table)
 --   Table of cursor types shown over margin numbers from `1` to
 --   `view.margins` (`5` by default).
@@ -390,7 +390,7 @@
 --     A text margin.
 --   * `view.MARGIN_RTEXT`
 --     A right-justified text margin.
---   * `view.MARGIN_COLOUR`
+--   * `view.MARGIN_COLOR`
 --     A marker symbol margin whose background color is configurable.
 --
 --   The default value for the first margin is `view.MARGIN_NUMBER`, followed
@@ -683,7 +683,7 @@
 --
 -- @field INDIC_GRADIENT (number, Read-only)
 --
--- @field INDIC_GRADIENTCENTRE (number, Read-only)
+-- @field INDIC_GRADIENTCENTER (number, Read-only)
 --
 -- @field INDIC_HIDDEN (number, Read-only)
 --
@@ -781,7 +781,7 @@
 --
 -- @field MARGIN_BACK (number, Read-only)
 --
--- @field MARGIN_COLOUR (number, Read-only)
+-- @field MARGIN_COLOR (number, Read-only)
 --
 -- @field MARGIN_FORE (number, Read-only)
 --
@@ -1155,7 +1155,7 @@ function marker_define_pixmap(view, marker, pixmap) end
 --   pixels for the top line, with the leftmost pixel first, then continuing
 --   with the pixels for subsequent lines. There is no gap between lines for
 --   alignment reasons. Each pixel consists of, in order, a red byte, a green
---   byte, a blue byte and an alpha byte. The colour bytes are not premultiplied
+--   byte, a blue byte and an alpha byte. The color bytes are not premultiplied
 --   by the alpha value. That is, a fully red pixel that is 25% opaque will be
 --   `[FF, 00, 00, 3F]`.
 function marker_define_rgba_image(view, marker, pixels) end
@@ -1254,7 +1254,7 @@ function set_default_fold_display_text(view, text) end
 -- @param view A view.
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
-function set_fold_margin_colour(view, use_setting, color) end
+function set_fold_margin_color(view, use_setting, color) end
 
 ---
 -- Overrides the fold margin's default highlight color with color *color*, in
@@ -1262,7 +1262,7 @@ function set_fold_margin_colour(view, use_setting, color) end
 -- @param view A view.
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
-function set_fold_margin_hi_colour(view, use_setting, color) end
+function set_fold_margin_hi_color(view, use_setting, color) end
 
 ---
 -- Overrides the selection's default background color with color *color*, in
@@ -1384,7 +1384,7 @@ function toggle_fold_show_text(view, line, text) end
 ---
 -- Centers current line in the view.
 -- @param view A view.
-function vertical_centre_caret(view) end
+function vertical_center_caret(view) end
 
 ---
 -- Returns the displayed line number of actual line number *line*, taking hidden

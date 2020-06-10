@@ -48,6 +48,7 @@ function lfs.dir_foreach(dir, f, filter, n, include_dirs) ui.dialogs.msgbox{text
 setmetatable(_L, {__index = function(t, k) return rawget(t, k:gsub('_', '')) or 'No Localization:'..k end})
 setmetatable(textadept.snippets, {__index = function(t, k) return rawget(t, k:gsub('^_', '')) end})
 buffer.set_theme = function(...) view:set_theme(select(2, ...)); events.connect(events.INITIALIZED, function() ui.dialogs.msgbox{title='Compatibility issue',text='Please change your use of "buffer:set_theme()" to "view:set_theme()"'} end) end
+local function en_au_to_us() for au,us in pairs{CASEINSENSITIVEBEHAVIOUR_IGNORECASE=buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE,CASEINSENSITIVEBEHAVIOUR_RESPECTCASE=buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE,INDIC_GRADIENTCENTRE=buffer.INDIC_GRADIENTCENTER,MARGIN_COLOUR=buffer.MARGIN_COLOR,auto_c_case_insensitive_behaviour=buffer.auto_c_case_insensitive_behavior,colourise=buffer.colorize,edge_colour=buffer.edge_color,set_fold_margin_colour=function()ui.dialogs.msgbox{text='Compatibility issue',text="Please update your theme's use of renamed buffer/view fields"}; return buffer.set_fold_margin_color end,set_fold_margin_hi_colour=buffer.set_fold_margin_hi_color,vertical_centre_caret=buffer.vertical_center_caret} do buffer[au]=us;view[au]=us end end; events.connect(events.BUFFER_NEW, en_au_to_us); en_au_to_us()
 
 -- The remainder of this file defines default buffer properties and applies them
 -- to subsequent buffers. Normally, a setting like `buffer.use_tabs = false`
@@ -248,8 +249,8 @@ view.indic_style[INDIC_PLACEHOLDER] = not CURSES and view.INDIC_DOTBOX or
 --buffer.auto_c_fill_ups = '('
 buffer.auto_c_choose_single = true
 --buffer.auto_c_ignore_case = true
---buffer.auto_c_case_insensitive_behaviour =
---  buffer.CASEINSENSITIVEBEHAVIOUR_IGNORECASE
+--buffer.auto_c_case_insensitive_behavior =
+--  buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE
 buffer.auto_c_multi = buffer.MULTIAUTOC_EACH
 --buffer.auto_c_auto_hide = false
 --buffer.auto_c_drop_rest_of_word = true

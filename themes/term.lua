@@ -67,8 +67,8 @@ property['style.whitespace'] = ''
 --view.caret_line_back =
 
 -- Fold Margin.
---view:set_fold_margin_colour(true, property_int['color.white'])
---view:set_fold_margin_hi_colour(true, property_int['color.white'])
+--view:set_fold_margin_color(true, property_int['color.white'])
+--view:set_fold_margin_hi_color(true, property_int['color.white'])
 
 -- Markers.
 local MARK_BOOKMARK = textadept.bookmarks.MARK_BOOKMARK
@@ -87,4 +87,4 @@ view.indic_fore[INDIC_PLACEHOLDER] = property_int['color.magenta']
 view.call_tip_fore_hlt = property_int['color.blue']
 
 -- Long Lines.
-view.edge_colour = property_int['color.red']
+view.edge_color = property_int['color.red']

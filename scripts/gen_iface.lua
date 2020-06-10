@@ -22,9 +22,13 @@ local increments = { -- constants to increment by one
   '^MARKER_MAX', '^MARKNUM_', '^MAX_MARGIN', '^STYLE_', '^INDICATOR_'
 }
 local changed_setter = {} -- holds properties changed to setter functions
+local function to_en_us(name)
+  return name:gsub('([iIlL][oO])[uU]([rR])', '%1%2'):
+    gsub('ise$', 'ize'):gsub('([cC][eE][nN][tT])([rR])([eE])', '%1%3%2')
+end
 local function to_lua_name(camel_case)
-  return camel_case:gsub('([a-z])([A-Z])', '%1_%2'):
-    gsub('([A-Z])([A-Z][a-z])', '%1_%2'):lower()
+  return to_en_us(camel_case:gsub('([a-z])([A-Z])', '%1_%2'):
+    gsub('([A-Z])([A-Z][a-z])', '%1_%2'):lower())
 end
 local function is_length(ptype, param)
   return ptype == 'position' and param:find('^length')
@@ -38,7 +42,7 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
   if line:find('^val ') then
     local name, value = line:match(const_patt)
     for i = 1, #ignores do if name:find(ignores[i]) then goto continue end end
-    name = name:gsub('^SC_', ''):gsub('^SC([^N]%u+)', '%1')
+    name = to_en_us(name:gsub('^SC_', ''):gsub('^SC([^N]%u+)', '%1'))
     if name == 'FIND_REGEXP' then
       value = tostring(tonumber(value) + 2^23) -- add SCFIND_CXX11REGEX
       value = value:gsub('%.0$', '') -- Lua 5.3+ may append this
