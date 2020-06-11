@@ -415,7 +415,7 @@ static void refresh_all() {
 /** `find.focus()` Lua function. */
 static int focus_find(lua_State *L) {
 #if GTK
-  if (!gtk_widget_has_focus(findbox)) {
+  if (!gtk_widget_has_focus(find_entry) && !gtk_widget_has_focus(repl_entry)) {
     gtk_widget_show(findbox);
     gtk_widget_grab_focus(find_entry);
     gtk_widget_grab_default(find_next);
