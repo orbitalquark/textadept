@@ -917,7 +917,7 @@ function indicator_clear_range(buffer, pos, length) end
 ---
 -- Returns the next boundary position, starting from position *pos*, of
 -- indicator number *indicator*, in the range of `1` to `32`.
--- Returns `1` if *indicator* was not found.
+-- Returns `buffer.length + 1` if *indicator* was not found.
 -- @param buffer A buffer.
 -- @param indicator An indicator number in the range of `1` to `32`.
 -- @param pos The position in *buffer* of the indicator.
