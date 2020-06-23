@@ -29,6 +29,8 @@ function assert_equal(v1, v2)
       return
     end
     ::continue::
+    v1 = string.format('{%s}', table.concat(v1, ', '))
+    v2 = string.format('{%s}', table.concat(v2, ', '))
   end
   error(string.format('%s ~= %s', v1, v2), 2)
 end
@@ -3001,7 +3003,606 @@ function test_set_theme()
   view:unsplit()
 end
 
+function test_set_lexer_style()
+  -- Defined in Lua lexer, which is not currently loaded.
+  view.property['style.library'] = view.property['style.library']
+end
+
 -- TODO: test init.lua's buffer settings
+
+function test_ctags()
+  local ctags = require('ctags')
+
+  -- Setup project.
+  local dir = os.tmpname()
+  os.remove(dir)
+  lfs.mkdir(dir)
+  os.execute(string.format('cp -r %s/test/modules/ctags/c/* %s', _HOME, dir))
+  lfs.mkdir(dir .. '/.hg') -- simulate version control
+  local foo_h, foo_c = dir .. '/include/foo.h', dir .. '/src/foo.c'
+
+  -- Generate tags and api.
+  io.open_file(dir .. '/src/foo.c')
+  textadept.menu.menubar[_L['Search']][_L['Ctags']][_L['Generate Project Tags and API']][2]()
+  assert(lfs.attributes(dir .. '/tags'), 'tags file not generated')
+  assert(lfs.attributes(dir .. '/api'), 'api file not generated')
+  local f = io.open(dir .. '/api')
+  local contents = f:read('a')
+  f:close()
+  assert(contents:find('main int main(int argc, char **argv) {', 1, true), 'did not properly generate api')
+
+  -- Test `ctags.goto_tag()`.
+  ctags.goto_tag('main')
+  assert_equal(buffer.filename, foo_c)
+  assert(buffer:get_cur_line():find('^int main%('), 'not at "main" function')
+  buffer:line_down()
+  buffer:vc_home()
+  ctags.goto_tag() -- foo(FOO)
+  assert_equal(buffer.filename, foo_h)
+  assert(buffer:get_cur_line():find('^void foo%('), 'not at "foo" function')
+  view:goto_buffer(-1) -- back to src/foo.c
+  assert_equal(buffer.filename, foo_c)
+  buffer:word_right()
+  buffer:word_right()
+  ctags.goto_tag() -- FOO
+  assert_equal(buffer.filename, foo_h)
+  assert(buffer:get_cur_line():find('^#define FOO 1'), 'not at "FOO" definition')
+
+  -- Test tag autocompletion.
+  buffer:line_end()
+  buffer:new_line()
+  buffer:add_text('m')
+  textadept.editing.autocomplete('ctag')
+  assert(buffer:get_cur_line():find('^main'), 'did not autocomplete "main" function')
+
+  -- Test `ctags.goto_tag()` with custom tags path.
+  ctags.ctags_flags[dir] = '-R ' .. dir -- for writing absolute paths
+  textadept.menu.menubar[_L['Search']][_L['Ctags']][_L['Generate Project Tags and API']][2]()
+  os.execute(string.format('mv %s/tags %s/src', dir, dir))
+  assert(not lfs.attributes(dir .. '/tags') and lfs.attributes(dir .. '/src/tags'), 'did not move tags file')
+  ctags[dir] = dir .. '/src/tags'
+  ctags.goto_tag('main')
+  assert_equal(buffer.filename, foo_c)
+  assert(buffer:get_cur_line():find('^int main%('), 'not at "main" function')
+
+  -- Test `ctags.goto_tag()` with no tags file and using current file contents.
+  os.remove(dir .. '/src/tags')
+  assert(not lfs.attributes(dir .. '/src/tags'), 'did not remove tags file')
+  buffer:line_down()
+  buffer:line_down()
+  buffer:vc_home()
+  ctags.goto_tag() -- bar()
+  assert_equal(buffer.filename, foo_c)
+  assert(buffer:get_cur_line():find('^void bar%('))
+
+  view:goto_buffer(1)
+  buffer:close(true)
+  buffer:close(true)
+  os.execute('rm -r ' .. dir)
+end
+
+function test_ctags_lua()
+  local ctags = require('ctags')
+
+  -- Setup project.
+  local dir = os.tmpname()
+  os.remove(dir)
+  lfs.mkdir(dir)
+  os.execute(string.format('cp -r %s/test/modules/ctags/lua/* %s', _HOME, dir))
+  lfs.mkdir(dir .. '/.hg') -- simulate version control
+
+  -- Generate tags and api.
+  io.open_file(dir .. '/foo.lua')
+  ctags.ctags_flags[dir] = '-R ' .. ctags.LUA_FLAGS
+  textadept.menu.menubar[_L['Search']][_L['Ctags']][_L['Generate Project Tags and API']][2]()
+  assert(lfs.attributes(dir .. '/tags'), 'tags file not generated')
+  assert(lfs.attributes(dir .. '/api'), 'api file not generated')
+
+  if not CURSES then -- TODO: cannot properly spawn with ctags.LUA_FLAGS on curses
+    ctags.goto_tag('foo')
+    assert(buffer:get_cur_line():find('^function foo%('), 'not at "foo" function')
+    ctags.goto_tag('bar')
+    assert(buffer:get_cur_line():find('^local function bar%('), 'not at "bar" function')
+    ctags.goto_tag('baz')
+    assert(buffer:get_cur_line():find('^baz = %{'), 'not at "baz" table')
+    ctags.goto_tag('quux')
+    assert(buffer:get_cur_line():find('^function baz:quux%('), 'not at "baz.quux" function')
+  end
+
+  -- Test using Textadept's tags and api generator.
+  ctags.ctags_flags[dir] = ctags.LUA_GENERATOR
+  ctags.api_commands[dir] = ctags.LUA_GENERATOR
+  textadept.menu.menubar[_L['Search']][_L['Ctags']][_L['Generate Project Tags and API']][2]()
+  ctags.goto_tag('new')
+  assert(buffer:get_cur_line():find('^function M%.new%('), 'not at "M.new" function')
+  local f = io.open(dir .. '/api')
+  local contents = f:read('a')
+  f:close()
+  assert(contents:find('new foo%.new%(%)\\nFoo'), 'did not properly generate api')
+
+  buffer:close(true)
+  os.execute('rm -r ' .. dir)
+end
+
+function test_export_interactive()
+  local export = require('export')
+  buffer.new()
+  buffer:add_text("_G.foo=table.concat{1,'bar',true,print}")
+  buffer:set_lexer('lua')
+  local filename = os.tmpname()
+  export.to_html(nil, filename)
+  _G.timeout(0.5, function() os.remove(filename) end)
+  buffer:close(true)
+end
+
+function test_file_diff()
+  local diff = require('file_diff')
+
+  local filename1 = _HOME .. '/test/modules/file_diff/1'
+  local filename2 = _HOME .. '/test/modules/file_diff/2'
+  io.open_file(filename1)
+  io.open_file(filename2)
+  view:split()
+  ui.goto_view(-1)
+  view:goto_buffer(-1)
+  diff.start('-', '-')
+  assert_equal(#_VIEWS, 2)
+  assert_equal(view, _VIEWS[1])
+  local buffer1, buffer2 = _VIEWS[1].buffer, _VIEWS[2].buffer
+  assert_equal(buffer1.filename, filename1)
+  assert_equal(buffer2.filename, filename2)
+
+  local function verify(buffer, markers, indicators, annotations)
+    for i = 1, buffer.line_count do
+      if not markers[i] then
+        assert(buffer:marker_get(i) == 0, 'unexpected marker on line %d', i)
+      else
+        assert(buffer:marker_get(i) & 1 << markers[i] - 1 > 0, 'incorrect marker on line %d', i)
+      end
+      if not annotations[i] then
+        assert(buffer.annotation_text[i] == '', 'unexpected annotation on line %d', i)
+      else
+        assert(buffer.annotation_text[i] == annotations[i], 'incorrect annotation on line %d', i)
+      end
+    end
+    for _, indic in ipairs{diff.INDIC_DELETION, diff.INDIC_ADDITION} do
+      local s = buffer:indicator_end(indic, 1)
+      local e = buffer:indicator_end(indic, s)
+      while s < buffer.length and e > s do
+        local text = buffer:text_range(s, e)
+        assert(indicators[text] == indic, 'incorrect indicator for "%s"', text)
+        s = buffer:indicator_end(indic, e)
+        e = buffer:indicator_end(indic, s)
+      end
+    end
+  end
+
+  -- Verify line markers.
+  verify(buffer1, {
+    [1] = diff.MARK_MODIFICATION,
+    [2] = diff.MARK_MODIFICATION,
+    [3] = diff.MARK_MODIFICATION,
+    [4] = diff.MARK_MODIFICATION,
+    [5] = diff.MARK_MODIFICATION,
+    [6] = diff.MARK_MODIFICATION,
+    [7] = diff.MARK_MODIFICATION,
+    [12] = diff.MARK_MODIFICATION,
+    [14] = diff.MARK_MODIFICATION,
+    [15] = diff.MARK_MODIFICATION,
+    [16] = diff.MARK_DELETION
+  }, {
+    ['is'] = diff.INDIC_DELETION,
+    ['line\n'] = diff.INDIC_DELETION,
+    ['    '] = diff.INDIC_DELETION,
+    ['+'] = diff.INDIC_DELETION,
+    ['pl'] = diff.INDIC_DELETION,
+    ['one'] = diff.INDIC_DELETION,
+    ['wo'] = diff.INDIC_DELETION,
+    ['three'] = diff.INDIC_DELETION,
+    ['will'] = diff.INDIC_DELETION
+  }, {[11] = ' \n'})
+  verify(buffer2, {
+    [1] = diff.MARK_MODIFICATION,
+    [2] = diff.MARK_MODIFICATION,
+    [3] = diff.MARK_MODIFICATION,
+    [4] = diff.MARK_MODIFICATION,
+    [5] = diff.MARK_MODIFICATION,
+    [6] = diff.MARK_MODIFICATION,
+    [7] = diff.MARK_MODIFICATION,
+    [12] = diff.MARK_ADDITION,
+    [13] = diff.MARK_ADDITION,
+    [14] = diff.MARK_MODIFICATION,
+    [16] = diff.MARK_MODIFICATION,
+    [17] = diff.MARK_MODIFICATION
+  }, {
+    ['at'] = diff.INDIC_ADDITION,
+    ['paragraph\n    '] = diff.INDIC_ADDITION,
+    ['-'] = diff.INDIC_ADDITION,
+    ['min'] = diff.INDIC_ADDITION,
+    ['two'] = diff.INDIC_ADDITION,
+    ['\t'] = diff.INDIC_ADDITION,
+    ['hree'] = diff.INDIC_ADDITION,
+    ['there are '] = diff.INDIC_ADDITION,
+    ['four'] = diff.INDIC_ADDITION,
+    ['have'] = diff.INDIC_ADDITION,
+    ['d'] = diff.INDIC_ADDITION
+  }, {[17] = ' '})
+
+  -- Stop comparing, verify the buffers are restored to normal, and then start
+  -- comparing again.
+  textadept.menu.menubar[_L['Tools']][_L['Compare Files']][_L['Stop Comparing']][2]()
+  verify(buffer1, {}, {}, {})
+  verify(buffer2, {}, {}, {})
+  textadept.menu.menubar[_L['Tools']][_L['Compare Files']][_L['Compare Buffers']][2]()
+
+  -- Test goto next/prev change.
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 1)
+  diff.goto_change(true)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 11)
+  diff.goto_change(true)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 12)
+  diff.goto_change(true)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 14)
+  diff.goto_change(true)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 16)
+  diff.goto_change(true)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 1)
+  diff.goto_change()
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 16)
+  diff.goto_change()
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 15)
+  diff.goto_change()
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 12)
+  diff.goto_change()
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 7)
+  buffer1:goto_line(1)
+
+  -- Merge first block right to left and verify.
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 1)
+  diff.merge(true)
+  assert(buffer1:get_line(1):find('^that'), 'did not merge from right to left')
+  local function verify_first_merge()
+    for i = 1, 7 do assert_equal(buffer1:get_line(i), buffer2:get_line(i)) end
+    verify(buffer1, {
+      [12] = diff.MARK_MODIFICATION,
+      [14] = diff.MARK_MODIFICATION,
+      [15] = diff.MARK_MODIFICATION,
+      [16] = diff.MARK_DELETION
+    }, {['three'] = diff.INDIC_DELETION, ['will'] = diff.INDIC_DELETION}, {[11] = ' \n'})
+    verify(buffer2, {
+      [12] = diff.MARK_ADDITION,
+      [13] = diff.MARK_ADDITION,
+      [14] = diff.MARK_MODIFICATION,
+      [16] = diff.MARK_MODIFICATION,
+      [17] = diff.MARK_MODIFICATION
+    }, {
+      ['four'] = diff.INDIC_ADDITION,
+      ['have'] = diff.INDIC_ADDITION,
+      ['d'] = diff.INDIC_ADDITION
+    }, {[17] = ' '})
+  end
+  verify_first_merge()
+  -- Undo, merge left to right, and verify.
+  buffer1:undo()
+  buffer1:goto_line(1)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 1)
+  diff.merge()
+  assert(buffer2:get_line(1):find('^this'), 'did not merge from left to right')
+  verify_first_merge()
+
+  if CURSES then goto curses_skip end do -- TODO: curses chokes trying to automate this
+
+  -- Go to next difference, merge second block right to left, and verify.
+  diff.goto_change(true)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 11)
+  ui.update()
+  diff.merge(true)
+  assert(buffer1:get_line(12):find('^%('), 'did not merge from right to left')
+  for i = 12, 13 do assert_equal(buffer1:get_line(i), buffer2:get_line(i)) end
+  verify(buffer1, {
+    [14] = diff.MARK_MODIFICATION,
+    [16] = diff.MARK_MODIFICATION,
+    [17] = diff.MARK_MODIFICATION,
+    [18] = diff.MARK_DELETION
+  }, {['three'] = diff.INDIC_DELETION, ['will'] = diff.INDIC_DELETION}, {})
+  verify(buffer2, {
+    [14] = diff.MARK_MODIFICATION,
+    [16] = diff.MARK_MODIFICATION,
+    [17] = diff.MARK_MODIFICATION
+  }, {
+    ['four'] = diff.INDIC_ADDITION,
+    ['have'] = diff.INDIC_ADDITION,
+    ['d'] = diff.INDIC_ADDITION
+  }, {[17] = ' '})
+  -- Undo, merge left to right, and verify.
+  buffer1:undo()
+  buffer1:goto_line(11)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 11)
+  diff.merge()
+  assert(buffer2:get_line(12):find('^be changed'), 'did not merge from left to right')
+  verify(buffer1, {
+    [12] = diff.MARK_MODIFICATION,
+    [14] = diff.MARK_MODIFICATION,
+    [15] = diff.MARK_MODIFICATION,
+    [16] = diff.MARK_DELETION
+  }, {['three'] = diff.INDIC_DELETION, ['will'] = diff.INDIC_DELETION}, {})
+  verify(buffer2, {
+    [12] = diff.MARK_MODIFICATION,
+    [14] = diff.MARK_MODIFICATION,
+    [15] = diff.MARK_MODIFICATION
+  }, {
+    ['four'] = diff.INDIC_ADDITION,
+    ['have'] = diff.INDIC_ADDITION,
+    ['d'] = diff.INDIC_ADDITION
+  }, {[15] = ' '})
+
+  -- Go to next difference, merge third block from right to left, and verify.
+  diff.goto_change(true)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 12)
+  diff.merge(true)
+  assert(buffer1:get_line(12):find('into four'), 'did not merge from right to left')
+  assert_equal(buffer1:get_line(12), buffer2:get_line(12))
+  local function verify_third_merge()
+    verify(buffer1, {
+      [14] = diff.MARK_MODIFICATION,
+      [15] = diff.MARK_MODIFICATION,
+      [16] = diff.MARK_DELETION
+    }, {['will'] = diff.INDIC_DELETION}, {})
+    verify(buffer2, {
+      [14] = diff.MARK_MODIFICATION,
+      [15] = diff.MARK_MODIFICATION
+    }, {['have'] = diff.INDIC_ADDITION, ['d'] = diff.INDIC_ADDITION}, {[15] = ' '})
+  end
+  verify_third_merge()
+  -- Undo, merge left to right, and verify.
+  buffer1:undo()
+  buffer1:goto_line(12)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 12)
+  diff.merge()
+  assert(buffer2:get_line(12):find('into three'), 'did not merge from left to right')
+  verify_third_merge()
+
+  -- Go to next difference, merge fourth block from right to left, and verify.
+  diff.goto_change(true)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 14)
+  diff.merge(true)
+  assert(buffer1:get_line(14):find('have'), 'did not merge from right to left')
+  local function verify_fourth_merge()
+    for i = 14, 15 do assert_equal(buffer1:get_line(i), buffer2:get_line(i)) end
+    verify(buffer1, {[16] = diff.MARK_DELETION}, {}, {})
+    verify(buffer2, {}, {}, {[15] = ' '})
+  end
+  verify_fourth_merge()
+  -- Undo, merge left to right, and verify.
+  buffer1:undo()
+  buffer1:goto_line(14)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 14)
+  diff.merge()
+  assert(buffer2:get_line(14):find('will'), 'did not merge from left to right')
+  verify_fourth_merge()
+
+  -- Go to next difference, merge fifth block from right to left, and verify.
+  diff.goto_change(true)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 16)
+  diff.merge(true)
+  assert(buffer1:get_line(16):find('^\n'), 'did not merge from right to left')
+  local function verify_fifth_merge()
+    assert_equal(buffer1.length, buffer2.length)
+    for i = 1, buffer1.length do
+      assert_equal(buffer1:get_line(i), buffer2:get_line(i))
+    end
+    verify(buffer1, {}, {}, {})
+    verify(buffer2, {}, {}, {})
+  end
+  verify_fifth_merge()
+  -- Undo, merge left to right, and verify.
+  buffer1:undo()
+  buffer1:goto_line(16)
+  assert_equal(buffer1:line_from_position(buffer1.current_pos), 16)
+  diff.merge()
+  assert(buffer2:get_line(16):find('^%('), 'did not merge from left to right')
+  verify_fifth_merge()
+
+  -- Test scroll synchronization.
+  _VIEWS[1].x_offset = 50
+  ui.update()
+  assert_equal(_VIEWS[2].x_offset, _VIEWS[1].x_offset)
+  _VIEWS[1].x_offset = 0
+  -- TODO: test vertical synchronization
+
+  end ::curses_skip::
+  textadept.menu.menubar[_L['Tools']][_L['Compare Files']][_L['Stop Comparing']][2]()
+  ui.goto_view(_VIEWS[#_VIEWS])
+  buffer:close(true)
+  ui.goto_view(-1)
+  view:unsplit()
+  buffer:close(true)
+  -- Make sure nothing bad happens.
+  diff.goto_change()
+  diff.merge()
+end
+
+function test_file_diff_interactive()
+  local diff = require('file_diff')
+  diff.start(_HOME .. '/test/modules/file_diff/1')
+  assert_equal(#_VIEWS, 2)
+  textadept.menu.menubar[_L['Tools']][_L['Compare Files']][_L['Stop Comparing']][2]()
+  local different_files = _VIEWS[1].buffer.filename ~= _VIEWS[2].buffer.filename
+  ui.goto_view(1)
+  buffer:close(true)
+  view:unsplit()
+  if different_files then buffer:close(true) end
+end
+
+function test_history()
+  local history = require('history')
+  history.disable_listening() -- clear preexisting history
+  history.enable_listening()
+  local filename1 = _HOME .. '/test/modules/history/1'
+  io.open_file(filename1)
+  buffer:goto_line(5)
+  history.back() -- should not do anything (ignore initial file load)
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
+  buffer:add_text('foo')
+  buffer:goto_line(5 + history.minimum_line_distance + 1)
+  history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
+  assert_equal(buffer.current_pos, buffer.line_end_position[5])
+  history.forward() -- should stay put (no edits have been made since)
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
+  buffer:new_line()
+  buffer:add_text('bar') -- close changes should update current history
+  local filename2 = _HOME .. '/test/modules/history/2'
+  io.open_file(filename2)
+  buffer:goto_line(10)
+  buffer:add_text('baz')
+  history.back() -- should ignore initial file load and go back to file 1
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 6)
+  history.back() -- should stay put (updated history from line 5 to line 6)
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 6)
+  history.forward()
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  history.back()
+  buffer:goto_line(15)
+  buffer:clear() -- erases forward history to file 2
+  history.forward() -- should not do anything
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
+  history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 6)
+  history.forward()
+  view:goto_buffer(1)
+  assert_equal(buffer.filename, filename2)
+  buffer:goto_line(20)
+  buffer:add_text('quux')
+  view:goto_buffer(-1)
+  assert_equal(buffer.filename, filename1)
+  buffer:undo() -- undo delete of '\n'
+  buffer:undo() -- undo add of 'foo'
+  buffer:redo() -- re-add 'foo'
+  history.back() -- undo and redo should not affect history
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 20)
+  history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
+  history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 6)
+  buffer:target_whole_document()
+  buffer:replace_target(string.rep('\n', buffer.line_count)) -- whole buffer replacements should not affect history (e.g. clang-format)
+  history.forward()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
+  view:goto_buffer(1)
+  assert_equal(buffer.filename, filename2)
+  buffer:close(true)
+  history.forward() -- should re-open file 2
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 20)
+  buffer:close(true)
+  buffer:close(true)
+end
+
+function test_history_per_view()
+  local history = require('history')
+  history.disable_listening() -- clear preexisting history
+  history.enable_listening()
+  local filename1 = _HOME .. '/test/modules/history/1'
+  io.open_file(filename1)
+  buffer:goto_line(5)
+  buffer:add_text('foo')
+  buffer:goto_line(10)
+  buffer:add_text('bar')
+  view:split()
+  history.back() -- no history for this view
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  local filename2 = _HOME .. '/test/modules/history/2'
+  io.open_file(filename2)
+  buffer:goto_line(15)
+  buffer:add_text('baz')
+  buffer:goto_line(20)
+  history.back()
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
+  history.back() -- no more history for this view
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
+  ui.goto_view(-1)
+  history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
+  history.forward()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  history.forward() -- no more history for this view
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  view:unsplit()
+  view:goto_buffer(1)
+  buffer:close(true)
+  buffer:close(true)
+end
+
+function test_spellcheck()
+  local spellcheck = require('spellcheck')
+  local SPELLING_ID = 1 -- not accessible
+  buffer:new()
+  buffer:add_text('-- foo bar\nbaz = "quux"')
+
+  -- Test background highlighting.
+  spellcheck.check_spelling()
+  local function get_misspellings()
+    local misspellings = {}
+    local s = buffer:indicator_end(spellcheck.INDIC_SPELLING, 1)
+    local e = buffer:indicator_end(spellcheck.INDIC_SPELLING, s)
+    while e > s do
+      misspellings[#misspellings + 1] = buffer:text_range(s, e)
+      s = buffer:indicator_end(spellcheck.INDIC_SPELLING, e)
+      e = buffer:indicator_end(spellcheck.INDIC_SPELLING, s)
+    end
+    return misspellings
+  end
+  assert_equal(get_misspellings(), {'foo', 'baz', 'quux'})
+  buffer:set_lexer('lua')
+  spellcheck.check_spelling()
+  assert_equal(get_misspellings(), {'foo', 'quux'})
+
+  -- Test interactive parts.
+  spellcheck.check_spelling(true)
+  assert(buffer:auto_c_active(), 'no misspellings')
+  local s, e = buffer.current_pos, buffer:word_end_position(buffer.current_pos)
+  assert_equal(buffer:text_range(s, e), 'foo')
+  buffer:cancel()
+  events.emit(events.USER_LIST_SELECTION, 1, 'goo', s)
+  assert_equal(buffer:text_range(s, e), 'goo')
+  ui.update()
+  if CURSES then spellcheck.check_spelling() end -- not needed when interactive
+  spellcheck.check_spelling(true)
+  assert(buffer:auto_c_active(), 'spellchecker not active')
+  s, e = buffer.current_pos, buffer:word_end_position(buffer.current_pos)
+  assert_equal(buffer:text_range(s, e), 'quux')
+  buffer:cancel()
+  events.emit(events.INDICATOR_CLICK, s)
+  assert(buffer:auto_c_active(), 'spellchecker not active')
+  buffer:cancel()
+  events.emit(events.USER_LIST_SELECTION, 1, '(Ignore)', s)
+  assert_equal(get_misspellings(), {})
+  spellcheck.check_spelling(true)
+  assert(not buffer:auto_c_active(), 'misspellings')
+
+  -- TODO: test add.
+
+  buffer:close(true)
+end
 
 -- Load buffer and view API from their respective LuaDoc files.
 local function load_buffer_view_props()
