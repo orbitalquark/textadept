@@ -52,8 +52,6 @@ end
 
 local expected_failures = {}
 function expected_failure(f) expected_failures[f] = true end
-local unstable_tests = {}
-function unstable(f) unstable_tests[f] = true end
 
 --------------------------------------------------------------------------------
 
@@ -1804,7 +1802,6 @@ function test_editing_filter_through()
 
   assert_raises(function() textadept.editing.filter_through() end, 'string expected, got nil')
 end
-unstable(test_editing_filter_through)
 
 function test_editing_autocomplete()
   assert_raises(function() textadept.editing.autocomplete() end, 'string expected, got nil')
@@ -2258,12 +2255,10 @@ function test_menu_menu_functions()
   textadept.menu.menubar[_L['Edit']][_L['Complete Word']][2]()
   assert_equal(buffer:get_text(), 'foo foo')
   buffer:set_text('2\n1\n3\n')
-  if not CURSES then -- this is unstable in curses
-    textadept.menu.menubar[_L['Edit']][_L['Filter Through']][2]()
-    ui.command_entry:set_text('sort')
-    events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
-    assert_equal(buffer:get_text(), '1\n2\n3\n')
-  end
+  textadept.menu.menubar[_L['Edit']][_L['Filter Through']][2]()
+  ui.command_entry:set_text('sort')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  assert_equal(buffer:get_text(), '1\n2\n3\n')
   buffer:set_text('foo')
   buffer:line_end()
   textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Enclose as XML Tags']][2]()
@@ -2429,7 +2424,6 @@ function test_run_build()
   -- TODO: chdir(_HOME) and textadept.run.build() -- no param.
   -- TODO: project whose makefile is autodetected.
 end
-unstable(test_run_build)
 
 function test_run_goto_internal_lua_error()
   xpcall(error, function(message) events.emit(events.ERROR, debug.traceback(message)) end, 'internal error', 2)
@@ -3723,7 +3717,6 @@ for i = 1, #tests do
 
   _ENV = setmetatable({}, {__index = _ENV})
   local name, f, attempts = tests[i], _ENV[tests[i]], 1
-  ::retry::
   print(string.format('Running %s', name))
   ui.update()
   local ok, errmsg = xpcall(f, function(errmsg)
@@ -3731,12 +3724,7 @@ for i = 1, #tests do
     return string.format('%s %s', fail, debug.traceback(errmsg, 3))
   end)
   ui.update()
-  if not ok and unstable_tests[f] and attempts < 3 then
-    cleanup()
-    print('Failed, but unstable. Trying again.')
-    attempts = attempts + 1
-    goto retry
-  elseif not errmsg then
+  if not errmsg then
     if #_BUFFERS > 1 then
       ok, errmsg = false, 'Failed! Test did not close the buffer(s) it created'
     elseif #_VIEWS > 1 then
