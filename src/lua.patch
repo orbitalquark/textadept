@@ -48,7 +48,7 @@ diff -r 8a23edc91533 src/luaconf.h
  
  
 --- a/src/loslib.c	2017-04-19 13:29:57.000000000 -0400
-+++ b/src/loslib.c	2020-05-24 14:28:49.259487829 -0400
++++ b/src/loslib.c	2020-06-22 19:16:23.952024597 -0400
 @@ -4,6 +4,15 @@
  ** See Copyright Notice in lua.h
  */
@@ -85,11 +85,11 @@ diff -r 8a23edc91533 src/luaconf.h
    {"time",      os_time},
    {"tmpname",   os_tmpname},
    {NULL, NULL}
-@@ -404,6 +419,630 @@
+@@ -404,6 +419,643 @@
  
  LUAMOD_API int luaopen_os (lua_State *L) {
    luaL_newlib(L, syslib);
-+#if (!GTK || __APPLE__)
++#if (!GTK && !_WIN32 || __APPLE__)
 +  // Need to keep track of running processes for monitoring fds and pids.
 +  lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, "spawn_procs");
 +#endif
@@ -160,14 +160,27 @@ diff -r 8a23edc91533 src/luaconf.h
  
 +/** Process exit cleanup function. */
 +static void exited(PStream *p, int status) {
++  lua_State *L = p->L;
 +#if _WIN32
 +  close(p->pid);
++#elif (!GTK || __APPLE__)
++  // Stop tracking and monitoring this proc.
++  lua_getfield(L, LUA_REGISTRYINDEX, "spawn_procs");
++  lua_pushnil(L);
++  while (lua_next(L, -2)) {
++    PStream *monitored_p = (PStream *)lua_touserdata(L, -2);
++    if (monitored_p->pid == p->pid) {
++      lua_pushnil(L), lua_replace(L, -2), lua_settable(L, -3); // t[proc] = nil
++      break;
++    } else lua_pop(L, 1); // value
++  }
++  lua_pop(L, 1); // spawn_procs
 +#endif
 +  close(p->fstdin), close(p->fstdout), close(p->fstderr);
-+  luaL_unref(p->L, LUA_REGISTRYINDEX, p->stdout_cb);
-+  luaL_unref(p->L, LUA_REGISTRYINDEX, p->stderr_cb);
-+  luaL_unref(p->L, LUA_REGISTRYINDEX, p->exit_cb);
-+  luaL_unref(p->L, LUA_REGISTRYINDEX, p->ref); // allow proc to be collected
++  luaL_unref(L, LUA_REGISTRYINDEX, p->stdout_cb);
++  luaL_unref(L, LUA_REGISTRYINDEX, p->stderr_cb);
++  luaL_unref(L, LUA_REGISTRYINDEX, p->exit_cb);
++  luaL_unref(L, LUA_REGISTRYINDEX, p->ref); // allow proc to be collected
 +  p->pid = 0, p->exit_status = status;
 +}
 +
