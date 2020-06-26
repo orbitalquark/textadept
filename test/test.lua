@@ -3747,14 +3747,17 @@ end
 
 print(string.format('%d tests run, %d unexpected failures, %d expected failures', tests_run, tests_failed - tests_failed_expected, tests_failed_expected))
 
---if package.loaded['luacov'] then
---  require('luacov').save_stats() -- TODO: this crashes every other run
---  os.execute('luacov')
---  local f = assert(io.open('luacov.report.out'))
---  buffer:append_text(f:read('a'):match('\nSummary.+$'))
---  f:close()
---else
---  buffer:new_line()
---  buffer:append_text('No LuaCov coverage to report.')
---end
---buffer:set_save_point()
+-- Note: stock luacov crashes on hook.lua lines 51 and 58 every other run.
+-- `file.max` and `file.max_hits` are both `nil`, so change comparisons to be
+-- `(file.max or 0)` and `(file.max_hits or 0)`, respectively.
+if package.loaded['luacov'] then
+  require('luacov').save_stats()
+  os.execute('luacov')
+  local f = assert(io.open('luacov.report.out'))
+  buffer:append_text(f:read('a'):match('\nSummary.+$'))
+  f:close()
+else
+  buffer:new_line()
+  buffer:append_text('No LuaCov coverage to report.')
+end
+buffer:set_save_point()
