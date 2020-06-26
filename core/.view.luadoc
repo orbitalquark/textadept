@@ -942,7 +942,7 @@ function brace_bad_light(view, pos) end
 
 ---
 -- Highlights unmatched brace characters with indicator number *indicator*, in
--- the range of `1 to `32`, instead of the
+-- the range of `1` to `32`, instead of the
 -- `view.STYLE_BRACEBAD` style if *use_indicator* is `true`.
 -- @param view A view.
 -- @param use_indicator Whether or not to use an indicator.
