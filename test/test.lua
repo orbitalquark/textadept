@@ -3351,8 +3351,8 @@ function test_file_diff()
     ['d'] = diff.INDIC_ADDITION
   }, {[15] = ' '})
 
-  -- Go to next difference, merge third block from right to left, and verify.
-  diff.goto_change(true)
+  -- Already on next difference; merge third block from right to left, and
+  -- verify.
   assert_equal(buffer1:line_from_position(buffer1.current_pos), 12)
   diff.merge(true)
   assert(buffer1:get_line(12):find('into four'), 'did not merge from right to left')
