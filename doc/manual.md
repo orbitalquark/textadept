@@ -1125,19 +1125,19 @@ creates a new buffer instead of `Ctrl+N`, or that the buffer list (`Ctrl+B`)
 shows buffers by their z-order (most recently viewed to least recently viewed)
 instead of the order they were opened in:
 
-    keys.cC = buffer.new
-    keys.cn = nil
-    keys.cb = function() ui.switch_buffer(true) end
+    keys['ctrl+C'] = buffer.new
+    keys['ctrl+n'] = nil
+    keys['ctrl+b'] = function() ui.switch_buffer(true) end
 
 A key binding is simply a Lua function assigned to a key sequence in the global
 `keys` table. Key sequences are composed of an ordered combination of modifier
 keys followed by either the key's *inserted character*, or if no such character
 exists, the string representation of the key. On Windows and Linux, modifier
-keys are "Control", "Alt", and "Shift", represented by `c`, `a`, and `s`,
-respectively. On Mac OSX, modifier keys are "Control", "Alt/Option", "Command",
-and "Shift", represented by `c`, `a`, `m`, and `s`, respectively. On curses,
-modifier keys are "Control", "Alt", and "Shift", represented by `c`, `m` (for
-Meta), and `s`, respectively.
+keys are "Control", "Alt", and "Shift", represented by `ctrl`, `alt`, and
+`shift`, respectively. On Mac OSX, modifier keys are "Control", "Alt/Option",
+"Command", and "Shift", represented by `ctrl`, `alt`, `cmd`, and `shift`,
+respectively. On curses, modifier keys are "Control", "Alt", and "Shift",
+represented by `ctrl`, `meta`, and `shift`, respectively.
 
 Key bindings can also be language-specific by storing them in a
 `keys[`*lexer*`]` table. If you wanted to add or modify language-specific key
@@ -1147,7 +1147,7 @@ bindings outside of a language module, you would add something like this to
     events.connect(events.LEXER_LOADED, function(lexer)
       if lexer ~= '...' then return end
       if not keys[lexer] then keys[lexer] = {} end
-      keys[lexer].cn = function() ... end
+      keys[lexer]['ctrl+n'] = function() ... end
     end)
 
 If you plan on redefining most key bindings (e.g. in order to mimic an editor
@@ -2151,6 +2151,12 @@ values; it's just the keys that have changed. See *core/locale.conf* for
 examples.
 
 #### Key Bindings Changes
+
+Key binding modifiers have changed from their shortened form to a longer form
+that is more intuitive. `'c'` is now `'ctrl'`, `'a'` is now `'alt'`, `'m'` is
+now `'cmd'` on Mac OSX and `'meta'` in the terminal version, and `'s'` is now
+`'shift'`. For example, `keys.cn = ...` is now `keys['ctrl+n'] = ...` and
+`keys['m<'] = ...` is now `keys['cmd+<'] = ...` or `keys['meta+<'] = ...`.
 
 The key binding for inserting a user-specified snippet from a dialog has changed
 from `Ctrl+K` (`⌥⇥` on Mac OSX | `M-K` on curses) to `Ctrl+Shift+K`

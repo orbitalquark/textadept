@@ -19,6 +19,7 @@ local M = {}
 -- Ctrl+Shift+O  |⌘⇧O      |M-O       |Reload file
 -- Ctrl+S        |⌘S       |^S        |Save file
 -- Ctrl+Shift+S  |⌘⇧S      |M-^S      |Save file as..
+-- None          |None     |None      |Save all files
 -- Ctrl+W        |⌘W       |^W        |Close file
 -- Ctrl+Shift+W  |⌘⇧W      |M-^W      |Close all files
 -- None          |None     |None      |Load session...
@@ -80,25 +81,24 @@ local M = {}
 -- Ctrl+Shift+X    |⌘⇧X    |M-^X         |Stop
 -- Ctrl+Alt+E      |^⌘E    |M-X          |Next Error
 -- Ctrl+Alt+Shift+E|^⌘⇧E   |M-S-X        |Previous Error
--- Ctrl+Space      |⌥Esc   |^Space       |Complete symbol
--- Ctrl+H          |^H     |M-H<br/>M-S-H|Show documentation
--- Tab             |⇥      |Tab          |Expand snippet or next placeholder
--- Ctrl+Shift+K    |⌥⇧⇥    |M-S-K        |Insert snippet...
--- Shift+Tab       |⇧⇥     |S-Tab        |Previous snippet placeholder
--- Esc             |Esc    |Esc          |Cancel snippet
--- Ctrl+K          |⌥⇥     |M-K          |Complete trigger word
 -- Ctrl+F2         |⌘F2    |F1           |Toggle bookmark
 -- Ctrl+Shift+F2   |⌘⇧F2   |F6           |Clear bookmarks
 -- F2              |F2     |F2           |Next bookmark
 -- Shift+F2        |⇧F2    |F3           |Previous bookmark
 -- Alt+F2          |⌥F2    |F4           |Goto bookmark...
--- F9              |F9     |F9           |Start recording macro
--- Shift+F9        |⇧F9    |F10          |Stop recording macro
--- Alt+F9          |⌥F9    |F12          |Play recorded macro
+-- F9              |F9     |F9           |Start/stop recording macro
+-- Shift+F9        |⇧F9    |F10          |Play recorded macro
 -- Ctrl+U          |⌘U     |^U           |Quickly open `_USERHOME`
 -- None            |None   |None         |Quickly open `_HOME`
 -- Ctrl+Alt+Shift+O|^⌘⇧O   |M-S-O        |Quickly open current directory
 -- Ctrl+Alt+Shift+P|^⌘⇧P   |M-^P         |Quickly open current project
+-- Ctrl+Shift+K    |⌥⇧⇥    |M-S-K        |Insert snippet...
+-- Tab             |⇥      |Tab          |Expand snippet or next placeholder
+-- Shift+Tab       |⇧⇥     |S-Tab        |Previous snippet placeholder
+-- Esc             |Esc    |Esc          |Cancel snippet
+-- Ctrl+K          |⌥⇥     |M-K          |Complete trigger word
+-- Ctrl+Space      |⌥Esc   |^Space       |Complete symbol
+-- Ctrl+H          |^H     |M-H<br/>M-S-H|Show documentation
 -- Ctrl+I          |⌘I     |M-S-I        |Show style
 -- **Buffer**      |      |             |
 -- Ctrl+Tab        |^⇥    |M-N          |Next buffer
@@ -205,8 +205,8 @@ local M = {}
 -- N/A            |N/A            |S-Tab       |Focus replace buttons
 -- Tab            |⇥              |Down        |Focus replace field
 -- Shift+Tab      |⇧⇥             |Up          |Focus find field
--- Down           |⇣              |^P          |Cycle back through history
--- Up             |⇡              |^N          |Cycle forward through history
+-- Up             |⇡              |^P          |Cycle back through history
+-- Down           |⇣              |^N          |Cycle forward through history
 -- N/A            |N/A            |F1          |Toggle "Match Case"
 -- N/A            |N/A            |F2          |Toggle "Whole Word"
 -- N/A            |N/A            |F3          |Toggle "Regex"
@@ -224,13 +224,11 @@ module('textadept.keys')]]
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
 -- ca: aAbBcCdD   F      jJkKlLmM N    qQ    t       xXy zZ_"'()[]{}<>*  /   \s
 --
--- CTRL = 'c' (Control ^)
--- ALT = 'a' (Alt)
--- META = [unused]
--- SHIFT = 's' (Shift ⇧)
--- ADD = ''
--- Control, Alt, Shift, and 'a' = 'caA'
--- Control, Shift, and '\t' = 'cs\t'
+-- c = 'ctrl' (Control ^)
+-- a = 'alt' (Alt)
+-- s = 'shift' (Shift ⇧)
+-- Control, Alt, Shift, and 'a' = 'ctrl+alt+A'
+-- Control, Shift, and '\t' = 'ctrl+shift+\t'
 --
 -- Mac OSX key bindings.
 --
@@ -239,21 +237,20 @@ module('textadept.keys')]]
 -- c:      cC D    gG H   J K L    oO  qQ            xXyYzZ_   ) ] }  *  /
 -- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  p q~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
--- CTRL = 'c' (Control ^)
--- ALT = 'a' (Alt/option ⌥)
--- META = 'm' (Command ⌘)
--- SHIFT = 's' (Shift ⇧)
--- ADD = ''
--- Command, Option, Shift, and 'a' = 'amA'
--- Command, Shift, and '\t' = 'ms\t'
+-- c = 'ctrl' (Control ^)
+-- a = 'alt' (Alt/option ⌥)
+-- m = 'cmd' (Command ⌘)
+-- s = 'shift' (Shift ⇧)
+-- Command, Option, Shift, and 'a' = 'alt+cmd+A'
+-- Command, Shift, and '\t' = 'cmd+shift+\t'
 --
 -- Curses key bindings.
 --
 -- Key bindings available depend on your implementation of curses.
 --
 -- For ncurses (Linux, Mac OSX, BSD):
---   * The only Control keys recognized are 'ca'-'cz', 'c ', 'c\\', 'c]', 'c^',
---     and 'c_'.
+--   * The only Control keys recognized are 'ctrl+a'-'ctrl+z', 'ctrl+ ',
+--     'ctrl+\\', 'ctrl+]', 'ctrl+^', and 'ctrl+_'.
 --   * Control+Shift and Control+Meta+Shift keys are not recognized.
 --   * Modifiers for function keys F1-F12 are not recognized.
 -- For pdcurses (Win32):
@@ -267,305 +264,276 @@ module('textadept.keys')]]
 -- m:          e          J            qQ  sS    vVw   yY  _          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
--- CTRL = 'c' (Control ^)
--- ALT = [unused]
--- META = 'm' (Alt)
--- SHIFT = 's' (Shift ⇧)
--- ADD = ''
--- Control, Meta, and 'a' = 'cma'
+-- c = 'ctrl' (Control ^)
+-- m = 'meta' (Alt)
+-- s = 'shift' (Shift ⇧)
+-- Control, Meta, and 'a' = 'ctrl+meta+a'
 
-local keys, OSX, GUI, CURSES, _L = keys, OSX, not CURSES, CURSES, _L
-
--- File.
-keys[not OSX and (GUI and 'cn' or 'cmn') or 'mn'] = buffer.new
-keys[not OSX and 'co' or 'mo'] = io.open_file
-keys[not OSX and GUI and 'cao' or 'cmo'] = io.open_recent_file
-keys[not OSX and (GUI and 'cO' or 'mo') or 'mO'] = buffer.reload
-keys[not OSX and 'cs' or 'ms'] = buffer.save
-keys[not OSX and (GUI and 'cS' or 'cms') or 'mS'] = buffer.save_as
--- TODO: io.save_all_files
-keys[not OSX and 'cw' or 'mw'] = buffer.close
-keys[not OSX and (GUI and 'cW' or 'cmw') or 'mW'] = io.close_all_buffers
--- TODO: textadept.sessions.load
--- TODO: textadept.sessions.save
-keys[not OSX and 'cq' or 'mq'] = quit
-
--- Edit.
+local _L = _L
 local m_edit = textadept.menu.menubar[_L['Edit']]
-keys[not OSX and 'cz' or 'mz'] = buffer.undo
-if CURSES then keys.mz = keys.cz end -- ^Z suspends in some terminals
-if not OSX then keys.cy = buffer.redo end
-keys[not OSX and GUI and 'cZ' or 'mZ'] = buffer.redo
-keys[not OSX and 'cx' or 'mx'] = buffer.cut
-keys[not OSX and 'cc' or 'mc'] = buffer.copy
-keys[not OSX and 'cv' or 'mv'] = buffer.paste
-keys[not OSX and (GUI and 'cV' or 'mv') or 'mV'] =
-  textadept.editing.paste_reindent
-if GUI then keys[not OSX and 'cd' or 'md'] = buffer.line_duplicate end
-keys.del = buffer.clear
-keys[not OSX and (GUI and 'adel' or 'mdel') or 'cdel'] =
-  m_edit[_L['Delete Word']][2]
-keys[not OSX and GUI and 'ca' or 'ma'] = buffer.select_all
-keys[GUI and 'cm' or 'mm'] = m_edit[_L['Match Brace']][2]
-keys[not OSX and ((GUI or WIN32) and 'c\n' or 'cmj') or 'cesc'] =
-  m_edit[_L['Complete Word']][2]
-if GUI then
-  keys[not OSX and 'caH' or 'mH'] = textadept.editing.highlight_word
-end
-keys[not OSX and GUI and 'c/' or 'm/'] = textadept.editing.block_comment
-keys.ct = textadept.editing.transpose_chars
-keys[not OSX and (GUI and 'cJ' or 'mj') or 'cj'] = textadept.editing.join_lines
-keys[not OSX and (GUI and 'c|' or 'c\\') or 'm|'] =
-  m_edit[_L['Filter Through']][2]
--- Select.
-local m_sel = m_edit[_L['Select']]
-keys[GUI and 'cM' or 'mM'] = m_sel[_L['Select between Matching Delimiters']][2]
-keys[not OSX and GUI and 'c<' or 'm<'] = m_sel[_L['Select between XML Tags']][2]
-if GUI then
-  keys[not OSX and 'c>' or 'm>'] = m_sel[_L['Select in XML Tag']][2]
-end
-keys[not OSX and (GUI and 'cD' or 'mW') or 'mD'] = textadept.editing.select_word
-keys[not OSX and GUI and 'cN' or 'mN'] = textadept.editing.select_line
-keys[not OSX and GUI and 'cP' or 'mP'] = textadept.editing.select_paragraph
--- Selection.
-m_sel = m_edit[_L['Selection']]
-keys[not OSX and (GUI and 'cau' or 'cmu') or 'cu'] = buffer.upper_case
-keys[not OSX and (GUI and 'caU' or 'cml') or 'cU'] = buffer.lower_case
-keys[not OSX and (GUI and 'a<' or 'm>') or 'c<'] =
-  m_sel[_L['Enclose as XML Tags']][2]
-if GUI then
-  keys[not OSX and 'a>' or 'c>'] = m_sel[_L['Enclose as Single XML Tag']][2]
-  keys[not OSX and "a'" or "c'"] = m_sel[_L['Enclose in Single Quotes']][2]
-  keys[not OSX and 'a"' or 'c"'] = m_sel[_L['Enclose in Double Quotes']][2]
-end
-keys[not OSX and (GUI and 'a(' or 'm)') or 'c('] =
-  m_sel[_L['Enclose in Parentheses']][2]
-keys[not OSX and (GUI and 'a[' or 'm]') or 'c['] =
-  m_sel[_L['Enclose in Brackets']][2]
-keys[not OSX and (GUI and 'a{' or 'm}') or 'c{'] =
-  m_sel[_L['Enclose in Braces']][2]
-keys.csup = buffer.move_selected_lines_up
-keys.csdown = buffer.move_selected_lines_down
-
--- Search.
+local m_sel, m_seln = m_edit[_L['Select']], m_edit[_L['Selection']]
 local m_search = textadept.menu.menubar[_L['Search']]
-keys[not OSX and GUI and 'cf' or 'mf'] = m_search[_L['Find']][2]
-if CURSES then keys.mF = keys.mf end -- mf is used by some GUI terminals
-keys[not OSX and GUI and 'cg' or 'mg'] = ui.find.find_next
-if not OSX and GUI then keys.f3 = keys.cg end
-keys[not OSX and GUI and 'cG' or 'mG'] = ui.find.find_prev
-if not OSX and GUI then keys.sf3 = keys.cG end
-keys[not OSX and (GUI and 'car' or 'mr') or 'cr'] = ui.find.replace
-keys[not OSX and (GUI and 'caR' or 'mR') or 'cR'] = ui.find.replace_all
--- Find Next is an when find pane is focused in GUI.
--- Find Prev is ap when find pane is focused in GUI.
--- Replace is ar when find pane is focused in GUI.
--- Replace All is aa when find pane is focused in GUI.
-keys[not OSX and GUI and 'caf' or 'cmf'] = ui.find.find_incremental
-if GUI then
-  keys[not OSX and 'cF' or 'mF'] = m_search[_L['Find in Files']][2]
-end
--- Find in Files is ai when find pane is focused in GUI.
-if GUI then
-  keys[not OSX and 'cag' or 'cmg'] = m_search[_L['Goto Next File Found']][2]
-  keys[not OSX and 'caG' or 'cmG'] = m_search[_L['Goto Previous File Found']][2]
-end
-keys[not OSX and 'cj' or 'mj'] = textadept.editing.goto_line
-
--- Tools.
 local m_tools = textadept.menu.menubar[_L['Tools']]
-keys[not OSX and (GUI and 'ce' or 'mc') or 'me'] =
-  m_tools[_L['Command Entry']][2]
-keys[not OSX and (GUI and 'cE' or 'mC') or 'mE'] =
-  m_tools[_L['Select Command']][2]
-keys[not OSX and 'cr' or 'mr'] = textadept.run.run
-keys[not OSX and (GUI and 'cR' or 'cmr') or 'mR'] = textadept.run.compile
-keys[not OSX and (GUI and 'cB' or 'cmb') or 'mB'] = textadept.run.build
-if GUI then
-  keys[not OSX and 'cA' or 'mA'] = m_tools[_L['Set Arguments...']][2]
-end
-keys[not OSX and (GUI and 'cX' or 'cmx') or 'mX'] = textadept.run.stop
-keys[not OSX and (GUI and 'cae' or 'mx') or 'cme'] =
-  m_tools[_L['Next Error']][2]
-keys[not OSX and (GUI and 'caE' or 'mX') or 'cmE'] =
-  m_tools[_L['Previous Error']][2]
--- Bookmark.
 local m_bookmark = m_tools[_L['Bookmarks']]
-keys[not OSX and (GUI and 'cf2' or 'f1') or 'mf2'] = textadept.bookmarks.toggle
-keys[not OSX and (GUI and 'csf2' or 'f6') or 'msf2'] = textadept.bookmarks.clear
-keys.f2 = m_bookmark[_L['Next Bookmark']][2]
-keys[GUI and 'sf2' or 'f3'] = m_bookmark[_L['Previous Bookmark']][2]
-keys[GUI and 'af2' or 'f4'] = textadept.bookmarks.goto_mark
--- Macros.
-keys.f9 = textadept.macros.record
-keys[GUI and 'sf9' or 'f10'] = textadept.macros.play
--- Quick Open.
-local m_quick_open = m_tools[_L['Quick Open']]
-keys[not OSX and 'cu' or 'mu'] = m_quick_open[_L['Quickly Open User Home']][2]
--- TODO: m_quick_open[_L['Quickly Open Textadept Home']][2]
-keys[not OSX and (GUI and 'caO' or 'mO') or 'cmO'] =
-  m_quick_open[_L['Quickly Open Current Directory']][2]
-keys[not OSX and (GUI and 'caP' or 'cmp') or 'cmP'] = io.quick_open
--- Snippets.
+local m_qopen = m_tools[_L['Quick Open']]
 local m_snippets = m_tools[_L['Snippets']]
-keys[not OSX and (GUI and 'cK' or 'mK') or 'sa\t'] = textadept.snippets.select
-keys['\t'] = textadept.snippets.insert
-keys['s\t'] = textadept.snippets.previous
-keys.esc = textadept.snippets.cancel_current
-keys[not OSX and (GUI and 'ck' or 'mk') or 'a\t'] =
-  m_snippets[_L['Complete Trigger Word']][2]
--- Other.
-keys[not OSX and 'c ' or 'aesc'] = m_tools[_L['Complete Symbol']][2]
-keys[GUI and 'ch' or 'mh'] = textadept.editing.show_documentation
-if CURSES then keys.mH = keys.mh end -- mh is used by some GUI terminals
-keys[not OSX and (GUI and 'ci' or 'mI') or 'mi'] = m_tools[_L['Show Style']][2]
-
--- Buffer.
 local m_buffer = textadept.menu.menubar[_L['Buffer']]
-keys[GUI and 'c\t' or 'mn'] = m_buffer[_L['Next Buffer']][2]
-keys[GUI and 'cs\t' or 'mp'] = m_buffer[_L['Previous Buffer']][2]
-keys[not OSX and GUI and 'cb' or 'mb'] = ui.switch_buffer
-if CURSES then keys.mB = keys.mb end -- mb is used by some GUI terminals
--- Indentation.
 local m_indentation = m_buffer[_L['Indentation']]
--- TODO: m_indentation[_L['Tab width: 2']][2]
--- TODO: m_indentation[_L['Tab width: 3']][2]
--- TODO: m_indentation[_L['Tab width: 4']][2]
--- TODO: m_indentation[_L['Tab width: 8']][2]
-keys[not OSX and (GUI and 'caT' or 'mt') or 'cT'] =
-  m_indentation[_L['Toggle Use Tabs']][2]
-if CURSES then keys.mT = keys.mt end -- mt is used by some GUI terminals
-keys[not OSX and (GUI and 'cai' or 'mi') or 'ci'] =
-  textadept.editing.convert_indentation
--- EOL Mode.
--- TODO: m_buffer[_L['EOL Mode']][_L['CRLF']][2]
--- TODO: m_buffer[_L['EOL Mode']][_L['LF']][2]
--- Encoding.
--- TODO: m_buffer[_L['Encoding']][_L['UTF-8 Encoding']][2]
--- TODO: m_buffer[_L['Encoding']][_L['ASCII Encoding']][2]
--- TODO: m_buffer[_L['Encoding']][_L['CP-1252 Encoding']][2]
--- TODO: m_buffer[_L['Encoding']][_L['UTF-16 Encoding']][2]
-if GUI then
-  keys[not OSX and 'ca\n' or 'c\n'] = m_buffer[_L['Toggle View EOL']][2]
-  keys[not OSX and 'ca\\' or 'c\\'] = m_buffer[_L['Toggle Wrap Mode']][2]
-  keys[not OSX and 'caS' or 'cS'] = m_buffer[_L['Toggle View Whitespace']][2]
-end
-keys[not OSX and GUI and 'cL' or 'mL'] = textadept.file_types.select_lexer
-keys.f5 = m_buffer[_L['Refresh Syntax Highlighting']][2]
-if CURSES then keys.cl = keys.f5 end
-
--- View.
 local m_view = textadept.menu.menubar[_L['View']]
-if GUI then
-  keys[not OSX and 'can' or 'ca\t'] = m_view[_L['Next View']][2]
-  keys[not OSX and 'cap' or 'cas\t'] = m_view[_L['Previous View']][2]
-  keys[not OSX and 'cas' or 'cs'] = m_view[_L['Split View Horizontal']][2]
-  if not OSX then keys.cah = keys.cas end
-  keys[not OSX and 'cav' or 'cv'] = m_view[_L['Split View Vertical']][2]
-  keys[not OSX and 'caw' or 'cw'] = m_view[_L['Unsplit View']][2]
-  keys[not OSX and 'caW' or 'cW'] = m_view[_L['Unsplit All Views']][2]
-  keys[not OSX and 'ca+' or 'c+'] = m_view[_L['Grow View']][2]
-  keys[not OSX and 'ca=' or 'c='] = keys[not OSX and 'ca+' or 'c+']
-  keys[not OSX and 'ca-' or 'c-'] = m_view[_L['Shrink View']][2]
-else
-  keys.cmv = {
+local m_help = textadept.menu.menubar[_L['Help']]
+
+-- Bindings for Linux/Win32, Mac OSX, Terminal.
+local bindings = {
+  -- File.
+  [buffer.new] = {'ctrl+n', 'cmd+n', 'ctrl+meta+n'},
+  [io.open_file] = {'ctrl+o', 'cmd+o', 'ctrl+o'},
+  [io.open_recent_file] = {'ctrl+alt+o', 'ctrl+cmd+o', 'ctrl+alt+o'},
+  [buffer.reload] = {'ctrl+O', 'cmd+O', 'meta+o'},
+  [buffer.save] = {'ctrl+s', 'cmd+s', 'ctrl+s'},
+  [buffer.save_as] = {'ctrl+S', 'cmd+S', 'ctrl+meta+s'},
+  -- TODO: io.save_all_files
+  [buffer.close] = {'ctrl+w', 'cmd+w', 'ctrl+w'},
+  [io.close_all_buffers] = {'ctrl+W', 'cmd+W', 'ctrl+meta+w'},
+  -- TODO: textadept.sessions.load
+  -- TODO: textadept.sessions.save
+  [quit] = {'ctrl+q', 'cmd+q', 'ctrl+q'},
+
+  -- Edit.
+  [buffer.undo] = {'ctrl+z', 'cmd+z', {'ctrl+z', 'meta+z'}},
+  [buffer.redo] = {{'ctrl+y', 'ctrl+Z'}, 'cmd+Z', {'ctrl+y', 'meta+Z'}},
+  [buffer.cut] = {'ctrl+x', 'cmd+x', 'ctrl+x'},
+  [buffer.copy] = {'ctrl+c', 'cmd+c', 'ctrl+c'},
+  [buffer.paste] = {'ctrl+v', 'cmd+v', 'ctrl+v'},
+  [textadept.editing.paste_reindent] = {'ctrl+V', 'cmd+V', 'meta+v'},
+  [buffer.line_duplicate] = {'ctrl+d', 'cmd+d', nil},
+  [buffer.clear] = {'del', {'del', 'ctrl+d'}, {'del', 'ctrl+d'}},
+  [m_edit[_L['Delete Word']][2]] =
+    {'alt+del', 'ctrl+del', {'meta+del', 'meta+d'}},
+  [buffer.select_all] = {'ctrl+a', 'cmd+a', 'meta+a'},
+  [m_edit[_L['Match Brace']][2]] = {'ctrl+m', 'ctrl+m', 'meta+m'},
+  [m_edit[_L['Complete Word']][2]] =
+    {'ctrl+\n', 'ctrl+esc', {'ctrl+meta+j', 'ctrl+\n'}},
+  [textadept.editing.highlight_word] = {'ctrl+alt+H', 'cmd+H', nil},
+  [textadept.editing.block_comment] = {'ctrl+/', 'ctrl+/', 'meta+/'},
+  [textadept.editing.transpose_chars] = {'ctrl+t', 'ctrl+t', 'ctrl+t'},
+  [textadept.editing.join_lines] = {'ctrl+J', 'ctrl+j', 'meta+j'},
+  [m_edit[_L['Filter Through']][2]] = {'ctrl+|', 'cmd+|', 'ctrl+\\'},
+  -- Select.
+  [m_sel[_L['Select between Matching Delimiters']][2]] =
+    {'ctrl+M', 'ctrl+M', 'meta+M'},
+  [m_sel[_L['Select between XML Tags']][2]] = {'ctrl+<', 'cmd+<', 'meta+<'},
+  [m_sel[_L['Select in XML Tag']][2]] = {'ctrl+>', 'cmd+>', nil},
+  [textadept.editing.select_word] = {'ctrl+D', 'cmd+D', 'meta+W'},
+  [textadept.editing.select_line] = {'ctrl+N', 'cmd+N', 'meta+N'},
+  [textadept.editing.select_paragraph] = {'ctrl+P', 'cmd+P', 'meta+P'},
+  -- Selection.
+  [buffer.upper_case] = {'ctrl+alt+u', 'ctrl+u', 'ctrl+meta+u'},
+  [buffer.lower_case] = {'ctrl+alt+U', 'ctrl+U', 'ctrl+meta+l'},
+  [m_seln[_L['Enclose as XML Tags']][2]] = {'alt+<', 'ctrl+<', 'meta+>'},
+  [m_seln[_L['Enclose as Single XML Tag']][2]] = {'alt+>', 'ctrl+>', nil},
+  [m_seln[_L['Enclose in Single Quotes']][2]] = {"alt+'", "ctrl+'", nil},
+  [m_seln[_L['Enclose in Double Quotes']][2]] = {'alt+"', 'ctrl+"', nil},
+  [m_seln[_L['Enclose in Parentheses']][2]] = {'alt+(', 'ctrl+(', 'meta+)'},
+  [m_seln[_L['Enclose in Brackets']][2]] = {'alt+[', 'ctrl+[', 'meta+]'},
+  [m_seln[_L['Enclose in Braces']][2]] = {'alt+{', 'ctrl+{', 'meta+}'},
+  [buffer.move_selected_lines_up] =
+    {'ctrl+shift+up', 'ctrl+shift+up', 'ctrl+shift+up'},
+  [buffer.move_selected_lines_down] =
+    {'ctrl+shift+down', 'ctrl+shift+down', 'ctrl+shift+down'},
+
+  -- Search.
+  [m_search[_L['Find']][2]] = {'ctrl+f', 'cmd+f', {'meta+f', 'meta+F'}},
+  [ui.find.find_next] = {{'ctrl+g', 'f3'}, 'cmd+g', 'meta+g'},
+  [ui.find.find_prev] = {{'ctrl+G', 'shift+f3'}, 'cmd+G', 'meta+G'},
+  [ui.find.replace] = {'ctrl+alt+r', 'ctrl+r', 'meta+r'},
+  [ui.find.replace_all] = {'ctrl+alt+R', 'ctrl+R', 'meta+R'},
+  -- Find Next is an when find pane is focused in GUI.
+  -- Find Prev is ap when find pane is focused in GUI.
+  -- Replace is ar when find pane is focused in GUI.
+  -- Replace All is aa when find pane is focused in GUI.
+  [ui.find.find_incremental] = {'ctrl+alt+f', 'ctrl+cmd+f', 'ctrl+meta+f'},
+  [m_search[_L['Find in Files']][2]] = {'ctrl+F', 'cmd+F', nil},
+  -- Find in Files is ai when find pane is focused in GUI.
+  [m_search[_L['Goto Next File Found']][2]] = {'ctrl+alt+g', 'ctrl+cmd+g', nil},
+  [m_search[_L['Goto Previous File Found']][2]] =
+    {'ctrl+alt+G', 'ctrl+cmd+G', nil},
+  [textadept.editing.goto_line] = {'ctrl+j', 'cmd+j', 'ctrl+j'},
+
+  -- Tools.
+  [m_tools[_L['Command Entry']][2]] = {'ctrl+e', 'cmd+e', 'meta+c'},
+  [m_tools[_L['Select Command']][2]] = {'ctrl+E', 'cmd+E', 'meta+C'},
+  [textadept.run.run] = {'ctrl+r', 'cmd+r', 'ctrl+r'},
+  [textadept.run.compile] = {'ctrl+R', 'cmd+R', 'ctrl+meta+r'},
+  [m_tools[_L['Set Arguments...']][2]] = {'ctrl+A', 'cmd+A', nil},
+  [textadept.run.build] = {'ctrl+B', 'cmd+B', 'ctrl+meta+b'},
+  [textadept.run.stop] = {'ctrl+X', 'cmd+X', 'ctrl+meta+x'},
+  [m_tools[_L['Next Error']][2]] = {'ctrl+alt+e', 'ctrl+cmd+e', 'meta+x'},
+  [m_tools[_L['Previous Error']][2]] = {'ctrl+alt+E', 'ctrl+cmd+E', 'meta+X'},
+  -- Bookmark.
+  [textadept.bookmarks.toggle] = {'ctrl+f2', 'cmd+f2', 'f1'},
+  [textadept.bookmarks.clear] = {'ctrl+shift+f2', 'cmd+shift+f2', 'f6'},
+  [m_bookmark[_L['Next Bookmark']][2]] = {'f2', 'f2', 'f2'},
+  [m_bookmark[_L['Previous Bookmark']][2]] = {'shift+f2', 'shift+f2', 'f3'},
+  [textadept.bookmarks.goto_mark] = {'alt+f2', 'alt+f2', 'f4'},
+  -- Macros.
+  [textadept.macros.record] = {'f9', 'f9', 'f9'},
+  [textadept.macros.play] = {'shift+f9', 'shift+f9', 'f10'},
+  -- Quick Open.
+  [m_qopen[_L['Quickly Open User Home']][2]] = {'ctrl+u', 'cmd+u', 'ctrl+u'},
+  -- TODO: m_qopen[_L['Quickly Open Textadept Home']][2]
+  [m_qopen[_L['Quickly Open Current Directory']][2]] =
+    {'ctrl+alt+O', 'ctrl+cmd+O', 'meta+O'},
+  [io.quick_open] = {'ctrl+alt+P', 'ctrl+cmd+P', 'ctrl+meta+p'},
+  -- Snippets.
+  [textadept.snippets.select] = {'ctrl+K', 'shift+alt+\t', 'meta+K'},
+  [textadept.snippets.insert] = {'\t', '\t', '\t'},
+  [textadept.snippets.previous] = {'shift+\t', 'shift+\t', 'shift+\t'},
+  [textadept.snippets.cancel_current] = {'esc', 'esc', 'esc'},
+  [m_snippets[_L['Complete Trigger Word']][2]] = {'ctrl+k', 'alt+\t', 'meta+k'},
+  -- Other.
+  [m_tools[_L['Complete Symbol']][2]] = {'ctrl+ ', 'alt+esc', 'ctrl+ '},
+  [textadept.editing.show_documentation] =
+    {'ctrl+h', 'ctrl+h', {'meta+h', 'meta+H'}},
+  [m_tools[_L['Show Style']][2]] = {'ctrl+i', 'cmd+i', 'meta+I'},
+
+  -- Buffer.
+  [m_buffer[_L['Next Buffer']][2]] = {'ctrl+\t', 'ctrl+\t', 'meta+n'},
+  [m_buffer[_L['Previous Buffer']][2]] =
+    {'ctrl+shift+\t', 'ctrl+shift+\t', 'meta+p'},
+  [ui.switch_buffer] = {'ctrl+b', 'cmd+b', {'meta+b', 'meta+B'}},
+  -- Indentation.
+  -- TODO: m_indentation[_L['Tab width: 2']][2]
+  -- TODO: m_indentation[_L['Tab width: 3']][2]
+  -- TODO: m_indentation[_L['Tab width: 4']][2]
+  -- TODO: m_indentation[_L['Tab width: 8']][2]
+  [m_indentation[_L['Toggle Use Tabs']][2]] =
+    {'ctrl+alt+T', 'ctrl+T', {'meta+t', 'meta+T'}},
+  [textadept.editing.convert_indentation] = {'ctrl+alt+i', 'ctrl+i', 'meta+i'},
+  -- EOL Mode.
+  -- TODO: m_buffer[_L['EOL Mode']][_L['CRLF']][2]
+  -- TODO: m_buffer[_L['EOL Mode']][_L['LF']][2]
+  -- Encoding.
+  -- TODO: m_buffer[_L['Encoding']][_L['UTF-8 Encoding']][2]
+  -- TODO: m_buffer[_L['Encoding']][_L['ASCII Encoding']][2]
+  -- TODO: m_buffer[_L['Encoding']][_L['CP-1252 Encoding']][2]
+  -- TODO: m_buffer[_L['Encoding']][_L['UTF-16 Encoding']][2]
+  [m_buffer[_L['Toggle View EOL']][2]] = {'ctrl+alt+\n', 'ctrl+\n', nil},
+  [m_buffer[_L['Toggle Wrap Mode']][2]] = {'ctrl+alt+\\', 'ctrl+\\', nil},
+  [m_buffer[_L['Toggle View Whitespace']][2]] = {'ctrl+alt+S', 'ctrl+S', nil},
+  [textadept.file_types.select_lexer] = {'ctrl+L', 'cmd+L', 'meta+L'},
+  [m_buffer[_L['Refresh Syntax Highlighting']][2]] =
+    {'f5', 'f5', {'f5', 'ctrl+l'}},
+
+  -- View.
+  [m_view[_L['Next View']][2]] = {'ctrl+alt+n', 'ctrl+alt+\t', nil},
+  [m_view[_L['Previous View']][2]] = {'ctrl+alt+p', 'ctrl+alt+shift+\t', nil},
+  [m_view[_L['Split View Horizontal']][2]] =
+    {{'ctrl+alt+s', 'ctrl+alt+h'}, 'ctrl+s', nil},
+  [m_view[_L['Split View Vertical']][2]] = {'ctrl+alt+v', 'ctrl+v', nil},
+  [m_view[_L['Unsplit View']][2]] = {'ctrl+alt+w', 'ctrl+w', nil},
+  [m_view[_L['Unsplit All Views']][2]] = {'ctrl+alt+W', 'ctrl+W', nil},
+  [m_view[_L['Grow View']][2]] =
+    {{'ctrl+alt++', 'ctrl+alt+='}, {'ctrl++', 'ctrl+='}, nil},
+  [m_view[_L['Shrink View']][2]] = {'ctrl+alt+-', 'ctrl+-', nil},
+  [m_view[_L['Toggle Current Fold']][2]] = {'ctrl+*', 'cmd+*', 'meta+*'},
+  [m_view[_L['Toggle Show Indent Guides']][2]] = {'ctrl+alt+I', 'ctrl+I', nil},
+  [m_view[_L['Toggle Virtual Space']][2]] = {'ctrl+alt+V', 'ctrl+V', nil},
+  [view.zoom_in] = {'ctrl+=', 'cmd+=', nil},
+  [view.zoom_out] = {'ctrl+-', 'cmd+-', nil},
+  [m_view[_L['Reset Zoom']][2]] = {'ctrl+0', 'cmd+0', nil},
+
+  -- Help.
+  [m_help[_L['Show Manual']][2]] = {'f1', 'f1', nil},
+  [m_help[_L['Show LuaDoc']][2]] = {'shift+f1', 'shift+f1', nil},
+
+  -- Movement commands.
+  -- Unbound keys are handled by Scintilla, but when playing back a macro, this
+  -- is not possible. Define some useful default key bindings so Scintilla does
+  -- not have to handle them. Note that Scintilla still will handle some keys.
+  [buffer.line_down] = {'down', {'down', 'ctrl+n'}, {'down', 'ctrl+n'}},
+  [buffer.line_down_extend] =
+    {'shift+down', {'shift+down', 'ctrl+N'}, 'shift+down'},
+  [buffer.line_up] = {'up', {'up', 'ctrl+p'}, {'up', 'ctrl+p'}},
+  [buffer.line_up_extend] = {'shift+up', {'shift+up', 'ctrl+P'}, 'shift+up'},
+  [buffer.char_left] = {'left', {'left', 'ctrl+b'}, {'left', 'ctrl+b'}},
+  [buffer.char_left_extend] =
+    {'shift+left', {'shift+left', 'ctrl+B'}, 'shift+left'},
+  [buffer.word_left] = {'ctrl+left', {'ctrl+left', 'ctrl+cmd+b'}, 'ctrl+left'},
+  [buffer.word_left_extend] =
+    {'ctrl+shift+left', {'ctrl+shift+left', 'ctrl+cmd+B'}, 'ctrl+shift+left'},
+  [buffer.char_right] = {'right', {'right', 'ctrl+f'}, {'right', 'ctrl+f'}},
+  [buffer.char_right_extend] =
+    {'shift+right', {'shift+right', 'ctrl+F'}, 'shift+right'},
+  [buffer.word_right] =
+    {'ctrl+right', {'ctrl+right', 'ctrl+cmd+f'}, 'ctrl+right'},
+  [buffer.word_right_end_extend] = {
+    'ctrl+shift+right', {'ctrl+shift+right', 'ctrl+cmd+F'}, 'ctrl+shift+right'
+  },
+  [buffer.vc_home] = {'home', {'cmd+left', 'ctrl+a'}, {'home', 'ctrl+a'}},
+  [buffer.vc_home_extend] =
+    {'shift+home', {'cmd+shift+left', 'ctrl+A'}, 'meta+A'},
+  [buffer.line_end] = {'end', {'cmd+right', 'ctrl+e'}, {'end', 'ctrl+e'}},
+  [buffer.line_end_extend] =
+    {'shift+end', {'cmd+shift+right', 'ctrl+E'}, 'meta+E'},
+  [view.vertical_center_caret] = {nil, 'ctrl+l', nil},
+  [buffer.page_up_extend] = {nil, nil, 'meta+U'},
+  [buffer.page_down_extend] = {nil, nil, 'meta+D'},
+  [buffer.document_start] = {nil, nil, 'ctrl+meta+a'},
+  [buffer.document_end] = {nil, nil, 'ctrl+meta+e'},
+
+  [function(b)
+    buffer:line_end_extend()
+    if not buffer.selection_empty then buffer:cut() else buffer:clear() end
+  end] = {nil, 'ctrl+k', 'ctrl+k'},
+  [buffer.del_word_right] = {'ctrl+del', 'cmd+del', 'ctrl+del'},
+  [buffer.del_line_right] =
+    {'ctrl+shift+del', 'cmd+shift+del', 'ctrl+shift+del'},
+  [buffer.delete_back] = {'\b', '\b', {'\b', 'ctrl+h'}},
+  [buffer.del_word_left] = {'ctrl+\b', 'cmd+\b', nil},
+  [buffer.del_line_left] = {'ctrl+shift+\b', 'cmd+shift+\b', nil},
+  [function() buffer.selection_mode = 0 end] = {nil, nil, 'ctrl+^'},
+  [buffer.swap_main_anchor_caret] = {nil, nil, 'ctrl+]'},
+
+  -- Other.
+  -- UTF-8 input.
+  [function()
+    ui.command_entry.run(
+      function(code) buffer:add_text(utf8.char(tonumber(code, 16))) end)
+  end] = {nil, 'cmd+U', 'meta+u'}
+}
+
+local keys, plat = keys, CURSES and 3 or OSX and 2 or 1
+for f, plat_keys in pairs(bindings) do
+  local key = plat_keys[plat]
+  if type(key) == 'string' then
+    keys[key] = f
+  elseif type(key) == 'table' then
+    for _, key in ipairs(key) do keys[key] = f end
+  end
+end
+
+if CURSES then
+  keys['ctrl+meta+v'] = {
     n = m_view[_L['Next View']][2],
     p = m_view[_L['Previous View']][2],
     s = m_view[_L['Split View Horizontal']][2],
+    h = m_view[_L['Split View Horizontal']][2],
     v = m_view[_L['Split View Vertical']][2],
     w = m_view[_L['Unsplit View']][2],
     W = m_view[_L['Unsplit All Views']][2],
     ['+'] = m_view[_L['Grow View']][2],
+    ['='] = m_view[_L['Grow View']][2],
     ['-'] = m_view[_L['Shrink View']][2]
   }
-  if not OSX then keys.cmv.h = keys.cmv.s end
-  keys.cmv['='] = keys.cmv['+']
-end
-keys[not OSX and GUI and 'c*' or 'm*'] = m_view[_L['Toggle Current Fold']][2]
-if GUI then
-  keys[not OSX and 'caI' or 'cI'] = m_view[_L['Toggle Show Indent Guides']][2]
-  keys[not OSX and 'caV' or 'cV'] = m_view[_L['Toggle Virtual Space']][2]
-end
-keys[not OSX and GUI and 'c=' or 'm='] = view.zoom_in
-keys[not OSX and GUI and 'c-' or 'm-'] = view.zoom_out
-keys[not OSX and GUI and 'c0' or 'm0'] = m_view[_L['Reset Zoom']][2]
-
--- Help.
-if GUI then
-  keys.f1 = textadept.menu.menubar[_L['Help']][_L['Show Manual']][2]
-  keys.sf1 = textadept.menu.menubar[_L['Help']][_L['Show LuaDoc']][2]
 end
 
--- Movement commands.
-if OSX then
-  keys.cf, keys.cF = buffer.char_right, buffer.char_right_extend
-  keys.cmf, keys.cmF = buffer.word_right, buffer.word_right_extend
-  keys.cb, keys.cB = buffer.char_left, buffer.char_left_extend
-  keys.cmb, keys.cmB = buffer.word_left, buffer.word_left_extend
-  keys.cn, keys.cN = buffer.line_down, buffer.line_down_extend
-  keys.cp, keys.cP = buffer.line_up, buffer.line_up_extend
-  keys.ca, keys.cA = buffer.vc_home, buffer.vc_home_extend
-  keys.ce, keys.cE = buffer.line_end, buffer.line_end_extend
-  keys.aright, keys.aleft = buffer.word_right, buffer.word_left
-  keys.cd = buffer.clear
-  keys.ck = function()
-    buffer:line_end_extend()
-    if not buffer.selection_empty then buffer:cut() else buffer:clear() end
-  end
-  keys.cl = view.vertical_center_caret
-  -- GTK-OSX reports Fn-key as a single keycode which confuses Scintilla. Do
-  -- not propagate it.
-  keys.fn = function() return true end
-elseif CURSES then
-  keys['c^'] = function() buffer.selection_mode = 0 end
-  keys['c]'] = buffer.swap_main_anchor_caret
-  keys.cf, keys.cb = buffer.char_right, buffer.char_left
-  keys.cn, keys.cp = buffer.line_down, buffer.line_up
-  keys.ca, keys.ce = buffer.vc_home, buffer.line_end
-  keys.mA, keys.mE = buffer.vc_home_extend, buffer.line_end_extend
-  keys.mU, keys.mD = buffer.page_up_extend, buffer.page_down_extend
-  keys.cma, keys.cme = buffer.document_start, buffer.document_end
-  keys.cd, keys.md, keys.ch = buffer.clear, keys.mdel, buffer.delete_back
-  keys.ck = function()
-    buffer:line_end_extend()
-    if not buffer.selection_empty then buffer:cut() else buffer:clear() end
-  end
-end
+-- GTK-OSX reports Fn-key as a single keycode which confuses Scintilla. Do
+-- not propagate it.
+if OSX then keys.fn = function() return true end end
 
--- Unbound keys are handled by Scintilla, but when playing back a macro, this is
--- not possible. Define useful default key bindings so Scintilla does not have
--- to handle them.
-keys.left, keys.sleft = buffer.char_left, buffer.char_left_extend
-keys.cleft, keys.csleft  = buffer.word_left, buffer.word_left_extend
-keys.right, keys.sright = buffer.char_right, buffer.char_right_extend
-keys.cright, keys.csright = buffer.word_right, buffer.word_right_extend
-if OSX then
-  keys.mleft, keys.msleft = buffer.vc_home, buffer.vc_home_extend
-  keys.mright, keys.msright = buffer.line_end, buffer.line_end_extend
-end
-keys.down, keys.sdown = buffer.line_down, buffer.line_down_extend
-keys.up, keys.sup = buffer.line_up, buffer.line_up_extend
-if not OSX then
-  keys.home, keys.shome = buffer.vc_home, buffer.vc_home_extend
-  keys['end'], keys.send = buffer.line_end, buffer.line_end_extend
-end
-keys.del, keys.sdel = buffer.clear, buffer.cut
-keys[not OSX and 'cdel' or 'mdel'] = buffer.del_word_right
-keys[not OSX and 'csdel' or 'msdel'] = buffer.del_line_right
-keys['\b'], keys['s\b'] = buffer.delete_back, buffer.delete_back
-keys[not OSX and 'c\b' or 'm\b'] = buffer.del_word_left
-keys[not OSX and 'cs\b' or 'ms\b'] = buffer.del_line_left
-
--- Other.
-ui.find.find_incremental_keys.cr = function()
-  ui.find.find_incremental(ui.command_entry:get_text(), false, true) -- reverse
-end
-if OSX or CURSES then
-  -- UTF-8 input.
-  keys[OSX and 'mU' or 'mu'] = function()
-    ui.command_entry.run(
-      function(code) buffer:add_text(utf8.char(tonumber(code, 16))) end)
-  end
+-- Reverse incremental find.
+ui.find.find_incremental_keys['ctrl+r'] = function()
+  ui.find.find_incremental(ui.command_entry:get_text(), false, true)
 end
 
 return M

@@ -220,8 +220,10 @@ M.find_incremental_keys = setmetatable({
 }, {__index = function(_, k)
   -- Add the character for any key pressed without modifiers to incremental
   -- find.
-  if #k > 1 and k:find('^[cams]*.+$') then return end
-  M.find_incremental(ui.command_entry:get_text() .. k, true)
+  if #k == 1 or not k:find('ctrl%+') and not k:find('alt%+') and
+     not k:find('meta%+') and not k:find('shift%+') then
+    M.find_incremental(ui.command_entry:get_text() .. k, true)
+  end
 end})
 
 ---

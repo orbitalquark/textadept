@@ -41,26 +41,33 @@ end
 -- @usage setmetatable(mode_keys, ui.command_entry.editing_keys)
 -- @class table
 -- @name editing_keys
-M.editing_keys = {__index = {
+M.editing_keys = {__index = {}}
+
+-- Fill in default platform-specific key bindings.
+local ekeys, plat = M.editing_keys.__index, CURSES and 3 or OSX and 2 or 1
+local bindings = {
   -- Note: cannot use `M.cut`, `M.copy`, etc. since M is never considered the
   -- global buffer.
-  [not OSX and 'cx' or 'mx'] = function() M:cut() end,
-  [not OSX and 'cc' or 'mc'] = function() M:copy() end,
-  [not OSX and 'cv' or 'mv'] = function() M:paste() end,
-  [not OSX and not CURSES and 'ca' or 'ma'] = function() M:select_all() end,
-  [not OSX and 'cz' or 'mz'] = function() M:undo() end,
-  [not OSX and 'cZ' or 'mZ'] = function() M:redo() end,
-  [not OSX and 'cy' or '\0'] = function() M:redo() end,
-  up = function() cycle_history(true) end, down = cycle_history,
-  [(OSX or CURSES) and 'cp' or '\0'] = function() cycle_history(true) end,
-  [(OSX or CURSES) and 'cn' or '\0'] = cycle_history,
+  [function() M:undo() end] = {'ctrl+z', 'cmd+z', 'ctrl+z'},
+  [function() M:undo() end] = {nil, nil, 'meta+z'},
+  [function() M:redo() end] = {'ctrl+y', 'cmd+Z', 'ctrl+y'},
+  [function() M:redo() end] = {'ctrl+Z', nil, 'meta+Z'},
+  [function() M:cut() end] = {'ctrl+x', 'cmd+x', 'ctrl+x'},
+  [function() M:copy() end] = {'ctrl+c', 'cmd+c', 'ctrl+c'},
+  [function() M:paste() end] = {'ctrl+v', 'cmd+v', 'ctrl+v'},
+  [function() M:select_all() end] = {'ctrl+a', 'cmd+a', 'meta+a'},
+  [function() cycle_history(true) end] = {'up', 'up', 'up'},
+  [cycle_history] = {'down', 'down', 'down'},
   -- Movement keys.
-  [(OSX or CURSES) and 'cf' or '\0'] = function() M:char_right() end,
-  [(OSX or CURSES) and 'cb' or '\0'] = function() M:char_left() end,
-  [(OSX or CURSES) and 'ca' or '\0'] = function() M:vc_home() end,
-  [(OSX or CURSES) and 'ce' or '\0'] = function() M:line_end() end,
-  [(OSX or CURSES) and 'cd' or '\0'] = function() M:clear() end
-}}
+  [function() M:char_right() end] = {nil, 'ctrl+f', 'ctrl+f'},
+  [function() M:char_left() end] = {nil, 'ctrl+b', 'ctrl+b'},
+  [function() M:vc_home() end] = {nil, 'ctrl+a', 'ctrl+a'},
+  [function() M:line_end() end] = {nil, 'ctrl+e', 'ctrl+e'},
+  [function() M:clear() end] = {nil, 'ctrl+d', 'ctrl+d'}
+}
+for f, plat_keys in pairs(bindings) do
+  if plat_keys[plat] then ekeys[plat_keys[plat]] = f end
+end
 
 -- Environment for abbreviated Lua commands.
 -- @class table
