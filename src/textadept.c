@@ -894,7 +894,7 @@ static int ui_newindex(lua_State *L) {
     SS(focused_view, SCI_COPYTEXT, lua_rawlen(L, 3), (sptr_t)text);
   } else if (strcmp(key, "statusbar_text") == 0)
     set_statusbar_text(lua_tostring(L, 3), 0);
-  else if (strcmp(key, "bufstatusbar_text") == 0)
+  else if (strcmp(key, "buffer_statusbar_text") == 0)
     set_statusbar_text(lua_tostring(L, 3), 1);
   else if (strcmp(key, "menubar") == 0) {
 #if GTK

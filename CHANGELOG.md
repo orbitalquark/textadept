@@ -2757,7 +2757,7 @@ Changes:
 * Renamed `_M.textadept` to [`textadept`][].
 * New [`events.INITIALIZED`][] event.
 * Renamed `buffer:get_style_name()` to `buffer.style_name`.
-* Renamed `ui.docstatusbar_text` to [`ui.bufstatusbar_text`][].
+* Renamed `ui.docstatusbar_text` to `ui.bufstatusbar_text`.
 * Removed `textadept.bookmarks.BOOKMARK_COLOR`,
   `textadept.editing.HIGHLIGHT_COLOR`, and `textadept.run.ERROR_COLOR` while
   exposing their respective marker and indicator numbers for customization.
@@ -2778,7 +2778,6 @@ Changes:
 [`ui`]: api.html#ui
 [`textadept`]: api.html#textadept
 [`events.INITIALIZED`]: api.html#events.INITIALIZED
-[`ui.bufstatusbar_text`]: api.html#ui.bufstatusbar_text
 [`io` module]: api.html#io
 [CDK]: http://invisible-island.net/cdk/cdk.html
 
