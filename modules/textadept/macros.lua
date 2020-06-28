@@ -29,17 +29,17 @@ local function event_recorder(event)
   return function(...) macro[#macro + 1] = {event, ...} end
 end
 local event_recorders = {
-  [events.KEYPRESS] = function(code, shift, control, alt, meta)
+  [events.KEYPRESS] = function(code, shift, control, alt, cmd)
     -- Not every keypress should be recorded (e.g. toggling macro recording).
     -- Use very basic key handling to try to identify key commands to ignore.
     local key = code < 256 and string.char(code) or keys.KEYSYMS[code]
     if key then
       if shift and code >= 32 and code < 256 then shift = false end
       local key_seq = (control and 'c' or '') .. (alt and 'a' or '') ..
-        (meta and OSX and 'm' or '') .. (shift and 's' or '') .. key
+        (cmd and OSX and 'm' or '') .. (shift and 's' or '') .. key
       for i = 1, #ignore do if keys[key_seq] == ignore[i] then return end end
     end
-    macro[#macro + 1] = {events.KEYPRESS, code, shift, control, alt, meta}
+    macro[#macro + 1] = {events.KEYPRESS, code, shift, control, alt, cmd}
   end,
   [events.MENU_CLICKED] = event_recorder(events.MENU_CLICKED),
   [events.CHAR_ADDED] = event_recorder(events.CHAR_ADDED),
