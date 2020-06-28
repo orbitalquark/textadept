@@ -554,14 +554,14 @@ function test_file_io_quick_open_interactive()
 end
 
 function test_keys_keychain()
-  local ca = keys.ca
+  local ctrl_a = keys['ctrl+a']
   local foo = false
-  keys.ca = {a = function() foo = true end}
+  keys['ctrl+a'] = {a = function() foo = true end}
   events.emit(events.KEYPRESS, string.byte('a'))
   assert(not foo, 'foo set outside keychain')
   events.emit(events.KEYPRESS, string.byte('a'), false, true)
   assert_equal(#keys.keychain, 1)
-  --assert_equal(keys.keychain[1], 'ca')
+  assert_equal(keys.keychain[1], 'ctrl+a')
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
   assert_equal(#keys.keychain, 0, 'keychain not canceled')
   events.emit(events.KEYPRESS, string.byte('a'))
@@ -569,7 +569,7 @@ function test_keys_keychain()
   events.emit(events.KEYPRESS, string.byte('a'), false, true)
   events.emit(events.KEYPRESS, string.byte('a'))
   assert(foo, 'foo not set')
-  keys.ca = ca -- restore
+  keys['ctrl+a'] = ctrl_a -- restore
 end
 
 function test_keys_propagation()

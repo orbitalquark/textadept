@@ -15,14 +15,15 @@ module('textadept.menu')]]
 local _L = _L
 local SEPARATOR = {''}
 
--- The following buffer functions need to be made constant in order for menu
--- items to identify the key associated with the functions.
+-- The following buffer and view functions need to be made constant in order for
+-- menu items to identify the key associated with the functions.
 local menu_buffer_functions = {
   'undo', 'redo', 'cut', 'copy', 'paste', 'line_duplicate', 'clear',
   'select_all', 'upper_case', 'lower_case', 'move_selected_lines_up',
-  'move_selected_lines_down', 'zoom_in', 'zoom_out'
+  'move_selected_lines_down'
 }
 for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
+view.zoom_in, view.zoom_out = view.zoom_in, view.zoom_out
 
 -- Commonly used functions in menu commands.
 local sel_enc = textadept.editing.select_enclosed
@@ -398,11 +399,11 @@ local key_shortcuts, menu_items, contextmenu_items
 -- @return keycode and modifier mask
 local function get_gdk_key(key_seq)
   if not key_seq then return nil end
-  local mods, key = key_seq:match('^([cams]*)(.+)$')
-  if not mods or not key then return nil end
-  local modifiers = ((mods:find('s') or key:lower() ~= key) and 1 or 0) +
-    (mods:find('c') and 4 or 0) + (mods:find('a') and 8 or 0) +
-    (mods:find('m') and 0x10000000 or 0)
+  local mods, key = key_seq:match('^(.*%+)(.+)$')
+  if not mods and not key then mods, key = '', key_seq end
+  local modifiers = ((mods:find('shift%+') or key:lower() ~= key) and 1 or 0) +
+    (mods:find('ctrl%+') and 4 or 0) + (mods:find('alt%+') and 8 or 0) +
+    (mods:find('cmd%+') and 0x10000000 or 0)
   local code = string.byte(key)
   if #key > 1 or code < 32 then
     for i, s in pairs(keys.KEYSYMS) do

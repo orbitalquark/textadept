@@ -32,33 +32,34 @@ local M = {}
 -- (`^`), "Alt/Option" (`⌥`), "Command" (`⌘`), and "Shift" (`⇧`). These
 -- modifiers have the following string representations:
 --
--- Modifier | Linux / Win32 | Mac OSX | curses   |
--- ---------|---------------|---------|----------|
--- Control  | `'c'`         | `'c'`   | `'c'`    |
--- Alt      | `'a'`         | `'a'`   | `'m'`    |
--- Command  | N/A           | `'m'`   | N/A      |
--- Shift    | `'s'`         | `'s'`   | `'s'`    |
+-- Modifier | Linux / Win32 | Mac OSX   | curses    |
+-- ---------|---------------|-----------|-----------|
+-- Control  | `'ctrl'       | `'ctrl'`  | `'ctrl'`  |
+-- Alt      | `'alt'`       | `'alt'`   | `'meta'`  |
+-- Command  | N/A           | `'cmd'`   | N/A       |
+-- Shift    | `'shift'`     | `'shift'` | `'shift'` |
 --
 -- The string representation of key values less than 255 is the character that
 -- Textadept would normally insert if the "Control", "Alt", and "Command"
 -- modifiers were not held down. Therefore, a combination of `Ctrl+Alt+Shift+A`
--- has the key sequence `caA` on Windows and Linux, but a combination of
--- `Ctrl+Shift+Tab` has the key sequence `cs\t`. On a United States English
--- keyboard, since the combination of `Ctrl+Shift+,` has the key sequence `c<`
--- (`Shift+,` inserts a `<`), Textadept recognizes the key binding as `Ctrl+<`.
--- This allows key bindings to be language and layout agnostic. For key values
--- greater than 255, Textadept uses the [`keys.KEYSYMS`]() lookup table.
--- Therefore, `Ctrl+Right Arrow` has the key sequence `cright`. Uncommenting the
--- `print()` statements in *core/keys.lua* causes Textadept to print key
--- sequences to standard out (stdout) for inspection.
+-- has the key sequence `ctrl+alt+A` on Windows and Linux, but a combination of
+-- `Ctrl+Shift+Tab` has the key sequence `ctrl+shift+\t`. On a United States
+-- English keyboard, since the combination of `Ctrl+Shift+,` has the key
+-- sequence `ctrl+<` (`Shift+,` inserts a `<`), Textadept recognizes the key
+-- binding as `Ctrl+<`. This allows key bindings to be language and layout
+-- agnostic. For key values greater than 255, Textadept uses the
+-- [`keys.KEYSYMS`]() lookup table. Therefore, `Ctrl+Right Arrow` has the key
+-- sequence `ctrl+right`. Uncommenting the `print()` statements in
+-- *core/keys.lua* causes Textadept to print key sequences to standard out
+-- (stdout) for inspection.
 --
 -- ## Commands
 --
 -- A command bound to a key sequence is simply a Lua function. For example:
 --
---     keys['cn'] = buffer.new
---     keys['cz'] = buffer.undo
---     keys['cu'] = function() io.quick_open(_USERHOME) end
+--     keys['ctrl+n'] = buffer.new
+--     keys['ctrl+z'] = buffer.undo
+--     keys['ctrl+u'] = function() io.quick_open(_USERHOME) end
 --
 -- Textadept handles [`buffer`]() references properly in static contexts.
 --
@@ -95,7 +96,7 @@ local M = {}
 -- but you can redefine it via [`keys.CLEAR`](). An example key chain looks
 -- like:
 --
---     keys['aa'] = {
+--     keys['alt+a'] = {
 --       a = function1,
 --       b = function2,
 --       c = {...}
@@ -111,7 +112,8 @@ local M = {}
 --   The default value is `nil`.
 module('keys')]]
 
-local CTRL, ALT, META, SHIFT = 'c', not CURSES and 'a' or 'm', 'm', 's'
+local CTRL, ALT, SHIFT = 'ctrl+', not CURSES and 'alt+' or 'meta+', 'shift+'
+local CMD = 'cmd+'
 M.CLEAR = 'esc'
 
 ---
@@ -198,12 +200,12 @@ end
 -- @param shift Whether or not the Shift modifier is pressed.
 -- @param control Whether or not the Control modifier is pressed.
 -- @param alt Whether or not the Alt/option modifier is pressed.
--- @param meta Whether or not the Command modifier on Mac OSX is pressed.
+-- @param cmd Whether or not the Command modifier on Mac OSX is pressed.
 -- @param caps_lock Whether or not Caps Lock is enabled.
 -- @return `true` to stop handling the key; `nil` otherwise.
-local function keypress(code, shift, control, alt, meta, caps_lock)
-  --print(code, M.KEYSYMS[code], shift, control, alt, meta, caps_lock)
-  if caps_lock and (shift or control or alt or meta) and code < 256 then
+local function keypress(code, shift, control, alt, cmd, caps_lock)
+  --print(code, M.KEYSYMS[code], shift, control, alt, cmd, caps_lock)
+  if caps_lock and (shift or control or alt or cmd) and code < 256 then
     code = string[shift and 'upper' or 'lower'](string.char(code)):byte()
   end
   local key = code >= 32 and code < 256 and string.char(code) or M.KEYSYMS[code]
@@ -213,7 +215,7 @@ local function keypress(code, shift, control, alt, meta, caps_lock)
   -- For composed keys on OSX, ignore alt.
   if OSX and alt and code < 256 then alt = false end
   local key_seq = (control and CTRL or '') .. (alt and ALT or '') ..
-    (meta and OSX and META or '') .. (shift and SHIFT or '') .. key
+    (cmd and OSX and CMD or '') .. (shift and SHIFT or '') .. key
   --print(key_seq)
 
   ui.statusbar_text = ''
