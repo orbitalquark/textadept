@@ -446,7 +446,7 @@ browser	_HOME/modules/export/init.lua	/^module('export')]]$/;"	F	class:export
 buffer	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	m	
 buffer	_HOME/core/.view.luadoc	/^local buffer$/;"	t	class:view
 buffer	_HOME/core/init.lua	/^local buffer$/;"	t	
-bufstatusbar_text	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
+buffer_statusbar_text	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
 build	_HOME/modules/textadept/run.lua	/^function M.build(root_directory)$/;"	f	class:textadept.run
 build_commands	_HOME/modules/textadept/run.lua	/^M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='docker build .',--[[Make]]Makefile='make',GNUmakefile='make',makefile='make',--[[Maven]]['pom.xml']='mvn',--[[Ruby]]Rakefile='rake'}$/;"	t	class:textadept.run
 call_tip_active	_HOME/core/.view.luadoc	/^function call_tip_active(view) end$/;"	f	class:view
@@ -560,7 +560,7 @@ edge_column	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 edge_mode	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 edit_toggle_overtype	_HOME/core/.buffer.luadoc	/^function edit_toggle_overtype(buffer) end$/;"	f	class:buffer
 editing	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	m	class:textadept
-editing_keys	_HOME/modules/textadept/command_entry.lua	/^M.editing_keys = {__index = {$/;"	t	class:ui.command_entry
+editing_keys	_HOME/modules/textadept/command_entry.lua	/^M.editing_keys = {__index = {}}$/;"	t	class:ui.command_entry
 embed	_HOME/lexers/lexer.lua	/^function M.embed(lexer, child, start_rule, end_rule)$/;"	f	class:lexer
 emit	_HOME/core/events.lua	/^function M.emit(event, ...)$/;"	f	class:events
 empty_undo_buffer	_HOME/core/.buffer.luadoc	/^function empty_undo_buffer(buffer) end$/;"	f	class:buffer
