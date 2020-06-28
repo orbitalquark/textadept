@@ -160,7 +160,7 @@ local M = {}
 --   * _`shift`_: The "Shift" modifier key is held down.
 --   * _`ctrl`_: The "Control" modifier key is held down.
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
---   * _`meta`_: The "Command" modifier key on Mac OSX is held down.
+--   * _`cmd`_: The "Command" modifier key on Mac OSX is held down.
 --   * _`caps_lock`_: The "Caps Lock" modifier is on.
 -- @field MARGIN_CLICK (string)
 --   Emitted when clicking the mouse inside a sensitive margin.
@@ -253,7 +253,7 @@ local M = {}
 --   * _`shift`_: The "Shift" modifier key is held down.
 --   * _`ctrl`_: The "Control" modifier key is held down.
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
---   * _`meta`_: The "Command" modifier key on Mac OSX is held down.
+--   * _`cmd`_: The "Command" modifier key on Mac OSX is held down.
 -- @field UPDATE_UI (string)
 --   Emitted after the view is visually updated.
 --   Arguments:
