@@ -19,7 +19,7 @@ local ui = ui
 --   The text on the clipboard.
 -- @field statusbar_text (string, Write-only)
 --   The text displayed in the statusbar.
--- @field bufstatusbar_text (string, Write-only)
+-- @field buffer_statusbar_text (string, Write-only)
 --   The text displayed in the buffer statusbar.
 -- @field maximized (bool)
 --   Whether or not Textadept's window is maximized.
@@ -336,7 +336,7 @@ events_connect(events.UPDATE_UI, function(updated)
   local tabs = string.format(
     '%s %d', buffer.use_tabs and _L['Tabs:'] or _L['Spaces:'], buffer.tab_width)
   local enc = buffer.encoding or ''
-  ui.bufstatusbar_text = string.format(
+  ui.buffer_statusbar_text = string.format(
     text, _L['Line:'], line, max, _L['Col:'], col, lexer, eol, tabs, enc)
 end)
 

@@ -2043,6 +2043,8 @@ lexers                     |Removed |N/A<sup>a</sup>
 \_cancel_current()         |Renamed |[cancel_current()][]
 \_select()                 |Renamed |[select()][]
 \_paths                    |Renamed |[paths][]
+**ui**                     |        |
+bufstatusbar\_text         |Renamed |[buffer_statusbar_text][]
 **ui.find**                |        |
 find\_in\_files\_timeout   |Removed |N/A
 **view**                   |        |
@@ -2071,6 +2073,7 @@ section below.
 [cancel_current()]: api.html#textadept.snippets.cancel_current
 [select()]: api.html#textadept.snippets.select
 [paths]: api.html#textadept.snippets.paths
+[buffer_statusbar_text]: api.html#ui.buffer_statusbar_text
 
 #### Buffer Indexing Changes
 
