@@ -183,7 +183,7 @@ end
 local function compile_or_run(filename, commands)
   if filename == buffer.filename then
     buffer:annotation_clear_all()
-    buffer:save()
+    if buffer.modify then buffer:save() end
   end
   local ext = filename:match('[^/\\.]+$')
   local lexer = filename == buffer.filename and buffer:get_lexer() or
