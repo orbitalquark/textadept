@@ -91,6 +91,8 @@ local M = {}
 --   * _`line`_: The line number of the position double-clicked.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
 --     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
+--     On Mac OSX, the Command modifier key is reported as `view.MOD_CTRL` and
+--     Ctrl is `view.MOD_META`.
 --     Note: If you set `view.rectangular_selection_modifier` to
 --     `view.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
 --     and "Alt" due to a Scintilla limitation with GTK.
@@ -140,6 +142,8 @@ local M = {}
 --   * _`position`_: The clicked text's position.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
 --     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
+--     On Mac OSX, the Command modifier key is reported as `view.MOD_CTRL` and
+--     Ctrl is `view.MOD_META`.
 --     Note: If you set `view.rectangular_selection_modifier` to
 --     `view.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
 --     and "Alt" due to a Scintilla limitation with GTK.
@@ -170,6 +174,8 @@ local M = {}
 --   * _`position`_: The beginning position of the clicked margin's line.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
 --     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
+--     On Mac OSX, the Command modifier key is reported as `view.MOD_CTRL` and
+--     Ctrl is `view.MOD_META`.
 --     Note: If you set `view.rectangular_selection_modifier` to
 --     `view.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
 --     and "Alt" due to a Scintilla limitation with GTK.
