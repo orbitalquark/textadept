@@ -54,7 +54,17 @@ local function text_range(buffer, start_pos, end_pos)
   buffer:set_target_range(target_start, target_end) -- restore
   return text
 end
-events.connect(events.BUFFER_NEW, function() buffer.text_range = text_range end)
+
+-- Documentation is in core/.buffer.luadoc.
+local function style_of_name(buffer, style_name)
+  assert_type(style_name, 'string', 2)
+  local GETNAMEDSTYLE = _SCINTILLA.properties.named_styles[1]
+  return buffer:private_lexer_call(GETNAMEDSTYLE, style_name)
+end
+
+events.connect(events.BUFFER_NEW, function()
+  buffer.text_range, buffer.style_of_name = text_range, style_of_name
+end)
 
 --[[ This comment is for LuaDoc.
 ---

@@ -1783,6 +1783,15 @@ function new() end
 function text_range(buffer, start_pos, end_pos) end
 
 ---
+-- Returns the style number associated with string *style_name*, or
+-- `view.STYLE_DEFAULT` if *style_name* is not in use.
+-- @param buffer A buffer.
+-- @param string The style name to get the number of.
+-- @return style number, between `1` and `256`.
+-- @see name_of_style
+function style_of_name(buffer, style_name) end
+
+---
 -- Reloads the buffer's file contents, discarding any changes.
 -- @param buffer A buffer.
 -- @name reload

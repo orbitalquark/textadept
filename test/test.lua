@@ -2958,14 +2958,13 @@ end
 
 function test_view_split_refresh_styles()
   io.open_file(_HOME .. '/init.lua')
-  local GETNAMEDSTYLE = _SCINTILLA.properties.named_styles[1]
-  local style = buffer:private_lexer_call(GETNAMEDSTYLE, 'library')
+  local style = buffer:style_of_name('library')
   assert(style > 1, 'cannot retrieve number of library style')
   local color = view.style_fore[style]
   assert(color ~= view.style_fore[view.STYLE_DEFAULT], 'library style not set')
   view:split()
   for _, view in ipairs(_VIEWS) do
-    local view_style = buffer:private_lexer_call(GETNAMEDSTYLE, 'library')
+    local view_style = buffer:style_of_name('library')
     assert_equal(view_style, style)
     local view_color = view.style_fore[view_style]
     assert_equal(view_color, color)
@@ -2998,7 +2997,21 @@ function test_set_theme()
 end
 
 function test_set_lexer_style()
+  buffer.new()
+  buffer:set_lexer('java')
+  buffer:add_text('foo()')
+  buffer:colorize(1, -1)
+  local style = buffer:style_of_name('function')
+  assert_equal(buffer.style_at[1], style)
+  local default_fore = view.style_fore[view.STYLE_DEFAULT]
+  assert(view.style_fore[style] ~= default_fore, 'function name style_fore same as default style_fore')
+  view.style_fore[style] = view.style_fore[view.STYLE_DEFAULT]
+  assert_equal(buffer.style_fore[style], default_fore)
+  buffer:close(true)
   -- Defined in Lua lexer, which is not currently loaded.
+  assert(buffer:style_of_name('library'), view.STYLE_DEFAULT)
+  -- Emulate a theme setting to trigger an LPeg lexer style refresh, but without
+  -- a token defined.
   view.property['style.library'] = view.property['style.library']
 end
 
