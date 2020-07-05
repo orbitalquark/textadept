@@ -413,9 +413,9 @@ function M.goto_error(line_num, next)
   end
   if detail.message then
     buffer.annotation_text[detail.line] = detail.message
-    local GETNAMEDSTYLE = _SCINTILLA.properties.named_styles[1]
-    local style = buffer:private_lexer_call(GETNAMEDSTYLE, 'error')
-    if not detail.warning then buffer.annotation_style[detail.line] = style end
+    if not detail.warning then
+      buffer.annotation_style[detail.line] = buffer:style_of_name('error')
+    end
   end
 end
 events.connect(events.KEYPRESS, function(code)
