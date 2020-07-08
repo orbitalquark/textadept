@@ -18,22 +18,41 @@ end
 
 textadept = require('textadept')
 
+local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
+
 -- Documentation is in core/.view.luadoc.
-local function set_theme(view, name, props)
+local function set_theme(view, name, options)
   if not assert_type(name, 'string', 2):find('[/\\]') then
     name = package.searchpath(name, string.format(
       '%s/themes/?.lua;%s/themes/?.lua', _USERHOME, _HOME))
   end
   if not name or not lfs.attributes(name) then return end
-  if not assert_type(props, 'table/nil', 3) then props = {} end
+  if not assert_type(options, 'table/nil', 3) then options = {} end
   local orig_view = _G.view
   if view ~= orig_view then ui.goto_view(view) end
-  dofile(name)
-  for prop, value in pairs(props) do view.property[prop] = value end
+  -- Mimic `lexer.colors` and `lexer.styles` because (1) the lexer module is not
+  -- yet available and (2) even if it was, color and style settings would not
+  -- be captured later during init.
+  local property = view.property
+  local colors = setmetatable({}, {__newindex = function(t, name, color)
+    property['color.' .. name] = color -- TODO: auto-convert '#RRGGBB'?
+    rawset(t, name, color) -- cache instead of __index for property[...]
+  end})
+  local styles = setmetatable({}, {__newindex = function(_, name, props)
+    local settings = {}
+    for k, v in pairs(props) do
+      settings[#settings + 1] = type(v) ~= 'boolean' and
+        string.format('%s:%s', k, v) or
+        string.format('%s%s', v and '' or 'not', k)
+    end
+    property['style.' .. name] = table.concat(settings, ',')
+  end})
+  local env = {lexer = {colors = colors, styles = styles}}
+  for k, v in pairs(options) do env[k] = v end
+  loadfile(name, 't', setmetatable(env, {__index = _G}))()
   -- Force reload of all styles since the current lexer may have defined its own
   -- styles. (The LPeg lexer has only refreshed default lexer styles.)
   -- Note: cannot use `buffer.set_lexer()` because it may not exist yet.
-  local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
   buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'text')
   if view ~= orig_view then ui.goto_view(orig_view) end
 end
@@ -300,8 +319,6 @@ for _, mt in ipairs{buffer_mt, view_mt} do
   mt.__index, mt.__newindex = mt.__orig_index, mt.__orig_newindex
 end
 
-local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
-
 -- Sets default properties for a Scintilla document.
 events.connect(events.BUFFER_NEW, function()
   local buffer = _G.buffer
@@ -340,13 +357,12 @@ events.connect(events.VIEW_NEW, function()
   -- subsequent views.
   if #_VIEWS == 1 then return end
   load_settings()
-  -- Refresh styles since the user may have altered style settings.
-  -- When load_settings() calls `view.property['style.default'] = ...`, the
-  -- LPeg lexer resets all styles to that default. However, load_settings() may
-  -- later call a user's `view.property['fontsize'] = ...`, which
-  -- 'style.default' references. Styles are now stale and need refreshing. This
-  -- is not an issue in BUFFER_NEW since a lexer is set immediately afterwards,
-  -- which refreshes styles.
+  -- Refresh styles in case a lexer has extra style settings. When
+  -- load_settings() calls `view.property['style.default'] = ...`, the LPeg
+  -- lexer resets all styles to that default. However, some lexers have extra
+  -- style settings that are not set by load_settings(), and thus need
+  -- refreshing. This is not an issue in BUFFER_NEW since a lexer is set
+  -- immediately afterwards, which refreshes styles.
   -- Note: `buffer:set_lexer()` is insufficient for some reason.
   buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'text')
 end, 1)
