@@ -72,7 +72,7 @@ styles.class = {fore = colors.yellow}
 styles.comment = {fore = colors.grey}
 styles.constant = {fore = colors.red}
 styles.embedded = {fore = colors.dark_blue, back = colors.dark_white}
-styles.error = {fore = colors.red, italics}
+styles.error = {fore = colors.red, italics = true}
 styles['function'] = {fore = colors.dark_orange}
 styles.identifier = {}
 styles.keyword = {fore = colors.dark_blue}
