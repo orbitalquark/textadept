@@ -35,7 +35,11 @@ local function set_theme(view, name, options)
   -- be captured later during init.
   local property = view.property
   local colors = setmetatable({}, {__newindex = function(t, name, color)
-    property['color.' .. name] = color -- TODO: auto-convert '#RRGGBB'?
+    if type(color) == 'string' then
+      local r, g, b = color:match('^#(%x%x)(%x%x)(%x%x)$')
+      color = tonumber(string.format('%s%s%s', b, g, r), 16) or 0
+    end
+    property['color.' .. name] = color
     rawset(t, name, color) -- cache instead of __index for property[...]
   end})
   local styles = setmetatable({}, {__newindex = function(_, name, props)
