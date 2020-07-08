@@ -1249,33 +1249,34 @@ terminal version uses "term".
 &nbsp;&nbsp;
 ![Term Theme](images/termtheme.png)
 
-Each theme is a single Lua file. It contains color and style definitions for
-displaying syntactic elements like comments, strings, and keywords in
-programming language source files. These [definitions][] apply universally to
-all programming language elements, resulting in a single, unified theme. Themes
-also set view-related editor properties like caret and selection colors.
+Each theme is a single Lua file. It contains [color][] and [style][] definitions
+for displaying syntactic elements like comments, strings, and keywords in
+programming language source files. These definitions apply universally to all
+programming language elements, resulting in a single, unified theme. Themes also
+set view-related editor properties like caret and selection colors.
 
 Note: The only colors that the terminal version of Textadept recognizes are the
 standard black, red, green, yellow, blue, magenta, cyan, white, and bold
 variants of those colors. Your terminal emulator's settings determine how to
 display these standard colors (which may be completely different in the end).
 
-[definitions]: api.html#lexer.Styles.and.Styling
+[color]: api.html#lexer.colors
+[style]: api.html#lexer.styles
 
 ## Setting Themes
 
 Override the default theme in your [*~/.textadept/init.lua*](#User.Init) using
-the [`buffer.set_theme()`][] function. For example:
+the [`view.set_theme()`][] function. For example:
 
-    buffer:set_theme(not CURSES and 'dark' or 'term')
+    view:set_theme(not CURSES and 'dark' or 'term')
 
 Either restart Textadept for changes to take effect or type [`reset`][] in the
 [command entry](#Lua.Command.Entry).
 
-`buffer.set_theme()` can also tweak theme properties like font face and font
-size without editing the theme file itself:
+`view.set_theme()` can also tweak theme options like font face and font size
+without editing the theme file itself:
 
-    buffer:set_theme('light', {font = 'Monospace', fontsize = 12})
+    view:set_theme('light', {font = 'Monospace', size = 12})
 
 You can even tweak themes on a per-language basis. For example, in order to
 color Java functions black instead of the default orange, add the following to
@@ -1283,13 +1284,14 @@ color Java functions black instead of the default orange, add the following to
 
     events.connect(events.LEXER_LOADED, function(lexer)
       if lexer ~= 'java' then return end
-      view.property['style.function'] = 'fore:$(color.light_black)'
+      local default_fore = view.style_fore[view.STYLE_DEFAULT]
+      view.style_fore[buffer:style_of_name('function')] = default_fore
     end)
 
-For a full list of configurable properties, please consult the theme file you
-are using.
+For a full list of configurable properties and styles, please consult the theme
+file you are using.
 
-[`buffer.set_theme()`]: api.html#buffer.set_theme
+[`view.set_theme()`]: api.html#view.set_theme
 [`reset`]: api.html#reset
 
 ## Creating Themes
@@ -2031,6 +2033,8 @@ N/A                        |Added   |[to_eol()][]
 delimited\_range()         |Replaced|[range()][]
 nested\_pair()             |Replaced|[range()][]
 N/A                        |Added   |[number][]
+N/A                        |Added   |[colors][]
+N/A                        |Added   |[styles][]
 **lfs**                    |        |
 dir\_foreach()             |Replaced|for filename in [`lfs.walk()`][] do ... end
 **textadept.bookmarks**    |        |
@@ -2066,6 +2070,8 @@ section below.
 [to_eol()]: api.html#lexer.to_eol
 [range()]: api.html#lexer.range
 [number]: api.html#lexer.number
+[colors]: api.html#lexer.colors
+[styles]: api.html#lexer.styles
 [`lfs.walk()`]: api.html#lfs.walk
 [toggle()]: api.html#textadept.bookmarks.toggle
 [insert()]: api.html#textadept.snippets.insert
@@ -2145,6 +2151,43 @@ confirmed.
 [Scintilla API]: http://scintilla.org/ScintillaDoc.html
 [Scintilla]: http://scintilla.org
 [view]: api.html#view
+
+#### Theme and Lexer Changes
+
+Themes and lexers have a new, optional API for defining and using colors and
+styles. Previously, all definitions and access to colors and styles was
+accomplished through `buffer.property` and `buffer.property_int`. Now it can be
+done via the `lexer.colors` and `lexer.styles` variables. For example:
+
+    -- Textadept 10
+    local property, property_int = buffer.property, buffer.property_int
+    property['color.blue'] = 0xFF0000
+    property['style.keyword'] = 'fore:$(color.blue),bold'
+    buffer.edge_colour = property_int['color.grey']
+
+    -- Textadept 11
+    local colors, styles = lexer.colors, lexer.styles
+    colors.blue = 0xFF0000
+    styles.keyword = {fore = colors.blue, bold = true}
+    view.edge_color = colors.grey
+
+Any additional settings passed `view:set_theme()` are available as global
+variables in the theme. Textadept's themes make use of `font` and `size` (the
+latter of which used to be `fontsize`) for easily configuring font and size
+per-user.
+
+Lexers can also utilize these new features. For example:
+
+    -- Textadept 10
+    lex:add_rule('custom_rule', token('custom', P('word')))
+    lex:add_style('custom', lexer.STYLE_KEYWORD .. 'italic')
+
+    -- Textadept 11
+    lex:add_rule('custom_rule', token('custom', P('word')))
+    lex:add_style('custom', lexer.styles.keyword .. {italic = true})
+
+Note that these features are optional. Themes and lexers setting property
+strings is still supported.
 
 #### Localization Changes
 
