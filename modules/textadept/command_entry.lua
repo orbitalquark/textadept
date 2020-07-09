@@ -250,12 +250,12 @@ events.connect(events.INITIALIZED, function()
   for key, f in pairs(keys) do
     if f == textadept.editing.show_documentation then
       lua_keys[key] = function()
-        -- Temporarily change _G.buffer since ui.command_entry is the "active"
-        -- buffer.
-        local orig_buffer = _G.buffer
-        _G.buffer = ui.command_entry
+        -- Temporarily change _G.buffer and _G.view since ui.command_entry is
+        -- the "active" buffer and view.
+        local orig_buffer, orig_view = _G.buffer, _G.view
+        _G.buffer, _G.view = ui.command_entry, ui.command_entry
         textadept.editing.show_documentation()
-        _G.buffer = orig_buffer
+        _G.buffer, _G.view = orig_buffer, orig_view
       end
       break
     end
