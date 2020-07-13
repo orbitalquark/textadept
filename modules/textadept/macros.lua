@@ -31,12 +31,12 @@ end
 local event_recorders = {
   [events.KEYPRESS] = function(code, shift, control, alt, cmd)
     -- Not every keypress should be recorded (e.g. toggling macro recording).
-    -- Use very basic key handling to try to identify key commands to ignore.
+    -- Use very basic key handling to try to identify key bindings to ignore.
     local key = code < 256 and string.char(code) or keys.KEYSYMS[code]
     if key then
       if shift and code >= 32 and code < 256 then shift = false end
-      local key_seq = (control and 'c' or '') .. (alt and 'a' or '') ..
-        (cmd and OSX and 'm' or '') .. (shift and 's' or '') .. key
+      local key_seq = (control and 'ctrl+' or '') .. (alt and 'alt+' or '') ..
+        (cmd and OSX and 'cmd+' or '') .. (shift and 'shift+' or '') .. key
       for i = 1, #ignore do if keys[key_seq] == ignore[i] then return end end
     end
     macro[#macro + 1] = {events.KEYPRESS, code, shift, control, alt, cmd}
