@@ -366,7 +366,8 @@ function M.goto_line(line)
   buffer:goto_line(line)
 end
 args.register(
-  '-l', '--line', 1, function(line) M.goto_line(line) end, 'Go to line')
+  '-l', '--line', 1, function(line) M.goto_line(tonumber(line) or line) end,
+  'Go to line')
 
 ---
 -- Transposes characters intelligently.
