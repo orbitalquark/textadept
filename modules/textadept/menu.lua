@@ -153,11 +153,9 @@ local default_menubar = {
       ui.find.in_files = true
       ui.find.focus()
     end},
-    {_L['Goto Next File Found'], function()
-      ui.find.goto_file_found(false, true)
-    end},
+    {_L['Goto Next File Found'], function() ui.find.goto_file_found(true) end},
     {_L['Goto Previous File Found'], function()
-      ui.find.goto_file_found(false, false)
+      ui.find.goto_file_found(false)
     end},
     SEPARATOR,
     {_L['Jump to'], textadept.editing.goto_line}
@@ -198,10 +196,8 @@ local default_menubar = {
     end},
     {_L['Build'], textadept.run.build},
     {_L['Stop'], textadept.run.stop},
-    {_L['Next Error'], function() textadept.run.goto_error(false, true) end},
-    {_L['Previous Error'], function()
-      textadept.run.goto_error(false, false)
-    end},
+    {_L['Next Error'], function() textadept.run.goto_error(true) end},
+    {_L['Previous Error'], function() textadept.run.goto_error(false) end},
     SEPARATOR,
     {
       title = _L['Bookmarks'],

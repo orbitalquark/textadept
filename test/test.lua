@@ -2072,7 +2072,7 @@ function test_ui_find_find_in_files()
     assert_equal(buffer:text_range(s, e), 'foo')
     s = buffer:indicator_end(ui.find.INDIC_FIND, e + 1)
   end
-  ui.find.goto_file_found(nil, true) -- wraps around
+  ui.find.goto_file_found(true) -- wraps around
   assert_equal(#_VIEWS, 2)
   assert(buffer.filename, 'not in file found result')
   ui.goto_view(1)
@@ -2094,7 +2094,6 @@ function test_ui_find_find_in_files()
   assert(buffer.filename and buffer.filename ~= filename, 'opened the same file')
   buffer:close()
   ui.goto_view(1) -- files found buffer
-  assert_raises(function() ui.find.goto_file_found(true) end, 'number/nil expected, got boolean')
   ui.find.find_entry_text = ''
   view:unsplit()
   buffer:close()
@@ -2350,7 +2349,7 @@ function test_run_compile_run()
   assert(buffer:get_text():find("'end' expected"), 'no compile error')
   assert(buffer:get_text():find('> exit status: 256'), 'no compile error')
   if #_VIEWS > 1 then view:unsplit() end
-  textadept.run.goto_error(nil, true) -- wraps
+  textadept.run.goto_error(true) -- wraps
   assert_equal(#_VIEWS, 2)
   assert_equal(buffer.filename, compile_file)
   assert_equal(buffer:line_from_position(buffer.current_pos), LINE(3))
@@ -2380,7 +2379,7 @@ function test_run_compile_run()
   assert_equal(buffer._type, _L['[Message Buffer]'])
   ui.update() -- process output
   assert(buffer:get_text():find('attempt to call a nil value'), 'no run error')
-  textadept.run.goto_error(nil, false)
+  textadept.run.goto_error(false)
   assert_equal(buffer.filename, run_file)
   assert_equal(buffer:line_from_position(buffer.current_pos), LINE(2))
   textadept.run.goto_error(nil, false)
@@ -2389,12 +2388,11 @@ function test_run_compile_run()
   ui.goto_view(1)
   assert(buffer:marker_get(buffer:line_from_position(buffer.current_pos)) & 1 << textadept.run.MARK_WARNING - 1 > 0)
   ui.goto_view(-1)
-  textadept.run.goto_error(nil, false)
+  textadept.run.goto_error(false)
   assert_equal(buffer.filename, compile_file)
   if #_VIEWS > 1 then view:unsplit() end
   buffer:close() -- compile_file
   buffer:close() -- run_file
-  assert_raises(function() textadept.run.goto_error(true) end, 'number/nil expected, got boolean')
   buffer:close() -- message buffer
 
   assert_raises(function() textadept.run.compile({}) end, 'string/nil expected, got table')
