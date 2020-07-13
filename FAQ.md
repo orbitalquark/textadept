@@ -113,7 +113,7 @@ The curses version does not support feature _x_ the GUI version does. Is this a
 bug?
 
 **A:**
-Maybe. Some terminals do not recognize certain key commands like `Shift+Arrow`
+Maybe. Some terminals do not recognize certain key sequences like `Shift+Arrow`
 for making selections. Linux's virtual terminals (the ones accessible with
 `Ctrl+Alt+FunctionKey`) are an example. GNOME Terminal, LXTerminal and XTerm
 seem to work fine. rxvt and rxvt-unicode do not work out of the box, but may be

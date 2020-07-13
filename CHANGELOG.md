@@ -3427,7 +3427,7 @@ Bugfixes:
 Changes:
 
 * Added `make install` and `make uninstall` rules for optional installation.
-* Updated manual with ncurses key commands.
+* Updated manual with ncurses key bindings.
 * Consolidated `_M.textadept.bookmarks.add()` and
   `_M.textadept.bookmarks.remove()` into [`_M.textadept.bookmarks.toggle()`][].
 * Updated manual images.
@@ -4015,11 +4015,11 @@ Changes:
   + Added [`view.buffer`][] field.
   + Renamed `gui.check_focused_buffer()` to `buffer:check_global()`.
   + [`view:goto_buffer()`][] and [`gui.goto_view()`] arguments make sense now.
-    (May require changes to custom key commands.)
+    (May require changes to custom key bindings.)
 * Directory is remembered in file chooser dialog after open or save as.
 * Added language-specific [context menu][] support.
 * Use [LuaCoco][] patch for Lua 5.1.4.
-* Use lexer at the caret for key commands and snippets.
+* Use lexer at the caret for key bindings and snippets.
 * Added `selected` and `monospaced-font` options for dropdown and textbox
   dialogs, respectively.
 * Updated to [Scintilla][] 2.29.
@@ -4072,7 +4072,7 @@ Bugfixes:
 Changes:
 
 * Added Russian translation.
-* Changed some key commands from 4.0 beta 2.
+* Changed some key bindings from 4.0 beta 2.
 * Do not hide the statusbar when the command entry has focus.
 
 [3 to 4 migration guide]: manual.html#Textadept.3.to.4
@@ -4166,7 +4166,7 @@ Changes:
   [`_m.textadept.editing.STRIP_WHITESPACE_ON_SAVE`][].
 * Renamed `_m.textadept.editing.select_scope()` to
   `_m.textadept.editing.select_style()`.
-* *Completely new set of key commands.*
+* *Completely new set of key bindings.*
 * Scintilla: translucent RGBA images can be used in margins and autocompletion
   and user lists.
 * Scintilla: added new `buffer.INDIC_DOTBOX` indicator.
@@ -4390,7 +4390,7 @@ Changes:
   patterns.
 * `Ctrl+T, V` (`Apple+T, V` on Mac OSX) keychain for toggling whitespace, wrap,
   etc. is now `Ctrl+Shift+B` (`Apple+Shift+B`).
-* Key commands and menu definition syntax changed.
+* Key bindings and menu definition syntax changed.
 * Snapopen allows for multiple-selection.
 * [`gui.print()`][] handles `nil` and non-string arguments properly.
 * Officially supported modules have their own [repositories][] and are available
@@ -5055,7 +5055,7 @@ Changes:
 * Added Dot and JSON lexers.
 * Search [`_USERHOME`][] in addition to [`_HOME`][] for themes.
 * Added command line switch for not loading/saving session.
-* Modified key commands to be more key-layout agnostic.
+* Modified key bindings to be more key-layout agnostic.
 * Added `reset_before` and `reset_after` events while `textadept.reset()` is
   being run.
 * Reload current lexer module after `textadept.reset()`.
@@ -5110,7 +5110,7 @@ Bugfixes:
 Changes:
 
 * Refactored `modules/textadept/lsnippets.lua`.
-* Updated key commands.
+* Updated key bindings.
 * Allow PM modules in the `~/.textadept` user directory.
 * Added [`style_whitespace`][] to [lexers][] for custom styles.
 * Added standard `F3` key command for "Find Next" for Windows/Linux.
@@ -5254,7 +5254,7 @@ Bugfixes:
 
 Updates:
 
-* Added key commands and menu items to navigate "Find in Files" list.
+* Added key bindings and menu items to navigate "Find in Files" list.
 * The `recent_files` popup list behaves better.
 * Attempt to preserve existing EOL mode for opened files.
 * Add drag-and-dropped directories to the PM browser list.
@@ -5546,7 +5546,7 @@ Bugfixes:
 
 Updates:
 
-* Added user-friendly key commands and menus.
+* Added user-friendly key bindings and menus.
 * Added 43 more lexers.
 * Moved block-comment commands from language modules to `textadept.editing`
   module.

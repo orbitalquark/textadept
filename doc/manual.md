@@ -58,7 +58,7 @@ beginning, the editor's features came later. Most of Textadept's internals use
 Lua, from syntax highlighting to opening and saving files to searching and
 replacing and more. Textadept gives you complete control over the entire
 application using Lua. Everything from moving the caret to changing menus and
-key commands on-the-fly to handling core events is possible. Its potential is
+key bindings on-the-fly to handling core events is possible. Its potential is
 vast.
 
 ![Split Views](images/splitviews.png)
