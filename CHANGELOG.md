@@ -448,7 +448,7 @@ Changes:
 
 * Added optional position argument to
   [`textadept.editing.show_documentation()`][].
-* [`textadept.editing.highlight_word()`][] does not select the word by default
+* `textadept.editing.highlight_word()` does not select the word by default
   anymore.
 * Changed [file filter][] format to be more flat and intuitive.
 * Added `-l` and `--line` command line switches to jump to a buffer line.
@@ -466,7 +466,6 @@ Changes:
 [PGP -- 10.3 beta Modules]: download/textadept_10.3_beta.modules.zip.asc
 [`os.spawn()`]: api.html#os.spawn
 [`textadept.editing.show_documentation()`]: api.html#textadept.editing.show_documentation
-[`textadept.editing.highlight_word()`]: api.html#textadept.editing.highlight_word
 [PDCurses]: https://pdcurses.sourceforge.io/
 
 ## 10.2 (01 Nov 2018)

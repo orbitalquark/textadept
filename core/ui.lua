@@ -33,9 +33,17 @@ local ui = ui
 --   with a group of [`ui.print()`]() and [`ui._print()`]() function calls.
 --   The default value is `false`, and focuses buffers when messages are printed
 --   to them.
+-- @field highlight_words (bool)
+--   Whether or not to automatically highlight all instances of the selected
+--   word.
+--   The default value is `true` except in the terminal version.
+-- @field INDIC_HIGHLIGHT (number)
+--   The word highlight indicator number.
 module('ui')]]
 
 ui.silent_print = false
+ui.highlight_words = not CURSES
+ui.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 -- Helper function for printing messages to buffers.
 -- @see ui._print
@@ -179,10 +187,12 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
   end
 end})
 
+local events, events_connect = events, events.connect
+
 local buffers_zorder = {}
 
 -- Adds new buffers to the z-order list.
-events.connect(events.BUFFER_NEW, function()
+events_connect(events.BUFFER_NEW, function()
   if buffer ~= ui.command_entry then table.insert(buffers_zorder, 1, buffer) end
 end)
 
@@ -198,13 +208,13 @@ local function update_zorder()
   end
   table.insert(buffers_zorder, 1, buffer)
 end
-events.connect(events.BUFFER_AFTER_SWITCH, update_zorder)
-events.connect(events.VIEW_AFTER_SWITCH, update_zorder)
+events_connect(events.BUFFER_AFTER_SWITCH, update_zorder)
+events_connect(events.VIEW_AFTER_SWITCH, update_zorder)
 
 -- Saves and restores buffer zorder data during a reset.
-events.connect(
+events_connect(
   events.RESET_BEFORE, function(persist) persist.ui_zorder = buffers_zorder end)
-events.connect(
+events_connect(
   events.RESET_AFTER, function(persist) buffers_zorder = persist.ui_zorder end)
 
 ---
@@ -281,7 +291,31 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
   io.open_file(filename)
 end
 
-local events, events_connect = events, events.connect
+-- Clears highlighted word indicators.
+local function clear_highlighted_words()
+  buffer.indicator_current = ui.INDIC_HIGHLIGHT
+  buffer:indicator_clear_range(1, buffer.length)
+end
+events_connect(events.KEYPRESS, function(code)
+  if keys.KEYSYMS[code] == 'esc' then clear_highlighted_words() end
+end, 1)
+
+-- Highlight all instances of the selected word.
+events_connect(events.UPDATE_UI, function(updated)
+  if updated and updated & buffer.UPDATE_SELECTION > 0 and
+     ui.highlight_words and not buffer.selection_empty and
+     buffer:is_range_word(buffer.selection_start, buffer.selection_end) then
+    clear_highlighted_words()
+    local word = buffer:text_range(buffer.selection_start, buffer.selection_end)
+    buffer.search_flags = buffer.FIND_MATCHCASE | buffer.FIND_WHOLEWORD
+    buffer:target_whole_document()
+    while buffer:search_in_target(word) ~= -1 do
+      buffer:indicator_fill_range(
+        buffer.target_start, buffer.target_end - buffer.target_start)
+      buffer:set_target_range(buffer.target_end, buffer.length + 1)
+    end
+  end
+end)
 
 -- Ensure title, statusbar, etc. are updated for new views.
 events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI, 3) end)

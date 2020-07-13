@@ -17,15 +17,12 @@ local M = {}
 --   The default value is `false`.
 -- @field INDIC_BRACEMATCH (number)
 --   The matching brace highlight indicator number.
--- @field INDIC_HIGHLIGHT (number)
---   The word highlight indicator number.
 module('textadept.editing')]]
 
 M.auto_indent = true
 M.strip_trailing_spaces = false
 M.autocomplete_all_words = false
 M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
-M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 ---
 -- Map of image names to registered image numbers.
@@ -536,41 +533,6 @@ function M.convert_indentation()
     end
   end
   buffer:end_undo_action()
-end
-
--- Clears highlighted word indicators and markers.
-local function clear_highlighted_words()
-  buffer.indicator_current = M.INDIC_HIGHLIGHT
-  buffer:indicator_clear_range(1, buffer.length)
-end
-events.connect(events.KEYPRESS, function(code)
-  if keys.KEYSYMS[code] == 'esc' then clear_highlighted_words() end
-end, 1)
-
----
--- Highlights all occurrences of the selected text or all occurrences of the
--- current word.
--- @see buffer.word_chars
--- @name highlight_word
-function M.highlight_word()
-  clear_highlighted_words()
-  local buffer = buffer
-  local s, e = buffer.selection_start, buffer.selection_end
-  if s == e then
-    s = buffer:word_start_position(s, true)
-    e = buffer:word_end_position(s, true)
-  end
-  if s == e then return end
-  local word = buffer:text_range(s, e)
-  local flags = buffer.FIND_MATCHCASE
-  if buffer:is_range_word(s, e) then flags = flags | buffer.FIND_WHOLEWORD end
-  buffer.search_flags = flags
-  buffer:target_whole_document()
-  while buffer:search_in_target(word) ~= -1 do
-    buffer:indicator_fill_range(
-      buffer.target_start, buffer.target_end - buffer.target_start)
-    buffer:set_target_range(buffer.target_end, buffer.length + 1)
-  end
 end
 
 ---

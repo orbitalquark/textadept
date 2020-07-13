@@ -38,7 +38,6 @@ local M = {}
 -- Ctrl+A                  |⌘A       |M-A           |Select all
 -- Ctrl+M                  |^M       |M-M           |Match brace
 -- Ctrl+Enter              |^Esc     |M-Enter^(‡)   |Complete word
--- Ctrl+Alt+Shift+H        |⌘⇧H      |None          |Highlight word
 -- Ctrl+/                  |^/       |M-/           |Toggle block comment
 -- Ctrl+T                  |^T       |^T            |Transpose characters
 -- Ctrl+Shift+J            |^J       |M-J           |Join lines
@@ -222,7 +221,7 @@ module('textadept.keys')]]
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:       C         H I            p  Q     T ~ V     Y  _   ) ] }   +
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
--- ca: aAbBcCdD   F      jJkKlLmM N    qQ    t       xXy zZ_"'()[]{}<>*  /   \s
+-- ca: aAbBcCdD   F   H  jJkKlLmM N    qQ    t       xXy zZ_"'()[]{}<>*  /   \s
 --
 -- c = 'ctrl' (Control ^)
 -- a = 'alt' (Alt)
@@ -233,7 +232,7 @@ module('textadept.keys')]]
 -- Mac OSX key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- m:       C        ~  I JkK  ~M    p  ~    tT   V    yY  _   ) ] }   +   ~~\n
+-- m:       C        ~H I JkK  ~M    p  ~    tT   V    yY  _   ) ] }   +   ~~\n
 -- c:      cC D    gG H   J K L    oO  qQ            xXyYzZ_   ) ] }  *  /
 -- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  p q~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
@@ -313,7 +312,6 @@ local bindings = {
   [m_edit[_L['Match Brace']][2]] = {'ctrl+m', 'ctrl+m', 'meta+m'},
   [m_edit[_L['Complete Word']][2]] =
     {'ctrl+\n', 'ctrl+esc', {'ctrl+meta+j', 'ctrl+\n'}},
-  [textadept.editing.highlight_word] = {'ctrl+alt+H', 'cmd+H', nil},
   [textadept.editing.block_comment] = {'ctrl+/', 'ctrl+/', 'meta+/'},
   [textadept.editing.transpose_chars] = {'ctrl+t', 'ctrl+t', 'ctrl+t'},
   [textadept.editing.join_lines] = {'ctrl+J', 'ctrl+j', 'meta+j'},
