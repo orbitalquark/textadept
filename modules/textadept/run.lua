@@ -355,14 +355,16 @@ local function is_msg_buf(buf) return buf._type == _L['[Message Buffer]'] end
 -- If *line_num* is `nil`, jumps to the next or previous warning or error,
 -- depending on boolean *next*. Displays an annotation with the warning or error
 -- message if possible.
--- @param line_num The line number in the message buffer that contains the
---   compile/run warning or error to go to.
+-- @param line_num Optional line number in the message buffer that contains the
+--   compile/run warning or error to go to. This parameter may be omitted
+--   completely.
 -- @param next Optional flag indicating whether to go to the next recognized
 --   warning/error or the previous one. Only applicable when *line_num* is
 --   `nil`.
 -- @see error_patterns
 -- @name goto_error
 function M.goto_error(line_num, next)
+  if type(line_num) == 'boolean' then line_num, next = nil, line_num end
   local msg_view, msg_buf = nil, nil
   for i = 1, #_VIEWS do
     if is_msg_buf(_VIEWS[i].buffer) then msg_view = _VIEWS[i] break end
