@@ -1753,7 +1753,7 @@ function test_editing_convert_indentation()
   buffer:close(true)
 end
 
-function test_editing_highlight_word()
+function test_ui_highlight_word()
   buffer.new()
   buffer:append_text(table.concat({
     'foo',
@@ -1763,18 +1763,33 @@ function test_editing_highlight_word()
     'fooquux',
     'foo'
   }, '\n'))
-  textadept.editing.highlight_word()
+  textadept.editing.select_word()
+  ui.update()
   local indics = {
     buffer:position_from_line(LINE(1)),
     buffer:position_from_line(LINE(3)) + 4,
     buffer:position_from_line(LINE(4)) + 4,
     buffer:position_from_line(LINE(6))
   }
-  local bit = 1 << textadept.editing.INDIC_HIGHLIGHT - 1
+  local bit = 1 << ui.INDIC_HIGHLIGHT - 1
   for _, pos in ipairs(indics) do
     local mask = buffer:indicator_all_on_for(pos)
     assert(mask & bit > 0, 'no indicator on line %d', buffer:line_from_position(pos))
   end
+  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  local pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 1)
+  assert_equal(pos, 1) -- highlights cleared
+  -- Verify turning off word highlighting.
+  ui.highlight_words = false
+  textadept.editing.select_word()
+  ui.update()
+  pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
+  assert_equal(pos, 1) -- no highlights
+  ui.highlight_words = true -- reset
+  -- Verify partial word selections do not highlight words.
+  buffer:set_sel(1, 3)
+  pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
+  assert_equal(pos, 1) -- no highlights
   buffer:close(true)
 end
 
@@ -1999,6 +2014,53 @@ function test_ui_find_find_text()
   buffer:close(true)
 end
 
+function test_ui_find_highlight_results()
+  local function assert_indics(indics)
+    local bit = 1 << ui.INDIC_HIGHLIGHT - 1
+    for _, pos in ipairs(indics) do
+      local mask = buffer:indicator_all_on_for(pos)
+      assert(mask & bit > 0, 'no indicator on line %d', buffer:line_from_position(pos))
+    end
+  end
+
+  buffer.new()
+  buffer:append_text(table.concat({
+    'foo',
+    'foobar',
+    'bar foo',
+    'baz foo bar',
+    'fooquux',
+    'foo'
+  }, '\n'))
+  -- Normal search.
+  ui.find.find_entry_text = 'foo'
+  ui.find.find_next()
+  assert_indics{
+    buffer:position_from_line(LINE(1)),
+    buffer:position_from_line(LINE(3)) + 4,
+    buffer:position_from_line(LINE(4)) + 4,
+    buffer:position_from_line(LINE(6))
+  }
+  -- Regex search.
+  ui.find.find_entry_text = 'ba.'
+  ui.find.regex = true
+  ui.find.find_next()
+  assert_indics{
+    buffer:position_from_line(LINE(2)) + 3,
+    buffer:position_from_line(LINE(3)),
+    buffer:position_from_line(LINE(4)),
+    buffer:position_from_line(LINE(4)) + 8,
+  }
+  ui.find.regex = false -- reset
+  -- Do not highlight short searches (potential performance issue).
+  ui.find.find_entry_text = 'f'
+  ui.find.find_next()
+  local pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
+  assert_equal(pos, 1)
+  ui.find.find_entry_text = '' -- reset
+  buffer:close(true)
+end
+
 function test_ui_find_incremental()
   if not rawget(ui.find.find_incremental_keys, '\n') then
     -- Overwritten in _USERHOME.
@@ -2050,6 +2112,36 @@ function test_ui_find_incremental()
   buffer:close(true)
 
   assert_raises(function() ui.find.find_incremental(1) end, 'string/nil expected, got number')
+end
+
+function test_ui_find_incremental_highlight()
+  buffer.new()
+  buffer:set_text(table.concat({
+    ' foo',
+    'foobar',
+    'FOObaz',
+    'FOOquux'
+  }, '\n'))
+  ui.find.find_incremental()
+  events.emit(events.KEYPRESS, string.byte('f'))
+  ui.command_entry:add_text('f') -- simulate keypress
+  local pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
+  assert_equal(pos, 1) -- too short
+  events.emit(events.KEYPRESS, string.byte('o'))
+  ui.command_entry:add_text('o') -- simulate keypress
+  local indics = {
+    buffer:position_from_line(LINE(1)) + 1,
+    buffer:position_from_line(LINE(2)),
+    buffer:position_from_line(LINE(3)),
+    buffer:position_from_line(LINE(4))
+  }
+  local bit = 1 << ui.INDIC_HIGHLIGHT - 1
+  for _, pos in ipairs(indics) do
+    local mask = buffer:indicator_all_on_for(pos)
+    assert(mask & bit > 0, 'no indicator on line %d', buffer:line_from_position(pos))
+  end
+  ui.find.find_entry_text = '' -- reset
+  buffer:close(true)
 end
 
 function test_ui_find_find_in_files()

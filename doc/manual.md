@@ -768,9 +768,8 @@ point on the current line.
 
 ### Word Highlight
 
-In order to highlight all occurrences of a given word, such as a variable name,
-place the caret over the word and press `Ctrl+Alt+Shift+H` (`⌘⇧H` on Mac OSX |
-N/A in curses). This feature also works for plain text.
+All occurrences of the selected word, such as a variable name, are automatically
+highlighted. This also works with Find results in the current buffer.
 
 ![Word Highlight](images/wordhighlight.png)
 
@@ -1018,11 +1017,13 @@ curses) or by reading the [buffer API documentation][].
 Many of Textadept's default modules come with configurable settings that can be
 changed from your *~/.textadept/init.lua* (which is executed after those modules
 are loaded). Each module's [API documentation][] lists any configurable settings
-it has. For example, in order to always hide the tab bar, disable character
-autopairing with typeover, strip trailing whitespace on save, and use C99-style
-line comments in C code, add the following to *~/.textadept/init.lua*:
+it has. For example, in order to always hide the tab bar, stop automatically
+highlighting all instances of selected words, disable character autopairing with
+typeover, strip trailing whitespace on save, and use C99-style line comments in
+C code, add the following to *~/.textadept/init.lua*:
 
     ui.tabs = false
+    ui.highlight_words = false
     textadept.editing.auto_pairs = nil
     textadept.editing.typeover_chars = nil
     textadept.editing.strip_trailing_spaces = true
@@ -2037,6 +2038,9 @@ N/A                        |Added   |[styles][]
 dir\_foreach()             |Replaced|for filename in [`lfs.walk()`][] do ... end
 **textadept.bookmarks**    |        |
 toggle(line, on)           |Changed |[toggle()][]
+**textadept.editing**      |        |
+highlight_word()           |Replaced|[ui.highlight_words][]
+INDIC\_HIGHLIGHT           |Replaced|[ui.INDIC_HIGHLIGHT][]
 **textadept.file_types**   |        |
 lexers                     |Removed |N/A<sup>a</sup>
 **textadept.snippets**     |        |
@@ -2072,6 +2076,8 @@ section below.
 [styles]: api.html#lexer.styles
 [`lfs.walk()`]: api.html#lfs.walk
 [toggle()]: api.html#textadept.bookmarks.toggle
+[ui.highlight_words]: api.html#ui.highlight_words
+[ui.INDIC_HIGHLIGHT]: api.html#ui.INDIC_HIGHLIGHT
 [insert()]: api.html#textadept.snippets.insert
 [previous()]: api.html#textadept.snippets.previous
 [cancel_current()]: api.html#textadept.snippets.cancel_current

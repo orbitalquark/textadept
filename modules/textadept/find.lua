@@ -124,6 +124,19 @@ local function find(text, next, flags, no_wrap, wrapped)
   if flags >= 1 << 31 then M.find_in_files() return end -- not performed here
   local first_visible_line = view.first_visible_line -- for 'no results found'
 
+  -- Highlight all occurrences first, otherwise regex tags will be overwritten.
+  buffer.indicator_current = ui.INDIC_HIGHLIGHT
+  buffer:indicator_clear_range(1, buffer.length)
+  if ui.highlight_words and #text > 1 then
+    buffer.search_flags = flags
+    buffer:target_whole_document()
+    while buffer:search_in_target(text) ~= -1 do
+      buffer:indicator_fill_range(
+        buffer.target_start, buffer.target_end - buffer.target_start)
+      buffer:set_target_range(buffer.target_end, buffer.length + 1)
+    end
+  end
+
   -- If text is selected, assume it is from the current search and move the
   -- caret appropriately for the next search.
   buffer:goto_pos(next and buffer.selection_end or buffer.selection_start)

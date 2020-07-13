@@ -97,7 +97,6 @@ local default_menubar = {
     {_L['Complete Word'], function()
       textadept.editing.autocomplete('word')
     end},
-    {_L['Highlight Word'], textadept.editing.highlight_word},
     {_L['Toggle Block Comment'], textadept.editing.block_comment},
     {_L['Transpose Characters'], textadept.editing.transpose_chars},
     {_L['Join Lines'], textadept.editing.join_lines},
