@@ -3097,6 +3097,9 @@ function test_set_lexer_style()
   assert(view.style_fore[style] ~= default_fore, 'function name style_fore same as default style_fore')
   view.style_fore[style] = view.style_fore[view.STYLE_DEFAULT]
   assert_equal(view.style_fore[style], default_fore)
+  assert(lexer.colors.orange > 0 and lexer.colors.orange ~= default_fore)
+  lexer.styles['function'] = {fore = lexer.colors.orange}
+  assert_equal(view.style_fore[style], lexer.colors.orange)
   buffer:close(true)
   -- Defined in Lua lexer, which is not currently loaded.
   assert(buffer:style_of_name('library'), view.STYLE_DEFAULT)
