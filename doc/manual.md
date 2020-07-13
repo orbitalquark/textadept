@@ -769,7 +769,8 @@ point on the current line.
 ### Word Highlight
 
 All occurrences of the selected word, such as a variable name, are automatically
-highlighted. This also works with Find results in the current buffer.
+highlighted. This also works with Find results in the current buffer. Pressing
+`Esc` clears highlighting.
 
 ![Word Highlight](images/wordhighlight.png)
 
