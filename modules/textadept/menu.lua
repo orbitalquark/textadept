@@ -414,7 +414,7 @@ local function get_gdk_key(key_seq)
 end
 
 -- Creates a menu suitable for `ui.menu()` from the menu table format.
--- Also assigns key commands.
+-- Also assigns key bindings.
 -- @param menu The menu to create a GTK menu from.
 -- @param contextmenu Flag indicating whether or not the menu is a context menu.
 --   If so, menu_id offset is 1000. The default value is `false`.

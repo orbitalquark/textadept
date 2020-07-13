@@ -346,7 +346,7 @@ end, 1)
 -- Sets default properties for a Scintilla window.
 events.connect(events.VIEW_NEW, function()
   local buffer, view = _G.buffer, _G.view
-  -- Allow redefinitions of these Scintilla key commands.
+  -- Allow redefinitions of these Scintilla key bindings.
   local ctrl_keys = {
     '[', ']', '/', '\\', 'Z', 'Y', 'X', 'C', 'V', 'A', 'L', 'T', 'D', 'U'
   }
