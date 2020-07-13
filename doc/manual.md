@@ -1535,8 +1535,6 @@ contains the generated API documentation HTML files.
 Textadept contains its own copy of [Lua 5.3][] which has the same configuration
 (*luaconf.h*) as vanilla Lua with the following exceptions:
 
-* `TA_LUA_PATH` and `TA_LUA_CPATH` replace the `LUA_PATH` and `LUA_CPATH`
-  environment variables.
 * `LUA_ROOT` is "/usr/" in Linux systems instead of "/usr/local/".
 * `LUA_PATH` and `LUA_CPATH` do not have "./?.lua" and "./?.so" in them.
 * No compatibility flags are set for previous versions.
