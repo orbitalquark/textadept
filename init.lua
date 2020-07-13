@@ -337,6 +337,7 @@ events.connect(events.BUFFER_NEW, function()
   buffer:private_lexer_call(LOADLEXERLIBRARY, _HOME .. '/lexers')
   load_settings()
   buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
+  if not _G.lexer then _G.lexer = require('lexer') end
   if buffer == ui.command_entry then
     ui.command_entry.caret_line_visible = false
   end
