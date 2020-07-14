@@ -304,7 +304,8 @@ end, 1)
 events_connect(events.UPDATE_UI, function(updated)
   if updated and updated & buffer.UPDATE_SELECTION > 0 and
      ui.highlight_words and not buffer.selection_empty and
-     buffer:is_range_word(buffer.selection_start, buffer.selection_end) then
+     buffer:is_range_word(buffer.selection_start, buffer.selection_end) and
+     buffer:get_sel_text():find('^%S+$') then
     clear_highlighted_words()
     local word = buffer:text_range(buffer.selection_start, buffer.selection_end)
     buffer.search_flags = buffer.FIND_MATCHCASE | buffer.FIND_WHOLEWORD
