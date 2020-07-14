@@ -1491,10 +1491,10 @@ function test_editing_paste_reindent_tabs_to_spaces()
 end
 expected_failure(test_editing_paste_reindent_tabs_to_spaces)
 
-function test_editing_block_comment_lines()
+function test_editing_toggle_comment_lines()
   buffer.new()
   buffer:add_text('foo')
-  textadept.editing.block_comment()
+  textadept.editing.toggle_comment()
   assert_equal(buffer:get_text(), 'foo')
   buffer:set_lexer('lua')
   local text = table.concat({
@@ -1505,7 +1505,7 @@ function test_editing_block_comment_lines()
   }, '\n')
   buffer:set_text(text)
   buffer:goto_pos(buffer:position_from_line(LINE(2)))
-  textadept.editing.block_comment()
+  textadept.editing.toggle_comment()
   assert_equal(buffer:get_text(), table.concat({
     '',
     '--local foo = "bar"',
@@ -1513,12 +1513,12 @@ function test_editing_block_comment_lines()
     ''
   }, '\n'))
   assert_equal(buffer.current_pos, buffer:position_from_line(LINE(2)) + 2)
-  textadept.editing.block_comment() -- uncomment
+  textadept.editing.toggle_comment() -- uncomment
   assert_equal(buffer:get_line(LINE(2)), 'local foo = "bar"\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(LINE(2)))
   local offset = 5
   buffer:set_sel(buffer:position_from_line(LINE(2)) + offset, buffer:position_from_line(LINE(4)) - offset)
-  textadept.editing.block_comment()
+  textadept.editing.toggle_comment()
   assert_equal(buffer:get_text(), table.concat({
     '',
     '--local foo = "bar"',
@@ -1527,7 +1527,7 @@ function test_editing_block_comment_lines()
   }, '\n'))
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)) + offset + 2)
   assert_equal(buffer.selection_end, buffer:position_from_line(LINE(4)) - offset)
-  textadept.editing.block_comment() -- uncomment
+  textadept.editing.toggle_comment() -- uncomment
   assert_equal(buffer:get_text(), table.concat({
     '',
     'local foo = "bar"',
@@ -1542,7 +1542,7 @@ function test_editing_block_comment_lines()
   buffer:close(true)
 end
 
-function test_editing_block_comment()
+function test_editing_toggle_comment()
   buffer.new()
   buffer:set_lexer('ansi_c')
   buffer:set_text(table.concat({
@@ -1552,7 +1552,7 @@ function test_editing_block_comment()
     ''
   }, '\n'))
   buffer:set_sel(buffer:position_from_line(LINE(2)), buffer:position_from_line(LINE(4)))
-  textadept.editing.block_comment()
+  textadept.editing.toggle_comment()
   assert_equal(buffer:get_text(), table.concat({
     '',
     '  /*const char *foo = "bar";*/',
@@ -1561,7 +1561,7 @@ function test_editing_block_comment()
   }, '\n'))
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)) + 2)
   assert_equal(buffer.selection_end, buffer:position_from_line(LINE(4)))
-  textadept.editing.block_comment() -- uncomment
+  textadept.editing.toggle_comment() -- uncomment
   assert_equal(buffer:get_text(), table.concat({
     '',
     '  const char *foo = "bar";',
