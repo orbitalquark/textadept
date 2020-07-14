@@ -57,12 +57,12 @@ for _ = 1, #M.XPM_IMAGES do _SCINTILLA.next_image_type() end -- sync
 
 ---
 -- Map of lexer names to line comment strings for programming languages, used by
--- the `block_comment()` function.
+-- the `toggle_comment()` function.
 -- Keys are lexer names and values are either the language's line comment
 -- prefixes or block comment delimiters separated by a '|' character.
 -- @class table
 -- @name comment_string
--- @see block_comment
+-- @see toggle_comment
 M.comment_string = {actionscript='//',ada='--',apdl='!',ansi_c='/*|*/',antlr='//',apl='#',applescript='--',asp='\'',autoit=';',awk='#',b_lang='//',bash='#',batch=':',bibtex='%',boo='#',chuck='//',cmake='#',coffeescript='#',context='%',cpp='//',crystal='#',csharp='//',css='/*|*/',cuda='//',desktop='#',django='{#|#}',dmd='//',dockerfile='#',dot='//',eiffel='--',elixir='#',erlang='%',faust='//',fennel=';',fish='#',forth='|\\',fortran='!',fsharp='//',gap='#',gettext='#',gherkin='#',glsl='//',gnuplot='#',go='//',groovy='//',gtkrc='#',haskell='--',html='<!--|-->',icon='#',idl='//',inform='!',ini='#',Io='#',java='//',javascript='//',json='/*|*/',jsp='//',latex='%',ledger='#',less='//',lilypond='%',lisp=';',logtalk='%',lua='--',makefile='#',matlab='#',moonscript='--',myrddin='//',nemerle='//',nim='#',nsis='#',objective_c='//',pascal='//',perl='#',php='//',pico8='//',pike='//',pkgbuild='#',prolog='%',props='#',protobuf='//',ps='%',pure='//',python='#',rails='#',rc='#',rebol=';',rest='.. ',rexx='--',rhtml='<!--|-->',rstats='#',ruby='#',rust='//',sass='//',scala='//',scheme=';',smalltalk='"|"',sml='(*)',snobol4='#',sql='--',tcl='#',tex='%',text='',toml='#',vala='//',vb='\'',vbscript='\'',verilog='//',vhdl='--',wsf='<!--|-->',xml='<!--|-->',yaml='#'}
 
 ---
@@ -305,8 +305,8 @@ end
 -- As long as any part of a line is selected, the entire line is eligible for
 -- commenting/uncommenting.
 -- @see comment_string
--- @name block_comment
-function M.block_comment()
+-- @name toggle_comment
+function M.toggle_comment()
   local comment = M.comment_string[buffer:get_lexer(true)] or ''
   local prefix, suffix = comment:match('^([^|]+)|?([^|]*)$')
   if not prefix then return end

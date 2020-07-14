@@ -312,7 +312,7 @@ local bindings = {
   [m_edit[_L['Match Brace']][2]] = {'ctrl+m', 'ctrl+m', 'meta+m'},
   [m_edit[_L['Complete Word']][2]] =
     {'ctrl+\n', 'ctrl+esc', {'ctrl+meta+j', 'ctrl+\n'}},
-  [textadept.editing.block_comment] = {'ctrl+/', 'ctrl+/', 'meta+/'},
+  [textadept.editing.toggle_comment] = {'ctrl+/', 'ctrl+/', 'meta+/'},
   [textadept.editing.transpose_chars] = {'ctrl+t', 'ctrl+t', 'ctrl+t'},
   [textadept.editing.join_lines] = {'ctrl+J', 'ctrl+j', 'meta+j'},
   [m_edit[_L['Filter Through']][2]] = {'ctrl+|', 'cmd+|', 'ctrl+\\'},

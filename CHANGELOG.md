@@ -2880,7 +2880,7 @@ Changes:
 * Renamed Adeptsense image fields.
 * Renamed `_M.textadept.editing.STRIP_WHITESPACE_ON_SAVE` to
   `STRIP_TRAILING_SPACES`.
-* [`_M.textadept.editing.block_comment()`][] supports block comment delimiters.
+* `_M.textadept.editing.block_comment()` supports block comment delimiters.
 * Block comments for languages is now built-in. The supplemental ones on the
   wiki are no longer needed.
 * `gui.set_theme()` accepts key-value argument pairs for overriding theme
@@ -2903,7 +2903,6 @@ Changes:
 [PGP -- 7.0 alpha 2 Linux x86_64]: download/textadept_7.0_alpha_2.x86_64.tgz.asc
 [PGP -- 7.0 alpha 2 Modules]: download/textadept_7.0_alpha_2.modules.zip.asc
 [compiling]: manual.html#Compiling
-[`_M.textadept.editing.block_comment()`]: api.html#textadept.editing.block_comment
 [`_M.textadept.bookmarks.goto_mark()`]: api.html#textadept.bookmarks.goto_mark
 [LuaJIT]: http://luajit.org
 [nightly builds]: README.html#Download

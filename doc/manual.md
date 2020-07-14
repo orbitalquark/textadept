@@ -2036,10 +2036,11 @@ N/A                        |Added   |[number][]
 N/A                        |Added   |[colors][]
 N/A                        |Added   |[styles][]
 **lfs**                    |        |
-dir\_foreach()             |Replaced|for filename in [`lfs.walk()`][] do ... end
+dir\_foreach()             |Replaced|for filename in [lfs.walk()][] do ... end
 **textadept.bookmarks**    |        |
 toggle(line, on)           |Changed |[toggle()][]
 **textadept.editing**      |        |
+block\_comment()           |Renamed |[toggle_comment()][]
 highlight_word()           |Replaced|[ui.highlight_words][]
 INDIC\_HIGHLIGHT           |Replaced|[ui.INDIC_HIGHLIGHT][]
 **textadept.file_types**   |        |
@@ -2075,8 +2076,9 @@ section below.
 [number]: api.html#lexer.number
 [colors]: api.html#lexer.colors
 [styles]: api.html#lexer.styles
-[`lfs.walk()`]: api.html#lfs.walk
+[lfs.walk()]: api.html#lfs.walk
 [toggle()]: api.html#textadept.bookmarks.toggle
+[toggle_comment()]: api.html#textadept.editing.toggle_comment
 [ui.highlight_words]: api.html#ui.highlight_words
 [ui.INDIC_HIGHLIGHT]: api.html#ui.INDIC_HIGHLIGHT
 [insert()]: api.html#textadept.snippets.insert
