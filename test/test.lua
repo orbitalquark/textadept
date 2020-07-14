@@ -1790,6 +1790,11 @@ function test_ui_highlight_word()
   buffer:set_sel(1, 3)
   pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
   assert_equal(pos, 1) -- no highlights
+  -- Verify multi-word selections do not highlight words.
+  buffer:set_sel(buffer:position_from_line(LINE(3)), buffer.line_end_position[LINE(3)])
+  assert(buffer:is_range_word(buffer.selection_start, buffer.selection_end))
+  pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
+  assert_equal(pos, 1) -- no highlights
   buffer:close(true)
 end
 
