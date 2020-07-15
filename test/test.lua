@@ -1041,6 +1041,59 @@ if CURSES then
   -- TODO: clipboard, mouse events, etc.
 end
 
+function test_spawn_cwd()
+  assert_equal(os.spawn('pwd'):read('a'), lfs.currentdir() .. '\n')
+  assert_equal(os.spawn('pwd', '/tmp'):read('a'), '/tmp\n')
+end
+
+function test_spawn_env()
+  assert(not os.spawn('env'):read('a'):find('^%s*$'), 'empty env')
+  assert(os.spawn('env', {'FOO=bar'}):read('a'):find('FOO=bar\n'), 'env not set')
+end
+
+function test_spawn_stdin()
+  local p = os.spawn('lua -e "print(io.read())"')
+  p:write('foo\n')
+  p:close()
+  assert_equal(p:read('l'), 'foo')
+  assert_equal(p:read('a'), '')
+end
+
+function test_spawn_callbacks()
+  local exit_status = -1
+  local p = os.spawn('echo foo', ui.print, nil, function(status) exit_status = status end)
+  os.execute('sleep 0.1')
+  ui.update()
+  assert_equal(buffer._type, _L['[Message Buffer]'])
+  assert(buffer:get_text():find('^foo'), 'no spawn stdout')
+  assert_equal(exit_status, 0)
+  buffer:close(true)
+  view:unsplit()
+  -- Verify stdout is not read as stderr.
+  p = os.spawn('echo foo', nil, ui.print)
+  os.execute('sleep 0.1')
+  ui.update()
+  assert_equal(#_BUFFERS, 1)
+end
+
+function test_spawn_wait()
+  local exit_status = -1
+  local p = os.spawn('sleep 0.1', nil, nil, function(status) exit_status = status end)
+  assert_equal(p:status(), "running")
+  assert_equal(p:wait(), 0)
+  assert_equal(exit_status, 0)
+  assert_equal(p:status(), "terminated")
+  -- Verify call to wait again returns previous exit status.
+  assert_equal(p:wait(), exit_status)
+end
+
+function test_spawn_kill()
+  local p = os.spawn('sleep 1')
+  p:kill()
+  assert(p:wait() ~= 0)
+  assert_equal(p:status(), "terminated")
+end
+
 if WIN32 and CURSES then
   function test_spawn()
     -- TODO:
@@ -1754,6 +1807,8 @@ function test_editing_convert_indentation()
 end
 
 function test_ui_highlight_word()
+  local highlight = ui.highlight_words
+  ui.highlight_words = true
   buffer.new()
   buffer:append_text(table.concat({
     'foo',
@@ -1796,6 +1851,7 @@ function test_ui_highlight_word()
   pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
   assert_equal(pos, 1) -- no highlights
   buffer:close(true)
+  ui.highlight_words = highlight -- reset
 end
 
 function test_editing_filter_through()
@@ -3102,9 +3158,10 @@ function test_set_lexer_style()
   assert(view.style_fore[style] ~= default_fore, 'function name style_fore same as default style_fore')
   view.style_fore[style] = view.style_fore[view.STYLE_DEFAULT]
   assert_equal(view.style_fore[style], default_fore)
-  assert(lexer.colors.orange > 0 and lexer.colors.orange ~= default_fore)
-  lexer.styles['function'] = {fore = lexer.colors.orange}
-  assert_equal(view.style_fore[style], lexer.colors.orange)
+  local color = lexer.colors[not CURSES and 'orange' or 'blue']
+  assert(color > 0 and color ~= default_fore)
+  lexer.styles['function'] = {fore = color}
+  assert_equal(view.style_fore[style], color)
   buffer:close(true)
   -- Defined in Lua lexer, which is not currently loaded.
   assert(buffer:style_of_name('library'), view.STYLE_DEFAULT)
