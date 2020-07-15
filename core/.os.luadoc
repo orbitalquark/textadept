@@ -6,13 +6,13 @@
 module('os')
 
 ---
--- Spawns an interactive child process *argv* in a separate thread, returning
+-- Spawns an interactive child process *cmd* in a separate thread, returning
 -- a handle to that process.
--- On Windows, *argv* is passed to `cmd.exe`: `%COMSPEC% /c [argv]`.
+-- On Windows, *cmd* is passed to `cmd.exe`: `%COMSPEC% /c [cmd]`.
 -- At the moment, only the Windows terminal version spawns processes in the same
 -- thread.
--- @param argv A command line string that contains the program's name followed
---   by arguments to pass to it. `PATH` is searched for program names.
+-- @param cmd A command line string that contains the program's name followed by
+--   arguments to pass to it. `PATH` is searched for program names.
 -- @param cwd Optional current working directory (cwd) for the child
 --   process. When omitted, the parent's cwd is used.
 -- @param env Optional list of environment variables for the child process.
