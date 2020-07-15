@@ -32,7 +32,7 @@ diff -r 8a23edc91533 src/luaconf.h
  
  
 --- a/src/loslib.c	2017-04-19 13:29:57.000000000 -0400
-+++ b/src/loslib.c	2020-06-22 19:16:23.952024597 -0400
++++ b/src/loslib.c	2020-07-15 00:31:50.061476181 -0400
 @@ -4,6 +4,15 @@
  ** See Copyright Notice in lua.h
  */
@@ -69,7 +69,7 @@ diff -r 8a23edc91533 src/luaconf.h
    {"time",      os_time},
    {"tmpname",   os_tmpname},
    {NULL, NULL}
-@@ -404,6 +419,643 @@
+@@ -404,6 +419,633 @@
  
  LUAMOD_API int luaopen_os (lua_State *L) {
    luaL_newlib(L, syslib);
@@ -139,12 +139,19 @@ diff -r 8a23edc91533 src/luaconf.h
 +static int lp_status(lua_State *L) {
 +  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
 +  lua_pushstring(L, p->pid ? "running" : "terminated");
-   return 1;
- }
- 
++  return 1;
++}
++
 +/** Process exit cleanup function. */
 +static void exited(PStream *p, int status) {
 +  lua_State *L = p->L;
++  if (p->exit_cb != LUA_REFNIL) {
++    // Call exit callback function with exit status.
++    lua_rawgeti(L, LUA_REGISTRYINDEX, p->exit_cb);
++    lua_pushinteger(L, status);
++    if (lua_pcall(L, 1, 0, 0) != LUA_OK)
++      fprintf(stderr, "Lua: %s\n", lua_tostring(L, -1)), lua_pop(L, 1);
++  }
 +#if _WIN32
 +  close(p->pid);
 +#elif (!GTK || __APPLE__)
@@ -296,9 +303,9 @@ diff -r 8a23edc91533 src/luaconf.h
 +    lua_pushfstring(L, "process (pid=%d)", p->pid);
 +  else
 +    lua_pushstring(L, "process (terminated)");
-+  return 1;
-+}
-+
+   return 1;
+ }
+ 
 +#if (GTK && !__APPLE__)
 +/** __gc Lua metamethod. */
 +static int lp_gc(lua_State *L) {
@@ -352,12 +359,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +
 +/** Signal that the child process finished. */
 +static void p_exit(GPid pid, int status, void *data) {
-+  PStream *p = (PStream *)data;
-+  lua_rawgeti(p->L, LUA_REGISTRYINDEX, p->exit_cb);
-+  lua_pushinteger(p->L, status);
-+  if (lua_pcall(p->L, 1, 0, 0) != LUA_OK)
-+    fprintf(stderr, "Lua: %s\n", lua_tostring(p->L, -1)), lua_pop(p->L, 1);
-+  exited(p, status);
++  exited((PStream *)data, status);
 +}
 +#elif !_WIN32
 +/**
@@ -419,21 +421,9 @@ diff -r 8a23edc91533 src/luaconf.h
 +    int status;
 +    if (waitpid(p->pid, &status, WNOHANG) > 0) {
 +      fd_read(p->fstdout, p), fd_read(p->fstderr, p); // read anything left
-+      if (p->exit_cb != LUA_REFNIL) {
-+        lua_rawgeti(L, LUA_REGISTRYINDEX, p->exit_cb);
-+        lua_pushinteger(L, status);
-+        if (lua_pcall(L, 1, 0, 0) != LUA_OK)
-+          fprintf(stderr, "Lua: %s\n", lua_tostring(L, -1)), lua_pop(L, 1);
-+      }
-+      close(p->fstdin), close(p->fstdout), close(p->fstderr);
-+      luaL_unref(L, LUA_REGISTRYINDEX, p->stdout_cb);
-+      luaL_unref(L, LUA_REGISTRYINDEX, p->stderr_cb);
-+      luaL_unref(L, LUA_REGISTRYINDEX, p->exit_cb);
-+      luaL_unref(L, LUA_REGISTRYINDEX, p->ref); // allow proc to be collected
-+      p->pid = 0;
-+      lua_pushnil(L), lua_replace(L, -2), lua_settable(L, -3); // t[proc] = nil
-+      lua_pushnil(L); // push nil for next call to lua_next()
-+    } else lua_pop(L, 1); // value
++      exited(p, status);
++    }
++    lua_pop(L, 1); // value
 +  }
 +  lua_pop(L, 1); // spawn_procs
 +  return n;
