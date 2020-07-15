@@ -23,7 +23,7 @@ _M = {} -- language modules table
 
 -- pdcurses compatibility.
 if CURSES and WIN32 then
-  function os.spawn(argv, ...)
+  function os.spawn(cmd, ...)
     local cwd = lfs.currentdir()
     local args, i = {...}, 1
     if type(args[i]) == 'string' then
@@ -31,7 +31,7 @@ if CURSES and WIN32 then
       i = i + 1
     end
     if type(args[i]) == 'table' then i = i + 1 end -- env (ignore)
-    local p = io.popen(assert_type(argv, 'string', 1) .. ' 2>&1')
+    local p = io.popen(assert_type(cmd, 'string', 1) .. ' 2>&1')
     if type(args[i]) == 'function' then args[i](p:read('a')) end -- stdout_cb
     local status = select(3, p:close())
     if type(args[i + 2]) == 'function' then args[i + 2](status) end -- exit_cb
