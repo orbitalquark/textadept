@@ -2312,7 +2312,7 @@ Download:
 
 Bugfixes:
 
-* Fixed bug in parsing output from a cancelled dropdown dialog.
+* Fixed bug in parsing output from a canceled dropdown dialog.
 * Always use absolute file paths so sessions are saved and reloaded properly.
 * Temporarily disabled asynchronous spawning on OSX due to GLib crashes.
 
@@ -3362,7 +3362,7 @@ Download:
 
 Bugfixes:
 
-* Cancelling in [`buffer:close()`][] caused unwanted key propagation.
+* Canceling in [`buffer:close()`][] caused unwanted key propagation.
 * Correctly emit [`RUN_OUTPUT` events][].
 * Fixed bug with extra empty entry in the buffer browser.
 * Fixed incremental find in ncurses.

@@ -85,7 +85,7 @@ io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}
 
 ---
 -- Opens *filenames*, a string filename or list of filenames, or the
--- user-selected filenames.
+-- user-selected filename(s).
 -- Emits a `FILE_OPENED` event.
 -- @param filenames Optional string filename or table of filenames to open. If
 --   `nil`, the user is prompted with a fileselect dialog.
@@ -382,12 +382,13 @@ io.quick_open_filters = {}
 -- If *paths* is `nil`, uses the current project's root directory, which is
 -- obtained from `io.get_project_root()`.
 -- String or list *filter* determines which files to show in the dialog, with
--- the default filter being `lfs.default_filter`. A filter consists of Lua
--- patterns that match file and directory paths to include or exclude. Exclusive
--- patterns begin with a '!'. If no inclusive patterns are given, any path is
--- initially considered. As a convenience, file extensions can be specified
--- literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/'
--- also matches the Windows directory separator ('[/\\]' is not needed).
+-- the default filter being `io.quick_open_filters[path]` (if it exists) or
+-- `lfs.default_filter`. A filter consists of Lua patterns that match file and
+-- directory paths to include or exclude. Exclusive patterns begin with a '!'.
+-- If no inclusive patterns are given, any path is initially considered. As a
+-- convenience, file extensions can be specified literally instead of as a Lua
+-- pattern (e.g. '.lua' vs. '%.lua$'), and '/' also matches the Windows
+-- directory separator ('[/\\]' is not needed).
 -- The number of files in the list is capped at `quick_open_max`.
 -- If *filter* is `nil` and *paths* is ultimately a string, the filter from the
 -- `io.quick_open_filters` table is used in place of `lfs.default_filter` if the

@@ -176,7 +176,7 @@
 -- @field line_indentation (table)
 --   Table of column indentation amounts per line number.
 -- @field main_selection (number)
---   The number of the main, or most recent, selection.
+--   The number of the main or most recent selection.
 --   Only an existing selection can be made main.
 -- @field margin_text (table)
 --   Table of text displayed in text margins per line number.
@@ -439,8 +439,9 @@ module('buffer')
 ---
 -- Selects the range of text between positions *start_pos* to *end_pos* as the
 -- main selection, retaining all other selections as additional selections.
--- Since an empty selection still counts as a selection, use
--- `buffer.set_selection()` first when setting a list of selections.
+-- Since an empty selection (i.e. the current position) still counts as a
+-- selection, use `buffer.set_selection()` first when setting a list of
+-- selections.
 -- @param buffer A buffer.
 -- @param end_pos The caret position of the range of text to select in *buffer*.
 -- @param start_pos The anchor position of the range of text to select in
@@ -474,7 +475,7 @@ function append_text(buffer, text) end
 function auto_c_active(buffer) end
 
 ---
--- Cancels an autocompletion or user list.
+-- Cancels the displayed autocompletion or user list.
 -- @param buffer A buffer.
 function auto_c_cancel(buffer) end
 
@@ -652,11 +653,6 @@ function convert_eols(buffer, mode) end
 function copy(buffer) end
 
 ---
--- Copies the selected text or the current line to the clipboard.
--- @param buffer A buffer.
-function copy_allow_line(buffer) end
-
----
 -- Copies the range of text between positions *start_pos* and *end_pos* to the
 -- clipboard.
 -- @param buffer A buffer.
@@ -816,20 +812,6 @@ function get_last_child(buffer, line, level) end
 function get_line(buffer, line) end
 
 ---
--- Returns the position of the end of the selected text on line number *line*,
--- or `-1` if *line* has no selection.
--- @param buffer A buffer.
--- @param line The line number in *buffer* to use.
-function get_line_sel_end_position(buffer, line) end
-
----
--- Returns the position of the beginning of the selected text on line number
--- *line*, or `-1` if *line* has no selection.
--- @param buffer A buffer.
--- @param line The line number in *buffer* to use.
-function get_line_sel_start_position(buffer, line) end
-
----
 -- Returns the selected text.
 -- Multiple selections are included in order with no delimiters. Rectangular
 -- selections are included from top to bottom with end of line characters.
@@ -845,7 +827,7 @@ function get_text(buffer) end
 
 ---
 -- Moves the caret to the beginning of line number *line* and scrolls it into
--- view, regardless of whether *line* is hidden or not.
+-- view, regardless of whether or not *line* is hidden.
 -- @param buffer A buffer.
 -- @param line The line number in *buffer* to go to.
 function goto_line(buffer, line) end
@@ -1959,6 +1941,7 @@ function set_lexer(buffer, lexer) end
 --   * clear_cmd_key
 --   * clear_all_cmd_keys
 --   * clear_tab_stops
+--   * copy_allow_line
 --   * count_code_units
 --   * create_document
 --   * create_loader
@@ -1976,6 +1959,8 @@ function set_lexer(buffer, lexer) end
 --   * free_sub_styles
 --   * get_hotspot_active_back
 --   * get_hotspot_active_fore
+--   * get_line_sel_end_position
+--   * get_line_sel_start_position
 --   * get_next_tab_stop
 --   * get_range_pointer
 --   * get_styled_text

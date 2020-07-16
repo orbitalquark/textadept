@@ -46,7 +46,7 @@ local M = {}
 -- @field AUTO_C_SELECTION (string)
 --   Emitted after selecting an item from an autocompletion list, but before
 --   inserting that item into the buffer.
---   Automatic insertion can be cancelled by calling
+--   Automatic insertion can be canceled by calling
 --   [`buffer:auto_c_cancel()`]() before returning from the event handler.
 --   Arguments:
 --
@@ -71,6 +71,7 @@ local M = {}
 --   Emitted by [`buffer.delete()`]().
 -- @field BUFFER_NEW (string)
 --   Emitted after creating a new buffer.
+--   The new buffer is `buffer`.
 --   Emitted on startup and by [`buffer.new()`]().
 -- @field CALL_TIP_CLICK (string)
 --   Emitted when clicking on a calltip.
@@ -288,6 +289,7 @@ local M = {}
 --   * _`position`_: The position the list was displayed at.
 -- @field VIEW_NEW (string)
 --   Emitted after creating a new view.
+--   The new view is `view`.
 --   Emitted on startup and by [`view.split()`]().
 -- @field VIEW_BEFORE_SWITCH (string)
 --   Emitted right before switching to another view.
