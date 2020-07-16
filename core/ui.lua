@@ -249,7 +249,7 @@ end
 -- If no view was found and *split* is `true`, splits the current view in order
 -- to show the requested file. If *split* is `false`, shifts to the next or
 -- *preferred_view* view in order to show the requested file. If *sloppy* is
--- `true`, requires only the last part of *filename* to match a buffer's
+-- `true`, requires only the basename of *filename* to match a buffer's
 -- `filename`. If the requested file was not found, it is opened in the desired
 -- view.
 -- @param filename The filename of the buffer to go to.

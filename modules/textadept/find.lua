@@ -246,14 +246,16 @@ end})
 -- Use the `find_text`, `match_case`, `whole_word`, and `regex` fields to set
 -- the search text and option flags, respectively.
 -- A filter determines which files to search in, with the default filter being
--- `lfs.default_filter`. A filter consists of Lua patterns that match filenames
--- to include or exclude. Exclusive patterns begin with a '!'. If no inclusive
--- patterns are given, any filename is initially considered. As a convenience,
--- file extensions can be specified literally instead of as a Lua pattern (e.g.
--- '.lua' vs. '%.lua$'), and '/' also matches the Windows directory separator
--- ('[/\\]' is not needed).
+-- `ui.find.find_in_files_filters[dir]` (if it exists) or `lfs.default_filter`.
+-- A filter consists of Lua patterns that match filenames to include or exclude.
+-- Patterns are inclusive by default. Exclusive patterns begin with a '!'. If no
+-- inclusive patterns are given, any filename is initially considered. As a
+-- convenience, file extensions can be specified literally instead of as a Lua
+-- pattern (e.g. '.lua' vs. '%.lua$'), and '/' also matches the Windows
+-- directory separator ('[/\\]' is not needed).
 -- If *filter* is `nil`, the filter from the `ui.find.find_in_files_filters`
--- table is used. If that filter does not exist, `lfs.default_filter` is used.
+-- table for *dir* is used. If that filter does not exist, `lfs.default_filter`
+-- is used.
 -- @param dir Optional directory path to search. If `nil`, the user is prompted
 --   for one.
 -- @param filter Optional filter for files and directories to exclude. The

@@ -93,7 +93,7 @@ end)
 -- @field BSD (bool)
 --   Whether or not Textadept is running on BSD.
 -- @field CURSES (bool)
---   Whether or not Textadept is running in the terminal.
+--   Whether or not Textadept is running in a terminal.
 --   Curses feature incompatibilities are listed in the [Appendix][].
 --
 --   [Appendix]: manual.html#Curses.Compatibility

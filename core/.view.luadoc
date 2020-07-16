@@ -445,6 +445,7 @@
 --   The alternative string representations of characters.
 --   Representations are displayed in the same way control characters are. Use
 --   the empty string for the '\0' character when assigning its representation.
+--   Characters are strings, not numeric codes.
 --   Call [`view.clear_representation()`]() to remove a representation.
 -- @field rgba_image_height (number)
 --   The height of the RGBA image to be defined using
@@ -926,7 +927,7 @@
 module('view')
 
 ---
--- The [buffer](#buffer) the view contains. (Read-only)
+-- The [buffer](#buffer) the view currently contains. (Read-only)
 -- @class table
 -- @name buffer
 local buffer
@@ -975,7 +976,7 @@ function brace_highlight_indicator(view, use_indicator, indicator) end
 function call_tip_active(view) end
 
 ---
--- Removes a call tip from view.
+-- Removes the displayed call tip from view.
 -- @param view A view.
 function call_tip_cancel(view) end
 
@@ -1013,8 +1014,8 @@ function clear_registered_images(view) end
 ---
 -- Removes the alternate string representation for character *char*.
 -- @param view A view.
--- @param char The character in `buffer.representations` to remove the alternate
---   string representation for.
+-- @param char The string character in `buffer.representations` to remove the
+--   alternate string representation for.
 function clear_representation(view, char) end
 
 ---
@@ -1027,7 +1028,7 @@ function contracted_fold_next(view, line) end
 
 ---
 -- Returns the actual line number of displayed line number *display_line*,
--- taking hidden lines into account.
+-- taking wrapped, annotated, and hidden lines into account.
 -- If *display_line* is less than or equal to `1`, returns `1`. If
 -- *display_line* is greater than the number of displayed lines, returns
 -- `buffer.line_count`.
@@ -1373,7 +1374,7 @@ function toggle_fold(view, line) end
 ---
 -- Toggles a fold point on line number *line* between expanded (where all of
 -- its child lines are displayed) and contracted (where all of its child lines
--- are hidden), and shows string *text* after the line.
+-- are hidden), and shows string *text* next to that line.
 -- *text* is drawn with style number `view.STYLE_FOLDDISPLAYTEXT`.
 -- @param view A view.
 -- @param line The line number in *view* to toggle the fold on and display
@@ -1387,9 +1388,9 @@ function toggle_fold_show_text(view, line, text) end
 function vertical_center_caret(view) end
 
 ---
--- Returns the displayed line number of actual line number *line*, taking hidden
--- lines into account, or `-1` if *line* is outside the range of lines in the
--- buffer.
+-- Returns the displayed line number of actual line number *line*, taking
+-- wrapped, annotated, and hidden lines into account, or `-1` if *line* is
+-- outside the range of lines in the buffer.
 -- Lines can occupy more than one display line if they wrap.
 -- @param view A view.
 -- @param line The line number in *view* to use.
