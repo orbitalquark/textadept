@@ -163,9 +163,9 @@ function M.save(filename)
     local current = buffer == view.buffer
     session.buffers[#session.buffers + 1] = {
       filename = buffer.filename or buffer._type,
-      anchor = current and buffer.anchor or buffer._anchor,
-      current_pos = current and buffer.current_pos or buffer._current_pos,
-      top_line = current and view.first_visible_line or buffer._top_line,
+      anchor = current and buffer.anchor or buffer._anchor or 1,
+      current_pos = current and buffer.current_pos or buffer._current_pos or 1,
+      top_line = current and view.first_visible_line or buffer._top_line or 1,
     }
     local bookmarks = {}
     local BOOKMARK_BIT = 1 << textadept.bookmarks.MARK_BOOKMARK - 1
