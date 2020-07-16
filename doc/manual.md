@@ -2019,6 +2019,7 @@ edge\_colour               |Renamed |edge\_color
 set\_fold\_margin\_\*colour|Renamed |set\_fold\_margin\_\*color
 vertical\_centre\_caret    |Renamed |vertical\_center\_caret
 **events**                 |        |
+AUTO\_C\_CANCELLED         |Renamed |AUTO\_C\_CANCELED
 N/A                        |Added   |[events.SESSION_SAVE][]
 N/A                        |Added   |[events.SESSION_LOAD][]
 **io**                     |        |
