@@ -127,7 +127,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   -- Highlight all occurrences first, otherwise regex tags will be overwritten.
   buffer.indicator_current = ui.INDIC_HIGHLIGHT
   buffer:indicator_clear_range(1, buffer.length)
-  if ui.highlight_words and #text > 1 then
+  if ui.highlight_words ~= ui.HIGHLIGHT_NONE and #text > 1 then
     buffer.search_flags = flags
     buffer:target_whole_document()
     while buffer:search_in_target(text) ~= -1 do
