@@ -1807,40 +1807,46 @@ function test_editing_convert_indentation()
 end
 
 function test_ui_highlight_word()
+  local function verify(indics)
+    local bit = 1 << ui.INDIC_HIGHLIGHT - 1
+    for _, pos in ipairs(indics) do
+      local mask = buffer:indicator_all_on_for(pos)
+      assert(mask & bit > 0, 'no indicator on line %d', buffer:line_from_position(pos))
+    end
+  end
+
   local highlight = ui.highlight_words
-  ui.highlight_words = true
+  ui.highlight_words = ui.HIGHLIGHT_SELECTED
   buffer.new()
   buffer:append_text(table.concat({
     'foo',
     'foobar',
-    'bar foo',
+    'bar  foo',
     'baz foo bar',
     'fooquux',
     'foo'
   }, '\n'))
+  local function verify_foo()
+    verify{
+      buffer:position_from_line(LINE(1)),
+      buffer:position_from_line(LINE(3)) + 5,
+      buffer:position_from_line(LINE(4)) + 4,
+      buffer:position_from_line(LINE(6))
+    }
+  end
   textadept.editing.select_word()
   ui.update()
-  local indics = {
-    buffer:position_from_line(LINE(1)),
-    buffer:position_from_line(LINE(3)) + 4,
-    buffer:position_from_line(LINE(4)) + 4,
-    buffer:position_from_line(LINE(6))
-  }
-  local bit = 1 << ui.INDIC_HIGHLIGHT - 1
-  for _, pos in ipairs(indics) do
-    local mask = buffer:indicator_all_on_for(pos)
-    assert(mask & bit > 0, 'no indicator on line %d', buffer:line_from_position(pos))
-  end
+  verify_foo()
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
   local pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 1)
   assert_equal(pos, 1) -- highlights cleared
   -- Verify turning off word highlighting.
-  ui.highlight_words = false
+  ui.highlight_words = ui.HIGHLIGHT_NONE
   textadept.editing.select_word()
   ui.update()
   pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
   assert_equal(pos, 1) -- no highlights
-  ui.highlight_words = true -- reset
+  ui.highlight_words = ui.HIGHLIGHT_SELECTED -- reset
   -- Verify partial word selections do not highlight words.
   buffer:set_sel(1, 3)
   pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
@@ -1848,6 +1854,24 @@ function test_ui_highlight_word()
   -- Verify multi-word selections do not highlight words.
   buffer:set_sel(buffer:position_from_line(LINE(3)), buffer.line_end_position[LINE(3)])
   assert(buffer:is_range_word(buffer.selection_start, buffer.selection_end))
+  pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
+  assert_equal(pos, 1) -- no highlights
+  -- Verify current word highlighting.
+  ui.highlight_words = ui.HIGHLIGHT_CURRENT
+  buffer:goto_pos(1)
+  ui.update()
+  verify_foo()
+  buffer:line_down()
+  ui.update()
+  verify{buffer:position_from_line(LINE(2))}
+  buffer:line_down()
+  ui.update()
+  verify{buffer:position_from_line(LINE(3)), buffer:position_from_line(LINE(4)) + 9}
+  buffer:word_right()
+  ui.update()
+  verify_foo()
+  buffer:char_left()
+  ui.update()
   pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
   assert_equal(pos, 1) -- no highlights
   buffer:close(true)
