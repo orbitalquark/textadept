@@ -1449,16 +1449,16 @@ function goto_buffer(view, buffer) end
 
 ---
 -- Sets the view's color theme to be string *name*, with the contents of table
--- *options* available as global variables.
+-- *env* available as global variables.
 -- User themes override Textadept's default themes when they have the same name.
 -- If *name* contains slashes, it is assumed to be an absolute path to a theme
 -- instead of a theme name.
 -- @param view A view.
 -- @param name The name or absolute path of a theme to set.
--- @param options Optional table of global variables themes can utilize to
---   override default settings such as font and size.
+-- @param env Optional table of global variables themes can utilize to override
+--   default settings such as font and size.
 -- @usage view:set_theme('light', {font = 'Monospace', size = 12})
 -- @name set_theme
 -- @see _G.lexer.colors
 -- @see _G.lexer.styles
-function set_theme(view, name, options) end
+function set_theme(view, name, env) end

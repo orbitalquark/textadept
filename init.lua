@@ -21,38 +21,15 @@ textadept = require('textadept')
 local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 
 -- Documentation is in core/.view.luadoc.
-local function set_theme(view, name, options)
+local function set_theme(view, name, env)
   if not assert_type(name, 'string', 2):find('[/\\]') then
     name = package.searchpath(name, string.format(
       '%s/themes/?.lua;%s/themes/?.lua', _USERHOME, _HOME))
   end
   if not name or not lfs.attributes(name) then return end
-  if not assert_type(options, 'table/nil', 3) then options = {} end
+  if not assert_type(env, 'table/nil', 3) then env = {} end
   local orig_view = _G.view
   if view ~= orig_view then ui.goto_view(view) end
-  -- Mimic `lexer.colors` and `lexer.styles` because (1) the lexer module is not
-  -- yet available and (2) even if it was, color and style settings would not
-  -- be captured later during init.
-  local property = view.property
-  local colors = setmetatable({}, {__newindex = function(t, name, color)
-    if type(color) == 'string' then
-      local r, g, b = color:match('^#(%x%x)(%x%x)(%x%x)$')
-      color = tonumber(string.format('%s%s%s', b, g, r), 16) or 0
-    end
-    property['color.' .. name] = color
-    rawset(t, name, color) -- cache instead of __index for property[...]
-  end})
-  local styles = setmetatable({}, {__newindex = function(_, name, props)
-    local settings = {}
-    for k, v in pairs(props) do
-      settings[#settings + 1] = type(v) ~= 'boolean' and
-        string.format('%s:%s', k, v) or
-        string.format('%s%s', v and '' or 'not', k)
-    end
-    property['style.' .. name] = table.concat(settings, ',')
-  end})
-  local env = {lexer = {colors = colors, styles = styles}}
-  for k, v in pairs(options) do env[k] = v end
   loadfile(name, 't', setmetatable(env, {__index = _G}))()
   -- Force reload of all styles since the current lexer may have defined its own
   -- styles. (The LPeg lexer has only refreshed default lexer styles.)
@@ -117,6 +94,34 @@ for _, mt in ipairs{buffer_mt, view_mt} do
     mt.__orig_newindex(t, k, v)
   end
 end
+
+-- Mimic the `lexer` module because (1) it is not yet available and (2) even if
+-- it was, color, style, and property settings would not be captured during
+-- init.
+local property = view.property
+local colors = setmetatable({}, {__newindex = function(t, name, color)
+  if type(color) == 'string' then
+    local r, g, b = color:match('^#(%x%x)(%x%x)(%x%x)$')
+    color = tonumber(string.format('%s%s%s', b, g, r), 16) or 0
+  end
+  property['color.' .. name] = color
+  rawset(t, name, color) -- cache instead of __index for property[...]
+end})
+local styles = setmetatable({}, {__newindex = function(_, name, props)
+  local settings = {}
+  for k, v in pairs(props) do
+    settings[#settings + 1] = type(v) ~= 'boolean' and
+      string.format('%s:%s', k, v) or
+      string.format('%s%s', v and '' or 'not', k)
+  end
+  property['style.' .. name] = table.concat(settings, ',')
+end})
+lexer = setmetatable({colors = colors, styles = styles}, {
+  __newindex = function(_, k, v)
+    if k == 'folding' then k = 'fold' end
+    property[k:gsub('_', '.')] = v and '1' or '0'
+  end
+})
 
 -- Default buffer and view settings.
 
@@ -287,11 +292,11 @@ view.call_tip_use_style = buffer.tab_width *
 --view.call_tip_position = true
 
 -- Folding.
-view.property['fold'] = '1'
---view.property['fold.by.indentation'] = '1'
---view.property['fold.line.comments'] = '1'
---view.property['fold.on.zero.sum.lines'] = '1'
---view.property['fold.compact'] = '1'
+lexer.folding = true
+--lexer.fold_by_indentation = true
+--lexer.fold_line_comments = true
+--lexer.fold_on_zero_sum_lines = true
+--lexer.fold_compact = true
 view.automatic_fold = view.AUTOMATICFOLD_SHOW | view.AUTOMATICFOLD_CLICK |
   view.AUTOMATICFOLD_CHANGE
 view.fold_flags = not CURSES and view.FOLDFLAG_LINEAFTER_CONTRACTED or 0
@@ -337,7 +342,7 @@ events.connect(events.BUFFER_NEW, function()
   buffer:private_lexer_call(LOADLEXERLIBRARY, _HOME .. '/lexers')
   load_settings()
   buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
-  if not _G.lexer then _G.lexer = require('lexer') end
+  _G.lexer = require('lexer') -- replace mimic
   if buffer == ui.command_entry then
     ui.command_entry.caret_line_visible = false
   end

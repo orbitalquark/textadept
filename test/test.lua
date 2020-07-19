@@ -3170,6 +3170,35 @@ function test_set_lexer_style()
   view.property['style.library'] = view.property['style.library']
 end
 
+function test_lexer_fold_properties()
+  lexer.property['fold.compact'] = '0'
+  assert(not lexer.fold_compact, 'lexer.fold_compact not updated')
+  lexer.fold_compact = true
+  assert(lexer.fold_compact, 'lexer.fold_compact not updated')
+  assert_equal(lexer.property['fold.compact'], '1')
+  lexer.fold_compact = nil
+  assert(not lexer.fold_compact)
+  assert_equal(lexer.property['fold.compact'], '0')
+  local truthy, falsy = {true, '1', 1}, {false, '0', 0}
+  for i = 1, #truthy do
+    lexer.fold_compact = truthy[i]
+    assert(lexer.fold_compact, 'lexer.fold_compact not updated for "%s"', tostring(truthy[i]))
+    lexer.fold_compact = falsy[i]
+    assert(not lexer.fold_compact, 'lexer.fold_compact not updated for "%s"', tostring(falsy[i]))
+  end
+  -- Verify fold and folding properties are synchronized.
+  lexer.property['fold'] = '0'
+  assert(not lexer.folding)
+  lexer.folding = true
+  assert(lexer.property['fold'] == '1')
+  -- Lexer fold properties and view fold properties do not mirror because
+  -- Scintilla forwards view property settings to lexers, not vice-versa.
+  view.property['fold'] = '0'
+  assert(not lexer.folding)
+  lexer.folding = true
+  assert_equal(view.property['fold'], '0')
+end
+
 -- TODO: test init.lua's buffer settings
 
 function test_ctags()
