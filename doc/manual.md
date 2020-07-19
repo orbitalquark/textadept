@@ -2036,6 +2036,7 @@ nested\_pair()             |Replaced|[range()][]
 N/A                        |Added   |[number][]
 N/A                        |Added   |[colors][]
 N/A                        |Added   |[styles][]
+N/A                        |Added   |[folding][] and other fold\* properties
 **lfs**                    |        |
 dir\_foreach()             |Replaced|for filename in [lfs.walk()][] do ... end
 **textadept.bookmarks**    |        |
@@ -2077,6 +2078,7 @@ section below.
 [number]: api.html#lexer.number
 [colors]: api.html#lexer.colors
 [styles]: api.html#lexer.styles
+[folding]: api.html#lexer.folding
 [lfs.walk()]: api.html#lfs.walk
 [toggle()]: api.html#textadept.bookmarks.toggle
 [toggle_comment()]: api.html#textadept.editing.toggle_comment
