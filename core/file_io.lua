@@ -384,15 +384,15 @@ io.quick_open_filters = {}
 -- String or list *filter* determines which files to show in the dialog, with
 -- the default filter being `io.quick_open_filters[path]` (if it exists) or
 -- `lfs.default_filter`. A filter consists of Lua patterns that match file and
--- directory paths to include or exclude. Exclusive patterns begin with a '!'.
--- If no inclusive patterns are given, any path is initially considered. As a
--- convenience, file extensions can be specified literally instead of as a Lua
--- pattern (e.g. '.lua' vs. '%.lua$'), and '/' also matches the Windows
--- directory separator ('[/\\]' is not needed).
+-- directory paths to include or exclude. Patterns are inclusive by default.
+-- Exclusive patterns begin with a '!'. If no inclusive patterns are given, any
+-- path is initially considered. As a convenience, file extensions can be
+-- specified literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'),
+-- and '/' also matches the Windows directory separator ('[/\\]' is not needed).
 -- The number of files in the list is capped at `quick_open_max`.
 -- If *filter* is `nil` and *paths* is ultimately a string, the filter from the
--- `io.quick_open_filters` table is used in place of `lfs.default_filter` if the
--- former exists.
+-- `io.quick_open_filters` table is used. If that filter does not exist,
+-- `lfs.default_filter` is used.
 -- *opts* is an optional table of additional options for
 -- `ui.dialogs.filteredlist()`.
 -- @param paths Optional string directory path or table of directory paths to
