@@ -118,11 +118,11 @@ for i = buffer.MARKNUM_FOLDEREND, buffer.MARKNUM_FOLDEROPEN do -- fold margin
 end
 
 -- Indicators.
-view.indic_fore[ui.INDIC_HIGHLIGHT] = colors.grey
-view.indic_alpha[ui.INDIC_HIGHLIGHT] = 128
 view.indic_fore[ui.find.INDIC_FIND] = colors.dark_yellow
 view.indic_alpha[ui.find.INDIC_FIND] = 255
 view.indic_fore[textadept.editing.INDIC_BRACEMATCH] = colors.light_grey
+view.indic_fore[textadept.editing.INDIC_HIGHLIGHT] = colors.orange
+view.indic_alpha[textadept.editing.INDIC_HIGHLIGHT] = 128
 view.indic_fore[textadept.snippets.INDIC_PLACEHOLDER] = colors.grey
 
 -- Call tips.

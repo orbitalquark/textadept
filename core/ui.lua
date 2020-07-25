@@ -33,26 +33,9 @@ local ui = ui
 --   with a group of [`ui.print()`]() and [`ui._print()`]() function calls.
 --   The default value is `false`, and focuses buffers when messages are printed
 --   to them.
--- @field highlight_words (number)
---   The word highlight mode.
---
---   * `ui.HIGHLIGHT_CURRENT`
---     Automatically highlight all instances of the current word.
---   * `ui.HIGHLIGHT_SELECTED`
---     Automatically highlight all instances of the selected word.
---   * `ui.HIGHLIGHT_NONE`
---     Do not automatically highlight words.
---
---   The default value is `ui.HIGHLIGHT_SELECTED` except in the terminal
---   version, where it is `ui.HIGHLIGHT_NONE`.
--- @field INDIC_HIGHLIGHT (number)
---   The word highlight indicator number.
 module('ui')]]
 
 ui.silent_print = false
-ui.HIGHLIGHT_NONE, ui.HIGHLIGHT_CURRENT, ui.HIGHLIGHT_SELECTED = 1, 2, 3
-ui.highlight_words = not CURSES and ui.HIGHLIGHT_SELECTED or ui.HIGHLIGHT_NONE
-ui.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 -- Helper function for printing messages to buffers.
 -- @see ui._print
@@ -299,42 +282,6 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
   end
   io.open_file(filename)
 end
-
--- Clears highlighted word indicators.
-local function clear_highlighted_words()
-  buffer.indicator_current = ui.INDIC_HIGHLIGHT
-  buffer:indicator_clear_range(1, buffer.length)
-end
-events_connect(events.KEYPRESS, function(code)
-  if keys.KEYSYMS[code] == 'esc' then clear_highlighted_words() end
-end, 1)
-
--- Highlight all instances of the current or selected word.
-events_connect(events.UPDATE_UI, function(updated)
-  if not updated or updated & buffer.UPDATE_SELECTION == 0 then return end
-  local word
-  if ui.highlight_words == ui.HIGHLIGHT_CURRENT then
-    local s = buffer:word_start_position(buffer.current_pos, true)
-    local e = buffer:word_end_position(buffer.current_pos, true)
-    if s == e then clear_highlighted_words() return end
-    word = buffer:text_range(s, e)
-  elseif ui.highlight_words == ui.HIGHLIGHT_SELECTED then
-    local s, e = buffer.selection_start, buffer.selection_end
-    if not buffer:is_range_word(s, e) then return end
-    word = buffer:get_sel_text()
-    if not word:find('^%S+$') then return end
-  else
-    return
-  end
-  clear_highlighted_words()
-  buffer.search_flags = buffer.FIND_MATCHCASE | buffer.FIND_WHOLEWORD
-  buffer:target_whole_document()
-  while buffer:search_in_target(word) ~= -1 do
-    buffer:indicator_fill_range(
-      buffer.target_start, buffer.target_end - buffer.target_start)
-    buffer:set_target_range(buffer.target_end, buffer.length + 1)
-  end
-end)
 
 -- Ensure title, statusbar, etc. are updated for new views.
 events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI, 3) end)
