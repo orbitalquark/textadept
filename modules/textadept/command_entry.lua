@@ -7,8 +7,7 @@ local M = ui.command_entry
 ---
 -- Textadept's Command Entry.
 -- It supports multiple modes that each have their own functionality (such as
--- running Lua code, searching for text incrementally, and filtering text
--- through shell commands) and history.
+-- running Lua code and filtering text through shell commands) and history.
 -- @field height (number)
 --   The height in pixels of the command entry.
 module('ui.command_entry')]]

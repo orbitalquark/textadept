@@ -1814,6 +1814,10 @@ function test_ui_highlight_word()
       assert(mask & bit > 0, 'no indicator on line %d', buffer:line_from_position(pos))
     end
   end
+  local function update()
+    ui.update()
+    if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
+  end
 
   local highlight = ui.highlight_words
   ui.highlight_words = ui.HIGHLIGHT_SELECTED
@@ -1835,7 +1839,7 @@ function test_ui_highlight_word()
     }
   end
   textadept.editing.select_word()
-  ui.update()
+  update()
   verify_foo()
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
   local pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 1)
@@ -1843,7 +1847,7 @@ function test_ui_highlight_word()
   -- Verify turning off word highlighting.
   ui.highlight_words = ui.HIGHLIGHT_NONE
   textadept.editing.select_word()
-  ui.update()
+  update()
   pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
   assert_equal(pos, 1) -- no highlights
   ui.highlight_words = ui.HIGHLIGHT_SELECTED -- reset
@@ -1859,19 +1863,19 @@ function test_ui_highlight_word()
   -- Verify current word highlighting.
   ui.highlight_words = ui.HIGHLIGHT_CURRENT
   buffer:goto_pos(1)
-  ui.update()
+  update()
   verify_foo()
   buffer:line_down()
-  ui.update()
+  update()
   verify{buffer:position_from_line(LINE(2))}
   buffer:line_down()
-  ui.update()
+  update()
   verify{buffer:position_from_line(LINE(3)), buffer:position_from_line(LINE(4)) + 9}
   buffer:word_right()
-  ui.update()
+  update()
   verify_foo()
   buffer:char_left()
-  ui.update()
+  update()
   pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
   assert_equal(pos, 1) -- no highlights
   buffer:close(true)
@@ -2101,7 +2105,7 @@ end
 
 function test_ui_find_highlight_results()
   local function assert_indics(indics)
-    local bit = 1 << ui.INDIC_HIGHLIGHT - 1
+    local bit = 1 << ui.find.INDIC_FIND - 1
     for _, pos in ipairs(indics) do
       local mask = buffer:indicator_all_on_for(pos)
       assert(mask & bit > 0, 'no indicator on line %d', buffer:line_from_position(pos))
@@ -2140,21 +2144,20 @@ function test_ui_find_highlight_results()
   -- Do not highlight short searches (potential performance issue).
   ui.find.find_entry_text = 'f'
   ui.find.find_next()
-  local pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
+  local pos = buffer:indicator_end(ui.find.INDIC_FIND, 2)
   assert_equal(pos, 1)
+  -- Verify turning off match highlighting works.
+  ui.find.highlight_all_matches = false
+  ui.find.find_entry_text = 'foo'
+  ui.find.find_next()
+  pos = buffer:indicator_end(ui.find.INDIC_FIND, 2)
+  assert_equal(pos, 1)
+  ui.find.highlight_all_matches = true -- reset
   ui.find.find_entry_text = '' -- reset
   buffer:close(true)
 end
 
 function test_ui_find_incremental()
-  if not rawget(ui.find.find_incremental_keys, '\n') then
-    -- Overwritten in _USERHOME.
-    ui.find.find_incremental_keys['\n'] = function()
-      ui.find.find_entry_text = ui.command_entry:get_text() -- save
-      ui.find.find_incremental(ui.command_entry:get_text(), true, true)
-    end
-  end
-
   buffer.new()
   buffer:set_text(table.concat({
     ' foo',
@@ -2163,40 +2166,38 @@ function test_ui_find_incremental()
     'FOOquux'
   }, '\n'))
   assert_equal(buffer.current_pos, POS(1))
-  ui.find.find_incremental()
-  events.emit(events.KEYPRESS, string.byte('f'))
-  ui.command_entry:add_text('f') -- simulate keypress
+  ui.find.incremental = true
+  ui.find.find_entry_text = 'f' -- simulate 'f' keypress
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
   assert_equal(buffer.selection_start, POS(1) + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 1)
-  events.emit(events.KEYPRESS, string.byte('o'))
-  ui.command_entry:add_text('o') -- simulate keypress
-  events.emit(events.KEYPRESS, string.byte('o'))
-  ui.command_entry:add_text('o') -- simulate keypress
+  ui.find.find_entry_text = 'fo' -- simulate 'o' keypress
+  ui.find.find_entry_text = 'foo' -- simulate 'o' keypress
+  if CURSES then events.emit(events.FIND, ui.find.find_entry_text, true) end
   assert_equal(buffer.selection_start, POS(1) + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
-  events.emit(events.KEYPRESS, string.byte('q'))
-  ui.command_entry:add_text('q') -- simulate keypress
+  ui.find.find_entry_text = 'fooq' -- simulate 'q' keypress
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(4)))
   assert_equal(buffer.selection_end, buffer.selection_start + 4)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF08 or 263) -- \b
-  ui.command_entry:delete_back() -- simulate keypress
+  ui.find.find_entry_text = 'foo' -- simulate backspace
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.FIND, ui.find.find_entry_text, true) -- simulate Find Next
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(3)))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.match_case = true
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n, wrap
+  events.emit(events.FIND, ui.find.find_entry_text, true) -- simulate Find Next, wrap
   assert_equal(buffer.selection_start, POS(1) + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.match_case = false
   ui.find.find_entry_text = '' -- reset
+  ui.find.incremental = false -- reset
   buffer:close(true)
-
-  assert_raises(function() ui.find.find_incremental(1) end, 'string/nil expected, got number')
 end
 
 function test_ui_find_incremental_highlight()
@@ -2207,25 +2208,26 @@ function test_ui_find_incremental_highlight()
     'FOObaz',
     'FOOquux'
   }, '\n'))
-  ui.find.find_incremental()
-  events.emit(events.KEYPRESS, string.byte('f'))
-  ui.command_entry:add_text('f') -- simulate keypress
-  local pos = buffer:indicator_end(ui.INDIC_HIGHLIGHT, 2)
+  ui.find.incremental = true
+  ui.find.find_entry_text = 'f' -- simulate 'f' keypress
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
+  local pos = buffer:indicator_end(ui.find.INDIC_FIND, 2)
   assert_equal(pos, 1) -- too short
-  events.emit(events.KEYPRESS, string.byte('o'))
-  ui.command_entry:add_text('o') -- simulate keypress
+  ui.find.find_entry_text = 'fo' -- simulate 'o' keypress
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
   local indics = {
     buffer:position_from_line(LINE(1)) + 1,
     buffer:position_from_line(LINE(2)),
     buffer:position_from_line(LINE(3)),
     buffer:position_from_line(LINE(4))
   }
-  local bit = 1 << ui.INDIC_HIGHLIGHT - 1
+  local bit = 1 << ui.find.INDIC_FIND - 1
   for _, pos in ipairs(indics) do
     local mask = buffer:indicator_all_on_for(pos)
     assert(mask & bit > 0, 'no indicator on line %d', buffer:line_from_position(pos))
   end
   ui.find.find_entry_text = '' -- reset
+  ui.find.incremental = false -- reset
   buffer:close(true)
 end
 

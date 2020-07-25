@@ -18,7 +18,7 @@ events.connect(events.INITIALIZED, function()
   local m_tools = textadept.menu.menubar[_L['Tools']]
   ignore = {
     textadept.menu.menubar[_L['Search']][_L['Find']][2],
-    ui.find.find_incremental,
+    textadept.menu.menubar[_L['Search']][_L['Find Incremental']][2],
     m_tools[_L['Select Command']][2],
     m_tools[_L['Macros']][_L['Start/Stop Recording']][2]
   }

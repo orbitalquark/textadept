@@ -22,6 +22,9 @@ local M = ui.find
 -- @field in_files (bool)
 --   Find search text in a list of files.
 --   The default value is `false`.
+-- @field incremental (bool)
+--   Find search text incrementally as it is typed.
+--   The default value is `false`.
 -- @field find_label_text (string, Write-only)
 --   The text of the "Find" label.
 --   This is primarily used for localization.
@@ -97,7 +100,9 @@ M.find_in_files_filters = {}
 
 -- Keep track of find text and found text so that "replace all" works as
 -- expected during a find session ("replace all" with selected text normally
--- does "replace in selection").
+-- does "replace in selection"). Also track find text for incremental find (if
+-- text has changed, the user is still typing; if text is the same, the user
+-- clicked "Find Next" or "Find Prev").
 local find_text, found_text
 
 -- Returns a bit-mask of search flags to use in Scintilla search functions based
@@ -142,6 +147,18 @@ local function find(text, next, flags, no_wrap, wrapped)
   if flags >= 1 << 31 then M.find_in_files() return end -- not performed here
   local first_visible_line = view.first_visible_line -- for 'no results found'
 
+  if M.incremental and not wrapped then
+    if type(M.incremental) == 'boolean' then
+      -- Starting a new incremental search, anchor at current pos.
+      M.incremental = buffer.current_pos
+    elseif text == find_text then
+      -- "Find Next" or "Find Prev" clicked, anchor at new current pos.
+      M.incremental = buffer:position_relative(
+        buffer.current_pos, next and 1 or -1)
+    end
+    buffer:goto_pos(M.incremental or 1)
+  end
+
   -- If text is selected, assume it is from the current search and move the
   -- caret appropriately for the next search.
   buffer:goto_pos(next and buffer.selection_end or buffer.selection_start)
@@ -152,7 +169,8 @@ local function find(text, next, flags, no_wrap, wrapped)
   local pos = f(buffer, flags, text)
   view:ensure_visible_enforce_policy(buffer:line_from_position(pos))
   view:scroll_range(buffer.anchor, buffer.current_pos)
-  find_text, found_text = text, buffer:get_sel_text() -- track for "replace all"
+  -- Track find text and found text for "replace all" and incremental find.
+  find_text, found_text = text, buffer:get_sel_text()
 
   -- If nothing was found, wrap the search.
   if pos == -1 and not no_wrap then
@@ -190,77 +208,13 @@ local function find(text, next, flags, no_wrap, wrapped)
   return pos
 end
 events.connect(events.FIND, find)
+events.connect(events.FIND_TEXT_CHANGED, function()
+  if not M.incremental then return end
+  events.emit(events.FIND, M.find_entry_text, true)
+  return true -- redraw in CURSES
+end)
 events.connect(
   events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wrapped'] end)
-
-local incremental_start
-
--- Finds and selects text incrementally in the current buffer from a starting
--- position.
--- Flags other than `FIND_MATCHCASE` are ignored.
--- @param text The text to find.
--- @param next Flag indicating whether or not the search direction is forward.
--- @param anchor Flag indicating whether or not to search from the current
---   position.
-local function find_incremental(text, next, anchor)
-  local orig_pos = buffer.current_pos
-  if anchor then
-    incremental_start = buffer:position_relative(orig_pos, next and 1 or -1)
-  end
-  buffer:goto_pos(incremental_start or 1)
-  -- Note: even though `events.FIND` does not support a flags parameter, the
-  -- default handler has one, so make use of it.
-  events.emit(
-    events.FIND, text, next, M.match_case and buffer.FIND_MATCHCASE or 0)
-  if buffer.selection_empty and anchor then buffer:goto_pos(orig_pos) end
-end
-
----
--- Begins an incremental search using the command entry if *text* is `nil`.
--- Otherwise, continues an incremental search by searching for the next or
--- previous instance of string *text*, depending on boolean *next*.
--- *anchor* indicates whether or not to search for *text* starting from the
--- caret position instead of the position where the incremental search began.
--- Only the `match_case` find option is recognized. Normal command entry
--- functionality is unavailable until the search is finished or by pressing
--- `Esc`.
--- @param text The text to incrementally search for, or `nil` to begin an
---   incremental search.
--- @param next Flag indicating whether or not the search direction is forward.
---   Only applicable when *text* is not `nil`.
--- @param anchor Optional flag indicating whether or not to start searching from
---   the caret position. The default value is `false`.
--- @name find_incremental
-function M.find_incremental(text, next, anchor)
-  assert_type(text, 'string/nil', 1)
-  if text then find_incremental(text, next, anchor) return end
-  incremental_start = buffer.current_pos
-  ui.command_entry:set_text('')
-  ui.command_entry.run(nil, M.find_incremental_keys)
-end
-
----
--- Table of key bindings used when searching for text incrementally.
--- @class table
--- @name find_incremental_keys
-M.find_incremental_keys = setmetatable({
-  ['\n'] = function()
-    M.find_entry_text = ui.command_entry:get_text() -- save
-    M.find_incremental(ui.command_entry:get_text(), true, true)
-  end,
-  ['\b'] = function()
-    local e = ui.command_entry:position_before(ui.command_entry.length + 1)
-    M.find_incremental(ui.command_entry:text_range(1, e), true)
-    return false -- propagate
-  end
-}, {__index = function(_, k)
-  -- Add the character for any key pressed without modifiers to incremental
-  -- find.
-  if #k == 1 or not k:find('ctrl%+') and not k:find('alt%+') and
-     not k:find('meta%+') and not k:find('shift%+') then
-    M.find_incremental(ui.command_entry:get_text() .. k, true)
-  end
-end})
 
 ---
 -- Searches directory *dir* or the user-specified directory for files that match

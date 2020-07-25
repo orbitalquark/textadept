@@ -246,7 +246,7 @@ Changes:
   terminal version.
 * Replaced `ui.command_entry.enter_mode()` and `ui.command_entry.finish_mode()`
   with simplified [`ui.command_entry.run()`][].
-* Added [`ui.find.find_incremental_keys`][] table of key bindings during "Find
+* Added `ui.find.find_incremental_keys` table of key bindings during "Find
   Incremental" searches.
 * Replaced `textadept.macros.start_recording()` and
   `textadept.macros.stop_recording()` with [`textadept.macros.record()`][].
@@ -268,7 +268,6 @@ Changes:
 [Scintilla]: http://scintilla.org
 [`textadept.editing.paste_reindent()`]: api.html#textadept.editing.paste_reindent
 [`ui.command_entry.run()`]: api.html#ui.command_entry.run
-[`ui.find.find_incremental_keys`]: api.html#ui.find.find_incremental_keys
 [`textadept.macros.record()`]: api.html#textadept.macros.record
 
 ## 10.6 (01 Sep 2019)

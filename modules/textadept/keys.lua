@@ -349,7 +349,8 @@ local bindings = {
   -- Find Prev is ap when find pane is focused in GUI.
   -- Replace is ar when find pane is focused in GUI.
   -- Replace All is aa when find pane is focused in GUI.
-  [ui.find.find_incremental] = {'ctrl+alt+f', 'ctrl+cmd+f', 'ctrl+meta+f'},
+  [m_search[_L['Find Incremental']][2]] =
+    {'ctrl+alt+f', 'ctrl+cmd+f', 'ctrl+meta+f'},
   [m_search[_L['Find in Files']][2]] = {'ctrl+F', 'cmd+F', nil},
   -- Find in Files is ai when find pane is focused in GUI.
   [m_search[_L['Goto Next File Found']][2]] = {'ctrl+alt+g', 'ctrl+cmd+g', nil},
@@ -528,10 +529,5 @@ end
 -- GTK-OSX reports Fn-key as a single keycode which confuses Scintilla. Do
 -- not propagate it.
 if OSX then keys.fn = function() return true end end
-
--- Reverse incremental find.
-ui.find.find_incremental_keys['ctrl+r'] = function()
-  ui.find.find_incremental(ui.command_entry:get_text(), false, true)
-end
 
 return M
