@@ -75,8 +75,8 @@ view.marker_back[textadept.run.MARK_WARNING] = colors.yellow
 view.marker_back[textadept.run.MARK_ERROR] = colors.red
 
 -- Indicators.
-view.indic_fore[ui.INDIC_HIGHLIGHT] = colors.yellow
 view.indic_fore[ui.find.INDIC_FIND] = colors.yellow
+view.indic_fore[textadept.editing.INDIC_HIGHLIGHT] = colors.yellow
 view.indic_fore[textadept.snippets.INDIC_PLACEHOLDER] = colors.magenta
 
 -- Call tips.

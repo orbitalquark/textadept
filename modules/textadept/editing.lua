@@ -15,14 +15,30 @@ local M = {}
 --   Autocomplete the current word using words from all open buffers.
 --   If `true`, performance may be slow when many buffers are open.
 --   The default value is `false`.
+-- @field highlight_words (number)
+--   The word highlight mode.
+--
+--   * `textadept.editing.HIGHLIGHT_CURRENT`
+--     Automatically highlight all instances of the current word.
+--   * `textadept.editing.HIGHLIGHT_SELECTED`
+--     Automatically highlight all instances of the selected word.
+--   * `textadept.editing.HIGHLIGHT_NONE`
+--     Do not automatically highlight words.
+--
+--   The default value is `textadept.editing.HIGHLIGHT_NONE`.
 -- @field INDIC_BRACEMATCH (number)
 --   The matching brace highlight indicator number.
+-- @field INDIC_HIGHLIGHT (number)
+--   The word highlight indicator number.
 module('textadept.editing')]]
 
 M.auto_indent = true
 M.strip_trailing_spaces = false
 M.autocomplete_all_words = false
+M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
+M.highlight_words = M.HIGHLIGHT_NONE
 M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
+M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 ---
 -- Map of image names to registered image numbers.
@@ -161,6 +177,43 @@ events.connect(events.UPDATE_UI, function(updated)
     return
   end
   view:brace_bad_light(-1)
+end)
+
+-- Clears highlighted word indicators.
+local function clear_highlighted_words()
+  buffer.indicator_current = M.INDIC_HIGHLIGHT
+  buffer:indicator_clear_range(1, buffer.length)
+end
+events.connect(events.KEYPRESS, function(code)
+  if keys.KEYSYMS[code] == 'esc' then clear_highlighted_words() end
+end, 1)
+
+-- Highlight all instances of the current or selected word.
+events.connect(events.UPDATE_UI, function(updated)
+  if not updated or updated & buffer.UPDATE_SELECTION == 0 then return end
+  local word
+  if M.highlight_words == M.HIGHLIGHT_CURRENT then
+    clear_highlighted_words()
+    local s = buffer:word_start_position(buffer.current_pos, true)
+    local e = buffer:word_end_position(buffer.current_pos, true)
+    if s == e then return end
+    word = buffer:text_range(s, e)
+  elseif M.highlight_words == M.HIGHLIGHT_SELECTED then
+    local s, e = buffer.selection_start, buffer.selection_end
+    if s ~= e then clear_highlighted_words() end
+    if not buffer:is_range_word(s, e) then return end
+    word = buffer:get_sel_text()
+    if word:find(string.format('[^%s]', buffer.word_chars)) then return end
+  else
+    return
+  end
+  buffer.search_flags = buffer.FIND_MATCHCASE | buffer.FIND_WHOLEWORD
+  buffer:target_whole_document()
+  while buffer:search_in_target(word) ~= -1 do
+    buffer:indicator_fill_range(
+      buffer.target_start, buffer.target_end - buffer.target_start)
+    buffer:set_target_range(buffer.target_end, buffer.length + 1)
+  end
 end)
 
 -- Moves over typeover characters when typed, taking multiple selections into

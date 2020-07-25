@@ -265,8 +265,9 @@ if not CURSES then view.indic_under[ui.find.INDIC_FIND] = true end
 local INDIC_BRACEMATCH = textadept.editing.INDIC_BRACEMATCH
 view.indic_style[INDIC_BRACEMATCH] = view.INDIC_BOX
 view:brace_highlight_indicator(not CURSES, INDIC_BRACEMATCH)
-view.indic_style[ui.INDIC_HIGHLIGHT] = view.INDIC_ROUNDBOX
-if not CURSES then view.indic_under[ui.INDIC_HIGHLIGHT] = true end
+local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
+view.indic_style[INDIC_HIGHLIGHT] = view.INDIC_ROUNDBOX
+if not CURSES then view.indic_under[INDIC_HIGHLIGHT] = true end
 local INDIC_PLACEHOLDER = textadept.snippets.INDIC_PLACEHOLDER
 view.indic_style[INDIC_PLACEHOLDER] = not CURSES and view.INDIC_DOTBOX or
   view.INDIC_STRAIGHTBOX
