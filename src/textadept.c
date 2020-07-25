@@ -121,13 +121,13 @@ static GtkWidget *findbox, *find_entry, *repl_entry, *find_label, *repl_label;
 #define find_text gtk_entry_get_text(GTK_ENTRY(find_entry))
 #define repl_text gtk_entry_get_text(GTK_ENTRY(repl_entry))
 #define set_entry_text(entry, text) gtk_entry_set_text( \
-  GTK_ENTRY(entry == find_text ? find_entry : repl_entry), text)
+  GTK_ENTRY(entry == find_entry ? find_entry : repl_entry), text)
 typedef GtkWidget *FindButton;
 static FindButton find_next, find_prev, replace, replace_all;
 static GtkWidget *match_case, *whole_word, *regex, *in_files;
 typedef GtkListStore ListStore;
 static ListStore *find_history, *repl_history;
-#define toggled(w) gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))
+#define checked(w) gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))
 #define toggle(w, on) gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), on)
 #define set_label_text(l, t) gtk_label_set_text_with_mnemonic(GTK_LABEL(l), t)
 #define set_button_label(b, l) gtk_button_set_label(GTK_BUTTON(b), l)
@@ -152,7 +152,7 @@ TermKey *ta_tk; // global for CDK use
 // curses find & replace pane.
 static CDKSCREEN *findbox;
 static CDKENTRY *find_entry, *repl_entry, *focused_entry;
-static char *find_text, *repl_text, *find_label, *repl_label, *prev_text;
+static char *find_text, *repl_text, *find_label, *repl_label;
 #define set_entry_text(entry, text) copyfree(&entry, text)
 typedef enum {find_next, replace, find_prev, replace_all} FindButton;
 static bool find_options[4], *match_case = &find_options[0],
@@ -161,7 +161,7 @@ static bool find_options[4], *match_case = &find_options[0],
 static char *button_labels[4], *option_labels[4];
 typedef char *ListStore;
 static ListStore find_history[10], repl_history[10];
-#define toggled(find_option) *find_option
+#define checked(find_option) *find_option
 // Use pointer arithmetic to highlight/unhighlight options as necessary.
 #define toggle(o, on) do { \
   if (*o != on) *o = on, option_labels[o - match_case] += *o ? -4 : 4; \
@@ -395,9 +395,9 @@ static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
   } else if (key == KEY_UP || key == KEY_DOWN) {
     focused_entry = entry == find_entry ? repl_entry : find_entry;
     injectCDKEntry(entry, KEY_ENTER); // exit this entry
-  } else if ((!prev_text || strcmp(prev_text, text) != 0)) {
+  } else if ((!find_text || strcmp(find_text, text) != 0)) {
+    copyfree(&find_text, text);
     if (emit(lua, "find_text_changed", -1)) refresh_all();
-    copyfree(&prev_text, text);
   }
   return true;
 }
@@ -442,7 +442,7 @@ static int focus_find(lua_State *L) {
   bind(KEY_DOWN, NULL), bind(KEY_UP, NULL);
   setCDKEntryValue(find_entry, find_text);
   setCDKEntryValue(repl_entry, repl_text);
-  setCDKEntryPostProcess(find_entry, find_keypress, NULL), prev_text = NULL;
+  setCDKEntryPostProcess(find_entry, find_keypress, NULL);
   char *clipboard = scintilla_get_clipboard(focused_view, NULL);
   GPasteBuffer = copyChar(clipboard); // set the CDK paste buffer
   curs_set(1);
@@ -474,17 +474,17 @@ static int focus_find(lua_State *L) {
 static int find_index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
   if (strcmp(key, "find_entry_text") == 0)
-    lua_pushstring(L, find_text);
+    find_text ? lua_pushstring(L, find_text) : lua_pushliteral(L, "");
   else if (strcmp(key, "replace_entry_text") == 0)
-    lua_pushstring(L, repl_text);
+    repl_text ? lua_pushstring(L, repl_text) : lua_pushliteral(L, "");
   else if (strcmp(key, "match_case") == 0)
-    lua_pushboolean(L, toggled(match_case));
+    lua_pushboolean(L, checked(match_case));
   else if (strcmp(key, "whole_word") == 0)
-    lua_pushboolean(L, toggled(whole_word));
+    lua_pushboolean(L, checked(whole_word));
   else if (strcmp(key, "regex") == 0)
-    lua_pushboolean(L, toggled(regex));
+    lua_pushboolean(L, checked(regex));
   else if (strcmp(key, "in_files") == 0)
-    lua_pushboolean(L, toggled(in_files));
+    lua_pushboolean(L, checked(in_files));
   else
     lua_rawget(L, 1);
   return 1;
@@ -1450,8 +1450,7 @@ static int reset(lua_State *L) {
   lua_pushnil(L), lua_setglobal(L, "arg");
   run_file(L, "init.lua"), emit(L, "initialized", -1);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_arg"), lua_setglobal(L, "arg");
-  emit(L, "reset_after", LUA_TTABLE, persist_ref, -1);
-  return 0;
+  return (emit(L, "reset_after", LUA_TTABLE, persist_ref, -1), 0);
 }
 
 /** Runs the timeout function passed to `_G.timeout()`. */
@@ -1978,8 +1977,7 @@ static bool split_pane(
       pane->y + pane->split_size + 1, pane->x);
     pane->win = newwin(1, pane->cols, pane->y + pane->split_size, pane->x);
   }
-  refresh_pane(pane);
-  return true;
+  return (refresh_pane(pane), true);
 }
 #endif
 
@@ -2344,8 +2342,7 @@ static bool read_pipe(GIOChannel *source, GIOCondition _, HANDLE pipe) {
   g_io_channel_read_to_end(source, &buf, &len, NULL);
   for (char *p = buf; p < buf + len - 2; p++) if (!*p) *p = '\n'; // '\0\0' end
   process(NULL, NULL, buf);
-  g_free(buf), DisconnectNamedPipe(pipe);
-  return false;
+  return (g_free(buf), DisconnectNamedPipe(pipe), false);
 }
 
 /** Listens for remote Textadept communications. */
@@ -2369,8 +2366,7 @@ int g_application_run(GApplication *_, int __, char **___) {
   WriteFile(pipe, cwd, strlen(cwd) + 1, &len_written, NULL);
   for (int i = 1; i < __argc; i++)
     WriteFile(pipe, __argv[i], strlen(__argv[i]) + 1, &len_written, NULL);
-  CloseHandle(pipe);
-  return 0;
+  return (CloseHandle(pipe), 0);
 }
 #endif
 
@@ -2605,8 +2601,7 @@ int main(int argc, char **argv) {
   termkey_destroy(ta_tk);
 #endif
 
-  free(textadept_home);
-  return 0;
+  return (free(textadept_home), 0);
 }
 
 #if (_WIN32 && !CURSES)
