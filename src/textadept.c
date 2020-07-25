@@ -121,7 +121,7 @@ static GtkWidget *findbox, *find_entry, *repl_entry, *find_label, *repl_label;
 #define find_text gtk_entry_get_text(GTK_ENTRY(find_entry))
 #define repl_text gtk_entry_get_text(GTK_ENTRY(repl_entry))
 #define set_entry_text(entry, text) gtk_entry_set_text( \
-  GTK_ENTRY(entry == find_entry ? find_entry : repl_entry), text)
+  GTK_ENTRY(entry == find_text ? find_entry : repl_entry), text)
 typedef GtkWidget *FindButton;
 static FindButton find_next, find_prev, replace, replace_all;
 static GtkWidget *match_case, *whole_word, *regex, *in_files;
@@ -474,9 +474,9 @@ static int focus_find(lua_State *L) {
 static int find_index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
   if (strcmp(key, "find_entry_text") == 0)
-    find_text ? lua_pushstring(L, find_text) : lua_pushliteral(L, "");
+    lua_pushstring(L, find_text);
   else if (strcmp(key, "replace_entry_text") == 0)
-    repl_text ? lua_pushstring(L, repl_text) : lua_pushliteral(L, "");
+    lua_pushstring(L, repl_text);
   else if (strcmp(key, "match_case") == 0)
     lua_pushboolean(L, checked(match_case));
   else if (strcmp(key, "whole_word") == 0)
@@ -2169,6 +2169,8 @@ static GtkWidget *new_combo(
   gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(combo), 0);
   gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(combo), false);
   *entry = gtk_bin_get_child(GTK_BIN(combo));
+  gtk_entry_set_text(GTK_ENTRY(*entry), " "),
+    gtk_entry_set_text(GTK_ENTRY(*entry), ""); // initialize with non-NULL
   gtk_entry_set_activates_default(GTK_ENTRY(*entry), true);
   gtk_label_set_mnemonic_widget(GTK_LABEL(*label), *entry);
   return combo;
