@@ -205,13 +205,12 @@ local function find(text, next, flags, no_wrap, wrapped)
     end
   end
 
-  return pos
+  return pos ~= -1
 end
 events.connect(events.FIND, find)
 events.connect(events.FIND_TEXT_CHANGED, function()
   if not M.incremental then return end
-  events.emit(events.FIND, M.find_entry_text, true)
-  return true -- redraw in CURSES
+  return events.emit(events.FIND, M.find_entry_text, true)
 end)
 events.connect(
   events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wrapped'] end)
