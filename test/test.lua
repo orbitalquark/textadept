@@ -2167,16 +2167,17 @@ function test_ui_find_incremental()
   }, '\n'))
   assert_equal(buffer.current_pos, POS(1))
   ui.find.incremental = true
+  if not CURSES then ui.find.focus() end
   ui.find.find_entry_text = 'f' -- simulate 'f' keypress
   if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
   assert_equal(buffer.selection_start, POS(1) + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 1)
   ui.find.find_entry_text = 'fo' -- simulate 'o' keypress
   ui.find.find_entry_text = 'foo' -- simulate 'o' keypress
-  if CURSES then events.emit(events.FIND, ui.find.find_entry_text, true) end
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
   assert_equal(buffer.selection_start, POS(1) + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
-  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
+  events.emit(events.FIND, ui.find.find_entry_text, true) -- simulate Find Next
   assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.find_entry_text = 'fooq' -- simulate 'q' keypress
@@ -2195,6 +2196,14 @@ function test_ui_find_incremental()
   assert_equal(buffer.selection_start, POS(1) + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.match_case = false
+  ui.find.whole_word = true
+  ui.find.find_entry_text = 'foob'
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
+  assert(buffer.selection_empty, 'no text should be found')
+  ui.find.find_entry_text = 'foobar'
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
+  assert_equal(buffer:get_sel_text(), 'foobar')
+  ui.find.whole_word = false
   ui.find.find_entry_text = '' -- reset
   ui.find.incremental = false -- reset
   buffer:close(true)
