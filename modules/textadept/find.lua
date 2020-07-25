@@ -52,8 +52,12 @@ local M = ui.find
 -- @field in_files_label_text (string, Write-only)
 --   The text of the "In files" label.
 --   This is primarily used for localization.
+-- @field highlight_all_matches (boolean)
+--   Whether or not to highlight all occurrences of found text in the current
+--   buffer.
+--   The default value is `true`.
 -- @field INDIC_FIND (number)
---   The find in files highlight indicator number.
+--   The find results highlight indicator number.
 -- @field _G.events.FIND_WRAPPED (string)
 --   Emitted when a text search wraps (passes through the beginning of the
 --   buffer), either from bottom to top (when searching for a next occurrence),
@@ -73,6 +77,7 @@ M.match_case_label_text = not CURSES and _L['Match case'] or _L['Case(F1)']
 M.whole_word_label_text = not CURSES and _L['Whole word'] or _L['Word(F2)']
 M.regex_label_text = not CURSES and _L['Regex'] or _L['Regex(F3)']
 M.in_files_label_text = not CURSES and _L['In files'] or _L['Files(F4)']
+M.highlight_all_matches = true
 
 M.INDIC_FIND = _SCINTILLA.next_indic_number()
 
@@ -105,6 +110,19 @@ local function get_flags()
     (M.regex and buffer.FIND_REGEXP or 0) | (M.in_files and 1 << 31 or 0)
 end
 
+-- Returns whether or not the given buffer is a files found buffer.
+local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
+
+-- Clears highlighted match indicators.
+local function clear_highlighted_matches()
+  buffer.indicator_current = M.INDIC_FIND
+  buffer:indicator_clear_range(1, buffer.length)
+end
+events.connect(events.KEYPRESS, function(code)
+  if keys.KEYSYMS[code] ~= 'esc' or is_ff_buf(buffer) then return end
+  clear_highlighted_matches()
+end, 1)
+
 -- Finds and selects text in the current buffer.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
@@ -123,19 +141,6 @@ local function find(text, next, flags, no_wrap, wrapped)
   if not flags then flags = get_flags() end
   if flags >= 1 << 31 then M.find_in_files() return end -- not performed here
   local first_visible_line = view.first_visible_line -- for 'no results found'
-
-  -- Highlight all occurrences first, otherwise regex tags will be overwritten.
-  buffer.indicator_current = ui.INDIC_HIGHLIGHT
-  buffer:indicator_clear_range(1, buffer.length)
-  if ui.highlight_words ~= ui.HIGHLIGHT_NONE and #text > 1 then
-    buffer.search_flags = flags
-    buffer:target_whole_document()
-    while buffer:search_in_target(text) ~= -1 do
-      buffer:indicator_fill_range(
-        buffer.target_start, buffer.target_end - buffer.target_start)
-      buffer:set_target_range(buffer.target_end, buffer.length + 1)
-    end
-  end
 
   -- If text is selected, assume it is from the current search and move the
   -- caret appropriately for the next search.
@@ -162,6 +167,24 @@ local function find(text, next, flags, no_wrap, wrapped)
     end
   elseif not wrapped then
     ui.statusbar_text = ''
+  end
+
+  -- Highlight all found occurrences.
+  clear_highlighted_matches()
+  if pos ~= -1 and M.highlight_all_matches and #text > 1 then
+    buffer.search_flags = flags
+    buffer:target_whole_document()
+    while buffer:search_in_target(text) ~= -1 do
+      buffer:indicator_fill_range(
+        buffer.target_start, buffer.target_end - buffer.target_start)
+      buffer:set_target_range(buffer.target_end, buffer.length + 1)
+    end
+    -- For regex searches, `buffer.tag` was clobbered. It needs to be filled in
+    -- again for any subsequent replace operations that need it.
+    if ui.find.regex then
+      buffer:set_target_range(buffer.selection_start, buffer.length + 1)
+      buffer:search_in_target(text)
+    end
   end
 
   return pos
@@ -243,8 +266,8 @@ end})
 -- Searches directory *dir* or the user-specified directory for files that match
 -- search text and search options (subject to optional filter *filter*), and
 -- prints the results to a buffer titled "Files Found", highlighting found text.
--- Use the `find_text`, `match_case`, `whole_word`, and `regex` fields to set
--- the search text and option flags, respectively.
+-- Use the `find_entry_text`, `match_case`, `whole_word`, and `regex` fields to
+-- set the search text and option flags, respectively.
 -- A filter determines which files to search in, with the default filter being
 -- `ui.find.find_in_files_filters[dir]` (if it exists) or `lfs.default_filter`.
 -- A filter consists of Lua patterns that match filenames to include or exclude.
@@ -398,8 +421,6 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
   ui.statusbar_text = string.format('%d %s', count, _L['replacement(s) made'])
 end)
 
--- Returns whether or not the given buffer is a files found buffer.
-local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 ---
 -- Jumps to the source of the find in files search result on line number
 -- *line_num* in the buffer titled "Files Found" or, if *line_num* is `nil`,
