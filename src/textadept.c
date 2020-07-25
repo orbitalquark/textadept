@@ -151,7 +151,7 @@ TermKey *ta_tk; // global for CDK use
 // curses find & replace pane.
 static CDKSCREEN *findbox;
 static CDKENTRY *find_entry, *repl_entry, *focused_entry;
-static char *find_text, *repl_text, *find_label, *repl_label;
+static char *find_text, *repl_text, *find_label, *repl_label, *prev_text;
 #define set_entry_text(entry, text) copyfree(&entry, text)
 typedef enum {find_next, replace, find_prev, replace_all} FindButton;
 static int find_options[4];
@@ -342,42 +342,6 @@ static int click_replace_all(lua_State *L) {
 
 #if CURSES
 /**
- * Signal for Find/Replace entry keypress.
- * For tab keys, toggle through find/replace buttons.
- * For ^N and ^P keys, cycle through find/replace history.
- * For F1-F4 keys, toggle the respective search option.
- * For up and down keys, toggle entry focus.
- */
-static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
-  CDKENTRY *entry = (CDKENTRY *)object;
-  if (key == KEY_TAB || key == KEY_BTAB)
-    injectCDKButtonbox((CDKBUTTONBOX *)data, key);
-  else if (key == CDK_PREV || key == CDK_NEXT) {
-    ListStore *store = entry == find_entry ? find_history : repl_history;
-    int i;
-    for (i = 9; i >= 0; i--)
-      if (store[i] && strcmp(store[i], getCDKEntryValue(entry)) == 0) break;
-    key == CDK_PREV ? i++ : i--;
-    if (i >= 0 && i <= 9 && store[i])
-      setCDKEntryValue(entry, store[i]), drawCDKEntry(entry, FALSE);
-  } else if (key >= KEY_F(1) && key <= KEY_F(4)) {
-    toggle(&find_options[key - KEY_F(1)], !find_options[key - KEY_F(1)]);
-    // Redraw the optionbox.
-    CDKBUTTONBOX **optionbox = (CDKBUTTONBOX **)data;
-    int width = (*optionbox)->boxWidth - 1;
-    destroyCDKButtonbox(*optionbox);
-    *optionbox = newCDKButtonbox(
-      findbox, RIGHT, TOP, 2, width, NULL, 2, 2, option_labels, 4, A_NORMAL,
-      FALSE, FALSE);
-    drawCDKButtonbox(*optionbox, FALSE);
-  } else if (key == KEY_UP || key == KEY_DOWN) {
-    focused_entry = entry == find_entry ? repl_entry : find_entry;
-    injectCDKEntry(entry, KEY_ENTER); // exit this entry
-  }
-  return TRUE;
-}
-
-/**
  * Redraws an entire pane and its children.
  * @param pane The pane to redraw.
  */
@@ -396,6 +360,46 @@ static void refresh_all() {
   refresh_pane(pane);
   if (command_entry_focused) scintilla_noutrefresh(command_entry);
   refresh();
+}
+
+/**
+ * Signal for Find/Replace entry keypress.
+ * For tab keys, toggle through find/replace buttons.
+ * For ^N and ^P keys, cycle through find/replace history.
+ * For F1-F4 keys, toggle the respective search option.
+ * For up and down keys, toggle entry focus.
+ * Otherwise, emit events for entry text changes.
+ */
+static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
+  CDKENTRY *entry = (CDKENTRY *)object;
+  char *text = getCDKEntryValue(entry);
+  if (key == KEY_TAB || key == KEY_BTAB)
+    injectCDKButtonbox((CDKBUTTONBOX *)data, key);
+  else if (key == CDK_PREV || key == CDK_NEXT) {
+    ListStore *store = entry == find_entry ? find_history : repl_history;
+    int i;
+    for (i = 9; i >= 0; i--) if (store[i] && strcmp(store[i], text) == 0) break;
+    key == CDK_PREV ? i++ : i--;
+    if (i >= 0 && i <= 9 && store[i])
+      setCDKEntryValue(entry, store[i]), drawCDKEntry(entry, FALSE);
+  } else if (key >= KEY_F(1) && key <= KEY_F(4)) {
+    toggle(&find_options[key - KEY_F(1)], !find_options[key - KEY_F(1)]);
+    // Redraw the optionbox.
+    CDKBUTTONBOX **optionbox = (CDKBUTTONBOX **)data;
+    int width = (*optionbox)->boxWidth - 1;
+    destroyCDKButtonbox(*optionbox);
+    *optionbox = newCDKButtonbox(
+      findbox, RIGHT, TOP, 2, width, NULL, 2, 2, option_labels, 4, A_NORMAL,
+      FALSE, FALSE);
+    drawCDKButtonbox(*optionbox, FALSE);
+  } else if (key == KEY_UP || key == KEY_DOWN) {
+    focused_entry = entry == find_entry ? repl_entry : find_entry;
+    injectCDKEntry(entry, KEY_ENTER); // exit this entry
+  } else if ((!prev_text || strcmp(prev_text, text) != 0)) {
+    if (emit(lua, "find_text_changed", -1)) refresh_all();
+    copyfree(&prev_text, text);
+  }
+  return TRUE;
 }
 #endif
 
@@ -438,6 +442,7 @@ static int focus_find(lua_State *L) {
   bind(KEY_DOWN, NULL), bind(KEY_UP, NULL);
   setCDKEntryValue(find_entry, find_text);
   setCDKEntryValue(repl_entry, repl_text);
+  setCDKEntryPostProcess(find_entry, find_keypress, NULL), prev_text = NULL;
   char *clipboard = scintilla_get_clipboard(focused_view, NULL);
   GPasteBuffer = copyChar(clipboard); // set the CDK paste buffer
   curs_set(1);
@@ -2169,6 +2174,11 @@ static GtkWidget *new_combo(GtkWidget **label, GtkWidget **entry, ListStore **hi
   return combo;
 }
 
+/** Signal for a Find entry keypress. */
+static void find_changed(GtkEditable *_, void *L) {
+  emit(L, "find_text_changed", -1);
+}
+
 /** Creates and returns a new button for the findbox. */
 static GtkWidget *new_button() {
   GtkWidget *button = gtk_button_new_with_mnemonic(""); // localized via Lua
@@ -2190,6 +2200,8 @@ static GtkWidget *new_findbox() {
 
   GtkWidget *find_combo = new_combo(&find_label, &find_entry, &find_history),
     *replace_combo = new_combo(&repl_label, &repl_entry, &repl_history);
+  g_signal_connect(
+    GTK_EDITABLE(find_entry), "changed", G_CALLBACK(find_changed), lua);
   find_next = new_button(), find_prev = new_button(), replace = new_button(),
     replace_all = new_button(), match_case = new_option(),
     whole_word = new_option(), regex = new_option(), in_files = new_option();

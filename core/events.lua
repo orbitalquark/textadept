@@ -133,6 +133,10 @@ local M = {}
 --
 --   * _`text`_: The text to search for.
 --   * _`next`_: Whether or not to search forward.
+-- @field FIND_TEXT_CHANGED (string)
+--   Emitted when the text in the "Find" field of the Find & Replace Pane
+--   changes.
+--   `ui.find.find_entry_text` contains the current text.
 -- @field FOCUS (string)
 --   Emitted when Textadept receives focus.
 --   This event is never emitted when Textadept is running in the terminal.
@@ -391,9 +395,9 @@ end)
 for _, v in pairs(_SCINTILLA.events) do M[v[1]:upper()] = v[1] end
 local textadept_events = { -- defined in C
   'appleevent_odoc', 'buffer_after_switch', 'buffer_before_switch',
-  'buffer_deleted', 'buffer_new', 'csi', 'error', 'find', 'focus',
-  'initialized', 'keypress', 'menu_clicked', 'mouse', 'quit', 'replace',
-  'replace_all', 'reset_after', 'reset_before', 'resume', 'suspend',
+  'buffer_deleted', 'buffer_new', 'csi', 'error', 'find', 'find_text_changed',
+  'focus', 'initialized', 'keypress', 'menu_clicked', 'mouse', 'quit',
+  'replace', 'replace_all', 'reset_after', 'reset_before', 'resume', 'suspend',
   'tab_clicked', 'view_after_switch', 'view_before_switch', 'view_new'
 }
 for _, v in pairs(textadept_events) do M[v:upper()] = v end
