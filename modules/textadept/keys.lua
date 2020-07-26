@@ -119,7 +119,6 @@ local M = {}
 -- Ctrl+Alt+\\     |^\\   |None         |Toggle wrap mode
 -- Ctrl+Alt+Shift+S|^⇧S   |None         |Toggle view whitespace
 -- Ctrl+Shift+L    |⌘⇧L   |M-S-L        |Select lexer...
--- F5              |F5    |^L<br/>F5    |Refresh syntax highlighting
 -- **View**                 |         |                 |
 -- Ctrl+Alt+N               |^⌥⇥      |M-^V N           |Next view
 -- Ctrl+Alt+P               |^⌥⇧⇥     |M-^V P           |Previous view
@@ -258,7 +257,7 @@ module('textadept.keys')]]
 --   * Ctrl+Meta+Symbol keys are not recognized.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:        g~~   ~            ~
+-- c:        g~~  l~            ~
 -- cm:   cd  g~~ k ~   q  t    yz
 -- m:          e          J            qQ  sS    vVw   yY  _          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
@@ -420,8 +419,6 @@ local bindings = {
   [m_buffer[_L['Toggle Wrap Mode']][2]] = {'ctrl+alt+\\', 'ctrl+\\', nil},
   [m_buffer[_L['Toggle View Whitespace']][2]] = {'ctrl+alt+S', 'ctrl+S', nil},
   [textadept.file_types.select_lexer] = {'ctrl+L', 'cmd+L', 'meta+L'},
-  [m_buffer[_L['Refresh Syntax Highlighting']][2]] =
-    {'f5', 'f5', {'f5', 'ctrl+l'}},
 
   -- View.
   [m_view[_L['Next View']][2]] = {'ctrl+alt+n', 'ctrl+alt+\t', nil},

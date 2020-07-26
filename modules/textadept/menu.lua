@@ -299,8 +299,7 @@ local default_menubar = {
       view.view_ws = view.view_ws == 0 and view.WS_VISIBLEALWAYS or 0
     end},
     SEPARATOR,
-    {_L['Select Lexer...'], textadept.file_types.select_lexer},
-    {_L['Refresh Syntax Highlighting'], function() buffer:colorize(1, -1) end}
+    {_L['Select Lexer...'], textadept.file_types.select_lexer}
   },
   {
     title = _L['View'],
