@@ -9,6 +9,8 @@ local M = ui.find
 --   The text in the "Find" entry.
 -- @field replace_entry_text (string)
 --   The text in the "Replace" entry.
+--   When searching for text in a directory of files, this is the current file
+--   and directory filter.
 -- @field match_case (bool)
 --   Match search text case sensitively.
 --   The default value is `false`.
@@ -20,7 +22,7 @@ local M = ui.find
 --   Interpret search text as a Regular Expression.
 --   The default value is `false`.
 -- @field in_files (bool)
---   Find search text in a list of files.
+--   Find search text in a directory of files.
 --   The default value is `false`.
 -- @field incremental (bool)
 --   Find search text incrementally as it is typed.
@@ -92,7 +94,7 @@ events.FIND_WRAPPED = 'find_wrapped'
 local preferred_view
 
 ---
--- Map of file paths to filters used in `ui.find.find_in_files()`.
+-- Map of directory paths to filters used in `ui.find.find_in_files()`.
 -- @class table
 -- @name find_in_files_filters
 -- @see find_in_files
@@ -102,8 +104,36 @@ M.find_in_files_filters = {}
 -- expected during a find session ("replace all" with selected text normally
 -- does "replace in selection"). Also track find text for incremental find (if
 -- text has changed, the user is still typing; if text is the same, the user
--- clicked "Find Next" or "Find Prev").
-local find_text, found_text
+-- clicked "Find Next" or "Find Prev"). Keep track of repl_text for
+-- non-"In files" in order to restore it from filter text as necessary.
+local find_text, found_text, repl_text = nil, nil, ''
+
+-- Returns a reasonable initial directory for use with Find in Files.
+local function ff_dir()
+  return io.get_project_root() or (buffer.filename or ''):match('^.+[/\\]') or
+    lfs.currentdir()
+end
+
+local orig_focus = M.focus
+---
+-- Displays and focuses the Find & Replace Pane.
+-- @param options Optional table of options to initially set.
+-- @name focus
+function M.focus(options)
+  if assert_type(options, 'table/nil', 1) then
+    for k, v in pairs(options) do M[k] = v end
+  end
+  M.replace_label_text = not M.in_files and _L['Replace:'] or _L['Filter:']
+  if M.in_files then
+    repl_text = M.replace_entry_text -- save
+    local filter = M.find_in_files_filters[ff_dir()] or lfs.default_filter
+    M.replace_entry_text = type(filter) == 'string' and filter or
+      table.concat(filter, ';')
+  elseif repl_text and M.replace_entry_text ~= repl_text then
+    M.replace_entry_text = repl_text -- restore
+  end
+  orig_focus()
+end
 
 -- Returns a bit-mask of search flags to use in Scintilla search functions based
 -- on the checkboxes in the find box.
@@ -223,12 +253,12 @@ events.connect(
 -- set the search text and option flags, respectively.
 -- A filter determines which files to search in, with the default filter being
 -- `ui.find.find_in_files_filters[dir]` (if it exists) or `lfs.default_filter`.
--- A filter consists of Lua patterns that match filenames to include or exclude.
--- Patterns are inclusive by default. Exclusive patterns begin with a '!'. If no
--- inclusive patterns are given, any filename is initially considered. As a
--- convenience, file extensions can be specified literally instead of as a Lua
--- pattern (e.g. '.lua' vs. '%.lua$'), and '/' also matches the Windows
--- directory separator ('[/\\]' is not needed).
+-- A filter consists of Lua patterns that match file and directory paths to
+-- include or exclude. Patterns are inclusive by default. Exclusive patterns
+-- begin with a '!'. If no inclusive patterns are given, any filename is
+-- initially considered. As a convenience, file extensions can be specified
+-- literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/'
+-- also matches the Windows directory separator ('[/\\]' is not needed).
 -- If *filter* is `nil`, the filter from the `ui.find.find_in_files_filters`
 -- table for *dir* is used. If that filter does not exist, `lfs.default_filter`
 -- is used.
@@ -243,20 +273,26 @@ function M.find_in_files(dir, filter)
   if not assert_type(dir, 'string/nil', 1) then
     dir = ui.dialogs.fileselect{
       title = _L['Select Directory'], select_only_directories = true,
-      with_directory = io.get_project_root() or
-        (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir()
+      with_directory = ff_dir()
     }
     if not dir then return end
   end
   if not assert_type(filter, 'string/table/nil', 2) then
+    if M.replace_entry_text ~= repl_text then
+      -- Update stored filter.
+      local t = {}
+      for patt in M.replace_entry_text:gmatch('[^;]+') do t[#t + 1] = patt end
+      M.find_in_files_filters[dir] = t
+    end
     filter = M.find_in_files_filters[dir] or lfs.default_filter
   end
 
   if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
   ui.silent_print = false
-  ui._print(
-    _L['[Files Found Buffer]'],
-    string.format('%s %s', _L['Find:']:gsub('_', ''), M.find_entry_text))
+  ui._print(_L['[Files Found Buffer]'], string.format(
+    '%s %s\n%s %s', _L['Find:']:gsub('_', ''), M.find_entry_text,
+    _L['Filter:']:gsub('_', ''),
+    type(filter) == 'string' and filter or table.concat(filter, ';')))
   buffer.indicator_current = M.INDIC_FIND
 
   -- Determine which files to search.
@@ -443,12 +479,6 @@ events.connect(events.DOUBLE_CLICK, function(_, line)
 end)
 
 --[[ The functions below are Lua C functions.
-
----
--- Displays and focuses the Find & Replace Pane.
--- @class function
--- @name focus
-local focus
 
 ---
 -- Mimics pressing the "Find Next" button.

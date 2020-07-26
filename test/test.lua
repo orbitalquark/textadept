@@ -1850,7 +1850,7 @@ function test_editing_highlight_word()
   update()
   pos = buffer:indicator_end(textadept.editing.INDIC_HIGHLIGHT, 2)
   assert_equal(pos, 1) -- no highlights
-  textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_SELECTED -- reset
+  textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_SELECTED
   -- Verify partial word selections do not highlight words.
   buffer:set_sel(1, 3)
   pos = buffer:indicator_end(textadept.editing.INDIC_HIGHLIGHT, 2)
@@ -2098,8 +2098,8 @@ function test_ui_find_find_text()
   ui.find.find_entry_text = 'quux'
   ui.find.find_next()
   assert_equal(buffer.selection_start, buffer.selection_end) -- no match
-  ui.find.find_entry_text = '' -- reset
-  ui.find.match_case, ui.find.regex = false, false -- reset
+  ui.find.match_case, ui.find.regex = false, false
+  ui.find.find_entry_text = ''
   buffer:close(true)
 end
 
@@ -2112,6 +2112,8 @@ function test_ui_find_highlight_results()
     end
   end
 
+  local highlight_all_matches = ui.find.highlight_all_matches
+  ui.find.highlight_all_matches = true
   buffer.new()
   buffer:append_text(table.concat({
     'foo',
@@ -2140,7 +2142,7 @@ function test_ui_find_highlight_results()
     buffer:position_from_line(LINE(4)),
     buffer:position_from_line(LINE(4)) + 8,
   }
-  ui.find.regex = false -- reset
+  ui.find.regex = false
   -- Do not highlight short searches (potential performance issue).
   ui.find.find_entry_text = 'f'
   ui.find.find_next()
@@ -2152,8 +2154,8 @@ function test_ui_find_highlight_results()
   ui.find.find_next()
   pos = buffer:indicator_end(ui.find.INDIC_FIND, 2)
   assert_equal(pos, 1)
-  ui.find.highlight_all_matches = true -- reset
-  ui.find.find_entry_text = '' -- reset
+  ui.find.find_entry_text = ''
+  ui.find.highlight_all_matches = highlight_all_matches -- reset
   buffer:close(true)
 end
 
@@ -2167,7 +2169,6 @@ function test_ui_find_incremental()
   }, '\n'))
   assert_equal(buffer.current_pos, POS(1))
   ui.find.incremental = true
-  if not CURSES then ui.find.focus() end
   ui.find.find_entry_text = 'f' -- simulate 'f' keypress
   if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
   assert_equal(buffer.selection_start, POS(1) + 1)
@@ -2204,8 +2205,8 @@ function test_ui_find_incremental()
   if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
   assert_equal(buffer:get_sel_text(), 'foobar')
   ui.find.whole_word = false
-  ui.find.find_entry_text = '' -- reset
-  ui.find.incremental = false -- reset
+  ui.find.find_entry_text = ''
+  ui.find.incremental = false
   buffer:close(true)
 end
 
@@ -2235,8 +2236,8 @@ function test_ui_find_incremental_highlight()
     local mask = buffer:indicator_all_on_for(pos)
     assert(mask & bit > 0, 'no indicator on line %d', buffer:line_from_position(pos))
   end
-  ui.find.find_entry_text = '' -- reset
-  ui.find.incremental = false -- reset
+  ui.find.find_entry_text = ''
+  ui.find.incremental = false
   buffer:close(true)
 end
 
@@ -2290,6 +2291,46 @@ function test_ui_find_find_in_files()
   assert_raises(function() ui.find.find_in_files('', 1) end, 'string/table/nil expected, got number')
 end
 
+function test_ui_find_find_in_files_interactive()
+  local filter = ui.find.find_in_files_filters[_HOME]
+  ui.find.find_in_files_filters[_HOME] = nil -- ensure not set
+  ui.find.find_entry_text = 'foo'
+  ui.find.in_files = true
+  ui.find.replace_entry_text = '/test'
+  events.emit(events.FIND, ui.find.find_entry_text, true)
+  local results = buffer:get_text()
+  assert(results:find('Filter: /test\n'), 'no filter defined')
+  assert(results:find('src/foo.c'), 'foo.c not found')
+  assert(results:find('include/foo.h'), 'foo.h not found')
+  assert_equal(table.concat(ui.find.find_in_files_filters[_HOME], ';'), '/test')
+  buffer:clear_all()
+  ui.find.replace_entry_text = '/test;.c'
+  events.emit(events.FIND, ui.find.find_entry_text, true)
+  results = buffer:get_text()
+  assert(results:find('Filter: /test;.c\n'), 'no filter defined')
+  assert(results:find('src/foo.c'), 'foo.c not found')
+  assert(not results:find('include/foo.h'), 'foo.h found')
+  assert_equal(table.concat(ui.find.find_in_files_filters[_HOME], ';'), '/test;.c')
+  if not CURSES then
+    -- Verify save and restore of replacement text and directory filters.
+    ui.find.focus{in_files = false}
+    assert_equal(ui.find.in_files, false)
+    ui.find.replace_entry_text = 'bar'
+    ui.find.focus{in_files = true}
+    assert_equal(ui.find.in_files, true)
+    assert_equal(ui.find.replace_entry_text, '/test;.c')
+    ui.find.focus{in_files = false}
+    assert_equal(ui.find.replace_entry_text, 'bar')
+  end
+  ui.find.find_entry_text = ''
+  ui.find.in_files = false
+  buffer:close()
+  ui.goto_view(1)
+  view:unsplit()
+  buffer:close()
+  ui.find.find_in_files_filters[_HOME] = filter
+end
+
 function test_ui_find_replace()
   buffer.new()
   buffer:set_text('foofoo')
@@ -2313,7 +2354,7 @@ function test_ui_find_replace()
   ui.find.replace_entry_text = ''
   ui.find.replace()
   assert_equal(buffer:get_text(), 'barbooሴ')
-  ui.find.find_entry_text, ui.find.replace_entry_text = '', '' -- reset
+  ui.find.find_entry_text, ui.find.replace_entry_text = '', ''
   buffer:close(true)
 end
 
@@ -2344,7 +2385,7 @@ function test_ui_find_replace_all()
   ui.find.find_entry_text, ui.find.replace_entry_text = 'quux', ''
   ui.find.replace_all()
   assert_equal(buffer:get_text(), '\nbar\nbaz\n')
-  ui.find.find_entry_text, ui.find.replace_entry_text = '', '' -- reset
+  ui.find.find_entry_text, ui.find.replace_entry_text = '', ''
   buffer:close(true)
 end
 
