@@ -202,7 +202,7 @@ events.connect(events.UPDATE_UI, function(updated)
     local s, e = buffer.selection_start, buffer.selection_end
     if s ~= e then clear_highlighted_words() end
     if not buffer:is_range_word(s, e) then return end
-    word = buffer:get_sel_text()
+    word = buffer:text_range(s, e)
     if word:find(string.format('[^%s]', buffer.word_chars)) then return end
   else
     return
