@@ -422,10 +422,10 @@ static int focus_find(lua_State *L) {
   int e_width = COLS - o_width - b_width - l_width - 1;
   find_entry = newCDKEntry(
     findbox, l_width - strlen(find_label), TOP, NULL, find_label, A_NORMAL, '_',
-    vMIXED, e_width, 0, 64, false, false);
+    vMIXED, e_width, 0, 1024, false, false);
   repl_entry = newCDKEntry(
     findbox, l_width - strlen(repl_label), BOTTOM, NULL, repl_label, A_NORMAL,
-    '_', vMIXED, e_width, 0, 64, false, false);
+    '_', vMIXED, e_width, 0, 1024, false, false);
   CDKBUTTONBOX *buttonbox, *optionbox;
   buttonbox = newCDKButtonbox(
     findbox, COLS - o_width - b_width, TOP, 2, b_width, NULL, 2, 2,

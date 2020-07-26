@@ -139,21 +139,18 @@ local default_menubar = {
   {
     title = _L['Search'],
     {_L['Find'], function()
-      ui.find.in_files, ui.find.incremental = false, false
-      ui.find.focus()
+      ui.find.focus{in_files = false, incremental = false}
     end},
     {_L['Find Next'], ui.find.find_next},
     {_L['Find Previous'], ui.find.find_prev},
     {_L['Replace'], ui.find.replace},
     {_L['Replace All'], ui.find.replace_all},
     {_L['Find Incremental'], function()
-      ui.find.in_files, ui.find.incremental = false, true
-      ui.find.focus()
+      ui.find.focus{in_files = false, incremental = true}
     end},
     SEPARATOR,
     {_L['Find in Files'], function()
-      ui.find.in_files, ui.find.incremental = true, false
-      ui.find.focus()
+      ui.find.focus{in_files = true, incremental = false}
     end},
     {_L['Goto Next File Found'], function() ui.find.goto_file_found(true) end},
     {_L['Goto Previous File Found'], function()
