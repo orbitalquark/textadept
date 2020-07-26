@@ -2171,6 +2171,10 @@ static GtkWidget *new_combo(
   *entry = gtk_bin_get_child(GTK_BIN(combo));
   gtk_entry_set_text(GTK_ENTRY(*entry), " "),
     gtk_entry_set_text(GTK_ENTRY(*entry), ""); // initialize with non-NULL
+  PangoFontDescription *font = pango_font_description_new();
+  pango_font_description_set_family(font, "monospace");
+  gtk_widget_modify_font(*entry, font);
+  pango_font_description_free(font);
   gtk_entry_set_activates_default(GTK_ENTRY(*entry), true);
   gtk_label_set_mnemonic_widget(GTK_LABEL(*label), *entry);
   return combo;
