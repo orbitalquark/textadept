@@ -370,7 +370,7 @@ function io.get_project_root(path)
 end
 
 ---
--- Map of file paths to filters used by `io.quick_open()`.
+-- Map of directory paths to filters used by `io.quick_open()`.
 -- @class table
 -- @name quick_open_filters
 -- @see quick_open
