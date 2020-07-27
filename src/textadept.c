@@ -2172,7 +2172,7 @@ static GtkWidget *new_combo(
   gtk_entry_set_text(GTK_ENTRY(*entry), " "),
     gtk_entry_set_text(GTK_ENTRY(*entry), ""); // initialize with non-NULL
   PangoFontDescription *font = pango_font_description_new();
-  pango_font_description_set_family(font, "monospace");
+  pango_font_description_set_family_static(font, "monospace");
   gtk_widget_modify_font(*entry, font);
   pango_font_description_free(font);
   gtk_entry_set_activates_default(GTK_ENTRY(*entry), true);
