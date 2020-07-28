@@ -147,6 +147,17 @@
 -- @field end_at_last_line (bool)
 --   Disable scrolling past the last line.
 --   The default value is `true`.
+-- @field eol_annotation_visible (number)
+--   The EOL annotation visibility mode.
+--
+--   * `view.EOLANNOTATION_HIDDEN`
+--     EOL Annotations are invisible.
+--   * `view.EOLANNOTATION_STANDARD`
+--     Draw EOL annotations no decoration.
+--   * `view.EOLANNOTATION_BOXED`
+--     Draw EOL annotations outlined with a box.
+--
+--   The default value is `view.EOLANNOTATION_HIDDEN`.
 -- @field extra_ascent (number)
 --   The amount of pixel padding above lines.
 --   The default value is `0`.

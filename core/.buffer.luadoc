@@ -126,6 +126,12 @@
 -- @field end_styled (number, Read-only)
 --   The current styling position or the last correctly styled character's
 --   position.
+-- @field eol_annotation_style (table)
+--   Table of style numbers for EOL annotation text per line number.
+--   Only some style attributes are active in annotations: font,
+--   size/size_fractional, bold/weight, italics, fore, back, and character_set.
+-- @field eol_annotation_text (table)
+--   Table of EOL annotation text per line number.
 -- @field eol_mode (number)
 --   The current end of line mode. Changing the current mode does not convert
 --   any of the buffer's existing end of line characters.
@@ -779,6 +785,11 @@ function empty_undo_buffer(buffer) end
 -- Ends a sequence of actions to be undone or redone as a single action.
 -- @param buffer A buffer.
 function end_undo_action(buffer) end
+
+---
+-- Clears EOL annotations from all lines.
+-- @param buffer A buffer.
+function eol_annotation_clear_all(buffer) end
 
 ---
 -- Returns the position of column number *column* on line number *line* (taking
@@ -1849,6 +1860,7 @@ function set_lexer(buffer, lexer) end
 --   * direct_pointer
 --   * distance_to_secondary_styles
 --   * doc_pointer
+--   * eol_annotation_style_offset
 --   * focus
 --   * font_quality
 --   * gap_position
@@ -1931,6 +1943,7 @@ function set_lexer(buffer, lexer) end
 --   * allocate_line_character_index
 --   * allocate_sub_styles
 --   * assign_cmd_key
+--   * brace_match_next
 --   * buffered_draw
 --   * can_paste
 --   * change_insertion
