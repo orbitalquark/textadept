@@ -282,7 +282,7 @@ function M.find_in_files(dir, filter)
       -- Update stored filter.
       local t = {}
       for patt in M.replace_entry_text:gmatch('[^;]+') do t[#t + 1] = patt end
-      M.find_in_files_filters[dir] = t
+      M.find_in_files_filters[dir], M.find_in_files_filters[ff_dir()] = t, t
     end
     filter = M.find_in_files_filters[dir] or lfs.default_filter
   end
