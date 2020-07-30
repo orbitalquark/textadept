@@ -162,10 +162,7 @@ M.keychain = setmetatable({}, {
 })
 
 -- Clears the current key sequence.
--- Note: clearing a table is often faster than re-creating one.
-local function clear_key_sequence()
-  if #keychain == 1 then keychain[1] = nil else keychain = {} end
-end
+local function clear_key_seq() for i = 1, #keychain do keychain[i] = nil end end
 
 -- Return codes for `key_command()`.
 local INVALID, PROPAGATE, CHAIN, HALT = -1, 0, 1, 2
@@ -221,7 +218,7 @@ local function keypress(code, shift, control, alt, cmd, caps_lock)
   ui.statusbar_text = ''
   --if CURSES then ui.statusbar_text = string.format('"%s"', key_seq) end
   local in_chain = #keychain > 0
-  if in_chain and key_seq == M.CLEAR then clear_key_sequence() return true end
+  if in_chain and key_seq == M.CLEAR then clear_key_seq() return true end
   keychain[#keychain + 1] = key_seq
 
   local status = PROPAGATE
@@ -231,7 +228,7 @@ local function keypress(code, shift, control, alt, cmd, caps_lock)
   else
     status = key_command(M.mode)
   end
-  if status ~= CHAIN then clear_key_sequence() end
+  if status ~= CHAIN then clear_key_seq() end
   if status > PROPAGATE then return true end -- CHAIN or HALT
   if status == INVALID and in_chain then
     ui.statusbar_text = _L['Invalid sequence']
