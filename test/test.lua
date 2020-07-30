@@ -1,11 +1,5 @@
 -- Copyright 2020 Mitchell mitchell.att.foicica.com. See LICENSE.
 
--- In the past, Scintilla used 0-based indices as opposed to Lua's 1-based
--- indices, so these conversions were needed. Now, they are vestigal.
-local function LINE(i) return i end
-local function POS(i) return i end
-local function INDEX(i) return i end
-
 local _tostring = tostring
 -- Overloads tostring() to print more user-friendly output for `assert_equal()`.
 function tostring(value)
@@ -561,6 +555,7 @@ function test_keys_keychain()
   assert(not foo, 'foo set outside keychain')
   events.emit(events.KEYPRESS, string.byte('a'), false, true)
   assert_equal(#keys.keychain, 1)
+  _G.print(keys.mode,#keys.keychain,keys.keychain[0],keys.keychain[1],keys.keychain[2])
   assert_equal(keys.keychain[1], 'ctrl+a')
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
   assert_equal(#keys.keychain, 0, 'keychain not canceled')
@@ -750,7 +745,7 @@ function test_ui_print()
   assert_equal(buffer._type, _L['[Message Buffer]'])
   assert_equal(#_VIEWS, 1)
   assert_equal(buffer:get_text(), 'foo\n')
-  assert(buffer:line_from_position(buffer.current_pos) > LINE(1), 'still on first line')
+  assert(buffer:line_from_position(buffer.current_pos) > 1, 'still on first line')
   ui.print('bar', 'baz')
   assert_equal(buffer:get_text(), 'foo\nbar\tbaz\n')
   buffer:close()
@@ -1026,14 +1021,14 @@ function test_ui_buffer_switch_save_restore_properties()
   view:fold_line(
     buffer:line_from_position(buffer.current_pos), view.FOLDACTION_CONTRACT)
   view.view_eol = true
-  view.margin_width_n[INDEX(1)] = 0 -- hide line numbers
+  view.margin_width_n[1] = 0 -- hide line numbers
   view:goto_buffer(-1)
-  assert(view.margin_width_n[INDEX(1)] > 0, 'line numbers are still hidden')
+  assert(view.margin_width_n[1] > 0, 'line numbers are still hidden')
   view:goto_buffer(1)
   assert_equal(buffer.current_pos, 10)
   assert_equal(view.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
   assert_equal(view.view_eol, true)
-  assert_equal(view.margin_width_n[INDEX(1)], 0)
+  assert_equal(view.margin_width_n[1], 0)
   buffer:close()
 end
 
@@ -1103,16 +1098,16 @@ end
 function test_buffer_text_range()
   buffer.new()
   buffer:set_text('foo\nbar\nbaz')
-  buffer:set_target_range(POS(5), POS(8))
+  buffer:set_target_range(5, 8)
   assert_equal(buffer.target_text, 'bar')
-  assert_equal(buffer:text_range(POS(1), buffer.length + 1), 'foo\nbar\nbaz')
-  assert_equal(buffer:text_range(-1, POS(4)), 'foo')
-  assert_equal(buffer:text_range(POS(9), POS(16)), 'baz')
+  assert_equal(buffer:text_range(1, buffer.length + 1), 'foo\nbar\nbaz')
+  assert_equal(buffer:text_range(-1, 4), 'foo')
+  assert_equal(buffer:text_range(9, 16), 'baz')
   assert_equal(buffer.target_text, 'bar') -- assert target range is unchanged
   buffer:close(true)
 
   assert_raises(function() buffer:text_range() end, 'number expected, got nil')
-  assert_raises(function() buffer:text_range(POS(5)) end, 'number expected, got nil')
+  assert_raises(function() buffer:text_range(5) end, 'number expected, got nil')
 end
 
 function test_bookmarks()
@@ -1122,27 +1117,27 @@ function test_bookmarks()
 
   buffer.new()
   buffer:new_line()
-  assert(buffer:line_from_position(buffer.current_pos) > LINE(1), 'still on first line')
+  assert(buffer:line_from_position(buffer.current_pos) > 1, 'still on first line')
   textadept.bookmarks.toggle()
-  assert(has_bookmark(LINE(2)), 'no bookmark')
+  assert(has_bookmark(2), 'no bookmark')
   textadept.bookmarks.toggle()
-  assert(not has_bookmark(LINE(2)), 'bookmark still there')
+  assert(not has_bookmark(2), 'bookmark still there')
 
-  buffer:goto_pos(buffer:position_from_line(LINE(1)))
+  buffer:goto_pos(buffer:position_from_line(1))
   textadept.bookmarks.toggle()
-  buffer:goto_pos(buffer:position_from_line(LINE(2)))
+  buffer:goto_pos(buffer:position_from_line(2))
   textadept.bookmarks.toggle()
   textadept.bookmarks.goto_mark(true)
-  assert_equal(buffer:line_from_position(buffer.current_pos), LINE(1))
+  assert_equal(buffer:line_from_position(buffer.current_pos), 1)
   textadept.bookmarks.goto_mark(true)
-  assert_equal(buffer:line_from_position(buffer.current_pos), LINE(2))
+  assert_equal(buffer:line_from_position(buffer.current_pos), 2)
   textadept.bookmarks.goto_mark(false)
-  assert_equal(buffer:line_from_position(buffer.current_pos), LINE(1))
+  assert_equal(buffer:line_from_position(buffer.current_pos), 1)
   textadept.bookmarks.goto_mark(false)
-  assert_equal(buffer:line_from_position(buffer.current_pos), LINE(2))
+  assert_equal(buffer:line_from_position(buffer.current_pos), 2)
   textadept.bookmarks.clear()
-  assert(not has_bookmark(LINE(1)), 'bookmark still there')
-  assert(not has_bookmark(LINE(2)), 'bookmark still there')
+  assert(not has_bookmark(1), 'bookmark still there')
+  assert(not has_bookmark(2), 'bookmark still there')
   buffer:close(true)
 end
 
@@ -1151,9 +1146,9 @@ function test_bookmarks_interactive()
   buffer:new_line()
   textadept.bookmarks.toggle()
   buffer:line_up()
-  assert_equal(buffer:line_from_position(buffer.current_pos), LINE(1))
+  assert_equal(buffer:line_from_position(buffer.current_pos), 1)
   textadept.bookmarks.goto_mark()
-  assert_equal(buffer:line_from_position(buffer.current_pos), LINE(2))
+  assert_equal(buffer:line_from_position(buffer.current_pos), 2)
   buffer:close(true)
 end
 
@@ -1315,24 +1310,24 @@ function test_editing_auto_pair()
   events.emit(events.CHAR_ADDED, string.byte('('))
   assert_equal(buffer:get_text(), 'foo()')
   events.emit(events.KEYPRESS, string.byte(')'))
-  assert_equal(buffer.current_pos, buffer.line_end_position[LINE(1)])
+  assert_equal(buffer.current_pos, buffer.line_end_position[1])
   buffer:char_left()
   -- Note: cannot check for brace highlighting; indicator search does not work.
   events.emit(events.KEYPRESS, not CURSES and 0xFF08 or 263) -- \b
   assert_equal(buffer:get_text(), 'foo')
   -- Multi-selection.
   buffer:set_text('foo(\nfoo(')
-  local pos1 = buffer.line_end_position[LINE(1)]
-  local pos2 = buffer.line_end_position[LINE(2)]
+  local pos1 = buffer.line_end_position[1]
+  local pos2 = buffer.line_end_position[2]
   buffer:set_selection(pos1, pos1)
   buffer:add_selection(pos2, pos2)
   events.emit(events.CHAR_ADDED, string.byte('('))
   assert_equal(buffer:get_text(), 'foo()\nfoo()')
   assert_equal(buffer.selections, 2)
-  assert_equal(buffer.selection_n_start[INDEX(1)], buffer.selection_n_end[INDEX(1)])
-  assert_equal(buffer.selection_n_start[INDEX(1)], pos1)
-  assert_equal(buffer.selection_n_start[INDEX(2)], buffer.selection_n_end[INDEX(2)])
-  assert_equal(buffer.selection_n_start[INDEX(2)], pos2 + 1)
+  assert_equal(buffer.selection_n_start[1], buffer.selection_n_end[1])
+  assert_equal(buffer.selection_n_start[1], pos1)
+  assert_equal(buffer.selection_n_start[2], buffer.selection_n_end[2])
+  assert_equal(buffer.selection_n_start[2], pos2 + 1)
   -- TODO: typeover.
   events.emit(events.KEYPRESS, not CURSES and 0xFF08 or 263) -- \b
   assert_equal(buffer:get_text(), 'foo\nfoo')
@@ -1349,23 +1344,23 @@ function test_editing_auto_indent()
   buffer.new()
   buffer:add_text('foo')
   buffer:new_line()
-  assert_equal(buffer.line_indentation[LINE(2)], 0)
+  assert_equal(buffer.line_indentation[2], 0)
   buffer:tab()
   buffer:add_text('bar')
   buffer:new_line()
-  assert_equal(buffer.line_indentation[LINE(3)], buffer.tab_width)
-  assert_equal(buffer.current_pos, buffer.line_indent_position[LINE(3)])
+  assert_equal(buffer.line_indentation[3], buffer.tab_width)
+  assert_equal(buffer.current_pos, buffer.line_indent_position[3])
   buffer:new_line()
   buffer:back_tab()
-  assert_equal(buffer.line_indentation[LINE(4)], 0)
-  assert_equal(buffer.current_pos, buffer:position_from_line(LINE(4)))
+  assert_equal(buffer.line_indentation[4], 0)
+  assert_equal(buffer.current_pos, buffer:position_from_line(4))
   buffer:new_line() -- should indent since previous line is blank
-  assert_equal(buffer.line_indentation[LINE(5)], buffer.tab_width)
-  assert_equal(buffer.current_pos, buffer.line_indent_position[LINE(5)])
-  buffer:goto_pos(buffer:position_from_line(LINE(2))) -- "\tbar"
+  assert_equal(buffer.line_indentation[5], buffer.tab_width)
+  assert_equal(buffer.current_pos, buffer.line_indent_position[5])
+  buffer:goto_pos(buffer:position_from_line(2)) -- "\tbar"
   buffer:new_line() -- should not change indentation
-  assert_equal(buffer.line_indentation[LINE(3)], buffer.tab_width)
-  assert_equal(buffer.current_pos, buffer:position_from_line(LINE(3)))
+  assert_equal(buffer.line_indentation[3], buffer.tab_width)
+  assert_equal(buffer.current_pos, buffer:position_from_line(3))
   buffer:close(true)
 end
 
@@ -1379,7 +1374,7 @@ function test_editing_strip_trailing_spaces()
     'baz\t '
   }, '\n')
   buffer:set_text(text)
-  buffer:goto_pos(buffer.line_end_position[LINE(2)])
+  buffer:goto_pos(buffer.line_end_position[2])
   events.emit(events.FILE_BEFORE_SAVE)
   assert_equal(buffer:get_text(), table.concat({
     'foo',
@@ -1387,7 +1382,7 @@ function test_editing_strip_trailing_spaces()
     'baz',
     ''
   }, '\n'))
-  assert_equal(buffer.current_pos, buffer.line_end_position[LINE(2)])
+  assert_equal(buffer.current_pos, buffer.line_end_position[2])
   buffer:undo()
   assert_equal(buffer:get_text(), text)
   buffer:close(true)
@@ -1414,8 +1409,8 @@ function test_editing_paste_reindent_tabs_to_tabs()
   }, '\r\n'))
   buffer:clear_all()
   buffer:add_text('\t\tquux\r\n\r\n') -- no auto-indent
-  assert_equal(buffer.line_indentation[LINE(2)], 0)
-  assert_equal(buffer.line_indentation[LINE(3)], 0)
+  assert_equal(buffer.line_indentation[2], 0)
+  assert_equal(buffer.line_indentation[3], 0)
   textadept.editing.paste_reindent()
   assert_equal(buffer:get_text(), table.concat({
     '\t\tquux',
@@ -1427,9 +1422,9 @@ function test_editing_paste_reindent_tabs_to_tabs()
   }, '\r\n'))
   buffer:clear_all()
   buffer:add_text('\t\tquux\r\n')
-  assert_equal(buffer.line_indentation[LINE(2)], 0)
+  assert_equal(buffer.line_indentation[2], 0)
   buffer:new_line() -- auto-indent
-  assert_equal(buffer.line_indentation[LINE(3)], 2 * buffer.tab_width)
+  assert_equal(buffer.line_indentation[3], 2 * buffer.tab_width)
   textadept.editing.paste_reindent()
   assert_equal(buffer:get_text(), table.concat({
     '\t\tquux',
@@ -1465,8 +1460,8 @@ function test_editing_paste_reindent_spaces_to_spaces()
   }, '\n'))
   buffer:clear_all()
   buffer:add_text('    foobar\n\n') -- no auto-indent
-  assert_equal(buffer.line_indentation[LINE(2)], 0)
-  assert_equal(buffer.line_indentation[LINE(3)], 0)
+  assert_equal(buffer.line_indentation[2], 0)
+  assert_equal(buffer.line_indentation[3], 0)
   textadept.editing.paste_reindent()
   assert_equal(buffer:get_text(), table.concat({
     '    foobar',
@@ -1479,9 +1474,9 @@ function test_editing_paste_reindent_spaces_to_spaces()
   }, '\n'))
   buffer:clear_all()
   buffer:add_text('    foobar\n')
-  assert_equal(buffer.line_indentation[LINE(2)], 0)
+  assert_equal(buffer.line_indentation[2], 0)
   buffer:new_line() -- auto-indent
-  assert_equal(buffer.line_indentation[LINE(3)], 4)
+  assert_equal(buffer.line_indentation[3], 4)
   textadept.editing.paste_reindent()
   assert_equal(buffer:get_text(), table.concat({
     '    foobar',
@@ -1530,7 +1525,7 @@ function test_editing_paste_reindent_tabs_to_spaces()
   buffer:add_text('function quux()')
   buffer:new_line()
   buffer:insert_text(-1, 'end')
-  buffer:colorize(POS(1), -1) -- first line should be a fold header
+  buffer:colorize(1, -1) -- first line should be a fold header
   textadept.editing.paste_reindent()
   assert_equal(buffer:get_text(), table.concat({
     'function quux()',
@@ -1557,7 +1552,7 @@ function test_editing_toggle_comment_lines()
     ''
   }, '\n')
   buffer:set_text(text)
-  buffer:goto_pos(buffer:position_from_line(LINE(2)))
+  buffer:goto_pos(buffer:position_from_line(2))
   textadept.editing.toggle_comment()
   assert_equal(buffer:get_text(), table.concat({
     '',
@@ -1565,12 +1560,12 @@ function test_editing_toggle_comment_lines()
     '  local baz = "quux"',
     ''
   }, '\n'))
-  assert_equal(buffer.current_pos, buffer:position_from_line(LINE(2)) + 2)
+  assert_equal(buffer.current_pos, buffer:position_from_line(2) + 2)
   textadept.editing.toggle_comment() -- uncomment
-  assert_equal(buffer:get_line(LINE(2)), 'local foo = "bar"\n')
-  assert_equal(buffer.current_pos, buffer:position_from_line(LINE(2)))
+  assert_equal(buffer:get_line(2), 'local foo = "bar"\n')
+  assert_equal(buffer.current_pos, buffer:position_from_line(2))
   local offset = 5
-  buffer:set_sel(buffer:position_from_line(LINE(2)) + offset, buffer:position_from_line(LINE(4)) - offset)
+  buffer:set_sel(buffer:position_from_line(2) + offset, buffer:position_from_line(4) - offset)
   textadept.editing.toggle_comment()
   assert_equal(buffer:get_text(), table.concat({
     '',
@@ -1578,8 +1573,8 @@ function test_editing_toggle_comment_lines()
     '--  local baz = "quux"',
     ''
   }, '\n'))
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)) + offset + 2)
-  assert_equal(buffer.selection_end, buffer:position_from_line(LINE(4)) - offset)
+  assert_equal(buffer.selection_start, buffer:position_from_line(2) + offset + 2)
+  assert_equal(buffer.selection_end, buffer:position_from_line(4) - offset)
   textadept.editing.toggle_comment() -- uncomment
   assert_equal(buffer:get_text(), table.concat({
     '',
@@ -1587,8 +1582,8 @@ function test_editing_toggle_comment_lines()
     '  local baz = "quux"',
     ''
   }, '\n'))
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)) + offset)
-  assert_equal(buffer.selection_end, buffer:position_from_line(LINE(4)) - offset)
+  assert_equal(buffer.selection_start, buffer:position_from_line(2) + offset)
+  assert_equal(buffer.selection_end, buffer:position_from_line(4) - offset)
   buffer:undo() -- comment
   buffer:undo() -- uncomment
   assert_equal(buffer:get_text(), text) -- verify atomic undo
@@ -1604,7 +1599,7 @@ function test_editing_toggle_comment()
     'const char *baz = "quux";',
     ''
   }, '\n'))
-  buffer:set_sel(buffer:position_from_line(LINE(2)), buffer:position_from_line(LINE(4)))
+  buffer:set_sel(buffer:position_from_line(2), buffer:position_from_line(4))
   textadept.editing.toggle_comment()
   assert_equal(buffer:get_text(), table.concat({
     '',
@@ -1612,8 +1607,8 @@ function test_editing_toggle_comment()
     '/*const char *baz = "quux";*/',
     ''
   }, '\n'))
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)) + 2)
-  assert_equal(buffer.selection_end, buffer:position_from_line(LINE(4)))
+  assert_equal(buffer.selection_start, buffer:position_from_line(2) + 2)
+  assert_equal(buffer.selection_end, buffer:position_from_line(4))
   textadept.editing.toggle_comment() -- uncomment
   assert_equal(buffer:get_text(), table.concat({
     '',
@@ -1621,18 +1616,18 @@ function test_editing_toggle_comment()
     'const char *baz = "quux";',
     ''
   }, '\n'))
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)))
-  assert_equal(buffer.selection_end, buffer:position_from_line(LINE(4)))
+  assert_equal(buffer.selection_start, buffer:position_from_line(2))
+  assert_equal(buffer.selection_end, buffer:position_from_line(4))
   buffer:close(true)
 end
 
 function test_editing_goto_line()
   buffer.new()
   buffer:new_line()
-  textadept.editing.goto_line(LINE(1))
-  assert_equal(buffer:line_from_position(buffer.current_pos), LINE(1))
-  textadept.editing.goto_line(LINE(2))
-  assert_equal(buffer:line_from_position(buffer.current_pos), LINE(2))
+  textadept.editing.goto_line(1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 1)
+  textadept.editing.goto_line(2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 2)
   buffer:close(true)
 
   assert_raises(function() textadept.editing.goto_line(true) end, 'number/nil expected, got boolean')
@@ -1664,8 +1659,8 @@ function test_editing_join_lines()
   buffer:append_text('foo\nbar\n  baz\nquux\n')
   textadept.editing.join_lines()
   assert_equal(buffer:get_text(), 'foo bar\n  baz\nquux\n')
-  assert_equal(buffer.current_pos, POS(4))
-  buffer:set_sel(buffer:position_from_line(LINE(2)) + 5, buffer:position_from_line(LINE(4)) - 5)
+  assert_equal(buffer.current_pos, 4)
+  buffer:set_sel(buffer:position_from_line(2) + 5, buffer:position_from_line(4) - 5)
   textadept.editing.join_lines()
   assert_equal(buffer:get_text(), 'foo bar\n  baz quux\n')
   buffer:close(true)
@@ -1682,14 +1677,14 @@ function test_editing_enclose()
   assert_equal(buffer:get_text(), '(foo bar)')
   buffer:undo()
   buffer:append_text('\nfoo bar')
-  buffer:set_selection(buffer.line_end_position[LINE(1)], buffer.line_end_position[LINE(1)])
-  buffer:add_selection(buffer.line_end_position[LINE(2)], buffer.line_end_position[LINE(2)])
+  buffer:set_selection(buffer.line_end_position[1], buffer.line_end_position[1])
+  buffer:add_selection(buffer.line_end_position[2], buffer.line_end_position[2])
   textadept.editing.enclose('<', '>')
   assert_equal(buffer:get_text(), 'foo <bar>\nfoo <bar>')
   buffer:undo()
   assert_equal(buffer:get_text(), 'foo bar\nfoo bar') -- verify atomic undo
-  buffer:set_selection(buffer:position_from_line(LINE(1)), buffer.line_end_position[LINE(1)])
-  buffer:add_selection(buffer:position_from_line(LINE(2)), buffer.line_end_position[LINE(2)])
+  buffer:set_selection(buffer:position_from_line(1), buffer.line_end_position[1])
+  buffer:add_selection(buffer:position_from_line(2), buffer.line_end_position[2])
   textadept.editing.enclose('-', '-')
   assert_equal(buffer:get_text(), '-foo bar-\n-foo bar-')
   buffer:close(true)
@@ -1701,14 +1696,14 @@ end
 function test_editing_select_enclosed()
   buffer.new()
   buffer:add_text('("foo bar")')
-  buffer:goto_pos(POS(6))
+  buffer:goto_pos(6)
   textadept.editing.select_enclosed()
   assert_equal(buffer:get_sel_text(), 'foo bar')
   textadept.editing.select_enclosed()
   assert_equal(buffer:get_sel_text(), '"foo bar"')
   textadept.editing.select_enclosed()
   assert_equal(buffer:get_sel_text(), 'foo bar')
-  buffer:goto_pos(POS(6))
+  buffer:goto_pos(6)
   textadept.editing.select_enclosed('("', '")')
   assert_equal(buffer:get_sel_text(), 'foo bar')
   textadept.editing.select_enclosed('("', '")')
@@ -1716,7 +1711,7 @@ function test_editing_select_enclosed()
   textadept.editing.select_enclosed('("', '")')
   assert_equal(buffer:get_sel_text(), 'foo bar')
   buffer:append_text('"baz"')
-  buffer:goto_pos(POS(10)) -- last " on first line
+  buffer:goto_pos(10) -- last " on first line
   textadept.editing.select_enclosed()
   assert_equal(buffer:get_sel_text(), 'foo bar')
   buffer:close(true)
@@ -1744,11 +1739,11 @@ function test_editing_select_word()
   assert_equal(buffer.selections, 4)
   assert_equal(buffer:get_sel_text(), 'foofoofoofoo')
   local lines = {}
-  for i = INDEX(1), INDEX(buffer.selections) do
+  for i = 1, buffer.selections do
     lines[#lines + 1] = buffer:line_from_position(buffer.selection_n_start[i])
   end
   table.sort(lines)
-  assert_equal(lines, {LINE(1), LINE(3), LINE(4), LINE(6)})
+  assert_equal(lines, {1, 3, 4, 6})
   buffer:close(true)
 end
 
@@ -1770,7 +1765,7 @@ function test_editing_select_paragraph()
     '',
     'quux'
   }, '\n'))
-  buffer:goto_pos(buffer:position_from_line(LINE(3)))
+  buffer:goto_pos(buffer:position_from_line(3))
   textadept.editing.select_paragraph()
   assert_equal(buffer:get_sel_text(), 'bar\nbaz\n\n')
   buffer:close(true)
@@ -1832,10 +1827,10 @@ function test_editing_highlight_word()
   }, '\n'))
   local function verify_foo()
     verify{
-      buffer:position_from_line(LINE(1)),
-      buffer:position_from_line(LINE(3)) + 5,
-      buffer:position_from_line(LINE(4)) + 4,
-      buffer:position_from_line(LINE(6))
+      buffer:position_from_line(1),
+      buffer:position_from_line(3) + 5,
+      buffer:position_from_line(4) + 4,
+      buffer:position_from_line(6)
     }
   end
   textadept.editing.select_word()
@@ -1856,7 +1851,7 @@ function test_editing_highlight_word()
   pos = buffer:indicator_end(textadept.editing.INDIC_HIGHLIGHT, 2)
   assert_equal(pos, 1) -- no highlights
   -- Verify multi-word selections do not highlight words.
-  buffer:set_sel(buffer:position_from_line(LINE(3)), buffer.line_end_position[LINE(3)])
+  buffer:set_sel(buffer:position_from_line(3), buffer.line_end_position[3])
   assert(buffer:is_range_word(buffer.selection_start, buffer.selection_end))
   pos = buffer:indicator_end(textadept.editing.INDIC_HIGHLIGHT, 2)
   assert_equal(pos, 1) -- no highlights
@@ -1867,10 +1862,10 @@ function test_editing_highlight_word()
   verify_foo()
   buffer:line_down()
   update()
-  verify{buffer:position_from_line(LINE(2))}
+  verify{buffer:position_from_line(2)}
   buffer:line_down()
   update()
-  verify{buffer:position_from_line(LINE(3)), buffer:position_from_line(LINE(4)) + 9}
+  verify{buffer:position_from_line(3), buffer:position_from_line(4) + 9}
   buffer:word_right()
   update()
   verify_foo()
@@ -1891,15 +1886,15 @@ function test_editing_filter_through()
   textadept.editing.filter_through('sort | uniq|cut -d "|" -f2')
   assert_equal(buffer:get_text(), 'foo\nbar\nbaz\nquux\nfoobar\n')
   buffer:undo()
-  buffer:set_sel(buffer:position_from_line(LINE(2)) + 2, buffer.line_end_position[LINE(2)])
+  buffer:set_sel(buffer:position_from_line(2) + 2, buffer.line_end_position[2])
   textadept.editing.filter_through('sed -e "s/o/O/g;"')
   assert_equal(buffer:get_text(), '3|baz\n1|fOO\n5|foobar\n1|foo\n4|quux\n2|bar\n')
   buffer:undo()
-  buffer:set_sel(buffer:position_from_line(LINE(2)), buffer:position_from_line(LINE(5)))
+  buffer:set_sel(buffer:position_from_line(2), buffer:position_from_line(5))
   textadept.editing.filter_through('sort')
   assert_equal(buffer:get_text(), '3|baz\n1|foo\n1|foo\n5|foobar\n4|quux\n2|bar\n')
   buffer:undo()
-  buffer:set_sel(buffer:position_from_line(LINE(2)), buffer:position_from_line(LINE(5)) + 1)
+  buffer:set_sel(buffer:position_from_line(2), buffer:position_from_line(5) + 1)
   textadept.editing.filter_through('sort')
   assert_equal(buffer:get_text(), '3|baz\n1|foo\n1|foo\n4|quux\n5|foobar\n2|bar\n')
   buffer:close(true)
@@ -1988,8 +1983,8 @@ function test_file_types_get_lexer()
     'h1 {}',
     '</style></head></html>'
   }, '\n'))
-  buffer:colorize(POS(1), -1)
-  buffer:goto_pos(buffer:position_from_line(LINE(2)))
+  buffer:colorize(1, -1)
+  buffer:goto_pos(buffer:position_from_line(2))
   assert_equal(buffer:get_lexer(), 'html')
   assert_equal(buffer:get_lexer(true), 'css')
   assert_equal(buffer:name_of_style(buffer.style_at[buffer.current_pos]), 'identifier')
@@ -2067,33 +2062,33 @@ function test_ui_find_find_text()
   }, '\n'))
   ui.find.find_entry_text = 'foo'
   ui.find.find_next()
-  assert_equal(buffer.selection_start, POS(1) + 1)
+  assert_equal(buffer.selection_start, 1 + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.whole_word = true
   ui.find.find_next()
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(4)))
+  assert_equal(buffer.selection_start, buffer:position_from_line(4))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   events.connect(events.FIND_WRAPPED, handler)
   ui.find.find_next()
   assert(wrapped, 'search did not wrap')
   events.disconnect(events.FIND_WRAPPED, handler)
-  assert_equal(buffer.selection_start, POS(1) + 1)
+  assert_equal(buffer.selection_start, 1 + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.find_prev()
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(4)))
+  assert_equal(buffer.selection_start, buffer:position_from_line(4))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.match_case, ui.find.whole_word = true, false
   ui.find.find_entry_text = 'FOO'
   ui.find.find_next()
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(3)))
+  assert_equal(buffer.selection_start, buffer:position_from_line(3))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.find_next()
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(3)))
+  assert_equal(buffer.selection_start, buffer:position_from_line(3))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.regex = true
   ui.find.find_entry_text = 'f(.)\\1'
   ui.find.find_next()
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(4)))
+  assert_equal(buffer.selection_start, buffer:position_from_line(4))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.find_entry_text = 'quux'
   ui.find.find_next()
@@ -2127,20 +2122,20 @@ function test_ui_find_highlight_results()
   ui.find.find_entry_text = 'foo'
   ui.find.find_next()
   assert_indics{
-    buffer:position_from_line(LINE(1)),
-    buffer:position_from_line(LINE(3)) + 4,
-    buffer:position_from_line(LINE(4)) + 4,
-    buffer:position_from_line(LINE(6))
+    buffer:position_from_line(1),
+    buffer:position_from_line(3) + 4,
+    buffer:position_from_line(4) + 4,
+    buffer:position_from_line(6)
   }
   -- Regex search.
   ui.find.find_entry_text = 'ba.'
   ui.find.regex = true
   ui.find.find_next()
   assert_indics{
-    buffer:position_from_line(LINE(2)) + 3,
-    buffer:position_from_line(LINE(3)),
-    buffer:position_from_line(LINE(4)),
-    buffer:position_from_line(LINE(4)) + 8,
+    buffer:position_from_line(2) + 3,
+    buffer:position_from_line(3),
+    buffer:position_from_line(4),
+    buffer:position_from_line(4) + 8,
   }
   ui.find.regex = false
   -- Do not highlight short searches (potential performance issue).
@@ -2167,34 +2162,34 @@ function test_ui_find_incremental()
     'FOObaz',
     'FOOquux'
   }, '\n'))
-  assert_equal(buffer.current_pos, POS(1))
+  assert_equal(buffer.current_pos, 1)
   ui.find.incremental = true
   ui.find.find_entry_text = 'f' -- simulate 'f' keypress
   if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
-  assert_equal(buffer.selection_start, POS(1) + 1)
+  assert_equal(buffer.selection_start, 1 + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 1)
   ui.find.find_entry_text = 'fo' -- simulate 'o' keypress
   ui.find.find_entry_text = 'foo' -- simulate 'o' keypress
   if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
-  assert_equal(buffer.selection_start, POS(1) + 1)
+  assert_equal(buffer.selection_start, 1 + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   events.emit(events.FIND, ui.find.find_entry_text, true) -- simulate Find Next
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)))
+  assert_equal(buffer.selection_start, buffer:position_from_line(2))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.find_entry_text = 'fooq' -- simulate 'q' keypress
   if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(4)))
+  assert_equal(buffer.selection_start, buffer:position_from_line(4))
   assert_equal(buffer.selection_end, buffer.selection_start + 4)
   ui.find.find_entry_text = 'foo' -- simulate backspace
   if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(2)))
+  assert_equal(buffer.selection_start, buffer:position_from_line(2))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   events.emit(events.FIND, ui.find.find_entry_text, true) -- simulate Find Next
-  assert_equal(buffer.selection_start, buffer:position_from_line(LINE(3)))
+  assert_equal(buffer.selection_start, buffer:position_from_line(3))
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.match_case = true
   events.emit(events.FIND, ui.find.find_entry_text, true) -- simulate Find Next, wrap
-  assert_equal(buffer.selection_start, POS(1) + 1)
+  assert_equal(buffer.selection_start, 1 + 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   ui.find.match_case = false
   ui.find.whole_word = true
@@ -2226,10 +2221,10 @@ function test_ui_find_incremental_highlight()
   ui.find.find_entry_text = 'fo' -- simulate 'o' keypress
   if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
   local indics = {
-    buffer:position_from_line(LINE(1)) + 1,
-    buffer:position_from_line(LINE(2)),
-    buffer:position_from_line(LINE(3)),
-    buffer:position_from_line(LINE(4))
+    buffer:position_from_line(1) + 1,
+    buffer:position_from_line(2),
+    buffer:position_from_line(3),
+    buffer:position_from_line(4)
   }
   local bit = 1 << ui.find.INDIC_FIND - 1
   for _, pos in ipairs(indics) do
@@ -2269,7 +2264,7 @@ function test_ui_find_find_in_files()
   local filename, line_num = view.buffer:get_sel_text():match('^([^:]+):(%d+)')
   ui.goto_view(-1)
   assert_equal(buffer.filename, filename)
-  assert_equal(buffer:line_from_position(buffer.current_pos), LINE(tonumber(line_num)))
+  assert_equal(buffer:line_from_position(buffer.current_pos), tonumber(line_num))
   assert_equal(buffer:get_sel_text(), 'foo')
   ui.goto_view(1) -- files found buffer
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
@@ -2338,7 +2333,7 @@ function test_ui_find_replace()
   ui.find.find_next()
   ui.find.replace_entry_text = 'bar'
   ui.find.replace()
-  assert_equal(buffer.selection_start, POS(4))
+  assert_equal(buffer.selection_start, 4)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   assert_equal(buffer:get_sel_text(), 'foo')
   assert_equal(buffer:get_text(), 'barfoo')
@@ -2373,7 +2368,7 @@ function test_ui_find_replace_all()
   buffer:undo()
   assert_equal(buffer:get_text(), text) -- verify atomic undo
   ui.find.regex = true
-  buffer:set_sel(buffer:position_from_line(LINE(2)), buffer:position_from_line(LINE(4)) + 3)
+  buffer:set_sel(buffer:position_from_line(2), buffer:position_from_line(4) + 3)
   ui.find.find_entry_text, ui.find.replace_entry_text = 'f(.)\\1', 'b\\1\\1'
   ui.find.replace_all() -- replace in selection
   assert_equal(buffer:get_text(), 'foo\nboobar\nboobaz\nboofoo')
@@ -2446,21 +2441,21 @@ function test_macro_record_play_with_keys_only()
   events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
   events.emit(events.KEYPRESS, 0xFFC6) -- f9; stop recording
   assert_equal(buffer:get_text(), 'foo\n\nbar\nbaz\n');
-  assert_equal(buffer.current_pos, buffer:position_from_line(LINE(3)))
+  assert_equal(buffer.current_pos, buffer:position_from_line(3))
   if not CURSES then
     events.emit(events.KEYPRESS, 0xFFC6, true) -- sf9; play
   else
     events.emit(events.KEYPRESS, 0xFFC7) -- f10; play
   end
   assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n');
-  assert_equal(buffer.current_pos, buffer:position_from_line(LINE(5)))
+  assert_equal(buffer.current_pos, buffer:position_from_line(5))
   if not CURSES then
     events.emit(events.KEYPRESS, 0xFFC6, true) -- sf9; play
   else
     events.emit(events.KEYPRESS, 0xFFC7) -- f10; play
   end
   assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n\n');
-  assert_equal(buffer.current_pos, buffer:position_from_line(LINE(7)))
+  assert_equal(buffer.current_pos, buffer:position_from_line(7))
   buffer:close(true)
 end
 
@@ -2491,12 +2486,12 @@ function test_menu_menu_functions()
   buffer:line_end()
   textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Enclose as XML Tags']][2]()
   assert_equal(buffer:get_text(), '<foo></foo>')
-  assert_equal(buffer.current_pos, POS(6))
+  assert_equal(buffer.current_pos, 6)
   buffer:undo()
   assert_equal(buffer:get_text(), 'foo') -- verify atomic undo
   textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Enclose as Single XML Tag']][2]()
   assert_equal(buffer:get_text(), '<foo />')
-  assert_equal(buffer.current_pos, buffer.line_end_position[LINE(1)])
+  assert_equal(buffer.current_pos, buffer.line_end_position[1])
   if not CURSES then -- there are focus issues in curses
     textadept.menu.menubar[_L['Search']][_L['Find in Files']][2]()
     assert(ui.find.in_files, 'not finding in files')
@@ -2535,7 +2530,7 @@ function test_menu_menu_functions()
   assert_equal(view.size, size)
   view:unsplit()
   buffer:set_text('if foo then\n  bar\nend')
-  buffer:colorize(POS(1), -1)
+  buffer:colorize(1, -1)
   textadept.menu.menubar[_L['View']][_L['Toggle Current Fold']][2]()
   assert_equal(view.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
   local indentation_guides = view.indentation_guides
@@ -2581,8 +2576,8 @@ function test_run_compile_run()
   textadept.run.goto_error(true) -- wraps
   assert_equal(#_VIEWS, 2)
   assert_equal(buffer.filename, compile_file)
-  assert_equal(buffer:line_from_position(buffer.current_pos), LINE(3))
-  assert(buffer.annotation_text[LINE(3)]:find("'end' expected"), 'annotation not visible')
+  assert_equal(buffer:line_from_position(buffer.current_pos), 3)
+  assert(buffer.annotation_text[3]:find("'end' expected"), 'annotation not visible')
   ui.goto_view(1) -- message buffer
   assert_equal(buffer._type, _L['[Message Buffer]'])
   assert(buffer:get_sel_text():find("'end' expected"), 'compile error not selected')
@@ -2596,7 +2591,7 @@ function test_run_compile_run()
   textadept.run.compile() -- clears annotation
   ui.update() -- process output
   view:goto_buffer(1)
-  assert(not buffer.annotation_text[LINE(3)]:find("'end' expected"), 'annotation visible')
+  assert(not buffer.annotation_text[3]:find("'end' expected"), 'annotation visible')
   buffer:close() -- compile_file
 
   local run_file = _HOME .. '/test/modules/textadept/run/run.lua'
@@ -2610,10 +2605,10 @@ function test_run_compile_run()
   assert(buffer:get_text():find('attempt to call a nil value'), 'no run error')
   textadept.run.goto_error(false)
   assert_equal(buffer.filename, run_file)
-  assert_equal(buffer:line_from_position(buffer.current_pos), LINE(2))
+  assert_equal(buffer:line_from_position(buffer.current_pos), 2)
   textadept.run.goto_error(nil, false)
   assert_equal(buffer.filename, run_file)
-  assert_equal(buffer:line_from_position(buffer.current_pos), LINE(1))
+  assert_equal(buffer:line_from_position(buffer.current_pos), 1)
   ui.goto_view(1)
   assert(buffer:marker_get(buffer:line_from_position(buffer.current_pos)) & 1 << textadept.run.MARK_WARNING - 1 > 0)
   ui.goto_view(-1)
@@ -2655,7 +2650,7 @@ end
 function test_run_goto_internal_lua_error()
   xpcall(error, function(message) events.emit(events.ERROR, debug.traceback(message)) end, 'internal error', 2)
   if #_VIEWS > 1 then view:unsplit() end
-  textadept.run.goto_error(LINE(1))
+  textadept.run.goto_error(1)
   assert(buffer.filename:find('/test/test%.lua$'), 'did not detect internal Lua error')
   view:unsplit()
   buffer:close()
@@ -2799,7 +2794,7 @@ function test_snippets_placeholders()
     'escape: %%1 %4%( %4%{',
   }, '\n'))
   assert_equal(buffer.selections, 1)
-  assert_equal(buffer.selection_start, POS(1) + 14)
+  assert_equal(buffer.selection_start, 1 + 14)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   assert_equal(buffer:get_sel_text(), 'foo')
   buffer:replace_sel('baz')
@@ -2814,9 +2809,9 @@ function test_snippets_placeholders()
   }, '\n'), lua_date, shell_date))
   textadept.snippets.insert()
   assert_equal(buffer.selections, 2)
-  assert_equal(buffer.selection_start, POS(1) + 18)
+  assert_equal(buffer.selection_start, 1 + 18)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
-  for i = INDEX(1), INDEX(buffer.selections) do
+  for i = 1, buffer.selections do
     assert_equal(buffer.selection_n_end[i], buffer.selection_n_start[i] + 3)
     assert_equal(buffer:text_range(buffer.selection_n_start[i], buffer.selection_n_end[i]), 'bar')
   end
@@ -2838,8 +2833,8 @@ function test_snippets_placeholders()
     'Shell: %s baz',
     'escape: %%1 ( {'
   }, '\n'), lua_date, shell_date))
-  assert_equal(buffer.selection_start, POS(1))
-  assert_equal(buffer.selection_start, POS(1))
+  assert_equal(buffer.selection_start, 1)
+  assert_equal(buffer.selection_start, 1)
   buffer:close(true)
 end
 
@@ -2885,28 +2880,28 @@ function test_snippets_nested()
   textadept.snippets.insert()
   assert_equal(buffer:get_text(), 'foobarbaz barbaz ') -- trailing spaces for snippet sentinels
   assert_equal(buffer:get_sel_text(), 'foo')
-  assert_equal(buffer.selection_start, POS(1))
+  assert_equal(buffer.selection_start, 1)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   buffer:replace_sel('quux')
   textadept.snippets.insert()
   assert_equal(buffer:get_sel_text(), 'bar')
-  assert_equal(buffer.selection_start, POS(1) + 4)
+  assert_equal(buffer.selection_start, 1 + 4)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   textadept.snippets.insert()
   assert_equal(buffer:get_sel_text(), 'baz')
-  assert_equal(buffer.selection_start, POS(1) + 7)
+  assert_equal(buffer.selection_start, 1 + 7)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   textadept.snippets.insert()
-  assert_equal(buffer.current_pos, POS(1) + 10)
+  assert_equal(buffer.current_pos, 1 + 10)
   assert_equal(buffer.selection_start, buffer.selection_end)
   assert_equal(buffer:get_text(), 'quuxbarbazbarbaz ')
   textadept.snippets.insert()
   assert_equal(buffer:get_sel_text(), 'bar')
-  assert_equal(buffer.selection_start, POS(1) + 10)
+  assert_equal(buffer.selection_start, 1 + 10)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   textadept.snippets.insert()
   assert_equal(buffer:get_sel_text(), 'baz')
-  assert_equal(buffer.selection_start, POS(1) + 13)
+  assert_equal(buffer.selection_start, 1 + 13)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   textadept.snippets.insert()
   assert_equal(buffer:get_text(), 'quuxbarbazbarbaz')
@@ -2917,21 +2912,21 @@ function test_snippets_nested()
   buffer:char_right()
   textadept.snippets.insert()
   textadept.snippets.cancel_current()
-  assert_equal(buffer.current_pos, POS(1) + 3)
+  assert_equal(buffer.current_pos, 1 + 3)
   assert_equal(buffer.selection_start, buffer.selection_end)
   assert_equal(buffer:get_text(), 'foobarbaz ')
   buffer:add_text('quux')
   assert_equal(buffer:get_text(), 'fooquuxbarbaz ')
   textadept.snippets.insert()
   assert_equal(buffer:get_sel_text(), 'bar')
-  assert_equal(buffer.selection_start, POS(1) + 7)
+  assert_equal(buffer.selection_start, 1 + 7)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   textadept.snippets.insert()
   assert_equal(buffer:get_sel_text(), 'baz')
-  assert_equal(buffer.selection_start, POS(1) + 10)
+  assert_equal(buffer.selection_start, 1 + 10)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
   textadept.snippets.insert()
-  assert_equal(buffer.current_pos, buffer.line_end_position[LINE(1)])
+  assert_equal(buffer.current_pos, buffer.line_end_position[1])
   assert_equal(buffer.selection_start, buffer.selection_end)
   assert_equal(buffer:get_text(), 'fooquuxbarbaz')
 
@@ -3066,15 +3061,15 @@ function test_lexer_api()
     'baz'
   }, '\n'))
   buffer:set_lexer('lua')
-  buffer:colorize(POS(1), -1)
+  buffer:colorize(1, -1)
   local lexer = require('lexer')
-  assert(lexer.fold_level[LINE(1)] & lexer.FOLD_HEADER > 0, 'not a fold header')
-  assert_equal(lexer.fold_level[LINE(2)], lexer.fold_level[LINE(3)])
-  assert(lexer.fold_level[LINE(4)] > lexer.fold_level[LINE(5)], 'incorrect fold levels')
-  assert(lexer.indent_amount[LINE(1)] < lexer.indent_amount[LINE(2)], 'incorrect indent level')
-  assert(lexer.indent_amount[LINE(2)] > lexer.indent_amount[LINE(3)], 'incorrect indent level')
-  lexer.line_state[LINE(1)] = 2
-  assert_equal(lexer.line_state[LINE(1)], 2)
+  assert(lexer.fold_level[1] & lexer.FOLD_HEADER > 0, 'not a fold header')
+  assert_equal(lexer.fold_level[2], lexer.fold_level[3])
+  assert(lexer.fold_level[4] > lexer.fold_level[5], 'incorrect fold levels')
+  assert(lexer.indent_amount[1] < lexer.indent_amount[2], 'incorrect indent level')
+  assert(lexer.indent_amount[2] > lexer.indent_amount[3], 'incorrect indent level')
+  lexer.line_state[1] = 2
+  assert_equal(lexer.line_state[1], 2)
   assert_equal(lexer.property['foo'], '')
   lexer.property['foo'] = 'bar'
   assert_equal(lexer.property['foo'], 'bar')
@@ -3086,13 +3081,13 @@ function test_lexer_api()
   assert_equal(lexer.property_int['baz'], 0)
   assert_equal(lexer.property_int['quux'], 0)
   assert_equal(lexer.style_at[2], 'keyword')
-  assert_equal(lexer.line_from_position(15), LINE(2))
+  assert_equal(lexer.line_from_position(15), 2)
   buffer:close(true)
 
   assert_raises(function() lexer.fold_level = nil end, 'read-only')
-  assert_raises(function() lexer.fold_level[LINE(1)] = 0 end, 'read-only')
+  assert_raises(function() lexer.fold_level[1] = 0 end, 'read-only')
   assert_raises(function() lexer.indent_amount = nil end, 'read-only')
-  assert_raises(function() lexer.indent_amount[LINE(1)] = 0 end, 'read-only')
+  assert_raises(function() lexer.indent_amount[1] = 0 end, 'read-only')
   assert_raises(function() lexer.property = nil end, 'read-only')
   assert_raises(function() lexer.property_int = nil end, 'read-only')
   assert_raises(function() lexer.property_int['foo'] = 1 end, 'read-only')
@@ -3204,8 +3199,8 @@ function test_buffer_read_write_only_properties()
   assert_raises(function() view.all_lines_visible = false end, 'read-only property')
   assert_raises(function() return buffer.auto_c_fill_ups end, 'write-only property')
   assert_raises(function() buffer.annotation_text = {} end, 'read-only property')
-  assert_raises(function() buffer.char_at[POS(1)] = string.byte(' ') end, 'read-only property')
-  assert_raises(function() return view.marker_alpha[INDEX(1)] end, 'write-only property')
+  assert_raises(function() buffer.char_at[1] = string.byte(' ') end, 'read-only property')
+  assert_raises(function() return view.marker_alpha[1] end, 'write-only property')
 end
 
 function test_set_theme()
