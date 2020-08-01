@@ -83,7 +83,8 @@ for _, mt in ipairs{buffer_mt, view_mt} do
         __newindex = function(property, k2, v2)
           settings[#settings + 1] = string.format(
             'buffer.%s[%s]=%s', k, repr(k2), repr(v2))
-          property_mt.__newindex(property, k2, v2)
+          local ok, errmsg = pcall(property_mt.__newindex, property, k2, v2)
+          if not ok then error(errmsg, 2) end
         end
       })
     end
