@@ -149,12 +149,12 @@ local M = {}
 -- Alt+Shift+Up    |⌥⇧⇡         |M-S-Up      |Line up extend rect. selection
 -- Left            |⇠<br/>^B    |^B<br/>Left |Char left
 -- Shift+Left      |⇧⇠<br/>^⇧B  |S-Left      |Char left extend selection
--- Ctrl+Left       |^⇠<br/>^⌘B  |^Left       |Word left
+-- Ctrl+Left       |⌥⇠<br/>^⌘B  |^Left       |Word left
 -- Ctrl+Shift+Left |^⇧⇠<br/>^⌘⇧B|S-^Left     |Word left extend selection
 -- Alt+Shift+Left  |⌥⇧⇠         |M-S-Left    |Char left extend rect. selection
 -- Right           |⇢<br/>^F    |^F<br/>Right|Char right
 -- Shift+Right     |⇧⇢<br/>^⇧F  |S-Right     |Char right extend selection
--- Ctrl+Right      |^⇢<br/>^⌘F  |^Right      |Word right
+-- Ctrl+Right      |⌥⇢<br/>^⌘F  |^Right      |Word right
 -- Ctrl+Shift+Right|^⇧⇢<br/>^⌘⇧F|S-^Right    |Word right extend selection
 -- Alt+Shift+Right |⌥⇧⇢         |M-S-Right   |Char right extend rect. selection
 -- Home            |⌘⇠<br/>^A   |^A<br/>Home |Line start
@@ -454,14 +454,14 @@ local bindings = {
   [buffer.char_left] = {'left', {'left', 'ctrl+b'}, {'left', 'ctrl+b'}},
   [buffer.char_left_extend] =
     {'shift+left', {'shift+left', 'ctrl+B'}, 'shift+left'},
-  [buffer.word_left] = {'ctrl+left', {'ctrl+left', 'ctrl+cmd+b'}, 'ctrl+left'},
+  [buffer.word_left] = {'ctrl+left', {'alt+left', 'ctrl+cmd+b'}, 'ctrl+left'},
   [buffer.word_left_extend] =
     {'ctrl+shift+left', {'ctrl+shift+left', 'ctrl+cmd+B'}, 'ctrl+shift+left'},
   [buffer.char_right] = {'right', {'right', 'ctrl+f'}, {'right', 'ctrl+f'}},
   [buffer.char_right_extend] =
     {'shift+right', {'shift+right', 'ctrl+F'}, 'shift+right'},
   [buffer.word_right] =
-    {'ctrl+right', {'ctrl+right', 'ctrl+cmd+f'}, 'ctrl+right'},
+    {'ctrl+right', {'alt+right', 'ctrl+cmd+f'}, 'ctrl+right'},
   [buffer.word_right_end_extend] = {
     'ctrl+shift+right', {'ctrl+shift+right', 'ctrl+cmd+F'}, 'ctrl+shift+right'
   },
