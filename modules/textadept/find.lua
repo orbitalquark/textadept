@@ -235,12 +235,12 @@ local function find(text, next, flags, no_wrap, wrapped)
     end
   end
 
-  return pos ~= -1
+  return pos
 end
 events.connect(events.FIND, find)
 events.connect(events.FIND_TEXT_CHANGED, function()
   if not M.incremental then return end
-  return events.emit(events.FIND, M.find_entry_text, true)
+  return events.emit(events.FIND, M.find_entry_text, true) ~= -1
 end)
 events.connect(
   events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wrapped'] end)

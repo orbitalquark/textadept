@@ -2093,6 +2093,7 @@ function test_ui_find_find_text()
   ui.find.find_entry_text = 'quux'
   ui.find.find_next()
   assert_equal(buffer.selection_start, buffer.selection_end) -- no match
+  assert_equal(events.emit(events.FIND, 'not found'), -1) -- simulate Find Next
   ui.find.match_case, ui.find.regex = false, false
   ui.find.find_entry_text = ''
   buffer:close(true)
