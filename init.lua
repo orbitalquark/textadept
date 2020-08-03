@@ -297,7 +297,7 @@ view.call_tip_use_style = buffer.tab_width *
 -- Folding.
 lexer.folding = true
 --lexer.fold_by_indentation = true
---lexer.fold_line_comments = true
+--lexer.fold_line_groups = true
 --lexer.fold_on_zero_sum_lines = true
 --lexer.fold_compact = true
 view.automatic_fold = view.AUTOMATICFOLD_SHOW | view.AUTOMATICFOLD_CLICK |
