@@ -2068,6 +2068,7 @@ MODE                       |Renamed |[mode][]
 N/A                        |Added   |[to_eol()][]
 delimited\_range()         |Replaced|[range()][]
 nested\_pair()             |Replaced|[range()][]
+fold\_line\_comments()     |Replaced|[fold_consecutive_lines()][]<sup>a</sup>
 N/A                        |Added   |[number][]
 N/A                        |Added   |[colors][]
 N/A                        |Added   |[styles][]
@@ -2080,9 +2081,9 @@ toggle(line, on)           |Changed |[toggle()][]
 block\_comment()           |Renamed |[toggle_comment()][]
 highlight_word()           |Replaced|[highlight_words][]
 **textadept.file_types**   |        |
-lexers                     |Removed |N/A<sup>a</sup>
+lexers                     |Removed |N/A<sup>b</sup>
 **textadept.find**         |        |
-find\_incremental()        |Replaced|[incremental][]<sup>b</sup>
+find\_incremental()        |Replaced|[incremental][]<sup>c</sup>
 find\_incremental\_keys    |Removed |
 N/A                        |Added   |[highlight_all_matches][]
 **textadept.snippets**     |        |
@@ -2098,11 +2099,12 @@ N/A                        |Added   |[progressbar()][]
 **ui.find**                |        |
 find\_in\_files\_timeout   |Removed |N/A
 **view**                   |        |
-N/A                        |Added   |_buffer functions and fields_<sup>c</sup>
+N/A                        |Added   |_buffer functions and fields_<sup>d</sup>
 
-<sup>a</sup>Use `for name in buffer:private_lexer_call(_SCINTILLA.functions.property_names[1]):gmatch('[^\n]+') do ... end`.<br/>
-<sup>b</sup>Use `textadept.menu.menubar[_L['Search']][_L['Find Incremental']][2]`.<br/>
-<sup>c</sup>Most buffer functions and fields are available in views now. See
+<sup>a</sup>Returns prefix and function, instead of just function.
+<sup>b</sup>Use `for name in buffer:private_lexer_call(_SCINTILLA.functions.property_names[1]):gmatch('[^\n]+') do ... end`.<br/>
+<sup>c</sup>Use `textadept.menu.menubar[_L['Search']][_L['Find Incremental']][2]`.<br/>
+<sup>d</sup>Most buffer functions and fields are available in views now. See
 section below.
 
 [view:set_theme()]: api.html#view.set_theme
@@ -2116,6 +2118,7 @@ section below.
 [mode]: api.html#keys.mode
 [to_eol()]: api.html#lexer.to_eol
 [range()]: api.html#lexer.range
+[fold_consecutive_lines()]: api.html#lexer.fold_consecutive_lines
 [number]: api.html#lexer.number
 [colors]: api.html#lexer.colors
 [styles]: api.html#lexer.styles
@@ -2251,7 +2254,7 @@ examples.
 
 #### Key Bindings Changes
 
-Key binding modifiers have changed from their shortened form to a longer form
+Key sequence modifiers have changed from their shortened form to a longer form
 that is more intuitive. `'c'` is now `'ctrl'`, `'a'` is now `'alt'`, `'m'` is
 now `'cmd'` on macOS and `'meta'` in the terminal version, and `'s'` is now
 `'shift'`. For example, `keys.cn = ...` is now `keys['ctrl+n'] = ...` and
