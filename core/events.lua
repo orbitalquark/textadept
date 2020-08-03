@@ -62,9 +62,11 @@ local M = {}
 --   * _`position`_: The position the list was displayed at.
 -- @field BUFFER_AFTER_SWITCH (string)
 --   Emitted right after switching to another buffer.
+--   The buffer being switched to is `buffer`.
 --   Emitted by [`view.goto_buffer()`]().
 -- @field BUFFER_BEFORE_SWITCH (string)
 --   Emitted right before switching to another buffer.
+--   The buffer being switched from is `buffer`.
 --   Emitted by [`view.goto_buffer()`]().
 -- @field BUFFER_DELETED (string)
 --   Emitted after deleting a buffer.
@@ -297,9 +299,11 @@ local M = {}
 --   Emitted on startup and by [`view.split()`]().
 -- @field VIEW_BEFORE_SWITCH (string)
 --   Emitted right before switching to another view.
+--   The view being switched from is `view`.
 --   Emitted by [`ui.goto_view()`]().
 -- @field VIEW_AFTER_SWITCH (string)
 --   Emitted right after switching to another view.
+--   The view being switched to is `view`.
 --   Emitted by [`ui.goto_view()`]().
 -- @field ZOOM (string)
 --   Emitted after changing [`view.zoom`]().

@@ -1150,8 +1150,7 @@ function marker_delete_all(buffer, marker) end
 function marker_delete_handle(buffer, handle) end
 
 ---
--- Returns a bit-mask that represents the markers that were added to line number
--- *line*.
+-- Returns a bit-mask that represents the markers on line number *line*.
 -- The first bit is set if marker number 1 is present, the second bit for marker
 -- number 2, and so on.
 -- @param buffer A buffer.
@@ -1168,16 +1167,16 @@ function marker_get(buffer, line) end
 function marker_handle_from_line(buffer, line, n) end
 
 ---
--- Returns the line number that marker handle *handle*, returned by
--- `buffer.marker_add()`, was added to, or `-1` if the line was not found.
+-- Returns the line number of the line that contains the marker with handle
+-- *handle* (returned `buffer.marker_add()`), or `-1` if the line was not found.
 -- @param buffer A buffer.
 -- @param handle The identifier of a marker returned by `buffer.marker_add()`.
 -- @return number
 function marker_line_from_handle(buffer, handle) end
 
 ---
--- Returns the first line number, starting at line number *line*, that has had
--- all of the markers represented by marker bit-mask *marker_mask* added to it.
+-- Returns the first line number, starting at line number *line*, that contains
+-- all of the markers represented by marker bit-mask *marker_mask*.
 -- Returns `-1` if no line was found.
 -- The first bit is set if marker 1 is set, the second bit for marker 2, etc.,
 -- up to marker 32.
@@ -1197,8 +1196,8 @@ function marker_next(buffer, line, marker_mask) end
 function marker_number_from_line(buffer, line, n) end
 
 ---
--- Returns the last line number, before or on line number *line*, that has had
--- all of the markers represented by marker bit-mask *marker_mask* added to it.
+-- Returns the last line number, before or on line number *line*, that contains
+-- all of the markers represented by marker bit-mask *marker_mask*.
 -- Returns `-1` if no line was found.
 -- The first bit is set if marker 1 is set, the second bit for marker 2, etc.,
 -- up to marker 32.
@@ -1761,7 +1760,7 @@ function word_start_position(buffer, pos, only_word_chars) end
 function delete(buffer) end
 
 ---
--- Creates and returns a new buffer.
+-- Creates a new buffer, displays it in the current view, and returns it.
 -- Emits a `BUFFER_NEW` event.
 -- @return the new buffer.
 -- @class function

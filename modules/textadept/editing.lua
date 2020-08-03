@@ -591,7 +591,7 @@ end
 ---
 -- Passes the selected text or all buffer text to string shell command *command*
 -- as standard input (stdin) and replaces the input text with the command's
--- standard output (stdout). *command* may contain pipes.
+-- standard output (stdout). *command* may contain shell pipes ('|').
 -- Standard input is as follows:
 --
 -- 1. If no text is selected, the entire buffer is used.
