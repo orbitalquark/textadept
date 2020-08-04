@@ -95,6 +95,8 @@ local preferred_view
 
 ---
 -- Map of directory paths to filters used in `ui.find.find_in_files()`.
+-- This table is updated when the user manually specifies a filter in the
+-- "Filter" entry during an "In files" search.
 -- @class table
 -- @name find_in_files_filters
 -- @see find_in_files
