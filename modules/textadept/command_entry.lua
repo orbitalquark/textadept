@@ -173,7 +173,7 @@ local prev_key_mode
 
 ---
 -- Opens the command entry, subjecting it to any key bindings defined in table
--- *keys*, highlighting text with lexer name *lexer*, and displaying
+-- *keys*, highlighting text with lexer name *lang*, and displaying
 -- *height* number of lines at a time, and then when the `Enter` key is pressed,
 -- closes the command entry and calls function *f* (if non-`nil`) with the
 -- command entry's text as an argument.
@@ -190,22 +190,22 @@ local prev_key_mode
 --   `Esc` and `Enter` are automatically defined to cancel and finish the
 --   command entry, respectively.
 --   This parameter may be omitted completely.
--- @param lexer Optional string lexer name to use for command entry text. The
+-- @param lang Optional string lexer name to use for command entry text. The
 --   default value is `'text'`.
 -- @param height Optional number of lines to display in the command entry. The
 --   default value is `1`.
 -- @see editing_keys
 -- @usage ui.command_entry.run(ui.print)
 -- @name run
-function M.run(f, keys, lexer, height)
+function M.run(f, keys, lang, height)
   if M:auto_c_active() then M:auto_c_cancel() end -- may happen in curses
   if not assert_type(f, 'function/nil', 1) and not keys then
-    f, keys, lexer = run_lua, lua_keys, 'lua'
+    f, keys, lang = run_lua, lua_keys, 'lua'
   elseif type(assert_type(keys, 'table/string/nil', 2)) == 'string' then
-    lexer, height, keys = keys, assert_type(lexer, 'number/nil', 3), {}
+    lang, height, keys = keys, assert_type(lang, 'number/nil', 3), {}
   else
     if not keys then keys = {} end
-    assert_type(lexer, 'string/nil', 3)
+    assert_type(lang, 'string/nil', 3)
     assert_type(height, 'number/nil', 4)
   end
   if not keys['esc'] then keys['esc'] = M.focus end -- hide
@@ -228,7 +228,7 @@ function M.run(f, keys, lexer, height)
   M:select_all()
   prev_key_mode = _G.keys.mode
   M.focus()
-  M:set_lexer(lexer or 'text')
+  M:set_lexer(lang or 'text')
   M.height = M:text_height(1) * (height or 1)
   _G.keys._command_entry, _G.keys.mode = keys, '_command_entry'
 end

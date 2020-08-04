@@ -555,7 +555,6 @@ function test_keys_keychain()
   assert(not foo, 'foo set outside keychain')
   events.emit(events.KEYPRESS, string.byte('a'), false, true)
   assert_equal(#keys.keychain, 1)
-  _G.print(keys.mode,#keys.keychain,keys.keychain[0],keys.keychain[1],keys.keychain[2])
   assert_equal(keys.keychain[1], 'ctrl+a')
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
   assert_equal(#keys.keychain, 0, 'keychain not canceled')
@@ -1997,7 +1996,7 @@ end
 
 function test_file_types_set_lexer()
   local lexer_loaded
-  local handler = function(lexer) lexer_loaded = lexer end
+  local handler = function(name) lexer_loaded = name end
   events.connect(events.LEXER_LOADED, handler)
   buffer.new()
   buffer.filename = 'foo.lua'
@@ -2030,9 +2029,9 @@ end
 
 function test_file_types_select_lexer_interactive()
   buffer.new()
-  local lexer = buffer:get_lexer()
+  local name = buffer:get_lexer()
   textadept.file_types.select_lexer()
-  assert(buffer:get_lexer() ~= lexer, 'lexer unchanged')
+  assert(buffer:get_lexer() ~= name, 'lexer unchanged')
   buffer:close()
 end
 

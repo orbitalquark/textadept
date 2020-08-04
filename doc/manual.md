@@ -934,7 +934,7 @@ startup and how to load them on-demand in response to events.
 The only kind of modules Textadept will load automatically are called language
 modules. Despite this distinction, they are still just plain Lua modules -- the
 only thing special about them is that a language module's name matches the
-language's lexer in Textadept's *lexers/* directory. (For example, the Lua
+language's lexer name in Textadept's *lexers/* directory. (For example, the Lua
 language module has the name "lua", and the C language module has the name
 "ansi\_c".)
 
@@ -1117,8 +1117,8 @@ ensure your Ruby code always uses 2 spaces for indentation (regardless of what
 your default indentation settings are), add the following to your
 *~/.textadept/init.lua*:
 
-    events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer ~= 'ruby' then return end
+    events.connect(events.LEXER_LOADED, function(name)
+      if name ~= 'ruby' then return end
       buffer.use_tabs = false
       buffer.tab_width = 2
     end)
@@ -1126,8 +1126,8 @@ your default indentation settings are), add the following to your
 Perhaps you want to auto-pair and brace-match '<' and '>' characters, but only
 in HTML and XML files. In order to accomplish this, add the following:
 
-    events.connect(events.LEXER_LOADED, function(lexer)
-      local is_markup = lexer == 'html' or lexer == 'xml'
+    events.connect(events.LEXER_LOADED, function(name)
+      local is_markup = name == 'html' or name == 'xml'
       textadept.editing.auto_pairs[string.byte('<')] = is_markup and '>'
       textadept.editing.brace_matches[string.byte('<')] = is_markup
       textadept.editing.brace_matches[string.byte('>')] = is_markup
@@ -1138,9 +1138,9 @@ you want to change without editing the module itself. (This is good practice.)
 Since that module is not available at startup, but only once an applicable
 source file is loaded, you would use this:
 
-    events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer ~= '...' then return end
-      _M[lexer].setting = 'custom setting'
+    events.connect(events.LEXER_LOADED, function(name)
+      if name ~= '...' then return end
+      _M[name].setting = 'custom setting'
     end)
 
 [`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
@@ -1164,8 +1164,8 @@ an `events.LEXER_LOADED` event. For example, if you wanted to extend Textadept's
 Lua module with an *extras.lua* module, add the following to
 *~/.textadept/init.lua*:
 
-    events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer == 'lua' then require('lua.extras') end
+    events.connect(events.LEXER_LOADED, function(name)
+      if name == 'lua' then require('lua.extras') end
     end)
 
 
@@ -1200,10 +1200,10 @@ Key bindings can also be language-specific by storing them in a
 bindings outside of a language module, you would add something like this to
 *~/.textadept/init.lua*:
 
-    events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer ~= '...' then return end
-      if not keys[lexer] then keys[lexer] = {} end
-      keys[lexer]['ctrl+n'] = function() ... end
+    events.connect(events.LEXER_LOADED, function(name)
+      if name ~= '...' then return end
+      if not keys[name] then keys[name] = {} end
+      keys[name]['ctrl+n'] = function() ... end
     end)
 
 If you plan on redefining most key bindings (e.g. in order to mimic an editor
@@ -1225,9 +1225,9 @@ via a global `snippets` table:
 
     snippets['file'] = '%<buffer.filename>'
     snippets['dir'] = "%<(buffer.filename or ''):match('^.+[/\\]')>"
-    events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer ~= '...' then return end
-      snippets[lexer]['trigger'] = 'snippet text'
+    events.connect(events.LEXER_LOADED, function(name)
+      if name ~= '...' then return end
+      snippets[name]['trigger'] = 'snippet text'
     end)
 
 You may also have a directory of snippet files where each file is its own
@@ -1338,8 +1338,8 @@ You can even tweak themes on a per-language basis. For example, in order to
 color Java functions black instead of the default orange, add the following to
 *~/.textadept/init.lua*:
 
-    events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer ~= 'java' then return end
+    events.connect(events.LEXER_LOADED, function(name)
+      if name ~= 'java' then return end
       local default_fore = view.style_fore[view.STYLE_DEFAULT]
       view.style_fore[buffer:style_of_name('function')] = default_fore
     end)
@@ -1553,8 +1553,8 @@ an arbitrary path to write the generated *tags* and *api* files to. You can then
 use your *~/.textadept/init.lua* file to load those completions and API docs for
 use within Textadept when editing [Lua files][]:
 
-    events.connect(events.LEXER_LOADED, function(lexer)
-      if lexer ~= 'lua' then return end
+    events.connect(events.LEXER_LOADED, function(name)
+      if name ~= 'lua' then return end
       _M.lua.tags[#_M.lua.tags + 1] = '/path/to/tags'
       table.insert(textadept.editing.api_files.lua, '/path/to/api')
     end)

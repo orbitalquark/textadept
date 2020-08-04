@@ -11,7 +11,7 @@ local M = {}
 --   properties since the module is not loaded when Textadept starts.
 --   Arguments:
 --
---   * _`lexer`_: The language lexer's name.
+--   * _`name`_: The language lexer's name.
 module('textadept.file_types')]]
 
 -- Events.
@@ -35,19 +35,19 @@ M.patterns = {['^#!.+[/ ][gm]?awk']='awk',['^#!.+[/ ]lua']='lua',['^#!.+[/ ]octa
 local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
 -- LuaDoc is in core/.buffer.luadoc.
 local function get_lexer(buffer, current)
-  local lexer = buffer:private_lexer_call(GETLEXERLANGUAGE)
-  return current and lexer:match('[^/]+$') or lexer:match('^[^/]+')
+  local name = buffer:private_lexer_call(GETLEXERLANGUAGE)
+  return current and name:match('[^/]+$') or name:match('^[^/]+')
 end
 
 -- Attempts to detect the language based on a buffer's first line of text or
 -- that buffer's filename.
 -- @param buffer The buffer to detect the language of.
--- @return lexer language or nil
+-- @return lexer name or nil
 local function detect_language(buffer)
   local line = buffer:get_line(1)
   -- Detect from first line.
-  for patt, lexer in pairs(M.patterns) do
-    if line:find(patt) then return lexer end
+  for patt, lexer_name in pairs(M.patterns) do
+    if line:find(patt) then return lexer_name end
   end
   -- Detect from file extension.
   return buffer.filename and M.extensions[buffer.filename:match('[^/\\.]+$')]
@@ -57,19 +57,19 @@ local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 local GETERROR = _SCINTILLA.properties.status[1]
 -- LuaDoc is in core/.buffer.luadoc.
-local function set_lexer(buffer, lang)
-  assert_type(lang, 'string/nil', 2)
-  if not lang then lang = detect_language(buffer) or 'text' end
+local function set_lexer(buffer, name)
+  assert_type(name, 'string/nil', 2)
+  if not name then name = detect_language(buffer) or 'text' end
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
-  buffer:private_lexer_call(SETLEXERLANGUAGE, lang)
+  buffer:private_lexer_call(SETLEXERLANGUAGE, name)
   local errmsg = buffer:private_lexer_call(GETERROR)
   if #errmsg > 0 then
     buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
     error(errmsg, 2)
   end
-  buffer._lexer = lang
-  if package.searchpath(lang, package.path) then _M[lang] = require(lang) end
-  if buffer ~= ui.command_entry then events.emit(events.LEXER_LOADED, lang) end
+  buffer._lexer = name
+  if package.searchpath(name, package.path) then _M[name] = require(name) end
+  if buffer ~= ui.command_entry then events.emit(events.LEXER_LOADED, name) end
   local last_line = view.first_visible_line + view.lines_on_screen
   buffer:colorize(1, buffer:position_from_line(last_line + 1)) -- refresh
 end

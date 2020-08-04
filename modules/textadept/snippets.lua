@@ -10,8 +10,8 @@ local M = {}
 --
 -- Define snippets in the global `snippets` table in key-value pairs. Each pair
 -- consists of either a string trigger word and its snippet text, or a string
--- lexer language (from the *lexers/* directory) with a table of trigger words
--- and snippet texts. When searching for a snippet to insert based on a trigger
+-- lexer name (from the *lexers/* directory) with a table of trigger words and 
+-- snippet texts. When searching for a snippet to insert based on a trigger
 -- word, Textadept considers snippets in the current lexer to have priority,
 -- followed by the ones in the global table. This means if there are two
 -- snippets with the same trigger word, Textadept inserts the one specific to
@@ -149,12 +149,12 @@ local function find_snippet(grep, no_trigger)
   local trigger = not no_trigger and buffer:text_range(
     buffer:word_start_position(buffer.current_pos), buffer.current_pos) or ''
   if no_trigger then grep = true end
-  local lexer = buffer:get_lexer(true)
+  local lang = buffer:get_lexer(true)
   local name_patt = '^' .. trigger
   -- Search in the snippet tables.
   local snippet_tables = {snippets}
-  if type(snippets[lexer]) == 'table' then
-    table.insert(snippet_tables, 1, snippets[lexer])
+  if type(snippets[lang]) == 'table' then
+    table.insert(snippet_tables, 1, snippets[lang])
   end
   for _, snippets in ipairs(snippet_tables) do
     if not grep and snippets[trigger] then return trigger, snippets[trigger] end
@@ -173,15 +173,15 @@ local function find_snippet(grep, no_trigger)
       -- "trigger.ext". Prefer "lexer."-prefixed snippets.
       local p1, p2, p3 = basename:match('^([^.]+)%.?([^.]*)%.?([^.]*)$')
       if not grep and
-         (p1 == lexer and p2 == trigger or p1 == trigger and p3 == '') or
+         (p1 == lang and p2 == trigger or p1 == trigger and p3 == '') or
          grep and
-         (p1 == lexer and p2 and p2:find(name_patt) or
+         (p1 == lang and p2 and p2:find(name_patt) or
            p1 and p1:find(name_patt) and p3 == '') then
         local f = io.open(string.format('%s/%s', M.paths[i], basename))
         text = f:read('a')
         f:close()
         if not grep then return trigger, text end
-        matching_snippets[p1 == lexer and p2 or p1] = text
+        matching_snippets[p1 == lang and p2 or p1] = text
       end
     end
   end

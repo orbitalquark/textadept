@@ -1830,13 +1830,13 @@ function set_encoding(buffer, encoding) end
 function get_lexer(buffer, current) end
 
 ---
--- Associates lexer name *lexer* or the auto-detected lexer name with the buffer
--- and then loads the appropriate language module if that module exists.
+-- Associates string lexer name *name* or the auto-detected lexer name with the 
+-- buffer and then loads the appropriate language module if that module exists.
 -- @param buffer A buffer.
--- @param lexer Optional string lexer name to set. If `nil`, attempts to
+-- @param name Optional string lexer name to set. If `nil`, attempts to
 --   auto-detect the buffer's lexer.
 -- @usage buffer:set_lexer('lexer_name')
-function set_lexer(buffer, lexer) end
+function set_lexer(buffer, name) end
 
 -- Unused Fields.
 --   * accessibility
