@@ -1043,7 +1043,11 @@ end
 
 function test_spawn_env()
   assert(not os.spawn('env'):read('a'):find('^%s*$'), 'empty env')
-  assert(os.spawn('env', {'FOO=bar'}):read('a'):find('FOO=bar\n'), 'env not set')
+  assert(os.spawn('env', {FOO = 'bar'}):read('a'):find('FOO=bar\n'), 'env not set')
+  local output = os.spawn('env', {FOO = 'bar', 'BAR=baz', [true] = 'false'}):read('a')
+  assert(output:find('FOO=bar\n'), 'env not set properly')
+  assert(output:find('BAR=baz\n'), 'env not set properly')
+  assert(not output:find('true=false\n'), 'env not set properly')
 end
 
 function test_spawn_stdin()
