@@ -440,6 +440,7 @@ snippet_mt = {
     if ph.choice then
       local sep = buffer.auto_c_separator
       buffer.auto_c_separator = string.byte(',')
+      buffer.auto_c_order = buffer.ORDER_CUSTOM
       buffer:auto_c_show(0, ph.choice)
       buffer.auto_c_separator = sep -- restore
     end
