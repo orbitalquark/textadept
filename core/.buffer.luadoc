@@ -626,11 +626,6 @@ function clear_all(buffer) end
 function clear_document_style(buffer) end
 
 ---
--- Removes all selections and moves the caret to the beginning of the buffer.
--- @param buffer A buffer.
-function clear_selections(buffer) end
-
----
 -- Instructs the lexer to style and mark fold points in the range of text
 -- between *start_pos* and *end_pos*.
 -- If *end_pos* is `-1`, styles and marks to the end of the buffer.
@@ -1950,8 +1945,9 @@ function set_lexer(buffer, lexer) end
 --   * char_position_from_point
 --   * char_position_from_point_close
 --   * character_category_optimization
---   * clear_cmd_key
 --   * clear_all_cmd_keys
+--   * clear_cmd_key
+--   * clear_selections
 --   * clear_tab_stops
 --   * copy_allow_line
 --   * count_code_units

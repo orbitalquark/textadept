@@ -617,7 +617,7 @@
 --
 --   The default value is `view.WRAPVISUALFLAG_NONE`.
 -- @field wrap_visual_flags_location (number)
---   The wrapped line visual flag drawing mode.
+--   The wrapped line visual flag location.
 --
 --   * `view.WRAPVISUALFLAGLOC_DEFAULT`
 --     Draw a visual flag near the view's right margin.
@@ -633,7 +633,7 @@
 --   the left of the view.
 -- @field zoom (number)
 --   The number of points to add to the size of all fonts.
---   Negative values are allowed.
+--   Negative values are allowed, down to `-10`.
 --   The default value is `0`.
 -- @field ANNOTATION_BOXED (number, Read-only)
 --

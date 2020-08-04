@@ -457,7 +457,8 @@ function standard_dropdown(options) end
 --     index) and the selected item's text (instead of its index). If no item
 --     was selected, returns the dialog's exit status (instead of its exit
 --     code). The default value is `false`.
---   * `width`: The dialog's pixel width.
+--   * `width`: The dialog's pixel width. The default width stretches nearly the
+--     width of Textadept's window.
 --   * `height`: The dialog's pixel height.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.

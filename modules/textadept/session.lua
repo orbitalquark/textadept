@@ -139,6 +139,8 @@ end
 -- Saves the session to file *filename* or the user-selected file.
 -- Saves split views, opened buffers, cursor information, recent files, and
 -- bookmarks.
+-- Upon quitting, the current session is saved to *filename* again, unless
+-- `textadept.session.save_on_quit` is `false`.
 -- @param filename Optional absolute path to the session file to save. If `nil`,
 --   the user is prompted for one.
 -- @usage textadept.session.save(filename)

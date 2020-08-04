@@ -463,7 +463,6 @@ clear_all	_HOME/core/.buffer.luadoc	/^function clear_all(buffer) end$/;"	f	class
 clear_document_style	_HOME/core/.buffer.luadoc	/^function clear_document_style(buffer) end$/;"	f	class:buffer
 clear_registered_images	_HOME/core/.view.luadoc	/^function clear_registered_images(view) end$/;"	f	class:view
 clear_representation	_HOME/core/.view.luadoc	/^function clear_representation(view, char) end$/;"	f	class:view
-clear_selections	_HOME/core/.buffer.luadoc	/^function clear_selections(buffer) end$/;"	f	class:buffer
 clipboard_text	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
 close	_HOME/core/.buffer.luadoc	/^function close(buffer, force) end$/;"	f	class:buffer
 close	_HOME/core/.os.luadoc	/^function spawn_proc:close() end$/;"	f	class:spawn_proc
