@@ -32,7 +32,7 @@ diff -r 8a23edc91533 src/luaconf.h
  
  
 --- a/src/loslib.c	2017-04-19 13:29:57.000000000 -0400
-+++ b/src/loslib.c	2020-08-04 14:12:25.974134329 -0400
++++ b/src/loslib.c	2020-08-04 16:32:00.029294802 -0400
 @@ -4,6 +4,15 @@
  ** See Copyright Notice in lua.h
  */
@@ -69,7 +69,7 @@ diff -r 8a23edc91533 src/luaconf.h
    {"time",      os_time},
    {"tmpname",   os_tmpname},
    {NULL, NULL}
-@@ -404,6 +419,633 @@
+@@ -404,6 +419,629 @@
  
  LUAMOD_API int luaopen_os (lua_State *L) {
    luaL_newlib(L, syslib);
@@ -82,11 +82,12 @@ diff -r 8a23edc91533 src/luaconf.h
  
 +
 +// Process spawning extension for Textadept using GLib or POSIX.
-+// Copyright 2012-2018 Mitchell mitchell.att.foicica.com. See LICENSE.
++// Copyright 2012-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
 +
 +#include <signal.h>
 +//#include <stdlib.h>
 +//#include <string.h>
++#include <stdbool.h>
 +#include <unistd.h>
 +#if GTK
 +#include <glib.h>
@@ -114,12 +115,6 @@ diff -r 8a23edc91533 src/luaconf.h
 +#define read(fd, buf, len) read((int)fd, buf, len)
 +#endif
 +#endif
-+#define l_setcfunction(l, n, name, f) \
-+  (lua_pushcfunction(l, f), lua_setfield(l, (n > 0) ? n : n - 1, name))
-+#define l_reffunction(l, n) \
-+  (luaL_argcheck(l, lua_isfunction(l, n) || lua_isnoneornil(l, n), n, \
-+                 "function or nil expected"), \
-+   lua_pushvalue(l, n), luaL_ref(l, LUA_REGISTRYINDEX))
 +
 +typedef struct {
 +  lua_State *L;
@@ -136,10 +131,9 @@ diff -r 8a23edc91533 src/luaconf.h
 +} PStream;
 +
 +/** p:status() Lua function. */
-+static int lp_status(lua_State *L) {
-+  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
-+  lua_pushstring(L, p->pid ? "running" : "terminated");
-+  return 1;
++static int proc_status(lua_State *L) {
++  PStream *p = luaL_checkudata(L, 1, "ta_spawn");
++  return (lua_pushstring(L, p->pid ? "running" : "terminated"), 1);
 +}
 +
 +/** Process exit cleanup function. */
@@ -157,13 +151,12 @@ diff -r 8a23edc91533 src/luaconf.h
 +#elif (!GTK || __APPLE__)
 +  // Stop tracking and monitoring this proc.
 +  lua_getfield(L, LUA_REGISTRYINDEX, "spawn_procs");
-+  lua_pushnil(L);
-+  while (lua_next(L, -2)) {
-+    PStream *monitored_p = (PStream *)lua_touserdata(L, -2);
++  for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
++    PStream *monitored_p = lua_touserdata(L, -2);
 +    if (monitored_p->pid == p->pid) {
 +      lua_pushnil(L), lua_replace(L, -2), lua_settable(L, -3); // t[proc] = nil
 +      break;
-+    } else lua_pop(L, 1); // value
++    }
 +  }
 +  lua_pop(L, 1); // spawn_procs
 +#endif
@@ -176,8 +169,8 @@ diff -r 8a23edc91533 src/luaconf.h
 +}
 +
 +/** p:wait() Lua function. */
-+static int lp_wait(lua_State *L) {
-+  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
++static int proc_wait(lua_State *L) {
++  PStream *p = luaL_checkudata(L, 1, "ta_spawn");
 +  if (!p->pid) return (lua_pushinteger(L, p->exit_status), 1);
 +#if !_WIN32
 +  int status;
@@ -193,25 +186,26 @@ diff -r 8a23edc91533 src/luaconf.h
 +}
 +
 +/** p:read() Lua function. */
-+static int lp_read(lua_State *L) {
-+  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
++static int proc_read(lua_State *L) {
++  PStream *p = luaL_checkudata(L, 1, "ta_spawn");
 +  luaL_argcheck(L, p->pid, 1, "process terminated");
 +  char *c = (char *)luaL_optstring(L, 2, "l");
 +  if (*c == '*') c++; // skip optional '*' (for compatibility)
-+  luaL_argcheck(L, *c == 'l' || *c == 'L' || *c == 'a' || lua_isnumber(L, 2), 2,
-+                   "invalid option");
++  luaL_argcheck(
++    L, *c == 'l' || *c == 'L' || *c == 'a' || lua_isnumber(L, 2), 2,
++    "invalid option");
 +#if (GTK && !__APPLE__)
 +  char *buf;
 +  size_t len;
 +  GError *error = NULL;
 +  GIOStatus status = G_IO_STATUS_NORMAL;
 +  if (!g_io_channel_get_buffered(p->cstdout))
-+    g_io_channel_set_buffered(p->cstdout, TRUE); // needed for functions below
++    g_io_channel_set_buffered(p->cstdout, true); // needed for functions below
 +  if (!lua_isnumber(L, 2)) {
 +    if (*c == 'l' || *c == 'L') {
 +      GString *s = g_string_new(NULL);
 +      status = g_io_channel_read_line_string(p->cstdout, s, NULL, &error);
-+      len = s->len, buf = g_string_free(s, FALSE);
++      len = s->len, buf = g_string_free(s, false);
 +    } else if (*c == 'a') {
 +      status = g_io_channel_read_to_end(p->cstdout, &buf, &len, &error);
 +      if (status == G_IO_STATUS_EOF) status = G_IO_STATUS_NORMAL;
@@ -222,7 +216,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +    status = g_io_channel_read_chars(p->cstdout, buf, bytes, &len, &error);
 +  }
 +  if ((g_io_channel_get_buffer_condition(p->cstdout) & G_IO_IN) == 0)
-+    g_io_channel_set_buffered(p->cstdout, FALSE); // needed for stdout callback
++    g_io_channel_set_buffered(p->cstdout, false); // needed for stdout callback
 +  if (*c == 'l' && buf[len - 1] == '\n') len--;
 +  if (*c == 'l' && buf[len - 1] == '\r') len--;
 +  lua_pushlstring(L, buf, len);
@@ -230,7 +224,8 @@ diff -r 8a23edc91533 src/luaconf.h
 +  if (status != G_IO_STATUS_NORMAL) {
 +    lua_pushnil(L);
 +    if (status == G_IO_STATUS_EOF) return 1;
-+    lua_pushinteger(L, error->code), lua_pushstring(L, error->message);
++    lua_pushinteger(L, error->code);
++    lua_pushstring(L, error->message);
 +    return 3;
 +  } else return 1;
 +#else
@@ -259,15 +254,16 @@ diff -r 8a23edc91533 src/luaconf.h
 +  }
 +  if (len < 0) {
 +    lua_pushnil(L);
-+    lua_pushinteger(L, errno), lua_pushstring(L, strerror(errno));
++    lua_pushinteger(L, errno);
++    lua_pushstring(L, strerror(errno));
 +    return 3;
 +  } else return 1;
 +#endif
 +}
 +
 +/** p:write() Lua function. */
-+static int lp_write(lua_State *L) {
-+  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
++static int proc_write(lua_State *L) {
++  PStream *p = luaL_checkudata(L, 1, "ta_spawn");
 +  luaL_argcheck(L, p->pid, 1, "process terminated");
 +  for (int i = 2; i <= lua_gettop(L); i++) {
 +    size_t len;
@@ -283,22 +279,22 @@ diff -r 8a23edc91533 src/luaconf.h
 +}
 +
 +/** p:close() Lua function. */
-+static int lp_close(lua_State *L) {
-+  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
++static int proc_close(lua_State *L) {
++  PStream *p = luaL_checkudata(L, 1, "ta_spawn");
 +  luaL_argcheck(L, p->pid, 1, "process terminated");
 +  return (close(p->fstdin), 0);
 +}
 +
 +/** p:kill() Lua function. */
-+static int lp_kill(lua_State *L) {
-+  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
++static int proc_kill(lua_State *L) {
++  PStream *p = luaL_checkudata(L, 1, "ta_spawn");
 +  if (p->pid) kill(p->pid, luaL_optinteger(L, 2, SIGKILL));
 +  return 0;
 +}
 +
 +/** tostring(p) Lua function. */
-+static int lp_tostring(lua_State *L) {
-+  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
++static int proc_tostring(lua_State *L) {
++  PStream *p = luaL_checkudata(L, 1, "ta_spawn");
 +  if (p->pid)
 +    lua_pushfstring(L, "process (pid=%d)", p->pid);
 +  else
@@ -308,8 +304,8 @@ diff -r 8a23edc91533 src/luaconf.h
 +
 +#if (GTK && !__APPLE__)
 +/** __gc Lua metamethod. */
-+static int lp_gc(lua_State *L) {
-+  PStream *p = (PStream *)luaL_checkudata(L, 1, "ta_spawn");
++static int proc_gc(lua_State *L) {
++  PStream *p = luaL_checkudata(L, 1, "ta_spawn");
 +  if (p->pid) {
 +    // lua_close() was called, forcing GC. Disconnect listeners since GTK is
 +    // still running and may try to invoke callbacks.
@@ -322,8 +318,8 @@ diff -r 8a23edc91533 src/luaconf.h
 +
 +/** Signal that channel output is available for reading. */
 +static int ch_read(GIOChannel *source, GIOCondition cond, void *data) {
-+  PStream *p = (PStream *)data;
-+  if (!p->pid || !(cond & G_IO_IN)) return FALSE;
++  PStream *p = data;
++  if (!p->pid || !(cond & G_IO_IN)) return false;
 +  char buf[BUFSIZ];
 +  size_t len = 0;
 +  do {
@@ -346,10 +342,10 @@ diff -r 8a23edc91533 src/luaconf.h
 + * @param p PStream to notify when output is available for reading.
 + * @param watch Whether or not to watch for output to send to a Lua callback.
 + */
-+static GIOChannel *new_channel(int fd, PStream *p, int watch) {
++static GIOChannel *new_channel(int fd, PStream *p, bool watch) {
 +  GIOChannel *channel = g_io_channel_unix_new(fd);
 +  g_io_channel_set_encoding(channel, NULL, NULL);
-+  g_io_channel_set_buffered(channel, FALSE);
++  g_io_channel_set_buffered(channel, false);
 +  if (watch) {
 +    g_io_add_watch(channel, G_IO_IN | G_IO_HUP, ch_read, p);
 +    g_io_channel_unref(channel);
@@ -358,8 +354,8 @@ diff -r 8a23edc91533 src/luaconf.h
 +}
 +
 +/** Signal that the child process finished. */
-+static void p_exit(GPid pid, int status, void *data) {
-+  exited((PStream *)data, status);
++static void proc_exited(GPid pid, int status, void *data) {
++  exited(data, status);
 +}
 +#elif !_WIN32
 +/**
@@ -369,17 +365,15 @@ diff -r 8a23edc91533 src/luaconf.h
 + */
 +int os_spawn_pushfds(lua_State *L) {
 +  int nfds = 1;
-+  fd_set *fds = (fd_set *)lua_newuserdata(L, sizeof(fd_set));
++  fd_set *fds = lua_newuserdata(L, sizeof(fd_set));
 +  FD_ZERO(fds);
 +  lua_getfield(L, LUA_REGISTRYINDEX, "spawn_procs");
-+  lua_pushnil(L);
-+  while (lua_next(L, -2)) {
-+    PStream *p = (PStream *)lua_touserdata(L, -2);
++  for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
++    PStream *p = lua_touserdata(L, -2);
 +    FD_SET(p->fstdout, fds);
 +    FD_SET(p->fstderr, fds);
 +    if (p->fstdout >= nfds) nfds = p->fstdout + 1;
 +    if (p->fstderr >= nfds) nfds = p->fstderr + 1;
-+    lua_pop(L, 1); // value
 +  }
 +  lua_pop(L, 1); // spawn_procs
 +  return nfds;
@@ -409,11 +403,10 @@ diff -r 8a23edc91533 src/luaconf.h
 + */
 +int os_spawn_readfds(lua_State *L) {
 +  int n = 0;
-+  fd_set *fds = (fd_set *)lua_touserdata(L, -1);
++  fd_set *fds = lua_touserdata(L, -1);
 +  lua_getfield(L, LUA_REGISTRYINDEX, "spawn_procs");
-+  lua_pushnil(L);
-+  while (lua_next(L, -2)) {
-+    PStream *p = (PStream *)lua_touserdata(L, -2);
++  for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
++    PStream *p = lua_touserdata(L, -2);
 +    // Read output if any is available.
 +    if (FD_ISSET(p->fstdout, fds)) fd_read(p->fstdout, p), n++;
 +    if (FD_ISSET(p->fstderr, fds)) fd_read(p->fstderr, p), n++;
@@ -423,7 +416,6 @@ diff -r 8a23edc91533 src/luaconf.h
 +      fd_read(p->fstdout, p), fd_read(p->fstderr, p); // read anything left
 +      exited(p, status);
 +    }
-+    lua_pop(L, 1); // value
 +  }
 +  lua_pop(L, 1); // spawn_procs
 +  return n;
@@ -436,13 +428,12 @@ diff -r 8a23edc91533 src/luaconf.h
 + * This is necessary because at the moment, using GLib on Mac OSX to spawn
 + * and monitor file descriptors mostly blocks when attempting to poll those fds.
 + */
-+static int monitor_fds(void *data) {
-+  lua_State *L = (lua_State *)data;
++static int monitor_fds(void *L) {
 +  struct timeval timeout = {0, 1e5}; // 0.1s
 +  int nfds = os_spawn_pushfds(L);
-+  fd_set *fds = (fd_set *)lua_touserdata(L, -1);
-+  if (select(nfds, fds, NULL, NULL, &timeout) > 0) os_spawn_readfds(L);
-+  lua_pop(L, 1); // fd_set
++  if (select(nfds, lua_touserdata(L, -1), NULL, NULL, &timeout) > 0)
++    os_spawn_readfds(L);
++  lua_pop(L, 1); // fds
 +  if (nfds == 1) monitoring_fds = 0;
 +  return nfds > 1;
 +}
@@ -506,19 +497,16 @@ diff -r 8a23edc91533 src/luaconf.h
 +  }
 +#else
 +  // Construct argv from first string param.
-+  lua_pushstring(L, getenv("COMSPEC"));
-+  lua_pushstring(L, " /c ");
-+  lua_pushvalue(L, 1);
-+  lua_concat(L, 3);
-+  lua_replace(L, 1); // cmd = os.getenv('COMSPEC')..' /c '..cmd
++  lua_pushstring(L, getenv("COMSPEC")), lua_pushstring(L, " /c "),
++    lua_pushvalue(L, 1), lua_concat(L, 3), lua_replace(L, 1);
 +  wchar_t argv[2048] = {L'\0'};
-+  MultiByteToWideChar(GetACP(), 0, lua_tostring(L, narg++), -1, (LPWSTR)&argv,
-+                      sizeof(argv));
++  MultiByteToWideChar(
++    GetACP(), 0, lua_tostring(L, narg++), -1, (LPWSTR)&argv, sizeof(argv));
 +  // Determine cwd from optional second string param.
 +  wchar_t cwd[MAX_PATH] = {L'\0'};
 +  if (lua_isstring(L, narg))
-+    MultiByteToWideChar(GetACP(), 0, lua_tostring(L, narg++), -1, (LPWSTR)&cwd,
-+                        MAX_PATH);
++    MultiByteToWideChar(
++      GetACP(), 0, lua_tostring(L, narg++), -1, (LPWSTR)&cwd, MAX_PATH);
 +  // Construct environment from optional third table param.
 +  char *envp = NULL;
 +  if (lua_istable(L, narg)) {
@@ -544,21 +532,25 @@ diff -r 8a23edc91533 src/luaconf.h
 +
 +  // Create process object to be returned and link callback functions from
 +  // optional fourth, fifth, and sixth function params.
-+  PStream *p = (PStream *)lua_newuserdata(L, sizeof(PStream));
++  PStream *p = lua_newuserdata(L, sizeof(PStream));
 +  p->L = L, p->ref = 0;
-+  p->stdout_cb = l_reffunction(L, narg), narg++;
-+  p->stderr_cb = l_reffunction(L, narg), narg++;
-+  p->exit_cb = l_reffunction(L, narg), narg++;
++  for (int i = narg; i < narg + 3; i++)
++    luaL_argcheck(
++      L, lua_isfunction(L, i) || lua_isnoneornil(L, i), i,
++      "function or nil expected");
++  p->stdout_cb = (lua_pushvalue(L, narg++), luaL_ref(L, LUA_REGISTRYINDEX));
++  p->stderr_cb = (lua_pushvalue(L, narg++), luaL_ref(L, LUA_REGISTRYINDEX));
++  p->exit_cb = (lua_pushvalue(L, narg++), luaL_ref(L, LUA_REGISTRYINDEX));
 +  if (luaL_newmetatable(L, "ta_spawn")) {
-+    l_setcfunction(L, -1, "status", lp_status);
-+    l_setcfunction(L, -1, "wait", lp_wait);
-+    l_setcfunction(L, -1, "read", lp_read);
-+    l_setcfunction(L, -1, "write", lp_write);
-+    l_setcfunction(L, -1, "close", lp_close);
-+    l_setcfunction(L, -1, "kill", lp_kill);
-+    l_setcfunction(L, -1, "__tostring", lp_tostring);
++    lua_pushcfunction(L, proc_status), lua_setfield(L, -2, "status");
++    lua_pushcfunction(L, proc_wait), lua_setfield(L, -2, "wait");
++    lua_pushcfunction(L, proc_read), lua_setfield(L, -2, "read");
++    lua_pushcfunction(L, proc_write), lua_setfield(L, -2, "write");
++    lua_pushcfunction(L, proc_close), lua_setfield(L, -2, "close");
++    lua_pushcfunction(L, proc_kill), lua_setfield(L, -2, "kill");
++    lua_pushcfunction(L, proc_tostring), lua_setfield(L, -2, "__tostring");
 +#if (GTK && !__APPLE__)
-+    l_setcfunction(L, -1, "__gc", lp_gc);
++    lua_pushcfunction(L, proc_gc), lua_setfield(L, -2, "__gc");
 +#endif
 +    lua_pushvalue(L, -1), lua_setfield(L, -2, "__index");
 +  }
@@ -568,12 +560,14 @@ diff -r 8a23edc91533 src/luaconf.h
 +#if !_WIN32
 +#if (GTK && !__APPLE__)
 +  GSpawnFlags flags = G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH;
-+  if (g_spawn_async_with_pipes(cwd, argv, envp, flags, NULL, NULL, &p->pid,
-+                               &p->fstdin, &p->fstdout, &p->fstderr, &error)) {
++  if (g_spawn_async_with_pipes(
++        cwd, argv, envp, flags, NULL, NULL, &p->pid, &p->fstdin, &p->fstdout,
++        &p->fstderr, &error)) {
 +    p->cstdout = new_channel(p->fstdout, p, p->stdout_cb > 0);
 +    p->cstderr = new_channel(p->fstderr, p, p->stderr_cb > 0);
 +    if (p->exit_cb != LUA_REFNIL)
-+      g_child_watch_add_full(G_PRIORITY_DEFAULT + 1, p->pid, p_exit, p, NULL);
++      g_child_watch_add_full(
++        G_PRIORITY_DEFAULT + 1, p->pid, proc_exited, p, NULL);
 +    lua_pushnil(L); // no error
 +  } else {
 +    lua_pushnil(L);
@@ -609,8 +603,8 @@ diff -r 8a23edc91533 src/luaconf.h
 +      dup2(pstdin[0], 0), dup2(pstdout[1], 1), dup2(pstderr[1], 2);
 +      close(pstdin[0]), close(pstdout[1]), close(pstderr[1]);
 +      if (cwd && chdir(cwd) < 0) {
-+        fprintf(stderr, "Failed to change directory '%s' (%s)", cwd,
-+                strerror(errno));
++        fprintf(
++          stderr, "Failed to change directory '%s' (%s)", cwd, strerror(errno));
 +        exit(EXIT_FAILURE);
 +      }
 +      extern char **environ;
@@ -621,8 +615,9 @@ diff -r 8a23edc91533 src/luaconf.h
 +      if (envp) environ = envp;
 +      execvp(argv[0], argv); // does not return on success
 +#endif
-+      fprintf(stderr, "Failed to execute child process \"%s\" (%s)", argv[0],
-+              strerror(errno));
++      fprintf(
++        stderr, "Failed to execute child process \"%s\" (%s)", argv[0],
++        strerror(errno));
 +      exit(EXIT_FAILURE);
 +    }
 +  } else {
@@ -644,11 +639,11 @@ diff -r 8a23edc91533 src/luaconf.h
 +  // Adapted from SciTE.
 +  SECURITY_DESCRIPTOR sd;
 +  InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
-+  SetSecurityDescriptorDacl(&sd, TRUE, NULL, FALSE);
++  SetSecurityDescriptorDacl(&sd, true, NULL, false);
 +  SECURITY_ATTRIBUTES sa = {sizeof(SECURITY_ATTRIBUTES), 0, 0};
 +  sa.nLength = sizeof(SECURITY_ATTRIBUTES);
 +  sa.lpSecurityDescriptor = &sd;
-+  sa.bInheritHandle = TRUE;
++  sa.bInheritHandle = true;
 +
 +  // Redirect stdin.
 +  HANDLE stdin_read = NULL, proc_stdin = NULL;
@@ -671,13 +666,14 @@ diff -r 8a23edc91533 src/luaconf.h
 +    stdout_write, stderr_write
 +  };
 +  PROCESS_INFORMATION proc_info = {0, 0, 0, 0};
-+  if (CreateProcessW(NULL, argv, NULL, NULL, TRUE, CREATE_NEW_PROCESS_GROUP,
-+                     envp, *cwd ? cwd : NULL, &startup_info, &proc_info)) {
++  if (CreateProcessW(
++        NULL, argv, NULL, NULL, true, CREATE_NEW_PROCESS_GROUP, envp,
++        *cwd ? cwd : NULL, &startup_info, &proc_info)) {
 +    p->pid = proc_info.hProcess;
 +    p->fstdin = proc_stdin, p->fstdout = proc_stdout, p->fstderr = proc_stderr;
 +    p->cstdout = new_channel(FD(proc_stdout), p, p->stdout_cb > 0);
 +    p->cstderr = new_channel(FD(proc_stderr), p, p->stderr_cb > 0);
-+    if (p->exit_cb != LUA_REFNIL) g_child_watch_add(p->pid, p_exit, p);
++    if (p->exit_cb != LUA_REFNIL) g_child_watch_add(p->pid, proc_exited, p);
 +    // Close unneeded handles.
 +    CloseHandle(proc_info.hThread);
 +    CloseHandle(stdin_read);
@@ -685,10 +681,10 @@ diff -r 8a23edc91533 src/luaconf.h
 +    lua_pushnil(L); // no error
 +  } else {
 +    char *message = NULL;
-+    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-+                   FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(),
-+                   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&message,
-+                   0, NULL);
++    FormatMessageA(
++      FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
++      FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(),
++      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&message, 0, NULL);
 +    lua_pushnil(L);
 +    lua_pushfstring(L, "%s: %s", lua_tostring(L, 1), message);
 +    LocalFree(message);
