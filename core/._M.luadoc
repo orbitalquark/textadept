@@ -42,8 +42,8 @@
 -- files. However, it does not know all of them, and the ones that it does know
 -- may not be completely accurate in all cases. Compile and run commands are
 -- read from the [`textadept.run.compile_commands`]() and
--- [`textadept.run.run_commands`]() tables using the appropriate lexer key, and
--- thus can be defined or modified. For Lua, it would look like:
+-- [`textadept.run.run_commands`]() tables using the appropriate lexer name key, 
+-- and thus can be defined or modified. For Lua, it would look like:
 --
 --     textadept.run.compile_commands.lua = 'luac "%f"'
 --     textadept.run.run_commands.lua = 'lua "%f"'
@@ -64,8 +64,8 @@
 -- `events.LEXER_LOADED` to change this and any other language-specific editor
 -- properties. For example:
 --
---     events.connect(events.LEXER_LOADED, function(lexer)
---       if lexer ~= 'python' then return end
+--     events.connect(events.LEXER_LOADED, function(name)
+--       if name ~= 'python' then return end
 --       buffer.tab_width = 4
 --       buffer.use_tabs = false
 --       view.view_ws = view.WS_VISIBLEALWAYS

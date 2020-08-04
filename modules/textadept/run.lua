@@ -90,16 +90,16 @@ local function scan_for_error(message, ext_or_lexer)
       end
       detail.warning =
         message:lower():find('warning') and not message:lower():find('error')
-      -- Compile and run commands specify the file extension or lexer used to
-      -- determine the command, so the error patterns used are guaranteed to be
-      -- correct. Build commands have no such context and instead iterate
+      -- Compile and run commands specify the file extension or lexer name used 
+      -- to determine the command, so the error patterns used are guaranteed to 
+      -- be correct. Build commands have no such context and instead iterate
       -- through all possible error patterns. Only consider the error/warning
-      -- valid if the extracted filename's extension or lexer matches the error
-      -- pattern's extension or lexer.
+      -- valid if the extracted filename's extension or lexer name matches the 
+      -- error pattern's extension or lexer name.
       if ext_or_lexer then return detail end
       local ext = detail.filename:match('[^/\\.]+$')
-      local lexer = textadept.file_types.extensions[ext]
-      if ext == key or lexer == key then return detail end
+      local lexer_name = textadept.file_types.extensions[ext]
+      if key == ext or key == lexer_name then return detail end
       ::continue::
     end
     ::continue::
@@ -186,9 +186,9 @@ local function compile_or_run(filename, commands)
     if buffer.modify then buffer:save() end
   end
   local ext = filename:match('[^/\\.]+$')
-  local lexer = filename == buffer.filename and buffer:get_lexer() or
+  local lang = filename == buffer.filename and buffer:get_lexer() or
     textadept.file_types.extensions[ext]
-  local command = commands[filename] or commands[ext] or commands[lexer]
+  local command = commands[filename] or commands[ext] or commands[lang]
   local dirname, basename = '', filename
   if filename:find('[/\\]') then
     dirname, basename = filename:match('^(.+)[/\\]([^/\\]+)$')
@@ -199,7 +199,7 @@ local function compile_or_run(filename, commands)
     ['%p'] = filename, ['%d'] = dirname, ['%f'] = basename,
     ['%e'] = basename:match('^(.+)%.') -- no extension
   }
-  run_command(command, dirname, event, macros, commands[ext] and ext or lexer)
+  run_command(command, dirname, event, macros, commands[ext] and ext or lang)
 end
 
 ---

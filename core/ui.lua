@@ -331,13 +331,13 @@ events_connect(events.UPDATE_UI, function(updated)
   local pos = buffer.selection_n_caret[buffer.main_selection]
   local line, max = buffer:line_from_position(pos), buffer.line_count
   local col = buffer.column[pos]
-  local lexer = buffer:get_lexer()
+  local lang = buffer:get_lexer()
   local eol = buffer.eol_mode == buffer.EOL_CRLF and _L['CRLF'] or _L['LF']
   local tabs = string.format(
     '%s %d', buffer.use_tabs and _L['Tabs:'] or _L['Spaces:'], buffer.tab_width)
   local enc = buffer.encoding or ''
   ui.buffer_statusbar_text = string.format(
-    text, _L['Line:'], line, max, _L['Col:'], col, lexer, eol, tabs, enc)
+    text, _L['Line:'], line, max, _L['Col:'], col, lang, eol, tabs, enc)
 end)
 
 -- Save buffer properties.
