@@ -65,6 +65,7 @@ M.XPM_IMAGES = {
   STRUCT = 7, TYPEDEF = 8
 }
 events.connect(events.VIEW_NEW, function()
+  local view = buffer ~= ui.command_entry and view or ui.command_entry
   for name, i in pairs(M.XPM_IMAGES) do
     if type(name) == 'string' then view:register_image(i, M.XPM_IMAGES[i]) end
   end
