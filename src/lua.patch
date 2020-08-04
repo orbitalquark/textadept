@@ -32,7 +32,7 @@ diff -r 8a23edc91533 src/luaconf.h
  
  
 --- a/src/loslib.c	2017-04-19 13:29:57.000000000 -0400
-+++ b/src/loslib.c	2020-07-15 00:31:50.061476181 -0400
++++ b/src/loslib.c	2020-08-04 14:12:25.974134329 -0400
 @@ -4,6 +4,15 @@
  ** See Copyright Notice in lua.h
  */
@@ -77,9 +77,9 @@ diff -r 8a23edc91533 src/luaconf.h
 +  // Need to keep track of running processes for monitoring fds and pids.
 +  lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, "spawn_procs");
 +#endif
-+  return 1;
-+}
-+
+   return 1;
+ }
+ 
 +
 +// Process spawning extension for Textadept using GLib or POSIX.
 +// Copyright 2012-2018 Mitchell mitchell.att.foicica.com. See LICENSE.
@@ -303,9 +303,9 @@ diff -r 8a23edc91533 src/luaconf.h
 +    lua_pushfstring(L, "process (pid=%d)", p->pid);
 +  else
 +    lua_pushstring(L, "process (terminated)");
-   return 1;
- }
- 
++  return 1;
++}
++
 +#if (GTK && !__APPLE__)
 +/** __gc Lua metamethod. */
 +static int lp_gc(lua_State *L) {
@@ -477,16 +477,12 @@ diff -r 8a23edc91533 src/luaconf.h
 +    if (*c == '"') c++;
 +  }
 +  int argc = lua_rawlen(L, -1);
-+  char **argv = malloc((argc + 1) * sizeof(char *));
++  char **argv = calloc(argc + 1, sizeof(char *));
 +  for (int i = 0; i < argc; i++) {
 +    lua_rawgeti(L, -1, i + 1);
-+    size_t len = lua_rawlen(L, -1);
-+    char *param = malloc(len + 1);
-+    strcpy(param, lua_tostring(L, -1)), param[len] = '\0';
-+    argv[i] = param;
++    argv[i] = strcpy(malloc(lua_rawlen(L, -1) + 1), lua_tostring(L, -1));
 +    lua_pop(L, 1); // param
 +  }
-+  argv[argc] = NULL;
 +  lua_pop(L, 1); // argv
 +#endif
 +  // Determine cwd from optional second string param.
@@ -495,16 +491,17 @@ diff -r 8a23edc91533 src/luaconf.h
 +  int envn = 0;
 +  char **envp = NULL;
 +  if (lua_istable(L, narg)) {
-+    envn = lua_rawlen(L, narg), envp = malloc((envn + 1) * sizeof(char *));
-+    for (int i = 0; i < envn; i++) {
-+      lua_rawgeti(L, narg, i + 1);
-+      size_t len = lua_rawlen(L, -1);
-+      char *pair = malloc(len + 1);
-+      strcpy(pair, lua_tostring(L, -1)), pair[len] = '\0';
-+      envp[i] = pair;
-+      lua_pop(L, 1); // pair
++    for (lua_pushnil(L); lua_next(L, narg); lua_pop(L, 1)) envn++;
++    envp = calloc(envn + 1, sizeof(char *));
++    int i = 0;
++    for (lua_pushnil(L); lua_next(L, narg); lua_pop(L, 1)) {
++      if (!lua_isstring(L, -2) || !lua_isstring(L, -1)) continue;
++      if (lua_type(L, -2) == LUA_TSTRING) {
++        lua_pushvalue(L, -2), lua_pushliteral(L, "="), lua_pushvalue(L, -3),
++          lua_concat(L, 3), lua_replace(L, -2); // construct "KEY=VALUE"
++      }
++      envp[i++] = strcpy(malloc(lua_rawlen(L, -1) + 1), lua_tostring(L, -1));
 +    }
-+    envp[envn] = NULL;
 +    narg++;
 +  }
 +#else
@@ -527,10 +524,13 @@ diff -r 8a23edc91533 src/luaconf.h
 +  if (lua_istable(L, narg)) {
 +    luaL_Buffer buf;
 +    luaL_buffinit(L, &buf);
-+    for (int i = 0; i < lua_rawlen(L, narg); i++) {
-+      lua_rawgeti(L, narg, i + 1);
++    for (lua_pushnil(L); lua_next(L, narg); lua_pop(L, 1)) {
++      if (!lua_isstring(L, -2) || !lua_isstring(L, -1)) continue;
++      if (lua_type(L, -2) == LUA_TSTRING) {
++        lua_pushvalue(L, -2), lua_pushliteral(L, "="), lua_pushvalue(L, -3),
++          lua_concat(L, 3), lua_replace(L, -2); // construct "KEY=VALUE"
++      }
 +      luaL_addstring(&buf, lua_tostring(L, -1)), luaL_addchar(&buf, '\0');
-+      lua_pop(L, 1); // pair
 +    }
 +    luaL_addchar(&buf, '\0');
 +    luaL_pushresult(&buf);
@@ -580,7 +580,7 @@ diff -r 8a23edc91533 src/luaconf.h
 +    lua_pushfstring(L, "%s: %s", lua_tostring(L, 1), error->message);
 +  }
 +
-+  g_strfreev(argv);
++  g_strfreev(argv), g_strfreev(envp);
 +#else
 +  // Adapted from Chris Emerson and GLib.
 +  // Attempt to create pipes for stdin, stdout, and stderr and fork process.
