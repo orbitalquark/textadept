@@ -739,10 +739,10 @@ only work after hiding the Find & Replace pane. For at least the English locale
 in the GUI version, use the button mnemonics: `Alt+N`, `Alt+P`, `Alt+R`, and
 `Alt+A` (`⌘N`, `⌘P`, `⌘R`, `⌘A` | N/A) after bringing up the pane.
 
-In the terminal version, `Tab` and `S-Tab` toggles between the find next, find
-previous, replace, and replace all buttons; `Up` and `Down` arrows switch
-between the find and replace text fields; `^P` and `^N` cycles through history;
-and `F1-F4` toggles find options.
+In the terminal version, `Tab` toggles between the find next, find previous,
+replace, and replace all buttons; `Up` and `Down` arrows switch between the find
+and replace text fields; `^P` and `^N` cycles through history; and `F1-F4`
+toggles find options.
 
 Pressing `Esc` (`Esc` | `Esc`) hides the pane after you finish with it.
 

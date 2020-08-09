@@ -64,7 +64,6 @@
 typedef GtkWidget Scintilla;
 // Translate GTK 2.x API to GTK 3.0 for compatibility.
 #if GTK_CHECK_VERSION(3,0,0)
-#define GDK_Escape GDK_KEY_Escape
 #define gtk_combo_box_entry_new_with_model(m,_) \
   gtk_combo_box_new_with_model_and_entry(m)
 #define gtk_combo_box_entry_set_text_column gtk_combo_box_set_entry_text_column
@@ -373,9 +372,14 @@ static void refresh_all() {
 static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
   CDKENTRY *entry = (CDKENTRY *)object;
   char *text = getCDKEntryValue(entry);
-  if (key == KEY_TAB || key == KEY_BTAB)
-    injectCDKButtonbox((CDKBUTTONBOX *)data, key);
-  else if (key == CDK_PREV || key == CDK_NEXT) {
+  if (key == KEY_TAB) {
+    CDKBUTTONBOX *box = (CDKBUTTONBOX *)data;
+    FindButton button = entry == find_entry ?
+      (getCDKButtonboxCurrentButton(box) == find_next ? find_prev : find_next) :
+      (getCDKButtonboxCurrentButton(box) == replace ? replace_all : replace);
+    setCDKButtonboxCurrentButton(box, button);
+    drawCDKButtonbox(box, false), drawCDKEntry(entry, false);
+  } else if (key == CDK_PREV || key == CDK_NEXT) {
     ListStore *store = entry == find_entry ? find_history : repl_history;
     int i;
     for (i = 9; i >= 0; i--) if (store[i] && strcmp(store[i], text) == 0) break;
@@ -394,6 +398,8 @@ static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
     drawCDKButtonbox(*optionbox, false);
   } else if (key == KEY_UP || key == KEY_DOWN) {
     focused_entry = entry == find_entry ? repl_entry : find_entry;
+    setCDKButtonboxCurrentButton(
+      (CDKBUTTONBOX *)data, focused_entry == find_entry ? find_next : replace);
     injectCDKEntry(entry, KEY_ENTER); // exit this entry
   } else if ((!find_text || strcmp(find_text, text) != 0)) {
     copyfree(&find_text, text);
@@ -406,10 +412,10 @@ static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
 /** `find.focus()` Lua function. */
 static int focus_find(lua_State *L) {
 #if GTK
-  if (!gtk_widget_has_focus(find_entry) && !gtk_widget_has_focus(repl_entry)) {
-    gtk_widget_show(findbox);
-    gtk_widget_grab_focus(find_entry), gtk_widget_grab_default(find_next);
-  } else gtk_widget_hide(findbox), gtk_widget_grab_focus(focused_view);
+  if (!gtk_widget_has_focus(find_entry) && !gtk_widget_has_focus(repl_entry))
+    gtk_widget_show(findbox), gtk_widget_grab_focus(find_entry);
+  else
+    gtk_widget_hide(findbox), gtk_widget_grab_focus(focused_view);
 #elif CURSES
   if (findbox) return 0; // already active
   wresize(scintilla_get_window(focused_view), LINES - 4, COLS);
@@ -436,10 +442,9 @@ static int focus_find(lua_State *L) {
   // TODO: ideally no #define here.
   #define bind(k, d) (bindCDKObject(vENTRY, find_entry, k, find_keypress, d), \
     bindCDKObject(vENTRY, repl_entry, k, find_keypress, d))
-  bind(KEY_TAB, buttonbox), bind(KEY_BTAB, buttonbox);
-  bind(CDK_NEXT, NULL), bind(CDK_PREV, NULL);
+  bind(KEY_TAB, buttonbox), bind(CDK_NEXT, NULL), bind(CDK_PREV, NULL);
   for (int i = 1; i <= 4; i++) bind(KEY_F(i), &optionbox);
-  bind(KEY_DOWN, NULL), bind(KEY_UP, NULL);
+  bind(KEY_DOWN, buttonbox), bind(KEY_UP, buttonbox);
   setCDKEntryValue(find_entry, find_text);
   setCDKEntryValue(repl_entry, repl_text);
   setCDKEntryPostProcess(find_entry, find_keypress, NULL);
@@ -1619,7 +1624,7 @@ static bool window_focused(GtkWidget *_, GdkEventFocus *__, void *L) {
 
 /** Signal for a Textadept keypress. */
 static bool window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
-  if (event->keyval != GDK_Escape || !gtk_widget_get_visible(findbox) ||
+  if (event->keyval != GDK_KEY_Escape || !gtk_widget_get_visible(findbox) ||
       gtk_widget_has_focus(command_entry))
     return false;
   return (gtk_widget_hide(findbox), gtk_widget_grab_focus(focused_view), true);
@@ -2154,6 +2159,15 @@ static Scintilla *new_view(sptr_t doc) {
 }
 
 #if GTK
+/** Signal for a Find/Replace entry keypress. */
+static bool find_keypress(GtkWidget *widget, GdkEventKey *event, void *L) {
+  if (event->keyval != GDK_KEY_Return) return false;
+  FindButton button = (event->state & GDK_SHIFT_MASK) == 0 ?
+    (widget == find_entry ? find_next : replace) :
+    (widget == find_entry ? find_prev : replace_all);
+  return (find_clicked(button, L), true);
+}
+
 /**
  * Creates and returns for the findbox a new GtkComboBoxEntry, storing its
  * GtkLabel, GtkEntry, and GtkListStore in the given pointers.
@@ -2175,8 +2189,8 @@ static GtkWidget *new_combo(
   pango_font_description_set_family_static(font, "monospace");
   gtk_widget_modify_font(*entry, font);
   pango_font_description_free(font);
-  gtk_entry_set_activates_default(GTK_ENTRY(*entry), true);
   gtk_label_set_mnemonic_widget(GTK_LABEL(*label), *entry);
+  g_signal_connect(*entry, "key-press-event", G_CALLBACK(find_keypress), lua);
   return combo;
 }
 
@@ -2211,7 +2225,6 @@ static GtkWidget *new_findbox() {
   find_next = new_button(), find_prev = new_button(), replace = new_button(),
     replace_all = new_button(), match_case = new_option(),
     whole_word = new_option(), regex = new_option(), in_files = new_option();
-  gtk_widget_set_can_default(find_next, true);
 
   GtkTable *table = GTK_TABLE(findbox);
   int expand = GTK_FILL | GTK_EXPAND, shrink = GTK_FILL | GTK_SHRINK;
@@ -2238,7 +2251,7 @@ static GtkWidget *new_findbox() {
 static bool focus_lost(GtkWidget *widget, GdkEvent *_, void *L) {
   if (widget == window && command_entry_focused) return true; // halt
   if (widget != command_entry || closing) return false;
-  return (emit(L, "keypress", LUA_TNUMBER, GDK_Escape, -1), false);
+  return (emit(L, "keypress", LUA_TNUMBER, GDK_KEY_Escape, -1), false);
 }
 #endif // if GTK
 
