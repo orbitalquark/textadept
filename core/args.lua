@@ -55,7 +55,12 @@ local function process(arg, no_emit_arg_none)
       switch.f(table.unpack(arg, i + 1, i + switch.narg))
       i = i + switch.narg
     else
-      io.open_file(lfs.abspath(arg[i], arg[-1]))
+      local filename = lfs.abspath(arg[i], arg[-1] or lfs.currentdir())
+      if lfs.attributes(filename, 'mode') ~= 'directory' then
+        io.open_file(filename)
+      else
+        lfs.chdir(filename)
+      end
       no_args = false
     end
     i = i + 1
