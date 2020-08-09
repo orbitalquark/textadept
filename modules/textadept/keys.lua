@@ -115,7 +115,6 @@ local M = {}
 -- None            |None  |None         |ASCII encoding
 -- None            |None  |None         |CP-1252 encoding
 -- None            |None  |None         |UTF-16 encoding
--- Ctrl+Alt+Enter  |^↩    |None         |Toggle view EOL
 -- Ctrl+Alt+\\     |^\\   |None         |Toggle wrap mode
 -- Ctrl+Alt+Shift+S|^⇧S   |None         |Toggle view whitespace
 -- Ctrl+Shift+L    |⌘⇧L   |M-S-L        |Select lexer...
@@ -219,7 +218,7 @@ module('textadept.keys')]]
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:       C         H I            p  Q     T ~ V     Y  _   ) ] }   +
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
--- ca: aAbBcCdD   F   H  jJkKlLmM N    qQ    t       xXy zZ_"'()[]{}<>*  /   \s
+-- ca: aAbBcCdD   F   H  jJkKlLmM N    qQ    t       xXy zZ_"'()[]{}<>*  / \n\s
 --
 -- c = 'ctrl' (Control ^)
 -- a = 'alt' (Alt)
@@ -231,7 +230,7 @@ module('textadept.keys')]]
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- m:       C        ~H I JkK  ~M    p  ~    tT   V    yY  _   ) ] }   +   ~~\n
--- c:      cC D    gG H   J K L    oO  qQ            xXyYzZ_   ) ] }  *  /
+-- c:      cC D    gG H   J K L    oO  qQ            xXyYzZ_   ) ] }  *  /   \n
 -- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  p q~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
 -- c = 'ctrl' (Control ^)
@@ -414,7 +413,6 @@ local bindings = {
   -- TODO: m_buffer[_L['Encoding']][_L['ASCII Encoding']][2]
   -- TODO: m_buffer[_L['Encoding']][_L['CP-1252 Encoding']][2]
   -- TODO: m_buffer[_L['Encoding']][_L['UTF-16 Encoding']][2]
-  [m_buffer[_L['Toggle View EOL']][2]] = {'ctrl+alt+\n', 'ctrl+\n', nil},
   [m_buffer[_L['Toggle Wrap Mode']][2]] = {'ctrl+alt+\\', 'ctrl+\\', nil},
   [m_buffer[_L['Toggle View Whitespace']][2]] = {'ctrl+alt+S', 'ctrl+S', nil},
   [textadept.file_types.select_lexer] = {'ctrl+L', 'cmd+L', 'meta+L'},

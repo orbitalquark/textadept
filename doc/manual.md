@@ -397,12 +397,12 @@ Textadept shows the name of the active buffer in its titlebar. Pressing
 ### Typical Buffer Settings
 
 Individual files have many configurable settings. Among the more useful settings
-are those involving line endings and their visibility, indentation settings,
-file encoding, long line wrapping, and the visibility of whitespace. Line
-endings are the characters that separate lines. Indentation consists of an
-indentation character (either a tab or a space) and an indentation size. File
-encoding specifies how to display text characters. Textadept shows these latter
-three settings among the contents of the buffer statusbar.
+are those involving line endings, indentation settings, file encoding, long line
+wrapping, and the visibility of whitespace. Line endings are the characters that
+separate lines. Indentation consists of an indentation character (either a tab
+or a space) and an indentation size. File encoding specifies how to display text
+characters. Textadept shows these latter three settings among the contents of
+the buffer statusbar.
 
 ![Document Statusbar](images/docstatusbar.png)
 
@@ -444,12 +444,6 @@ encoding and performs the conversion. Textadept saves new files as UTF-8 by
 default, but does not alter the encoding of existing ones.
 
 [`io.encodings`]: api.html#io.encodings
-
-#### View Line Endings
-
-Normally, EOL characters ("\r" and "\n") are invisible. Pressing
-`Ctrl+Alt+Enter` (`^↩` on macOS | none in the terminal) toggles their
-visibility.
 
 #### View Long Lines
 
