@@ -130,7 +130,7 @@ function M.focus(options)
     repl_text = M.replace_entry_text -- save
     local filter = M.find_in_files_filters[ff_dir()] or lfs.default_filter
     M.replace_entry_text = type(filter) == 'string' and filter or
-      table.concat(filter, ';')
+      table.concat(filter, ',')
   elseif repl_text and M.replace_entry_text ~= repl_text then
     M.replace_entry_text = repl_text -- restore
   end
@@ -283,7 +283,7 @@ function M.find_in_files(dir, filter)
     if M.replace_entry_text ~= repl_text then
       -- Update stored filter.
       local t = {}
-      for patt in M.replace_entry_text:gmatch('[^;]+') do t[#t + 1] = patt end
+      for patt in M.replace_entry_text:gmatch('[^,]+') do t[#t + 1] = patt end
       M.find_in_files_filters[dir], M.find_in_files_filters[ff_dir()] = t, t
     end
     filter = M.find_in_files_filters[dir] or lfs.default_filter
@@ -294,7 +294,7 @@ function M.find_in_files(dir, filter)
   ui._print(_L['[Files Found Buffer]'], string.format(
     '%s %s\n%s %s', _L['Find:']:gsub('_', ''), M.find_entry_text,
     _L['Filter:']:gsub('_', ''),
-    type(filter) == 'string' and filter or table.concat(filter, ';')))
+    type(filter) == 'string' and filter or table.concat(filter, ',')))
   buffer.indicator_current = M.INDIC_FIND
 
   -- Determine which files to search.

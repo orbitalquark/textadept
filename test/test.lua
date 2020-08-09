@@ -2301,15 +2301,15 @@ function test_ui_find_find_in_files_interactive()
   assert(results:find('Filter: /test\n'), 'no filter defined')
   assert(results:find('src/foo.c'), 'foo.c not found')
   assert(results:find('include/foo.h'), 'foo.h not found')
-  assert_equal(table.concat(ui.find.find_in_files_filters[_HOME], ';'), '/test')
+  assert_equal(table.concat(ui.find.find_in_files_filters[_HOME], ','), '/test')
   buffer:clear_all()
-  ui.find.replace_entry_text = '/test;.c'
+  ui.find.replace_entry_text = '/test,.c'
   events.emit(events.FIND, ui.find.find_entry_text, true)
   results = buffer:get_text()
-  assert(results:find('Filter: /test;.c\n'), 'no filter defined')
+  assert(results:find('Filter: /test,.c\n'), 'no filter defined')
   assert(results:find('src/foo.c'), 'foo.c not found')
   assert(not results:find('include/foo.h'), 'foo.h found')
-  assert_equal(table.concat(ui.find.find_in_files_filters[_HOME], ';'), '/test;.c')
+  assert_equal(table.concat(ui.find.find_in_files_filters[_HOME], ','), '/test,.c')
   if not CURSES then
     -- Verify save and restore of replacement text and directory filters.
     ui.find.focus{in_files = false}
@@ -2317,7 +2317,7 @@ function test_ui_find_find_in_files_interactive()
     ui.find.replace_entry_text = 'bar'
     ui.find.focus{in_files = true}
     assert_equal(ui.find.in_files, true)
-    assert_equal(ui.find.replace_entry_text, '/test;.c')
+    assert_equal(ui.find.replace_entry_text, '/test,.c')
     ui.find.focus{in_files = false}
     assert_equal(ui.find.replace_entry_text, 'bar')
   end
@@ -2444,21 +2444,21 @@ function test_macro_record_play_with_keys_only()
   buffer:new_line()
   events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
   events.emit(events.KEYPRESS, 0xFFC6) -- f9; stop recording
-  assert_equal(buffer:get_text(), 'foo\n\nbar\nbaz\n');
+  assert_equal(buffer:get_text(), 'foo\n\nbar\nbaz\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(3))
   if not CURSES then
     events.emit(events.KEYPRESS, 0xFFC6, true) -- sf9; play
   else
     events.emit(events.KEYPRESS, 0xFFC7) -- f10; play
   end
-  assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n');
+  assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(5))
   if not CURSES then
     events.emit(events.KEYPRESS, 0xFFC6, true) -- sf9; play
   else
     events.emit(events.KEYPRESS, 0xFFC7) -- f10; play
   end
-  assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n\n');
+  assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(7))
   buffer:close(true)
 end
@@ -3023,7 +3023,7 @@ function test_ansi_c_autocomplete()
   buffer.new()
   buffer:set_lexer('ansi_c')
 
-  buffer:add_text('str');
+  buffer:add_text('str')
   textadept.editing.autocomplete('ansi_c')
   assert(buffer:auto_c_active(), 'no autocompletions')
   assert_equal(buffer.auto_c_current_text, 'strcat')
