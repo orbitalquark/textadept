@@ -763,7 +763,7 @@ result jumps to it in the file, as do the the `Ctrl+Alt+G` and
 `Ctrl+Alt+Shift+G` (`^⌘G` and `^⌘⇧G` | none) key bindings for cycling through
 results.
 
-A filter consists of a semicolon-separated list of [Lua patterns](#Lua.Patterns)
+A filter consists of a comma-separated list of [Lua patterns](#Lua.Patterns)
 that match filenames and directories to include or exclude. Patterns are
 inclusive by default. Exclusive patterns begin with a '!'. If no inclusive
 patterns are given, any filename is initially considered. As a convenience,
