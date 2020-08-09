@@ -2516,9 +2516,6 @@ function test_menu_menu_functions()
   local use_tabs = buffer.use_tabs
   textadept.menu.menubar[_L['Buffer']][_L['Indentation']][_L['Toggle Use Tabs']][2]()
   assert(buffer.use_tabs ~= use_tabs, 'use tabs not toggled')
-  local view_eol = view.view_eol
-  textadept.menu.menubar[_L['Buffer']][_L['Toggle View EOL']][2]()
-  assert(view.view_eol ~= view_eol, 'view EOL not toggled')
   local wrap_mode = view.wrap_mode
   textadept.menu.menubar[_L['Buffer']][_L['Toggle Wrap Mode']][2]()
   assert(view.wrap_mode ~= wrap_mode, 'wrap mode not toggled')

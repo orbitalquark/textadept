@@ -288,7 +288,6 @@ local default_menubar = {
       {_L['UTF-16 Encoding'], function() set_encoding('UTF-16LE') end}
     },
     SEPARATOR,
-    {_L['Toggle View EOL'], function() view.view_eol = not view.view_eol end},
     {_L['Toggle Wrap Mode'], function()
       local first_visible_line = view.first_visible_line
       local display_line = view:visible_from_doc_line(first_visible_line)
