@@ -199,8 +199,7 @@ local M = {}
 -- Home           |↖<br/>⌘⇠<br/>^A|^A          |Home
 -- End            |↘<br/>⌘⇢<br/>^E|^E          |End
 -- N/A            |N/A            |^T          |Transpose characters
--- N/A            |N/A            |Tab         |Focus find buttons
--- N/A            |N/A            |S-Tab       |Focus replace buttons
+-- N/A            |N/A            |Tab         |Toggle find/replace buttons
 -- Tab            |⇥              |Down        |Focus replace field
 -- Shift+Tab      |⇧⇥             |Up          |Focus find field
 -- Up             |⇡              |^P          |Cycle back through history
