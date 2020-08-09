@@ -57,6 +57,9 @@ function M.load(filename)
   local session = f()
   local not_found = {}
 
+  -- Unserialize cwd.
+  if session.cwd then lfs.chdir(session.cwd) end
+
   -- Unserialize buffers.
   for _, buf in ipairs(session.buffers) do
     if lfs.attributes(buf.filename) then
@@ -157,6 +160,9 @@ function M.save(filename)
 
   -- Serialize user data.
   events.emit(events.SESSION_SAVE, session)
+
+  -- Serialize cwd.
+  session.cwd = lfs.currentdir()
 
   -- Serialize buffers.
   session.buffers = {}
