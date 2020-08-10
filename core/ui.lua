@@ -383,8 +383,7 @@ events_connect(events.VIEW_AFTER_SWITCH, update_bars)
 
 -- Save view state.
 local function save_view_state()
-  buffer._view_eol, buffer._view_ws = view.view_eol, view.view_ws
-  buffer._wrap_mode = view.wrap_mode
+  buffer._view_ws, buffer._wrap_mode = view.view_ws, view.wrap_mode
   buffer._margin_type_n, buffer._margin_width_n = {}, {}
   for i = 1, view.margins do
     buffer._margin_type_n[i] = view.margin_type_n[i]
@@ -397,8 +396,7 @@ events_connect(events.VIEW_BEFORE_SWITCH, save_view_state)
 -- Restore view state.
 local function restore_view_state()
   if not buffer._margin_type_n then return end
-  view.view_eol, view.view_ws = buffer._view_eol, buffer._view_ws
-  view.wrap_mode = buffer._wrap_mode
+  view.view_ws, view.wrap_mode = buffer._view_ws, buffer._wrap_mode
   for i = 1, view.margins do
     view.margin_type_n[i] = buffer._margin_type_n[i]
     view.margin_width_n[i] = buffer._margin_width_n[i]
