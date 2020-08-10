@@ -1865,8 +1865,9 @@ static void emit_notification(lua_State *L, SCNotification *n) {
   lua_pushinteger(L, n->modifiers), lua_setfield(L, -2, "modifiers");
   lua_pushinteger(L, n->modificationType),
     lua_setfield(L, -2, "modification_type");
-  lua_pushlstring(L, n->text, n->text ? n->length || strlen(n->text) : 0),
-    lua_setfield(L, -2, "text");
+  if (n->text)
+    lua_pushlstring(L, n->text, n->length ? n->length : strlen(n->text)),
+      lua_setfield(L, -2, "text");
   lua_pushinteger(L, n->length), lua_setfield(L, -2, "length"); // SCN_MODIFIED
   //lua_pushinteger(L, n->linesAdded), lua_setfield(L, -2, "lines_added");
   //lua_pushinteger(L, n->message), lua_setfield(L, -2, "message");
