@@ -802,8 +802,8 @@ selecting a lexer from the list manually sets the lexer instead. Your
 Some lexers support "code folding", the act of temporarily hiding blocks of code
 in order to make viewing easier. Markers in the margin to the left of the code
 denote fold points. Clicking on one toggles the folding for that block of code.
-Pressing `Ctrl+*` (`⌘*` on macOS | `M-*` in the terminal) also toggles the fold
-point on the current line.
+Pressing `Ctrl+*` (`⌘*` on macOS | `M-*` in the terminal) also toggles folding
+for the current block.
 
 ![Folding](images/folding.png)
 
