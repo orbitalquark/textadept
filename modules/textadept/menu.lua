@@ -317,7 +317,8 @@ local default_menubar = {
     end},
     SEPARATOR,
     {_L['Toggle Current Fold'], function()
-      view:toggle_fold(buffer:line_from_position(buffer.current_pos))
+      local line = buffer:line_from_position(buffer.current_pos)
+      view:toggle_fold(buffer.fold_parent[line])
     end},
     SEPARATOR,
     {_L['Toggle Show Indent Guides'], function()
