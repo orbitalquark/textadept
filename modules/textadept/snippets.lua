@@ -10,7 +10,7 @@ local M = {}
 --
 -- Define snippets in the global `snippets` table in key-value pairs. Each pair
 -- consists of either a string trigger word and its snippet text, or a string
--- lexer name (from the *lexers/* directory) with a table of trigger words and 
+-- lexer name (from the *lexers/* directory) with a table of trigger words and
 -- snippet texts. When searching for a snippet to insert based on a trigger
 -- word, Textadept considers snippets in the current lexer to have priority,
 -- followed by the ones in the global table. This means if there are two
@@ -23,7 +23,7 @@ local M = {}
 --
 -- Represents a placeholder, where *n* is an integer and *text* is default
 -- placeholder text. Textadept moves the caret to placeholders in numeric order
--- each time it calls [`textadept.snippets._insert()`](), finishing at either
+-- each time it calls [`textadept.snippets.insert()`](), finishing at either
 -- the "%0" placeholder if it exists or at the end of the snippet. Examples are
 --
 --     snippets['foo'] = 'foobar%1(baz)'
