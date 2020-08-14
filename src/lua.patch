@@ -1,3 +1,11 @@
+Lua changes:
+
+LUA_ROOT is "/usr" instead of "/usr/local".
+
+LUA_PATH and LUA_CPATH do not have "./?.lua" and "./?.so" in them.
+
+Added os.spawn() for spawning and interacting with asynchronous processes.
+
 diff -r 8a23edc91533 src/luaconf.h
 --- a/src/luaconf.h	Mon Jan 12 18:57:53 2015 -0500
 +++ b/src/luaconf.h	Mon Jan 12 23:50:08 2015 -0500
