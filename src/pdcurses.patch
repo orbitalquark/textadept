@@ -1,3 +1,10 @@
+PDCurses changes:
+
+Remap Alt-modified keys to emit their usual key codes so Textadept can handle
+them like ncurses.
+
+Support more Alt and Shift+Alt keys.
+
 --- a/wincon/pdckbd.c	2019-09-04 16:08:02.000000000 -0400
 +++ b/wincon/pdckbd.c	2020-02-07 16:00:29.000000000 -0500
 @@ -100,16 +80,16 @@

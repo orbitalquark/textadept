@@ -1,3 +1,9 @@
+libtermkey changes:
+
+Added Win32 PDCurses driver.
+
+Prevent ^C from interrupting.
+
 diff -r 49c8684413c0 driver-win32-pdcurses.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
 +++ b/driver-win32-pdcurses.c	Tue Dec 23 13:31:50 2014 -0500

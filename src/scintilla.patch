@@ -1,4 +1,11 @@
+Scintilla changes:
+
 Only link the LPeg lexer.
+
+Hijack SCI_LOADLEXERLIBRARY for programmatically setting input method.
+This is helpful on newer versions of macOS, where changing the input method is
+flaky.
+
 --- a/src/Catalogue.cxx	Fri Dec 06 16:19:52 2013 +1100
 +++ b/src/Catalogue.cxx	Sun Dec 15 21:21:20 2013 -0500
 @@ -74,6 +74,7 @@
@@ -18,9 +25,6 @@ Only link the LPeg lexer.
  
  	return 1;
  }
-Hijack SCI_LOADLEXERLIBRARY for programmatically setting input method.
-This is helpful on newer version of Mac OSX, where changing the input method is
-flaky.
 diff -r 6e368ee248e4 gtk/ScintillaGTK.cxx
 --- a/gtk/ScintillaGTK.cxx	Fri Oct 26 11:06:34 2018 -0400
 +++ b/gtk/ScintillaGTK.cxx	Sun Nov 25 00:20:58 2018 -0500
