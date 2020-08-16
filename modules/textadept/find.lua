@@ -122,12 +122,13 @@ local orig_focus = M.focus
 -- @param options Optional table of options to initially set.
 -- @name focus
 function M.focus(options)
+  local already_in_files = M.in_files
   if assert_type(options, 'table/nil', 1) then
     for k, v in pairs(options) do M[k] = v end
   end
   M.replace_label_text = not M.in_files and _L['Replace:'] or _L['Filter:']
   if M.in_files then
-    repl_text = M.replace_entry_text -- save
+    if not already_in_files then repl_text = M.replace_entry_text end -- save
     local filter = M.find_in_files_filters[ff_dir()] or lfs.default_filter
     M.replace_entry_text = type(filter) == 'string' and filter or
       table.concat(filter, ',')
