@@ -15,7 +15,7 @@ export PANGO_LIBDIR="$bundle_res/lib"
 export PANGO_SYSCONFDIR="$bundle_res/etc"
 export CHARSETALIASDIR="$bundle_res/lib"
 
-# Strip out the argument added by OSX.
+# Strip out the argument added by macOS.
 if [ x`echo "x$1" | sed -e "s/^x-psn_.*//"` == x ]; then shift 1; fi
 
 # Source '~/.textadept/osx_env.sh' to set variables like $PATH when opening

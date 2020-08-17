@@ -11,10 +11,10 @@ local M = {}
 -- Define key bindings in the global `keys` table in key-value pairs. Each pair
 -- consists of either a string key sequence and its associated command, a string
 -- lexer name (from the *lexers/* directory) with a table of key sequences and
--- commands, a string key mode with a table of key sequences and commands, or a 
--- key sequence with a table of more sequences and commands. The latter is part 
--- of what is called a "key chain", to be discussed below. When searching for a 
--- command to run based on a key sequence, Textadept considers key bindings in 
+-- commands, a string key mode with a table of key sequences and commands, or a
+-- key sequence with a table of more sequences and commands. The latter is part
+-- of what is called a "key chain", to be discussed below. When searching for a
+-- command to run based on a key sequence, Textadept considers key bindings in
 -- the current key mode to have priority. If no key mode is active,
 -- language-specific key bindings have priority, followed by the ones in the
 -- global table. This means if there are two commands with the same key
@@ -28,13 +28,13 @@ local M = {}
 --
 -- Key sequences are strings built from an ordered combination of modifier keys
 -- and the key's inserted character. Modifier keys are "Control", "Shift", and
--- "Alt" on Windows, Linux, BSD, and in curses. On Mac OSX they are "Control"
+-- "Alt" on Windows, Linux, BSD, and in curses. On macOS they are "Control"
 -- (`^`), "Alt/Option" (`⌥`), "Command" (`⌘`), and "Shift" (`⇧`). These
 -- modifiers have the following string representations:
 --
--- Modifier | Linux / Win32 | Mac OSX   | curses    |
+-- Modifier | Linux / Win32 | macOS     | Terminal  |
 -- ---------|---------------|-----------|-----------|
--- Control  | `'ctrl'       | `'ctrl'`  | `'ctrl'`  |
+-- Control  | `'ctrl'`      | `'ctrl'`  | `'ctrl'`  |
 -- Alt      | `'alt'`       | `'alt'`   | `'meta'`  |
 -- Command  | N/A           | `'cmd'`   | N/A       |
 -- Shift    | `'shift'`     | `'shift'` | `'shift'` |
@@ -197,7 +197,7 @@ end
 -- @param shift Whether or not the Shift modifier is pressed.
 -- @param control Whether or not the Control modifier is pressed.
 -- @param alt Whether or not the Alt/option modifier is pressed.
--- @param cmd Whether or not the Command modifier on Mac OSX is pressed.
+-- @param cmd Whether or not the Command modifier on macOS is pressed.
 -- @param caps_lock Whether or not Caps Lock is enabled.
 -- @return `true` to stop handling the key; `nil` otherwise.
 local function keypress(code, shift, control, alt, cmd, caps_lock)
@@ -209,7 +209,7 @@ local function keypress(code, shift, control, alt, cmd, caps_lock)
   if not key then return end
   -- Since printable characters are uppercased, disable shift.
   if shift and code >= 32 and code < 256 then shift = false end
-  -- For composed keys on OSX, ignore alt.
+  -- For composed keys on macOS, ignore alt.
   if OSX and alt and code < 256 then alt = false end
   local key_seq = (control and CTRL or '') .. (alt and ALT or '') ..
     (cmd and OSX and CMD or '') .. (shift and SHIFT or '') .. key

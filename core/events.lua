@@ -27,7 +27,7 @@ local M = {}
 -- handled it, or if you want to use the event framework to pass values.
 --
 -- @field APPLEEVENT_ODOC (string)
---   Emitted when Mac OSX tells Textadept to open a file.
+--   Emitted when macOS tells Textadept to open a file.
 --   Arguments:
 --
 --   * _`uri`_: The UTF-8-encoded URI to open.
@@ -94,7 +94,7 @@ local M = {}
 --   * _`line`_: The line number of the position double-clicked.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
 --     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
---     On Mac OSX, the Command modifier key is reported as `view.MOD_CTRL` and
+--     On macOS, the Command modifier key is reported as `view.MOD_CTRL` and
 --     Ctrl is `view.MOD_META`.
 --     Note: If you set `view.rectangular_selection_modifier` to
 --     `view.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
@@ -149,7 +149,7 @@ local M = {}
 --   * _`position`_: The clicked text's position.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
 --     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
---     On Mac OSX, the Command modifier key is reported as `view.MOD_CTRL` and
+--     On macOS, the Command modifier key is reported as `view.MOD_CTRL` and
 --     Ctrl is `view.MOD_META`.
 --     Note: If you set `view.rectangular_selection_modifier` to
 --     `view.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
@@ -171,7 +171,7 @@ local M = {}
 --   * _`shift`_: The "Shift" modifier key is held down.
 --   * _`ctrl`_: The "Control" modifier key is held down.
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
---   * _`cmd`_: The "Command" modifier key on Mac OSX is held down.
+--   * _`cmd`_: The "Command" modifier key on macOS is held down.
 --   * _`caps_lock`_: The "Caps Lock" modifier is on.
 -- @field MARGIN_CLICK (string)
 --   Emitted when clicking the mouse inside a sensitive margin.
@@ -181,7 +181,7 @@ local M = {}
 --   * _`position`_: The beginning position of the clicked margin's line.
 --   * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
 --     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
---     On Mac OSX, the Command modifier key is reported as `view.MOD_CTRL` and
+--     On macOS, the Command modifier key is reported as `view.MOD_CTRL` and
 --     Ctrl is `view.MOD_META`.
 --     Note: If you set `view.rectangular_selection_modifier` to
 --     `view.MOD_CTRL`, the "Control" modifier is reported as *both* "Control"
@@ -266,7 +266,7 @@ local M = {}
 --   * _`shift`_: The "Shift" modifier key is held down.
 --   * _`ctrl`_: The "Control" modifier key is held down.
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
---   * _`cmd`_: The "Command" modifier key on Mac OSX is held down.
+--   * _`cmd`_: The "Command" modifier key on macOS is held down.
 -- @field UPDATE_UI (string)
 --   Emitted after the view is visually updated.
 --   Arguments:

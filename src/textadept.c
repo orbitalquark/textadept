@@ -1811,7 +1811,7 @@ static bool exiting(GtkWidget *_, GdkEventAny *__, void *L) {
 
 #if (__APPLE__ && !CURSES)
 /**
- * Signal for opening files from OSX.
+ * Signal for opening files from macOS.
  * Generates an 'appleevent_odoc' event for each document sent.
  */
 static bool open_file(GtkosxApplication*_, char *path, void *L) {
@@ -1819,7 +1819,7 @@ static bool open_file(GtkosxApplication*_, char *path, void *L) {
 }
 
 /**
- * Signal for block terminating Textadept from OSX.
+ * Signal for block terminating Textadept from macOS.
  * Generates a 'quit' event.
  */
 static bool terminating(GtkosxApplication *_, void *L) {
@@ -1827,7 +1827,7 @@ static bool terminating(GtkosxApplication *_, void *L) {
 }
 
 /**
- * Signal for terminating Textadept from OSX.
+ * Signal for terminating Textadept from macOS.
  * Closes the Lua state and releases resources.
  * @see close_lua
  */

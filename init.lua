@@ -206,7 +206,7 @@ view.annotation_visible = view.ANNOTATION_BOXED
 view.eol_annotation_visible = view.EOLANNOTATION_BOXED
 
 -- Other.
-buffer.buffered_draw = not CURSES and not OSX -- Quartz buffers drawing on OSX
+buffer.buffered_draw = not CURSES and not OSX -- Quartz buffers drawing on macOS
 --buffer.word_chars =
 --buffer.whitespace_chars =
 --buffer.punctuation_chars =

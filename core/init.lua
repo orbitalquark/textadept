@@ -78,7 +78,7 @@ end)
 --   user-data is stored.
 --   On Windows machines *~/* is the value of the "USERHOME" environment
 --   variable (typically *C:\Users\username\\* or
---   *C:\Documents and Settings\username\\*). On Linux, BSD, and Mac OSX
+--   *C:\Documents and Settings\username\\*). On Linux, BSD, and macOS
 --   machines *~/* is the value of "$HOME" (typically */home/username/* and
 --   */Users/username/* respectively).
 -- @field _CHARSET (string)
@@ -87,7 +87,7 @@ end)
 -- @field WIN32 (bool)
 --   Whether or not Textadept is running on Windows.
 -- @field OSX (bool)
---   Whether or not Textadept is running on Mac OSX as a GUI application.
+--   Whether or not Textadept is running on macOS as a GUI application.
 -- @field LINUX (bool)
 --   Whether or not Textadept is running on Linux.
 -- @field BSD (bool)
