@@ -1498,7 +1498,7 @@ since the editor's internals consist primarily of Lua.
 When it comes to scripting Textadept, what exactly does that mean? Being an
 event-driven application, Textadept simply responds to input like keypresses and
 mouse clicks. By responding, Textadept just executes Lua functions. For example,
-pressing `Ctrl+O` (`⌘O` on macOS | `M-O` in the terminal) executes the
+pressing `Ctrl+O` (`⌘O` on macOS | `^O` in the terminal) executes the
 [`io.open_file()`][] function because a default keybinding in
 *modules/textadept/keys.lua* says so (you could change this in your
 [preferences](#Key.Bindings)). Subsequently, when Textadept opens a file, a
@@ -2074,6 +2074,7 @@ toggle(line, on)           |Changed |[toggle()][]
 **textadept.editing**      |        |
 block\_comment()           |Renamed |[toggle_comment()][]
 highlight_word()           |Replaced|[highlight_words][]
+N/A                        |Added   |[auto_enclose][]
 **textadept.file_types**   |        |
 lexers                     |Removed |N/A<sup>b</sup>
 **textadept.find**         |        |
@@ -2121,6 +2122,7 @@ section below.
 [toggle()]: api.html#textadept.bookmarks.toggle
 [toggle_comment()]: api.html#textadept.editing.toggle_comment
 [highlight_words]: api.html#textadept.editing.highlight_words
+[auto_enclose]: api.html#textadept.editing.auto_enclose
 [incremental]: api.html#ui.find.incremental
 [highlight_all_matches]: api.html#ui.find.highlight_all_matches
 [insert()]: api.html#textadept.snippets.insert

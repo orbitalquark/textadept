@@ -1696,6 +1696,25 @@ function test_editing_enclose()
   assert_raises(function() textadept.editing.enclose('<', 1) end, 'string expected, got number')
 end
 
+function test_editing_auto_enclose()
+  local auto_enclose = textadept.editing.auto_enclose
+  buffer.new()
+  buffer:add_text('foo bar')
+  buffer:word_left_extend()
+  textadept.editing.auto_enclose = false
+  events.emit(events.KEYPRESS, string.byte('*')) -- simulate typing
+  assert(buffer:get_text() ~= 'foo *bar*')
+  textadept.editing.auto_enclose = true
+  events.emit(events.KEYPRESS, string.byte('*')) -- simulate typing
+  assert_equal(buffer:get_text(), 'foo *bar*')
+  buffer:undo()
+  buffer:select_all()
+  events.emit(events.KEYPRESS, string.byte('(')) -- simulate typing
+  assert_equal(buffer:get_text(), '(foo bar)')
+  buffer:close(true)
+  textadept.editing.auto_enclose = auto_enclose -- restore
+end
+
 function test_editing_select_enclosed()
   buffer.new()
   buffer:add_text('("foo bar")')
