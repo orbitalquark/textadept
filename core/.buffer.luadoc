@@ -14,6 +14,8 @@
 -- Note that with regard to Scintilla-specific functionality, this API is a
 -- _suggestion_, not a hard requirement. All of that functionality also exists
 -- in [`view`](), even if undocumented.
+-- Any buffer fields set on startup (e.g. in *~/.textadept/init.lua*) will be
+-- the default, initial values for all buffers.
 -- @field additional_selection_typing (bool)
 --   Type into multiple selections.
 --   The default value is `false`.
@@ -1830,7 +1832,7 @@ function set_encoding(buffer, encoding) end
 function get_lexer(buffer, current) end
 
 ---
--- Associates string lexer name *name* or the auto-detected lexer name with the 
+-- Associates string lexer name *name* or the auto-detected lexer name with the
 -- buffer and then loads the appropriate language module if that module exists.
 -- @param buffer A buffer.
 -- @param name Optional string lexer name to set. If `nil`, attempts to

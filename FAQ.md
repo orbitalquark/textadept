@@ -6,11 +6,11 @@ unzipped folders 10s of MBs in size?
 
 **A:**
 Each download contains 2 executables: a GUI version and a terminal version.
-Furthermore, the Windows and OSX packages bundle in GTK runtimes, accounting for
-some 3/4 of the total application size. (GTK is the cross-platform GUI toolkit
-Textadept uses.) Then, starting in version 10, in order to be able to run on
-older Linux systems whose libstdc++ does not support newer C++11 symbols, the
-Linux executables statically link in a newer version of libstdc++. Finally,
+Furthermore, the Windows and macOS packages bundle in GTK runtimes, accounting
+for some 3/4 of the total application size. (GTK is the cross-platform GUI
+toolkit Textadept uses.) Then, starting in version 10, in order to be able to
+run on older Linux systems whose libstdc++ does not support newer C++11 symbols,
+the Linux executables statically link in a newer version of libstdc++. Finally,
 nightly builds are compiled with debug symbols enabled in order to aid debugging
 of various issues.
 
@@ -129,7 +129,7 @@ bug reports.
 - - -
 
 **Q:**
-Pressing `^O` in the curses version on Mac OSX does not do anything. Why?
+Pressing `^O` in the curses version on macOS does not do anything. Why?
 
 **A:**
 For whatever reason, `^O` is discarded by the terminal driver. To enable it, run
@@ -139,7 +139,7 @@ For whatever reason, `^O` is discarded by the terminal driver. To enable it, run
 - - -
 
 **Q:**
-How can I get the terminal version on Mac OSX to show more than 8 colors?
+How can I get the terminal version on macOS to show more than 8 colors?
 
 **A:**
 Enable the "Use bright colors for bold text" setting in your Terminal.app

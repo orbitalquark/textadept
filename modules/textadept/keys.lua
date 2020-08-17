@@ -10,21 +10,21 @@ local M = {}
 --
 -- ## Key Bindings
 --
--- Linux / Win32 | Mac OSX | Terminal | Command
--- --------------|---------|----------|--------
--- **File**      |         |          |
--- Ctrl+N        |⌘N       |M-^N      |New file
--- Ctrl+O        |⌘O       |^O        |Open file
--- Ctrl+Alt+O    |^⌘O      |M-^O      |Open recent file...
--- Ctrl+Shift+O  |⌘⇧O      |M-O       |Reload file
--- Ctrl+S        |⌘S       |^S        |Save file
--- Ctrl+Shift+S  |⌘⇧S      |M-^S      |Save file as..
--- None          |None     |None      |Save all files
--- Ctrl+W        |⌘W       |^W        |Close file
--- Ctrl+Shift+W  |⌘⇧W      |M-^W      |Close all files
--- None          |None     |None      |Load session...
--- None          |None     |None      |Save session...
--- Ctrl+Q        |⌘Q       |^Q        |Quit
+-- Win32, Linux, BSD|macOS|Terminal|Command
+-- -----------------|-----|--------|--------
+-- **File**         |     |        |
+-- Ctrl+N           |⌘N   |M-^N    |New file
+-- Ctrl+O           |⌘O   |^O      |Open file
+-- Ctrl+Alt+O       |^⌘O  |M-^O    |Open recent file...
+-- Ctrl+Shift+O     |⌘⇧O  |M-O     |Reload file
+-- Ctrl+S           |⌘S   |^S      |Save file
+-- Ctrl+Shift+S     |⌘⇧S  |M-^S    |Save file as..
+-- None             |None |None    |Save all files
+-- Ctrl+W           |⌘W   |^W      |Close file
+-- Ctrl+Shift+W     |⌘⇧W  |M-^W    |Close all files
+-- None             |None |None    |Load session...
+-- None             |None |None    |Save session...
+-- Ctrl+Q           |⌘Q   |^Q      |Quit
 -- **Edit**                |         |              |
 -- Ctrl+Z<br/>Alt+Bksp     |⌘Z       |^Z^(†)<br/>M-Z|Undo
 -- Ctrl+Y<br/>Ctrl+Shift+Z |⌘⇧Z      |^Y<br/>M-S-Z  |Redo
@@ -226,7 +226,7 @@ module('textadept.keys')]]
 -- Control, Alt, Shift, and 'a' = 'ctrl+alt+A'
 -- Control, Shift, and '\t' = 'ctrl+shift+\t'
 --
--- Mac OSX key bindings.
+-- macOS key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- m:       C        ~H I JkK  ~M    p  ~    tT   V    yY  _   ) ] }   +   ~~\n
@@ -244,7 +244,7 @@ module('textadept.keys')]]
 --
 -- Key bindings available depend on your implementation of curses.
 --
--- For ncurses (Linux, Mac OSX, BSD):
+-- For ncurses (Linux, macOS, BSD):
 --   * The only Control keys recognized are 'ctrl+a'-'ctrl+z', 'ctrl+ ',
 --     'ctrl+\\', 'ctrl+]', 'ctrl+^', and 'ctrl+_'.
 --   * Control+Shift and Control+Meta+Shift keys are not recognized.
@@ -278,7 +278,7 @@ local m_indentation = m_buffer[_L['Indentation']]
 local m_view = textadept.menu.menubar[_L['View']]
 local m_help = textadept.menu.menubar[_L['Help']]
 
--- Bindings for Linux/Win32, Mac OSX, Terminal.
+-- Bindings for Linux/Win32, macOS, Terminal.
 local bindings = {
   -- File.
   [buffer.new] = {'ctrl+n', 'cmd+n', 'ctrl+meta+n'},

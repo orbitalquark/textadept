@@ -42,7 +42,7 @@
 -- files. However, it does not know all of them, and the ones that it does know
 -- may not be completely accurate in all cases. Compile and run commands are
 -- read from the [`textadept.run.compile_commands`]() and
--- [`textadept.run.run_commands`]() tables using the appropriate lexer name key, 
+-- [`textadept.run.run_commands`]() tables using the appropriate lexer name key,
 -- and thus can be defined or modified. For Lua, it would look like:
 --
 --     textadept.run.compile_commands.lua = 'luac "%f"'
@@ -97,7 +97,7 @@
 -- Additional editing features for the language can be useful. For example, a
 -- C++ module might have a feature to add a ';' to the end of the current line
 -- and insert a new line. This command could be bound to the `Shift+Enter` (`⇧↩`
--- on Mac OSX | `S-Enter` in curses) key for easy access:
+-- on macOS | `S-Enter` in curses) key for easy access:
 --
 --     keys.cpp = {
 --       ['s\n'] = function()
@@ -108,7 +108,7 @@
 --     }
 --
 -- When defining key bindings for other commands, you may make use of a `Ctrl+L`
--- (`⌘L` on Mac OSX | `M-L` in curses) keychain. Traditionally this prefix has
+-- (`⌘L` on macOS | `M-L` in curses) keychain. Traditionally this prefix has
 -- been reserved for use by language modules (although neither Textadept nor its
 -- modules utilize it at the moment). Users may define this keychain for new or
 -- existing modules and it will not conflict with any default key bindings.

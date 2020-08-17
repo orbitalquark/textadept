@@ -433,8 +433,8 @@ diff -r 8a23edc91533 src/luaconf.h
 +static int monitoring_fds = 0;
 +/**
 + * Monitors spawned fds when GTK is idle.
-+ * This is necessary because at the moment, using GLib on Mac OSX to spawn
-+ * and monitor file descriptors mostly blocks when attempting to poll those fds.
++ * This is necessary because at the moment, using GLib on macOS to spawn and
++ * monitor file descriptors mostly blocks when attempting to poll those fds.
 + */
 +static int monitor_fds(void *L) {
 +  struct timeval timeout = {0, 1e5}; // 0.1s

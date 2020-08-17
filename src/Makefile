@@ -35,7 +35,7 @@ ifeq (win, $(findstring win, $(MAKECMDGOALS)))
     CURSES_LIBS = win32curses/lib/pdcurses.a win32curses/lib/libiconv.a
   endif
 else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
-  # Cross-compile for Mac OSX.
+  # Cross-compile for macOS.
   CROSS = x86_64-apple-darwin9-
   CFLAGS += -mdynamic-no-pic
   CXXFLAGS += -mdynamic-no-pic

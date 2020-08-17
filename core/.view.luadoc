@@ -14,6 +14,8 @@
 -- Note that with regard to Scintilla-specific functionality, this API is a
 -- _suggestion_, not a hard requirement. All of that functionality also exists
 -- in [`buffer`](), even if undocumented.
+-- Any view fields set on startup (e.g. in *~/.textadept/init.lua*) will be the
+-- default, initial values for all views.
 -- @field additional_caret_fore (number)
 --   The foreground color, in "0xBBGGRR" format, of additional carets.
 -- @field additional_carets_blink (bool)
@@ -464,7 +466,7 @@
 -- @field rgba_image_scale (number)
 --   The scale factor in percent of the RGBA image to be defined using
 --   [`view.marker_define_rgba_image()`]().
---   This is useful on OSX with a retina display where each display unit is 2
+--   This is useful on macOS with a retina display where each display unit is 2
 --   pixels: use a factor of `200` so that each image pixel is displayed using a
 --   screen pixel. The default scale, `100`, will stretch each image pixel to
 --   cover 4 screen pixels on a retina display.
