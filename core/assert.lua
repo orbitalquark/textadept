@@ -42,16 +42,18 @@ function assert_type(v, expected_type, narg)
   if type(v) == expected_type then return v end
   -- Note: do not use assert for performance reasons.
   if type(expected_type) ~= 'string' then
-    error(string.format("bad argument #2 to '%s' (string expected, got %s)",
-                        debug.getinfo(1, 'n').name, type(expected_type)), 2)
+    error(string.format(
+      "bad argument #2 to '%s' (string expected, got %s)",
+      debug.getinfo(1, 'n').name, type(expected_type)), 2)
   elseif narg == nil then
-    error(string.format("bad argument #3 to '%s' (value expected, got %s)",
-                        debug.getinfo(1, 'n').name, type(narg)), 2)
+    error(string.format(
+      "bad argument #3 to '%s' (value expected, got %s)",
+      debug.getinfo(1, 'n').name, type(narg)), 2)
   end
   for type_option in expected_type:gmatch('%a+') do
     if type(v) == type_option then return v end
   end
-  error(string.format("bad argument #%s to '%s' (%s expected, got %s)", narg,
-                      debug.getinfo(2, 'n').name or '?', expected_type,
-                      type(v)), 3)
+  error(string.format(
+    "bad argument #%s to '%s' (%s expected, got %s)", narg,
+    debug.getinfo(2, 'n').name or '?', expected_type, type(v)), 3)
 end
