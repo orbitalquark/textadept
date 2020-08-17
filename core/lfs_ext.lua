@@ -19,7 +19,8 @@ lfs.default_filter = {
   '!.jar', '!.jpeg', '!.jpg', '!.o', '!.pdf', '!.png', '!.so', '!.tar', '!.tgz',
   '!.tif', '!.tiff', '!.xz', '!.zip',
   -- Directories to exclude.
-  '!/%.bzr$', '!/%.git$', '!/%.hg$', '!/%.svn$', '!/node_modules$',
+  '!/%.bzr$', '!/%.git$', '!/%.hg$', '!/%.svn$', '!/_FOSSIL_$',
+  '!/node_modules$'
 }
 
 -- Documentation is in `lfs.walk()`.
