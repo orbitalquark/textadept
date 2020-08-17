@@ -26,6 +26,10 @@ local M = {}
 --     Do not automatically highlight words.
 --
 --   The default value is `textadept.editing.HIGHLIGHT_NONE`.
+-- @field auto_enclose (bool)
+--   Whether or not to auto-enclose selected text when typing a punctuation
+--   character, taking [`textadept.editing.auto_pairs`]() into account.
+--   The default value is `false`.
 -- @field INDIC_BRACEMATCH (number)
 --   The matching brace highlight indicator number.
 -- @field INDIC_HIGHLIGHT (number)
@@ -37,6 +41,7 @@ M.strip_trailing_spaces = false
 M.autocomplete_all_words = false
 M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
 M.highlight_words = M.HIGHLIGHT_NONE
+M.auto_enclose = false
 M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
 M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
@@ -477,6 +482,15 @@ function M.enclose(left, right)
   buffer:end_undo_action()
 end
 
+-- Enclose selected text in punctuation or auto-paired characters.
+events.connect(events.KEYPRESS, function(code)
+  if not M.auto_enclose or buffer.selection_empty or code >= 256 then return end
+  local char = string.char(code)
+  if char:find('^%P') then return end -- not punctuation
+  M.enclose(char, M.auto_pairs[code] or char)
+  return true -- prevent typing
+end, 1)
+
 ---
 -- Selects the text between strings *left* and *right* that enclose the caret.
 -- If that range is already selected, toggles between selecting *left* and
@@ -602,8 +616,8 @@ end
 -- have text selected is passed as stdin. However, if the end of the selection
 -- is at the beginning of a line, only the line ending delimiters from the
 -- previous line are included. The rest of the line is excluded.
--- @param command The Linux, BSD, Mac OSX, or Windows shell command to filter
---   text through. May contain pipes.
+-- @param command The Linux, BSD, macOS, or Windows shell command to filter text
+--   through. May contain pipes.
 -- @name filter_through
 function M.filter_through(command)
   assert(not (WIN32 and CURSES), 'not implemented in this environment')

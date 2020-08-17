@@ -399,6 +399,7 @@ auto_c_separator	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 auto_c_show	_HOME/core/.buffer.luadoc	/^function auto_c_show(buffer, len_entered, items) end$/;"	f	class:buffer
 auto_c_stops	_HOME/core/.buffer.luadoc	/^function auto_c_stops(buffer, chars) end$/;"	f	class:buffer
 auto_c_type_separator	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+auto_enclose	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	F	class:textadept.editing
 auto_indent	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	F	class:textadept.editing
 auto_pairs	_HOME/modules/textadept/editing.lua	/^M.auto_pairs = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}$/;"	t	class:textadept.editing
 autocomplete	_HOME/modules/textadept/editing.lua	/^function M.autocomplete(name)$/;"	f	class:textadept.editing
