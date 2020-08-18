@@ -1,121 +1,134 @@
 # Textadept
 
-## Overview
-
 Textadept is a fast, minimalist, and remarkably extensible cross-platform text
 editor for programmers. Written in a combination of C and [Lua][] and
-relentlessly optimized for speed and minimalism over the years, Textadept is an
-ideal editor for programmers who want endless extensibility without sacrificing
-speed or succumbing to code bloat and featuritis.
+relentlessly optimized for speed and minimalism for more than 12 years,
+Textadept is an ideal editor for programmers who want endless extensibility
+without sacrificing speed and disk space, and without succumbing to code bloat
+and a superabundance of features. The application has both a graphical user
+interface (GUI) version that runs in a desktop environment, and a terminal
+version that runs within a terminal emulator.
 
-[Lua]: http://lua.org
+[Lua]: https://lua.org
 
 ## Features
 
+* Fast and minimalist.
+* Cross platform, and with a terminal version, too.
 * Self-contained executable -- no installation necessary.
-* Entirely keyboard driven.
-* Unlimited split views.
 * Support for over 100 programming languages.
+* Unlimited split views.
+* Can be entirely keyboard driven.
 * Powerful snippets and key commands.
-* Code autocompletion and API lookup.
-* Unparalleled extensibility.
-* Terminal (curses) version.
+* Code autocompletion and documentation lookup.
+* Remarkably extensible, with a heavily documented Application Programming
+  Interface (API).
 
 ## Requirements
 
-In its bid for minimalism, Textadept has no dependencies on Windows and Mac OSX
-operating systems and depends only on [GTK 2.0][] version 2.18 or greater on
-Linux. Textadept includes its own copy of Lua on all platforms and bundles in a
-GTK runtime on Windows and Mac OSX.
+In its bid for minimalism, Textadept depends on very little to run. On Windows
+and macOS, it has no external dependencies. On Linux and BSD, the GUI version
+depends only on [GTK][] (a cross-platform GUI toolkit) version 2.24 or later
+(circa early 2011), and the terminal version depends only on a wide-character
+implementation of curses like [ncurses][](w).
 
-The terminal version of Textadept requires only an implementation of curses like
-[ncurses][].
-
-[GTK 2.0]: http://gtk.org
-[ncurses]: http://invisible-island.net/ncurses/ncurses.html
+[GTK]: https://gtk.org
+[ncurses]: https://invisible-island.net/ncurses/ncurses.html
 
 ## Download
 
-**Please [donate][] or purchase the [book][] to fund continuous development.**
+Download Textadept from the project's [download page][] by selecting the
+appropriate package for your platform. You can also download a separate set of
+modules that provide extra features and functionality to the core application.
 
-Download Textadept from the project's [download page][] or from these quick
-links:
-
-Stable Builds
-
-* [Win32][]
-* [Mac OSX][]
-* [Linux][]
-* [Linux x86\_64][]
-* [Modules][]
-
-Unstable Builds
-
-* [Win32 Nightly][]
-* [Mac OSX Nightly][]
-* [Linux Nightly][]
-* [Linux x86\_64 Nightly][]
-* [Modules Nightly][]
-
-_Warning_: nightly builds are untested, may have bugs, and are the absolute
-cutting-edge versions of Textadept. Do not use them in production, but for
-testing purposes only.
-
-If necessary, you can obtain PGP signatures from the [download page][] along
-with a public key in order to verify download integrity. For example on Linux,
-after importing the public key via `gpg --import foicica.pgp` and downloading
-the appropriate signature, run `gpg --verify [signature]`.
-
-[donate]: http://gum.co/textadept
-[book]: MEDIA.html#Book
-[download page]: http://foicica.com/textadept/download
-[Win32]: download/textadept_LATEST.win32.zip
-[Mac OSX]: download/textadept_LATEST.osx.zip
-[Linux]: download/textadept_LATEST.i386.tgz
-[Linux x86\_64]: download/textadept_LATEST.x86_64.tgz
-[Modules]: download/textadept_LATEST.modules.zip
-[Win32 Nightly]: download/textadept_NIGHTLY.win32.zip
-[Mac OSX Nightly]: download/textadept_NIGHTLY.osx.zip
-[Linux Nightly]: download/textadept_NIGHTLY.i386.tgz
-[Linux x86\_64 Nightly]: download/textadept_NIGHTLY.x86_64.tgz
-[Modules Nightly]: download/textadept_NIGHTLY.modules.zip
+[download page]: https://foicica.com/textadept/download
 
 ## Installation and Usage
 
-Textadept comes with a comprehensive manual and API documentation in the *doc/*
-directory. They are also available [online][].
+Textadept comes with a comprehensive user manual in its *doc/* directory. This
+manual is also available [online][1]. It covers all of Textadept's main
+features, including installation, usage, configuration, theming, scripting, and
+compilation.
 
-[online]: http://foicica.com/textadept
+Since nearly every aspect of Textadept can be scripted using Lua, the editor's
+API is heavily documented. This documentation is also located in *doc/* and
+available [online][2]. It serves as the ultimate resource when it comes to
+scripting the application.
 
-## Buy the Book
-
-<div style="float: left; margin: 0 1em 0 1em;">
-  <a href="MEDIA.html#Book">
-    <img src="book/ta_quickref_small.png" alt="" style="border-width: 1px;"/>
-  </a>
-</div>
-
-[*Textadept Quick Reference*][]
-
-Published: Oct 2016 <span style="color: #ef373a;">[New!]</span><br/>
-Pages: 170
-
-Textadept is a fast, minimalist, and remarkably extensible cross-platform text
-editor for programmers. This quick reference contains a wealth of knowledge on
-how to script and configure Textadept using the Lua programming language. It
+A more structured scripting resource is [Textadept Quick Reference][], which
+contains a wealth of knowledge on how to script and configure Textadept. It
 groups the editor's rich API into a series of tasks in a convenient and
-easy-to-use manner. [Read more...][]
+easy-to-use manner. This book serves as the perfect complement to Textadept's
+Manual and exhaustive API documentation.
 
-This book serves as the perfect complement to Textadept's Manual and exhaustive
-API documentation.
+[1]: https://foicica.com/textadept/manual.html
+[2]: https://foicica.com/textadept/api.html
+[Textadept Quick Reference]: https://foicica.com/textadept/MEDIA.html#Book
 
-[*Textadept Quick Reference*]: MEDIA.html#Book
-[Read more...]: MEDIA.html#Book
+## Compile
 
-## Contact
+Textadept is a bit unusual in that building it is only supported on Linux and
+BSD. The application is cross-compiled for Windows and macOS from Linux. While
+it is certainly possible to compile Textadept natively on those platforms, it is
+simply not supported in any official capacity.
 
-Contact me by email: mitchell.att.foicica.com.
+Textadept is built from its *src/* directory and binaries are placed in the
+application's root directory. The general procedure is to have Textadept build
+its dependencies first, and then its binaries. Textadept is self-contained,
+meaning you do not have to install it; it can run from its current location.
 
-There is also a [mailing list][].
+General Requirements:
 
+* [GNU C compiler][] (*gcc*) 4.9+ (circa early 2014)
+* [libstdc++][] version 4.9+
+* [GNU Make][] (*make*)
+* [GTK][] 2.24+ development libraries for the GUI version
+* [ncurses][](w) development libraries (wide character support) for the terminal
+  version
+* [MinGW][] or [mingw-w64][] 4.9+ (circa early 2014) when cross-compiling for
+  Windows.
+* [OSX cross toolchain][] _with GCC_ 4.9+ (not Clang) when cross-compiling for
+  macOS.
+
+The following table provides a brief list of `make` rules for building Textadept
+on Linux and BSD. (On BSD, substitute `make` with `gmake`.)
+
+Command              |Description
+---------------------|-----------
+`make deps`          |Downloads and builds all of Textadept's core dependencies
+`make deps NIGHTLY=1`|Optionally downloads and builds bleeding-edge dependencies
+`make`               |Builds Textadept, provided all dependencies are in place
+`make DEBUG=1`       |Optionally builds Textadept with debug symbols
+`make curses`        |Builds the terminal version of Textadept
+`make win32-deps`    |Downloads and builds Textadept's Windows dependencies
+`make win32`         |Cross-compiles Textadept for Windows
+`make win32-curses`  |Cross-compiles the terminal version for Windows
+`make osx-deps`      |Downloads and builds Textadept's macOS dependencies
+`make osx`           |Cross-compiles Textadept for macOS
+`make osx-curses`    |Cross-compiles the terminal version for macOS
+
+For more information on compiling Textadept, please see the [manual][].
+
+[GNU C compiler]: https://gcc.gnu.org
+[libstdc++]: https://gcc.gnu.org
+[GNU Make]: https://www.gnu.org/software/make/
+[GTK]: https://www.gtk.org
+[ncurses]: https://invisible-island.net/ncurses/ncurses.html
+[MinGW]: https://mingw.org
+[mingw-w64]: https://mingw-w64.org/
+[OSX cross toolchain]: https://github.com/tpoechtrager/osxcross
+[manual]: https://foicica.com/textadept/manual.html#Compiling
+
+## Contribute
+
+Your [donation][] or purchase of the [book][] helps fund Textadept's continuous
+development.
+
+Textadept is 100% [open source][]. Feel free to discuss features, report bugs,
+and submit patches either to the [mailing list][], or to me personally
+(mitchell.att.foicica.com).
+
+[donation]: https://gum.co/textadept
+[book]: https://foicica.com/textadept/MEDIA.html#Book
+[open source]: https://foicica.com/hg/textadept
 [mailing list]: http://foicica.com/lists
