@@ -201,7 +201,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   local f = next and buffer.search_next or buffer.search_prev
   local pos = f(buffer, flags, text)
   view:ensure_visible_enforce_policy(buffer:line_from_position(pos))
-  view:scroll_range(buffer.anchor, buffer.current_pos)
+  view:vertical_center_caret()
   -- Track find text and found text for "replace all" and incremental find.
   find_text, found_text = text, buffer:get_sel_text()
 
