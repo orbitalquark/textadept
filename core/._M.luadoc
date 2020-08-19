@@ -97,7 +97,7 @@
 -- Additional editing features for the language can be useful. For example, a
 -- C++ module might have a feature to add a ';' to the end of the current line
 -- and insert a new line. This command could be bound to the `Shift+Enter` (`⇧↩`
--- on macOS | `S-Enter` in curses) key for easy access:
+-- on macOS | `S-Enter` in the terminal version) key for easy access:
 --
 --     keys.cpp = {
 --       ['s\n'] = function()
@@ -108,11 +108,11 @@
 --     }
 --
 -- When defining key bindings for other commands, you may make use of a `Ctrl+L`
--- (`⌘L` on macOS | `M-L` in curses) keychain. Traditionally this prefix has
--- been reserved for use by language modules (although neither Textadept nor its
--- modules utilize it at the moment). Users may define this keychain for new or
--- existing modules and it will not conflict with any default key bindings.
--- For example:
+-- (`⌘L` on macOS | `M-L` in the terminal version) keychain. Traditionally this
+-- prefix has been reserved for use by language modules (although neither
+-- Textadept nor its modules utilize it at the moment). Users may define this
+-- keychain for new or existing modules and it will not conflict with any
+-- default key bindings. For example:
 --
 --     keys.lua[CURSES and 'meta+l' or OSX and 'cmd+l' or 'ctrl+l'] = {
 --       ...

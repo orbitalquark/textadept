@@ -210,7 +210,7 @@ local M = {}
 --
 -- †: Some terminals interpret ^Z as suspend; see FAQ for workaround.
 --
--- ‡: Ctrl+Enter in Win32 curses.
+-- ‡: Ctrl+Enter in Windows terminal version.
 module('textadept.keys')]]
 
 -- Windows and Linux key bindings.

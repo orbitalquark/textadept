@@ -66,8 +66,8 @@ Changes:
 * Modules: Improved in-place editing of files during comparison.
 * Scintilla: added [`lexer.colors`][] and [`lexer.styles`][] tables for use in
   themes. Also added new way to [define and reference styles][].
-* Scintilla: added [`lexer.fold*`][] options instead of setting view properties.
-* Scintilla: optimized performance when opening huge files.
+* Scintilla: Added [`lexer.fold*`][] options instead of setting view properties.
+* Scintilla: Optimized performance when opening huge files.
 * Scintilla: Added [`buffer.eol_annotation_text`][] analogue to
   `buffer.annotation_text`, but for EOL annotations.
 * Scintilla: Display DEL control characters like other control characters.
@@ -2070,7 +2070,7 @@ Changes:
 * Support bracketed paste in the terminal version.
 * Allow handling of unknown [CSI events][].
 * Added mouse support for buffers and eliminated many
-  [curses incompatibilities][].
+  [terminal version incompatibilities][].
 * Added [`_G.LINUX`][] and [`_G.BSD`][] platform flags for the sake of
   completeness.
 * [Rectangular selections][] with the mouse on Linux use the `Alt` modifier key
@@ -2096,7 +2096,7 @@ Changes:
 [PGP -- 7.8 beta Modules]: download/textadept_7.8_beta.modules.zip.asc
 [`ui.command_entry.editing_keys`]: api.html#ui.command_entry.editing_keys
 [CSI events]: api.html#events.CSI
-[curses incompatibilities]: manual.html#Curses.Compatibility
+[terminal version incompatibilities]: manual.html#Terminal.Version.Compatibility
 [`_G.LINUX`]: api.html#LINUX
 [`_G.BSD`]: api.html#BSD
 [Rectangular selections]: manual.html#Rectangular.Selection
@@ -2900,7 +2900,7 @@ Download:
 Bugfixes:
 
 * Fixed bug in user theme loading.
-* Fixed "Enter" key autocompletion in curses.
+* Fixed "Enter" key autocompletion in the terminal version.
 * Fixed crash when transposing in an empty buffer.
 * Fixed bug in find and run double-click event handlers.
 
@@ -2996,7 +2996,7 @@ Bugfixes:
 * Command entry loses focus less often.
 * Allow empty tables as keychains if they have metatables.
 * Fixed caret placement in block comment/uncomment.
-* Use '\n' keycode in curses instead of '\r'.
+* Use '\n' keycode in the terminal version instead of '\r'.
 * Fixed crash caused by split views.
 * Scintilla: fixed typing into multiple carets in virtual space.
 
@@ -3037,7 +3037,7 @@ Download:
 Bugfixes:
 
 * Fixed rendering on Mac OSX retina displays.
-* Fixed rectangle indicator display in curses.
+* Fixed rectangle indicator display in the terminal version.
 * Fixed Fn key recognition on Mac OSX.
 * Fixed compile errors for Mac OSX.
 * Find Previous for Lua patterns works.
@@ -3047,7 +3047,7 @@ Changes:
 * Textadept supports multiple curses platforms, not just ncurses. Make targets
   now use "curses" instead of "ncurses".
 * Better 16-color terminal support in lexer theme.
-* Reduced the delay when pressing `Esc` in curses.
+* Reduced the delay when pressing `Esc` in the terminal version.
 * [Messagebox][] dialogs can show icons via `--icon` and `--icon-file`.
 * New Win32 terminal version.
 * New [key modes][] functionality.
