@@ -82,7 +82,7 @@ your [preferences][].
 - - -
 
 **Q:**
-In the curses version on Linux, pressing `^Z` suspends Textadept instead of
+In the terminal version on Linux, pressing `^Z` suspends Textadept instead of
 performing an "Undo" action. How can I disable suspend and perform "Undo"
 instead?
 
@@ -97,7 +97,7 @@ Place the following in your `~/.textadept/init.lua` file:
 - - -
 
 **Q:**
-In Linux, middle-clicking in the curses version does not paste the primary
+In Linux, middle-clicking in the terminal version does not paste the primary
 selection and selecting text does copy to the primary selection. All other
 terminal apps support this functionality, why not Textadept?
 
@@ -109,8 +109,8 @@ application.
 - - -
 
 **Q:**
-The curses version does not support feature _x_ the GUI version does. Is this a
-bug?
+The terminal version does not support feature _x_ the GUI version does. Is this
+a bug?
 
 **A:**
 Maybe. Some terminals do not recognize certain key sequences like `Shift+Arrow`
@@ -119,17 +119,17 @@ for making selections. Linux's virtual terminals (the ones accessible with
 seem to work fine. rxvt and rxvt-unicode do not work out of the box, but may be
 configurable.
 
-Please see the [curses compatibility][] section of the appendix. If the feature
-in question is not listed there, it may be a bug. Please [contact][] me with any
-bug reports.
+Please see the [terminal version compatibility][] section of the appendix. If
+the feature in question is not listed there, it may be a bug. Please [contact][]
+me with any bug reports.
 
-[curses compatibility]: manual.html#Curses.Compatibility
+[terminal version compatibility]: manual.html#Terminal.Version.Compatibility
 [contact]: README.html#Contact
 
 - - -
 
 **Q:**
-Pressing `^O` in the curses version on macOS does not do anything. Why?
+Pressing `^O` in the terminal version on macOS does not do anything. Why?
 
 **A:**
 For whatever reason, `^O` is discarded by the terminal driver. To enable it, run
