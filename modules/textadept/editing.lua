@@ -472,12 +472,14 @@ function M.enclose(left, right)
 end
 
 -- Enclose selected text in punctuation or auto-paired characters.
-events.connect(events.KEYPRESS, function(code)
-  if not M.auto_enclose or buffer.selection_empty or code >= 256 then return end
-  local char = string.char(code)
-  if char:find('^%P') then return end -- not punctuation
-  M.enclose(char, M.auto_pairs[code] or char)
-  return true -- prevent typing
+events.connect(events.KEYPRESS, function(code, shift, ctrl, alt, cmd)
+  if M.auto_enclose and not buffer.selection_empty and code < 256 and
+     not ctrl and not alt and not cmd then
+    local char = string.char(code)
+    if char:find('^%P') then return end -- not punctuation
+    M.enclose(char, M.auto_pairs[code] or char)
+    return true -- prevent typing
+  end
 end, 1)
 
 ---
