@@ -220,17 +220,23 @@ local function find(text, next, flags, no_wrap, wrapped)
     ui.statusbar_text = ''
   end
 
-  -- Highlight all found occurrences.
+  -- Count and optionally highlight all found occurrences.
+  local count, current = 0
   clear_highlighted_matches()
-  if pos ~= -1 and M.highlight_all_matches and #text > 1 then
+  if pos ~= -1 then
     buffer.search_flags = flags
     buffer:target_whole_document()
     while buffer:search_in_target(text) ~= -1 do
       local s, e = buffer.target_start, buffer.target_end
       if s == e then break end -- prevent loops
-      buffer:indicator_fill_range(s, e - s)
+      if M.highlight_all_matches and e - s > 1 then
+        buffer:indicator_fill_range(s, e - s)
+      end
       buffer:set_target_range(e, buffer.length + 1)
+      count = count + 1
+      if s == pos then current = count end
     end
+    ui.statusbar_text = string.format('%s %d/%d', _L['Match'], current, count)
     -- For regex searches, `buffer.tag` was clobbered. It needs to be filled in
     -- again for any subsequent replace operations that need it.
     if ui.find.regex then
