@@ -1899,8 +1899,11 @@ static void notified(Scintilla *view, int _, SCNotification *n, void *L) {
 }
 
 #if GTK
-/** Signal for a Scintilla keypress. */
-static bool keypress(GtkWidget *_, GdkEventKey *event, void *L) {
+/**
+ * Signal for a Scintilla keypress.
+ * Note: cannot use bool return value due to modern i686-w64-mingw32-gcc issue.
+ */
+static int keypress(GtkWidget *_, GdkEventKey *event, void *L) {
   return emit(
     L, "keypress", LUA_TNUMBER, event->keyval,
     LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
