@@ -150,7 +150,7 @@ IV_LOOKFORWARD view.IV_LOOKFORWARD (number, Read-only)\n
 IV_NONE view.IV_NONE (number, Read-only)\n
 IV_REAL view.IV_REAL (number, Read-only)\n
 KEYPRESS events.KEYPRESS (string)\nEmitted when pressing a key.\nIf any handler returns `true`, the key is not inserted into the buffer.\nArguments:\n\n* _`code`_: The numeric key code.\n* _`shift`_: The "Shift" modifier key is held down.\n* _`ctrl`_: The "Control" modifier key is held down.\n* _`alt`_: The "Alt"/"Option" modifier key is held down.\n* _`cmd`_: The "Command" modifier key on macOS is held down.\n* _`caps_lock`_: The "Caps Lock" modifier is on.
-KEYSYMS keys.KEYSYMS (table)\nLookup table for string representations of key codes higher than 255.\nKey codes can be identified by temporarily uncommenting the `print()`\nstatements in *core/keys.lua*.
+KEYSYMS keys.KEYSYMS (table)\nLookup table for string representations of key codes higher than 255.\nKey codes can be identified by temporarily uncommenting the `print()`\nstatements in *core/keys.lua*.\nRecognized codes are: esc, \b, \t, \\n, down, up, left, right, home, end,\npgup, pgdn, del, ins, and f1-f12.\nThe GUI version also recognizes: kpenter, kphome, kpend, kpleft, kpup,\nkpright, kpdown, kppgup, kppgdn, kpmul, kpadd, kpsub, kpdiv, kpdec, and\nkp0-kp9.
 KEYWORD lexer.KEYWORD (string)\nThe token name for keyword tokens.
 LABEL lexer.LABEL (string)\nThe token name for label tokens.
 LEXER_LOADED events.LEXER_LOADED (string)\nEmitted after loading a language lexer.\nThis is useful for overriding a language module's key bindings or other\nproperties since the module is not loaded when Textadept starts.\nArguments:\n\n* _`name`_: The language lexer's name.
