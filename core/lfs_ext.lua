@@ -10,18 +10,13 @@ module('lfs')]]
 -- The filter table containing common binary file extensions and version control
 -- directories to exclude when iterating over files and directories using
 -- `walk`.
+-- Extensions excluded: a, bmp, bz2, class, dll, exe, gif, gz, jar, jpeg, jpg,
+-- o, pdf, png, so, tar, tgz, tif, tiff, xz, and zip.
+-- Directories excluded: .bzr, .git, .hg, .svn, _FOSSIL_, and node_modules.
 -- @see walk
 -- @class table
 -- @name default_filter
-lfs.default_filter = {
-  -- File extensions to exclude.
-  '!.a', '!.bmp', '!.bz2', '!.class', '!.dll', '!.exe', '!.gif', '!.gz',
-  '!.jar', '!.jpeg', '!.jpg', '!.o', '!.pdf', '!.png', '!.so', '!.tar', '!.tgz',
-  '!.tif', '!.tiff', '!.xz', '!.zip',
-  -- Directories to exclude.
-  '!/%.bzr$', '!/%.git$', '!/%.hg$', '!/%.svn$', '!/_FOSSIL_$',
-  '!/node_modules$'
-}
+lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!.exe','!.gif','!.gz','!.jar','!.jpeg','!.jpg','!.o','!.pdf','!.png','!.so','!.tar','!.tgz','!.tif','!.tiff','!.xz','!.zip',--[[Directories]]'!/%.bzr$','!/%.git$','!/%.hg$','!/%.svn$','!/_FOSSIL_$','!/node_modules$'}
 
 -- Documentation is in `lfs.walk()`.
 -- @param level Utility value indicating the directory level this function is
