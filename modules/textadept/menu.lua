@@ -17,11 +17,7 @@ local SEPARATOR = {''}
 
 -- The following buffer and view functions need to be made constant in order for
 -- menu items to identify the key associated with the functions.
-local menu_buffer_functions = {
-  'undo', 'redo', 'cut', 'copy', 'paste', 'line_duplicate', 'clear',
-  'select_all', 'upper_case', 'lower_case', 'move_selected_lines_up',
-  'move_selected_lines_down'
-}
+local menu_buffer_functions = {'undo','redo','cut','copy','paste','line_duplicate','clear','select_all','upper_case','lower_case','move_selected_lines_up','move_selected_lines_down'}
 for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 view.zoom_in, view.zoom_out = view.zoom_in, view.zoom_out
 

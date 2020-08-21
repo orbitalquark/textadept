@@ -355,15 +355,11 @@ end, 1)
 events.connect(events.VIEW_NEW, function()
   local buffer, view = _G.buffer, _G.view
   -- Allow redefinitions of these Scintilla key bindings.
-  local ctrl_keys = {
-    '[', ']', '/', '\\', 'Z', 'Y', 'X', 'C', 'V', 'A', 'L', 'T', 'D', 'U'
-  }
-  for _, key in ipairs(ctrl_keys) do
-    view:clear_cmd_key(string.byte(key) | view.MOD_CTRL << 16)
+  for _, code in utf8.codes('[]/\\ZYXCVALTDU') do
+    view:clear_cmd_key(code | view.MOD_CTRL << 16)
   end
-  for _, key in ipairs{'L', 'T', 'U', 'Z'} do -- ctrl+shift keys
-    view:clear_cmd_key(
-      string.byte(key) | (view.MOD_CTRL | view.MOD_SHIFT) << 16)
+  for _, code in utf8.codes('LTUZ') do
+    view:clear_cmd_key(code | (view.MOD_CTRL | view.MOD_SHIFT) << 16)
   end
   -- Since BUFFER_NEW loads themes and settings on startup, only load them for
   -- subsequent views.
