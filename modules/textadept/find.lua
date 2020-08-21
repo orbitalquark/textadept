@@ -226,9 +226,10 @@ local function find(text, next, flags, no_wrap, wrapped)
     buffer.search_flags = flags
     buffer:target_whole_document()
     while buffer:search_in_target(text) ~= -1 do
-      buffer:indicator_fill_range(
-        buffer.target_start, buffer.target_end - buffer.target_start)
-      buffer:set_target_range(buffer.target_end, buffer.length + 1)
+      local s, e = buffer.target_start, buffer.target_end
+      if s == e then break end -- prevent loops
+      buffer:indicator_fill_range(s, e - s)
+      buffer:set_target_range(e, buffer.length + 1)
     end
     -- For regex searches, `buffer.tag` was clobbered. It needs to be filled in
     -- again for any subsequent replace operations that need it.
