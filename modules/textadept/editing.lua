@@ -148,17 +148,19 @@ end)
 
 -- Removes matched chars on backspace, taking multiple selections into account.
 events.connect(events.KEYPRESS, function(code)
-  if not M.auto_pairs or keys.KEYSYMS[code] ~= '\b' then return end
-  buffer:begin_undo_action()
-  for i = 1, buffer.selections do
-    local pos = buffer.selection_n_caret[i]
-    local complement = M.auto_pairs[buffer.char_at[pos - 1]]
-    if complement and buffer.char_at[pos] == string.byte(complement) then
-      buffer:set_target_range(pos, pos + 1)
-      buffer:replace_target('')
+  if M.auto_pairs and keys.KEYSYMS[code] == '\b' and
+     not ui.command_entry.active then
+    buffer:begin_undo_action()
+    for i = 1, buffer.selections do
+      local pos = buffer.selection_n_caret[i]
+      local complement = M.auto_pairs[buffer.char_at[pos - 1]]
+      if complement and buffer.char_at[pos] == string.byte(complement) then
+        buffer:set_target_range(pos, pos + 1)
+        buffer:replace_target('')
+      end
     end
+    buffer:end_undo_action()
   end
-  buffer:end_undo_action()
 end, 1) -- need index of 1 because default key handler halts propagation
 
 -- Highlights matching braces.
@@ -214,16 +216,18 @@ end)
 -- Moves over typeover characters when typed, taking multiple selections into
 -- account.
 events.connect(events.KEYPRESS, function(code)
-  if not M.typeover_chars or not M.typeover_chars[code] then return end
-  local handled = false
-  for i = 1, buffer.selections do
-    local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
-    if s == e and buffer.char_at[s] == code then
-      buffer.selection_n_start[i], buffer.selection_n_end[i] = s + 1, s + 1
-      handled = true
+  if M.typeover_chars and M.typeover_chars[code] and
+     not ui.command_entry.active then
+    local handled = false
+    for i = 1, buffer.selections do
+      local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
+      if s == e and buffer.char_at[s] == code then
+        buffer.selection_n_start[i], buffer.selection_n_end[i] = s + 1, s + 1
+        handled = true
+      end
     end
+    if handled then return true end -- prevent typing
   end
-  if handled then return true end -- prevent typing
 end)
 
 -- Auto-indent on return.
@@ -474,7 +478,7 @@ end
 -- Enclose selected text in punctuation or auto-paired characters.
 events.connect(events.KEYPRESS, function(code, shift, ctrl, alt, cmd)
   if M.auto_enclose and not buffer.selection_empty and code < 256 and
-     not ctrl and not alt and not cmd then
+     not ctrl and not alt and not cmd and not ui.command_entry.active then
     local char = string.char(code)
     if char:find('^%P') then return end -- not punctuation
     M.enclose(char, M.auto_pairs[code] or char)

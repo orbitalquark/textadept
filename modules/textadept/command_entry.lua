@@ -10,6 +10,8 @@ local M = ui.command_entry
 -- running Lua code and filtering text through shell commands) and history.
 -- @field height (number)
 --   The height in pixels of the command entry.
+-- @field active (boolean)
+--   Whether or not the command entry is active.
 module('ui.command_entry')]]
 
 -- Command history per mode.
@@ -237,6 +239,7 @@ end
 local orig_focus = M.focus
 M.focus = function()
   keys.mode = prev_key_mode
+  M.active = not M.active
   orig_focus()
 end
 
