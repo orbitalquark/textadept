@@ -1854,6 +1854,8 @@ N/A                        |Added   |[highlight_all_matches][]
 \_paths                    |Renamed |[paths][]
 **ui**                     |        |
 bufstatusbar\_text         |Renamed |[buffer_statusbar_text][]
+**ui.command_entry**       |        |
+N/A                        |Added   |[active][]
 **ui.dialogs**             |        |
 N/A                        |Added   |[progressbar()][]
 **ui.find**                |        |
@@ -1895,6 +1897,7 @@ section below.
 [select()]: api.html#textadept.snippets.select
 [paths]: api.html#textadept.snippets.paths
 [buffer_statusbar_text]: api.html#ui.buffer_statusbar_text
+[active]: api.html#ui.command_entry.active
 [progressbar()]: api.html#ui.dialogs.progressbar
 
 #### Buffer Indexing Changes

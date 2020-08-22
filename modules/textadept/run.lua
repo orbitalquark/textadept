@@ -90,11 +90,11 @@ local function scan_for_error(message, ext_or_lexer)
       end
       detail.warning =
         message:lower():find('warning') and not message:lower():find('error')
-      -- Compile and run commands specify the file extension or lexer name used 
-      -- to determine the command, so the error patterns used are guaranteed to 
+      -- Compile and run commands specify the file extension or lexer name used
+      -- to determine the command, so the error patterns used are guaranteed to
       -- be correct. Build commands have no such context and instead iterate
       -- through all possible error patterns. Only consider the error/warning
-      -- valid if the extracted filename's extension or lexer name matches the 
+      -- valid if the extracted filename's extension or lexer name matches the
       -- error pattern's extension or lexer name.
       if ext_or_lexer then return detail end
       local ext = detail.filename:match('[^/\\.]+$')

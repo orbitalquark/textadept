@@ -1161,6 +1161,7 @@ function test_command_entry_run()
     ['\t'] = function() tab_pressed = true end
   }, nil, 2)
   ui.update() -- redraw command entry
+  assert_equal(ui.command_entry.active, true)
   assert_equal(ui.command_entry:get_lexer(), 'text')
   assert(ui.command_entry.height > ui.command_entry:text_height(0), 'height < 2 lines')
   ui.command_entry:set_text('foo')
@@ -1168,6 +1169,7 @@ function test_command_entry_run()
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   assert_equal(command_run, 'foo')
   assert(tab_pressed, '\\t not registered')
+  assert_equal(ui.command_entry.active, false)
 
   assert_raises(function() ui.command_entry.run(function() end, 1) end, 'table/string/nil expected, got number')
   assert_raises(function() ui.command_entry.run(function() end, {}, 1) end, 'string/nil expected, got number')
