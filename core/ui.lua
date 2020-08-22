@@ -48,7 +48,6 @@ local function _print(buffer_type, ...)
     if not ui.tabs then view:split() end
     buffer = _G.buffer.new()
     buffer._type = buffer_type
-    events.emit(events.FILE_OPENED)
   elseif not ui.silent_print then
     for _, view in ipairs(_VIEWS) do
       if view.buffer._type == buffer_type then ui.goto_view(view) break end
