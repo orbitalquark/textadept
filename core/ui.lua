@@ -49,10 +49,14 @@ local function _print(buffer_type, ...)
     buffer = _G.buffer.new()
     buffer._type = buffer_type
   elseif not ui.silent_print then
+    if not ui.tabs and #_VIEWS == 1 then view:split() end
     for _, view in ipairs(_VIEWS) do
       if view.buffer._type == buffer_type then ui.goto_view(view) break end
     end
-    if view.buffer._type ~= buffer_type then view:goto_buffer(buffer) end
+    if view.buffer._type ~= buffer_type then
+      if #_VIEWS > 1 then ui.goto_view(1) end
+      view:goto_buffer(buffer)
+    end
   end
   local args, n = {...}, select('#', ...)
   for i = 1, n do args[i] = tostring(args[i]) end
