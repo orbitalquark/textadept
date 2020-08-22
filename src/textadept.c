@@ -1067,9 +1067,10 @@ static int delete_buffer_lua(lua_State *L) {
   sptr_t doc = SS(view, SCI_GETDOCPOINTER, 0, 0);
   if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_rawlen(L, -1) == 1)
     new_buffer(0);
-  if (view == focused_view)
-    goto_doc(L, focused_view, -1, true), emit(L, "buffer_after_switch", -1);
-  return (delete_buffer(doc), emit(L, "buffer_deleted", -1), 0);
+  if (view == focused_view) goto_doc(L, focused_view, -1, true);
+  delete_buffer(doc), emit(L, "buffer_deleted", -1);
+  if (view == focused_view) emit(L, "buffer_after_switch", -1);
+  return 0;
 }
 
 /** `_G.buffer_new()` Lua function. */
