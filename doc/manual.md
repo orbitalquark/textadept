@@ -1393,25 +1393,6 @@ A theme consists of a single Lua file, and is typically responsible for:
 [colors]: api.html#lexer.colors
 [text display settings]: api.html#lexer.styles
 
-**Note:** the terminal version only recognizes up to 16 color values, regardless
-of how many colors your terminal actually supports. (Your terminal emulator's
-settings determine how to actually display these standard color values, which
-may end up being completely different in practice.) For some terminals, you may
-need to set a lexer style's `bold` attribute with the normal color in order to
-use the light color variant. The color values the terminal version recognizes
-are as follows:
-
-Value   |Common Color| Value  |Common Color
---------|------------|--------|------------
-0x000000|Black       |0x404040|Light black
-0x000080|Red         |0x0000FF|Light red
-0x008000|Green       |0x00FF00|Light green
-0x008080|Yellow      |0x00FFFF|Light yellow
-0x800000|Blue        |0xFF0000|Light blue
-0x800080|Magenta     |0xFF00FF|Light magenta
-0x808000|Cyan        |0xFFFF00|Light cyan
-0xC0C0C0|White       |0xFFFFFF|Light white
-
 Textadept attempts to load, in order, a given theme from the following
 locations:
 

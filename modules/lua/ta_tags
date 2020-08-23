@@ -339,6 +339,7 @@ _USERHOME	_HOME/core/init.lua	/^module('_G')]]$/;"	F
 _VIEWS	_HOME/core/init.lua	/^local _VIEWS$/;"	t	
 _print	_HOME/core/ui.lua	/^function ui._print(buffer_type, ...)$/;"	f	class:ui
 abspath	_HOME/core/lfs_ext.lua	/^function lfs.abspath(filename, prefix)$/;"	f	class:lfs
+active	_HOME/modules/textadept/command_entry.lua	/^module('ui.command_entry')]]$/;"	F	class:ui.command_entry
 add_dic	_HOME/modules/spellcheck/init.lua	/^function spellchecker:add_dic(dic) end$/;"	f	class:spellchecker
 add_fold_point	_HOME/lexers/lexer.lua	/^function M.add_fold_point(lexer, token_name, start_symbol, end_symbol)$/;"	f	class:lexer
 add_rule	_HOME/lexers/lexer.lua	/^function M.add_rule(lexer, id, rule)$/;"	f	class:lexer
@@ -507,7 +508,7 @@ debugger	_HOME/modules/debugger/init.lua	/^module('debugger')]]$/;"	m
 debugger.ansi_c	_HOME/modules/debugger/ansi_c/init.lua	/^module('debugger.ansi_c')]]$/;"	m	
 debugger.lua	_HOME/modules/debugger/lua/init.lua	/^module('debugger.lua')]]$/;"	m	
 dec_num	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-default_filter	_HOME/core/lfs_ext.lua	/^lfs.default_filter = {$/;"	t	class:lfs
+default_filter	_HOME/core/lfs_ext.lua	/^lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!.exe','!.gif','!.gz','!.jar','!.jpeg','!.jpg','!.o','!.pdf','!.png','!.so','!.tar','!.tgz','!.tif','!.tiff','!.xz','!.zip',--[[Directories]]'!/%.bzr$','!/%.git$','!/%.hg$','!/%.svn$','!/_FOSSIL_$','!/node_modules$'}$/;"	t	class:lfs
 del_line_left	_HOME/core/.buffer.luadoc	/^function del_line_left(buffer) end$/;"	f	class:buffer
 del_line_right	_HOME/core/.buffer.luadoc	/^function del_line_right(buffer) end$/;"	f	class:buffer
 del_word_left	_HOME/core/.buffer.luadoc	/^function del_word_left(buffer) end$/;"	f	class:buffer
