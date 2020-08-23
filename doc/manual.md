@@ -114,7 +114,9 @@ settings, change the settings of existing modules, load custom modules,
 configure key bindings, extend menus, enhance support for file types and
 programming languages, and run arbitrary Lua code. These topics will be covered
 throughout the manual. Textadept's comprehensive [Lua API][] lists, among other
-things, all configurable settings for buffers, views, and modules.
+things, all configurable settings for buffers, views, and modules. You can open
+your *~/.textadept/init.lua* file via `Ctrl+P` on Windows, Linux, and BSD, `⌘,`
+on macOS, and `M-~` in the terminal version.
 
 Here is a simple *~/.textadept/init.lua* for illustration:
 

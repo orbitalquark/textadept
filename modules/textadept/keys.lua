@@ -59,6 +59,7 @@ local M = {}
 -- Alt+{                   |^{       |M-}           |Enclose in braces
 -- Ctrl+Shift+Up           |^⇧⇡      |S-^Up         |Move selected lines up
 -- Ctrl+Shift+Down         |^⇧⇣      |S-^Down       |Move selected lines down
+-- Ctrl+P                  |⌘,       |M-~           |Preferences
 -- **Search**               |    |             |
 -- Ctrl+F                   |⌘F  |M-F<br/>M-S-F|Find
 -- Ctrl+G<br/>F3            |⌘G  |M-G          |Find next
@@ -213,10 +214,10 @@ local M = {}
 -- ‡: Ctrl+Enter in Windows terminal version.
 module('textadept.keys')]]
 
--- Windows and Linux key bindings.
+-- Windows, Linux, and BSD key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:       C         H I            p  Q     T ~ V     Y  _   ) ] }   +
+-- c:       C         H I               Q     T ~ V     Y  _   ) ] }   +
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
 -- ca: aAbBcCdD   F   H  jJkKlLmM N    qQ    t       xXy zZ_"'()[]{}<>*  / \n\s
 --
@@ -335,6 +336,8 @@ local bindings = {
     {'ctrl+shift+up', 'ctrl+shift+up', 'ctrl+shift+up'},
   [buffer.move_selected_lines_down] =
     {'ctrl+shift+down', 'ctrl+shift+down', 'ctrl+shift+down'},
+  -- Preferences
+  [m_edit[_L['Preferences']][2]] = {'ctrl+p', 'cmd+,', 'meta+~'},
 
   -- Search.
   [m_search[_L['Find']][2]] = {'ctrl+f', 'cmd+f', {'meta+f', 'meta+F'}},
