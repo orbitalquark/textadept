@@ -2276,7 +2276,7 @@ function test_ui_find_find_in_files()
   assert(count > 0, 'no files found')
   local s = buffer:indicator_end(ui.find.INDIC_FIND, 0)
   while true do
-    local e = buffer:indicator_end(ui.find.INDIC_FIND, s + 1)
+    local e = buffer:indicator_end(ui.find.INDIC_FIND, s)
     if e == s then break end -- no more results
     assert_equal(buffer:text_range(s, e), 'foo')
     s = buffer:indicator_end(ui.find.INDIC_FIND, e + 1)
@@ -2347,8 +2347,19 @@ function test_ui_find_find_in_files_interactive()
   buffer:close()
   ui.goto_view(1)
   view:unsplit()
-  buffer:close()
   ui.find.find_in_files_filters[_HOME] = filter
+end
+
+function test_ui_find_in_files_single_char()
+  ui.find.find_entry_text = 'z'
+  ui.find.find_in_files(_HOME .. '/test')
+  ui.find.goto_file_found(true)
+  assert_equal(buffer:get_sel_text(), 'z')
+  ui.find.find_entry_text = ''
+  buffer:close()
+  ui.goto_view(1)
+  view:unsplit()
+  buffer:close()
 end
 
 function test_ui_find_replace()

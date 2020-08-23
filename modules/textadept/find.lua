@@ -467,7 +467,7 @@ function M.goto_file_found(line_num, next)
   textadept.editing.select_line()
   pos = buffer.selection_start + pos - 1 -- absolute pos of result text on line
   local s = buffer:indicator_end(M.INDIC_FIND, buffer.selection_start)
-  local e = buffer:indicator_end(M.INDIC_FIND, s + 1)
+  local e = buffer:indicator_end(M.INDIC_FIND, s)
   if buffer:line_from_position(s) == buffer:line_from_position(pos) then
     s, e = s - pos, e - pos -- relative to line start
   else
