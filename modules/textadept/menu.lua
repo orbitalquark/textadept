@@ -130,7 +130,9 @@ local default_menubar = {
       SEPARATOR,
       {_L['Move Selected Lines Up'], buffer.move_selected_lines_up},
       {_L['Move Selected Lines Down'], buffer.move_selected_lines_down}
-    }
+    },
+    SEPARATOR,
+    {_L['Preferences'], function() io.open_file(_USERHOME .. '/init.lua') end}
   },
   {
     title = _L['Search'],
