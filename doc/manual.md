@@ -24,7 +24,7 @@
 
 Textadept is a fast, minimalist, and remarkably extensible cross-platform text
 editor for programmers. Written in a combination of C and [Lua][] and
-relentlessly optimized for speed and minimalism for more than 12 years,
+relentlessly optimized for speed and minimalism over the last 12+ years,
 Textadept is an ideal editor for programmers who want endless extensibility
 without sacrificing speed and disk space, and without succumbing to code bloat
 and a superabundance of features. The application has both a graphical user
@@ -108,15 +108,15 @@ platform-specific user data directory.
 
 There is a special file, *~/.textadept/init.lua*, that Textadept will create for
 you if it does not already exist. This file is what you use to configure
-Textadept and customize what the application does when it starts. For example,
-you can use this file to set a color theme, specify default buffer and view
-settings, change the settings of existing modules, load custom modules,
-configure key bindings, extend menus, enhance support for file types and
-programming languages, and run arbitrary Lua code. These topics will be covered
-throughout the manual. Textadept's comprehensive [Lua API][] lists, among other
-things, all configurable settings for buffers, views, and modules. You can open
-your *~/.textadept/init.lua* file via `Ctrl+P` on Windows, Linux, and BSD, `⌘,`
-on macOS, and `M-~` in the terminal version.
+Textadept, specify your preferences, and customize what the application does
+when it starts. For example, you can use this file to set a color theme, specify
+default buffer and view settings, change the settings of existing modules, load
+custom modules, configure key bindings, extend menus, enhance support for file
+types and programming languages, and run arbitrary Lua code. These topics will
+be covered throughout the manual. Textadept's comprehensive [Lua API][] lists,
+among other things, all configurable settings for buffers, views, and modules.
+You can open your *~/.textadept/init.lua* file via `Ctrl+P` on Windows, Linux,
+and BSD, `⌘,` on macOS, and `M-~` in the terminal version.
 
 Here is a simple *~/.textadept/init.lua* for illustration:
 
@@ -220,11 +220,19 @@ also contains a *ta* script for launching Textadept from the command line. You
 can put this script somewhere in your `$PATH` (e.g. */usr/local/bin/*), but this
 is completely optional.
 
-If you downloaded the set of extra modules, you can unpack its contents into
-Textadept's directory (thus merging the *modules/* directories) on Windows,
+If you downloaded Textadept's extra set of modules, you can unpack its contents
+into Textadept's directory (thus merging the *modules/* directories) on Windows,
 Linux, and BSD. On macOS, it is recommended to create a *~/.textadept/*
 directory (if it does not already exist) and unpack the modules there (thus
 creating or merging the *modules/* directory).
+
+**Note:** Textadept generally does not auto-load [modules](#Modules), so you
+will need to load at least some of those extra modules manually. For example, in
+your *~/.textadept/init.lua*:
+
+    require('ctags')
+    require('file_diff')
+    require('spellcheck')
 
 ### Running
 
@@ -245,12 +253,12 @@ table below.
 
 Switch             |Arguments|Description
 -------------------|:-------:|-----------
-`-e`, `--execute`  |    1    |Run Lua code
+`-e`, `--execute`  |    1    |Run the given Lua code
 `-f`, `--force`    |    0    |Forces unique instance
 `-h`, `--help`     |    0    |Shows this (except in the terminal version)
 `-l`, `--line`     |    1    |Jumps to a line in the previously opened file
 `-n`, `--nosession`|    0    |No state saving/restoring functionality
-`-s`, `--session`  |    1    |Loads a session on startup
+`-s`, `--session`  |    1    |Loads the given session on startup
 `-u`, `--userhome` |    1    |Sets alternate user data directory
 `-v`, `--version`  |    0    |Prints Textadept version and copyright information
 
@@ -273,8 +281,8 @@ Textadept can also open files and projects using the command line. For example:
 
 Unless a filename is specified as an absolute path, Textadept assumes it is
 relative to the application's current working directory (cwd). Textadept's cwd
-is initially the command line's cwd. If Textadept is not being run from the
-command line, its cwd is unspecified. If a project directory is specified, it
+is initially the command line's cwd. (If Textadept is not being run from the
+command line, its cwd is unspecified.) If a project directory is specified, it
 becomes Textadept's cwd. (Textadept does not open all files in that directory.)
 If multiple project directories are specified, the last one becomes the cwd.
 
@@ -306,8 +314,8 @@ However, this user directory can be controlled using the `-u` or `--userhome`
 command line argument. For example, invoking *textadept.exe* with the command
 line arguments `-u userdata` will read from and store settings and user data to
 a *userdata/* directory located inside an installation of Textadept. You can
-create a shortcut that passes these command line arguments to the Textadept
-executable and use that shortcut to run Textadept portably.
+create a Windows shortcut that passes these command line arguments to the
+Textadept executable and use that shortcut to run Textadept portably.
 
 Textadept's user interface has been translated into a few different languages.
 When the application starts, it attempts to auto-detect your language settings
@@ -315,9 +323,10 @@ by reading from the `$LANG` environment variable. If Textadept cannot determine
 what language to use, or if it does not support your language, it falls back on
 English. You can manually set your locale by copying one of the locale
 configuration files from Textadept's *core/locales/* to your *~/.textadept/*
-folder and renaming it *locale.conf*. If you would like to translate Textadept
-into your language, please translate the English messages in *core/locale.conf*
-and [send me][] the modified file for inclusion in a future release.
+directory and renaming it *locale.conf*. If you would like to translate
+Textadept into your language, please translate the English messages in
+*core/locale.conf* and [send me][] the modified file for inclusion in a future
+release.
 
 [send me]: README.html#Contact
 
@@ -332,15 +341,15 @@ you need Textadept to see. For example:
 
     export PATH=$PATH
 
-**Linux and BSD Note:** providing a single binary that runs on all Linux and BSD
-platforms proves challenging, since the versions of software installed vary
-widely from distribution to distribution. If you get an error like:
+**Linux Note:** providing a single binary that runs on all Linux systems proves
+challenging, since the versions of software installed vary widely from
+distribution to distribution. If you get an error like:
 
     error while loading shared libraries: <lib>: cannot open shared object
     file: No such file or directory
 
 you will need to [compile](#Compiling) Textadept manually for your system, which
-is not difficult.
+is a very straightforward and easy process.
 
 ![Linux](images/linux.png)
 &nbsp;&nbsp;
@@ -356,7 +365,7 @@ is not difficult.
 
 ![UI](images/ui.png)
 
-Textadept's user interface is sleek and simple. It consists of a menu and tab
+Textadept's user interface is sleek and simple. It consists of a menu bar, tab
 bar, editor view, and statusbar. There is also a find & replace pane and a
 command entry, though Textadept initially hides them both.
 
@@ -375,17 +384,17 @@ that can be used to activate it. For example, `Alt+E` accesses the "Edit" menu,
 `S` opens the "Select" sub-menu, and `L` invokes the menu item that selects the
 current line.
 
-The menu is also accessible in the form of a searchable dialog via
+Textadept's menu is also accessible in the form of a searchable dialog via
 `Ctrl+Shift+E` on Windows, Linux, and BSD, `⌘⇧E` on macOS, and `M-S-C` in the
 terminal version. (Despite the fact that the terminal version does not have a
 menu, it does have this dialog.) Typing part of the name of any command in the
 dialog filters the list, with spaces being wildcards. The arrow keys move the
 selection up and down. Pressing `Enter`, selecting `OK`, or double-clicking on a
-command invokes it. This feature is an alternative to navigating the menus or
-remembering key bindings. It can also be used to quickly look up key bindings
-for particular commands.
+command invokes it. (The terminal requires pressing `Enter`.) This feature is an
+alternative to navigating the menus or remembering key bindings. It can also be
+used to quickly look up key bindings for particular commands.
 
-**Note:** for the commands that have more than one key binding, only one of the
+**Note:** for commands that have more than one key binding, only one of those
 bindings is shown in the menu and dialog, and that binding is randomly chosen.
 
 You can extend Textadept's menu with your own menus, sub-menus, and menu items
@@ -395,7 +404,7 @@ For example, in your *~/.textadept/init.lua*:
 
     local tools = textadept.menu.menubar[_L['Tools']]
     tools[#tools + 1] = {''} -- separator
-    tools[#tools + 1] = {'Extra tool', function() ... end}
+    tools[#tools + 1] = {'Reset L_ua State', reset}
 
 [`textadept.menu.menubar`]: api.html#textadept.menu.menubar
 
@@ -421,22 +430,27 @@ Cycle to the next buffer via `Ctrl+Tab` on Windows, Linux, and BSD, `^⇥` on
 macOS, and `M-N` in the terminal version. Cycle to the previous buffer via
 `Ctrl+Shift+Tab`, `^⇧⇥`, and `M-P`.
 
+**Note:** Textadept does not currently support rearranging tabs (e.g. via drag
+and drop).
+
 The tab bar is also accessible in the form of a searchable dialog via `Ctrl+B`
 on Windows, Linux, and BSD, `⌘B` on macOS, and `M-B` or `M-S-B` in the terminal
 version. (Despite the fact that the terminal version does not have a tab bar, it
 does have this dialog.) The dialog displays a list of currently open buffers.
 Typing part of any filename filters the list, with spaces being wildcards. The
 arrow keys move the selection up and down. Pressing `Enter`, selecting `OK`, or
-double-clicking on a buffer switches to it. This feature is particularly useful
-when many files are open, and navigating through the tab bar is tedious.
+double-clicking on a buffer switches to it. (The terminal requires pressing
+`Enter`.) This feature is particularly useful when many files are open, and
+navigating through the tab bar is tedious.
 
 ![Buffer Browser](images/bufferbrowser.png)
 &nbsp;&nbsp;
 ![Buffer Browser Filtered](images/bufferbrowserfiltered.png)
 
-By default, the most recently opened buffers are shown towards the bottom of the
-list. You can configure the list to show the most recently viewed buffers first
-by changing the key binding. For example, in your *~/.textadept/init.lua*:
+By default, the list shows buffers in the same order as the tab bar (the most
+recently opened buffers are shown towards the bottom). You can configure the
+list to show the most recently viewed buffers first by changing the key binding.
+For example, in your *~/.textadept/init.lua*:
 
     keys['ctrl+b'] = function() ui.switch_buffer(true) end
 
@@ -445,8 +459,10 @@ by changing the key binding. For example, in your *~/.textadept/init.lua*:
 The editor view is where you will spend most of your time in Textadept. You can
 split it vertically and horizontally as many times as you like, and you can view
 the same buffer in two or more separate views. Lua also has near complete
-control over all views. Right-clicking inside a view brings up a configurable
-context menu that is defined by [`textadept.menu.context_menu`][].
+control over all views. The [`buffer`][] and [`view`][] documentation lists
+everything you can do with buffers and views directly. Right-clicking inside a
+view brings up a configurable context menu that is defined by
+[`textadept.menu.context_menu`][].
 
 Split views can be dynamically resized by clicking and dragging on the splitter
 bar that separates them. The following key bindings apply for split views:
@@ -477,6 +493,8 @@ may not be linear.
 and release the prefix, and then type the next key in the chain by itself in
 order to perform the split view action.
 
+[`buffer`]: api.html#buffer
+[`view`]: api.html#view
 [`textadept.menu.context_menu`]: api.html#textadept.menu.context_menu
 
 ### Find & Replace Pane
@@ -511,7 +529,8 @@ While the pane is open in the GUI, the following key bindings apply:
 * For at least the English locale, toggle the find options using their button
   mnemonics: `Alt+M`, `Alt+W`, `Alt+X`, `Alt+I` on Windows, Linux, and BSD, and
   `⌘M`, `⌘W`, `⌘X`, and `⌘I`, respectively, on macOS.
-* Cycle through find/replace history via `Up` and `Down`.
+* Cycle through find/replace history via `Up` and `Down` on Windows, Linux, BSD,
+  and the terminal version, and `⇡` and `⇣` on macOS.
 * Hide the pane via `Esc`.
 
 While the pane is open in the terminal version, the following key bindings
@@ -534,8 +553,8 @@ terminal version.
 
 **Tip:** by default, "Replace All" replaces all text in the buffer. Selecting a
 contiguous block of text and then performing "Replace All" replaces all text
-in that selection only. "Replace All" within non-contiguous selections (e.g.
-multiple selections) is currently not supported.
+in that selection only. Textadept does not currently support "Replace All"
+within non-contiguous selections (e.g. multiple selections).
 
 [`ui.find.highlight_all_matches`]: api.html#ui.find.highlight_all_matches
 
@@ -555,7 +574,7 @@ patterns begin with a '!'. If no inclusive patterns are given, any filename is
 initially considered. As a convenience, file extensions can be specified
 literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/' also
 matches the Windows directory separator ('[/\\]' is not needed). The default
-filter excludes many common binary files and version control folders from
+filter excludes many common binary files and version control directories from
 searches.
 
 **Tip:** Textadept keeps track of filters set per-directory. You can also set
@@ -579,7 +598,7 @@ bindings for these actions.)
 
 #### Incremental Find
 
-Textadept can search for text incrementally as you type by summoning the find &
+Textadept searches for text incrementally as you type when you summon the find &
 replace pane via `Ctrl+Alt+F` on Windows, Linux, and BSD, `^⌘F` on macOS, and
 `M-^F` in the terminal version. All of the find options apply except for
 "In Files".
@@ -591,7 +610,8 @@ execute Lua commands and interact with Textadept's internal Lua state. In
 another context it filters text through shell commands. [Lua extensions][] allow
 it to do even more. Like the find & replace pane, the command entry pops in and
 out as you wish. Each role has its own history that can be cycled through via
-the `Up` and `Down` key bindings.
+the `Up` and `Down` key bindings on Windows, Linux, BSD, and the terminal
+version, and `⇡` and `⇣` on macOS.
 
 [Lua extensions]: api.html#ui.command_entry
 
@@ -599,7 +619,7 @@ the `Up` and `Down` key bindings.
 
 ![Command Entry](images/commandentry.png)
 
-You can access the Lua command entry via `Ctrl+E` on Windows, Linux, and BSD,
+You can open the Lua command entry via `Ctrl+E` on Windows, Linux, and BSD,
 `⌘E` on macOS, and `M-C` in the terminal version. It acts very similarly to
 Lua's interactive prompt. Type in the Lua command or code to run and press
 `Enter` to invoke or run it. Textadept's [Lua API][] contains all of the
@@ -626,9 +646,9 @@ The following key bindings apply in the Lua command entry:
 
 ![Command Completion](images/commandentrycompletion.png)
 
-You can specify on the command line Lua commands to run on startup using the
-`-e` and `--execute` command line argument. This is useful when you want to run
-dynamic commands that do not belong in *~/.textadept/init.lua*.
+You can specify on the command line Lua commands and code to run on startup
+using the `-e` and `--execute` command line argument. This is useful when you
+want to run dynamic commands that do not belong in *~/.textadept/init.lua*.
 
 **Tip:** a side-effect of single-instance functionality in the GUI version of
 Textadept is that you can remotely control the original instance of Textadept.
@@ -650,8 +670,8 @@ file.
 You can filter text through shell commands via `Ctrl+|` on Windows, Linux, and
 BSD, `⌘|` on macOS, and `^\` in the terminal version. An example would be
 running the shell command `sort`, which accepts lines in a buffer as standard
-input (stdin), sorts those lines, and then emits them to standard out (stdout),
-which Textadept replaces the original input text with.
+input (stdin), sorts those lines, and then emits them to standard output
+(stdout), which Textadept replaces the original input text with.
 [`textadept.editing.filter_through()`][] describes how this feature determines
 stdin.
 
@@ -667,8 +687,8 @@ status information includes:
 * The lexer language name.
 * The line ending mode, or EOL mode, which is either CRLF ("\r\n") or LF ('\n').
   Line endings are the characters that separate lines.
-* The indentation settings, a combination of an indentation character (either
-  a tab or a space) and an indentation size (a measure of how many space
+* The indentation settings, which are a combination of an indentation character
+  (either a tab or a space) and an indentation size (a measure of how many space
   characters are in one level of indentation). If tabs are used for indentation,
   then the indentation size is the number of space characters to draw for each
   tab character.
@@ -683,25 +703,25 @@ status information includes:
 
 Textadept allows you to open files using a variety of methods:
 
-* Open one or more files in a single directory using a standard file chooser
-  dialog via `Ctrl+O` on Windows, Linux, and BSD, `⌘O` on macOS, and `^O` in the
-  terminal version.
-* Open one or more files in the current project or Textadept's current working
-  directory using a quick open dialog via `Ctrl+Alt+Shift+P` on Windows, Linux,
-  and BSD, `^⌘⇧P` on macOS, and `M-^P` in the terminal version. Typing part of
-  any filename filters the list, with spaces being wildcards. The arrow keys
-  move the selection up and down. Holding down `Shift` while pressing the arrow
-  keys selects multiple files, as does holding down `Ctrl` while clicking.
+* Open, using a standard file chooser dialog, one or more files in a single
+  directory via `Ctrl+O` on Windows, Linux, and BSD, `⌘O` on macOS, and `^O` in
+  the terminal version.
+* Open, using a quick open dialog, one or more files in the current project or
+  Textadept's current working directory via `Ctrl+Alt+Shift+P` on Windows,
+  Linux, and BSD, `^⌘⇧P` on macOS, and `M-^P` in the terminal version. Typing
+  part of any filename filters the list, with spaces being wildcards. The arrow
+  keys move the selection up and down. Holding down `Shift` while pressing the
+  arrow keys selects multiple files, as does holding down `Ctrl` while clicking.
   Pressing `Enter` or selecting `OK` opens all selected files. Double-clicking
-  on a single file opens it.
-* Open one or more files in the directory of the currently opened file using a
-  quick open dialog via `Ctrl+Alt+Shift+O` on Windows, Linux, and BSD, `^⌘⇧O` on
-  macOS, and `M-S-O` in the terminal version.
+  on a single file opens it. (The terminal requires pressing `Enter`.)
+* Open, using a quick open dialog, one or more files in the directory of the
+  currently opened file via `Ctrl+Alt+Shift+O` on Windows, Linux, and BSD,
+  `^⌘⇧O` on macOS, and `M-S-O` in the terminal version.
 * Open a file by dragging it from a file manager and dropping it into one of
   Textadept's views.
 * Open a recently opened file from a list of recent files via `Ctrl+Alt+O` on
   Windows, Linux, and BSD, `^⌘O` on macOS, and `M-^O` in the terminal version.
-* Open one or more files in *~/.textadept/* using a quick open dialog via
+* Open, using a quick open dialog, one or more files in *~/.textadept/* via
   `Ctrl+U` on Windows, Linux, and BSD, `⌘U` on macOS, and `^U` in the terminal
   version.
 * Reopen the currently opened file, discarding any unsaved changes, via
@@ -722,7 +742,7 @@ The current project is determined as follows:
    directory is searched next, and so on. If a version control directory is
    found, its parent directory is the current project.
 2. If Textadept's current working directory (cwd) contains a version control
-   directory, the cwd is the current project. Otherwise, the cwd's parent
+   directory, that cwd is the current project. Otherwise, the cwd's parent
    directory is searched, just like in step 1.
 3. If no version control directory is found, there is no current project.
 
@@ -747,7 +767,7 @@ patterns begin with a '!'. If no inclusive patterns are given, any filename is
 initially considered. As a convenience, file extensions can be specified
 literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/' also
 matches the Windows directory separator ('[/\\]' is not needed). The default
-filter excludes many common binary files and version control folders from
+filter excludes many common binary files and version control directories from
 searches.
 
 You can mimic a more traditional approach to projects by saving and loading
@@ -789,18 +809,19 @@ is not understood, you can write a [lexer][] for it, place that lexer in your
 For a given lexer name, Textadept attempts to find, in order, that lexer from
 the following locations:
 
-1. Your *~/.textadept/lexers/* folder.
-2. Textadept's *lexers/* folder.
+1. Your *~/.textadept/lexers/* directory.
+2. Textadept's *lexers/* directory.
 
-**Tip:** placing lexers in your user data folder avoids the possibility of you
-overwriting them when you update Textadept. These lexers also take precedence
-over the ones installed with Textadept.
+**Tip:** placing lexers in your user data directory avoids the possibility of
+you overwriting them when you update Textadept. These lexers also take
+precedence over the ones installed with Textadept.
 
 You can manually change a buffer's lexer via `Ctrl+Shift+L` on Windows, Linux,
 and BSD, `⌘⇧L` on macOS, and `M-S-L` in the terminal version. Typing part of a
 lexer name in the dialog filters the list, with spaces being wildcards. The
 arrow keys move the selection up and down. Pressing `Enter`, selecting `OK`, or
-double-clicking on a lexer assigns it to the current buffer.
+double-clicking on a lexer assigns it to the current buffer. (The terminal
+requires pressing `Enter`.)
 
 [`textadept.file_types.patterns`]: api.html#textadept.file_types.patterns
 [`textadept.file_types.extensions`]: api.html#textadept.file_types.extensions
@@ -836,8 +857,8 @@ text editors and all modern operating systems.
 
 Textadept attempts to auto-detect a file's line end mode (EOL mode), falling
 back on CRLF ("\r\n") by default on Windows, and LF ('\n') on all other
-platforms. You can change the line ending mode using the "Buffer > EOL Mode"
-menu.
+platforms. You can manually change the line ending mode using the
+"Buffer > EOL Mode" menu.
 
 Textadept does not attempt to auto-detect a file's indentation. The default
 indentation setting is two spaces, but you can specify your preferred
@@ -859,15 +880,14 @@ in your *~/.textadept/init.lua*:
       end
     end)
 
-You can manually change a buffer's indentation using the following three-step
-process:
+You can manually change a buffer's indentation using the following process:
 
 1. Toggle between using tabs and spaces via `Ctrl+Alt+Shift+T` on Windows,
    Linux, and BSD, `^⇧T` on macOS, and `M-T` or `M-S-T` in the terminal version.
 2. Set the indentation size via the "Buffer > Indentation" menu.
-3. Convert existing indentation to the new indentation settings via `Ctrl+Alt+I`
-   on Windows, Linux, and BSD, `^I` on macOS, and `M-I` in the terminal version.
-   This step is not required in buffers that have no indented text.
+3. Optionally convert existing indentation to the new indentation settings via
+   `Ctrl+Alt+I` on Windows, Linux, and BSD, `^I` on macOS, and `M-I` in the
+   terminal version.
 
 #### View Settings
 
@@ -877,7 +897,7 @@ whitespace characters. You can toggle line wrapping for the current buffer via
 whitespace visibility for the current buffer via `Ctrl+Alt+Shift+S` on Windows,
 Linux, and BSD, and `^⇧S` on macOS. Visible spaces are represented by dots, and
 visible tabs are represented by arrows. (The terminal version does not have
-default key bindings for these actions.)
+default key bindings for either of these actions.)
 
 The GUI version of Textadept can show small guiding lines based on indentation
 level, and does so by default. You can toggle the visibility of these guides for
@@ -885,7 +905,8 @@ the current view via `Ctrl+Alt+Shift+I` on Windows, Linux, and BSD, and `^⇧I` 
 macOS.
 
 The GUI version of Textadept also allows you to temporarily increase or decrease
-the font size in the current view. The following key bindings apply for zooming:
+the font size in the current view. The following key bindings apply for this
+feature:
 
 * Increase the view's font size via `Ctrl+=` on Windows, Linux, and BSD, and
   `⌘=` on macOS.
@@ -911,7 +932,7 @@ navigation-related key bindings are listed in the "Movement" section of the
 ### Brace Matching, Auto-pair, and Typeover
 
 Textadept automatically highlights matching brace characters when the caret is
-over one of them: '(', ')', '[', ']', '{', and '}'. You can jump to the current
+over one of them: '(', ')', '[', ']', '{', or '}'. You can jump to the current
 character's complement via `Ctrl+M` on Windows, Linux, and BSD, `^M` on macOS,
 and `M-M` in the terminal version. You can add highlighting for '<' and '>' by
 modifying [`textadept.editing.brace_matches`][]. For example, in your
@@ -926,8 +947,8 @@ Since braces often go together in pairs, Textadept automatically inserts the
 complement of opening brace characters you type, deletes that complement if you
 press `Backspace`, and moves over the complement if you type it (as opposed to
 inserting it again). Textadept also exhibits this behavior for single and double
-characters ('&apos;', and '&quot;'). You can configure or disable this behavior
-by modifying [`textadept.editing.auto_pairs`][] and
+quote characters ('&apos;' and '&quot;'). You can configure or disable this
+behavior by modifying [`textadept.editing.auto_pairs`][] and
 [`textadept.editing.typeover_chars`][]. For example, in your
 *~/.textadept/init.lua*:
 
@@ -950,7 +971,10 @@ word under the caret, or all occurrences of the selected word (e.g. a variable
 name), by setting [`textadept.editing.highlight_words`][]. For example, in your
 *~/.textadept/init.lua*:
 
+    -- Highlight all occurrences of the current word.
     textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_CURRENT
+    -- Highlight all occurrences of the selected word.
+    textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_SELECTED
 
 Pressing `Esc` clears highlighting. By default, Textadept does not perform any
 automatic highlighting.
@@ -1003,29 +1027,31 @@ write your own autocompletion routines.
 [API files]: api.html#textadept.editing.api_files
 [language]: api.html#_M
 
-### Selections
+### Text Selections
 
-Textadept has three kinds of selections: contiguous, multiple, and rectangular.
+Textadept has three kinds of text selections: contiguous, multiple, and
+rectangular.
 
 You can create contiguous selections as follows:
 
 * Make an arbitrary selection anchored at the caret by pressing the arrow keys,
-  home/end, page up/down, etc. while holding down the `Shift` key, or by
+  home/end, page up/down, etc. while holding down the `Shift` key, or by simply
   clicking and dragging the mouse.
 * The terminal version can also make an arbitrary selection by entering
   selection mode via `^^` and using normal movement keys. This feature is
   available since some terminals do not recognize `Shift` with movement keys.
   While in selection mode, swap the start and end positions via `^]` in order to
   alter the selection from its opposite side. Exit selection mode by typing
-  text, deleting text, performing an action that does changes text, or by
+  text, deleting text, performing an action that changes text, or by
   pressing `^^` again.
 * Select the current word via `Ctrl+Shift+D` on Windows, Linux, and BSD, `⌘⇧D`
   on macOS, and `M-S-W` in the terminal version. Repeated use of this action
-  selects subsequent occurrences of that word as additional selections.
+  selects subsequent occurrences of that word as additional (multiple)
+  selections.
 * Select the current line via `Ctrl+Shift+N` on Windows, Linux, and BSD, `⌘⇧N`
   on macOS, and `M-S-N` in the terminal version.
 * Double click to select a word, and triple-click to select a line.
-* Click and optionally drag within the line number margin to select lines.
+* Click and optionally drag within the line number margin to select whole lines.
 * Select the current paragraph via `Ctrl+Shift+P` on Windows, Linux, and BSD,
   `⌘⇧P` on macOS, and `M-S-P` in the terminal version. Paragraphs are surrounded
   by one or more blank lines.
@@ -1061,7 +1087,7 @@ You can create a rectangular selection as follows:
   normal, multi-line selection), press and hold down the `Alt` key on Windows,
   Linux, and BSD, `⌥` on macOS, and `M-` in the terminal version, and then
   continue dragging the mouse. This feature is available because some window
-  managers in Linux consume `Alt+Shift` arrow keys and `Alt` + mouse drag.
+  managers in Linux consume `Alt+Shift` + arrow keys and `Alt` + mouse drag.
 
 You are permitted to create a zero-width rectangular selection that spans
 multiple lines, and for this kind of selection, Textadept mirrors any typed text
@@ -1071,7 +1097,7 @@ on all of those lines.
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Rectangular Edit](images/rectangularselection2.png)
 
-### Transforms
+### Text Transformations
 
 Textadept can apply many different transformations to the current word, line,
 and selected text.
@@ -1108,14 +1134,15 @@ You can auto-enclose selected text between any typed punctuation character
 
 You can jump to a specific line in the current buffer via `Ctrl+J` on Windows,
 Linux, and BSD, `⌘J` on macOS, and `^J` in the terminal version. Enter the line
-number to jump to in the prompt, and press `Enter` or click `Ok`.
+number to jump to in the prompt, and press `Enter` or click `OK`.
 
 ### Bookmarks
 
 Bookmarks are markers attached to lines of interest. They move in sync with the
-lines they were added to as text is inserted and deleted. Bookmarks show up in
-the left-hand margin after line numbers. Textadept allows you to bookmark lines
-and jump back to them later. The following key bindings apply for bookmarks:
+lines they were added to as buffer text is inserted and deleted. Bookmarks show
+up in the left-hand margin after line numbers. Textadept allows you to bookmark
+lines and jump back to them later. The following key bindings apply for
+bookmarks:
 
 * Toggle a bookmark on the current line via `Ctrl+F2` on Windows, Linux, and
   BSD, `⌘F2` on macOS, and `F1` in the terminal version.
@@ -1140,12 +1167,12 @@ macros:
   BSD, `⌥F9` on macOS, and `F12` in the terminal version.
 
 You can use the "Tools > Macros" menu to save the most recently recorded macro
-to a file, and load one for playback on demand.
+to a file, and to load one for playback on demand.
 
 ### Snippets
 
 Snippets are dynamic text templates that can be inserted into the buffer on
-demand. They can be composed of any combination of plain text, placeholders for
+demand. They are composed of any combination of plain text, placeholders for
 interactive input, mirrors and transforms for interactive input, and arbitrary
 Lua and Shell code. Snippets eliminate the need for typing repetitive code
 constructs like class definitions, getters and setters, control structures, API
@@ -1169,7 +1196,7 @@ The following key bindings apply for snippets:
   Typing part of a snippet trigger in the dialog filters the list, with spaces
   being wildcards. The arrow keys move the selection up and down. Pressing
   `Enter`, selecting `OK`, or double-clicking on a snippet inserts it into the
-  current buffer.
+  current buffer. (The terminal requires pressing `Enter`.)
 * Show completion candidates for a partially-typed snippet trigger word via
   `Ctrl+K` on Windows, Linux, and BSD, `⌥⇥` on macOS, and `M-K` in the terminal
   version. Continuing to type changes the suggested completion. Use the arrow
@@ -1193,10 +1220,9 @@ The following key bindings apply for snippets:
 ### Code Folding
 
 Textadept can temporarily hide blocks of code in supported languages. Markers in
-the margin to the left of code denote fold points. You can toggle folding for
-the current block via `Ctrl+*` on Windows, Linux, and BSD, `⌘*` on macOS, and
-`M-*` in the terminal version. You can also click on folding markers in the
-margin in order to toggle folding.
+the margin to the left of code denote fold points. Clicking on those markers
+toggles folding. You can toggle folding for the current block via `Ctrl+*` on
+Windows, Linux, and BSD, `⌘*` on macOS, and `M-*` in the terminal version.
 
 ![Folding](images/folding.png)
 
@@ -1235,7 +1261,7 @@ Textadept knows most of the commands that compile and/or run code in source
 files. It also knows some of the commands that build projects. Textadept
 recognizes many of the warning and error messages emitted by those commands and
 marks them as they occur in compile/run/build output. Double-clicking on a line
-with a warning or error in order jumps to its source.
+with a warning or error jumps to its source.
 
 The following key bindings apply for compiling and running source files, and
 for building projects:
@@ -1248,7 +1274,7 @@ for building projects:
   file's compile and run commands via `Ctrl+Shift+A` on Windows, Linux, and BSD,
   and `⌘⇧A` on macOS. (The terminal version does not have a default key binding
   for setting command line arguments.) Enter the command line arguments for each
-  command and press `Enter` or click `Ok`.
+  command and press `Enter` or click `OK`.
 * Build the current project via `Ctrl+Shift+B` on Windows, Linux, and BSD, `⌘⇧B`
   on macOS, and `M-^B` in the terminal version.
 * Stop the currently running compile, run, or build process via `Ctrl+Shift+X`
@@ -1286,7 +1312,7 @@ patterns that recognize warning and error output by modifying the
 
 **Tip:** you can set compile and run commands on a per-filename basis, and these
 commands can contain arguments so that you do not have to invoke
-"Tools > Set Arguments...".
+"Tools > Set Arguments..."
 
 [`textadept.run.run_in_background`]: api.html#textadept.run.run_in_background
 [`textadept.run.compile_commands`]: api.html#textadept.run.compile_commands
@@ -1305,12 +1331,12 @@ starts up, or it can load modules on-demand in response to events. Once a module
 is loaded, it persists in memory and is never unloaded. Textadept attempts to
 load, in order, a given module from the following locations:
 
-1. Your *~/.textadept/modules/* folder.
-2. Textadept's *modules/* folder.
+1. Your *~/.textadept/modules/* directory.
+2. Textadept's *modules/* directory.
 
-**Tip:** placing modules in your user data folder avoids the possibility of you
-overwriting them when you update Textadept. These modules also take precedence
-over the ones installed with Textadept.
+**Tip:** placing modules in your user data directory avoids the possibility of
+you overwriting them when you update Textadept. These modules also take
+precedence over the ones installed with Textadept.
 
 Textadept will only load modules it is explicitly told to load (e.g. from your
 *~/.textadept/init.lua*). For example, in your *~/.textadept/init.lua*:
@@ -1387,8 +1413,8 @@ A theme consists of a single Lua file, and is typically responsible for:
 
 * Defining the [colors][] and [text display settings][] (styles) used in syntax
   highlighting.
-* Assigning colors to various UI elements such as the caret, selections,
-  margin markers, and call tips.
+* Assigning colors to various UI elements such as the caret, text selections,
+  margin markers, and documentation popups.
 * Specifying what symbols to use for margin markers and how to display visual
   elements like the brace match indicator and snippet placeholders.
 
@@ -1398,15 +1424,15 @@ A theme consists of a single Lua file, and is typically responsible for:
 Textadept attempts to load, in order, a given theme from the following
 locations:
 
-1. Your *~/.textadept/themes/* folder.
-2. Textadept's *themes/* folder.
+1. Your *~/.textadept/themes/* directory.
+2. Textadept's *themes/* directory.
 
-**Tip:** placing themes in your user data folder avoids the possibility of you
-overwriting them when you update Textadept. These themes also take precedence
-over the ones installed with Textadept.
+**Tip:** placing themes in your user data directory avoids the possibility of
+you overwriting them when you update Textadept. These themes also take
+precedence over the ones installed with Textadept.
 
-You can set Textadept's theme using [`view.set_theme()`][]. You can tweak a
-theme's styles on a per-language basis as well. For example, in your
+You can set Textadept's theme using [`view.set_theme()`][]. You can also tweak a
+theme's styles on a per-language basis. For example, in your
 *~/.textadept/init.lua*:
 
     if not CURSES then
@@ -1545,29 +1571,7 @@ The requirements for compiling Textadept on Linux or BSD should be readily
 available from a package manager. The requirements for cross-compiling Textadept
 for Windows from Linux should also be easily obtainable.
 
-Windows Requirements:
-
-* [MinGW][] or [mingw-w64][] 4.9+ (circa early 2014)
-
-**Note:** on Ubuntu for example, this dependency would be provided by the
-`gcc-mingw-w64` and `g++-mingw-w64` packages.
-
-[MinGW]: http://mingw.org
-[mingw-w64]: http://mingw-w64.org/
-
-macOS Requirements:
-
-* [OSX cross toolchain][] _with GCC_ 4.9+ (not Clang)
-
-**Note:** make sure you run `./build_binutils.sh` before `./build_gcc.sh`. macOS
-SDK tarballs like *MacOSX10.5.tar.gz* can be found readily on the internet.
-
-**Warning:** building an OSX toolchain can easily take 30 minutes or more and
-ultimately consume nearly 3.5GB of disk space.
-
-[OSX cross toolchain]: https://github.com/tpoechtrager/osxcross
-
-Linux Requirements:
+Linux requirements:
 
 * [GNU C compiler][] (*gcc*) 4.9+ (circa early 2014)
 * [libstdc++][] version 4.9+
@@ -1580,7 +1584,7 @@ Linux Requirements:
 `build-essential`, `libgtk2.0-dev`, `libncurses5-dev`, and `libncursesw5-dev`
 packages.
 
-BSD Requirements:
+BSD requirements:
 
 * [GNU C compiler][] (*gcc*) 4.9+ (circa early 2014)
 * [libstdc++][] version 4.9+
@@ -1591,6 +1595,23 @@ BSD Requirements:
 * [ncurses][](w) development libraries (wide character support) for the terminal
   version
 
+Windows cross-compiling requirements:
+
+* [MinGW][] or [mingw-w64][] 4.9+ (circa early 2014)
+
+**Note:** on Ubuntu for example, this dependency would be provided by the
+`gcc-mingw-w64` and `g++-mingw-w64` packages.
+
+macOS cross-compiling requirements:
+
+* [OSX cross toolchain][] with GCC 4.9+ (not Clang)
+
+**Note:** make sure you run `./build_binutils.sh` before `./build_gcc.sh`. macOS
+SDK tarballs like *MacOSX10.5.tar.gz* can be found readily on the internet.
+
+**Warning:** building an macOS cross toolchain can easily take 30 minutes or
+more and ultimately consume nearly 3.5GB of disk space.
+
 [GNU C compiler]: https://gcc.gnu.org
 [libstdc++]: https://gcc.gnu.org
 [GNU Make]: https://www.gnu.org/software/make/
@@ -1598,6 +1619,9 @@ BSD Requirements:
 [libiconv]: https://www.gnu.org/software/libiconv/
 [GTK]: https://www.gtk.org/download/linux.php
 [ncurses]: https://invisible-island.net/ncurses/#download_ncurses
+[MinGW]: http://mingw.org
+[mingw-w64]: http://mingw-w64.org/
+[OSX cross toolchain]: https://github.com/tpoechtrager/osxcross
 
 ### Compiling
 
@@ -1613,7 +1637,7 @@ Command              |Description
 ---------------------|-----------
 `make deps`          |Downloads and builds all of Textadept's core dependencies
 `make deps NIGHTLY=1`|Optionally downloads and builds bleeding-edge dependencies
-`make verify-deps`   |Verifies integrity of downloads (for optional security)
+`make verify-deps`   |Optionally verifies integrity of downloads (for security)
 `make`               |Builds Textadept, provided all dependencies are in place
 `make DEBUG=1`       |Optionally builds Textadept with debug symbols
 `make install`       |Optionally installs Textadept (to */usr/local* by default)
@@ -1668,7 +1692,7 @@ Regex       |Lua      |Meaning
 [[:upper:]] |%u       |Matches any upper case character
 \w          |%w       |Matches any alphanumeric character (Regex includes '_')
 [[:xdigit:]]|%x       |Matches any hexadecimal digit
-[*set*]     |[*set*]  |Matches any character in *set*, including ranges
+[*set*]     |[*set*]  |Matches any character in *set*, including ranges like A-Z
 [^*set*]    |[^*set*] |Matches the complement of *set*
 \*          |\*       |Matches the previous item (Regex) or class (Lua) 0+ times
 \+          |+        |Matches the previous item or class 1+ times
@@ -1680,7 +1704,7 @@ Regex       |Lua      |Meaning
 {*m*}       |         |Matches the previous item exactly *m* times
 \|          |         |Matches either the previous item or the next item
 &nbsp;      |%b*xy*   |Matches a balanced string bounded by *x* and *y*
-&nbsp;      |%f[*set*]|Matches position between characters outside/inside *set*
+&nbsp;      |%f[*set*]|Matches a position between characters not in and in *set*
 \\<         |         |Matches the beginning of a word
 \\>         |         |Matches the end of a word
 \b          |         |Matches a word boundary
@@ -1737,13 +1761,13 @@ terminal's constraints:
 
 [`buffer.register_image()`]: api.html#buffer.register_image
 
-### Folder Structure
+### Directory Structure
 
-Textadept's folder structure is organized as follows:
+Textadept's directory structure is organized as follows:
 
 * *core/*: Contains Textadept's core Lua modules. These modules are essential
   for the application to run. They provide Textadept's Lua to C interface, event
-  structure, file interactions, and localization.
+  framework, file interactions, and localization.
 * *lexers/*: Houses the lexer modules that analyze source code for syntax
   highlighting.
 * *modules/*: Contains modules for editing text and source code, as well as
@@ -1753,7 +1777,7 @@ Textadept's folder structure is organized as follows:
 * *etc/*, *lib/*, and *share/*: GTK support directories and only appear in the
   Windows and macOS packages.
 
-### Techologies
+### Technologies
 
 Textadept is composed of the following technologies:
 
