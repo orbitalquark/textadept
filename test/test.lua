@@ -1019,14 +1019,12 @@ function test_ui_buffer_switch_save_restore_properties()
   buffer:goto_pos(10)
   view:fold_line(
     buffer:line_from_position(buffer.current_pos), view.FOLDACTION_CONTRACT)
-  view.view_eol = true
   view.margin_width_n[1] = 0 -- hide line numbers
   view:goto_buffer(-1)
   assert(view.margin_width_n[1] > 0, 'line numbers are still hidden')
   view:goto_buffer(1)
   assert_equal(buffer.current_pos, 10)
   assert_equal(view.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
-  assert_equal(view.view_eol, true)
   assert_equal(view.margin_width_n[1], 0)
   buffer:close()
 end
@@ -2387,6 +2385,20 @@ function test_ui_find_replace()
   assert_equal(buffer:get_text(), 'barbooሴ')
   ui.find.find_entry_text, ui.find.replace_entry_text = '', ''
   buffer:close(true)
+end
+
+function test_ui_find_replace_text_save_restore()
+  if CURSES then return end -- there are focus issues in curses
+  ui.find.focus()
+  ui.find.find_entry_text = 'foo'
+  ui.find.replace_entry_text = 'bar'
+  ui.find.find_next()
+  ui.find.focus() -- simulate activating "Find"
+  assert_equal(ui.find.replace_entry_text, 'bar')
+  ui.find.focus{in_files = true} -- simulate activating "Find in Files"
+  assert(ui.find.replace_entry_text ~= 'bar', 'filter entry text not set')
+  ui.find.focus{in_files = false} -- simulate activating "Find"
+  assert_equal(ui.find.replace_entry_text, 'bar')
 end
 
 function test_ui_find_replace_all()

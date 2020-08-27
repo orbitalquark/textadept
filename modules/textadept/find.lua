@@ -204,6 +204,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   view:vertical_center_caret()
   -- Track find text and found text for "replace all" and incremental find.
   find_text, found_text = text, buffer:get_sel_text()
+  repl_text = ui.find.replace_entry_text -- save for ui.find.focus()
 
   -- If nothing was found, wrap the search.
   if pos == -1 and not no_wrap then
