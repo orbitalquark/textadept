@@ -60,7 +60,7 @@ local M = ui.find
 -- @field highlight_all_matches (boolean)
 --   Whether or not to highlight all occurrences of found text in the current
 --   buffer.
---   The default value is `true`.
+--   The default value is `false`.
 -- @field INDIC_FIND (number)
 --   The find results highlight indicator number.
 -- @field _G.events.FIND_WRAPPED (string)
@@ -82,7 +82,7 @@ M.match_case_label_text = not CURSES and _L['Match case'] or _L['Case(F1)']
 M.whole_word_label_text = not CURSES and _L['Whole word'] or _L['Word(F2)']
 M.regex_label_text = not CURSES and _L['Regex'] or _L['Regex(F3)']
 M.in_files_label_text = not CURSES and _L['In files'] or _L['Files(F4)']
-M.highlight_all_matches = true
+M.highlight_all_matches = false
 
 M.INDIC_FIND = _SCINTILLA.next_indic_number()
 
