@@ -359,6 +359,14 @@ is a very straightforward and easy process.
 &nbsp;&nbsp;
 ![curses](images/ncurses.png)
 
+### Updating
+
+Textadept releases typically occur on the first day of the month every 1-2
+months. There is no auto-update process. (Textadept does not connect to the
+internet; it's just a text editor.) Simply download the new version and copy its
+contents into your current installation, overwriting any existing files and
+directories.
+
 --------------------------------------------------------------------------------
 ## User Interface
 --------------------------------------------------------------------------------
@@ -1508,7 +1516,8 @@ will perform custom actions. Here are some ideas:
   to show the find & replace pane.
 * Auto-save files as you switch between buffers by listening for the
   `events.BUFFER_BEFORE_SWITCH` event and calling `buffer:save()` for buffers
-  that have a `buffer.filename`.
+  that have a `buffer.filename`. In the GUI version, you can even auto-save on
+  a timer via `timeout()`.
 * Overload Textadept's find & replace capabilities to use Lua patterns instead
   of regex by reacting to `events.FIND` and `events.REPLACE` before Textadept
   can, and then determining whether or not the editor's default routines should
