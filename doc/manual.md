@@ -517,12 +517,11 @@ You can summon the find & replace pane via `Ctrl+F` on Windows, Linux and BSD,
 find and replace functionality you would expect, along with "Match Case",
 "Whole Word", "[Regex](#Regex.and.Lua.Pattern.Syntax)", and "In Files" options.
 The pane also stores find and replace history, up to 10 entries for each. As you
-search, Textadept automatically highlights all instances of found text in the
-current buffer. You can turn this off by setting
-[`ui.find.highlight_all_matches`][]. For example, in your
-*~/.textadept/init.lua*:
+search, Textadept can automatically highlight all instances of found text in the
+current buffer by setting [`ui.find.highlight_all_matches`][]. For example, in
+your *~/.textadept/init.lua*:
 
-    ui.find.highlight_all_matches = false
+    ui.find.highlight_all_matches = true
 
 **Note:** Textadept does not support multi-line regex searches.
 
