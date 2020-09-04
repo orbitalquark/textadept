@@ -688,7 +688,7 @@ io	_HOME/core/file_io.lua	/^module('io')]]$/;"	m
 is_range_word	_HOME/core/.buffer.luadoc	/^function is_range_word(buffer, start_pos, end_pos) end$/;"	f	class:buffer
 join_lines	_HOME/modules/textadept/editing.lua	/^function M.join_lines()$/;"	f	class:textadept.editing
 keychain	_HOME/core/keys.lua	/^M.keychain = setmetatable({}, {$/;"	t	class:keys
-keys	_HOME/core/keys.lua	/^local keys$/;"	t	
+keys	_HOME/core/keys.lua	/^local keys]]$/;"	t	
 keys	_HOME/core/keys.lua	/^module('keys')]]$/;"	m	
 keys	_HOME/modules/lua_repl/init.lua	/^M.keys = {$/;"	t	class:lua_repl
 keys	_HOME/modules/textadept/keys.lua	/^module('textadept.keys')]]$/;"	m	class:textadept
