@@ -219,11 +219,12 @@ local function keypress(code, shift, control, alt, cmd, caps_lock)
 end
 events.connect(events.KEYPRESS, keypress)
 
+--[[ This comment is for LuaDoc.
 ---
 -- Map of key bindings to commands, with language-specific key tables assigned
 -- to a lexer name key.
 -- @class table
 -- @name _G.keys
-local keys
+local keys]]
 
 return M
