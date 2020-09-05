@@ -45,13 +45,13 @@ modules that provide extra features and functionality to the core application.
 
 ## Installation and Usage
 
-Textadept comes with a comprehensive user manual in its *doc/* directory. This
+Textadept comes with a comprehensive user manual in its *docs/* directory. This
 manual is also available [online][1]. It covers all of Textadept's main
 features, including installation, usage, configuration, theming, scripting, and
 compilation.
 
 Since nearly every aspect of Textadept can be scripted using Lua, the editor's
-API is heavily documented. This documentation is also located in *doc/* and
+API is heavily documented. This documentation is also located in *docs/* and
 available [online][2]. It serves as the ultimate resource when it comes to
 scripting the application.
 
