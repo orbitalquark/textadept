@@ -9,7 +9,7 @@ Each download contains 2 executables: a GUI version and a terminal version.
 Furthermore, the Windows and macOS packages bundle in GTK runtimes, accounting
 for some 3/4 of the total application size. (GTK is the cross-platform GUI
 toolkit Textadept uses.) Then, starting in version 10, in order to be able to
-run on older Linux systems whose libstdc++ does not support newer C++11 symbols,
+run on older Linux systems whose libstdc++ does not support newer C++ symbols,
 the Linux executables statically link in a newer version of libstdc++. Finally,
 nightly builds are compiled with debug symbols enabled in order to aid debugging
 of various issues.
@@ -17,20 +17,26 @@ of various issues.
 - - -
 
 **Q:**
-On Linux I get a `error while loading shared libraries: <lib>: cannot open`
-`shared object file: No such file or directory` when trying to run Textadept,
-or I get odd behavior in the terminal version, even crashes. How do I fix it?
+On Linux I either get one of the following error messages when trying to run
+Textadept, or I get odd behavior in the terminal version, even crashes.
+
+* `error while loading shared libraries: <lib>: cannot open shared object
+  file: No such file or directory`
+* `/<path>/libc.so.6: version 'GLIBC_<version>' not found`
+
+How do I fix this?
 
 **A:**
-It is difficult to provide a binary that runs on all Linux platforms since the
-library versions installed vary widely from distribution to distribution. For
-example, "libpng14" was available for many distributions starting in late 2009
-while Ubuntu 12.04 (circa 2012) used "libpng12". More recently, some
-distributions have started using "libncurses6" while many distributions are
-still on "libncurses5". Unfortunately in these cases, the best idea is to
-[compile][] Textadept. This process is actually very simple though. Only the
-GTK development libraries are needed for the GUI version. (A development library
-for a curses implementation is required for the terminal version.)
+Short answer: you will need to [compile][] Textadept manually for your system,
+which is a very straightforward and easy process.
+
+Long answer: it is difficult to provide a binary that runs on all Linux
+platforms since the library versions installed vary widely from distribution to
+distribution. For example, "libpng14" was available for many distributions
+starting in late 2009 while Ubuntu 12.04 (circa 2012) used "libpng12". More
+recently, some distributions have started using "libncurses6" while many
+distributions are still on "libncurses5". The only way to avoid problems that
+stem from these cases is to compile Textadept for the target system.
 
 [compile]: manual.html#Compiling
 
@@ -63,7 +69,7 @@ When I open a file in a non-English language, I see a lot of strange characters.
 Textadept was not able to detect the file's encoding correctly. You'll need to
 [help it][].
 
-[help it]: manual.html#Buffer.Encodings
+[help it]: manual.html#Encoding
 
 - - -
 
@@ -77,7 +83,7 @@ The LuaDoc describes [compile and run commands][] and you can configure them in
 your [preferences][].
 
 [compile and run commands]: api.html#_M.Compile.and.Run
-[preferences]: manual.html#Preferences
+[preferences]: manual.html#...textadept
 
 - - -
 
@@ -120,11 +126,10 @@ seem to work fine. rxvt and rxvt-unicode do not work out of the box, but may be
 configurable.
 
 Please see the [terminal version compatibility][] section of the appendix. If
-the feature in question is not listed there, it may be a bug. Please [contact][]
-me with any bug reports.
+the feature in question is not listed there, it may be a bug. Please contact
+me (mitchell.att.foicica.com) with any bug reports.
 
 [terminal version compatibility]: manual.html#Terminal.Version.Compatibility
-[contact]: README.html#Contact
 
 - - -
 
@@ -178,16 +183,3 @@ and then the "Change high DPI settings" button. Check the "Override high DPI
 scaling" checkbox towards the bottom of the pop-up dialog. The next time you
 run Textadept, the fonts should look much better. You may have to tweak other
 settings in the dialog, but the above worked for me.
-
-- - -
-
-**Q:**
-When I use Mercurial >= 3.9 to clone Textadept's source code repository, I get
-an "unsupported protocol" error related to TLS. How do I get around this?
-
-**A:**
-Set `hostsecurity.foicica.com:minimumprotocol=tls1.0` in your Mercurial
-configuration, as stated by the error message. Then try cloning again.
-
-- - -
-
