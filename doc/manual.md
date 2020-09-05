@@ -343,10 +343,11 @@ you need Textadept to see. For example:
 
 **Linux Note:** providing a single binary that runs on all Linux systems proves
 challenging, since the versions of software installed vary widely from
-distribution to distribution. If you get an error like:
+distribution to distribution. If you get errors like:
 
-    error while loading shared libraries: <lib>: cannot open shared object
-    file: No such file or directory
+  * `/<path>/libc.so.6: version 'GLIBC_<version>' not found`
+  * `error while loading shared libraries: <lib>: cannot open shared object
+    file: No such file or directory`
 
 you will need to [compile](#Compiling) Textadept manually for your system, which
 is a very straightforward and easy process.
@@ -1569,9 +1570,10 @@ editing Lua code. For example, in your *~/.textadept/init.lua*:
 --------------------------------------------------------------------------------
 
 Textadept is a bit unusual in that building it is only supported on Linux and
-BSD. The application is cross-compiled for Windows and macOS from Linux. While
-it is certainly possible to compile Textadept natively on those platforms, it is
-simply not supported in any official capacity.
+BSD, or within a [Docker][] [image][]. The application is cross-compiled for
+Windows and macOS from Linux. While it is certainly possible to compile
+Textadept natively on those platforms, it is simply not supported in any
+official capacity.
 
 ### Requirements
 
@@ -1587,10 +1589,12 @@ Linux requirements:
 * [GTK][] 2.24+ development libraries for the GUI version
 * [ncurses][](w) development libraries (wide character support) for the terminal
   version
+* _**OR**_
+* [Docker][]
 
 **Note:** on Ubuntu for example, these dependencies would be provided by the
-`build-essential`, `libgtk2.0-dev`, `libncurses5-dev`, and `libncursesw5-dev`
-packages.
+`build-essential`, `libgtk2.0-dev`, `libncurses5-dev`, `libncursesw5-dev`, and
+`docker.io` packages.
 
 BSD requirements:
 
@@ -1606,20 +1610,26 @@ BSD requirements:
 Windows cross-compiling requirements:
 
 * [MinGW][] or [mingw-w64][] 4.9+ (circa early 2014)
+* _**OR**_
+* [Docker][]
 
-**Note:** on Ubuntu for example, this dependency would be provided by the
-`gcc-mingw-w64` and `g++-mingw-w64` packages.
+**Note:** on Ubuntu for example, the compiler dependency would be provided by
+the `gcc-mingw-w64` and `g++-mingw-w64` packages.
 
 macOS cross-compiling requirements:
 
 * [OSX cross toolchain][] with GCC 4.9+ (not Clang)
+* _**OR**_
+* [Docker][]
 
 **Note:** make sure you run `./build_binutils.sh` before `./build_gcc.sh`. macOS
 SDK tarballs like *MacOSX10.5.tar.gz* can be found readily on the internet.
 
-**Warning:** building an macOS cross toolchain can easily take 30 minutes or
+**Warning:** building a macOS cross toolchain can easily take 30 minutes or
 more and ultimately consume nearly 3.5GB of disk space.
 
+[Docker]: https://www.docker.com/
+[image]: https://hub.docker.com/repository/docker/textadept/build
 [GNU C compiler]: https://gcc.gnu.org
 [libstdc++]: https://gcc.gnu.org
 [GNU Make]: https://www.gnu.org/software/make/
@@ -1680,6 +1690,38 @@ specify your system's MinGW name prefix using the `CROSS` variable. For example:
 
     make CROSS=i586-mingw32-msvc- win32-deps
     make CROSS=i586-mingw32-msvc- win32
+
+#### Compiling using Docker
+
+You can use [Docker][] to build Textadept for Windows, macOS, or Linux. The
+[image][] required to do so is about 2.5GB in size. For example:
+
+    localhost$ docker pull textadept/build:v1.0
+    localhost$ docker run -t -i -v /path/to/textadept:/ta -w /ta/src \
+      textadept/build:v1.0
+    container# make deps
+    container# make
+    container# exit
+
+If you prefer to build your own Docker image instead of pulling one, you can
+run `docker build .` from Textadept's *src/* directory, which contains the
+relevant *Dockerfile*.
+
+You can issue within the container any of the build commands given in
+the previous table, though the install commands are meaningless.
+
+**Linux note:** if, when running one of the Linux binaries produced, you get an
+error like `/<path>/libstdc++.so.6: version 'GLIBCXX_<version>' not found`, then
+try compiling with the following flags:
+
+    container# make CXXFLAGS="-0s -std=c++11 -static-libstdc++"
+
+If you still get an error, this time like
+`/<path>/libc.so.6: version 'GLIBC_<version>' not found`, then you will have to
+compile Textadept manually without Docker.
+
+[Docker]: https://www.docker.com/
+[image]: https://hub.docker.com/repository/docker/textadept/build
 
 --------------------------------------------------------------------------------
 ## Appendix
