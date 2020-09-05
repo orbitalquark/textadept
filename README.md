@@ -89,6 +89,8 @@ General Requirements:
   Windows.
 * [OSX cross toolchain][] _with GCC_ 4.9+ (not Clang) when cross-compiling for
   macOS.
+* _**OR**_
+* [Docker][]
 
 The following table provides a brief list of `make` rules for building Textadept
 on Linux and BSD. (On BSD, substitute `make` with `gmake`.)
@@ -107,6 +109,9 @@ Command              |Description
 `make osx`           |Cross-compiles Textadept for macOS
 `make osx-curses`    |Cross-compiles the terminal version for macOS
 
+When building within Docker, the relevant [container image][] is
+`textadept/build:v1.0`.
+
 For more information on compiling Textadept, please see the [manual][].
 
 [GNU C compiler]: https://gcc.gnu.org
@@ -117,6 +122,8 @@ For more information on compiling Textadept, please see the [manual][].
 [MinGW]: https://mingw.org
 [mingw-w64]: https://mingw-w64.org/
 [OSX cross toolchain]: https://github.com/tpoechtrager/osxcross
+[Docker]: https://www.docker.com/
+[container image]: https://hub.docker.com/repository/docker/textadept/build
 [manual]: https://foicica.com/textadept/manual.html#Compiling
 
 ## Contribute

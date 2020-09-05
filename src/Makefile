@@ -36,9 +36,11 @@ ifeq (win, $(findstring win, $(MAKECMDGOALS)))
   endif
 else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
   # Cross-compile for macOS.
-  CROSS = x86_64-apple-darwin9-
+  CC = cc
+  CXX = c++
+  CROSS = x86_64-apple-darwin14-
   CFLAGS += -mdynamic-no-pic
-  CXXFLAGS += -mdynamic-no-pic
+  CXXFLAGS += -mdynamic-no-pic -stdlib=libc++
   LUA_CFLAGS = -DLUA_USE_MACOSX
   LDFLAGS = -liconv
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
@@ -287,7 +289,7 @@ luadoc: ../modules ../core ../lexers/lexer.lua | ../modules/lua/lua.luadoc
 ifndef NIGHTLY
   basedir = textadept_$(version)
 else
-  basedir = textadept_NIGHTLY_$(shell date +"%F")
+  basedir = textadept_nightly_$(shell date +"%F")
 endif
 osxapp = Textadept.app
 osxapp_bin = $(osxapp)/Contents/MacOS
@@ -303,30 +305,26 @@ osxapp_libs = libatk-1.0.0.dylib libcairo.2.dylib libexpat.1.dylib \
               libpixman-1.0.dylib libpng16.16.dylib charset.alias \
               gdk-pixbuf-2.0 gtk-2.0
 
-release-all: release release64 win32-release osx-release modules-release
+release-all: release win32-release osx-release modules-release
 
-$(basedir).i386: ; hg archive $@ -X ".hg*"
-release: $(basedir).i386
+ifneq (, $(shell hg summary 2>/dev/null))
+  archive = hg archive -X ".hg*" $(1)
+else
+  archive = cd ../ && git archive HEAD --prefix src/$(1)/ | tar -xf -
+endif
+
+$(basedir).linux: ; $(call archive,$@)
+release: $(basedir).linux
 	make deps clean doc sign-deps
-	PKG_CONFIG_PATH=/opt/gtk/lib/pkgconfig make -j4 \
-		LDFLAGS="$(LDFLAGS) -static-libstdc++"
-	make -j4 LDFLAGS="$(LDFLAGS) -static-libstdc++" \
-		CURSES_CFLAGS=-I/opt/ncursesw/include/ncursesw \
-		CURSES_LIBS="-L/opt/ncursesw/lib -lncursesw" curses
-	cp -rL ../doc ../lexers ../textadept* $< && cp *.asc $</src
-	tar czf /tmp/$<.tgz $< && rm -rf $< && gpg --batch -ab /tmp/$<.tgz
-$(basedir).x86_64: ; hg archive $@ -X ".hg*"
-release64: $(basedir).x86_64
-	make clean
 	PKG_CONFIG_PATH=/opt/gtk64/lib/pkgconfig make -j4 CFLAGS="$(CFLAGS) -m64" \
-		CXXFLAGS="$(CXXFLAGS) -m64 -static-libstdc++" || return 0
+		CXXFLAGS="$(CXXFLAGS) -m64 -static-libstdc++"
 	make -j4 CFLAGS="$(CFLAGS) -m64" \
 		CXXFLAGS="$(CXXFLAGS) -m64 -static-libstdc++" \
 		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
-		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses || return 0
+		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses
 	cp -rL ../doc ../lexers ../textadept* $< && cp *.asc $</src
-	tar czf /tmp/$<.tgz $< && rm -rf $< && gpg --batch -ab /tmp/$<.tgz
-$(basedir).win32: ; hg archive $@ -X ".hg*"
+	tar czf $<.tgz $< && rm -rf $< && gpg --batch -ab $<.tgz
+$(basedir).win32: ; $(call archive,$@)
 win32-release: $(basedir).win32
 	make -j4 clean win32-deps
 	cp win32gtk/bin/*.dll $< && cp -r win32gtk/etc \
@@ -336,25 +334,27 @@ win32-release: $(basedir).win32
 	make -j4 win32-curses
 	cp -rL ../doc ../lexers ../textadept* $<
 	cp *.asc $</src
-	zip -r /tmp/$<.zip $< && rm -rf $< && gpg --batch -ab /tmp/$<.zip
-$(basedir).osx: ; mkdir $@ && cp ../scripts/osx/ta $@
-osx-release: $(basedir).osx
+	zip -r $<.zip $< && rm -rf $< && gpg --batch -ab $<.zip
+$(basedir).macOS: ; mkdir $@ && cp ../scripts/osx/ta $@
+osx-release: $(basedir).macOS
 	make clean osx-deps
-	make -j4 osx
-	make -j4 osx-curses
+	make CROSS=x86_64-apple-darwin9- CC=gcc CXX=g++ \
+		CXXFLAGS="-Os -std=c++11 -mdynamic-no-pic" -j4 osx
+	make CROSS=x86_64-apple-darwin9- CC=gcc CXX=g++ \
+		CXXFLAGS="-Os -std=c++11 -mdynamic-no-pic" -j4 osx-curses
 	make osx-app && mv $(osxapp) $<
-	zip -r /tmp/$<.zip $< && rm -rf $< && gpg --batch -ab /tmp/$<.zip
+	zip -r $<.zip $< && rm -rf $< && gpg --batch -ab $<.zip
 $(basedir).modules:
 	mkdir -p $@/modules
 	hg archive -R /home/mitchell/code/textadept_modules/ -r tip $@/modules
 modules-release: $(basedir).modules
-	zip -r /tmp/$<.zip $< && rm -r $< && gpg --batch -ab /tmp/$<.zip
+	zip -r $<.zip $< && rm -r $< && gpg --batch -ab $<.zip
 
 osx-app: ../textadept ../textadept-curses ../scripts/osx/textadept_osx
 	mkdir -p $(osxapp_bin) $(osxapp_res)
 	cp Info.plist $(osxapp_bin)/../
 	cp $^ $(osxapp_bin)/
-	hg archive $(osxapp_res) -X ".hg*"
+	$(call archive,$(osxapp_res))
 	cp -rL ../doc ../lexers $(osxapp_res) && cp *.asc $(osxapp_res)/src
 	mv $(osxapp_res)/core/images/textadept.icns $(osxapp_res)/
 	cp -r gtkosx/etc gtkosx/share $(osxapp_res)/ && mkdir $(osxapp_res)/lib/
