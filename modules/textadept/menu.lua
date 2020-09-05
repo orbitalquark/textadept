@@ -334,8 +334,8 @@ local default_menubar = {
   },
   {
     title = _L['Help'],
-    {_L['Show Manual'], function() open_page(_HOME .. '/doc/manual.html') end},
-    {_L['Show LuaDoc'], function() open_page(_HOME .. '/doc/api.html') end},
+    {_L['Show Manual'], function() open_page(_HOME .. '/docs/manual.html') end},
+    {_L['Show LuaDoc'], function() open_page(_HOME .. '/docs/api.html') end},
     SEPARATOR,
     {_L['About'], function()
       ui.dialogs.msgbox{

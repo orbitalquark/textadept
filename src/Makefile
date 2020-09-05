@@ -238,7 +238,7 @@ textadept-curses.exe: $(sci_objs) $(sci_lex_objs) LexLPeg-curses.o \
 
 # Install/uninstall.
 
-install: $(install_targets) | ../core ../doc ../init.lua ../lexers ../LICENSE \
+install: $(install_targets) | ../core ../docs ../init.lua ../lexers ../LICENSE \
                               ../modules ../themes
 	install -d $(DESTDIR)$(bin_dir) $(DESTDIR)$(data_dir)
 	install $^ $(DESTDIR)$(data_dir)
@@ -269,17 +269,18 @@ clean: ; rm -f *.o ../textadept*
 
 ta_home = $(shell dirname `pwd`)
 
-doc: manual luadoc
-manual: ../*.md ../doc/manual.md | ../doc/bombay
-	$| -d ../doc -t ../doc --title Textadept $^
-	sed -i -e "s/manual - Textadept/Textadept $(subst _, ,$(version)) Manual/;" \
-		../doc/manual.html
+docs: manual luadoc
+manual: ../*.md ../docs/manual.md
+	for file in $^; do \
+		markdown $$file | ../scripts/gen_doc.lua > \
+			../docs/`basename $$file .md`.html; \
+	done
 	sed -i -e "s/Textadept Manual/Textadept $(subst _, ,$(version)) Manual/;" \
-		../doc/manual.html
+		../docs/manual.html
 luadoc: ../modules ../core ../lexers/lexer.lua | ../modules/lua/lua.luadoc
-	cd ../doc && luadoc -d . -t . --doclet markdowndoc $^
+	cd ../docs && luadoc -d . -t . --doclet markdowndoc $^
 	sed -i -e "s/Textadept API/Textadept $(subst _, ,$(version)) API/;" \
-		../doc/api.html
+		../docs/api.html
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $^ --ta-home=$(ta_home)
 	cd ../modules/lua && mv tags ta_tags && mv api ta_api
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $| --ta-home=$(ta_home)
@@ -315,14 +316,14 @@ endif
 
 $(basedir).linux: ; $(call archive,$@)
 release: $(basedir).linux
-	make deps clean doc sign-deps
+	make deps clean docs sign-deps
 	PKG_CONFIG_PATH=/opt/gtk64/lib/pkgconfig make -j4 CFLAGS="$(CFLAGS) -m64" \
 		CXXFLAGS="$(CXXFLAGS) -m64 -static-libstdc++"
 	make -j4 CFLAGS="$(CFLAGS) -m64" \
 		CXXFLAGS="$(CXXFLAGS) -m64 -static-libstdc++" \
 		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
 		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses
-	cp -rL ../doc ../lexers ../textadept* $< && cp *.asc $</src
+	cp -rL ../docs ../lexers ../textadept* $< && cp *.asc $</src
 	tar czf $<.tgz $< && rm -rf $< && gpg --batch -ab $<.tgz
 $(basedir).win32: ; $(call archive,$@)
 win32-release: $(basedir).win32
@@ -332,7 +333,7 @@ win32-release: $(basedir).win32
 	rm -r $</lib/*.a $</lib/glib-2.0 $</lib/gtk-2.0/include $</lib/pkgconfig
 	make -j4 win32
 	make -j4 win32-curses
-	cp -rL ../doc ../lexers ../textadept* $<
+	cp -rL ../docs ../lexers ../textadept* $<
 	cp *.asc $</src
 	zip -r $<.zip $< && rm -rf $< && gpg --batch -ab $<.zip
 $(basedir).macOS: ; mkdir $@ && cp ../scripts/osx/ta $@
@@ -355,7 +356,7 @@ osx-app: ../textadept ../textadept-curses ../scripts/osx/textadept_osx
 	cp Info.plist $(osxapp_bin)/../
 	cp $^ $(osxapp_bin)/
 	$(call archive,$(osxapp_res))
-	cp -rL ../doc ../lexers $(osxapp_res) && cp *.asc $(osxapp_res)/src
+	cp -rL ../docs ../lexers $(osxapp_res) && cp *.asc $(osxapp_res)/src
 	mv $(osxapp_res)/core/images/textadept.icns $(osxapp_res)/
 	cp -r gtkosx/etc gtkosx/share $(osxapp_res)/ && mkdir $(osxapp_res)/lib/
 	cp -r $(addprefix gtkosx/lib/, $(osxapp_libs)) $(osxapp_res)/lib/
@@ -364,7 +365,7 @@ osx-app: ../textadept ../textadept-curses ../scripts/osx/textadept_osx
 
 # External dependencies.
 
-base_deps = scintilla ../lexers lua lualibs gtdialog cdk ../doc/bombay
+base_deps = scintilla ../lexers lua lualibs gtdialog cdk
 deps: $(base_deps) termkey
 win32-deps: $(base_deps) win32gtk win32curses
 osx-deps: $(base_deps) gtkosx termkey
@@ -387,7 +388,6 @@ win32gtk_zip = win32gtk-2.24.32.zip
 win32curses_zip = win32curses39.zip
 pdcurses_zip = PDCurses-3.9.zip
 gtkosx_tgz = gtkosx-2.24.31.tar.gz
-bombay_zip = bombay.zip
 cloc = cloc-1.60.pl
 
 $(scintilla_zip): ; $(WGET) http://foicica.com/hg/scintilla/archive/$@
@@ -442,8 +442,6 @@ win32curses: pdcurses.patch | $(win32curses_zip) $(pdcurses_zip)
 	cp $@/src/wincon/pdcurses.a $@/lib/
 $(gtkosx_tgz): ; $(WGET) http://foicica.com/textadept/download/$@
 gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
-$(bombay_zip): ; $(WGET) http://foicica.com/hg/bombay/archive/tip.zip
-../doc/bombay: | $(bombay_zip) ; unzip -d $(dir $@) -j $|
 $(cloc): ; $(WGET) http://prdownloads.sourceforge.net/cloc/$@
 sign-deps: | $(scintilla_tgz) $(lua_tgz) $(lpeg_tgz) $(lfs_zip) \
              $(gtdialog_zip) $(cdk_tgz) $(termkey_tgz) $(win32gtk_zip) \
@@ -454,7 +452,7 @@ verify-deps: | $(wildcard $(basename $(wildcard *.asc)))
 
 clean-deps:
 	rm -rf scintilla ../lexers lua gtdialog cdk termkey win32gtk win32curses \
-		gtkosx $(notdir ../doc/bombay)
+		gtkosx
 
 # Count lines of code.
 
