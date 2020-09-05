@@ -270,11 +270,8 @@ clean: ; rm -f *.o ../textadept*
 ta_home = $(shell dirname `pwd`)
 
 docs: manual luadoc
-manual: ../*.md ../docs/manual.md
-	for file in $^; do \
-		markdown $$file | ../scripts/gen_doc.lua > \
-			../docs/`basename $$file .md`.html; \
-	done
+manual: $(addprefix ../docs/,manual.md changelog.md faq.md media.md thanks.md)
+	for file in $^; do ../scripts/gen_doc.lua $$file; done
 	sed -i -e "s/Textadept Manual/Textadept $(subst _, ,$(version)) Manual/;" \
 		../docs/manual.html
 luadoc: ../modules ../core ../lexers/lexer.lua | ../modules/lua/lua.luadoc

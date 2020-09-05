@@ -345,9 +345,9 @@ you need Textadept to see. For example:
 challenging, since the versions of software installed vary widely from
 distribution to distribution. If you get errors like:
 
-  * `/<path>/libc.so.6: version 'GLIBC_<version>' not found`
   * `error while loading shared libraries: <lib>: cannot open shared object
     file: No such file or directory`
+  * `/<path>/libc.so.6: version 'GLIBC_<version>' not found`
 
 you will need to [compile](#Compiling) Textadept manually for your system, which
 is a very straightforward and easy process.
@@ -1539,7 +1539,7 @@ in a convenient and easy-to-use manner.
 [event]: api.html#events
 [spawn]: api.html#os.spawn
 [Lua API]: api.html
-[Textadept Quick Reference]: MEDIA.html#Book
+[Textadept Quick Reference]: media.html#Book
 
 ### Generate Autocompletion and Documentation Files
 

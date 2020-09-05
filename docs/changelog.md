@@ -7,7 +7,7 @@
 [Atom Feed]: feed
 [PGP Public Key]: https://foicica.com/foicica.pgp
 [donate]: http://gum.co/textadept
-[book]: MEDIA.html#Book
+[book]: media.html#Book
 
 ## 11.0 alpha 3 (01 Aug 2020)
 

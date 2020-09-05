@@ -5,8 +5,7 @@ Textadept the amazing editor that it is today.
 
 ## Sponsors
 
-=[The Library of the University of Antwerp][]=
-    reST and YAML lexers and modules
+* [The Library of the University of Antwerp][]: reST and YAML lexers and modules
 
 [The Library of the University of Antwerp]: http://www.uantwerpen.be
 
@@ -66,6 +65,5 @@ private contract work related to Textadept.
 * Vais Salikhov
 * Vladimir Lomov
 
-If I have left off your name, please [contact me][]. I am very sorry about that.
-
-[contact me]: README.html#Contact
+If I have left off your name, please contact me (mitchell.att.foicica.com). I am
+very sorry about that.

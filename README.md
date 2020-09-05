@@ -63,7 +63,7 @@ Manual and exhaustive API documentation.
 
 [1]: https://foicica.com/textadept/manual.html
 [2]: https://foicica.com/textadept/api.html
-[Textadept Quick Reference]: https://foicica.com/textadept/MEDIA.html#Book
+[Textadept Quick Reference]: https://foicica.com/textadept/media.html#Book
 
 ## Compile
 
@@ -136,6 +136,6 @@ and submit patches either to the [mailing list][], or to me personally
 (mitchell.att.foicica.com).
 
 [donation]: https://gum.co/textadept
-[book]: https://foicica.com/textadept/MEDIA.html#Book
+[book]: https://foicica.com/textadept/media.html#Book
 [open source]: https://foicica.com/hg/textadept
 [mailing list]: http://foicica.com/lists
