@@ -63,6 +63,9 @@ local M = ui.find
 --   The default value is `false`.
 -- @field INDIC_FIND (number)
 --   The find results highlight indicator number.
+-- @field _G.events.FIND_RESULT_FOUND (string)
+--   Emitted when a result is found. It is selected and has been scrolled into
+--   view.
 -- @field _G.events.FIND_WRAPPED (string)
 --   Emitted when a text search wraps (passes through the beginning of the
 --   buffer), either from bottom to top (when searching for a next occurrence),
@@ -87,7 +90,7 @@ M.highlight_all_matches = false
 M.INDIC_FIND = _SCINTILLA.next_indic_number()
 
 -- Events.
-events.FIND_WRAPPED = 'find_wrapped'
+events.FIND_RESULT_FOUND, events.FIND_WRAPPED = 'find_found', 'find_wrapped'
 
 -- When finding in files, note the current view since results are shown in a
 -- split view. Jumping between results should be done in the original view.
@@ -202,7 +205,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   local pos = f(buffer, flags, text)
   view:ensure_visible_enforce_policy(buffer:line_from_position(pos))
   view:scroll_range(buffer.anchor, buffer.current_pos)
-  view:vertical_center_caret()
+  events.emit(events.FIND_RESULT_FOUND)
   -- Track find text and found text for "replace all" and incremental find.
   find_text, found_text = text, buffer:get_sel_text()
   repl_text = ui.find.replace_entry_text -- save for ui.find.focus()
