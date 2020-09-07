@@ -331,7 +331,7 @@ end)
 
 -- Sets buffer statusbar text.
 events_connect(events.UPDATE_UI, function(updated)
-  if updated and updated & 3 == 0 then return end -- ignore scrolling
+  if updated & 3 == 0 then return end -- ignore scrolling
   local text = not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
     '%s %d/%d  %s %d  %s  %s  %s  %s'
   local pos = buffer.selection_n_caret[buffer.main_selection]
