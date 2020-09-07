@@ -2414,7 +2414,7 @@ static void signalled(int signal) {
     WINDOW *win = scintilla_get_window(command_entry);
     wresize(win, 1, COLS), mvwin(win, LINES - 1 - getmaxy(win), 0);
     if (signal == SIGCONT) emit(lua, "resume", -1);
-    emit(lua, "update_ui", -1);
+    emit(lua, "update_ui", LUA_TNUMBER, 0, -1);
   } else if (!emit(lua, "suspend", -1))
     endwin(), termkey_stop(ta_tk), kill(0, SIGSTOP);
   refresh_all();
