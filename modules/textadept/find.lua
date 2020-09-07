@@ -57,6 +57,8 @@ local M = ui.find
 -- @field in_files_label_text (string, Write-only)
 --   The text of the "In files" label.
 --   This is primarily used for localization.
+-- @field active (boolean)
+--   Whether or not the Find & Replace pane is active.
 -- @field highlight_all_matches (boolean)
 --   Whether or not to highlight all occurrences of found text in the current
 --   buffer.

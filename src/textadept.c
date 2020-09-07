@@ -131,6 +131,7 @@ static ListStore *find_history, *repl_history;
 #define set_label_text(l, t) gtk_label_set_text_with_mnemonic(GTK_LABEL(l), t)
 #define set_button_label(b, l) gtk_button_set_label(GTK_BUTTON(b), l)
 #define set_option_label(o, _, l) gtk_button_set_label(GTK_BUTTON(o), l)
+#define find_active(w) gtk_widget_get_visible(w)
 // GTK command entry.
 #define command_entry_focused gtk_widget_has_focus(command_entry)
 #elif CURSES
@@ -176,6 +177,7 @@ static ListStore find_history[10], repl_history[10];
   copyfree(&option_labels[i], lua_tostring(L, -1)); \
   if (!*option) option_labels[i] += 4; \
 } while (false)
+#define find_active(w) (w != NULL)
 // Curses command entry and statusbar.
 static bool command_entry_focused;
 int statusbar_length[2];
@@ -490,6 +492,8 @@ static int find_index(lua_State *L) {
     lua_pushboolean(L, checked(regex));
   else if (strcmp(key, "in_files") == 0)
     lua_pushboolean(L, checked(in_files));
+  else if (strcmp(key, "active") == 0)
+    lua_pushboolean(L, find_active(findbox));
   else
     lua_rawget(L, 1);
   return 1;

@@ -165,7 +165,7 @@ end, 1) -- need index of 1 because default key handler halts propagation
 
 -- Highlights matching braces.
 events.connect(events.UPDATE_UI, function(updated)
-  if updated and updated & 3 == 0 then return end -- ignore scrolling
+  if updated & 3 == 0 then return end -- ignore scrolling
   local pos = buffer.selection_n_caret[buffer.main_selection]
   if M.brace_matches[buffer.char_at[pos]] then
     local match = buffer:brace_match(pos, 0)
@@ -187,7 +187,7 @@ end, 1)
 
 -- Highlight all instances of the current or selected word.
 events.connect(events.UPDATE_UI, function(updated)
-  if not updated or updated & buffer.UPDATE_SELECTION == 0 then return end
+  if updated & buffer.UPDATE_SELECTION == 0 or ui.find.active then return end
   local word
   if M.highlight_words == M.HIGHLIGHT_CURRENT then
     clear_highlighted_words()
