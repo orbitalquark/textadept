@@ -262,8 +262,7 @@ view:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, view.MARK_TCORNER)
 --view:marker_enable_highlight(true)
 
 -- Indicators.
-view.indic_style[ui.find.INDIC_FIND] = not CURSES and view.INDIC_BOX or
-  view.INDIC_ROUNDBOX
+view.indic_style[ui.find.INDIC_FIND] = view.INDIC_ROUNDBOX
 if not CURSES then view.indic_under[ui.find.INDIC_FIND] = true end
 local INDIC_BRACEMATCH = textadept.editing.INDIC_BRACEMATCH
 view.indic_style[INDIC_BRACEMATCH] = view.INDIC_BOX
