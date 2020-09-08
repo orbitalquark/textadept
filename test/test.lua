@@ -2229,6 +2229,8 @@ function test_ui_find_incremental()
 end
 
 function test_ui_find_incremental_highlight()
+  local highlight_all_matches = ui.find.highlight_all_matches
+  ui.find.highlight_all_matches = true
   buffer.new()
   buffer:set_text(table.concat({
     ' foo',
@@ -2256,6 +2258,7 @@ function test_ui_find_incremental_highlight()
   end
   ui.find.find_entry_text = ''
   ui.find.incremental = false
+  ui.find.highlight_all_matches = highlight_all_matches
   buffer:close(true)
 end
 
