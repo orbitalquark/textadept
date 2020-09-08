@@ -481,9 +481,9 @@ static int focus_find(lua_State *L) {
 static int find_index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
   if (strcmp(key, "find_entry_text") == 0)
-    lua_pushstring(L, find_text);
+    lua_pushstring(L, find_text ? find_text : "");
   else if (strcmp(key, "replace_entry_text") == 0)
-    lua_pushstring(L, repl_text);
+    lua_pushstring(L, repl_text ? repl_text : "");
   else if (strcmp(key, "match_case") == 0)
     lua_pushboolean(L, checked(match_case));
   else if (strcmp(key, "whole_word") == 0)
