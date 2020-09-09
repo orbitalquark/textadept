@@ -91,7 +91,7 @@ else
     install_targets = ../textadept
   else
     plat_flag = -DCURSES
-    CURSES_CFLAGS = $(shell pkg-config --silence-errors --cflags ncursesw  || \
+    CURSES_CFLAGS = $(shell pkg-config --silence-errors --cflags ncursesw || \
                             pkg-config --silence-errors --cflags ncurses || \
                             pkg-config --silence-errors --cflags curses)
     CURSES_LIBS = $(shell pkg-config --silence-errors --libs ncursesw || \
@@ -267,20 +267,19 @@ clean: ; rm -f *.o ../textadept*
 
 # Documentation.
 
+lua_src = ../core ../modules ../lexers/lexer.lua
 ta_home = $(shell dirname `pwd`)
 
 docs: manual luadoc
-manual: $(addprefix ../docs/,manual.md changelog.md faq.md media.md thanks.md) \
-        | ../docs/_layouts/default.html
+manual: ../docs/api.md $(wildcard ../docs/*.md) | ../docs/_layouts/default.html
 	for file in $(basename $^); do \
 		cat $| | ../scripts/fill_layout.lua $$file.md > $$file.html; \
 	done
-	sed -i -e "s/Textadept Manual/Textadept $(subst _, ,$(version)) Manual/;" \
-		../docs/manual.html
-luadoc: ../modules ../core ../lexers/lexer.lua | ../modules/lua/lua.luadoc
-	cd ../docs && luadoc -d . -t . --doclet markdowndoc $^
-	sed -i -e "s/Textadept API/Textadept $(subst _, ,$(version)) API/;" \
-		../docs/api.html
+	sed -i "s/Textadept \(Manual\|API\)/Textadept $(subst _, ,$(version)) \1/;" \
+		../docs/*.html
+docs/api.md: $(lua_src)
+	cd ../docs && luadoc --doclet markdowndoc $^ > $(notdir $@)
+luadoc: $(lua_src) | ../modules/lua/lua.luadoc
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $^ --ta-home=$(ta_home)
 	cd ../modules/lua && mv tags ta_tags && mv api ta_api
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $| --ta-home=$(ta_home)
