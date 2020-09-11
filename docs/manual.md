@@ -1,4 +1,4 @@
-# Textadept Manual
+## Textadept Manual
 
 **Contents**
 
@@ -15,10 +15,10 @@
 11. [Appendix](#Appendix)
 
 --------------------------------------------------------------------------------
-## Introduction
+### Introduction
 --------------------------------------------------------------------------------
 
-### Overview
+#### Overview
 
 ![Textadept](images/textadept.png)
 
@@ -56,7 +56,7 @@ potential is seemingly limitless.
 
 ![Split Views](images/splitviews.png)
 
-### About This Manual
+#### About This Manual
 
 This manual uses the following typographical conventions:
 
@@ -94,7 +94,7 @@ or need a refresher, the excerpt from [Lua Quick Reference][] may be of help.
 
 [Lua Quick Reference]: https://foicica.com/lua/
 
-### ~/.textadept
+#### ~/.textadept
 
 Textadept stores all settings and user data in a local user directory that
 varies, depending on the platform. This directory can also be configured using
@@ -161,10 +161,10 @@ assigned to keys, associated with menu items, or connected to events.
 [Lua API]: api.html
 
 --------------------------------------------------------------------------------
-## Installation
+### Installation
 --------------------------------------------------------------------------------
 
-### Requirements
+#### Requirements
 
 In its bid for minimalism, Textadept depends on very little to run. On Windows
 and macOS, it has no external dependencies. On Linux and BSD, the GUI version
@@ -180,7 +180,7 @@ systems. Linux and BSD have no defined minimum.
 [GTK]: https://gtk.org
 [ncurses]: https://invisible-island.net/ncurses/ncurses.html
 
-### Download
+#### Download
 
 Download Textadept from the project's [download page][] by selecting the
 appropriate package for your platform. You can also download a separate set of
@@ -210,7 +210,7 @@ version of Textadept, and one for the terminal version.
 
 [download page]: https://foicica.com/textadept/download
 
-### Installation
+#### Installation
 
 Installing Textadept is simple and easy. You do not need administrator
 privileges. On Windows, Linux, and BSD, simply unpack the archive anywhere. On
@@ -234,7 +234,7 @@ your *~/.textadept/init.lua*:
     require('file_diff')
     require('spellcheck')
 
-### Running
+#### Running
 
 Run Textadept on Windows by double-clicking *textadept.exe* or
 *textadept-curses.exe*. On macOS, double-click *Textadept.app* or invoke the
@@ -360,7 +360,7 @@ is a very straightforward and easy process.
 &nbsp;&nbsp;
 ![curses](images/ncurses.png)
 
-### Updating
+#### Updating
 
 Textadept releases typically occur on the first day of the month every 1-2
 months. There is no auto-update process. (Textadept does not connect to the
@@ -369,7 +369,7 @@ contents into your current installation, overwriting any existing files and
 directories.
 
 --------------------------------------------------------------------------------
-## User Interface
+### User Interface
 --------------------------------------------------------------------------------
 
 ![UI](images/ui.png)
@@ -381,7 +381,7 @@ command entry, though Textadept initially hides them both.
 Textadept's titlebar shows the name and path of the current, active buffer. A
 '\*' character, if present, indicates there are unsaved changes in that buffer.
 
-### Menu
+#### Menu
 
 The GUI version of Textadept has a completely customizable menu that provides
 access to nearly all of the application's editing features.
@@ -417,7 +417,7 @@ For example, in your *~/.textadept/init.lua*:
 
 [`textadept.menu.menubar`]: api.html#textadept.menu.menubar
 
-### Tab Bar
+#### Tab Bar
 
 The GUI version of Textadept has a tab bar that displays all of Textadept's open
 buffers by name, though it is only visible when two or more buffers are open. A
@@ -463,7 +463,7 @@ For example, in your *~/.textadept/init.lua*:
 
     keys['ctrl+b'] = function() ui.switch_buffer(true) end
 
-### Editor View
+#### Editor View
 
 The editor view is where you will spend most of your time in Textadept. You can
 split it vertically and horizontally as many times as you like, and you can view
@@ -506,7 +506,7 @@ order to perform the split view action.
 [`view`]: api.html#view
 [`textadept.menu.context_menu`]: api.html#textadept.menu.context_menu
 
-### Find & Replace Pane
+#### Find & Replace Pane
 
 The find & replace pane is a compact, full-featured pane that allows you to
 quickly search through files and directories. The pane is available only when
@@ -566,7 +566,7 @@ within non-contiguous selections (e.g. multiple selections).
 
 [`ui.find.highlight_all_matches`]: api.html#ui.find.highlight_all_matches
 
-#### Find in Files
+##### Find in Files
 
 Textadept can search for text within multiple files and directories via
 `Ctrl+Shift+F` on Windows, Linux, and BSD, and `⌘⇧F` on macOS. (The terminal
@@ -604,14 +604,14 @@ bindings for these actions.)
 
 [`ui.find_in_files_filters`]: api.html#ui.find.find_in_files_filters
 
-#### Incremental Find
+##### Incremental Find
 
 Textadept searches for text incrementally as you type when you summon the find &
 replace pane via `Ctrl+Alt+F` on Windows, Linux, and BSD, `^⌘F` on macOS, and
 `M-^F` in the terminal version. All of the find options apply except for
 "In Files".
 
-### Command Entry
+#### Command Entry
 
 The versatile command entry has many different roles. Its primary role is to
 execute Lua commands and interact with Textadept's internal Lua state. In
@@ -623,7 +623,7 @@ version, and `⇡` and `⇣` on macOS.
 
 [Lua extensions]: api.html#ui.command_entry
 
-#### Lua Command Entry
+##### Lua Command Entry
 
 ![Command Entry](images/commandentry.png)
 
@@ -673,7 +673,7 @@ file.
 [`view`]: api.html#view
 [`ui`]: api.html#ui
 
-#### Shell Command Entry and Filtering Text
+##### Shell Command Entry and Filtering Text
 
 You can filter text through shell commands via `Ctrl+|` on Windows, Linux, and
 BSD, `⌘|` on macOS, and `^\` in the terminal version. An example would be
@@ -685,7 +685,7 @@ stdin.
 
 [`textadept.editing.filter_through()`]: api.html#textadept.editing.filter_through
 
-### Statusbar
+#### Statusbar
 
 The statusbar consists of two sections. The left section displays temporary
 status messages, while the right section shows buffer status information. Buffer
@@ -706,7 +706,7 @@ status information includes:
 ![Document Statusbar](images/docstatusbar.png)
 
 --------------------------------------------------------------------------------
-## Working with Files and Projects
+### Working with Files and Projects
 --------------------------------------------------------------------------------
 
 Textadept allows you to open files using a variety of methods:
@@ -786,7 +786,7 @@ startup using the `-s` or `--session` command line argument.
 [`io.quick_open_filters`]: api.html#io.quick_open_filters
 [`io.quick_open_max`]: api.html#io.quick_open_max
 
-#### Language
+##### Language
 
 When Textadept opens a file, it automatically attempts to identify the
 programming language associated with that file and assigns a lexer to perform
@@ -835,7 +835,7 @@ requires pressing `Enter`.)
 [`textadept.file_types.extensions`]: api.html#textadept.file_types.extensions
 [lexer]: api.html#lexer
 
-#### Encoding
+##### Encoding
 
 Textadept has the ability to work with files encoded in one of many different
 encodings, but by default it only attempts to read UTF-8, ASCII, CP1252, and
@@ -861,7 +861,7 @@ text editors and all modern operating systems.
 [`io.encodings`]: api.html#io.encodings
 [`buffer.set_encoding()`]: api.html#buffer.set_encoding
 
-#### Buffer Settings
+##### Buffer Settings
 
 Textadept attempts to auto-detect a file's line end mode (EOL mode), falling
 back on CRLF ("\r\n") by default on Windows, and LF ('\n') on all other
@@ -897,7 +897,7 @@ You can manually change a buffer's indentation using the following process:
    `Ctrl+Alt+I` on Windows, Linux, and BSD, `^I` on macOS, and `M-I` in the
    terminal version.
 
-#### View Settings
+##### View Settings
 
 Textadept normally does not wrap long lines into view, nor does it show
 whitespace characters. You can toggle line wrapping for the current buffer via
@@ -924,7 +924,7 @@ feature:
   and BSD, and `⌘0` on macOS.
 
 --------------------------------------------------------------------------------
-## Adept Editing
+### Adept Editing
 --------------------------------------------------------------------------------
 
 Textadept implements most of the customary key bindings for navigating text
@@ -937,7 +937,7 @@ navigation-related key bindings are listed in the "Movement" section of the
 
 [key bindings list]: api.html#textadept.keys
 
-### Brace Matching, Auto-pair, and Typeover
+#### Brace Matching, Auto-pair, and Typeover
 
 Textadept automatically highlights matching brace characters when the caret is
 over one of them: '(', ')', '[', ']', '{', or '}'. You can jump to the current
@@ -972,7 +972,7 @@ behavior by modifying [`textadept.editing.auto_pairs`][] and
 [`textadept.editing.auto_pairs`]: api.html#textadept.editing.auto_pairs
 [`textadept.editing.typeover_chars`]: api.html#textadept.editing.typeover_chars
 
-### Word Highlight
+#### Word Highlight
 
 Textadept can be configured to automatically highlight all occurrences of the
 word under the caret, or all occurrences of the selected word (e.g. a variable
@@ -991,7 +991,7 @@ automatic highlighting.
 
 [`textadept.editing.highlight_words`]: api.html#textadept.editing.highlight_words
 
-### Autocompletion and Documentation
+#### Autocompletion and Documentation
 
 Textadept provides buffer-based word completion. It can also autocomplete
 symbols for programming languages and display documentation for functions and
@@ -1035,7 +1035,7 @@ write your own autocompletion routines.
 [API files]: api.html#textadept.editing.api_files
 [language]: api.html#_M
 
-### Text Selections
+#### Text Selections
 
 Textadept has three kinds of text selections: contiguous, multiple, and
 rectangular.
@@ -1105,7 +1105,7 @@ on all of those lines.
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Rectangular Edit](images/rectangularselection2.png)
 
-### Text Transformations
+#### Text Transformations
 
 Textadept can apply many different transformations to the current word, line,
 and selected text.
@@ -1138,13 +1138,13 @@ You can auto-enclose selected text between any typed punctuation character
 [`textadept.editing.auto_pairs`]: api.html#textadept.editing.auto_pairs
 [`textadept.editing.auto_enclose`]: api.html#textadept.editing.auto_enclose
 
-### Goto Line
+#### Goto Line
 
 You can jump to a specific line in the current buffer via `Ctrl+J` on Windows,
 Linux, and BSD, `⌘J` on macOS, and `^J` in the terminal version. Enter the line
 number to jump to in the prompt, and press `Enter` or click `OK`.
 
-### Bookmarks
+#### Bookmarks
 
 Bookmarks are markers attached to lines of interest. They move in sync with the
 lines they were added to as buffer text is inserted and deleted. Bookmarks show
@@ -1162,7 +1162,7 @@ bookmarks:
 * Clear all bookmarks in the current buffer via `Ctrl+Shift+F2` on Windows,
   Linux, and BSD, `⌘⇧F2` on macOS, and `F6` in the terminal version.
 
-### Macros
+#### Macros
 
 Macros allow you to quickly record a series of edits and play them back without
 having to write a custom Lua script. The following key bindings apply for
@@ -1177,7 +1177,7 @@ macros:
 You can use the "Tools > Macros" menu to save the most recently recorded macro
 to a file, and to load one for playback on demand.
 
-### Snippets
+#### Snippets
 
 Snippets are dynamic text templates that can be inserted into the buffer on
 demand. They are composed of any combination of plain text, placeholders for
@@ -1225,7 +1225,7 @@ The following key bindings apply for snippets:
 [language]: api.html#_M
 [snippets documentation]: api.html#textadept.snippets
 
-### Code Folding
+#### Code Folding
 
 Textadept can temporarily hide blocks of code in supported languages. Markers in
 the margin to the left of code denote fold points. Clicking on those markers
@@ -1234,7 +1234,7 @@ Windows, Linux, and BSD, `⌘*` on macOS, and `M-*` in the terminal version.
 
 ![Folding](images/folding.png)
 
-### Virtual Space
+#### Virtual Space
 
 Textadept normally constrains the caret to remain within text lines. Enabling
 virtual space allows you to move the caret into the space beyond the ends of
@@ -1242,7 +1242,7 @@ lines. Toggle virtual space via `Ctrl+Alt+Shift+V` on Windows, Linux, and BSD,
 and `^⇧V` in macOS. (The terminal version does not have a default key binding
 for toggling virtual space.)
 
-### Key Bindings
+#### Key Bindings
 
 Key bindings are simply commands (Lua functions) assigned to key sequences in
 the [`keys`][] table. Key sequences are composed of an ordered combination of
@@ -1262,7 +1262,7 @@ outside that mode until the mode is unset (e.g. Vim-style modal editing). The
 [keys documentation]: api.html#keys
 
 --------------------------------------------------------------------------------
-## Compile, Run, and Build
+### Compile, Run, and Build
 --------------------------------------------------------------------------------
 
 Textadept knows most of the commands that compile and/or run code in source
@@ -1329,7 +1329,7 @@ commands can contain arguments so that you do not have to invoke
 [`textadept.run.error_patterns`]: api.html#textadept.run.error_patterns
 
 --------------------------------------------------------------------------------
-## Modules
+### Modules
 --------------------------------------------------------------------------------
 
 Modules are packages of Lua code that provide functionality for Textadept. Most
@@ -1364,7 +1364,7 @@ module's associated lexer is loaded for a buffer.
 **Note:** lexer language names are typically the names of lexer files in your
 *~/.textadept/lexers/* directory and Textadept's *lexers/* directory.
 
-### Developing Modules
+#### Developing Modules
 
 Modules follow the Lua package model: a module is either a single Lua file or
 a group of Lua files in a directory that contains an *init.lua* file (which is
@@ -1402,7 +1402,7 @@ features inside an [`events.LEXER_LOADED`][] event handler. For example, in your
 [`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
 
 --------------------------------------------------------------------------------
-## Themes
+### Themes
 --------------------------------------------------------------------------------
 
 Themes customize Textadept's look and feel. The editor comes with three built-in
@@ -1472,7 +1472,7 @@ not GTK 3.
 [GTK Resource Files]: https://developer.gnome.org/gtk3/stable/gtk3-Resource-Files.html
 
 --------------------------------------------------------------------------------
-## Scripting
+### Scripting
 --------------------------------------------------------------------------------
 
 Nearly every aspect of Textadept can be scripted, or controlled, using Lua.
@@ -1541,7 +1541,7 @@ in a convenient and easy-to-use manner.
 [Lua API]: api.html
 [Textadept Quick Reference]: media.html#Book
 
-### Generate Autocompletion and Documentation Files
+#### Generate Autocompletion and Documentation Files
 
 You can generate for use with Textadept
 [autocompletion and documentation](#Autocompletion.and.Documentation) files for
@@ -1566,7 +1566,7 @@ editing Lua code. For example, in your *~/.textadept/init.lua*:
 [LuaDoc]: https://keplerproject.github.com/luadoc/
 
 --------------------------------------------------------------------------------
-## Compiling
+### Compiling
 --------------------------------------------------------------------------------
 
 Textadept is a bit unusual in that building it is only supported on Linux and
@@ -1575,7 +1575,7 @@ Windows and macOS from Linux. While it is certainly possible to compile
 Textadept natively on those platforms, it is simply not supported in any
 official capacity.
 
-### Requirements
+#### Requirements
 
 The requirements for compiling Textadept on Linux or BSD should be readily
 available from a package manager. The requirements for cross-compiling Textadept
@@ -1641,7 +1641,7 @@ more and ultimately consume nearly 3.5GB of disk space.
 [mingw-w64]: http://mingw-w64.org/
 [OSX cross toolchain]: https://github.com/tpoechtrager/osxcross
 
-### Compiling
+#### Compiling
 
 Textadept is built from its *src/* directory and binaries are placed in the
 application's root directory. The general procedure is to have Textadept build
@@ -1691,7 +1691,7 @@ specify your system's MinGW name prefix using the `CROSS` variable. For example:
     make CROSS=i586-mingw32-msvc- win32-deps
     make CROSS=i586-mingw32-msvc- win32
 
-#### Compiling using Docker
+##### Compiling using Docker
 
 You can use [Docker][] to build Textadept for Windows, macOS, or Linux. The
 [image][] required to do so is about 2.5GB in size. For example:
@@ -1724,10 +1724,10 @@ compile Textadept manually without Docker.
 [image]: https://hub.docker.com/repository/docker/textadept/build
 
 --------------------------------------------------------------------------------
-## Appendix
+### Appendix
 --------------------------------------------------------------------------------
 
-### Regex and Lua Pattern Syntax
+#### Regex and Lua Pattern Syntax
 
 The following table outlines Regex and Lua Pattern syntax:
 
@@ -1779,7 +1779,7 @@ There are a number of references for this syntax on the internet, including:
 More information on Lua patterns can be found in the
 [Lua 5.3 Reference Manual](https://www.lua.org/manual/5.3/manual.html#6.4.1).
 
-### Terminal Version Compatibility
+#### Terminal Version Compatibility
 
 Textadept's terminal version requires a font with good glyph support (like
 DejaVu Sans Mono or Liberation Mono), and lacks some GUI features due to the
@@ -1811,7 +1811,7 @@ terminal's constraints:
 
 [`buffer.register_image()`]: api.html#buffer.register_image
 
-### Directory Structure
+#### Directory Structure
 
 Textadept's directory structure is organized as follows:
 
@@ -1827,7 +1827,7 @@ Textadept's directory structure is organized as follows:
 * *etc/*, *lib/*, and *share/*: GTK support directories and only appear in the
   Windows and macOS packages.
 
-### Technologies
+#### Technologies
 
 Textadept is composed of the following technologies:
 
@@ -1853,9 +1853,9 @@ Textadept is composed of the following technologies:
 [cdk]: https://invisible-island.net/cdk/
 [libtermkey]: http://www.leonerd.org.uk/code/libtermkey/
 
-### Migrating from Textadept 10 to 11
+#### Migrating from Textadept 10 to 11
 
-#### API Changes
+##### API Changes
 
 Old API                    |Change  |New API
 ---------------------------|:------:|-------
@@ -1957,7 +1957,7 @@ section below.
 [active]: api.html#ui.command_entry.active
 [progressbar()]: api.html#ui.dialogs.progressbar
 
-#### Buffer Indexing Changes
+##### Buffer Indexing Changes
 
 All buffer positions, lines, and countable entities now start from `1` instead
 of `0`. For example, `buffer:get_line(1)` now returns the contents of the first
@@ -2001,7 +2001,7 @@ I found it helpful to quickly scan source files for syntax-highlighted numbers
 and then seeing if those numbers needed to be changed. Searching for "- 1",
 "+ 1", "buffer.length", etc. was also helpful.
 
-#### View API Additions and Buffer API Changes
+##### View API Additions and Buffer API Changes
 
 Textadept's [buffer][] API is largely based on the [Scintilla API][], which does
 not distinguish between buffer- and view-specific functionality. Textadept 11
@@ -2028,7 +2028,7 @@ confirmed.
 [Scintilla]: https://scintilla.org
 [view]: api.html#view
 
-#### Theme and Lexer Changes
+##### Theme and Lexer Changes
 
 Themes and lexers have a new, optional API for defining and using colors and
 styles. Previously, all definitions and access to colors and styles was
@@ -2065,14 +2065,14 @@ Lexers can also utilize these new features. For example:
 Note that these features are optional. Themes and lexers setting property
 strings is still supported.
 
-#### Localization Changes
+##### Localization Changes
 
 GUI mnemonics in localization keys have been removed. For example, `_L['_New']`
 should be changed to `_L['New']`. Mnemonics can still be used in localization
 values; it's just the keys that have changed. See Textadept's *core/locale.conf*
 for examples.
 
-#### Key Bindings Changes
+##### Key Bindings Changes
 
 Key sequence modifiers have changed from their shortened form to a longer form
 that is more intuitive. `'c'` is now `'ctrl'`, `'a'` is now `'alt'`, `'m'` is
@@ -2084,12 +2084,12 @@ The key binding for inserting a user-specified snippet from a dialog has changed
 from `Ctrl+K` (`⌥⇥` on macOS | `M-K` on the terminal) to `Ctrl+Shift+K`
 (`⌥⇧⇥` | `M-S-K`). `Ctrl+K` (`⌥⇥` | `M-K`) now autocompletes snippet names.
 
-#### Session Changes
+##### Session Changes
 
 Textadept saves and loads session from Lua data files instead of structured text
 files. As a result, Textadept 11 cannot load session files from 10.x or before.
 
-#### Miscellaneous Changes
+##### Miscellaneous Changes
 
 * *~/.textadept/?.lua* and *~/.textadept/?.{so,dll}* has been removed from
   `package.path` and `package.cpath`, respectively. All modules should be placed

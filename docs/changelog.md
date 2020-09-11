@@ -1,4 +1,4 @@
-# Changelog
+## Changelog
 
 [Atom Feed][] | [PGP Public Key][]
 
@@ -9,7 +9,7 @@
 [donate]: http://gum.co/textadept
 [book]: media.html#Book
 
-## 11.0 alpha 3 (01 Aug 2020)
+### 11.0 alpha 3 (01 Aug 2020)
 
 Please see the [10 to 11 migration guide][] for upgrading from Textadept 10 to
 Textadept 11.
@@ -102,7 +102,7 @@ Changes:
 [`buffer.eol_annotation_text`]: api.html#buffer.eol_annotation_text
 [Scintilla]: https://scintilla.org
 
-## 11.0 alpha 2 (01 Jun 2020)
+### 11.0 alpha 2 (01 Jun 2020)
 
 * [Textadept 11.0 alpha 2 -- Win32][] | [PGP -- 11.0 alpha 2 Win32][]
 * [Textadept 11.0 alpha 2 -- Mac OSX 10.6+][] | [PGP -- 11.0 alpha 2 OSX][]
@@ -153,7 +153,7 @@ Changes:
 [`lexer.number`]: api.html#lexer.number
 [Scintilla]: https://scintilla.org
 
-## 11.0 alpha (31 Mar 2020)
+### 11.0 alpha (31 Mar 2020)
 
 * [Textadept 11.0 alpha -- Win32][] | [PGP -- 11.0 alpha Win32][]
 * [Textadept 11.0 alpha -- Mac OSX 10.6+][] | [PGP -- 11.0 alpha OSX][]
@@ -247,7 +247,7 @@ Changes:
 [`ui.dialogs.progressbar()`]: api.html#ui.dialogs.progressbar
 [PDCurses]: https://pdcurses.sourceforge.io/
 
-## 10.8 (01 Jan 2020)
+### 10.8 (01 Jan 2020)
 
 Download:
 
@@ -290,7 +290,7 @@ Changes:
 [`events.TAB_CLICKED`]: api.html#events.TAB_CLICKED
 [Scintilla]: http://scintilla.org
 
-## 10.7 (01 Nov 2019)
+### 10.7 (01 Nov 2019)
 
 Download:
 
@@ -345,7 +345,7 @@ Changes:
 [`ui.command_entry.run()`]: api.html#ui.command_entry.run
 [`textadept.macros.record()`]: api.html#textadept.macros.record
 
-## 10.6 (01 Sep 2019)
+### 10.6 (01 Sep 2019)
 
 Download:
 
@@ -381,7 +381,7 @@ Changes:
 [PGP -- 10.6 Modules]: download/textadept_10.6.modules.zip.asc
 [Scintilla]: http://scintilla.org
 
-## 10.5 (01 Jul 2019)
+### 10.5 (01 Jul 2019)
 
 Download:
 
@@ -421,7 +421,7 @@ Changes:
 [`textadept.editing.show_documentation()`]: api.html#textadept.editing.show_documentation
 [Scintilla]: http://scintilla.org
 
-## 10.4 (01 May 2019)
+### 10.4 (01 May 2019)
 
 Download:
 
@@ -460,7 +460,7 @@ Changes:
 [LuaFileSystem]: https://keplerproject.github.io/luafilesystem/
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/
 
-## 10.3 (01 Mar 2019)
+### 10.3 (01 Mar 2019)
 
 Download:
 
@@ -493,7 +493,7 @@ Changes:
 [PGP -- 10.3 Modules]: download/textadept_10.3.modules.zip.asc
 [Scintilla]: http://scintilla.org
 
-## 10.3 beta (01 Jan 2019)
+### 10.3 beta (01 Jan 2019)
 
 Download:
 
@@ -540,7 +540,7 @@ Changes:
 [file filter]: api.html#io.quick_open
 [PDCurses]: https://pdcurses.sourceforge.io/
 
-## 10.2 (01 Nov 2018)
+### 10.2 (01 Nov 2018)
 
 Download:
 
@@ -590,7 +590,7 @@ Changes:
 [`textadept.macros`]: api.html#textadept.macros
 [Scintilla]: http://scintilla.org
 
-## 10.1 (01 Oct 2018)
+### 10.1 (01 Oct 2018)
 
 Download:
 
@@ -630,7 +630,7 @@ Changes:
 [`events.RESET_AFTER`]: api.html#events.RESET_AFTER
 [`ui.find.find_in_files_filters`]: api.html#ui.find.find_in_files_filters
 
-## 10.0 (01 Aug 2018)
+### 10.0 (01 Aug 2018)
 
 Please see the [9 to 10 migration guide][] for upgrading from Textadept 9 to
 Textadept 10.
@@ -675,7 +675,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [Lua]: http://lua.org
 
-## 10.0 beta 2 (01 Jun 2018)
+### 10.0 beta 2 (01 Jun 2018)
 
 Download:
 
@@ -711,7 +711,7 @@ Changes:
 [PGP -- 10.0 beta 2 Linux x86_64]: download/textadept_10.0_beta_2.x86_64.tgz.asc
 [PGP -- 10.0 beta 2 Modules]: download/textadept_10.0_beta_2.modules.zip.asc
 
-## 10.0 beta (01 May 2018)
+### 10.0 beta (01 May 2018)
 
 Download:
 
@@ -745,7 +745,7 @@ Changes:
 [PGP -- 10.0 beta Linux x86_64]: download/textadept_10.0_beta.x86_64.tgz.asc
 [PGP -- 10.0 beta Modules]: download/textadept_10.0_beta.modules.zip.asc
 
-## 10.0 alpha 3 (01 Apr 2018)
+### 10.0 alpha 3 (01 Apr 2018)
 
 Download:
 
@@ -787,7 +787,7 @@ Changes:
 [`events.AUTO_C_SELECTION_CHANGE`]: api.html#events.AUTO_C_SELECTION_CHANGE
 [Scintilla]: http://scintilla.org
 
-## 10.0 alpha 2 (01 Mar 2018)
+### 10.0 alpha 2 (01 Mar 2018)
 
 Download:
 
@@ -837,7 +837,7 @@ Changes:
 [PGP -- 10.0 alpha 2 Modules]: download/textadept_10.0_alpha_2.modules.zip.asc
 [`buffer.move_extends_selection`]: api.html#buffer.move_extends_selection
 
-## 10.0 alpha (01 Jan 2018)
+### 10.0 alpha (01 Jan 2018)
 
 Download:
 
@@ -884,7 +884,7 @@ Changes:
 [`events.ZOOM`]: api.html#events.ZOOM
 [create lexers]: api.html#lexer
 
-## 9.6 (01 Nov 2017)
+### 9.6 (01 Nov 2017)
 
 Download:
 
@@ -915,7 +915,7 @@ Changes:
 [PGP -- 9.6 Linux x86_64]: download/textadept_9.6.x86_64.tgz.asc
 [PGP -- 9.6 Modules]: download/textadept_9.6.modules.zip.asc
 
-## 9.5 (01 Sep 2017)
+### 9.5 (01 Sep 2017)
 
 Download:
 
@@ -956,7 +956,7 @@ Changes:
 [`ui.switch_buffer()`]: api.html#ui.switch_buffer
 [`io.open_file()`]: api.html#io.open_file
 
-## 9.5 beta (01 Jul 2017)
+### 9.5 beta (01 Jul 2017)
 
 Download:
 
@@ -1009,7 +1009,7 @@ Changes:
 [Lua command entry]: manual.html#Lua.Command.Entry
 [Scintilla]: http://scintilla.org
 
-## 9.4 (01 May 2017)
+### 9.4 (01 May 2017)
 
 Download:
 
@@ -1050,7 +1050,7 @@ Changes:
 [PGP -- 9.4 Modules]: download/textadept_9.4.modules.zip.asc
 [Scintilla]: http://scintilla.org
 
-## 9.3 (01 Mar 2017)
+### 9.3 (01 Mar 2017)
 
 Download:
 
@@ -1100,7 +1100,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [Lua]: http://lua.org
 
-## 9.2 (21 Dec 2016)
+### 9.2 (21 Dec 2016)
 
 Download:
 
@@ -1129,7 +1129,7 @@ Changes:
 [PGP -- 9.2 Linux x86_64]: download/textadept_9.2.x86_64.tgz.asc
 [PGP -- 9.2 Modules]: download/textadept_9.2.modules.zip.asc
 
-## 9.1 (11 Dec 2016)
+### 9.1 (11 Dec 2016)
 
 Download:
 
@@ -1193,7 +1193,7 @@ Changes:
 [`buffer.tab_draw_mode`]: api.html#buffer.tab_draw_mode
 [Scintilla]: http://scintilla.org
 
-## 9.0 (01 Oct 2016)
+### 9.0 (01 Oct 2016)
 
 Please see the [8 to 9 migration guide][] for upgrading from Textadept 8 to
 Textadept 9.
@@ -1236,7 +1236,7 @@ Changes:
 [PGP -- 9.0 Modules]: download/textadept_9.0.modules.zip.asc
 [Scintilla]: http://scintilla.org
 
-## 9.0 beta (01 Sep 2016)
+### 9.0 beta (01 Sep 2016)
 
 Download:
 
@@ -1273,7 +1273,7 @@ Changes:
 [PGP -- 9.0 beta Modules]: download/textadept_9.0_beta.modules.zip.asc
 [`events.TAB_CLICKED`]: api.html#events.TAB_CLICKED
 
-## 9.0 alpha 2 (11 Jul 2016)
+### 9.0 alpha 2 (11 Jul 2016)
 
 Download:
 
@@ -1306,7 +1306,7 @@ Changes:
 [PGP -- 9.0 alpha 2 Modules]: download/textadept_9.0_alpha_2.modules.zip.asc
 [regular expressions]: manual.html#Regular.Expressions
 
-## 9.0 alpha (01 Jul 2016)
+### 9.0 alpha (01 Jul 2016)
 
 Download:
 
@@ -1397,7 +1397,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [Lua]: http://www.lua.org
 
-## 8.7 (01 May 2016)
+### 8.7 (01 May 2016)
 
 Download:
 
@@ -1470,7 +1470,7 @@ Changes:
 [lspawn]: http://foicica.com/hg/lspawn
 [Scintilla]: http://scintilla.org
 
-## 8.6 (01 Mar 2016)
+### 8.6 (01 Mar 2016)
 
 Download:
 
@@ -1529,7 +1529,7 @@ Changes:
 [lspawn]: http://foicica.com/hg/lspawn
 [Scintilla]: http://scintilla.org
 
-## 8.5 (01 Jan 2016)
+### 8.5 (01 Jan 2016)
 
 Download:
 
@@ -1570,7 +1570,7 @@ Changes:
 [compile, run, and build commands]: api.html#textadept.run.build_commands
 [Lua]: http://www.lua.org
 
-## 8.4 (11 Nov 2015)
+### 8.4 (11 Nov 2015)
 
 Download:
 
@@ -1614,7 +1614,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/
 
-## 8.3 (01 Oct 2015)
+### 8.3 (01 Oct 2015)
 
 Download:
 
@@ -1655,7 +1655,7 @@ Changes:
 [`os.spawn()`]: api.html#os.spawn
 [Scintilla]: http://scintilla.org
 
-## 8.2 (01 Sep 2015)
+### 8.2 (01 Sep 2015)
 
 Download:
 
@@ -1699,7 +1699,7 @@ Changes:
 [`events.AUTO_C_COMPLETED`]: api.html#events.AUTO_C_COMPLETED
 [Scintilla]: http://scintilla.org
 
-## 8.1 (01 Jul 2015)
+### 8.1 (01 Jul 2015)
 
 Download:
 
@@ -1750,7 +1750,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [Lua]: http://lua.org
 
-## 8.0 (01 May 2015)
+### 8.0 (01 May 2015)
 
 Please see the [7 to 8 migration guide][] for upgrading from Textadept 7 to
 Textadept 8.
@@ -1784,7 +1784,7 @@ Changes:
 [PGP -- 8.0 Modules]: download/textadept_8.0.modules.zip.asc
 [`textadept.run.RUN_IN_BACKGROUND`]: api.html#textadept.run.run_in_background
 
-## 8.0 beta (21 Apr 2015)
+### 8.0 beta (21 Apr 2015)
 
 Download:
 
@@ -1822,7 +1822,7 @@ Changes:
 [`_FOLDBYINDENTATION`]: api.html#lexer.Fold.by.Indentation
 [Scintilla]: http://scintilla.org
 
-## 8.0 alpha (01 Apr 2015)
+### 8.0 alpha (01 Apr 2015)
 
 Download:
 
@@ -1866,7 +1866,7 @@ Changes:
 [`spawn_proc:kill()`]: api.html#spawn_proc:kill
 [`lexer._FOLDBYINDENTATION`]: api.html#lexer.Fold.by.Indentation
 
-## 7.9 (11 Mar 2015)
+### 7.9 (11 Mar 2015)
 
 Download:
 
@@ -1921,7 +1921,7 @@ Changes:
 [`buffer.indic_hover_style`]: api.html#buffer.indic_hover_style
 [Scintilla]: http://scintilla.org
 
-## 7.8 (01 Feb 2015)
+### 7.8 (01 Feb 2015)
 
 Download:
 
@@ -1951,7 +1951,7 @@ Changes:
 [PGP -- 7.8 Linux x86_64]: download/textadept_7.8.x86_64.tgz.asc
 [PGP -- 7.8 Modules]: download/textadept_7.8.modules.zip.asc
 
-## 7.8 beta 3 (21 Jan 2015)
+### 7.8 beta 3 (21 Jan 2015)
 
 Download:
 
@@ -1993,7 +1993,7 @@ Changes:
 [`events.RESUME`]: api.html#events.RESUME
 [Scintilla]: http://scintilla.org
 
-## 7.8 beta 2 (11 Jan 2015)
+### 7.8 beta 2 (11 Jan 2015)
 
 Download:
 
@@ -2038,7 +2038,7 @@ Changes:
 [`spawn_proc:close()`]: api.html#spawn_proc:close
 [Scintilla]: http://scintilla.org
 
-## 7.8 beta (01 Dec 2014)
+### 7.8 beta (01 Dec 2014)
 
 Download:
 
@@ -2102,7 +2102,7 @@ Changes:
 [Rectangular selections]: manual.html#Rectangular.Selection
 [`_SCINTILLA.next_image_type()`]: api.html#_SCINTILLA.next_image_type
 
-## 7.7 (01 Oct 2014)
+### 7.7 (01 Oct 2014)
 
 Download:
 
@@ -2137,7 +2137,7 @@ Changes:
 [PGP -- 7.7 Modules]: download/textadept_7.7.modules.zip.asc
 [Scintilla]: http://scintilla.org
 
-## 7.6 (01 Sep 2014)
+### 7.6 (01 Sep 2014)
 
 Download:
 
@@ -2175,7 +2175,7 @@ Changes:
 [PGP -- 7.6 Modules]: download/textadept_7.6.modules.zip.asc
 [Scintilla]: http://scintilla.org
 
-## 7.5 (11 Jul 2014)
+### 7.5 (11 Jul 2014)
 
 Download:
 
@@ -2214,7 +2214,7 @@ Changes:
 [`buffer.auto_c_multi`]: api.html#buffer.auto_c_multi
 [Scintilla]: http://scintilla.org
 
-## 7.4 (11 Jun 2014)
+### 7.4 (11 Jun 2014)
 
 Download:
 
@@ -2247,7 +2247,7 @@ Changes:
 [PGP -- 7.4 Linux x86_64]: download/textadept_7.4.x86_64.tgz.asc
 [PGP -- 7.4 Modules]: download/textadept_7.4.modules.zip.asc
 
-## 7.3 (01 Jun 2014)
+### 7.3 (01 Jun 2014)
 
 Download:
 
@@ -2312,7 +2312,7 @@ Changes:
 [`textadept.menu.tab_context_menu`]: api.html#textadept.menu.tab_context_menu
 [Scintilla]: http://scintilla.org
 
-## 7.2 (01 May 2014)
+### 7.2 (01 May 2014)
 
 Download:
 
@@ -2341,7 +2341,7 @@ Changes:
 [PGP -- 7.2 Linux x86_64]: download/textadept_7.2.x86_64.tgz.asc
 [PGP -- 7.2 Modules]: download/textadept_7.2.modules.zip.asc
 
-## 7.2 beta 4 (11 Apr 2014)
+### 7.2 beta 4 (11 Apr 2014)
 
 Download:
 
@@ -2372,7 +2372,7 @@ Changes:
 [PGP -- 7.2 beta 4 Linux x86_64]: download/textadept_7.2_beta_4.x86_64.tgz.asc
 [PGP -- 7.2 beta 4 Modules]: download/textadept_7.2_beta_4.modules.zip.asc
 
-## 7.2 beta 3 (01 Apr 2014)
+### 7.2 beta 3 (01 Apr 2014)
 
 Download:
 
@@ -2424,7 +2424,7 @@ Changes:
 [LuaJIT]: http://luajit.org
 [Scintilla]: http://scintilla.org
 
-## 7.2 beta 2 (01 Mar 2014)
+### 7.2 beta 2 (01 Mar 2014)
 
 Download:
 
@@ -2453,7 +2453,7 @@ Changes:
 [PGP -- 7.2 beta 2 Linux x86_64]: download/textadept_7.2_beta_2.x86_64.tgz.asc
 [PGP -- 7.2 beta 2 Modules]: download/textadept_7.2_beta_2.modules.zip.asc
 
-## 7.2 beta (11 Feb 2014)
+### 7.2 beta (11 Feb 2014)
 
 Download:
 
@@ -2496,7 +2496,7 @@ Changes:
 [`buffer:drop_selection_n()`]: api.html#buffer.drop_selection_n
 [Scintilla]: http://scintilla.org
 
-## 7.2 alpha (01 Jan 2014)
+### 7.2 alpha (01 Jan 2014)
 
 Download:
 
@@ -2561,7 +2561,7 @@ Changes:
 [Lua]: http://lua.org
 [Scintilla]: http://scintilla.org
 
-## 7.1 (11 Nov 2013)
+### 7.1 (11 Nov 2013)
 
 Download:
 
@@ -2602,7 +2602,7 @@ Changes:
 [`ui.tabs`]: api.html#ui.tabs
 [`events.FILE_CHANGED`]: api.html#events.FILE_CHANGED
 
-## 7.0 (01 Nov 2013)
+### 7.0 (01 Nov 2013)
 
 Please see the [6 to 7 migration guide][] for upgrading from Textadept 6 to
 Textadept 7.
@@ -2640,7 +2640,7 @@ Changes:
 [PGP -- 7.0 Linux x86_64]: download/textadept_7.0.x86_64.tgz.asc
 [PGP -- 7.0 Modules]: download/textadept_7.0.modules.zip.asc
 
-## 7.0 beta 5 (21 Oct 2013)
+### 7.0 beta 5 (21 Oct 2013)
 
 Download:
 
@@ -2688,7 +2688,7 @@ Changes:
 [rule]: api.html#lexer.Rules
 [Child lexers]: api.html#lexer.Child.Lexer
 
-## 7.0 beta 4 (01 Oct 2013)
+### 7.0 beta 4 (01 Oct 2013)
 
 Download:
 
@@ -2765,7 +2765,7 @@ Changes:
 [`lexer.delimited_range()`]: api.html#lexer.delimited_range
 [`lexer.nested_pair()`]: api.html#lexer.nested_pair
 
-## 7.0 beta 3 (11 Sep 2013)
+### 7.0 beta 3 (11 Sep 2013)
 
 Download:
 
@@ -2813,7 +2813,7 @@ Changes:
 [`io` module]: api.html#io
 [CDK]: http://invisible-island.net/cdk/cdk.html
 
-## 7.0 beta 2 (11 Aug 2013)
+### 7.0 beta 2 (11 Aug 2013)
 
 Download:
 
@@ -2851,7 +2851,7 @@ Changes:
 [`gui.maximized`]: api.html#ui.maximized
 [Scintilla]: http://scintilla.org
 
-## 7.0 beta (11 Jul 2013)
+### 7.0 beta (11 Jul 2013)
 
 Download:
 
@@ -2887,7 +2887,7 @@ Changes:
 [`_M.textadept.file_types`]: api.html#textadept.file_types
 [directly]: manual.html#File.Types
 
-## 7.0 alpha 2 (01 Jul 2013)
+### 7.0 alpha 2 (01 Jul 2013)
 
 Download:
 
@@ -2939,7 +2939,7 @@ Changes:
 [LuaJIT]: http://luajit.org
 [nightly builds]: README.html#Download
 
-## 7.0 alpha (01 Jun 2013)
+### 7.0 alpha (01 Jun 2013)
 
 Download:
 
@@ -2979,7 +2979,7 @@ Changes:
 [*properties.lua*]: manual.html#Buffer.Settings
 [Scintilla]: http://scintilla.org
 
-## 6.6 (01 Jun 2013)
+### 6.6 (01 Jun 2013)
 
 Download:
 
@@ -3023,7 +3023,7 @@ Changes:
 [PGP -- 6.6 Modules]: download/textadept_6.6.modules.zip.asc
 [Scintilla]: http://scintilla.org
 
-## 6.6 beta (01 May 2013)
+### 6.6 beta (01 May 2013)
 
 Download:
 
@@ -3092,7 +3092,7 @@ Changes:
 [`_M.textadept.editing.select_enclosed()`]: api.html#textadept.editing.select_enclosed
 [`io.encodings`]: api.html#io.encodings
 
-## 6.5 (01 Apr 2013)
+### 6.5 (01 Apr 2013)
 
 Download:
 
@@ -3149,7 +3149,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [Lua]: http://lua.org
 
-## 6.4 (01 Mar 2013)
+### 6.4 (01 Mar 2013)
 
 Download:
 
@@ -3192,7 +3192,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [LuaJIT]: http://luajit.org
 
-## 6.3 (01 Feb 2013)
+### 6.3 (01 Feb 2013)
 
 Download:
 
@@ -3237,7 +3237,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [typeover characters]: api.html#textadept.editing.typeover_chars
 
-## 6.2 (01 Jan 2013)
+### 6.2 (01 Jan 2013)
 
 Download:
 
@@ -3272,7 +3272,7 @@ Changes:
 [PGP -- 6.2 Modules]: download/textadept_6.2.modules.zip.asc
 [`_M.textadept.snapopen.open()`]: api.html#io.quick_open
 
-## 6.1 (11 Dec 2012)
+### 6.1 (11 Dec 2012)
 
 Download:
 
@@ -3317,7 +3317,7 @@ Changes:
 [API documentation]: api.html
 [LuaJIT]: http://luajit.org
 
-## 6.0 (01 Nov 2012)
+### 6.0 (01 Nov 2012)
 
 Please see the [5 to 6 migration guide][] for upgrading from Textadept 5 to
 Textadept 6.
@@ -3378,7 +3378,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [LuaJIT]: http://luajit.org
 
-## 6.0 beta 3 (01 Oct 2012)
+### 6.0 beta 3 (01 Oct 2012)
 
 Download:
 
@@ -3427,7 +3427,7 @@ Changes:
 [PGP -- 6.0 beta 3 Modules]: download/textadept_6.0_beta_3.modules.zip.asc
 [`_M.textadept.keys`]: api.html#textadept.keys
 
-## 6.0 beta 2 (01 Sep 2012)
+### 6.0 beta 2 (01 Sep 2012)
 
 Download:
 
@@ -3485,7 +3485,7 @@ Changes:
 [`buffer:vc_home_display_extend()`]: api.html#buffer.vc_home_display_extend
 [Scintilla]: http://scintilla.org
 
-## 6.0 beta (01 Aug 2012)
+### 6.0 beta (01 Aug 2012)
 
 Download:
 
@@ -3546,7 +3546,7 @@ Changes:
 [`buffer.whitespace_chars`]: api.html#buffer.whitespace_chars
 [Scintilla]: http://scintilla.org
 
-## 5.5 beta (01 Jul 2012)
+### 5.5 beta (01 Jul 2012)
 
 Download:
 
@@ -3594,7 +3594,7 @@ Changes:
 [Lua 5.2.1]: http://www.lua.org/manual/5.2/
 [LuaJIT]: http://luajit.org
 
-## 5.4 (01 Jun 2012)
+### 5.4 (01 Jun 2012)
 
 Download:
 
@@ -3641,7 +3641,7 @@ Changes:
 [`buffer:delete_range()`]: api.html#buffer.delete_range
 [Scintilla]: http://scintilla.org
 
-## 5.3 (01 May 2012)
+### 5.3 (01 May 2012)
 
 Download:
 
@@ -3693,7 +3693,7 @@ Changes:
 [GLib]: http://gtk.org/download/linux.php
 [Scintilla]: http://scintilla.org
 
-## 5.2 (01 Apr 2012)
+### 5.2 (01 Apr 2012)
 
 Download:
 
@@ -3751,7 +3751,7 @@ Changes:
 [GTK]: http://gtk.org
 [Scintilla]: http://scintilla.org
 
-## 5.1 (01 Mar 2012)
+### 5.1 (01 Mar 2012)
 
 Download:
 
@@ -3789,7 +3789,7 @@ Changes:
 [PGP -- 5.1 Modules]: download/textadept_5.1.modules.zip.asc
 [GtkOSXApplication]: https://live.gnome.org/GTK%2B/OSX/Integration#Gtk-mac-integration.2BAC8-GtkOSXApplication
 
-## 5.0 (01 Feb 2012)
+### 5.0 (01 Feb 2012)
 
 Please see the [4 to 5 migration guide][] for upgrading from Textadept 4 to
 Textadept 5.
@@ -3834,7 +3834,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [LuaJIT]: http://luajit.org
 
-## 5.0 beta (11 Jan 2012)
+### 5.0 beta (11 Jan 2012)
 
 Download:
 
@@ -3876,7 +3876,7 @@ Changes:
 [manual]: manual.html
 [`select_word()`]: api.html#textadept.editing.select_word
 
-## 5.0 alpha (21 Dec 2011)
+### 5.0 alpha (21 Dec 2011)
 
 Download:
 
@@ -3915,7 +3915,7 @@ Changes:
 [manual]: manual.html
 [LuaJIT]: http://luajit.org
 
-## 4.3 (01 Dec 2011)
+### 4.3 (01 Dec 2011)
 
 Download:
 
@@ -3960,7 +3960,7 @@ Changes:
 [`lexer.LABEL`]: api.html#lexer.LABEL
 [Scintilla]: http://scintilla.org
 
-## 4.2 (01 Nov 2011)
+### 4.2 (01 Nov 2011)
 
 Download:
 
@@ -3997,7 +3997,7 @@ Changes:
 [PGP -- 4.2 Modules]: download/textadept_4.2.modules.zip.asc
 [Scintilla]: http://scintilla.org
 
-## 4.1 (01 Oct 2011)
+### 4.1 (01 Oct 2011)
 
 Download:
 
@@ -4057,7 +4057,7 @@ Changes:
 [LuaCoco]: http://coco.luajit.org/
 [Scintilla]: http://scintilla.org
 
-## 4.0 (01 Sep 2011)
+### 4.0 (01 Sep 2011)
 
 Please see the [3 to 4 migration guide][] for upgrading from Textadept 3 to
 Textadept 4.
@@ -4100,7 +4100,7 @@ Changes:
 [PGP -- 4.0 Source]: download/textadept_4.0.src.zip.asc
 [PGP -- 4.0 Modules]: download/textadept_4.0.modules.zip.asc
 
-## 4.0 beta 2 (11 Aug 2011)
+### 4.0 beta 2 (11 Aug 2011)
 
 Download:
 
@@ -4140,7 +4140,7 @@ Changes:
 [PGP -- 4.0 beta 2 Modules]: download/textadept_4.0_beta_2.modules.zip.asc
 [recent file list]: api.html#io.recent_files
 
-## 4.0 beta (01 Aug 2011)
+### 4.0 beta (01 Aug 2011)
 
 Download:
 
@@ -4201,7 +4201,7 @@ Changes:
 [menu]: api.html#ui.menu
 [Scintilla]: http://scintilla.org
 
-## 3.9 (01 Jul 2011)
+### 3.9 (01 Jul 2011)
 
 Download:
 
@@ -4264,7 +4264,7 @@ Changes:
 [emit events]: api.html#events.COMPILE_OUTPUT
 [find]: api.html#ui.find
 
-## 3.8 (11 Jun 2011)
+### 3.8 (11 Jun 2011)
 
 Download:
 
@@ -4325,7 +4325,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [easier]: api.html#lexer.Code.Folding
 
-## 3.7 (01 May 2011)
+### 3.7 (01 May 2011)
 
 Download:
 
@@ -4358,7 +4358,7 @@ Changes:
 [PGP -- 3.7 Source]: download/textadept_3.7.src.zip.asc
 [PGP -- 3.7 Modules]: download/textadept_3.7.modules.zip.asc
 
-## 3.7 beta 3 (01 Apr 2011)
+### 3.7 beta 3 (01 Apr 2011)
 
 Download:
 
@@ -4419,7 +4419,7 @@ Changes:
 [`_m.textadept.snippets`]: api.html#textadept.snippets
 [repositories]: http://foicica.com/hg
 
-## 3.7 beta 2 (01 Mar 2011)
+### 3.7 beta 2 (01 Mar 2011)
 
 Download:
 
@@ -4484,7 +4484,7 @@ Changes:
 [HTML]: api.html#_M.html
 [Ruby]: api.html#_M.ruby
 
-## 3.7 beta (01 Feb 2011)
+### 3.7 beta (01 Feb 2011)
 
 Download:
 
@@ -4525,7 +4525,7 @@ Changes:
 [`char_matches`]: api.html#textadept.editing.auto_pairs
 [`braces`]: api.html#textadept.editing.brace_matches
 
-## 3.6 (01 Jan 2011)
+### 3.6 (01 Jan 2011)
 
 Download:
 
@@ -4565,7 +4565,7 @@ Changes:
 [`_m.textadept.filter_through`]: api.html#textadept.editing.filter_through
 [shell commands]: manual.html#Shell.Commands.and.Filtering.Text
 
-## 3.5 (01 Dec 2010)
+### 3.5 (01 Dec 2010)
 
 Download:
 
@@ -4604,7 +4604,7 @@ Changes:
 [manual]: manual.html
 [`file_after_save`]: api.html#events.FILE_AFTER_SAVE
 
-## 3.4 (01 Nov 2010)
+### 3.4 (01 Nov 2010)
 
 Download:
 
@@ -4679,7 +4679,7 @@ Changes:
 [Scintilla]: http://scintilla.org
 [`_G.OSX`]: api.html#OSX
 
-## 3.3 (01 Oct 2010)
+### 3.3 (01 Oct 2010)
 
 Download:
 
@@ -4713,7 +4713,7 @@ Changes:
 [PGP -- 3.3 Source]: download/textadept_3.3.src.zip.asc
 [`_m.textadept.snapopen`]: api.html#io.quick_open
 
-## 3.2 (01 Sep 2010)
+### 3.2 (01 Sep 2010)
 
 Download:
 
@@ -4747,7 +4747,7 @@ Changes:
 [PGP -- 3.2 Source]: download/textadept_3.2.src.zip.asc
 [Scintilla]: http://scintilla.org
 
-## 3.1 (21 Aug 2010)
+### 3.1 (21 Aug 2010)
 
 Download:
 
@@ -4790,7 +4790,7 @@ Changes:
 [PGP -- 3.1 Source]: download/textadept_3.1.src.zip.asc
 [Scintilla]: http://scintilla.org
 
-## 3.0 (01 Jul 2010)
+### 3.0 (01 Jul 2010)
 
 Please see the [2 to 3 migration guide][] for upgrading from Textadept 2 to
 Textadept 3.
@@ -4823,7 +4823,7 @@ Changes:
 [PGP -- 3.0 Linux x86_64]: download/textadept_3.0.x86_64.tgz.asc
 [PGP -- 3.0 Source]: download/textadept_3.0.src.zip.asc
 
-## 3.0 beta (21 Jun 2010)
+### 3.0 beta (21 Jun 2010)
 
 Download:
 
@@ -4887,7 +4887,7 @@ Changes:
 [Abbreviated]: manual.html#Lua.Command.Entry
 [arguments]: api.html#args
 
-## 2.2 (11 May 2010)
+### 2.2 (11 May 2010)
 
 Download:
 
@@ -4919,7 +4919,7 @@ Changes:
 [PGP -- 2.2 Linux x86_64]: download/textadept_2.2.x86_64.tgz.asc
 [PGP -- 2.2 Source]: download/textadept_2.2.src.zip.asc
 
-## 2.2 beta 2 (01 May 2010)
+### 2.2 beta 2 (01 May 2010)
 
 Download:
 
@@ -4965,7 +4965,7 @@ Changes:
 [Compile and run]: api.html#_M.Compile.and.Run
 [Block comment]: api.html#textadept.editing.comment_string
 
-## 2.2 beta (01 Apr 2010)
+### 2.2 beta (01 Apr 2010)
 
 Download:
 
@@ -5011,7 +5011,7 @@ Changes:
 [gtdialog]: http://foicica.com/gtdialog
 [`gui.dialog('filteredlist', ...)]: api.html#ui.dialog
 
-## 2.1 (01 Mar 2010)
+### 2.1 (01 Mar 2010)
 
 Download:
 
@@ -5075,7 +5075,7 @@ Changes:
 [`buffer.auto_c_current_text`]: api.html#buffer.auto_c_current_text
 [Scintilla]: http://scintilla.org
 
-## 2.0 (01 Oct 2009)
+### 2.0 (01 Oct 2009)
 
 Download:
 
@@ -5116,7 +5116,7 @@ Changes:
 [`style_whitespace`]: api.html#lexer.STYLE_WHITESPACE
 [lexers]: api.html#lexer
 
-## 2.0 beta (31 Jul 2009)
+### 2.0 beta (31 Jul 2009)
 
 Download:
 
@@ -5183,7 +5183,7 @@ Changes:
 [Incremental find]: manual.html#Incremental.Find
 [GTK]: http://gtk.org
 
-## 1.6 (01 Apr 2009)
+### 1.6 (01 Apr 2009)
 
 Download:
 
@@ -5218,7 +5218,7 @@ Updates:
 [PGP -- 1.6 Source]: download/textadept_1.6.src.zip.asc
 [`file_before_save`]: api.html#events.FILE_BEFORE_SAVE
 
-## 1.6 beta (01 Mar 2009)
+### 1.6 beta (01 Mar 2009)
 
 Download:
 
@@ -5260,7 +5260,7 @@ Updates:
 [PGP -- 1.6 beta Linux x86_64]: download/textadept_1.6beta.x86_64.tgz.asc
 [PGP -- 1.6 beta Source]: download/textadept_1.6beta.src.zip.asc
 
-## 1.5 (20 Feb 2009)
+### 1.5 (20 Feb 2009)
 
 Download:
 
@@ -5305,7 +5305,7 @@ Updates:
 [PGP -- 1.5 Linux x86_64]: download/textadept_1.5.x86_64.tgz.asc
 [PGP -- 1.5 Source]: download/textadept_1.5.src.zip.asc
 
-## 1.4 (10 Feb 2009)
+### 1.4 (10 Feb 2009)
 
 Download:
 
@@ -5342,7 +5342,7 @@ Updates:
 [PGP -- 1.4 Linux x86_64]: download/textadept_1.4.x86_64.tgz.asc
 [PGP -- 1.4 Source]: download/textadept_1.4.src.zip.asc
 
-## 1.3 (30 Jan 2009)
+### 1.3 (30 Jan 2009)
 
 Download:
 
@@ -5390,7 +5390,7 @@ Updates:
 [PGP -- 1.3 Linux x86_64]: download/textadept_1.3.x86_64.tgz.asc
 [PGP -- 1.3 Source]: download/textadept_1.3.src.zip.asc
 
-## 1.2 (21 Jan 2009)
+### 1.2 (21 Jan 2009)
 
 Download:
 
@@ -5417,7 +5417,7 @@ Updates:
 [PGP -- 1.2 Linux]: download/textadept_1.2.tgz.asc
 [`_m.textadept.run`]: api.html#textadept.run
 
-## 1.1 (11 Jan 2009)
+### 1.1 (11 Jan 2009)
 
 Download:
 
@@ -5448,7 +5448,7 @@ Updates:
 [localization]: api.html#_L
 [bookmarks]: api.html#textadept.bookmarks
 
-## 1.0 (01 Jan 2009)
+### 1.0 (01 Jan 2009)
 
 Download:
 
@@ -5486,7 +5486,7 @@ Updates:
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html
 [LuaFileSystem]: http://keplerproject.github.com/luafilesystem/
 
-## 0.6 (03 Oct 2008)
+### 0.6 (03 Oct 2008)
 
 Download:
 
@@ -5520,7 +5520,7 @@ Updates:
 [manual]: manual.html
 [pattern matching]: manual.html#File.Types
 
-## 0.5 (23 Jul 2008)
+### 0.5 (23 Jul 2008)
 
 Download:
 
@@ -5544,7 +5544,7 @@ Updates:
 [PGP -- 0.5 Linux]: download/ta_beta_r5.tgz.asc
 [PGP -- 0.5 Linux x86_64]: download/ta_beta_r5_x86_64.tgz.asc
 
-## 0.4 (25 Jun 2008)
+### 0.4 (25 Jun 2008)
 
 Download:
 
@@ -5581,7 +5581,7 @@ Updates:
 [bookmark]: api.html#textadept.bookmarks
 [tab-completion]: manual.html#Command.Entry.Tab.Completion
 
-## 0.3 (04 Mar 2008)
+### 0.3 (04 Mar 2008)
 
 Download:
 
@@ -5608,7 +5608,7 @@ Updates:
 [Zenity]: http://live.gnome.org/Zenity
 [lua_dialog]: http://luaforge.net/projects/lua-dialog
 
-## 0.2 (20 Dec 2007)
+### 0.2 (20 Dec 2007)
 
 Download:
 
@@ -5632,7 +5632,7 @@ Updates:
 [PGP -- 0.2 OSX]: download/ta_beta_r2.1_osx.tgz.asc
 [PGP -- 0.2 Linux]: download/ta_beta_r2.tgz.asc
 
-## 0.1 (01 Dec 2007)
+### 0.1 (01 Dec 2007)
 
 Download:
 

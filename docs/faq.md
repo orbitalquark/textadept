@@ -1,4 +1,4 @@
-# FAQ
+## FAQ
 
 **Q:**
 If Textadept is so minimalist, why are the downloads around 10MB in size and the
