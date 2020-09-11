@@ -235,7 +235,7 @@ local function find(text, next, flags, no_wrap, wrapped)
     buffer:target_whole_document()
     while buffer:search_in_target(text) ~= -1 do
       local s, e = buffer.target_start, buffer.target_end
-      if s == e then break end -- prevent loops
+      if s == e then e = e + 1 end -- prevent loops for zero-length results
       if M.highlight_all_matches and e - s > 1 then
         buffer:indicator_fill_range(s, e - s)
       end
