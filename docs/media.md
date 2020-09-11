@@ -1,6 +1,6 @@
-# Media
+## Media
 
-## Book
+### Book
 
 <div style="float: left; margin: 0 1em 0 1em;">
   <a href="book/ta_quickref.png">
@@ -53,7 +53,7 @@ exhaustive API documentation.
 [ES]: http://www.amazon.es/Textadept-Quick-Reference-Mitchell/dp/0991237943/
 [Excerpt]: download/ta_quickref4_excerpt.pdf
 
-## Lua Workshop 2012
+### Lua Workshop 2012
 
 *Textadept - Behind the Scenes* ([slides][])
 
