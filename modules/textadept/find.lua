@@ -403,7 +403,7 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
   end
   local EOF = replace_in_sel and e == buffer.length + 1 -- no indicator at EOF
   local f = not M.regex and buffer.replace_target or buffer.replace_target_re
-  rtext = unescape(rtext)
+  rtext, repl_text = unescape(rtext), rtext -- save for ui.find.focus()
 
   -- Perform the search and replace.
   buffer:begin_undo_action()
