@@ -2402,6 +2402,10 @@ function test_ui_find_replace_text_save_restore()
   assert(ui.find.replace_entry_text ~= 'bar', 'filter entry text not set')
   ui.find.focus{in_files = false} -- simulate activating "Find"
   assert_equal(ui.find.replace_entry_text, 'bar')
+  ui.find.replace_entry_text = 'baz'
+  ui.find.replace_all()
+  ui.find.focus() -- simulate activating "Find"
+  assert_equal(ui.find.replace_entry_text, 'baz')
 end
 
 function test_ui_find_replace_all()
