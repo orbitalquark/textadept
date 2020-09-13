@@ -52,6 +52,7 @@
 #include "lualib.h"
 #include "lauxlib.h"
 #include "Scintilla.h"
+#include "LexLPeg.h"
 #if GTK
 #include "ScintillaWidget.h"
 #elif CURSES
@@ -1413,6 +1414,7 @@ static void new_buffer(sptr_t doc) {
 //#elif CURSES
   // TODO: tabs
 #endif
+  SS(focused_view, SCI_SETILEXER, 0, (sptr_t)CreateLexer(NULL));
   lua_pushdoc(lua, doc), lua_setglobal(lua, "buffer");
   if (!initing) emit(lua, "buffer_new", -1);
 }
@@ -2359,6 +2361,7 @@ static void new_window() {
   mvwin(scintilla_get_window(command_entry), LINES - 2, 0);
   dummy_view = scintilla_new(NULL, NULL);
 #endif
+  SS(command_entry, SCI_SETILEXER, 0, (sptr_t)CreateLexer(NULL));
   register_command_entry_doc();
 }
 

@@ -337,7 +337,6 @@ events.connect(events.BUFFER_NEW, function()
   local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
   local SETLUASTATE = _SCINTILLA.functions.change_lexer_state[1]
   local LOADLEXERLIBRARY = _SCINTILLA.functions.load_lexer_library[1]
-  buffer.lexer_language = 'lpeg'
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLUASTATE, _LUA)

@@ -174,8 +174,8 @@ implementation of curses like [ncurses][](w). Most Linux and BSD systems either
 already have these dependencies installed, or they are readily available from a
 package manager.
 
-Windows XP and Mac OSX 10.6 (Snow Leopard) are the minimum required operating
-systems. Linux and BSD have no defined minimum.
+Windows XP and Mac OSX 10.7 (Lion) are the minimum required operating systems.
+Linux and BSD have no defined minimum.
 
 [GTK]: https://gtk.org
 [ncurses]: https://invisible-island.net/ncurses/ncurses.html
@@ -1583,8 +1583,7 @@ for Windows from Linux should also be easily obtainable.
 
 Linux requirements:
 
-* [GNU C compiler][] (*gcc*) 4.9+ (circa early 2014)
-* [libstdc++][] version 4.9+
+* [GNU C compiler][] (*gcc*) 7.1+ (circa mid-2017)
 * [GNU Make][] (*make*)
 * [GTK][] 2.24+ development libraries for the GUI version
 * [ncurses][](w) development libraries (wide character support) for the terminal
@@ -1598,8 +1597,7 @@ Linux requirements:
 
 BSD requirements:
 
-* [GNU C compiler][] (*gcc*) 4.9+ (circa early 2014)
-* [libstdc++][] version 4.9+
+* [GNU C compiler][] (*gcc*) 7.1+ or [Clang][] 4.0+
 * [GNU Make][] (*gmake*)
 * [pkg-config][]
 * [libiconv][]
@@ -1609,7 +1607,7 @@ BSD requirements:
 
 Windows cross-compiling requirements:
 
-* [MinGW][] or [mingw-w64][] 4.9+ (circa early 2014)
+* [mingw-w64][] 5.0+ with GCC 7.1+
 * _**OR**_
 * [Docker][]
 
@@ -1618,26 +1616,22 @@ the `gcc-mingw-w64` and `g++-mingw-w64` packages.
 
 macOS cross-compiling requirements:
 
-* [OSX cross toolchain][] with GCC 4.9+ (not Clang)
+* [OSX cross toolchain][] with [Clang][] 4.0+
 * _**OR**_
 * [Docker][]
 
-**Note:** make sure you run `./build_binutils.sh` before `./build_gcc.sh`. macOS
-SDK tarballs like *MacOSX10.5.tar.gz* can be found readily on the internet.
-
-**Warning:** building a macOS cross toolchain can easily take 30 minutes or
-more and ultimately consume nearly 3.5GB of disk space.
+**Note:** Textadept's *src/Dockerfile* contains an example of how to build an
+OSX cross toolchain.
 
 [Docker]: https://www.docker.com/
 [image]: https://hub.docker.com/repository/docker/textadept/build
 [GNU C compiler]: https://gcc.gnu.org
-[libstdc++]: https://gcc.gnu.org
 [GNU Make]: https://www.gnu.org/software/make/
+[Clang]: https://clang.llvm.org/
 [pkg-config]: https://www.freedesktop.org/wiki/Software/pkg-config/
 [libiconv]: https://www.gnu.org/software/libiconv/
 [GTK]: https://www.gtk.org/download/linux.php
 [ncurses]: https://invisible-island.net/ncurses/#download_ncurses
-[MinGW]: http://mingw.org
 [mingw-w64]: http://mingw-w64.org/
 [OSX cross toolchain]: https://github.com/tpoechtrager/osxcross
 
@@ -1684,21 +1678,18 @@ you will have to run something like:
     make CFLAGS="-I/usr/local/include" \
       CXXFLAGS="-I/usr/local/include -L/usr/local/lib"
 
-**Windows note:** the MinGW cross compiler's name prefix is assumed to be
-"i686-w64-mingw32-". If this is not the case on your system, you will have to
-specify your system's MinGW name prefix using the `CROSS` variable. For example:
+Also, if you want to compile with Clang, you will have to run something like:
 
-    make CROSS=i586-mingw32-msvc- win32-deps
-    make CROSS=i586-mingw32-msvc- win32
+    make CC=cc CXX=c++
 
 ##### Compiling using Docker
 
 You can use [Docker][] to build Textadept for Windows, macOS, or Linux. The
 [image][] required to do so is about 2.5GB in size. For example:
 
-    localhost$ docker pull textadept/build:v1.0
+    localhost$ docker pull ghcr.io/orbitalquark/textadept-build:v1.0
     localhost$ docker run -t -i -v /path/to/textadept:/ta -w /ta/src \
-      textadept/build:v1.0
+      ghcr.io/orbitalquark/textadept-build:v1.0
     container# make deps
     container# make
     container# exit
@@ -1714,14 +1705,14 @@ the previous table, though the install commands are meaningless.
 error like `/<path>/libstdc++.so.6: version 'GLIBCXX_<version>' not found`, then
 try compiling with the following flags:
 
-    container# make CXXFLAGS="-0s -std=c++11 -static-libstdc++"
+    container# make CXXFLAGS="-0s -std=c++17 -static-libstdc++"
 
 If you still get an error, this time like
 `/<path>/libc.so.6: version 'GLIBC_<version>' not found`, then you will have to
 compile Textadept manually without Docker.
 
 [Docker]: https://www.docker.com/
-[image]: https://hub.docker.com/repository/docker/textadept/build
+[image]: https://github.com/users/orbitalquark/packages/container/textadept-build
 
 --------------------------------------------------------------------------------
 ### Appendix

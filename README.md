@@ -68,9 +68,10 @@ Manual and exhaustive API documentation.
 ## Compile
 
 Textadept is a bit unusual in that building it is only supported on Linux and
-BSD. The application is cross-compiled for Windows and macOS from Linux. While
-it is certainly possible to compile Textadept natively on those platforms, it is
-simply not supported in any official capacity.
+BSD, or within a [Docker][] [image][]. The application is cross-compiled for
+Windows and macOS from Linux. While it is certainly possible to compile
+Textadept natively on those platforms, it is simply not supported in any
+official capacity.
 
 Textadept is built from its *src/* directory and binaries are placed in the
 application's root directory. The general procedure is to have Textadept build
@@ -79,16 +80,13 @@ meaning you do not have to install it; it can run from its current location.
 
 General Requirements:
 
-* [GNU C compiler][] (*gcc*) 4.9+ (circa early 2014)
-* [libstdc++][] version 4.9+
+* [GNU C compiler][] (*gcc*) 7.1+ (circa mid-2017)
 * [GNU Make][] (*make*)
 * [GTK][] 2.24+ development libraries for the GUI version
 * [ncurses][](w) development libraries (wide character support) for the terminal
   version
-* [MinGW][] or [mingw-w64][] 4.9+ (circa early 2014) when cross-compiling for
-  Windows.
-* [OSX cross toolchain][] _with GCC_ 4.9+ (not Clang) when cross-compiling for
-  macOS.
+* [mingw-w64][] 5.0+ with GCC 7.1+ when cross-compiling for Windows.
+* [OSX cross toolchain][] with [Clang][] 4.0+ when cross-compiling for macOS.
 * _**OR**_
 * [Docker][]
 
@@ -109,21 +107,20 @@ Command              |Description
 `make osx`           |Cross-compiles Textadept for macOS
 `make osx-curses`    |Cross-compiles the terminal version for macOS
 
-When building within Docker, the relevant [container image][] is
-`textadept/build:v1.0`.
+When building within Docker, the relevant container [image][] is
+`ghcr.io/orbitalquark/textadept-build:v1.0`.
 
 For more information on compiling Textadept, please see the [manual][].
 
+[Docker]: https://www.docker.com/
+[image]: https://github.com/users/orbitalquark/packages/container/textadept-build
 [GNU C compiler]: https://gcc.gnu.org
-[libstdc++]: https://gcc.gnu.org
 [GNU Make]: https://www.gnu.org/software/make/
 [GTK]: https://www.gtk.org
 [ncurses]: https://invisible-island.net/ncurses/ncurses.html
-[MinGW]: https://mingw.org
 [mingw-w64]: https://mingw-w64.org/
 [OSX cross toolchain]: https://github.com/tpoechtrager/osxcross
-[Docker]: https://www.docker.com/
-[container image]: https://hub.docker.com/repository/docker/textadept/build
+[Clang]: https://clang.llvm.org/
 [manual]: https://foicica.com/textadept/manual.html#Compiling
 
 ## Contribute
@@ -131,11 +128,11 @@ For more information on compiling Textadept, please see the [manual][].
 Your [donation][] or purchase of the [book][] helps fund Textadept's continuous
 development.
 
-Textadept is 100% [open source][]. Feel free to discuss features, report bugs,
-and submit patches either to the [mailing list][], or to me personally
+Textadept is [open source][]. Feel free to discuss features, report bugs, and
+submit patches either to the [mailing list][], or to me personally
 (mitchell.att.foicica.com).
 
 [donation]: https://gum.co/textadept
 [book]: https://foicica.com/textadept/media.html#Book
-[open source]: https://foicica.com/hg/textadept
+[open source]: https://github.com/orbitalquark/textadept
 [mailing list]: http://foicica.com/lists
