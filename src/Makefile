@@ -3,7 +3,7 @@
 CC = gcc
 CFLAGS = -Os
 CXX = g++
-CXXFLAGS = -Os -std=c++11
+CXXFLAGS = -Os -std=c++17
 MAKE = make
 ifeq (win, $(findstring win, $(MAKECMDGOALS)))
   # Cross-compile for Win32.
@@ -38,9 +38,9 @@ else ifeq (osx, $(findstring osx, $(MAKECMDGOALS)))
   # Cross-compile for macOS.
   CC = cc
   CXX = c++
-  CROSS = x86_64-apple-darwin14-
+  CROSS = x86_64-apple-darwin17-
   CFLAGS += -mdynamic-no-pic
-  CXXFLAGS += -mdynamic-no-pic -stdlib=libc++
+  CXXFLAGS += -mdynamic-no-pic -stdlib=libc++ -Wno-register
   LUA_CFLAGS = -DLUA_USE_MACOSX
   LDFLAGS = -liconv
   ifeq (, $(findstring curses, $(MAKECMDGOALS)))
@@ -107,7 +107,7 @@ WGET = wget -O $@
 
 # Scintilla.
 
-sci_flags = -pedantic $(plat_flag) -DSCI_LEXER -DLPEG_LEXER -DNDEBUG \
+sci_flags = -pedantic $(plat_flag) -DSCI_LEXER -DSCI_EMPTYCATALOGUE -DNDEBUG \
             -Iscintilla/include -Iscintilla/src -Iscintilla/lexlib -Wall
 
 sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o Catalogue.o \
@@ -175,8 +175,9 @@ $(sci_objs): %.o: scintilla/src/%.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $< -o $@
 $(sci_lex_objs): %.o: scintilla/lexlib/%.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $< -o $@
-$(sci_lexer_objs): scintilla/lexers/LexLPeg.cxx
-	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) $< -o $@
+$(sci_lexer_objs): LexLPeg.cxx
+	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) -DNO_SCITE -DNO_DLL \
+		$< -o $@
 $(sci_gtk_objs): %.o: scintilla/gtk/%.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $(GTK_CFLAGS) $< -o $@
 scintilla-marshal.o: scintilla/gtk/scintilla-marshal.c
@@ -212,7 +213,7 @@ $(textadept_curses_objs): \
   ta_flags += -Iscintilla/curses -Itermkey -Icdk $(CURSES_CFLAGS)
 loslib.o: LUA_CFLAGS += -DGTK $(GLIB_CFLAGS)
 gtdialog.o: gtdialog_flags += $(GTK_CFLAGS)
-gtdialog-curses.o: gtdialog_flags += -Icdk $(CURSES_CFLAGS)
+gtdialog-curses.o: gtdialog_flags += -I. -Icdk $(CURSES_CFLAGS)
 
 # Executables.
 
@@ -305,7 +306,7 @@ osxapp_libs = libatk-1.0.0.dylib libcairo.2.dylib libexpat.1.dylib \
               libpixman-1.0.dylib libpng16.16.dylib charset.alias \
               gdk-pixbuf-2.0 gtk-2.0
 
-release-all: release win32-release osx-release modules-release
+release-all: release win32-release osx-release #modules-release
 
 ifneq (, $(shell hg summary 2>/dev/null))
   archive = hg archive -X ".hg*" $(1)
@@ -316,12 +317,8 @@ endif
 $(basedir).linux: ; $(call archive,$@)
 release: $(basedir).linux
 	make deps clean docs sign-deps
-	PKG_CONFIG_PATH=/opt/gtk64/lib/pkgconfig make -j4 CFLAGS="$(CFLAGS) -m64" \
-		CXXFLAGS="$(CXXFLAGS) -m64 -static-libstdc++"
-	make -j4 CFLAGS="$(CFLAGS) -m64" \
-		CXXFLAGS="$(CXXFLAGS) -m64 -static-libstdc++" \
-		CURSES_CFLAGS=-I/opt/ncursesw64/include/ncursesw \
-		CURSES_LIBS="-L/opt/ncursesw64/lib -lncursesw" curses
+	make -j4 CXXFLAGS="$(CXXFLAGS) -static-libstdc++"
+	make -j4 CXXFLAGS="$(CXXFLAGS) -static-libstdc++" curses
 	cp -rL ../docs ../lexers ../textadept* $< && cp *.asc $</src
 	tar czf $<.tgz $< && rm -rf $< && gpg --batch -ab $<.tgz
 $(basedir).win32: ; $(call archive,$@)
@@ -338,10 +335,8 @@ win32-release: $(basedir).win32
 $(basedir).macOS: ; mkdir $@ && cp ../scripts/osx/ta $@
 osx-release: $(basedir).macOS
 	make clean osx-deps
-	make CROSS=x86_64-apple-darwin9- CC=gcc CXX=g++ \
-		CXXFLAGS="-Os -std=c++11 -mdynamic-no-pic" -j4 osx
-	make CROSS=x86_64-apple-darwin9- CC=gcc CXX=g++ \
-		CXXFLAGS="-Os -std=c++11 -mdynamic-no-pic" -j4 osx-curses
+	make -j4 osx
+	make -j4 osx-curses
 	make osx-app && mv $(osxapp) $<
 	zip -r $<.zip $< && rm -rf $< && gpg --batch -ab $<.zip
 $(basedir).modules:
@@ -364,23 +359,29 @@ osx-app: ../textadept ../textadept-curses ../scripts/osx/textadept_osx
 
 # External dependencies.
 
-base_deps = scintilla ../lexers lua lualibs gtdialog cdk
+base_deps = scintilla scinterm scintillua lua lualibs gtdialog cdk
 deps: $(base_deps) termkey
 win32-deps: $(base_deps) win32gtk win32curses
 osx-deps: $(base_deps) gtkosx termkey
 
+root_url = https://github.com/orbitalquark
 ifndef NIGHTLY
-  #gtdialog_url = http://foicica.com/gtdialog/download/$@
-  gtdialog_url = http://foicica.com/hg/gtdialog/archive/$@
+  scinterm_url = $(root_url)/scinterm/archive/$@
+  scintillua_url = $(root_url)/scintillua/archive/$@
+  gtdialog_url = $(root_url)/gtdialog/archive/$@
 else
-  gtdialog_url = http://foicica.com/hg/gtdialog/archive/tip.zip
+  scinterm_url = $(root_url)/scinterm/archive/default.zip
+  scintillua_url = $(root_url)/scintillua/archive/default.zip
+  gtdialog_url = $(root_url)/gtdialog/archive/default.zip
 endif
 
-scintilla_zip = 0c74cd397b6b.zip
+scintilla_tgz = scintilla445.tgz
+scinterm_zip = 9e2ffa159299899c9345aea15c17ba1941953871.zip
+scintillua_zip = e8fe6d18063af4193e817c7e2da8e6f8ccce4aec.zip
 lua_tgz = lua-5.3.5.tar.gz
 lpeg_tgz = lpeg-1.0.2.tar.gz
 lfs_zip = v1_7_0_2.zip
-gtdialog_zip = 243e2b811d53.zip
+gtdialog_zip = 4958d06ca50bfe622c821342da38a1c22249e574.zip
 cdk_tgz = cdk-5.0-20150928.tgz
 termkey_tgz = libtermkey-0.20.tar.gz
 win32gtk_zip = win32gtk-2.24.32.zip
@@ -389,16 +390,22 @@ pdcurses_zip = PDCurses-3.9.zip
 gtkosx_tgz = gtkosx-2.24.31.tar.gz
 cloc = cloc-1.60.pl
 
-$(scintilla_zip): ; $(WGET) http://foicica.com/hg/scintilla/archive/$@
-scintilla: scintilla.patch | $(scintilla_zip)
+$(scintilla_tgz): ; $(WGET) https://www.scintilla.org/$@
+scintilla: scintilla.patch | $(scintilla_tgz)
 	if [ -d $@/.hg ]; then \
-		hg --cwd $@ update -C LongTerm3; \
+		hg --cwd $@ update -C; \
 	else \
 		if [ -d $@ ]; then rm -r $@; fi; \
-		mkdir $@ && unzip -d $@ $| && mv $@/*/* $@; \
+		tar xzf $|; \
 	fi
 	for patch in $^; do echo Applying $$patch; patch -d $@ -N -p1 < $$patch; done
-../lexers: | scintilla ; ln -s src/$|/lexlua $@
+$(scinterm_zip): ; $(WGET) $(scinterm_url) -O $@
+scinterm: scintilla/curses
+scintilla/curses: | $(scinterm_zip) ; unzip -d $@ -j $| "*/*.cxx" "*/*.h"
+$(scintillua_zip): ; $(WGET) $(scintillua_url) -O $@
+scintillua: ../lexers LexLPeg.cxx
+../lexers: | $(scintillua_zip) ; unzip -d $@ -j $| "*/lexers/*" -x "*/themes/*"
+LexLPeg.cxx: | $(scintillua_zip) ; unzip -j $| "*/*.cxx" "*/*.h"
 $(lua_tgz): ; $(WGET) http://www.lua.org/ftp/$@
 $(lpeg_tgz): ; $(WGET) http://www.inf.puc-rio.br/~roberto/lpeg/$@
 $(lfs_zip): ; $(WGET) http://github.com/keplerproject/luafilesystem/archive/$@
@@ -412,8 +419,8 @@ lua/src/lib/lpeg: | $(lpeg_tgz)
 lua/src/lib/lfs: | $(lfs_zip)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir -p $@ && unzip -d $(dir $@) -j $| "*/src/*.c" "*/src/*.h"
-$(gtdialog_zip): ; $(WGET) $(gtdialog_url)
-gtdialog: | $(gtdialog_zip) ; unzip -d $@ -j $|
+$(gtdialog_zip): ; $(WGET) $(gtdialog_url) -O $@
+gtdialog: | $(gtdialog_zip) ; unzip -d $@ -j $| "*/*.c" "*/*.h"
 $(cdk_tgz): ; $(WGET) http://invisible-mirror.net/archives/cdk/$@
 cdk: cdk.patch | $(cdk_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
@@ -442,16 +449,16 @@ win32curses: pdcurses.patch | $(win32curses_zip) $(pdcurses_zip)
 $(gtkosx_tgz): ; $(WGET) http://foicica.com/textadept/download/$@
 gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 $(cloc): ; $(WGET) http://prdownloads.sourceforge.net/cloc/$@
-sign-deps: | $(scintilla_tgz) $(lua_tgz) $(lpeg_tgz) $(lfs_zip) \
-             $(gtdialog_zip) $(cdk_tgz) $(termkey_tgz) $(win32gtk_zip) \
-             $(win32curses_zip) $(pdcurses_zip) $(gtkosx_tgz)
+sign-deps: | $(scintilla_tgz) $(scinterm_zip) $(scintillua_zip) $(lua_tgz) \
+             $(lpeg_tgz) $(lfs_zip) $(gtdialog_zip) $(cdk_tgz) $(termkey_tgz) \
+             $(win32gtk_zip) $(win32curses_zip) $(pdcurses_zip) $(gtkosx_tgz)
 	@for file in $|; do gpg --batch -ab $$file; done
 verify-deps: | $(wildcard $(basename $(wildcard *.asc)))
 	@for file in $|; do echo "$$file"; gpg --verify $$file.asc || return 1; done
 
 clean-deps:
-	rm -rf scintilla ../lexers lua gtdialog cdk termkey win32gtk win32curses \
-		gtkosx
+	rm -rf scintilla ../lexers LexLPeg.cxx lua gtdialog cdk termkey win32gtk \
+		win32curses gtkosx
 
 # Count lines of code.
 
