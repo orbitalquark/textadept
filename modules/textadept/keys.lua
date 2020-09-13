@@ -8,7 +8,7 @@ local M = {}
 -- This set of key bindings is pretty standard among other text editors, at
 -- least for basic editing commands and movements.
 --
--- ## Key Bindings
+-- ### Key Bindings
 --
 -- Win32, Linux, BSD|macOS|Terminal|Command
 -- -----------------|-----|--------|--------

@@ -2,17 +2,17 @@
 
 **Contents**
 
-1. [Introduction](#Introduction)
-2. [Installation](#Installation)
-3. [User Interface](#User.Interface)
-4. [Working with Files and Projects](#Working.with.Files.and.Projects)
-5. [Adept Editing](#Adept.Editing)
-6. [Compile, Run, and Build](#Compile..Run..and.Build)
-7. [Modules](#Modules)
-8. [Themes](#Themes)
-9. [Scripting](#Scripting)
-10. [Compiling](#Compiling)
-11. [Appendix](#Appendix)
+1. [Introduction](#introduction)
+2. [Installation](#installation)
+3. [User Interface](#user-interface)
+4. [Working with Files and Projects](#working-with-files-and-projects)
+5. [Adept Editing](#adept-editing)
+6. [Compile, Run, and Build](#compile-run-and-build)
+7. [Modules](#modules)
+8. [Themes](#themes)
+9. [Scripting](#scripting)
+10. [Compiling](#compiling)
+11. [Appendix](#appendix)
 
 --------------------------------------------------------------------------------
 ### Introduction
@@ -92,7 +92,7 @@ programming language that you can understand the simple code samples spread
 throughout the manual's contents. If you would like to quickly get up to speed,
 or need a refresher, the excerpt from [Lua Quick Reference][] may be of help.
 
-[Lua Quick Reference]: https://foicica.com/lua/
+[Lua Quick Reference]: https://foicica.com/lua
 
 #### ~/.textadept
 
@@ -182,15 +182,10 @@ Linux and BSD have no defined minimum.
 
 #### Download
 
-Download Textadept from the project's [download page][] by selecting the
-appropriate package for your platform. You can also download a separate set of
-modules that provide extra features and functionality to the core application.
-
-The download page also has PGP signatures along with a public key should you
-wish to manually verify download integrity. For example, on Linux:
-
-    gpg --import foicica.pgp
-    gpg --verify [package].asc
+Textadept releases can be found [here][1]. Select the appropriate package for
+your platform. A comprehensive list of changes between releases can be found
+[here][2]. You can also download a separate set of modules that provide extra
+features and functionality to the core application.
 
 **Windows Note:** antivirus software may flag the Windows package as containing
 a virus or malware. This is a false-positive, likely due to Textadept's terminal
@@ -208,7 +203,8 @@ Windows |16 MB        |41 MB (23 MB without bundled GTK Runtime)
 **Note:** each platform package contains two executables, one for the GUI
 version of Textadept, and one for the terminal version.
 
-[download page]: https://foicica.com/textadept/download
+[1]: https://github.com/orbitalquark/textadept/releases
+[2]: changelog.html
 
 #### Installation
 
@@ -226,7 +222,7 @@ Linux, and BSD. On macOS, it is recommended to create a *~/.textadept/*
 directory (if it does not already exist) and unpack the modules there (thus
 creating or merging the *modules/* directory).
 
-**Note:** Textadept generally does not auto-load [modules](#Modules), so you
+**Note:** Textadept generally does not auto-load [modules](#modules), so you
 will need to load at least some of those extra modules manually. For example, in
 your *~/.textadept/init.lua*:
 
@@ -325,10 +321,8 @@ English. You can manually set your locale by copying one of the locale
 configuration files from Textadept's *core/locales/* to your *~/.textadept/*
 directory and renaming it *locale.conf*. If you would like to translate
 Textadept into your language, please translate the English messages in
-*core/locale.conf* and [send me][] the modified file for inclusion in a future
-release.
-
-[send me]: README.html#Contact
+*core/locale.conf* and send me (mitchell.att.foicica.com) the modified file for
+inclusion in a future release.
 
 **macOS Tip:** by default, macOS does not allow GUI applications like
 *Textadept.app* to see shell environment variables like `$PATH`. (The terminal
@@ -349,7 +343,7 @@ distribution to distribution. If you get errors like:
     file: No such file or directory`
   * `/<path>/libc.so.6: version 'GLIBC_<version>' not found`
 
-you will need to [compile](#Compiling) Textadept manually for your system, which
+you will need to [compile](#compiling) Textadept manually for your system, which
 is a very straightforward and easy process.
 
 ![Linux](images/linux.png)
@@ -516,7 +510,7 @@ distractions.
 You can summon the find & replace pane via `Ctrl+F` on Windows, Linux and BSD,
 `⌘F` on macOS, and `M-F` or `M-S-F` in the terminal version. It has the usual
 find and replace functionality you would expect, along with "Match Case",
-"Whole Word", "[Regex](#Regex.and.Lua.Pattern.Syntax)", and "In Files" options.
+"Whole Word", "[Regex](#regex-and-lua-pattern-syntax)", and "In Files" options.
 The pane also stores find and replace history, up to 10 entries for each. As you
 search, Textadept can automatically highlight all instances of found text in the
 current buffer by setting [`ui.find.highlight_all_matches`][]. For example, in
@@ -576,7 +570,7 @@ been substituted for a "Filter" entry that contains files and directories to
 include or exclude from the search.
 
 A filter consists of a comma-separated list of
-[Lua patterns](#Regex.and.Lua.Pattern.Syntax) that match filenames and
+[Lua patterns](#regex-and-lua-pattern-syntax) that match filenames and
 directories to include or exclude. Patterns are inclusive by default. Exclusive
 patterns begin with a '!'. If no inclusive patterns are given, any filename is
 initially considered. As a convenience, file extensions can be specified
@@ -769,7 +763,7 @@ setting [`io.quick_open_max`][]. For example, in your *~/.textadept/init.lua*:
     io.quick_open_max = 10000 -- support huge projects
 
 A filter consists of a comma-separated list of
-[Lua patterns](#Regex.and.Lua.Pattern.Syntax) that match filenames and
+[Lua patterns](#regex-and-lua-pattern-syntax) that match filenames and
 directories to include or exclude. Patterns are inclusive by default. Exclusive
 patterns begin with a '!'. If no inclusive patterns are given, any filename is
 initially considered. As a convenience, file extensions can be specified
@@ -1027,7 +1021,7 @@ documentation support for Lua and C, including for its own Lua API.
 
 Textadept's framework for providing symbol autocompletion and documentation
 relies on [autocompleter][] functions and [API files][], which are often
-supplied by [language][] [modules](#Modules). You can use this framework to
+supplied by [language][] [modules](#modules). You can use this framework to
 write your own autocompletion routines.
 
 [`textadept.editing.autocomplete_all_words`]: api.html#textadept.editing.autocomplete_all_words
@@ -1192,7 +1186,7 @@ calls, and more.
 
 A snippet has a trigger word associated with snippet text in the [`snippets`][]
 table. Language-specific snippets are in a subtable assigned to their language's
-lexer name, and are often supplied by [language][] [modules](#Modules). Snippets
+lexer name, and are often supplied by [language][] [modules](#modules). Snippets
 may also be the contents of files in a snippet directory, with file names being
 the trigger word. The [snippets documentation][] describes snippets and their
 contents in more detail.
@@ -1250,7 +1244,7 @@ modifier keys followed by either the key's inserted character or, if no such
 character exists, the string representation of the key according to
 [`keys.KEYSYMS`][]. Language-specific keys are in a subtable assigned to their
 language's lexer name, and are often supplied by [language][]
-[modules](#Modules). Key sequences can also be assigned tables of key bindings
+[modules](#modules). Key sequences can also be assigned tables of key bindings
 to create key chains (e.g. Emacs `C-x` prefix). Key bindings can be grouped into
 modes such that while a mode is active, Textadept ignores all key bindings
 outside that mode until the mode is unset (e.g. Vim-style modal editing). The
@@ -1455,7 +1449,7 @@ theme's styles on a per-language basis. For example, in your
     end)
 
 **Tip:** you can experiment with themes without having to restart Textadept by
-using the [`reset()`][] command in the [Lua Command Entry](#Lua.Command.Entry).
+using the [`reset()`][] command in the [Lua Command Entry](#lua-command-entry).
 Once you make changes to either your *~/.textadept/init.lua* or theme file,
 issuing the `reset` command will reload your changes.
 
@@ -1533,18 +1527,18 @@ If you are looking for a more structured scripting resource,
 and configure Textadept. It groups the editor's rich API into a series of tasks
 in a convenient and easy-to-use manner.
 
-[Lua 5.3]: https://www.lua.org/manual/5.3/
+[Lua 5.3]: https://www.lua.org/manual/5.3
 [`buffer`]: api.html#buffer
 [interactive dialog]: api.html#ui.dialogs
 [event]: api.html#events
 [spawn]: api.html#os.spawn
 [Lua API]: api.html
-[Textadept Quick Reference]: media.html#Book
+[Textadept Quick Reference]: book.html
 
 #### Generate Autocompletion and Documentation Files
 
 You can generate for use with Textadept
-[autocompletion and documentation](#Autocompletion.and.Documentation) files for
+[autocompletion and documentation](#autocompletion-and-documentation) files for
 your Lua modules. Simply run [LuaDoc][] with Textadept's *modules/lua/tadoc.lua*
 doclet. For example:
 
@@ -1563,7 +1557,7 @@ editing Lua code. For example, in your *~/.textadept/init.lua*:
     end)
     table.insert(textadept.editing.api_files.lua, '/path/to/api')
 
-[LuaDoc]: https://keplerproject.github.com/luadoc/
+[LuaDoc]: https://keplerproject.github.com/luadoc
 
 --------------------------------------------------------------------------------
 ### Compiling
@@ -1623,16 +1617,16 @@ macOS cross-compiling requirements:
 **Note:** Textadept's *src/Dockerfile* contains an example of how to build an
 OSX cross toolchain.
 
-[Docker]: https://www.docker.com/
+[Docker]: https://www.docker.com
 [image]: https://hub.docker.com/repository/docker/textadept/build
 [GNU C compiler]: https://gcc.gnu.org
-[GNU Make]: https://www.gnu.org/software/make/
-[Clang]: https://clang.llvm.org/
-[pkg-config]: https://www.freedesktop.org/wiki/Software/pkg-config/
-[libiconv]: https://www.gnu.org/software/libiconv/
+[GNU Make]: https://www.gnu.org/software/make
+[Clang]: https://clang.llvm.org
+[pkg-config]: https://www.freedesktop.org/wiki/Software/pkg-config
+[libiconv]: https://www.gnu.org/software/libiconv
 [GTK]: https://www.gtk.org/download/linux.php
 [ncurses]: https://invisible-island.net/ncurses/#download_ncurses
-[mingw-w64]: http://mingw-w64.org/
+[mingw-w64]: http://mingw-w64.org
 [OSX cross toolchain]: https://github.com/tpoechtrager/osxcross
 
 #### Compiling
@@ -1649,7 +1643,6 @@ Command              |Description
 ---------------------|-----------
 `make deps`          |Downloads and builds all of Textadept's core dependencies
 `make deps NIGHTLY=1`|Optionally downloads and builds bleeding-edge dependencies
-`make verify-deps`   |Optionally verifies integrity of downloads (for security)
 `make`               |Builds Textadept, provided all dependencies are in place
 `make DEBUG=1`       |Optionally builds Textadept with debug symbols
 `make install`       |Optionally installs Textadept (to */usr/local* by default)
@@ -1711,7 +1704,7 @@ If you still get an error, this time like
 `/<path>/libc.so.6: version 'GLIBC_<version>' not found`, then you will have to
 compile Textadept manually without Docker.
 
-[Docker]: https://www.docker.com/
+[Docker]: https://www.docker.com
 [image]: https://github.com/users/orbitalquark/packages/container/textadept-build
 
 --------------------------------------------------------------------------------
@@ -1829,20 +1822,24 @@ Textadept is composed of the following technologies:
 * [cdk][]: terminal UI widget toolkit
 * [libtermkey][]: terminal keyboard entry handling library
 * [Scintilla][]: core text editing component
+* [Scinterm][]: curses (terminal) platform for Scintilla
+* [Scintillua][]: syntax highlighting for Scintilla using Lua lexers
 * [Lua][]: core scripting language
 * [LPeg][]: Lua pattern matching library for syntax highlighting
 * [LuaFileSystem][]: Lua library for accessing the host filesystem
 
 [GTK]: https://www.gtk.org
 [Scintilla]: https://scintilla.org
+[Scinterm]: https://orbitalquark.github.io/scinterm
+[Scintillua]: https://orbitalquark.github.io/scintillua
 [Lua]: https://www.lua.org
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html
-[LuaFileSystem]: https://keplerproject.github.io/luafilesystem/
-[gtDialog]: https://foicica.com/gtdialog/
-[ncurses]: https://invisible-island.net/ncurses/
-[pdcurses]: http://pdcurses.sourceforge.net/
-[cdk]: https://invisible-island.net/cdk/
-[libtermkey]: http://www.leonerd.org.uk/code/libtermkey/
+[LuaFileSystem]: https://keplerproject.github.io/luafilesystem
+[gtDialog]: https://orbitalquark.github.io/gtdialog
+[ncurses]: https://invisible-island.net/ncurses
+[pdcurses]: http://pdcurses.sourceforge.net
+[cdk]: https://invisible-island.net/cdk
+[libtermkey]: http://www.leonerd.org.uk/code/libtermkey
 
 #### Migrating from Textadept 10 to 11
 
@@ -1911,7 +1908,7 @@ find\_in\_files\_timeout   |Removed |N/A
 **view**                   |        |
 N/A                        |Added   |_buffer functions and fields_<sup>d</sup>
 
-<sup>a</sup>Returns prefix and function, instead of just function.
+<sup>a</sup>Returns prefix and function, instead of just function.<br/>
 <sup>b</sup>Use `for name in buffer:private_lexer_call(_SCINTILLA.functions.property_names[1]):gmatch('[^\n]+') do ... end`.<br/>
 <sup>c</sup>Use `textadept.menu.menubar[_L['Search']][_L['Find Incremental']][2]`.<br/>
 <sup>d</sup>Most buffer functions and fields are available in views now. See

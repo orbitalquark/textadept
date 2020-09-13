@@ -96,7 +96,7 @@ end)
 --   Whether or not Textadept is running in a terminal.
 --   Curses feature incompatibilities are listed in the [Appendix][].
 --
---   [Appendix]: manual.html#Curses.Compatibility
+--   [Appendix]: manual.html#curses-compatibility
 module('_G')]]
 
 --[[ The tables below were defined in C.

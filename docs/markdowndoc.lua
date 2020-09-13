@@ -5,7 +5,7 @@
 local M = {}
 
 local TOC = '1. [%s](%s)\n'
-local MODULE = '<a id="%s"></a>\n## The `%s` Module\n\n'
+local MODULE = '<a id="%s"></a>\n## The `%s` Module\n'
 local FIELD = '<a id="%s"></a>\n#### `%s` %s\n\n'
 local FUNCTION = '<a id="%s"></a>\n#### `%s`(*%s*)\n\n'
 local FUNCTION_NO_PARAMS = '<a id="%s"></a>\n#### `%s`()\n\n'
@@ -28,13 +28,6 @@ local titles = {
 -- @param name The name of the module the description belongs to. Used for
 --   headers in module descriptions.
 local function write_description(f, description, name)
-  if name then
-    -- Add anchors for module description headers.
-    description = description:gsub('\n(#+%s+([^\n]+))', function(header, text)
-      return string.format(
-        '\n\n<a id="%s.%s"></a>\n\n%s', name, text:gsub('[%s%p]', '.'), header)
-    end)
-  end
   -- Substitute custom [`code`]() link convention with [`code`](#code) links.
   local self_link = '(%[`([^`(]+)%(?%)?`%])%(%)'
   description = description:gsub(self_link, function(link, id)
@@ -104,7 +97,7 @@ function M.start(doc)
 
     -- Write the header and description.
     f:write(string.format(MODULE, name, name))
-    f:write('- - -\n\n')
+    f:write('---\n\n')
     write_description(f, module.description, name)
 
     -- Write fields.
@@ -170,7 +163,7 @@ function M.start(doc)
         write_list(f, SEE, tbl.see, name)
       end
     end
-    f:write('- - -\n\n')
+    f:write('---\n')
   end
 end
 

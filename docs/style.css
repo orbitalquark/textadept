@@ -25,10 +25,10 @@ del { color: #994d4d; }
 h1 { margin: 0 0 1em 0; }
 h2, h3, h4, h5, h6 { margin: 1em 0 1em 0; }
 h1 { font-size: 1.3em; }
-h2 { font-size: 1.1em; }
-h3 { font-size: 1em; }
-h4 { font-size: 0.9em; }
-h5 { font-size: 0.8em; }
+h2 { font-size: 1.2em; }
+h3 { font-size: 1.1em; }
+h4 { font-size: 1.0em; }
+h5 { font-size: 0.9em; }
 
 hr {
   border: 1px solid #d9d9d9;

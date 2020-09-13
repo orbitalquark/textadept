@@ -6,7 +6,7 @@ local M = {}
 ---
 -- Manages key bindings in Textadept.
 --
--- ## Overview
+-- ### Overview
 --
 -- Define key bindings in the global `keys` table in key-value pairs. Each pair
 -- consists of either a string key sequence and its associated command, a string
@@ -24,7 +24,7 @@ local M = {}
 -- autocompletion, but fall back to word autocompletion if the first command
 -- fails.)
 --
--- ## Key Sequences
+-- ### Key Sequences
 --
 -- Key sequences are strings built from an ordered combination of modifier keys
 -- and the key's inserted character. Modifier keys are "Control", "Shift", and
@@ -53,7 +53,7 @@ local M = {}
 -- *core/keys.lua* causes Textadept to print key sequences to standard out
 -- (stdout) for inspection.
 --
--- ## Commands
+-- ### Commands
 --
 -- A command bound to a key sequence is simply a Lua function. For example:
 --
@@ -63,7 +63,7 @@ local M = {}
 --
 -- Textadept handles [`buffer`]() references properly in static contexts.
 --
--- ## Modes
+-- ### Modes
 --
 -- Modes are groups of key bindings such that when a key [mode](#keys.mode) is
 -- active, Textadept ignores all key bindings defined outside the mode until the
@@ -89,7 +89,7 @@ local M = {}
 -- **Warning**: When creating a mode, be sure to define a way to exit the mode,
 -- otherwise you will probably have to restart Textadept.
 --
--- ## Key Chains
+-- ### Key Chains
 --
 -- Key chains are a powerful concept. They allow you to assign multiple key
 -- bindings to one key sequence. By default, the `Esc` key cancels a key chain,

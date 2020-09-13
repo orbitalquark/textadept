@@ -37,23 +37,24 @@ implementation of curses like [ncurses][](w).
 
 ## Download
 
-Download Textadept from the project's [download page][] by selecting the
-appropriate package for your platform. You can also download a separate set of
-modules that provide extra features and functionality to the core application.
+Textadept releases can be found [here][1]. Select the appropriate package for
+your platform. A comprehensive list of changes between releases can be found
+[here][2]. You can also download a separate set of modules that provide extra
+features and functionality to the core application.
 
-[download page]: https://foicica.com/textadept/download
+[1]: https://github.com/orbitalquark/textadept/releases
+[2]: https://orbitalquark.github.io/textadept/changelog.html
 
 ## Installation and Usage
 
-Textadept comes with a comprehensive user manual in its *docs/* directory. This
-manual is also available [online][1]. It covers all of Textadept's main
-features, including installation, usage, configuration, theming, scripting, and
-compilation.
+Textadept comes with a comprehensive [user manual][] in its *docs/* directory.
+It covers all of Textadept's main features, including installation, usage,
+configuration, theming, scripting, and compilation.
 
 Since nearly every aspect of Textadept can be scripted using Lua, the editor's
-API is heavily documented. This documentation is also located in *docs/* and
-available [online][2]. It serves as the ultimate resource when it comes to
-scripting the application.
+API is heavily documented. This [API documentation][] is also located in
+*docs/*. It serves as the ultimate resource when it comes to scripting the
+application.
 
 A more structured scripting resource is [Textadept Quick Reference][], which
 contains a wealth of knowledge on how to script and configure Textadept. It
@@ -61,9 +62,9 @@ groups the editor's rich API into a series of tasks in a convenient and
 easy-to-use manner. This book serves as the perfect complement to Textadept's
 Manual and exhaustive API documentation.
 
-[1]: https://foicica.com/textadept/manual.html
-[2]: https://foicica.com/textadept/api.html
-[Textadept Quick Reference]: https://foicica.com/textadept/media.html#Book
+[user manual]: https://orbitalquark.github.io/textadept/manual.html
+[API documentation]: https://orbitalquark.github.io/textadept/api.html
+[Textadept Quick Reference]: https://orbitalquark.github.io/textadept/book.html
 
 ## Compile
 
@@ -121,7 +122,7 @@ For more information on compiling Textadept, please see the [manual][].
 [mingw-w64]: https://mingw-w64.org/
 [OSX cross toolchain]: https://github.com/tpoechtrager/osxcross
 [Clang]: https://clang.llvm.org/
-[manual]: https://foicica.com/textadept/manual.html#Compiling
+[manual]: https://orbitalquark.github.io/textadept/manual.html#compiling
 
 ## Contribute
 
@@ -133,6 +134,6 @@ submit patches either to the [mailing list][], or to me personally
 (mitchell.att.foicica.com).
 
 [donation]: https://gum.co/textadept
-[book]: https://foicica.com/textadept/media.html#Book
+[book]: https://orbitalquark.github.io/textadept/book.html
 [open source]: https://github.com/orbitalquark/textadept
 [mailing list]: http://foicica.com/lists
