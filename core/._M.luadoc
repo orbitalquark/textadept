@@ -1,4 +1,4 @@
--- Copyright 2007-2018 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the
 -- global _M table.
 
@@ -25,7 +25,7 @@
 --
 -- Examples of these features are described in the sections below.
 --
--- ## Block Comment
+-- ### Block Comment
 --
 -- Many languages have different syntaxes for single line comments and
 -- multi-line comments in source code. Textadept's block comment feature only
@@ -36,7 +36,7 @@
 --
 --     textadept.editing.comment_string.ansi_c = '//' -- change from /* ... */
 --
--- ## Compile and Run
+-- ### Compile and Run
 --
 -- Textadept knows most of the commands that compile and/or run code in source
 -- files. However, it does not know all of them, and the ones that it does know
@@ -57,7 +57,7 @@
 --     if not patterns.lua then patterns.lua = {} end
 --     patterns.lua[#patterns.lua + 1] = '^luac?: (.-):(%d+): (.+)$'
 --
--- ## Buffer Properties
+-- ### Buffer Properties
 --
 -- By default, Textadept uses 2 spaces for indentation. Some languages have
 -- different indentation guidelines, however. As described in the manual, use
@@ -71,7 +71,7 @@
 --       view.view_ws = view.WS_VISIBLEALWAYS
 --     end
 --
--- ## Autocompletion and Documentation
+-- ### Autocompletion and Documentation
 --
 -- Textadept has the capability to autocomplete symbols for programming
 -- languages and display API documentation. In order for these to work for a
@@ -80,7 +80,7 @@
 -- included language modules have examples of autocompleters and API
 -- documentation, as well as most of its officially supported language modules.
 --
--- ## Snippets
+-- ### Snippets
 --
 -- [Snippets](#textadept.snippets) for common language constructs are useful.
 -- Some snippets for common Lua control structures look like this:
@@ -92,7 +92,7 @@
 --       forp = "for %1(k), %2(v) in pairs(%3(table)) do\n\t%0\nend",
 --     }
 --
--- ## Commands
+-- ### Commands
 --
 -- Additional editing features for the language can be useful. For example, a
 -- C++ module might have a feature to add a ';' to the end of the current line
@@ -118,7 +118,7 @@
 --       ...
 --     }
 --
--- ## Menus
+-- ### Menus
 --
 -- It may be useful to add language-specific menu options to the top-level menu
 -- and/or right-click context menu in order to access module features without

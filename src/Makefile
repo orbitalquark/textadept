@@ -268,19 +268,22 @@ clean: ; rm -f *.o ../textadept*
 
 # Documentation.
 
-lua_src = ../core ../modules ../lexers/lexer.lua
+ifndef ALL_MODULES
+  modules = $(addprefix ../modules/,ansi_c lua textadept)
+else
+  modules = ../modules
+endif
 ta_home = $(shell dirname `pwd`)
 
-docs: manual luadoc
+docs: luadoc manual
 manual: ../docs/api.md $(wildcard ../docs/*.md) | ../docs/_layouts/default.html
 	for file in $(basename $^); do \
 		cat $| | ../scripts/fill_layout.lua $$file.md > $$file.html; \
 	done
 	sed -i "s/Textadept \(Manual\|API\)/Textadept $(subst _, ,$(version)) \1/;" \
 		../docs/*.html
-docs/api.md: $(lua_src)
-	cd ../docs && luadoc --doclet markdowndoc $^ > $(notdir $@)
-luadoc: $(lua_src) | ../modules/lua/lua.luadoc
+luadoc: ../core $(modules) ../lexers/lexer.lua | ../modules/lua/lua.luadoc
+	cd ../docs && luadoc --doclet markdowndoc $^ > api.md
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $^ --ta-home=$(ta_home)
 	cd ../modules/lua && mv tags ta_tags && mv api ta_api
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $| --ta-home=$(ta_home)
@@ -316,11 +319,11 @@ endif
 
 $(basedir).linux: ; $(call archive,$@)
 release: $(basedir).linux
-	make deps clean docs sign-deps
+	make deps clean docs
 	make -j4 CXXFLAGS="$(CXXFLAGS) -static-libstdc++"
 	make -j4 CXXFLAGS="$(CXXFLAGS) -static-libstdc++" curses
-	cp -rL ../docs ../lexers ../textadept* $< && cp *.asc $</src
-	tar czf $<.tgz $< && rm -rf $< && gpg --batch -ab $<.tgz
+	cp -rL ../docs ../lexers ../textadept* $<
+	tar czf $<.tgz $< && rm -rf $<
 $(basedir).win32: ; $(call archive,$@)
 win32-release: $(basedir).win32
 	make -j4 clean win32-deps
@@ -330,27 +333,26 @@ win32-release: $(basedir).win32
 	make -j4 win32
 	make -j4 win32-curses
 	cp -rL ../docs ../lexers ../textadept* $<
-	cp *.asc $</src
-	zip -r $<.zip $< && rm -rf $< && gpg --batch -ab $<.zip
+	zip -r $<.zip $< && rm -rf $<
 $(basedir).macOS: ; mkdir $@ && cp ../scripts/osx/ta $@
 osx-release: $(basedir).macOS
 	make clean osx-deps
 	make -j4 osx
 	make -j4 osx-curses
 	make osx-app && mv $(osxapp) $<
-	zip -r $<.zip $< && rm -rf $< && gpg --batch -ab $<.zip
+	zip -r $<.zip $< && rm -rf $<
 $(basedir).modules:
 	mkdir -p $@/modules
 	hg archive -R /home/mitchell/code/textadept_modules/ -r tip $@/modules
 modules-release: $(basedir).modules
-	zip -r $<.zip $< && rm -r $< && gpg --batch -ab $<.zip
+	zip -r $<.zip $< && rm -r $<
 
 osx-app: ../textadept ../textadept-curses ../scripts/osx/textadept_osx
 	mkdir -p $(osxapp_bin) $(osxapp_res)
 	cp Info.plist $(osxapp_bin)/../
 	cp $^ $(osxapp_bin)/
 	$(call archive,$(osxapp_res))
-	cp -rL ../docs ../lexers $(osxapp_res) && cp *.asc $(osxapp_res)/src
+	cp -rL ../docs ../lexers $(osxapp_res)
 	mv $(osxapp_res)/core/images/textadept.icns $(osxapp_res)/
 	cp -r gtkosx/etc gtkosx/share $(osxapp_res)/ && mkdir $(osxapp_res)/lib/
 	cp -r $(addprefix gtkosx/lib/, $(osxapp_libs)) $(osxapp_res)/lib/
@@ -449,12 +451,6 @@ win32curses: pdcurses.patch | $(win32curses_zip) $(pdcurses_zip)
 $(gtkosx_tgz): ; $(WGET) http://foicica.com/textadept/download/$@
 gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 $(cloc): ; $(WGET) http://prdownloads.sourceforge.net/cloc/$@
-sign-deps: | $(scintilla_tgz) $(scinterm_zip) $(scintillua_zip) $(lua_tgz) \
-             $(lpeg_tgz) $(lfs_zip) $(gtdialog_zip) $(cdk_tgz) $(termkey_tgz) \
-             $(win32gtk_zip) $(win32curses_zip) $(pdcurses_zip) $(gtkosx_tgz)
-	@for file in $|; do gpg --batch -ab $$file; done
-verify-deps: | $(wildcard $(basename $(wildcard *.asc)))
-	@for file in $|; do echo "$$file"; gpg --verify $$file.asc || return 1; done
 
 clean-deps:
 	rm -rf scintilla ../lexers LexLPeg.cxx lua gtdialog cdk termkey win32gtk \

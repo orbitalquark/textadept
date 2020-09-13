@@ -6,7 +6,7 @@ local M = {}
 ---
 -- Snippets for Textadept.
 --
--- ## Overview
+-- ### Overview
 --
 -- Define snippets in the global `snippets` table in key-value pairs. Each pair
 -- consists of either a string trigger word and its snippet text, or a string
@@ -17,9 +17,9 @@ local M = {}
 -- snippets with the same trigger word, Textadept inserts the one specific to
 -- the current lexer, not the global one.
 --
--- ## Special Sequences
+-- ### Special Sequences
 --
--- ### `%`*n*`(`*text*`)`
+-- #### `%`*n*`(`*text*`)`
 --
 -- Represents a placeholder, where *n* is an integer and *text* is default
 -- placeholder text. Textadept moves the caret to placeholders in numeric order
@@ -29,7 +29,7 @@ local M = {}
 --     snippets['foo'] = 'foobar%1(baz)'
 --     snippets['bar'] = 'start\n\t%0\nend'
 --
--- ### `%`*n*`{`*list*`}`
+-- #### `%`*n*`{`*list*`}`
 --
 -- Also represents a placeholder (where *n* is an integer), but presents a list
 -- of choices for placeholder text constructed from comma-separated *list*.
@@ -37,7 +37,7 @@ local M = {}
 --
 --     snippets['op'] = 'operator(%1(1), %2(1), "%3{add,sub,mul,div}")'
 --
--- ### `%`*n*
+-- #### `%`*n*
 --
 -- Represents a mirror, where *n* is an integer. Mirrors with the same *n* as a
 -- placeholder mirror any user input in the placeholder. If no placeholder
@@ -47,7 +47,7 @@ local M = {}
 --     snippets['foo'] = '%1(mirror), %1, on the wall'
 --     snippets['q'] = '"%1"'
 --
--- ### `%`*n*`<`*Lua code*`>`<br/>`%`*n*`[`*Shell code*`]`
+-- #### `%`*n*`<`*Lua code*`>`<br/>`%`*n*`[`*Shell code*`]`
 --
 -- Represents a transform, where *n* is an integer that has an associated
 -- placeholder, *Lua code* is arbitrary Lua code, and *Shell code* is arbitrary
@@ -77,12 +77,12 @@ local M = {}
 --
 --     snippets['env'] = '$%1(HOME) = %1[echo $%]'
 --
--- ### `%%`
+-- #### `%%`
 --
 -- Stands for a single '%' since '%' by itself has a special meaning in
 -- snippets.
 --
--- ### `%(`<br/>`%{`
+-- #### `%(`<br/>`%{`
 --
 -- Stands for a single '(' or '{', respectively, after a `%`*n* mirror.
 -- Otherwise, the mirror would be interpreted as a placeholder or transform.
@@ -90,12 +90,12 @@ local M = {}
 -- a `%`*n* mirror due to `%<...>` and `%[...]` sequences being interpreted as
 -- code to execute.
 --
--- ### `\t`
+-- #### `\t`
 --
 -- A single unit of indentation based on the buffer's indentation settings
 -- ([`buffer.use_tabs`]() and [`buffer.tab_width`]()).
 --
--- ### `\n`
+-- #### `\n`
 --
 -- A single set of line ending delimiters based on the buffer's end of line mode
 -- ([`buffer.eol_mode`]()).

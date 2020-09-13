@@ -38,7 +38,7 @@ recently, some distributions have started using "libncurses6" while many
 distributions are still on "libncurses5". The only way to avoid problems that
 stem from these cases is to compile Textadept for the target system.
 
-[compile]: manual.html#Compiling
+[compile]: manual.html#compiling
 
 - - -
 
@@ -69,7 +69,7 @@ When I open a file in a non-English language, I see a lot of strange characters.
 Textadept was not able to detect the file's encoding correctly. You'll need to
 [help it][].
 
-[help it]: manual.html#Encoding
+[help it]: manual.html#encoding
 
 - - -
 
@@ -129,7 +129,7 @@ Please see the [terminal version compatibility][] section of the appendix. If
 the feature in question is not listed there, it may be a bug. Please contact
 me (mitchell.att.foicica.com) with any bug reports.
 
-[terminal version compatibility]: manual.html#Terminal.Version.Compatibility
+[terminal version compatibility]: manual.html#terminal-version-compatibility
 
 - - -
 
