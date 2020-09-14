@@ -408,9 +408,9 @@ $(scintillua_zip): ; $(WGET) $(scintillua_url) -O $@
 scintillua: ../lexers LexLPeg.cxx
 ../lexers: | $(scintillua_zip) ; unzip -d $@ -j $| "*/lexers/*" -x "*/themes/*"
 LexLPeg.cxx: | $(scintillua_zip) ; unzip -j $| "*/*.cxx" "*/*.h"
-$(lua_tgz): ; $(WGET) http://www.lua.org/ftp/$@
+$(lua_tgz): ; $(WGET) https://www.lua.org/ftp/$@
 $(lpeg_tgz): ; $(WGET) http://www.inf.puc-rio.br/~roberto/lpeg/$@
-$(lfs_zip): ; $(WGET) http://github.com/keplerproject/luafilesystem/archive/$@
+$(lfs_zip): ; $(WGET) https://github.com/keplerproject/luafilesystem/archive/$@
 lua: lua.patch | $(lua_tgz)
 	if [ -d $@ ]; then rm -rf $@; fi
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
@@ -423,7 +423,7 @@ lua/src/lib/lfs: | $(lfs_zip)
 	mkdir -p $@ && unzip -d $(dir $@) -j $| "*/src/*.c" "*/src/*.h"
 $(gtdialog_zip): ; $(WGET) $(gtdialog_url) -O $@
 gtdialog: | $(gtdialog_zip) ; unzip -d $@ -j $| "*/*.c" "*/*.h"
-$(cdk_tgz): ; $(WGET) http://invisible-mirror.net/archives/cdk/$@
+$(cdk_tgz): ; $(WGET) https://invisible-mirror.net/archives/cdk/$@
 cdk: cdk.patch | $(cdk_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
@@ -436,9 +436,9 @@ termkey: termkey.patch | $(termkey_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@ && chmod +w $@/termkey.h
 	patch -d $@ -N -p1 < $<
-$(win32gtk_zip): ; $(WGET) http://foicica.com/textadept/download/$@
+$(win32gtk_zip): ; $(WGET) https://foicica.com/textadept/download/$@
 win32gtk: | $(win32gtk_zip) ; unzip $|
-$(win32curses_zip): ; $(WGET) http://foicica.com/textadept/download/$@
+$(win32curses_zip): ; $(WGET) https://foicica.com/textadept/download/$@
 $(pdcurses_zip): ; $(WGET) http://prdownloads.sourceforge.net/pdcurses/$@
 win32curses: pdcurses.patch | $(win32curses_zip) $(pdcurses_zip)
 	unzip $(win32curses_zip)
@@ -448,7 +448,7 @@ win32curses: pdcurses.patch | $(win32curses_zip) $(pdcurses_zip)
 	cd $@/src/wincon && $(MAKE) CC="$(CROSS)$(CC) $(CFLAGS)" LIBEXE=$(CROSS)ar \
 		LINK="$(CROSS)$(CC) $(CFLAGS)" WIDE=Y UTF8=Y libs
 	cp $@/src/wincon/pdcurses.a $@/lib/
-$(gtkosx_tgz): ; $(WGET) http://foicica.com/textadept/download/$@
+$(gtkosx_tgz): ; $(WGET) https://foicica.com/textadept/download/$@
 gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 $(cloc): ; $(WGET) http://prdownloads.sourceforge.net/cloc/$@
 

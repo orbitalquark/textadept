@@ -51,7 +51,7 @@ Whether or not Textadept is running on BSD.
 Whether or not Textadept is running in a terminal.
   Curses feature incompatibilities are listed in the [Appendix][].
 
-  [Appendix]: manual.html#curses-compatibility
+  [Appendix]: manual.html#terminal-version-compatibility
 
 <a id="LINUX"></a>
 #### `LINUX` (bool)
@@ -632,8 +632,8 @@ to work with the global one.
 Many of these functions and fields are derived from buffer-specific
 functionality of the Scintilla editing component, and additional information
 can be found on the Scintilla website:
-[http://scintilla.org/ScintillaDoc.html](
-http://scintilla.org/ScintillaDoc.html).
+[https://scintilla.org/ScintillaDoc.html](
+https://scintilla.org/ScintillaDoc.html).
 Note that with regard to Scintilla-specific functionality, this API is a
 _suggestion_, not a hard requirement. All of that functionality also exists
 in [`view`](#view), even if undocumented.
@@ -4492,7 +4492,7 @@ trying to open a file whose encoding is not recognized. Valid encodings are
   * Unicode: UTF-8, UCS-2, UCS-2BE, UCS-2LE, UCS-4, UCS-4BE, UCS-4LE, UTF-16,
     UTF-16BE, UTF-16LE, UTF-32, UTF-32BE, UTF-32LE, UTF-7, C99, JAVA.
 
-[GNU iconv's encodings]: http://www.gnu.org/software/libiconv/
+[GNU iconv's encodings]: https://www.gnu.org/software/libiconv/
 
 Usage:
 
@@ -6420,7 +6420,7 @@ Valid encodings are [GNU libiconv's encodings][] and include:
   * Unicode: UTF-8, UCS-2, UCS-2BE, UCS-2LE, UCS-4, UCS-4BE, UCS-4LE, UTF-16,
     UTF-16BE, UTF-16LE, UTF-32, UTF-32BE, UTF-32LE, UTF-7, C99, JAVA.
 
-[GNU libiconv's encodings]: http://www.gnu.org/software/libiconv/
+[GNU libiconv's encodings]: https://www.gnu.org/software/libiconv/
 
 Parameters:
 
@@ -7555,7 +7555,7 @@ A single unit of indentation based on the buffer's indentation settings
 A single set of line ending delimiters based on the buffer's end of line mode
 ([`buffer.eol_mode`](#buffer.eol_mode)).
 
-[`io.popen()`]: http://www.lua.org/manual/5.3/manual.html#pdf-io.popen
+[`io.popen()`]: https://www.lua.org/manual/5.3/manual.html#pdf-io.popen
 
 
 ### Fields defined by `textadept.snippets`
@@ -8906,8 +8906,8 @@ with just the global one.
 Many of these functions and fields are derived from view-specific
 functionality the Scintilla editing component, and additional information can
 be found on the Scintilla website:
-[http://scintilla.org/ScintillaDoc.html](
-http://scintilla.org/ScintillaDoc.html)
+[https://scintilla.org/ScintillaDoc.html](
+https://scintilla.org/ScintillaDoc.html).
 Note that with regard to Scintilla-specific functionality, this API is a
 _suggestion_, not a hard requirement. All of that functionality also exists
 in [`buffer`](#buffer), even if undocumented.

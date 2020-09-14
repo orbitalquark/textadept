@@ -100,7 +100,7 @@ local M = {}
 -- A single set of line ending delimiters based on the buffer's end of line mode
 -- ([`buffer.eol_mode`]()).
 --
--- [`io.popen()`]: http://www.lua.org/manual/5.3/manual.html#pdf-io.popen
+-- [`io.popen()`]: https://www.lua.org/manual/5.3/manual.html#pdf-io.popen
 --
 -- @field INDIC_PLACEHOLDER (number)
 --   The snippet placeholder indicator number.

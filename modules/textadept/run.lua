@@ -5,7 +5,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Compile and run source code files with Textadept.
--- [Language modules](#_M.Compile.and.Run) may tweak the `compile_commands`,
+-- [Language modules](#compile-and-run) may tweak the `compile_commands`,
 -- `run_commands`, and `error_patterns` tables for particular languages.
 -- The user may tweak `build_commands` for particular projects.
 -- @field run_in_background (bool)

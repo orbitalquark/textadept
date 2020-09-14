@@ -2,7 +2,7 @@
 
 _RELEASE = 'Textadept 11.0 alpha 3'
 _COPYRIGHT =
-  'Copyright © 2007-2020 Mitchell. See LICENSE.\nhttp://foicica.com/textadept'
+  'Copyright © 2007-2020 Mitchell. See LICENSE.\nhttps://foicica.com/textadept'
 
 package.path = string.format('%s/core/?.lua;%s', _HOME, package.path)
 
@@ -96,7 +96,7 @@ end)
 --   Whether or not Textadept is running in a terminal.
 --   Curses feature incompatibilities are listed in the [Appendix][].
 --
---   [Appendix]: manual.html#curses-compatibility
+--   [Appendix]: manual.html#terminal-version-compatibility
 module('_G')]]
 
 --[[ The tables below were defined in C.

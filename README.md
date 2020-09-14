@@ -136,4 +136,4 @@ submit patches either to the [mailing list][], or to me personally
 [donation]: https://gum.co/textadept
 [book]: https://orbitalquark.github.io/textadept/book.html
 [open source]: https://github.com/orbitalquark/textadept
-[mailing list]: http://foicica.com/lists
+[mailing list]: https://foicica.com/lists

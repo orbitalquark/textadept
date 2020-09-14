@@ -8,9 +8,8 @@
 -- to work with the global one.
 -- Many of these functions and fields are derived from buffer-specific
 -- functionality of the Scintilla editing component, and additional information
--- can be found on the Scintilla website:
--- [http://scintilla.org/ScintillaDoc.html](
--- http://scintilla.org/ScintillaDoc.html).
+-- can be found on the
+-- [Scintilla website](https://scintilla.org/ScintillaDoc.html).
 -- Note that with regard to Scintilla-specific functionality, this API is a
 -- _suggestion_, not a hard requirement. All of that functionality also exists
 -- in [`view`](), even if undocumented.
