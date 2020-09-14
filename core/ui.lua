@@ -584,8 +584,8 @@ local goto_view
 --   menu. '_' characters are treated as a menu mnemonics. If the menu item is
 --   empty, a menu separator item is created. Submenus are just nested
 --   menu-structure tables. Their title text is defined with a `title` key.
--- @usage ui.menu{{'_New', 1}, {'_Open', 2}, {''}, {'_Quit', 4}}
--- @usage ui.menu{{'_New', 1, string.byte('n'), 4}} -- 'Ctrl+N'
+-- @usage ui.menu{ {'_New', 1}, {'_Open', 2}, {''}, {'_Quit', 4} }
+-- @usage ui.menu{ {'_New', 1, string.byte('n'), 4} } -- 'Ctrl+N'
 -- @see events.MENU_CLICKED
 -- @see textadept.menu.menubar
 -- @see textadept.menu.context_menu
