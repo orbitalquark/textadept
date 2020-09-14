@@ -1243,7 +1243,7 @@ Changes:
   `buffer.INDIC_TEXTFORE` indicators.
 * Updated to [Scintilla][] 3.5.4.
 
-[new repository]: https://foicica.com/hg/textadept_modules
+[new repository]: https://github.com/orbitalquark/textadept-modules
 [`textadept.file_types.patterns`]: api.html#textadept.file_types.patterns
 [`events.FILE_AFTER_SAVE`]: api.html#events.FILE_AFTER_SAVE
 [`buffer.indic_hover_fore`]: api.html#buffer.indic_hover_fore
@@ -2641,7 +2641,7 @@ Changes:
 
 [events]: api.html#events
 [documentation]: manual.html#getting-modules
-[official modules]: https://foicica.com/hg
+[official modules]: https://github.com/orbitalquark/textadept-modules
 [`buffer:move_selected_lines_up()`]: api.html#buffer.move_selected_lines_up
 [`buffer:move_selected_lines_down()`]: api.html#buffer.move_selected_lines_down
 [Scintilla]: https://scintilla.org
@@ -2690,13 +2690,13 @@ Changes:
 * Key bindings and menu definition syntax changed.
 * Snapopen allows for multiple-selection.
 * `gui.print()` handles `nil` and non-string arguments properly.
-* Officially supported modules have their own [repositories][] and are available
+* Officially supported modules have their own [repository][] and are available
   as a separate download.
 * Added cancel button to standard dialogs.
 
 [Scintilla]: https://scintilla.org
 [`_m.textadept.snippets`]: api.html#textadept.snippets
-[repositories]: https://foicica.com/hg
+[repository]: https://github.com/orbitalquark/textadept-modules
 
 ### 3.7 beta 2 (01 Mar 2011)
 

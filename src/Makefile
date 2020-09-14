@@ -436,9 +436,9 @@ termkey: termkey.patch | $(termkey_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@ && chmod +w $@/termkey.h
 	patch -d $@ -N -p1 < $<
-$(win32gtk_zip): ; $(WGET) https://foicica.com/textadept/download/$@
+$(win32gtk_zip): ; $(WGET) $(root_url)/textadept-build/raw/default/$@
 win32gtk: | $(win32gtk_zip) ; unzip $|
-$(win32curses_zip): ; $(WGET) https://foicica.com/textadept/download/$@
+$(win32curses_zip): ; $(WGET) $(root_url)/textadept-build/raw/default/$@
 $(pdcurses_zip): ; $(WGET) http://prdownloads.sourceforge.net/pdcurses/$@
 win32curses: pdcurses.patch | $(win32curses_zip) $(pdcurses_zip)
 	unzip $(win32curses_zip)
@@ -448,7 +448,7 @@ win32curses: pdcurses.patch | $(win32curses_zip) $(pdcurses_zip)
 	cd $@/src/wincon && $(MAKE) CC="$(CROSS)$(CC) $(CFLAGS)" LIBEXE=$(CROSS)ar \
 		LINK="$(CROSS)$(CC) $(CFLAGS)" WIDE=Y UTF8=Y libs
 	cp $@/src/wincon/pdcurses.a $@/lib/
-$(gtkosx_tgz): ; $(WGET) https://foicica.com/textadept/download/$@
+$(gtkosx_tgz): ; $(WGET) $(root_url)/textadept-build/raw/default/$@
 gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 $(cloc): ; $(WGET) http://prdownloads.sourceforge.net/cloc/$@
 

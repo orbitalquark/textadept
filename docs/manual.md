@@ -92,7 +92,7 @@ programming language that you can understand the simple code samples spread
 throughout the manual's contents. If you would like to quickly get up to speed,
 or need a refresher, the excerpt from [Lua Quick Reference][] may be of help.
 
-[Lua Quick Reference]: https://foicica.com/lua
+[Lua Quick Reference]: https://orbitalquark.github.io/lua-quick-reference
 
 #### ~/.textadept
 

@@ -1,8 +1,8 @@
 -- Copyright 2007-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
 
 _RELEASE = 'Textadept 11.0 alpha 3'
-_COPYRIGHT =
-  'Copyright © 2007-2020 Mitchell. See LICENSE.\nhttps://foicica.com/textadept'
+_COPYRIGHT = 'Copyright © 2007-2020 Mitchell. See LICENSE.\n' ..
+  'https://orbitalquark.github.io/textadept'
 
 package.path = string.format('%s/core/?.lua;%s', _HOME, package.path)
 
