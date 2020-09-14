@@ -1,5 +1,7 @@
 ## Textadept Quick Reference Book
 
+<script src="https://gumroad.com/js/gumroad.js"></script>
+
 <div style="float: left; margin: 0 1em 0 1em;">
   <img src="images/quickref_small.png" alt="" style="border-width: 1px;"/>
 </div>
@@ -7,11 +9,14 @@
 *Textadept Quick Reference*<br/>
 Fourth Edition
 
-Order the [e-book][] &ndash; $15 USD<br/>
-Order the [e-book bundle][] with [Lua Quick Reference][] &ndash; $27 USD<br/>
-Order the print book via Amazon [US][], [UK][], [DE][], [FR][], [IT][], [ES][]
+Order the <a href="https://gum.co/textadept_ebook" target="_blank">e-book</a> --
+$15 USD<sup>[†](#note)</sup><br/>
+Order the <a href="https://gum.co/qr_bundle" target="_blank">e-book bundle</a>
+with [Lua Quick Reference][] -- $27 USD<br/>
+Order the print book via Amazon [US][], [CA][], [UK][], [DE][], [FR][], [IT][],
+[ES][] -- ~$25 USD
 
-Published: Aug 2018
+Published: Aug 2018<br/>
 ISBN: 978-0-9912379-4-4<br/>
 Pages: 174
 
@@ -38,13 +43,17 @@ This book covers how to:
 It serves as the perfect complement to Textadept's comprehensive Manual and
 exhaustive API documentation.
 
-[e-book]: https://gum.co/textadept_ebook
-[e-book bundle]: https://gum.co/qr_bundle
-[Lua Quick Reference]: https://foicica.com/lua
+<a name="note"></a>
+<sup>†</sup> Your purchase of the Fourth Edition e-book (either by itself or as
+part of a bundle) entitles you to a free copy of the forthcoming Fifth Edition
+e-book when it is released.
+
+[Lua Quick Reference]: https://orbitalquark.github.io/lua-quick-reference
 [US]: https://www.amazon.com/Textadept-Quick-Reference-Mitchell/dp/0991237943/
+[CA]: https://www.amazon.ca/Textadept-Quick-Reference-Mitchell/dp/0991237943/
 [UK]: https://www.amazon.co.uk/Textadept-Quick-Reference-Mitchell/dp/0991237943/
 [DE]: https://www.amazon.de/Textadept-Quick-Reference-Mitchell/dp/0991237943/
 [FR]: https://www.amazon.fr/Textadept-Quick-Reference-Mitchell/dp/0991237943/
 [IT]: https://www.amazon.it/Textadept-Quick-Reference-Mitchell/dp/0991237943/
 [ES]: https://www.amazon.es/Textadept-Quick-Reference-Mitchell/dp/0991237943/
-[Excerpt]: https://raw.githubusercontent.com/orbitalquark/textadept/default/docs/quickref_excerpt.pdf
+[Excerpt]: https://github.com/orbitalquark/textadept/blob/default/docs/quickref_excerpt.pdf
