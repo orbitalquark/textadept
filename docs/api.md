@@ -7825,8 +7825,8 @@ Parameters:
 
 Usage:
 
-* `ui.menu{{'_New', 1}, {'_Open', 2}, {''}, {'_Quit', 4}}`
-* `ui.menu{{'_New', 1, string.byte('n'), 4}} -- 'Ctrl+N'`
+* `ui.menu{ {'_New', 1}, {'_Open', 2}, {''}, {'_Quit', 4} }`
+* `ui.menu{ {'_New', 1, string.byte('n'), 4} } -- 'Ctrl+N'`
 
 See also:
 
