@@ -83,7 +83,7 @@ The LuaDoc describes [compile and run commands][] and you can configure them in
 your [preferences][].
 
 [compile and run commands]: api.html#_M.Compile.and.Run
-[preferences]: manual.html#...textadept
+[preferences]: manual.html#textadept
 
 - - -
 

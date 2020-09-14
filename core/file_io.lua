@@ -63,7 +63,7 @@ io.recent_files = {}
 --   * Unicode: UTF-8, UCS-2, UCS-2BE, UCS-2LE, UCS-4, UCS-4BE, UCS-4LE, UTF-16,
 --     UTF-16BE, UTF-16LE, UTF-32, UTF-32BE, UTF-32LE, UTF-7, C99, JAVA.
 --
--- [GNU iconv's encodings]: http://www.gnu.org/software/libiconv/
+-- [GNU iconv's encodings]: https://www.gnu.org/software/libiconv/
 -- @usage io.encodings[#io.encodings + 1] = 'UTF-32'
 -- @class table
 -- @name encodings
