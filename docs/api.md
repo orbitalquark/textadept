@@ -631,9 +631,8 @@ While you can work with individual buffer instances, it is really only useful
 to work with the global one.
 Many of these functions and fields are derived from buffer-specific
 functionality of the Scintilla editing component, and additional information
-can be found on the Scintilla website:
-[https://scintilla.org/ScintillaDoc.html](
-https://scintilla.org/ScintillaDoc.html).
+can be found on the
+[Scintilla website](https://scintilla.org/ScintillaDoc.html).
 Note that with regard to Scintilla-specific functionality, this API is a
 _suggestion_, not a hard requirement. All of that functionality also exists
 in [`view`](#view), even if undocumented.
@@ -5215,9 +5214,8 @@ Put your lexer in your *~/.textadept/lexers/* directory so you do not
 overwrite it when upgrading Textadept. Also, lexers in this directory
 override default lexers. Thus, Textadept loads a user *lua* lexer instead of
 the default *lua* lexer. This is convenient for tweaking a default lexer to
-your liking. Then add a [file type][] for your lexer if necessary.
-
-[file type]: textadept.file_types.html
+your liking. Then add a [file type](#textadept.file_types) for your lexer if
+necessary.
 
 #### SciTE
 
@@ -7171,7 +7169,7 @@ number.
 ---
 
 Compile and run source code files with Textadept.
-[Language modules](#_M.Compile.and.Run) may tweak the `compile_commands`,
+[Language modules](#compile-and-run) may tweak the `compile_commands`,
 `run_commands`, and `error_patterns` tables for particular languages.
 The user may tweak `build_commands` for particular projects.
 
@@ -8904,10 +8902,9 @@ Constants are documented in the fields they apply to.
 While you can work with individual view instances, it is often useful to work
 with just the global one.
 Many of these functions and fields are derived from view-specific
-functionality the Scintilla editing component, and additional information can
-be found on the Scintilla website:
-[https://scintilla.org/ScintillaDoc.html](
-https://scintilla.org/ScintillaDoc.html).
+functionality of the Scintilla editing component, and additional information
+can be found on the
+[Scintilla website](https://scintilla.org/ScintillaDoc.html).
 Note that with regard to Scintilla-specific functionality, this API is a
 _suggestion_, not a hard requirement. All of that functionality also exists
 in [`buffer`](#buffer), even if undocumented.

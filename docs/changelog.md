@@ -242,7 +242,6 @@ Download:
 * [Textadept 10.8 -- Win32][]
 * [Textadept 10.8 -- Mac OSX 10.6+][]
 * [Textadept 10.8 -- Linux][]
-* [Textadept 10.8 -- Linux x86_64][]
 * [Textadept 10.8 -- Modules][]
 
 Bugfixes:
@@ -266,9 +265,8 @@ Changes:
 * Updated to [Scintilla][] 3.11.2.
 
 [Textadept 10.8 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_10.8/textadept_10.8.win32.zip
-[Textadept 10.8 -- Mac OSX 10.6+]: https://github.com/orbitalquark/textadept/releases/download/textadept_10.8/textadept_10.8.osx.zip
-[Textadept 10.8 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_10.8/textadept_10.8.i386.tgz
-[Textadept 10.8 -- Linux x86_64]: https://github.com/orbitalquark/textadept/releases/download/textadept_10.8/textadept_10.8.x86_64.tgz
+[Textadept 10.8 -- Mac OSX 10.6+]: https://github.com/orbitalquark/textadept/releases/download/textadept_10.8/textadept_10.8.macOS.zip
+[Textadept 10.8 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_10.8/textadept_10.8.linux.tgz
 [Textadept 10.8 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_10.8/textadept_10.8.modules.zip
 [`events.TAB_CLICKED`]: api.html#events.TAB_CLICKED
 [Scintilla]: https://scintilla.org
