@@ -32,7 +32,7 @@ styles.line_number = {fore = colors.black, bold = true}
 styles.brace_light = {fore = colors.black, back = colors.white}
 --styles.control_char =
 --styles.indent_guide =
---styles.call_tip =
+styles.call_tip = {fore = colors.white, back = colors.black}
 styles.fold_display_text = {fore = colors.black, bold = true}
 
 -- Token styles.
