@@ -32,7 +32,7 @@ RUN echo "Building osxcross" \
   && tar czf /opt/osxcross/tarballs/${sdk}.tar.gz ${sdk} \
   && rm -r ${sdk}* \
   && cd /opt/osxcross \
-  && sed -i -e 's/I386_SUPPORTED=1/I386_SUPPORTED=0/;' build.sh \
+  && sed -i 's/I386_SUPPORTED=1/I386_SUPPORTED=0/;' build.sh \
   && UNATTENDED=1 SDK_VERSION="10.13" OSX_VERSION_MIN="10.6" ./build.sh
 RUN echo "Cleaning up" && rm -rf /opt/osxcross/build /opt/osxcross/tarballs/MacOSX*
 ENV PATH="$PATH:/opt/osxcross/target/bin"
