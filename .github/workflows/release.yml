@@ -71,7 +71,7 @@ jobs:
           version="${{ github.event.inputs.tag }}"
           if [[ -z $version ]]; then
             version=`ls -1 src/textadept_*.zip | head -1 |
-              sed -e 's/[^_]\+_\(.\+\)\.[^.]\+\.zip/\1/;'`
+              sed 's/[^_]\+_\(.\+\)\.[^.]\+\.zip/\1/;'`
           fi
           echo "::set-output name=version::$version"
 
