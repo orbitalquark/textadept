@@ -2313,6 +2313,8 @@ function test_ui_find_find_in_files()
 end
 
 function test_ui_find_find_in_files_interactive()
+  local cwd = lfs.currentdir()
+  lfs.chdir(_HOME)
   local filter = ui.find.find_in_files_filters[_HOME]
   ui.find.find_in_files_filters[_HOME] = nil -- ensure not set
   ui.find.find_entry_text = 'foo'
@@ -2320,6 +2322,7 @@ function test_ui_find_find_in_files_interactive()
   ui.find.replace_entry_text = '/test'
   events.emit(events.FIND, ui.find.find_entry_text, true)
   local results = buffer:get_text()
+  assert(results:find('Directory: '), 'directory not shown')
   assert(results:find('Filter: /test\n'), 'no filter defined')
   assert(results:find('src/foo.c'), 'foo.c not found')
   assert(results:find('include/foo.h'), 'foo.h not found')
@@ -2349,6 +2352,7 @@ function test_ui_find_find_in_files_interactive()
   ui.goto_view(1)
   view:unsplit()
   ui.find.find_in_files_filters[_HOME] = filter
+  lfs.chdir(cwd)
 end
 
 function test_ui_find_in_files_single_char()
