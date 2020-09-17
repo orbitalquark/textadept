@@ -257,7 +257,7 @@ end
 events.connect(events.FIND, find)
 events.connect(events.FIND_TEXT_CHANGED, function()
   if not M.incremental then return end
-  return events.emit(events.FIND, M.find_entry_text, true) ~= -1
+  return events.emit(events.FIND, M.find_entry_text, true) or true -- refresh
 end)
 events.connect(
   events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wrapped'] end)
