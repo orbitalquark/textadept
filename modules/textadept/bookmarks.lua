@@ -26,6 +26,14 @@ end
 -- @name clear
 function M.clear() buffer:marker_delete_all(M.MARK_BOOKMARK) end
 
+-- Returns an iterator for all bookmarks in the current buffer.
+local function bookmarks()
+  return function(_, line)
+    line = buffer:marker_next(line + 1, 1 << M.MARK_BOOKMARK - 1)
+    return line >= 1 and line or nil
+  end, nil, 0
+end
+
 ---
 -- Prompts the user to select a bookmarked line to move the caret to the
 -- beginning of unless *next* is given.
@@ -36,10 +44,10 @@ function M.clear() buffer:marker_delete_all(M.MARK_BOOKMARK) end
 --   prompting the user for a bookmarked line to go to.
 -- @name goto_mark
 function M.goto_mark(next)
-  local BOOKMARK_BIT = 1 << M.MARK_BOOKMARK - 1
   if next ~= nil then
     local f = next and buffer.marker_next or buffer.marker_previous
     local current_line = buffer:line_from_position(buffer.current_pos)
+    local BOOKMARK_BIT = 1 << M.MARK_BOOKMARK - 1
     local line = f(buffer, current_line + (next and 1 or -1), BOOKMARK_BIT)
     if line == -1 then
       line = f(buffer, (next and 1 or buffer.line_count), BOOKMARK_BIT)
@@ -55,12 +63,10 @@ function M.goto_mark(next)
     local filename = buffer.filename or buffer._type or _L['Untitled']
     if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
-    local line = buffer:marker_next(1, BOOKMARK_BIT)
-    while line >= 1 do
+    for line in bookmarks() do
       utf8_list[#utf8_list + 1] = string.format(
         '%s:%d: %s', basename, line, buffer:get_line(line):match('^[^\r\n]*'))
       buffers[#buffers + 1] = buffer
-      line = buffer:marker_next(line + 1, BOOKMARK_BIT)
     end
     ::continue::
   end
@@ -74,5 +80,15 @@ function M.goto_mark(next)
   view:goto_buffer(buffers[i])
   textadept.editing.goto_line(tonumber(utf8_list[i]:match('^[^:]+:(%d+):')))
 end
+
+local lines = {}
+-- Save and restore bookmarks on buffer:reload().
+events.connect(events.FILE_BEFORE_RELOAD, function()
+  for line in bookmarks() do lines[#lines + 1] = line end
+end)
+events.connect(events.FILE_AFTER_RELOAD, function()
+  for _, line in ipairs(lines) do buffer:marker_add(line, M.MARK_BOOKMARK) end
+  lines = {} -- clear
+end)
 
 return M

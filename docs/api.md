@@ -3060,6 +3060,8 @@ Parameters:
 #### `buffer.reload`(*buffer*)
 
 Reloads the buffer's file contents, discarding any changes.
+Emits `FILE_BEFORE_RELOAD` and `FILE_AFTER_RELOAD` events if the buffer is
+the current one.
 
 Parameters:
 
@@ -4306,6 +4308,12 @@ Extends Lua's `io` library with Textadept functions for working with files.
 
 ### Fields defined by `io`
 
+<a id="events.FILE_AFTER_RELOAD"></a>
+#### `events.FILE_AFTER_RELOAD` (string)
+
+Emitted after reloading the current file.
+  Emitted by [`buffer:reload()`](#buffer.reload).
+
 <a id="events.FILE_AFTER_SAVE"></a>
 #### `events.FILE_AFTER_SAVE` (string)
 
@@ -4316,6 +4324,12 @@ Emitted right after saving a file to disk.
   * _`filename`_: The filename of the file being saved.
   * _`saved_as`_: Whether or not the file was saved under a different
     filename.
+
+<a id="events.FILE_BEFORE_RELOAD"></a>
+#### `events.FILE_BEFORE_RELOAD` (string)
+
+Emitted before reloading the current file.
+  Emitted by [`buffer:reload()`](#buffer.reload).
 
 <a id="events.FILE_BEFORE_SAVE"></a>
 #### `events.FILE_BEFORE_SAVE` (string)
