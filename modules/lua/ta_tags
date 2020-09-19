@@ -61,7 +61,9 @@ EOL_CRLF	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 EOL_LF	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 ERROR	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 ERROR	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
+FILE_AFTER_RELOAD	_HOME/core/file_io.lua	/^module('io')]]$/;"	F	class:events
 FILE_AFTER_SAVE	_HOME/core/file_io.lua	/^module('io')]]$/;"	F	class:events
+FILE_BEFORE_RELOAD	_HOME/core/file_io.lua	/^module('io')]]$/;"	F	class:events
 FILE_BEFORE_SAVE	_HOME/core/file_io.lua	/^module('io')]]$/;"	F	class:events
 FILE_CHANGED	_HOME/core/file_io.lua	/^module('io')]]$/;"	F	class:events
 FILE_OPENED	_HOME/core/file_io.lua	/^module('io')]]$/;"	F	class:events

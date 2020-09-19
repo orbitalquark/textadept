@@ -1153,6 +1153,25 @@ function test_bookmarks_interactive()
   buffer:close(true)
 end
 
+function test_bookmarks_reload()
+  local function has_bookmark(line)
+    return buffer:marker_get(line) & 1 << textadept.bookmarks.MARK_BOOKMARK - 1 > 0
+  end
+
+  io.open_file(_HOME .. '/test/modules/textadept/bookmarks/foo')
+  buffer:line_down()
+  textadept.bookmarks.toggle()
+  buffer:line_down()
+  buffer:line_down()
+  textadept.bookmarks.toggle()
+  assert(has_bookmark(2), 'line not bookmarked')
+  assert(has_bookmark(4), 'line not bookmarked')
+  buffer:reload()
+  assert(has_bookmark(2), 'bookmark not restored')
+  assert(has_bookmark(4), 'bookmark not restored')
+  buffer:close(true)
+end
+
 function test_command_entry_run()
   local command_run, tab_pressed = false, false
   ui.command_entry.run(function(command) command_run = command end, {

@@ -347,7 +347,7 @@ events_connect(events.UPDATE_UI, function(updated)
 end)
 
 -- Save buffer properties.
-events_connect(events.BUFFER_BEFORE_SWITCH, function()
+local function save_buffer_state()
   -- Save view state.
   buffer._anchor, buffer._current_pos = buffer.anchor, buffer.current_pos
   local n = buffer.main_selection
@@ -361,10 +361,12 @@ events_connect(events.BUFFER_BEFORE_SWITCH, function()
     folds[#folds + 1], i = i, view:contracted_fold_next(i + 1)
   end
   buffer._folds = folds
-end)
+end
+events_connect(events.BUFFER_BEFORE_SWITCH, save_buffer_state)
+events_connect(events.FILE_BEFORE_RELOAD, save_buffer_state)
 
 -- Restore buffer properties.
-events_connect(events.BUFFER_AFTER_SWITCH, function()
+local function restore_buffer_state()
   if not buffer._folds then return end
   -- Restore fold state.
   for i = 1, #buffer._folds do view:toggle_fold(buffer._folds[i]) end
@@ -376,7 +378,9 @@ events_connect(events.BUFFER_AFTER_SWITCH, function()
   local _top_line, top_line = buffer._top_line, view.first_visible_line
   view:line_scroll(0, view:visible_from_doc_line(_top_line) - top_line)
   view.x_offset = buffer._x_offset or 0
-end)
+end
+events_connect(events.BUFFER_AFTER_SWITCH, restore_buffer_state)
+events_connect(events.FILE_AFTER_RELOAD, restore_buffer_state)
 
 -- Updates titlebar and statusbar.
 local function update_bars()
