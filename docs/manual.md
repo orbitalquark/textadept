@@ -1860,6 +1860,7 @@ set\_fold\_margin\_\*colour|Renamed |set\_fold\_margin\_\*color
 vertical\_centre\_caret    |Renamed |vertical\_center\_caret
 **events**                 |        |
 AUTO\_C\_CANCELLED         |Renamed |AUTO\_C\_CANCELED
+N/A                        |Added   |[COMMAND_TEXT_CHANGED][]
 N/A                        |Added   |[FILE_BEFORE_RELOAD][]
 N/A                        |Added   |[FILE_AFTER_RELOAD][]
 N/A                        |Added   |[SESSION_SAVE][]
@@ -1918,6 +1919,7 @@ section below.
 
 [view:set_theme()]: api.html#view.set_theme
 [name_of_style]: api.html#buffer.name_of_style
+[COMMAND_TEXT_CHANGED]: api.html#events.COMMAND_TEXT_CHANGED
 [FILE_BEFORE_RELOAD]: api.html#events.FILE_BEFORE_RELOAD
 [FILE_AFTER_RELOAD]: api.html#events.FILE_AFTER_RELOAD
 [SESSION_SAVE]: api.html#events.SESSION_SAVE
