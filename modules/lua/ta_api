@@ -947,6 +947,7 @@ typeover_chars textadept.editing.typeover_chars (table)\nTable of characters to 
 ui _G.ui (module)\nUtilities for interacting with Textadept's user interface.
 undo buffer.undo(buffer)\nUndoes the most recent action.\n@param buffer A buffer.
 unsplit view.unsplit(view)\nUnsplits the view if possible, returning `true` on success.\n@param view The view to unsplit.\n@return boolean if the view was unsplit or not.
+update ui.update()\nProcesses pending GTK events, including reading from spawned processes.\nThis function is primarily used in unit tests.
 upper lexer.upper (pattern)\nA pattern that matches any upper case character ('A'-'Z').
 upper_case buffer.upper_case(buffer)\nConverts the selected text to upper case letters.\n@param buffer A buffer.
 use_tabs buffer.use_tabs (bool)\nUse tabs instead of spaces in indentation. Changing the current setting\ndoes not convert any of the buffer's existing indentation. Use\n`textadept.editing.convert_indentation()` to do so.\nThe default value is `true`.

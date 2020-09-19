@@ -816,6 +816,20 @@ static int menu(lua_State *L) {
 #endif
 }
 
+/** `ui.update()` Lua function. */
+static int update_ui(lua_State *L) {
+#if GTK
+  while (gtk_events_pending()) gtk_main_iteration();
+#elif (CURSES && !_WIN32)
+  struct timeval timeout = {0, 1e5}; // 0.1s
+  int nfds = os_spawn_pushfds(L);
+  while (select(nfds, lua_touserdata(L, -1), NULL, NULL, &timeout) > 0)
+    if (os_spawn_readfds(L) >= 0) refresh_all();
+  lua_pop(L, 1); // fd_set
+#endif
+  return 0;
+}
+
 /** `ui.__index` Lua metamethod. */
 static int ui_index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
@@ -1572,6 +1586,7 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
   lua_pushcfunction(L, get_split_table), lua_setfield(L, -2, "get_split_table");
   lua_pushcfunction(L, goto_view), lua_setfield(L, -2, "goto_view");
   lua_pushcfunction(L, menu), lua_setfield(L, -2, "menu");
+  lua_pushcfunction(L, update_ui), lua_setfield(L, -2, "update");
   set_metatable(L, -1, "ta_ui", ui_index, ui_newindex);
   lua_setglobal(L, "ui");
 

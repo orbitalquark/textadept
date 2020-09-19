@@ -593,4 +593,11 @@ local goto_view
 -- @class function
 -- @name menu
 local menu
+
+---
+-- Processes pending GTK events, including reading from spawned processes.
+-- This function is primarily used in unit tests.
+-- @class function
+-- @name update
+local update
 ]]
