@@ -1325,6 +1325,19 @@ function test_command_entry_mode_restore()
   keys.mode = nil
 end
 
+function test_command_entry_text_changed_event()
+  local changed = false
+  events.connect(events.COMMAND_TEXT_CHANGED, function() changed = true end)
+  ui.command_entry.run()
+  assert(not changed, 'changed event emitted')
+  ui.command_entry:set_text('foo')
+  assert(changed, 'changed event not emitted')
+  changed = false
+  ui.command_entry:undo()
+  assert(changed, 'changed event not emitted')
+  ui.command_entry:focus() -- hide
+end
+
 function test_editing_auto_pair()
   buffer.new()
   -- Single selection.

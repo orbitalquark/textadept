@@ -3916,6 +3916,12 @@ Emitted after the user types a text character into the buffer.
 
   * _`code`_: The text character's character code.
 
+<a id="events.COMMAND_TEXT_CHANGED"></a>
+#### `events.COMMAND_TEXT_CHANGED` (string)
+
+Emitted when the text in the command entry changes.
+  `ui.command_entry:get_text()` contains the current text.
+
 <a id="events.CSI"></a>
 #### `events.CSI` (string)
 

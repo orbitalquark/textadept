@@ -39,6 +39,7 @@ CHAR_ADDED events.CHAR_ADDED (string)\nEmitted after the user types a text chara
 CLASS lexer.CLASS (string)\nThe token name for class tokens.
 CLASS textadept.editing.XPM_IMAGES.CLASS (table)\nThe image number for classes.
 CLEAR keys.CLEAR (string)\nThe key that clears the current key chain.\nIt cannot be part of a key chain.\nThe default value is `'esc'` for the `Esc` key.
+COMMAND_TEXT_CHANGED events.COMMAND_TEXT_CHANGED (string)\nEmitted when the text in the command entry changes.\n`ui.command_entry:get_text()` contains the current text.
 COMMENT lexer.COMMENT (string)\nThe token name for comment tokens.
 COMPILE_OUTPUT events.COMPILE_OUTPUT (string)\nEmitted when executing a language's compile shell command.\nBy default, compiler output is printed to the message buffer. In order to\noverride this behavior, connect to the event with an index of `1` and\nreturn `true`.\nArguments:\n\n* `output`: A line of string output from the command.\n* `ext_or_lexer`: The file extension or lexer name associated with the\n  executed compile command.
 CONSTANT lexer.CONSTANT (string)\nThe token name for constant tokens.

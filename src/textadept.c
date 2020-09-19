@@ -1913,8 +1913,12 @@ static void emit_notification(lua_State *L, SCNotification *n) {
 
 /** Signal for a Scintilla notification. */
 static void notified(Scintilla *view, int _, SCNotification *n, void *L) {
-  if (focused_view == view || n->nmhdr.code == SCN_URIDROPPED) {
-    if (focused_view != view) view_focused(view, L);
+  if (view == command_entry) {
+    if (n->nmhdr.code == SCN_MODIFIED &&
+        (n->modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)))
+      emit(L, "command_text_changed", -1);
+  } else if (view == focused_view || n->nmhdr.code == SCN_URIDROPPED) {
+    if (view != focused_view) view_focused(view, L);
     emit_notification(L, n);
   } else if (n->nmhdr.code == SCN_FOCUSIN)
     view_focused(view, L);
@@ -2348,6 +2352,7 @@ static void new_window() {
 
   command_entry = scintilla_new();
   gtk_widget_set_size_request(command_entry, 1, 1);
+  g_signal_connect(command_entry, SCINTILLA_NOTIFY, G_CALLBACK(notified), lua);
   g_signal_connect(command_entry, "key-press-event", G_CALLBACK(keypress), lua);
   g_signal_connect(
     command_entry, "focus-out-event", G_CALLBACK(focus_lost), lua);
@@ -2371,7 +2376,7 @@ static void new_window() {
   dummy_view = scintilla_new();
 #elif CURSES
   pane = new_pane(new_view(0)), resize_pane(pane, LINES - 2, COLS, 1, 0);
-  command_entry = scintilla_new(NULL, NULL);
+  command_entry = scintilla_new(notified, lua);
   wresize(scintilla_get_window(command_entry), 1, COLS);
   mvwin(scintilla_get_window(command_entry), LINES - 2, 0);
   dummy_view = scintilla_new(NULL, NULL);
