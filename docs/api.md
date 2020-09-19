@@ -7856,6 +7856,12 @@ Parameters:
 * *`zorder`*: Flag that indicates whether or not to list buffers by their
   z-order. The default value is `false`.
 
+<a id="ui.update"></a>
+#### `ui.update`()
+
+Processes pending GTK events, including reading from spawned processes.
+This function is primarily used in unit tests.
+
 
 ### Tables defined by `ui`
 
