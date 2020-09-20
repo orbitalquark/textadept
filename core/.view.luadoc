@@ -111,7 +111,7 @@
 --
 --   The default value is `view.CARETSTYLE_LINE`.
 -- @field caret_width (number)
---   The line caret's pixel width in insert mode, either `0`, `1`, `2`, or `3`.
+--   The line caret's pixel width in insert mode, between `0` and `20`.
 --   The default value is `1`.
 -- @field cursor (number)
 --   The display cursor type.

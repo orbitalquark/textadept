@@ -765,8 +765,8 @@ Changes:
   too.
 * Removed MacRoman encoding detection and options.
 * Scintilla: Character-based word selection, navigation, and manipulation.
-* Scintilla: Added [`buffer.EDGE_MULTILINE`][],
-  [`buffer:multi_edge_add_line()`][], and [`buffer:multi_edge_clear_all()`][]
+* Scintilla: Added [`view.EDGE_MULTILINE`][],
+  [`view:multi_edge_add_line()`][], and [`view:multi_edge_clear_all()`][]
   for multiple edge lines.
 * Scintilla: Added `buffer.MARGIN_COLOUR` and [`buffer.margin_back_n`][] for
   setting arbitrary margin background colors.
@@ -782,9 +782,9 @@ Changes:
   selection.
 * Updated to [Scintilla][] 3.7.1.
 
-[`buffer.EDGE_MULTILINE`]: api.html#buffer.EDGE_MULTILINE
-[`buffer:multi_edge_add_line()`]: api.html#buffer.multi_edge_add_line
-[`buffer:multi_edge_clear_all()`]: api.html#buffer.multi_edge_clear_all
+[`view.EDGE_MULTILINE`]: api.html#view.EDGE_MULTILINE
+[`view:multi_edge_add_line()`]: api.html#view.multi_edge_add_line
+[`view:multi_edge_clear_all()`]: api.html#view.multi_edge_clear_all
 [`buffer.margin_back_n`]: api.html#buffer.margin_back_n
 [`buffer.margins`]: api.html#buffer.margins
 [`buffer:toggle_fold_display_text()`]: api.html#buffer.toggle_fold_display_text

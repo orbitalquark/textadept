@@ -379,7 +379,7 @@ endif
 
 scintilla_tgz = scintilla445.tgz
 scinterm_zip = 9e2ffa159299899c9345aea15c17ba1941953871.zip
-scintillua_zip = e8fe6d18063af4193e817c7e2da8e6f8ccce4aec.zip
+scintillua_zip = scintillua_4.4.5-1.zip
 lua_tgz = lua-5.3.5.tar.gz
 lpeg_tgz = lpeg-1.0.2.tar.gz
 lfs_zip = v1_7_0_2.zip
