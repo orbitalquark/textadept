@@ -88,7 +88,7 @@ local M = {}
 --   * _`code`_: The text character's character code.
 -- @field COMMAND_TEXT_CHANGED (string)
 --   Emitted when the text in the command entry changes.
---   `ui.command_entry:get_text()` contains the current text.
+--   `ui.command_entry:get_text()` returns the current text.
 -- @field DOUBLE_CLICK (string)
 --   Emitted after double-clicking the mouse button.
 --   Arguments:

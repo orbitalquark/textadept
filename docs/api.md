@@ -1203,6 +1203,12 @@ Whether or not the buffer has unsaved changes.
 Whether or not regular caret movement alters the selected text.
   [`buffer.selection_mode`](#buffer.selection_mode) dictates this property.
 
+<a id="buffer.multi_edge_column"></a>
+#### `buffer.multi_edge_column` (table, Read-only)
+
+Table of edge column positions per edge column number.
+  A position of `-1` means no edge column was found.
+
 <a id="buffer.multi_paste"></a>
 #### `buffer.multi_paste` (number)
 
@@ -3920,7 +3926,7 @@ Emitted after the user types a text character into the buffer.
 #### `events.COMMAND_TEXT_CHANGED` (string)
 
 Emitted when the text in the command entry changes.
-  `ui.command_entry:get_text()` contains the current text.
+  `ui.command_entry:get_text()` returns the current text.
 
 <a id="events.CSI"></a>
 #### `events.CSI` (string)
@@ -10003,7 +10009,7 @@ The caret's visual style.
 <a id="view.caret_width"></a>
 #### `view.caret_width` (number)
 
-The line caret's pixel width in insert mode, either `0`, `1`, `2`, or `3`.
+The line caret's pixel width in insert mode, between `0` and `20`.
   The default value is `1`.
 
 <a id="view.cursor"></a>
