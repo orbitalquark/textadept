@@ -461,3 +461,4 @@ clean-deps:
 sources = ../core ../modules/ansi_c ../modules/lua ../modules/textadept \
           textadept.c Makefile ../init.lua
 count: $(cloc) ; perl $< $(sources) --not-match-f=tadoc.lua
+plots: ; ../scripts/gen_plots.sh

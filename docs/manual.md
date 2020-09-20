@@ -43,7 +43,7 @@ code tries to avoid going beyond 4000 lines. After more than 12 years of
 development, Textadept contains [roughly the same amount of code][] since its
 inception while significantly improving year after year.
 
-[roughly the same amount of code]: https://foicica.com/stats.html#Textadept
+[roughly the same amount of code]: index.html#plots
 
 Textadept is remarkably extensible. It was designed to be that way from the
 beginning; the editor's features came later. Most of Textadept's internals are
