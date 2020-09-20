@@ -119,8 +119,7 @@ jobs:
                 exit 0
               fi
             elif [[ $echoing -eq 1 ]]; then
-              echo "$line" | grep -v '\(\[Textadept\|Download:\)' |
-                sed "s,\(manual\|api\)\.html,$prefix/\0,;" || continue
+              echo "$line" | sed "s,\(manual\|api\)\.html,$prefix/\0,;"
             fi
           done < docs/changelog.md >> log.md
       - name: Create release
