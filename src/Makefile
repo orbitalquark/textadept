@@ -280,8 +280,9 @@ manual: ../docs/api.md $(wildcard ../docs/*.md) | ../docs/_layouts/default.html
 	for file in $(basename $^); do \
 		cat $| | ../scripts/fill_layout.lua $$file.md > $$file.html; \
 	done
-	sed -i "s/Textadept \(Manual\|API\)/Textadept $(subst _, ,$(version)) \1/;" \
-		../docs/*.html
+	sed -i \
+		"s/\(\# Textadept\).\+\?\(Manual\|API\)/\1 $(subst _, ,$(version)) \2/;" \
+		../docs/*.md
 luadoc: ../core $(modules) ../lexers/lexer.lua | ../modules/lua/lua.luadoc
 	cd ../docs && luadoc --doclet markdowndoc $^ > api.md
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $^ --ta-home=$(ta_home)
