@@ -540,6 +540,12 @@ function test_file_io_quick_open_interactive()
     assert(buffer.filename:find('%.lua$'), '.lua file filter did not work')
     buffer:close()
   end
+  local quick_open_max = io.quick_open_max
+  io.quick_open_max = 10
+  io.quick_open(_HOME)
+  assert(#_BUFFERS > num_buffers, 'File limit exceeded notification did not occur')
+  buffer:close()
+  io.quick_open_max = quick_open_max -- restore
   lfs.chdir(cwd)
 
   assert_raises(function() io.quick_open(1) end, 'string/table/nil expected, got number')

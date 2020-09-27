@@ -419,7 +419,7 @@ function io.quick_open(paths, filter, opts)
   local utf8_list = {}
   for i = 1, #paths do
     for filename in lfs.walk(paths[i], filter or lfs.default_filter) do
-      if #utf8_list >= io.quick_open_max then return false end
+      if #utf8_list >= io.quick_open_max then break end
       utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
     end
   end
