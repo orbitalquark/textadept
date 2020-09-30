@@ -18,7 +18,6 @@ Download:
 * [Textadept 11.0 beta -- Win32][]
 * [Textadept 11.0 beta -- Mac OSX 10.7+][]
 * [Textadept 11.0 beta -- Linux][]
-* [Textadept 11.0 beta -- Linux x86_64][]
 * [Textadept 11.0 beta -- Modules][]
 
 Bugfixes:
@@ -87,9 +86,8 @@ Changes:
 
 [10 to 11 migration guide]: manual.html#migrating-from-textadept-10-to-11
 [Textadept 11.0 beta -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.win32.zip
-[Textadept 11.0 beta -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.osx.zip
-[Textadept 11.0 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.i386.tgz
-[Textadept 11.0 beta -- Linux x86_64]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.x86_64.tgz
+[Textadept 11.0 beta -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.macOS.zip
+[Textadept 11.0 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.linux.tgz
 [Textadept 11.0 beta -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.modules.zip
 [`textadept.editing.auto_enclose()`]: api.html#textadept.editing.auto_enclose
 [`ui.command_entry.active`]: api.html#ui.command_entry.active
