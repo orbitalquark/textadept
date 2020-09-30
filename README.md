@@ -99,6 +99,7 @@ Command              |Description
 `make deps`          |Downloads and builds all of Textadept's core dependencies
 `make deps NIGHTLY=1`|Optionally downloads and builds bleeding-edge dependencies
 `make`               |Builds Textadept, provided all dependencies are in place
+`make GTK3=1`        |Builds Textadept using GTK 3.x
 `make DEBUG=1`       |Optionally builds Textadept with debug symbols
 `make curses`        |Builds the terminal version of Textadept
 `make win32-deps`    |Downloads and builds Textadept's Windows dependencies
