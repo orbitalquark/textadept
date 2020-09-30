@@ -321,8 +321,8 @@ English. You can manually set your locale by copying one of the locale
 configuration files from Textadept's *core/locales/* to your *~/.textadept/*
 directory and renaming it *locale.conf*. If you would like to translate
 Textadept into your language, please translate the English messages in
-*core/locale.conf* and send me (mitchell.att.foicica.com) the modified file for
-inclusion in a future release.
+*core/locale.conf* and send me (see README.md) the modified file for inclusion
+in a future release.
 
 **macOS Tip:** by default, macOS does not allow GUI applications like
 *Textadept.app* to see shell environment variables like `$PATH`. (The terminal

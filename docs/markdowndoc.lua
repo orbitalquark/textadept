@@ -1,4 +1,4 @@
--- Copyright 2007-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2020 Mitchell. See LICENSE.
 
 -- Markdown doclet for Luadoc.
 -- @usage luadoc -doclet path/to/markdowndoc [file(s)] > api.md

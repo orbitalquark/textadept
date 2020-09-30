@@ -1,4 +1,4 @@
--- Copyright 2020 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2020 Mitchell. See LICENSE.
 
 local _tostring = tostring
 -- Overloads tostring() to print more user-friendly output for `assert_equal()`.
