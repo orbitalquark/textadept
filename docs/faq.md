@@ -126,8 +126,8 @@ seem to work fine. rxvt and rxvt-unicode do not work out of the box, but may be
 configurable.
 
 Please see the [terminal version compatibility][] section of the appendix. If
-the feature in question is not listed there, it may be a bug. Please contact
-me (mitchell.att.foicica.com) with any bug reports.
+the feature in question is not listed there, it may be a bug. Please contact me
+(see README.md) with any bug reports.
 
 [terminal version compatibility]: manual.html#terminal-version-compatibility
 

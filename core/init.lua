@@ -1,4 +1,4 @@
--- Copyright 2007-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2020 Mitchell. See LICENSE.
 
 _RELEASE = 'Textadept 11.0 alpha 3'
 _COPYRIGHT = 'Copyright © 2007-2020 Mitchell. See LICENSE.\n' ..

@@ -100,7 +100,7 @@ echo "
   set title 'Code Summary'
   set output '$loc'
   plot for [i=0:2] '$plotfile' index $nlangs+i using 1:2 with lines title columnhead(1) linestyle i+1
-  set title 'Code Counts'
+  set title 'Code Line Counts'
   set output '$languages'
   plot for [i=0:$nlangs-1] '$plotfile' index i using 1:4 with lines title columnhead(1) linestyle i+1
 " > $plotcmd

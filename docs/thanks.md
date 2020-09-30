@@ -17,9 +17,9 @@ available under Textadept's open source license. You will be credited on this
 page with an optional link to your website, and will receive a proper receipt or
 invoice for recording and/or tax-related purposes.
 
-Please send any inquiries by e-mail to mitchell.att.foicica.com. All
-correspondence is kept strictly confidential. You may also contact me for
-private contract work related to Textadept.
+Please send any inquiries by e-mail (see README.md). All correspondence is kept
+strictly confidential. You may also contact me for private contract work related
+to Textadept.
 
 ### Code and Documentation Contributors
 
@@ -65,5 +65,5 @@ private contract work related to Textadept.
 * Vais Salikhov
 * Vladimir Lomov
 
-If I have left off your name, please contact me (mitchell.att.foicica.com). I am
-very sorry about that.
+If I have left off your name, please contact me (see README.md). I am very sorry
+about that.

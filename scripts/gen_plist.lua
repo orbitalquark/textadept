@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2007-2020 Mitchell mitchell.att.foicica.com. See LICENSE.
+-- Copyright 2007-2020 Mitchell. See LICENSE.
 
 -- This script generates the "Info.plist" file for the macOS App bundle.
 
