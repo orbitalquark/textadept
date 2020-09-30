@@ -8,10 +8,103 @@ development.**
 [donate]: https://gum.co/textadept
 [book]: book.html
 
-### 11.0 alpha 3 (01 Aug 2020)
+### 11.0 beta (01 Oct 2020)
 
 Please see the [10 to 11 migration guide][] for upgrading from Textadept 10 to
 Textadept 11.
+
+Download:
+
+* [Textadept 11.0 beta -- Win32][]
+* [Textadept 11.0 beta -- Mac OSX 10.7+][]
+* [Textadept 11.0 beta -- Linux][]
+* [Textadept 11.0 beta -- Linux x86_64][]
+* [Textadept 11.0 beta -- Modules][]
+
+Bugfixes:
+
+* Fixed word left/right key bindings on macOS.
+* Fixed regression with showing "No results found" in searches.
+* Fixed regression in showing images in Lua command entry completions.
+* Fixed restoration of Replace entry text in various instances, such as after
+  "Find in Files" and "Replace All".
+* Prevent infinite loops when highlighting found text.
+* Fixed bugs in `events.KEYPRESS` handlers when command entry is active.
+* Fixed bug in "Find in Files" results highlighting when jumping to a result of
+  length 1.
+* Fixed emission of `events.UPDATE_UI` when resuming from terminal suspend.
+* Fixed initial query of `ui.find.find_text` and `ui.find.repl_text` in the
+  terminal version.
+* Fixed incorrect CSS key prefix incompatibility notice.
+* Fixed error reporting the number of zero-length find results.
+* Fixed call tip display in the terminal version.
+* Always refresh during incremental find in the terminal version.
+* Fixed `io.quick_open()` doing nothing when file limit was exceeded.
+* gtDialog: Fixed potential crash when canceling a running progressbar dialog.
+* Scintilla: Fixed position of marker symbols for `view.MARGIN_RTEXT` which were
+  being moved based on width of text.
+* Scintilla: Fixed hover indicator appearance when moving out of view.
+* Scintilla: Fixed display of `buffer.INDIC_TEXTFORE` and gradient indicators on
+  hover.
+
+Changes:
+
+* Rewrote manual and updated lots of other documentation and documentation
+  generation pipeline.
+* Prefer passing an environment table to `os.spawn()`.
+* Updated find & replace key bindings.
+* Use comma-separated patterns in find & replace pane's "Filter" field.
+* Removed "View EOL" menu item, key binding, and buffer setting.
+* Accept a directory as a command line argument.
+* Save the current working directory to session files.
+* "View > Toggle Fold" toggles folding for the current block, regardless of
+  line.
+* Recognize Fossil projects.
+* Added [`textadept.editing.auto_enclose()`][] for auto-enclosing selected text.
+* Show "Match X/Y" in statusbar when searching for text.
+* Added [`ui.command_entry.active`][].
+* Improved handling of print buffers and splits.
+* Added "Edit > Preferences" menu item and key binding for opening
+  *~/.textadept/init.lua*.
+* Disable `ui.find.highlight_all_matches` by default.
+* GCC 7.1+ is now required for building, added support for
+  [building with Docker][], and dropped automated Linux i386 builds.
+* Added [`events.FIND_RESULT_FOUND`][].
+* Added [`ui.find.active`][] and prevent word highlighting when searching.
+* Added support for jq language.
+* Record directory in "Find in Files" searches.
+* Added `ui.update()`, mainly for unit tests.
+* Added [`events.FILE_BEFORE_RELOAD`][] and [`events.FILE_AFTER_RELOAD`][]
+  events, and save/restore bookmarks.
+* Added [`events.COMMAND_TEXT_CHANGED`][] for when command entry text changes.
+* Added `_NOCOMPAT` option to disable temporary key shortcut compatibility
+  checking.
+* Updated Spanish translation.
+* gtDialog: Improved responsiveness for huge lists (greater than 10,000 items).
+* Scintilla: Added [`view.multi_edge_column`][].
+* Updated to [Scintilla][] 4.4.5.
+* Switched back to utilizing [Scintillua][] and [Scinterm][].
+
+[10 to 11 migration guide]: manual.html#migrating-from-textadept-10-to-11
+[Textadept 11.0 beta -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.win32.zip
+[Textadept 11.0 beta -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.osx.zip
+[Textadept 11.0 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.i386.tgz
+[Textadept 11.0 beta -- Linux x86_64]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.x86_64.tgz
+[Textadept 11.0 beta -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.modules.zip
+[`textadept.editing.auto_enclose()`]: api.html#textadept.editing.auto_enclose
+[`ui.command_entry.active`]: api.html#ui.command_entry.active
+[building with Docker]: manual.html#compiling-using-docker
+[`events.FIND_RESULT_FOUND`]: api.html#events.FIND_RESULT_FOUND
+[`ui.find.active`]: api.html#ui.find.active
+[`events.FILE_BEFORE_RELOAD`]: api.html#events.FILE_BEFORE_RELOAD
+[`events.FILE_AFTER_RELOAD`]: api.html#events.FILE_AFTER_RELOAD
+[`events.COMMAND_TEXT_CHANGED`]: api.html#events.COMMAND_TEXT_CHANGED
+[`view.multi_edge_column`]: api.html#view.multi_edge_column
+[Scintilla]: https://scintilla.org
+[Scintillua]: https://orbitalquark.github.io/scintillua
+[Scinterm]: https://orbitalquark.github.io/scinterm
+
+### 11.0 alpha 3 (01 Aug 2020)
 
 Download:
 
@@ -79,7 +172,6 @@ Changes:
 * Scintilla: Fixed GTK on Linux bug when pasting from closed application.
 * Updated to [Scintilla][] 3.21.0.
 
-[10 to 11 migration guide]: manual.html#migrating-from-textadept-10-to-11
 [Textadept 11.0 alpha 3 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_alpha_3/textadept_11.0_alpha_3.win32.zip
 [Textadept 11.0 alpha 3 -- Mac OSX 10.6+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_alpha_3/textadept_11.0_alpha_3.osx.zip
 [Textadept 11.0 alpha 3 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_alpha_3/textadept_11.0_alpha_3.i386.tgz
