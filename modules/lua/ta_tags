@@ -710,7 +710,7 @@ move_selected_lines_up	_HOME/core/.buffer.luadoc	/^function move_selected_lines_
 msgbox	_HOME/core/.ui.dialogs.luadoc	/^function msgbox(options) end$/;"	f	class:ui.dialogs
 multi_edge_add_line	_HOME/core/.view.luadoc	/^function multi_edge_add_line(view, column, color) end$/;"	f	class:view
 multi_edge_clear_all	_HOME/core/.view.luadoc	/^function multi_edge_clear_all(view) end$/;"	f	class:view
-multi_edge_column	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+multi_edge_column	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 multi_paste	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 multiple_select_add_each	_HOME/core/.buffer.luadoc	/^function multiple_select_add_each(buffer) end$/;"	f	class:buffer
 multiple_select_add_next	_HOME/core/.buffer.luadoc	/^function multiple_select_add_next(buffer) end$/;"	f	class:buffer

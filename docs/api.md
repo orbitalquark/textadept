@@ -1203,12 +1203,6 @@ Whether or not the buffer has unsaved changes.
 Whether or not regular caret movement alters the selected text.
   [`buffer.selection_mode`](#buffer.selection_mode) dictates this property.
 
-<a id="buffer.multi_edge_column"></a>
-#### `buffer.multi_edge_column` (table, Read-only)
-
-Table of edge column positions per edge column number.
-  A position of `-1` means no edge column was found.
-
 <a id="buffer.multi_paste"></a>
 #### `buffer.multi_paste` (number)
 
@@ -10453,6 +10447,12 @@ The number of milliseconds the mouse must idle before generating a
 Whether or not pressing [`view.rectangular_selection_modifier`](#view.rectangular_selection_modifier) when
   selecting text normally with the mouse turns on rectangular selection.
   The default value is `false`.
+
+<a id="view.multi_edge_column"></a>
+#### `view.multi_edge_column` (table, Read-only)
+
+Table of edge column positions per edge column number.
+  A position of `-1` means no edge column was found.
 
 <a id="view.property"></a>
 #### `view.property` (table)
