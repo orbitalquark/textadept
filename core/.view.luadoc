@@ -432,6 +432,9 @@
 --   Whether or not pressing [`view.rectangular_selection_modifier`]() when
 --   selecting text normally with the mouse turns on rectangular selection.
 --   The default value is `false`.
+-- @field multi_edge_column (table, Read-only)
+--   Table of edge column positions per edge column number.
+--   A position of `-1` means no edge column was found.
 -- @field property (table)
 --   Map of key-value string pairs used by lexers.
 -- @field property_expanded (table, Read-only)

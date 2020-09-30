@@ -196,9 +196,6 @@
 -- @field move_extends_selection (bool, Read-only)
 --   Whether or not regular caret movement alters the selected text.
 --   [`buffer.selection_mode`]() dictates this property.
--- @field multi_edge_column (table, Read-only)
---   Table of edge column positions per edge column number.
---   A position of `-1` means no edge column was found.
 -- @field multi_paste (number)
 --   The multiple selection paste mode.
 --
