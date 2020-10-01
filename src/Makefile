@@ -284,7 +284,7 @@ manual: ../docs/api.md $(wildcard ../docs/*.md) | ../docs/_layouts/default.html
 		"s/\(\# Textadept\).\+\?\(Manual\|API\)/\1 $(subst _, ,$(version)) \2/;" \
 		../docs/*.md
 luadoc: ../core $(modules) ../lexers/lexer.lua | ../modules/lua/lua.luadoc
-	cd ../docs && luadoc --doclet markdowndoc $^ > api.md
+	cd ../scripts && luadoc --doclet markdowndoc $^ > ../docs/api.md
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $^ --ta-home=$(ta_home)
 	cd ../modules/lua && mv tags ta_tags && mv api ta_api
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $| --ta-home=$(ta_home)
