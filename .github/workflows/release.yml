@@ -127,7 +127,10 @@ jobs:
         with:
           name: ${{ needs.build.outputs.version }}
           tag: textadept_${{ needs.build.outputs.version }}
-          prerelease: ${{ needs.build.outputs.version == 'nightly' }}
+          prerelease: |
+            ${{ needs.build.outputs.version == 'nightly' ||
+              contains(needs.build.outputs.version, 'alpha') ||
+              contains(needs.build.outputs.version, 'beta') }}
           allowUpdates: true
           bodyFile: log.md
           artifacts: src/textadept_*
