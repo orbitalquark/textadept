@@ -1242,6 +1242,11 @@ function test_command_entry_run_lua_abbreviated_env()
   run_lua_command('foo="bar"')
   run_lua_command('foo')
   assert(buffer:get_text():find('bar%s*$'), 'foo result not "bar"')
+  -- textadept get/set.
+  run_lua_command('editing')
+  assert(buffer:get_text():find('%b{}%s*$'), 'textadept.editing result not a table')
+  run_lua_command('editing.select_paragraph')
+  assert(buffer.selection_start ~= buffer.selection_end, 'textadept.editing.select_paragraph() did not select paragraph')
   buffer:close()
 end
 
@@ -1263,10 +1268,16 @@ function test_command_entry_complete_lua()
   ui.command_entry.run()
   assert_lua_autocompletion('string.', 'byte')
   assert_lua_autocompletion('auto', 'auto_c_active')
+  assert_lua_autocompletion('MARK', 'MARKER_MAX')
   assert_lua_autocompletion('buffer.auto', 'auto_c_auto_hide')
   assert_lua_autocompletion('buffer:auto', 'auto_c_active')
+  assert_lua_autocompletion('caret', 'caret_fore')
+  assert_lua_autocompletion('ANNO', 'ANNOTATION_BOXED')
+  assert_lua_autocompletion('view.margin', 'margin_back_n')
+  assert_lua_autocompletion('view:call', 'call_tip_active')
   assert_lua_autocompletion('goto', 'goto_buffer')
   assert_lua_autocompletion('_', '_BUFFERS')
+  assert_lua_autocompletion('fi', 'file_types')
   -- TODO: textadept.editing.show_documentation key binding.
   ui.command_entry:focus() -- hide
 end

@@ -80,7 +80,7 @@ local env = setmetatable({}, {
     elseif type(view[k]) == 'function' then
       return function(...) view[k](view, ...) end -- do not return a value
     end
-    return buffer[k] or view[k] or ui[k] or _G[k]
+    return buffer[k] or view[k] or ui[k] or _G[k] or textadept[k]
   end,
   __newindex = function(self, k, v)
     local ok, value = pcall(function() return buffer[k] end)
@@ -96,8 +96,8 @@ local env = setmetatable({}, {
 
 -- Executes string *code* as Lua code that is subject to an "abbreviated"
 -- environment.
--- In this environment, the contents of the `buffer`, `view`, and `ui` tables
--- are also considered as global functions and fields.
+-- In this environment, the contents of the `buffer`, `view`, `ui`, and
+-- `textadept` tables are also considered as global functions and fields.
 -- Prints the results of expressions like in the Lua prompt. Also invokes bare
 -- functions as commands.
 -- @param code The Lua code to execute.
@@ -138,11 +138,12 @@ local function complete_lua()
   part = '^' .. part
   local sep = string.char(M.auto_c_type_separator)
   local XPM = textadept.editing.XPM_IMAGES
-  if not ok or symbol == 'buffer' then
+  if not ok or symbol == 'buffer' or symbol == 'view' then
     local sci = _SCINTILLA
-    local global_envs =
-      not ok and {buffer, view, ui, _G, sci.functions, sci.properties} or
-      op == ':' and {sci.functions} or {sci.properties, sci.constants}
+    local global_envs = not ok and {
+      buffer, view, ui, _G, textadept, sci.functions, sci.properties,
+      sci.constants
+    } or op == ':' and {sci.functions} or {sci.properties, sci.constants}
     for _, env in ipairs(global_envs) do
       for k, v in pairs(env) do
         if type(k) == 'string' and k:find(part) then
