@@ -518,7 +518,7 @@ function optionselect(options) end
 --     or as strings in "#RRGGBB" format. If `true` (no list was given), a
 --     default palette is shown.
 --   * `string_output`: Return the selected color in string "#RRGGBB" format
---     instead of numeric "0xBBGGRR" format. The default value is `false`.
+--     instead of as a number. The default value is `false`.
 --   * `float`: Show the dialog on top of all desktop windows. The default value
 --     is `false`.
 -- @return selected color

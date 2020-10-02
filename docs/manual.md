@@ -626,10 +626,10 @@ You can open the Lua command entry via `Ctrl+E` on Windows, Linux, and BSD,
 Lua's interactive prompt. Type in the Lua command or code to run and press
 `Enter` to invoke or run it. Textadept's [Lua API][] contains all of the
 application's built-in commands. For convenience, the contents of the
-[`buffer`][], [`view`][], and [`ui`][] tables are considered to be global
-variables, the first parameter to `buffer` and `view` functions may be omitted,
-and function call parentheses can also be omitted. For example, instead of
-entering `buffer:append_text('foo')`, you can enter `append_text('foo')`.
+[`buffer`][], [`view`][], [`ui`][], and [`textadept`][] tables are considered to
+be global variables, the first parameter to `buffer` and `view` functions may be
+omitted, and function call parentheses can also be omitted. For example, instead
+of entering `buffer:append_text('foo')`, you can enter `append_text('foo')`.
 Instead of `view:split()`, you can simply use `split`. These convenience
 facilities are not available in normally executed Lua code, such as code in
 *~/.textadept/init.lua*.
@@ -666,6 +666,7 @@ file.
 [`buffer`]: api.html#buffer
 [`view`]: api.html#view
 [`ui`]: api.html#ui
+[`textadept`]: api.html#textadept
 
 ##### Shell Command Entry and Filtering Text
 

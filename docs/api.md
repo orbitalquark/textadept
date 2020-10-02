@@ -5228,7 +5228,7 @@ mark fold points based on changes in indentation, create the lexer with a
 
 ### Using Lexers
 
-#### Textadept
+**Textadept**
 
 Put your lexer in your *~/.textadept/lexers/* directory so you do not
 overwrite it when upgrading Textadept. Also, lexers in this directory
@@ -5237,7 +5237,7 @@ the default *lua* lexer. This is convenient for tweaking a default lexer to
 your liking. Then add a [file type](#textadept.file_types) for your lexer if
 necessary.
 
-#### SciTE
+**SciTE**
 
 Create a *.properties* file for your lexer and `import` it in either your
 *SciTEUser.properties* or *SciTEGlobal.properties*. The contents of the
@@ -8010,7 +8010,7 @@ Parameters:
     or as strings in "#RRGGBB" format. If `true` (no list was given), a
     default palette is shown.
   * `string_output`: Return the selected color in string "#RRGGBB" format
-    instead of numeric "0xBBGGRR" format. The default value is `false`.
+    instead of as a number. The default value is `false`.
   * `float`: Show the dialog on top of all desktop windows. The default value
     is `false`.
 
