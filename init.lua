@@ -321,7 +321,13 @@ buffer.accessibility = buffer.ACCESSIBILITY_DISABLED
 
 -- Load user init file, which may also define default buffer settings.
 local user_init = _USERHOME .. '/init.lua'
-if lfs.attributes(user_init) then dofile(user_init) end
+if lfs.attributes(user_init) then
+  local ok, errmsg = pcall(dofile, user_init)
+  if not ok then
+    events.connect(
+      events.INITIALIZED, function() events.emit(events.ERROR, errmsg) end)
+  end
+end
 
 -- Generate default buffer settings for subsequent buffers and remove temporary
 -- buffer metatable listener.
