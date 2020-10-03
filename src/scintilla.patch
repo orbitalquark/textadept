@@ -4,6 +4,7 @@ Scintilla changes:
   This is helpful on newer versions of macOS, where changing the input method is
   flaky.
 * Update DrawTabArrowFn() signature in order to draw strikeout tabs.
+* Handle leading whitespace in XPM images in order to prevent crashes.
 
 diff -r 6e368ee248e4 gtk/ScintillaGTK.cxx
 --- a/gtk/ScintillaGTK.cxx	Fri Oct 26 11:06:34 2018 -0400
@@ -44,3 +45,16 @@ diff -r 22b6bbb36280 src/EditView.h
  
  class LineTabstops;
  
+diff -r 22b6bbb36280 src/XPM.cxx
+--- a/src/XPM.cxx	Sat Sep 05 07:55:08 2020 +1000
++++ b/src/XPM.cxx	Fri Oct 02 20:32:13 2020 -0400
+@@ -92,6 +92,9 @@
+ void XPM::Init(const char *textForm) {
+ 	// Test done is two parts to avoid possibility of overstepping the memory
+ 	// if memcmp implemented strangely. Must be 4 bytes at least at destination.
++	while (*textForm == ' ') {
++		textForm++;
++	}
+ 	if ((0 == memcmp(textForm, "/* X", 4)) && (0 == memcmp(textForm, "/* XPM */", 9))) {
+ 		// Build the lines form out of the text form
+ 		std::vector<const char *> linesForm = LinesFormFromTextForm(textForm);
