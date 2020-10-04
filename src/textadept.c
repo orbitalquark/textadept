@@ -1559,6 +1559,7 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
     while (lua_pushnil(L), lua_next(L, -2))
       lua_pushnil(L), lua_replace(L, -2), lua_rawset(L, -3); // clear
     lua_pop(L, 2); // package.loaded, _G
+    lua_gc(L, LUA_GCCOLLECT, 0);
   }
   lua_pushinteger(L, (intptr_t)L), lua_setglobal(L, "_LUA"); // for LPeg lexer
   luaL_openlibs(L);
