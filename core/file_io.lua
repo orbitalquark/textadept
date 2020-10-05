@@ -244,7 +244,8 @@ local function close(buffer, force)
       title = _L['Close without saving?'],
       text = _L['There are unsaved changes in'], informative_text = filename,
       icon = 'gtk-dialog-question', button1 = _L['Cancel'],
-      button2 = _L['Close without saving']
+      button2 = _L['Close without saving'],
+      width = CURSES and #filename > 40 and ui.size[1] - 2 or nil
     }
     if button ~= 2 then return nil end -- do not propagate key command
   end
