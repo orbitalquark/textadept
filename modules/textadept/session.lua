@@ -108,7 +108,7 @@ function M.load(filename)
       title = _L['Session Files Not Found'],
       text = _L['The following session files were not found'],
       informative_text = table.concat(not_found, '\n'):iconv('UTF-8', _CHARSET),
-      icon = 'gtk-dialog-warning'
+      icon = 'gtk-dialog-warning', width = CURSES and ui.size[1] - 2 or nil
     }
   end
   session_file = filename
