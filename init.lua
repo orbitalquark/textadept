@@ -188,6 +188,7 @@ end
 events.connect(events.BUFFER_NEW, resize_line_number_margin)
 events.connect(events.VIEW_NEW, resize_line_number_margin)
 events.connect(events.FILE_OPENED, resize_line_number_margin)
+events.connect(events.ZOOM, resize_line_number_margin)
 -- Marker Margin.
 view.margin_width_n[2] = not CURSES and 4 or 1
 -- Fold Margin.
