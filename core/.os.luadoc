@@ -15,7 +15,7 @@ module('os')
 --   arguments to pass to it. `PATH` is searched for program names.
 -- @param cwd Optional current working directory (cwd) for the child
 --   process. When omitted, the parent's cwd is used.
--- @param env Optional table of environment variables for the child process.
+-- @param env Optional map of environment variables for the child process.
 --   When omitted, the parent's environment is used.
 -- @param stdout_cb Optional Lua function that accepts a string parameter for a
 --   block of standard output read from the child. Stdout is read asynchronously
@@ -32,7 +32,7 @@ module('os')
 -- @return proc or nil plus an error message on failure
 -- @usage os.spawn('lua ' .. buffer.filename, print)
 -- @usage proc = os.spawn('lua -e "print(io.read())"', print)
---        proc:write('foo\n')
+--   proc:write('foo\n')
 -- @class function
 -- @name os.spawn
 local spawn

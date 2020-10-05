@@ -3,7 +3,7 @@
 **Contents**
 
 1. [Introduction](#introduction)
-2. [Installation](#installation)
+2. [Getting Started](#getting-started)
 3. [User Interface](#user-interface)
 4. [Working with Files and Projects](#working-with-files-and-projects)
 5. [Adept Editing](#adept-editing)
@@ -161,7 +161,7 @@ assigned to keys, associated with menu items, or connected to events.
 [Lua API]: api.html
 
 --------------------------------------------------------------------------------
-### Installation
+### Getting Started
 --------------------------------------------------------------------------------
 
 #### Requirements
@@ -230,7 +230,23 @@ your *~/.textadept/init.lua*:
     require('file_diff')
     require('spellcheck')
 
+#### Updating
+
+Textadept releases typically occur on the first day of the month every 1-2
+months. There is no auto-update process. (Textadept does not connect to the
+internet; it's just a text editor.) Simply download the new version and copy its
+contents into your current installation, overwriting any existing files and
+directories.
+
 #### Running
+
+![Linux](images/linux.png)
+&nbsp;&nbsp;
+![macOS](images/macosx.png)
+&nbsp;&nbsp;
+![Win32](images/win32.png)
+&nbsp;&nbsp;
+![curses](images/ncurses.png)
 
 Run Textadept on Windows by double-clicking *textadept.exe* or
 *textadept-curses.exe*. On macOS, double-click *Textadept.app* or invoke the
@@ -251,12 +267,14 @@ Switch             |Arguments|Description
 -------------------|:-------:|-----------
 `-e`, `--execute`  |    1    |Run the given Lua code
 `-f`, `--force`    |    0    |Forces unique instance
-`-h`, `--help`     |    0    |Shows this (except in the terminal version)
+`-h`, `--help`     |    0    |Shows this<sup>a</sup>
 `-l`, `--line`     |    1    |Jumps to a line in the previously opened file
 `-n`, `--nosession`|    0    |No state saving/restoring functionality
 `-s`, `--session`  |    1    |Loads the given session on startup
 `-u`, `--userhome` |    1    |Sets alternate user data directory
-`-v`, `--version`  |    0    |Prints Textadept version and copyright information
+`-v`, `--version`  |    0    |Prints version and copyright info<sup>a</sup>
+
+<sup>a</sup>The terminal version does not support these.
 
 You can add your own command line arguments using [`args.register()`][]. For
 example, in your *~/.textadept/init.lua*:
@@ -345,22 +363,6 @@ distribution to distribution. If you get errors like:
 
 you will need to [compile](#compiling) Textadept manually for your system, which
 is a very straightforward and easy process.
-
-![Linux](images/linux.png)
-&nbsp;&nbsp;
-![macOS](images/macosx.png)
-&nbsp;&nbsp;
-![Win32](images/win32.png)
-&nbsp;&nbsp;
-![curses](images/ncurses.png)
-
-#### Updating
-
-Textadept releases typically occur on the first day of the month every 1-2
-months. There is no auto-update process. (Textadept does not connect to the
-internet; it's just a text editor.) Simply download the new version and copy its
-contents into your current installation, overwriting any existing files and
-directories.
 
 --------------------------------------------------------------------------------
 ### User Interface

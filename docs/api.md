@@ -6304,7 +6304,7 @@ Parameters:
   arguments to pass to it. `PATH` is searched for program names.
 * *`cwd`*: Optional current working directory (cwd) for the child
   process. When omitted, the parent's cwd is used.
-* *`env`*: Optional table of environment variables for the child process.
+* *`env`*: Optional map of environment variables for the child process.
   When omitted, the parent's environment is used.
 * *`stdout_cb`*: Optional Lua function that accepts a string parameter for a
   block of standard output read from the child. Stdout is read asynchronously
@@ -6323,7 +6323,7 @@ Usage:
 
 * `os.spawn('lua ' .. buffer.filename, print)`
 * `proc = os.spawn('lua -e "print(io.read())"', print)
-       proc:write('foo\n')`
+  proc:write('foo\n')`
 
 Return:
 

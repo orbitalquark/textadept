@@ -48,7 +48,7 @@ Bugfixes:
 
 Changes:
 
-* Rewrote manual and updated lots of other documentation and documentation
+* Rewrote manual and updated lots of other documentation and the documentation
   generation pipeline.
 * Prefer passing an environment table to `os.spawn()`.
 * Updated find & replace key bindings.
