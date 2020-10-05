@@ -2310,6 +2310,23 @@ function test_ui_find_incremental_highlight()
   buffer:close(true)
 end
 
+function test_ui_find_incremental_not_found()
+  buffer.new()
+  buffer:set_text('foobar')
+  ui.find.incremental = true
+  ui.find.find_entry_text = 'b'
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
+  assert_equal(buffer.current_pos, 4)
+  ui.find.find_entry_text = 'bb'
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
+  assert_equal(buffer.current_pos, 1)
+  events.emit(events.FIND, ui.find.find_entry_text, true) -- simulate Find Next
+  assert_equal(buffer.current_pos, 1) -- cursor did not advance
+  ui.find.find_entry_text = ''
+  ui.find.incremental = false
+  buffer:close(true)
+end
+
 function test_ui_find_find_in_files()
   ui.find.find_entry_text = 'foo'
   ui.find.match_case = true

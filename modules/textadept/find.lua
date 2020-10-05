@@ -166,6 +166,7 @@ events.connect(events.KEYPRESS, function(code)
   clear_highlighted_matches()
 end, 1)
 
+local incremental_orig_pos
 -- Finds and selects text in the current buffer.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
@@ -186,15 +187,17 @@ local function find(text, next, flags, no_wrap, wrapped)
   local first_visible_line = view.first_visible_line -- for 'no results found'
 
   if M.incremental and not wrapped then
+    local pos = buffer.current_pos
     if type(M.incremental) == 'boolean' then
       -- Starting a new incremental search, anchor at current pos.
-      M.incremental = buffer.current_pos
+      M.incremental, incremental_orig_pos = pos, pos
     elseif text == find_text then
       -- "Find Next" or "Find Prev" clicked, anchor at new current pos.
-      M.incremental = buffer:position_relative(
-        buffer.current_pos, next and 1 or -1)
+      M.incremental = buffer:position_relative(pos, next and 1 or -1)
     end
     buffer:goto_pos(M.incremental or 1)
+  elseif not M.incremental then
+    incremental_orig_pos = nil
   end
 
   -- If text is selected, assume it is from the current search and move the
@@ -221,7 +224,7 @@ local function find(text, next, flags, no_wrap, wrapped)
     if pos == -1 then
       ui.statusbar_text = _L['No results found']
       view:line_scroll(0, first_visible_line - view.first_visible_line)
-      buffer:goto_pos(anchor)
+      buffer:goto_pos(incremental_orig_pos or anchor)
     end
   elseif not wrapped then
     ui.statusbar_text = ''
