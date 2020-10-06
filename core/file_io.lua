@@ -136,7 +136,8 @@ function io.open_file(filenames, encodings)
     ::encoding_detected::
     buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
     -- Detect EOL mode.
-    buffer.eol_mode = text:find('\r\n') and buffer.EOL_CRLF or buffer.EOL_LF
+    local s, e = text:find('\r?\n')
+    if s then buffer.eol_mode = buffer[s < e and 'EOL_CRLF' or 'EOL_LF'] end
     -- Insert buffer text and set properties.
     buffer:append_text(text)
     buffer:empty_undo_buffer()
