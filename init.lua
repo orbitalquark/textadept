@@ -159,6 +159,7 @@ view.view_ws = view.WS_INVISIBLE
 --view.extra_descent =
 
 -- Line Endings
+buffer.eol_mode = WIN32 and buffer.EOL_CRLF or buffer.EOL_LF
 view.view_eol = false
 
 -- Styling
