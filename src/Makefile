@@ -393,6 +393,8 @@ pdcurses_zip = PDCurses-3.9.zip
 gtkosx_tgz = gtkosx-2.24.31.tar.gz
 cloc = cloc-1.60.pl
 
+LexLPeg = LexLPeg.cxx LexLPeg.h
+
 $(scintilla_tgz): ; $(WGET) https://www.scintilla.org/$@
 scintilla: scintilla.patch | $(scintilla_tgz)
 	if [ -d $@/.hg ]; then \
@@ -406,9 +408,9 @@ $(scinterm_zip): ; $(WGET) $(scinterm_url) -O $@
 scinterm: scintilla/curses
 scintilla/curses: | $(scinterm_zip) ; unzip -d $@ -j $| "*/*.cxx" "*/*.h"
 $(scintillua_zip): ; $(WGET) $(scintillua_url) -O $@
-scintillua: ../lexers LexLPeg.cxx
+scintillua: ../lexers $(LexLPeg)
 ../lexers: | $(scintillua_zip) ; unzip -d $@ -j $| "*/lexers/*" -x "*/themes/*"
-LexLPeg.cxx: | $(scintillua_zip) ; unzip -j $| "*/*.cxx" "*/*.h"
+$(LexLPeg): | $(scintillua_zip) ; unzip -j $| "*/*.cxx" "*/*.h"
 $(lua_tgz): ; $(WGET) https://www.lua.org/ftp/$@
 $(lpeg_tgz): ; $(WGET) http://www.inf.puc-rio.br/~roberto/lpeg/$@
 $(lfs_zip): ; $(WGET) https://github.com/keplerproject/luafilesystem/archive/$@
@@ -454,8 +456,8 @@ gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 $(cloc): ; $(WGET) http://prdownloads.sourceforge.net/cloc/$@
 
 clean-deps:
-	rm -rf scintilla ../lexers LexLPeg.cxx lua gtdialog cdk termkey win32gtk \
-		win32curses gtkosx
+	rm -rf scintilla ../lexers $(LexLPeg) lua gtdialog cdk termkey win32gtk \
+		win32curses gtkosx $(scinterm_zip) $(scintillua_zip) $(gtdialog_zip)
 
 # Count lines of code.
 
