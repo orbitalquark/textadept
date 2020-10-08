@@ -2508,6 +2508,166 @@ function test_ui_find_replace_all()
   buffer:close(true)
 end
 
+function test_history()
+  local filename1 = _HOME .. '/test/modules/textadept/history/1'
+  io.open_file(filename1)
+  textadept.history.clear() -- clear initial buffer switch record
+  buffer:goto_line(5)
+  textadept.history.back() -- should not do anything
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
+  buffer:add_text('foo')
+  buffer:goto_line(5 + textadept.history.minimum_line_distance + 1)
+  textadept.history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
+  assert_equal(buffer.current_pos, buffer.line_end_position[5])
+  textadept.history.forward() -- should stay put (no edits have been made since)
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
+  buffer:new_line()
+  buffer:add_text('bar') -- close changes should update current history
+  local filename2 = _HOME .. '/test/modules/textadept/history/2'
+  io.open_file(filename2)
+  buffer:goto_line(10)
+  buffer:add_text('baz')
+  textadept.history.back() -- should ignore initial file load and go back to file 1
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 6)
+  textadept.history.back() -- should stay put (updated history from line 5 to line 6)
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 6)
+  textadept.history.forward()
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  textadept.history.back()
+  buffer:goto_line(15)
+  buffer:clear() -- erases forward history to file 2
+  textadept.history.forward() -- should not do anything
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
+  textadept.history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 6)
+  textadept.history.forward()
+  view:goto_buffer(1)
+  assert_equal(buffer.filename, filename2)
+  buffer:goto_line(20)
+  buffer:add_text('quux')
+  view:goto_buffer(-1)
+  assert_equal(buffer.filename, filename1)
+  buffer:undo() -- undo delete of '\n'
+  buffer:undo() -- undo add of 'foo'
+  buffer:redo() -- re-add 'foo'
+  textadept.history.back() -- undo and redo should not affect history
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 20)
+  textadept.history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
+  textadept.history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 6)
+  buffer:target_whole_document()
+  buffer:replace_target(string.rep('\n', buffer.line_count)) -- whole buffer replacements should not affect history (e.g. clang-format)
+  textadept.history.forward()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
+  view:goto_buffer(1)
+  assert_equal(buffer.filename, filename2)
+  buffer:close(true)
+  textadept.history.back() -- should re-open file 2
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 20)
+  buffer:close(true)
+  buffer:close(true)
+
+  assert_raises(function() textadept.history.record(1) end, 'string/nil expected, got number')
+  assert_raises(function() textadept.history.record('', true) end, 'number/nil expected, got boolean')
+  assert_raises(function() textadept.history.record('', 1, '') end, 'number/nil expected, got string')
+end
+
+function test_history_soft_records()
+  local filename1 = _HOME .. '/test/modules/textadept/history/1'
+  io.open_file(filename1)
+  textadept.history.clear() -- clear initial buffer switch record
+  buffer:goto_line(5)
+  local filename2 = _HOME .. '/test/modules/textadept/history/2'
+  io.open_file(filename2)
+  buffer:goto_line(10)
+  textadept.history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
+  buffer:goto_line(15)
+  textadept.history.forward() -- should update soft record from line 5 to 15
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  buffer:goto_line(20)
+  textadept.history.back() -- should update soft record from line 10 to 20
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
+  textadept.history.forward()
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 20)
+  buffer:goto_line(10)
+  buffer:add_text('foo') -- should update soft record from line 20 to 10 and make it hard
+  textadept.history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
+  textadept.history.forward()
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  buffer:goto_line(20)
+  buffer:add_text('bar') -- should create a new record
+  textadept.history.back()
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  buffer:close(true)
+  buffer:close(true)
+end
+
+function test_history_per_view()
+  local filename1 = _HOME .. '/test/modules/textadept/history/1'
+  io.open_file(filename1)
+  textadept.history.clear() -- clear initial buffer switch record
+  buffer:goto_line(5)
+  buffer:add_text('foo')
+  buffer:goto_line(10)
+  buffer:add_text('bar')
+  view:split()
+  textadept.history.back() -- no history for this view
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  local filename2 = _HOME .. '/test/modules/textadept/history/2'
+  io.open_file(filename2)
+  buffer:goto_line(15)
+  buffer:add_text('baz')
+  buffer:goto_line(20)
+  textadept.history.back()
+  assert_equal(buffer.filename, filename2)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
+  textadept.history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  textadept.history.back() -- no more history for this view
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  ui.goto_view(-1)
+  textadept.history.back()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
+  textadept.history.forward()
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  textadept.history.forward() -- no more history for this view
+  assert_equal(buffer.filename, filename1)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
+  view:unsplit()
+  view:goto_buffer(1)
+  buffer:close(true)
+  buffer:close(true)
+end
+
 function test_macro_record_play_save_load()
   textadept.macros.save() -- should not do anything
   textadept.macros.play() -- should not do anything
@@ -3868,124 +4028,6 @@ function test_file_diff_interactive()
   buffer:close(true)
   view:unsplit()
   if different_files then buffer:close(true) end
-end
-
-function test_history()
-  local history = require('history')
-  history.disable_listening() -- clear preexisting history
-  history.enable_listening()
-  local filename1 = _HOME .. '/test/modules/history/1'
-  io.open_file(filename1)
-  buffer:goto_line(5)
-  history.back() -- should not do anything (ignore initial file load)
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
-  buffer:add_text('foo')
-  buffer:goto_line(5 + history.minimum_line_distance + 1)
-  history.back()
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
-  assert_equal(buffer.current_pos, buffer.line_end_position[5])
-  history.forward() -- should stay put (no edits have been made since)
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
-  buffer:new_line()
-  buffer:add_text('bar') -- close changes should update current history
-  local filename2 = _HOME .. '/test/modules/history/2'
-  io.open_file(filename2)
-  buffer:goto_line(10)
-  buffer:add_text('baz')
-  history.back() -- should ignore initial file load and go back to file 1
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 6)
-  history.back() -- should stay put (updated history from line 5 to line 6)
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 6)
-  history.forward()
-  assert_equal(buffer.filename, filename2)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
-  history.back()
-  buffer:goto_line(15)
-  buffer:clear() -- erases forward history to file 2
-  history.forward() -- should not do anything
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
-  history.back()
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 6)
-  history.forward()
-  view:goto_buffer(1)
-  assert_equal(buffer.filename, filename2)
-  buffer:goto_line(20)
-  buffer:add_text('quux')
-  view:goto_buffer(-1)
-  assert_equal(buffer.filename, filename1)
-  buffer:undo() -- undo delete of '\n'
-  buffer:undo() -- undo add of 'foo'
-  buffer:redo() -- re-add 'foo'
-  history.back() -- undo and redo should not affect history
-  assert_equal(buffer.filename, filename2)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 20)
-  history.back()
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
-  history.back()
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 6)
-  buffer:target_whole_document()
-  buffer:replace_target(string.rep('\n', buffer.line_count)) -- whole buffer replacements should not affect history (e.g. clang-format)
-  history.forward()
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
-  view:goto_buffer(1)
-  assert_equal(buffer.filename, filename2)
-  buffer:close(true)
-  history.forward() -- should re-open file 2
-  assert_equal(buffer.filename, filename2)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 20)
-  buffer:close(true)
-  buffer:close(true)
-end
-
-function test_history_per_view()
-  local history = require('history')
-  history.disable_listening() -- clear preexisting history
-  history.enable_listening()
-  local filename1 = _HOME .. '/test/modules/history/1'
-  io.open_file(filename1)
-  buffer:goto_line(5)
-  buffer:add_text('foo')
-  buffer:goto_line(10)
-  buffer:add_text('bar')
-  view:split()
-  history.back() -- no history for this view
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
-  local filename2 = _HOME .. '/test/modules/history/2'
-  io.open_file(filename2)
-  buffer:goto_line(15)
-  buffer:add_text('baz')
-  buffer:goto_line(20)
-  history.back()
-  assert_equal(buffer.filename, filename2)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
-  history.back() -- no more history for this view
-  assert_equal(buffer.filename, filename2)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 15)
-  ui.goto_view(-1)
-  history.back()
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
-  history.forward()
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
-  history.forward() -- no more history for this view
-  assert_equal(buffer.filename, filename1)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 10)
-  view:unsplit()
-  view:goto_buffer(1)
-  buffer:close(true)
-  buffer:close(true)
 end
 
 function test_spellcheck()

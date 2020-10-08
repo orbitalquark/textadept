@@ -20,6 +20,7 @@
 1. [textadept.bookmarks](#textadept.bookmarks)
 1. [textadept.editing](#textadept.editing)
 1. [textadept.file_types](#textadept.file_types)
+1. [textadept.history](#textadept.history)
 1. [textadept.keys](#textadept.keys)
 1. [textadept.macros](#textadept.macros)
 1. [textadept.menu](#textadept.menu)
@@ -6872,6 +6873,70 @@ Map of first-line patterns to their associated lexer names.
 Each pattern is matched against the first line in the file.
 
 ---
+<a id="textadept.history"></a>
+## The `textadept.history` Module
+---
+
+Records buffer positions within Textadept views over time and allows for
+navigating through that history.
+
+This module listens for text edit events and buffer switch events. Each time
+an insertion or deletion occurs, its location is recorded in the current
+view's location history. If the edit is close enough to the previous record,
+the previous record is amended. Each time a buffer switch occurs, the before
+and after locations are recorded.
+
+### Fields defined by `textadept.history`
+
+<a id="textadept.history.maximum_history_size"></a>
+#### `textadept.history.maximum_history_size` (number)
+
+The maximum number of history records to keep per view.
+  The default value is `100`.
+
+<a id="textadept.history.minimum_line_distance"></a>
+#### `textadept.history.minimum_line_distance` (number)
+
+The minimum number of lines between distinct history records.
+  The default value is `3`.
+
+
+### Functions defined by `textadept.history`
+
+<a id="textadept.history.back"></a>
+#### `textadept.history.back`()
+
+Navigates backwards through the current view's history.
+
+<a id="textadept.history.clear"></a>
+#### `textadept.history.clear`()
+
+Clears all view history.
+
+<a id="textadept.history.forward"></a>
+#### `textadept.history.forward`()
+
+Navigates forwards through the current view's history.
+
+<a id="textadept.history.record"></a>
+#### `textadept.history.record`(*filename, line, column, soft*)
+
+Records the given location in the current view's history.
+
+Parameters:
+
+* *`filename`*: Optional string filename, buffer type, or identifier of the
+  buffer to store. If `nil`, uses the current buffer.
+* *`line`*: Optional Integer line number to store. If `nil`, uses the current
+  line.
+* *`column`*: Optional integer column number on line *line* to store. If
+  `nil`, uses the current column.
+* *`soft`*: Optional flag that indicates whether or not this record should be
+  skipped when navigating backward towards it, and updated when navigating
+  away from it. The default value is `false`.
+
+
+---
 <a id="textadept.keys"></a>
 ## The `textadept.keys` Module
 ---
@@ -6897,41 +6962,45 @@ Ctrl+Shift+W     |⌘⇧W  |M-^W    |Close all files
 None             |None |None    |Load session...
 None             |None |None    |Save session...
 Ctrl+Q           |⌘Q   |^Q      |Quit
-**Edit**                |         |              |
-Ctrl+Z<br/>Alt+Bksp     |⌘Z       |^Z^(†)<br/>M-Z|Undo
-Ctrl+Y<br/>Ctrl+Shift+Z |⌘⇧Z      |^Y<br/>M-S-Z  |Redo
-Ctrl+X<br/>Shift+Del    |⌘X<br/>⇧⌦|^X            |Cut
-Ctrl+C<br/>Ctrl+Ins     |⌘C       |^C            |Copy
-Ctrl+V<br/>Shift+Ins    |⌘V       |^V            |Paste
-Ctrl+Shift+V            |⌘⇧V      |M-V           |Paste Reindent
-Ctrl+D                  |⌘D       |None          |Duplicate line
-Del                     |⌦<br/>^D |Del<br/>^D    |Delete
-Alt+Del                 |^⌦       |M-Del<br/>M-D |Delete word
-Ctrl+A                  |⌘A       |M-A           |Select all
-Ctrl+M                  |^M       |M-M           |Match brace
-Ctrl+Enter              |^Esc     |M-Enter^(‡)   |Complete word
-Ctrl+/                  |^/       |M-/           |Toggle block comment
-Ctrl+T                  |^T       |^T            |Transpose characters
-Ctrl+Shift+J            |^J       |M-J           |Join lines
-Ctrl+&#124;             |⌘&#124;  |^\            |Filter text through
-Ctrl+Shift+M            |^⇧M      |M-S-M         |Select between delimiters
-Ctrl+<                  |⌘<       |M-<           |Select between XML tags
-Ctrl+>                  |⌘>       |None          |Select in XML tag
-Ctrl+Shift+D            |⌘⇧D      |M-S-W         |Select word
-Ctrl+Shift+N            |⌘⇧N      |M-S-N         |Select line
-Ctrl+Shift+P            |⌘⇧P      |M-S-P         |Select paragraph
-Ctrl+Alt+U              |^U       |M-^U          |Upper case selection
-Ctrl+Alt+Shift+U        |^⇧U      |M-^L          |Lower case selection
-Alt+<                   |^<       |M->           |Enclose as XML tags
-Alt+>                   |^>       |None          |Enclose as single XML tag
-Alt+"                   |^"       |None          |Enclose in double quotes
-Alt+'                   |^'       |None          |Enclose in single quotes
-Alt+(                   |^(       |M-)           |Enclose in parentheses
-Alt+[                   |^[       |M-]           |Enclose in brackets
-Alt+{                   |^{       |M-}           |Enclose in braces
-Ctrl+Shift+Up           |^⇧⇡      |S-^Up         |Move selected lines up
-Ctrl+Shift+Down         |^⇧⇣      |S-^Down       |Move selected lines down
-Ctrl+P                  |⌘,       |M-~           |Preferences
+**Edit**               |         |              |
+Ctrl+Z<br/>Alt+Bksp    |⌘Z       |^Z^(†)<br/>M-Z|Undo
+Ctrl+Y<br/>Ctrl+Shift+Z|⌘⇧Z      |^Y<br/>M-S-Z  |Redo
+Ctrl+X<br/>Shift+Del   |⌘X<br/>⇧⌦|^X            |Cut
+Ctrl+C<br/>Ctrl+Ins    |⌘C       |^C            |Copy
+Ctrl+V<br/>Shift+Ins   |⌘V       |^V            |Paste
+Ctrl+Shift+V           |⌘⇧V      |M-V           |Paste Reindent
+Ctrl+D                 |⌘D       |None          |Duplicate line
+Del                    |⌦<br/>^D |Del<br/>^D    |Delete
+Alt+Del                |^⌦       |M-Del<br/>M-D |Delete word
+Ctrl+A                 |⌘A       |M-A           |Select all
+Ctrl+M                 |^M       |M-M           |Match brace
+Ctrl+Enter             |^Esc     |M-Enter^(‡)   |Complete word
+Ctrl+/                 |^/       |M-/           |Toggle block comment
+Ctrl+T                 |^T       |^T            |Transpose characters
+Ctrl+Shift+J           |^J       |M-J           |Join lines
+Ctrl+&#124;            |⌘&#124;  |^\            |Filter text through
+Ctrl+Shift+M           |^⇧M      |M-S-M         |Select between delimiters
+Ctrl+<                 |⌘<       |M-<           |Select between XML tags
+Ctrl+>                 |⌘>       |None          |Select in XML tag
+Ctrl+Shift+D           |⌘⇧D      |M-S-W         |Select word
+Ctrl+Shift+N           |⌘⇧N      |M-S-N         |Select line
+Ctrl+Shift+P           |⌘⇧P      |M-S-P         |Select paragraph
+Ctrl+Alt+U             |^U       |M-^U          |Upper case selection
+Ctrl+Alt+Shift+U       |^⇧U      |M-^L          |Lower case selection
+Alt+<                  |^<       |M->           |Enclose as XML tags
+Alt+>                  |^>       |None          |Enclose as single XML tag
+Alt+"                  |^"       |None          |Enclose in double quotes
+Alt+'                  |^'       |None          |Enclose in single quotes
+Alt+(                  |^(       |M-)           |Enclose in parentheses
+Alt+[                  |^[       |M-]           |Enclose in brackets
+Alt+{                  |^{       |M-}           |Enclose in braces
+Ctrl+Shift+Up          |^⇧⇡      |S-^Up         |Move selected lines up
+Ctrl+Shift+Down        |^⇧⇣      |S-^Down       |Move selected lines down
+Alt+,                  |^,       |M-,           |Navigate backward
+Alt+.                  |^.       |M-.           |Navigate forward
+None                   |None     |None          |Record location
+None                   |None     |None          |Clear navigation history
+Ctrl+P                 |⌘,       |M-~           |Preferences
 **Search**               |    |             |
 Ctrl+F                   |⌘F  |M-F<br/>M-S-F|Find
 Ctrl+G<br/>F3            |⌘G  |M-G          |Find next

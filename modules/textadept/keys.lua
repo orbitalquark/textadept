@@ -25,41 +25,45 @@ local M = {}
 -- None             |None |None    |Load session...
 -- None             |None |None    |Save session...
 -- Ctrl+Q           |⌘Q   |^Q      |Quit
--- **Edit**                |         |              |
--- Ctrl+Z<br/>Alt+Bksp     |⌘Z       |^Z^(†)<br/>M-Z|Undo
--- Ctrl+Y<br/>Ctrl+Shift+Z |⌘⇧Z      |^Y<br/>M-S-Z  |Redo
--- Ctrl+X<br/>Shift+Del    |⌘X<br/>⇧⌦|^X            |Cut
--- Ctrl+C<br/>Ctrl+Ins     |⌘C       |^C            |Copy
--- Ctrl+V<br/>Shift+Ins    |⌘V       |^V            |Paste
--- Ctrl+Shift+V            |⌘⇧V      |M-V           |Paste Reindent
--- Ctrl+D                  |⌘D       |None          |Duplicate line
--- Del                     |⌦<br/>^D |Del<br/>^D    |Delete
--- Alt+Del                 |^⌦       |M-Del<br/>M-D |Delete word
--- Ctrl+A                  |⌘A       |M-A           |Select all
--- Ctrl+M                  |^M       |M-M           |Match brace
--- Ctrl+Enter              |^Esc     |M-Enter^(‡)   |Complete word
--- Ctrl+/                  |^/       |M-/           |Toggle block comment
--- Ctrl+T                  |^T       |^T            |Transpose characters
--- Ctrl+Shift+J            |^J       |M-J           |Join lines
--- Ctrl+&#124;             |⌘&#124;  |^\            |Filter text through
--- Ctrl+Shift+M            |^⇧M      |M-S-M         |Select between delimiters
--- Ctrl+<                  |⌘<       |M-<           |Select between XML tags
--- Ctrl+>                  |⌘>       |None          |Select in XML tag
--- Ctrl+Shift+D            |⌘⇧D      |M-S-W         |Select word
--- Ctrl+Shift+N            |⌘⇧N      |M-S-N         |Select line
--- Ctrl+Shift+P            |⌘⇧P      |M-S-P         |Select paragraph
--- Ctrl+Alt+U              |^U       |M-^U          |Upper case selection
--- Ctrl+Alt+Shift+U        |^⇧U      |M-^L          |Lower case selection
--- Alt+<                   |^<       |M->           |Enclose as XML tags
--- Alt+>                   |^>       |None          |Enclose as single XML tag
--- Alt+"                   |^"       |None          |Enclose in double quotes
--- Alt+'                   |^'       |None          |Enclose in single quotes
--- Alt+(                   |^(       |M-)           |Enclose in parentheses
--- Alt+[                   |^[       |M-]           |Enclose in brackets
--- Alt+{                   |^{       |M-}           |Enclose in braces
--- Ctrl+Shift+Up           |^⇧⇡      |S-^Up         |Move selected lines up
--- Ctrl+Shift+Down         |^⇧⇣      |S-^Down       |Move selected lines down
--- Ctrl+P                  |⌘,       |M-~           |Preferences
+-- **Edit**               |         |              |
+-- Ctrl+Z<br/>Alt+Bksp    |⌘Z       |^Z^(†)<br/>M-Z|Undo
+-- Ctrl+Y<br/>Ctrl+Shift+Z|⌘⇧Z      |^Y<br/>M-S-Z  |Redo
+-- Ctrl+X<br/>Shift+Del   |⌘X<br/>⇧⌦|^X            |Cut
+-- Ctrl+C<br/>Ctrl+Ins    |⌘C       |^C            |Copy
+-- Ctrl+V<br/>Shift+Ins   |⌘V       |^V            |Paste
+-- Ctrl+Shift+V           |⌘⇧V      |M-V           |Paste Reindent
+-- Ctrl+D                 |⌘D       |None          |Duplicate line
+-- Del                    |⌦<br/>^D |Del<br/>^D    |Delete
+-- Alt+Del                |^⌦       |M-Del<br/>M-D |Delete word
+-- Ctrl+A                 |⌘A       |M-A           |Select all
+-- Ctrl+M                 |^M       |M-M           |Match brace
+-- Ctrl+Enter             |^Esc     |M-Enter^(‡)   |Complete word
+-- Ctrl+/                 |^/       |M-/           |Toggle block comment
+-- Ctrl+T                 |^T       |^T            |Transpose characters
+-- Ctrl+Shift+J           |^J       |M-J           |Join lines
+-- Ctrl+&#124;            |⌘&#124;  |^\            |Filter text through
+-- Ctrl+Shift+M           |^⇧M      |M-S-M         |Select between delimiters
+-- Ctrl+<                 |⌘<       |M-<           |Select between XML tags
+-- Ctrl+>                 |⌘>       |None          |Select in XML tag
+-- Ctrl+Shift+D           |⌘⇧D      |M-S-W         |Select word
+-- Ctrl+Shift+N           |⌘⇧N      |M-S-N         |Select line
+-- Ctrl+Shift+P           |⌘⇧P      |M-S-P         |Select paragraph
+-- Ctrl+Alt+U             |^U       |M-^U          |Upper case selection
+-- Ctrl+Alt+Shift+U       |^⇧U      |M-^L          |Lower case selection
+-- Alt+<                  |^<       |M->           |Enclose as XML tags
+-- Alt+>                  |^>       |None          |Enclose as single XML tag
+-- Alt+"                  |^"       |None          |Enclose in double quotes
+-- Alt+'                  |^'       |None          |Enclose in single quotes
+-- Alt+(                  |^(       |M-)           |Enclose in parentheses
+-- Alt+[                  |^[       |M-]           |Enclose in brackets
+-- Alt+{                  |^{       |M-}           |Enclose in braces
+-- Ctrl+Shift+Up          |^⇧⇡      |S-^Up         |Move selected lines up
+-- Ctrl+Shift+Down        |^⇧⇣      |S-^Down       |Move selected lines down
+-- Alt+,                  |^,       |M-,           |Navigate backward
+-- Alt+.                  |^.       |M-.           |Navigate forward
+-- None                   |None     |None          |Record location
+-- None                   |None     |None          |Clear navigation history
+-- Ctrl+P                 |⌘,       |M-~           |Preferences
 -- **Search**               |    |             |
 -- Ctrl+F                   |⌘F  |M-F<br/>M-S-F|Find
 -- Ctrl+G<br/>F3            |⌘G  |M-G          |Find next
@@ -336,7 +340,12 @@ local bindings = {
     {'ctrl+shift+up', 'ctrl+shift+up', 'ctrl+shift+up'},
   [buffer.move_selected_lines_down] =
     {'ctrl+shift+down', 'ctrl+shift+down', 'ctrl+shift+down'},
-  -- Preferences
+  -- History.
+  [textadept.history.back] = {'alt+,', 'ctrl+,', 'meta+,'},
+  [textadept.history.forward] = {'alt+.', 'ctrl+.', 'meta+.'},
+  -- TODO: textadept.history.record
+  -- TODO: textadept.history.clear
+  -- Preferences.
   [m_edit[_L['Preferences']][2]] = {'ctrl+p', 'cmd+,', 'meta+~'},
 
   -- Search.

@@ -131,6 +131,14 @@ local default_menubar = {
       {_L['Move Selected Lines Up'], buffer.move_selected_lines_up},
       {_L['Move Selected Lines Down'], buffer.move_selected_lines_down}
     },
+    {
+      title = _L['History'],
+      {_L['Navigate Backward'], textadept.history.back},
+      {_L['Navigate Forward'], textadept.history.forward},
+      {_L['Record Location'], textadept.history.record},
+      SEPARATOR,
+      {_L['Clear History'], textadept.history.clear}
+    },
     SEPARATOR,
     {_L['Preferences'], function() io.open_file(_USERHOME .. '/init.lua') end}
   },

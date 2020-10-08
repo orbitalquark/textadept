@@ -1135,6 +1135,13 @@ You can auto-enclose selected text between any typed punctuation character
 [`textadept.editing.auto_pairs`]: api.html#textadept.editing.auto_pairs
 [`textadept.editing.auto_enclose`]: api.html#textadept.editing.auto_enclose
 
+#### Navigate Through History
+
+Textadept records buffer positions within views over time and allows for
+navigating through that history. Navigate backward or forward via `Alt+,` or
+`Alt+.`, respectively, on Windows, Linux, and BSD; `^,` or `^.`, respectively,
+on macOS; and `M-,` or `M-.`, respectively, in the terminal version.
+
 #### Goto Line
 
 You can jump to a specific line in the current buffer via `Ctrl+J` on Windows,
@@ -1898,6 +1905,7 @@ lexers                     |Removed |N/A<sup>b</sup>
 find\_incremental()        |Replaced|[incremental][]<sup>c</sup>
 find\_incremental\_keys    |Removed |
 N/A                        |Added   |[highlight_all_matches][]
+**textadept.history**      |Added   |[textadept.history][]
 **textadept.snippets**     |        |
 \_insert()                 |Renamed |[insert()][]
 \_previous()               |Renamed |[previous()][]
@@ -1946,6 +1954,7 @@ section below.
 [highlight_words]: api.html#textadept.editing.highlight_words
 [incremental]: api.html#ui.find.incremental
 [highlight_all_matches]: api.html#ui.find.highlight_all_matches
+[textadept.history]: api.html#textadept.history
 [insert()]: api.html#textadept.snippets.insert
 [previous()]: api.html#textadept.snippets.previous
 [cancel_current()]: api.html#textadept.snippets.cancel_current
