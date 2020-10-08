@@ -4060,7 +4060,7 @@ function test_spellcheck()
   local s, e = buffer.current_pos, buffer:word_end_position(buffer.current_pos)
   assert_equal(buffer:text_range(s, e), 'foo')
   buffer:cancel()
-  events.emit(events.USER_LIST_SELECTION, 1, 'goo', s)
+  events.emit(events.USER_LIST_SELECTION, SPELLING_ID, 'goo', s)
   assert_equal(buffer:text_range(s, e), 'goo')
   ui.update()
   if CURSES then spellcheck.check_spelling() end -- not needed when interactive
@@ -4080,6 +4080,50 @@ function test_spellcheck()
   -- TODO: test add.
 
   buffer:close(true)
+end
+
+function test_spellcheck_encodings()
+  local spellcheck = require('spellcheck')
+  local SPELLING_ID = 1 -- not accessible
+  buffer:new()
+
+  -- Test UTF-8 dictionary and caret placement.
+  buffer:set_text(' multiumesc')
+  spellcheck.load('ro_RO')
+  spellcheck.check_spelling()
+  events.emit(events.INDICATOR_CLICK, 8)
+  assert_equal(buffer.auto_c_current_text, 'mulțumesc')
+  ui.update()
+  events.emit(
+    events.USER_LIST_SELECTION, SPELLING_ID, buffer.auto_c_current_text,
+    buffer.current_pos)
+  assert_equal(buffer:get_text(), ' mulțumesc')
+  assert_equal(buffer.current_pos, 9)
+
+  -- Test ISO8859-1 dictionary with different buffer encodings.
+  for _, encoding in pairs{'UTF-8', 'ISO8859-1', 'CP1252'} do
+    buffer:clear_all()
+    buffer:set_encoding(encoding)
+    buffer:set_text('schoen')
+    ui.update()
+    spellcheck.load('de_DE')
+    spellcheck.check_spelling(true)
+    assert_equal(buffer.auto_c_current_text, 'schön')
+    events.emit(
+      events.USER_LIST_SELECTION, SPELLING_ID, buffer.auto_c_current_text,
+      buffer.current_pos)
+    assert_equal(buffer:get_text():iconv(encoding, 'UTF-8'), string.iconv('schön', encoding, 'UTF-8'))
+    ui.update()
+    spellcheck.check_spelling()
+    assert_equal(buffer:indicator_end(spellcheck.INDIC_SPELLING, 1), 1)
+  end
+
+  buffer:close(true)
+end
+
+function test_spellcheck_load_interactive()
+  require('spellcheck')
+  textadept.menu.menubar[_L['Tools']][_L['Spelling']][_L['Load Dictionary...']][2]()
 end
 
 -- Load buffer and view API from their respective LuaDoc files.
