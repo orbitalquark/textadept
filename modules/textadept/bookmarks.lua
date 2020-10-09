@@ -26,8 +26,8 @@ end
 -- @name clear
 function M.clear() buffer:marker_delete_all(M.MARK_BOOKMARK) end
 
--- Returns an iterator for all bookmarks in the current buffer.
-local function bookmarks()
+-- Returns an iterator for all bookmarks in the given buffer.
+local function bookmarks(buffer)
   return function(_, line)
     line = buffer:marker_next(line + 1, 1 << M.MARK_BOOKMARK - 1)
     return line >= 1 and line or nil
@@ -63,7 +63,7 @@ function M.goto_mark(next)
     local filename = buffer.filename or buffer._type or _L['Untitled']
     if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
-    for line in bookmarks() do
+    for line in bookmarks(buffer) do
       utf8_list[#utf8_list + 1] = string.format(
         '%s:%d: %s', basename, line, buffer:get_line(line):match('^[^\r\n]*'))
       buffers[#buffers + 1] = buffer
@@ -84,7 +84,7 @@ end
 local lines = {}
 -- Save and restore bookmarks on buffer:reload().
 events.connect(events.FILE_BEFORE_RELOAD, function()
-  for line in bookmarks() do lines[#lines + 1] = line end
+  for line in bookmarks(buffer) do lines[#lines + 1] = line end
 end)
 events.connect(events.FILE_AFTER_RELOAD, function()
   for _, line in ipairs(lines) do buffer:marker_add(line, M.MARK_BOOKMARK) end
