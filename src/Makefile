@@ -317,6 +317,8 @@ ifneq (, $(shell hg summary 2>/dev/null))
 else
   archive = cd ../ && git archive HEAD --prefix src/$(1)/ | tar -xf -
 endif
+modules = css ctags debugger export file_diff html lsp lua_repl open_file_mode \
+  python rest ruby spellcheck yaml
 
 $(basedir).linux: ; $(call archive,$@)
 release: $(basedir).linux
@@ -344,9 +346,11 @@ osx-release: $(basedir).macOS
 	zip -r $<.zip $< && rm -rf $<
 $(basedir).modules:
 	mkdir -p $@/modules
-	hg archive -R /home/mitchell/code/textadept_modules/ -r tip $@/modules
-modules-release: $(basedir).modules
-	zip -r $<.zip $< && rm -r $<
+	for module in $(modules); do \
+		make -C ../modules/$$module release; \
+		unzip -d $@/modules ../modules/$$module/$$module.zip; \
+	done
+modules-release: $(basedir).modules ; zip -r $<.zip $< && rm -r $<
 
 osx-app: ../textadept ../textadept-curses ../scripts/osx/textadept_osx
 	mkdir -p $(osxapp_bin) $(osxapp_res)
