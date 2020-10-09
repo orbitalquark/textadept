@@ -396,8 +396,8 @@ io.quick_open_filters = {}
 --   string and a filter for it is defined in `io.quick_open_filters`.
 -- @param opts Optional table of additional options for
 --   `ui.dialogs.filteredlist()`.
--- @usage io.quick_open(buffer.filename:match('^.+/')) -- list all files in the
---   current file's directory, subject to the default filter
+-- @usage io.quick_open(buffer.filename:match('^(.+)[/\\]')) -- list all files
+--   in the current file's directory, subject to the default filter
 -- @usage io.quick_open(io.get_current_project(), '.lua') -- list all Lua files
 --    in the current project
 -- @usage io.quick_open(io.get_current_project(), '!/build') -- list all files
