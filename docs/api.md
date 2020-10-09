@@ -4471,8 +4471,8 @@ Parameters:
 
 Usage:
 
-* `io.quick_open(buffer.filename:match('^.+/')) -- list all files in the
-  current file's directory, subject to the default filter`
+* `io.quick_open(buffer.filename:match('^(.+)[/\\]')) -- list all files
+  in the current file's directory, subject to the default filter`
 * `io.quick_open(io.get_current_project(), '.lua') -- list all Lua files
    in the current project`
 * `io.quick_open(io.get_current_project(), '!/build') -- list all files
@@ -6884,7 +6884,7 @@ This module listens for text edit events and buffer switch events. Each time
 an insertion or deletion occurs, its location is recorded in the current
 view's location history. If the edit is close enough to the previous record,
 the previous record is amended. Each time a buffer switch occurs, the before
-and after locations are recorded.
+and after locations are also recorded.
 
 ### Fields defined by `textadept.history`
 
