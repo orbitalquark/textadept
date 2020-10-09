@@ -36,23 +36,12 @@ jobs:
         with:
           repository: orbitalquark/textadept-build
           path: textadept-build
-      - name: Checkout textadept-modules
-        uses: actions/checkout@v2
-        with:
-          repository: orbitalquark/textadept-modules
-          path: textadept-modules
       - name: Build
         id: build
         shell: bash
         run: |
           # Move cached dependencies into src/.
-          mv textadept-build/* src
-          rm -r textadept-build
-
-          # Temporarily zip up modules since anything named "textadept*" in root
-          # is deleted by "make clean".
-          zip -r src/textadept.modules.zip textadept-modules
-          rm -r textadept-modules
+          mv textadept-build/* src && rm -r textadept-build
 
           # Build.
           if [[ ${{ github.event_name }} != schedule ]]; then
@@ -74,9 +63,20 @@ jobs:
               sed 's/[^_]\+_\(.\+\)\.[^.]\+\.zip/\1/;'`
           fi
           echo "::set-output name=version::$version"
-
-          # Rename and sign modules zip now that the version is known.
-          mv src/textadept.modules.zip src/textadept_$version.modules.zip
+      - name: Package modules
+        shell: bash
+        run: |
+          mkdir textadept-modules
+          modules="css ctags debugger export file_diff html lsp lua_repl \
+            open_file_mode python rest ruby spellcheck yaml"
+          for module in $modules; do
+            gh_name="`echo -n $module | sed -e 's/_/-/g;'`"
+            gh_prefix="https://github.com/orbitalquark/textadept-$gh_name"
+            wget $gh_prefix/releases/download/latest/$module.zip
+            unzip -d textadept-modules $module.zip
+          done
+          zip -r src/textadept_${{ steps.build.outputs.version }}.modules.zip \
+            textadept-modules
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
