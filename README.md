@@ -132,7 +132,7 @@ development.
 
 Textadept is [open source][]. Feel free to discuss features, report bugs, and
 submit patches either to the [mailing list][], or to me personally
-(mitchell.att.foicica.com).
+(orbitalquark.att.triplequasar.com).
 
 [donation]: https://gum.co/textadept
 [book]: https://orbitalquark.github.io/textadept/book.html
