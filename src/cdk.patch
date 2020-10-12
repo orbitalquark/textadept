@@ -134,9 +134,9 @@ diff -r c40f79827990 cdk.c
   * This function takes a character string, full of format markers
   * and translates them into a chtype * array. This is better suited
 @@ -472,6 +499,7 @@
-    int start;
-    int used;
-    int x;
+    chtype attrib;
+    chtype lastChar;
+    chtype mask;
 +   char *s;
  
     (*to) = 0;
@@ -146,7 +146,7 @@ diff -r c40f79827990 cdk.c
  	 }
        }
 -      *to = used;
-+      for (from = 0; from < used; from+=utf8charlen(CharOf(result[from]))) (*to)++;
++      for (int from = 0; from < used; from+=utf8charlen(CharOf(result[from]))) (*to)++;
     }
     else
     {
@@ -162,7 +162,7 @@ diff -r c40f79827990 cdk.c
 @@ -1361,7 +1389,7 @@
         && (pathLen = strlen (pathname)) != 0)
     {
-       x = pathLen;
+       size_t x = pathLen;
 -      while ((dir[x] != '/') && (x > 0))
 +      while ((dir[x] != '/' && dir[x] != '\\') && (x > 0))
        {
@@ -385,17 +385,24 @@ diff -r c40f79827990 cdk_version.h
 diff -r c40f79827990 cdkscreen.c
 --- a/cdkscreen.c	Sun Nov 23 16:42:21 2014 -0500
 +++ b/cdkscreen.c	Sun Nov 23 16:45:38 2014 -0500
-@@ -180,17 +180,6 @@
+@@ -180,24 +180,6 @@
     ALL_SCREENS *item;
     CDKSCREEN *screen = 0;
  
 -   /* initialization, for the first time */
--   if (all_screens == 0)
+-   if (all_screens == 0 || stdscr == 0 || window == 0)
 -   {
 -      /* Set up basic curses settings. */
 -#ifdef HAVE_SETLOCALE
 -      setlocale (LC_ALL, "");
 -#endif
+-      /* Initialize curses after setting the locale, since curses depends
+-       * on having a correct locale to reflect the terminal's encoding.
+-       */
+-      if (stdscr == 0 || window == 0)
+-      {
+-	 window = initscr ();
+-      }
 -      noecho ();
 -      cbreak ();
 -   }
@@ -425,7 +432,7 @@ diff -r c40f79827990 draw.c
 -      for (x = 0; x < display; x++)
 +      for (x = 0; x < display; x++, p+=charlen)
        {
--	 (void)mvwaddch (window, ypos, xpos + x, string[x + start] | attr);
+-	 CDKmvwaddch (window, ypos, xpos + x, string[x + start], attr);
 +         charlen = utf8charlen(*p);
 +	 (void)mvwaddnstr (window, ypos, xpos + x, (const char *)p, charlen);
        }
@@ -437,7 +444,7 @@ diff -r c40f79827990 draw.c
 -      for (x = 0; x < display; x++)
 +      for (x = 0; x < display; x++, p+=charlen)
        {
--	 (void)mvwaddch (window, ypos + x, xpos, string[x + start] | attr);
+-	 CDKmvwaddch (window, ypos + x, xpos, string[x + start], attr);
 +         charlen = utf8charlen(*p);
 +	 (void)mvwaddnstr (window, ypos + x, xpos, (const char *)p, charlen);
        }
@@ -449,8 +456,8 @@ diff -r c40f79827990 entry.c
 --- a/entry.c	Sun Nov 23 16:42:21 2014 -0500
 +++ b/entry.c	Sun Nov 23 16:45:38 2014 -0500
 @@ -223,13 +223,13 @@
+ {
     int stringLen;
-    int charCount;
  
 -   stringLen = (int)strlen (entry->info);
 +   stringLen = (int)utf8strlen (entry->info);
@@ -458,7 +465,7 @@ diff -r c40f79827990 entry.c
     {
        if (stringLen < entry->max)
        {
- 	 charCount = entry->fieldWidth - 1;
+ 	 int charCount = entry->fieldWidth - 1;
 -	 entry->leftChar = stringLen - charCount;
 +	 entry->leftChar = stringLen - charCount; // horizontal scrolling with UTF8 does not work
  	 entry->screenCol = charCount;
@@ -498,7 +505,7 @@ diff -r c40f79827990 entry.c
  	    }
  	    break;
  
-@@ -364,20 +368,25 @@
+@@ -364,22 +368,27 @@
  	       bool success = FALSE;
  
  	       if (input == KEY_BACKSPACE)
@@ -511,6 +518,8 @@ diff -r c40f79827990 entry.c
  	       {
  		  if (currPos < infoLength)
  		  {
+ 		     int x;
+ 
 +		     int len = utf8charlen(widget->info[currPos]);
  		     for (x = currPos; x < infoLength; x++)
  		     {
@@ -550,12 +559,12 @@ diff -r c40f79827990 entry.c
   * This is a generic character parser for the entry field. It is used as a
   * callback function, so any personal modifications can be made by creating
 @@ -558,38 +584,42 @@
+  * a new function and calling the activation with its name.
   */
  static void CDKEntryCallBack (CDKENTRY *entry, chtype character)
  {
 -   int plainchar = filterByDisplayType (entry->dispType, character);
 +   int plainchar = character;
-    size_t temp;
 +   char utf8[6];
 +   int len;
  
@@ -590,7 +599,7 @@ diff -r c40f79827990 entry.c
        else
        {
  	 /* Update the character pointer. */
- 	 temp = strlen (entry->info);
+ 	 size_t temp = strlen (entry->info);
 -	 entry->info[temp] = (char)plainchar;
 -	 entry->info[temp + 1] = '\0';
 +	 strncpy(entry->info + temp, utf8, len);
@@ -614,8 +623,8 @@ diff -r c40f79827990 entry.c
     /* If there is information in the field. Then draw it in. */
     if (entry->info != 0)
     {
--      infoLength = (int)strlen (entry->info);
-+      infoLength = (int)utf8strlen (entry->info);
+-      int infoLength = (int)strlen (entry->info);
++      int infoLength = (int)utf8strlen (entry->info);
  
        /* Redraw the field. */
        if (isHiddenDisplayType (entry->dispType))
@@ -666,13 +675,13 @@ diff -r c40f79827990 fselect.c
 diff -r c40f79827990 gen-scale.c
 --- a/gen-scale.c	Sun Nov 23 16:42:21 2014 -0500
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
-@@ -1,816 +0,0 @@
+@@ -1,817 +0,0 @@
 -#include <cdk_int.h>
 -
 -/*
 - * $Author: tom $
-- * $Date: 2013/06/16 15:03:13 $
-- * $Revision: 1.24 $
+- * $Date: 2016/11/20 18:32:34 $
+- * $Revision: 1.25 $
 - */
 -
 -/*
@@ -1008,7 +1017,6 @@ diff -r c40f79827990 gen-scale.c
 -{
 -   bool result = FALSE;
 -   bool modify = TRUE;
--   int base = 0;
 -   int need = widget->fieldWidth;
 -   char *temp = (char *)malloc ((size_t) need + 2);
 -   char test;
@@ -1024,6 +1032,8 @@ diff -r c40f79827990 gen-scale.c
 -
 -   if (temp != 0)
 -   {
+-      int base = 0;
+-
 -      wmove (widget->fieldWin, 0, base);
 -      winnstr (widget->fieldWin, temp, need);
 -      strcpy (temp + need, " ");
@@ -1435,7 +1445,7 @@ diff -r c40f79827990 gen-scale.c
 -      widget->low = low;
 -      widget->high = high;
 -   }
--   else if (low > high)
+-   else
 -   {
 -      widget->low = high;
 -      widget->high = low;
@@ -1766,13 +1776,13 @@ diff -r c40f79827990 itemlist.c
 diff -r c40f79827990 matrix.c
 --- a/matrix.c	Sun Nov 23 16:42:21 2014 -0500
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
-@@ -1,1861 +0,0 @@
+@@ -1,1785 +0,0 @@
 -#include <cdk_int.h>
 -
 -/*
 - * $Author: tom $
-- * $Date: 2013/06/16 13:17:18 $
-- * $Revision: 1.193 $
+- * $Date: 2016/12/10 15:18:01 $
+- * $Revision: 1.198 $
 - */
 -
 -/*
@@ -1783,7 +1793,7 @@ diff -r c40f79827990 matrix.c
 -static void drawCDKMatrixCell (CDKMATRIX *matrix,
 -			       int srow, int scol,
 -			       int vrow, int vcol,
--			       chtype attr, boolean Box);
+-			       boolean Box);
 -static void drawCurCDKMatrixCell (CDKMATRIX *matrix);
 -static void drawEachCDKMatrixCell (CDKMATRIX *matrix);
 -static void drawEachColTitle (CDKMATRIX *matrix);
@@ -1802,6 +1812,30 @@ diff -r c40f79827990 matrix.c
 -	    matrix->lcol + matrix->ccol - 1)
 -
 -DeclareCDKObjects (MATRIX, Matrix, setCdk, Int);
+-
+-#define WHOLE_BOX ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER
+-
+-#define TOP_C_BOX ACS_ULCORNER, ACS_URCORNER, ACS_LTEE,     ACS_RTEE
+-#define MID_C_BOX ACS_LTEE,     ACS_RTEE,     ACS_LTEE,     ACS_RTEE
+-#define BOT_C_BOX ACS_LTEE,     ACS_RTEE,     ACS_LLCORNER, ACS_LRCORNER
+-
+-#define LFT_R_BOX ACS_ULCORNER, ACS_TTEE,     ACS_LLCORNER, ACS_BTEE
+-#define MID_R_BOX ACS_TTEE,     ACS_TTEE,     ACS_BTEE,     ACS_BTEE
+-#define RGT_R_BOX ACS_TTEE,     ACS_URCORNER, ACS_BTEE,     ACS_LRCORNER
+-
+-#define LFT_T_BOX ACS_ULCORNER, ACS_TTEE,     ACS_LTEE,     ACS_PLUS
+-#define MID_T_BOX ACS_TTEE,     ACS_TTEE,     ACS_PLUS,     ACS_PLUS
+-#define RGT_T_BOX ACS_TTEE,     ACS_URCORNER, ACS_PLUS,     ACS_RTEE
+-
+-#define LFT_M_BOX ACS_LTEE,     ACS_PLUS,     ACS_LTEE,     ACS_PLUS
+-#define MID_M_BOX ACS_PLUS,     ACS_PLUS,     ACS_PLUS,     ACS_PLUS
+-#define RGT_M_BOX ACS_PLUS,     ACS_RTEE,     ACS_PLUS,     ACS_RTEE
+-
+-#define LFT_B_BOX ACS_LTEE,     ACS_PLUS,     ACS_LLCORNER, ACS_BTEE
+-#define MID_B_BOX ACS_PLUS,     ACS_PLUS,     ACS_BTEE,     ACS_BTEE
+-#define RGT_B_BOX ACS_PLUS,     ACS_RTEE,     ACS_BTEE,     ACS_LRCORNER
+-
+-#define MyBox(cell,what,attr) attrbox(cell, what, ACS_HLINE, ACS_VLINE, attr)
 -
 -/*
 - * This function creates the matrix widget.
@@ -1898,7 +1932,7 @@ diff -r c40f79827990 matrix.c
 -    * Count the number of lines in the title (see setCdkTitle).
 -    */
 -   temp = CDKsplitString (title, '\n');
--   TitleLinesOf (matrix) = (int)CDKcountStrings ((CDK_CSTRING2) temp);
+-   TitleLinesOf (matrix) = (int)CDKcountStrings ((CDK_CSTRING2)temp);
 -   CDKfreeStrings (temp);
 -
 -   /* Determine the height of the box. */
@@ -2184,7 +2218,6 @@ diff -r c40f79827990 matrix.c
 -   int movedCell     = FALSE;
 -   int charcount     = (int)strlen (MATRIX_INFO (widget, widget->row, widget->col));
 -   int ppReturn      = 1;
--   int infolen;
 -   int ret           = unknownInt;
 -   bool complete     = FALSE;
 -
@@ -2204,11 +2237,7 @@ diff -r c40f79827990 matrix.c
 -   }
 -
 -   /* Put the focus on the current cell */
--   attrbox (CurMatrixCell (widget),
--	    ACS_ULCORNER, ACS_URCORNER,
--	    ACS_LLCORNER, ACS_LRCORNER,
--	    ACS_HLINE, ACS_VLINE,
--	    A_BOLD);
+-   MyBox (CurMatrixCell (widget), WHOLE_BOX, A_BOLD);
 -   wrefresh (CurMatrixCell (widget));
 -   highlightCDKMatrixCell (widget);
 -
@@ -2592,11 +2621,7 @@ diff -r c40f79827990 matrix.c
 -	    wrefresh (MATRIX_CELL (widget, widget->oldcrow, widget->oldccol));
 -
 -	    /* Highlight the new cell. */
--	    attrbox (CurMatrixCell (widget),
--		     ACS_ULCORNER, ACS_URCORNER,
--		     ACS_LLCORNER, ACS_LRCORNER,
--		     ACS_HLINE, ACS_VLINE,
--		     A_BOLD);
+-	    MyBox (CurMatrixCell (widget), WHOLE_BOX, A_BOLD);
 -	    wrefresh (CurMatrixCell (widget));
 -	    highlightCDKMatrixCell (widget);
 -	 }
@@ -2607,11 +2632,7 @@ diff -r c40f79827990 matrix.c
 -	    drawEachCDKMatrixCell (widget);
 -
 -	    /* Highlight the current cell. */
--	    attrbox (CurMatrixCell (widget),
--		     ACS_ULCORNER, ACS_URCORNER,
--		     ACS_LLCORNER, ACS_LRCORNER,
--		     ACS_HLINE, ACS_VLINE,
--		     A_BOLD);
+-	    MyBox (CurMatrixCell (widget), WHOLE_BOX, A_BOLD);
 -	    wrefresh (CurMatrixCell (widget));
 -	    highlightCDKMatrixCell (widget);
 -	 }
@@ -2625,7 +2646,7 @@ diff -r c40f79827990 matrix.c
 -	    }
 -	    else
 -	    {
--	       infolen = (int)strlen (CurMatrixInfo (widget));
+-	       int infolen = (int)strlen (CurMatrixInfo (widget));
 -	       wmove (CurMatrixCell (widget), 1, infolen + 1);
 -	    }
 -	    wrefresh (CurMatrixCell (widget));
@@ -2799,7 +2820,6 @@ diff -r c40f79827990 matrix.c
 -			       int col,
 -			       int vrow,
 -			       int vcol,
--			       chtype attr,
 -			       boolean Box)
 -{
 -   /* *INDENT-EQLS* */
@@ -2809,6 +2829,7 @@ diff -r c40f79827990 matrix.c
 -   int rows             = matrix->vrows;
 -   int cols             = matrix->vcols;
 -   int infolen          = (int)strlen (MATRIX_INFO (matrix, vrow, vcol));
+-   chtype attr          = A_NORMAL;
 -   int x;
 -
 -   /*
@@ -2846,174 +2867,94 @@ diff -r c40f79827990 matrix.c
 -    * If the value of the column spacing is greater than 0 then these
 -    * are independent boxes.
 -    */
--   if (matrix->colSpace != 0 && matrix->rowSpace != 0)
+-   if (matrix->colSpace != 0)
 -   {
--      attrbox (cell,
--	       ACS_ULCORNER, ACS_URCORNER,
--	       ACS_LLCORNER, ACS_LRCORNER,
--	       ACS_HLINE, ACS_VLINE,
--	       attr);
--      return;
+-      if (matrix->rowSpace != 0)
+-      {
+-	 MyBox (cell, WHOLE_BOX, attr);
+-      }
+-      else
+-      {
+-	 if (row == 1)
+-	 {
+-	    MyBox (cell, TOP_C_BOX, attr);
+-	 }
+-	 else if (row > 1 && row < rows)
+-	 {
+-	    MyBox (cell, MID_C_BOX, attr);
+-	 }
+-	 else if (row == rows)
+-	 {
+-	    MyBox (cell, BOT_C_BOX, attr);
+-	 }
+-      }
 -   }
--   if (matrix->colSpace != 0 && matrix->rowSpace == 0)
+-   else if (matrix->rowSpace != 0)
+-   {
+-      if (col == 1)
+-      {
+-	 MyBox (cell, LFT_R_BOX, attr);
+-      }
+-      else if (col > 1 && col < cols)
+-      {
+-	 MyBox (cell, MID_R_BOX, attr);
+-      }
+-      else if (col == cols)
+-      {
+-	 MyBox (cell, RGT_R_BOX, attr);
+-      }
+-   }
+-   else
 -   {
 -      if (row == 1)
 -      {
--	 attrbox (cell,
--		  ACS_ULCORNER, ACS_URCORNER,
--		  ACS_LTEE, ACS_RTEE,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--	 return;
+-	 if (col == 1)
+-	 {
+-	    MyBox (cell, LFT_T_BOX, attr);	/* top left corner */
+-	 }
+-	 else if (col > 1 && col < cols)
+-	 {
+-	    MyBox (cell, MID_T_BOX, attr);	/* top middle */
+-	 }
+-	 else if (col == cols)
+-	 {
+-	    MyBox (cell, RGT_T_BOX, attr);	/* top right corner */
+-	 }
 -      }
 -      else if (row > 1 && row < rows)
 -      {
--	 attrbox (cell,
--		  ACS_LTEE, ACS_RTEE,
--		  ACS_LTEE, ACS_RTEE,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--	 return;
+-	 if (col == 1)
+-	 {
+-	    MyBox (cell, LFT_M_BOX, attr);	/* middle left */
+-	 }
+-	 else if (col > 1 && col < cols)
+-	 {
+-	    MyBox (cell, MID_M_BOX, attr);	/* middle */
+-	 }
+-	 else if (col == cols)
+-	 {
+-	    MyBox (cell, RGT_M_BOX, attr);	/* middle right */
+-	 }
 -      }
 -      else if (row == rows)
 -      {
--	 attrbox (cell,
--		  ACS_LTEE, ACS_RTEE,
--		  ACS_LLCORNER, ACS_LRCORNER,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--	 return;
--      }
--   }
--   if (matrix->colSpace == 0 && matrix->rowSpace != 0)
--   {
--      if (col == 1)
--      {
--	 attrbox (cell,
--		  ACS_ULCORNER, ACS_TTEE,
--		  ACS_LLCORNER, ACS_BTEE,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--	 return;
--      }
--      else if (col > 1 && col < cols)
--      {
--	 attrbox (cell,
--		  ACS_TTEE, ACS_TTEE,
--		  ACS_BTEE, ACS_BTEE,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--	 return;
--      }
--      else if (col == cols)
--      {
--	 attrbox (cell,
--		  ACS_TTEE, ACS_URCORNER,
--		  ACS_BTEE, ACS_LRCORNER,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--	 return;
--      }
--   }
--
--   /* Start drawing the matrix. */
--   if (row == 1)
--   {
--      if (col == 1)
--      {
--	 /* Draw the top left corner */
--	 attrbox (cell,
--		  ACS_ULCORNER, ACS_TTEE,
--		  ACS_LTEE, ACS_PLUS,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--      }
--      else if (col > 1 && col < cols)
--      {
--	 /* Draw the top middle box */
--	 attrbox (cell,
--		  ACS_TTEE, ACS_TTEE,
--		  ACS_PLUS, ACS_PLUS,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--      }
--      else if (col == cols)
--      {
--	 /* Draw the top right corner */
--	 attrbox (cell,
--		  ACS_TTEE, ACS_URCORNER,
--		  ACS_PLUS, ACS_RTEE,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--      }
--   }
--   else if (row > 1 && row < rows)
--   {
--      if (col == 1)
--      {
--	 /* Draw the middle left box */
--	 attrbox (cell,
--		  ACS_LTEE, ACS_PLUS,
--		  ACS_LTEE, ACS_PLUS,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--      }
--      else if (col > 1 && col < cols)
--      {
--	 /* Draw the middle box */
--	 attrbox (cell,
--		  ACS_PLUS, ACS_PLUS,
--		  ACS_PLUS, ACS_PLUS,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--      }
--      else if (col == cols)
--      {
--	 /* Draw the middle right box */
--	 attrbox (cell,
--		  ACS_PLUS, ACS_RTEE,
--		  ACS_PLUS, ACS_RTEE,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--      }
--   }
--   else if (row == rows)
--   {
--      if (col == 1)
--      {
--	 /* Draw the bottom left corner */
--	 attrbox (cell,
--		  ACS_LTEE, ACS_PLUS,
--		  ACS_LLCORNER, ACS_BTEE,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--      }
--      else if (col > 1 && col < cols)
--      {
--	 /* Draw the bottom middle box */
--	 attrbox (cell,
--		  ACS_PLUS, ACS_PLUS,
--		  ACS_BTEE, ACS_BTEE,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
--      }
--      else if (col == cols)
--      {
--	 /* Draw the bottom right corner */
--	 attrbox (cell,
--		  ACS_PLUS, ACS_RTEE,
--		  ACS_BTEE, ACS_LRCORNER,
--		  ACS_HLINE, ACS_VLINE,
--		  attr);
+-	 if (col == 1)
+-	 {
+-	    MyBox (cell, LFT_B_BOX, attr);	/* bottom left corner */
+-	 }
+-	 else if (col > 1 && col < cols)
+-	 {
+-	    MyBox (cell, MID_B_BOX, attr);	/* bottom middle */
+-	 }
+-	 else if (col == cols)
+-	 {
+-	    MyBox (cell, RGT_B_BOX, attr);	/* bottom right corner */
+-	 }
 -      }
 -   }
 -
 -   /* Highlight the current cell. */
--   attrbox (CurMatrixCell (matrix),
--	    ACS_ULCORNER, ACS_URCORNER,
--	    ACS_LLCORNER, ACS_LRCORNER,
--	    ACS_HLINE, ACS_VLINE,
--	    A_BOLD);
+-   MyBox (CurMatrixCell (matrix), WHOLE_BOX, A_BOLD);
 -   wrefresh (CurMatrixCell (matrix));
 -   highlightCDKMatrixCell (matrix);
 -}
@@ -3068,7 +3009,6 @@ diff -r c40f79827990 matrix.c
 -	 drawCDKMatrixCell (matrix, x, y,
 -			    matrix->trow + x - 1,
 -			    matrix->lcol + y - 1,
--			    A_NORMAL,
 -			    matrix->boxCell);
 -      }
 -   }
@@ -3081,7 +3021,6 @@ diff -r c40f79827990 matrix.c
 -		      matrix->ccol,
 -		      matrix->row,
 -		      matrix->col,
--		      A_NORMAL,
 -		      matrix->boxCell);
 -}
 -
@@ -3092,7 +3031,6 @@ diff -r c40f79827990 matrix.c
 -		      matrix->oldccol,
 -		      matrix->oldvrow,
 -		      matrix->oldvcol,
--		      A_NORMAL,
 -		      matrix->boxCell);
 -}
 -
@@ -3124,11 +3062,7 @@ diff -r c40f79827990 matrix.c
 -   drawEachCDKMatrixCell (matrix);
 -
 -   /* Highlight the current cell. */
--   attrbox (CurMatrixCell (matrix),
--	    ACS_ULCORNER, ACS_URCORNER,
--	    ACS_LLCORNER, ACS_LRCORNER,
--	    ACS_HLINE, ACS_VLINE,
--	    A_BOLD);
+-   MyBox (CurMatrixCell (matrix), WHOLE_BOX, A_BOLD);
 -   wrefresh (CurMatrixCell (matrix));
 -   highlightCDKMatrixCell (matrix);
 -}
@@ -3631,13 +3565,13 @@ diff -r c40f79827990 matrix.c
 diff -r c40f79827990 view_info.c
 --- a/view_info.c	Sun Nov 23 16:42:21 2014 -0500
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
-@@ -1,45 +0,0 @@
+@@ -1,44 +0,0 @@
 -#include <cdk_int.h>
 -
 -/*
 - * $Author: tom $
-- * $Date: 2012/03/22 00:39:09 $
-- * $Revision: 1.2 $
+- * $Date: 2016/11/20 18:35:56 $
+- * $Revision: 1.3 $
 - */
 -
 -/*
@@ -3651,9 +3585,8 @@ diff -r c40f79827990 view_info.c
 -	      int buttonCount,
 -	      boolean interpret)
 -{
--   /* *INDENT-EQLS* * */
--   CDKVIEWER *viewer    = 0;
--   int selected         = -1;
+-   CDKVIEWER *viewer = 0;
+-   int selected;
 -
 -   /* Create the file viewer to view the file selected. */
 -   viewer = newCDKViewer (screen, CENTER, CENTER, -6, -16,
@@ -3680,13 +3613,13 @@ diff -r c40f79827990 view_info.c
 diff -r c40f79827990 viewer.c
 --- a/viewer.c	Sun Nov 23 16:42:21 2014 -0500
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
-@@ -1,1293 +0,0 @@
+@@ -1,1307 +0,0 @@
 -#include <cdk_int.h>
 -
 -/*
 - * $Author: tom $
-- * $Date: 2013/06/16 14:58:52 $
-- * $Revision: 1.164 $
+- * $Date: 2019/02/17 19:45:07 $
+- * $Revision: 1.167 $
 - */
 -
 -/*
@@ -3736,9 +3669,7 @@ diff -r c40f79827990 viewer.c
 -   int boxHeight;
 -   int xpos          = xplace;
 -   int ypos          = yplace;
--   int buttonWidth   = 0;
 -   int buttonAdj     = 0;
--   int buttonPos     = 1;
 -   int x             = 0;
 -   /* *INDENT-OFF* */
 -   static const struct { int from; int to; } bindings[] = {
@@ -3753,6 +3684,7 @@ diff -r c40f79827990 viewer.c
 -	    { '$',		KEY_END },
 -   };
 -   /* *INDENT-ON* */
+-
 -
 -   if ((viewer = newCDKObject (CDKVIEWER, &my_funcs)) == 0)
 -        return (0);
@@ -3780,6 +3712,9 @@ diff -r c40f79827990 viewer.c
 -   viewer->buttonCount = buttonCount;
 -   if (buttonCount > 0)
 -   {
+-      int buttonWidth = 0;
+-      int buttonPos = 1;
+-
 -      if ((viewer->button = typeCallocN (chtype *, buttonCount + 1)) == 0
 -	  || (viewer->buttonLen = typeCallocN (int, buttonCount + 1)) == 0
 -	  || (viewer->buttonPos = typeCallocN (int, buttonCount + 1)) == 0)
@@ -3883,7 +3818,8 @@ diff -r c40f79827990 viewer.c
 -   return TitleOf (viewer);
 -}
 -
--static void setupLine (CDKVIEWER *viewer, boolean interpret, const char *list, int x)
+-static void setupLine (CDKVIEWER *viewer, boolean interpret, const char
+-		       *list, int x)
 -{
 -   /* Did they ask for attribute interpretation? */
 -   if (interpret)
@@ -4033,7 +3969,6 @@ diff -r c40f79827990 viewer.c
 -	    /* We have a link, open the file. */
 -	    char **fileContents = 0;
 -	    int fileLen = 0;
--	    int fileLine = 0;
 -
 -	    /* Open the file and put it into the viewer. */
 -	    fileLen = CDKreadFile (filename, &fileContents);
@@ -4051,6 +3986,8 @@ diff -r c40f79827990 viewer.c
 -	    }
 -	    else
 -	    {
+-	       int fileLine;
+-
 -	       /* For each line read, copy it into the viewer. */
 -	       fileLen = MINIMUM (fileLen, (viewerSize - currentLine));
 -	       for (fileLine = 0; fileLine < fileLen; fileLine++)
@@ -4166,15 +4103,22 @@ diff -r c40f79827990 viewer.c
 -   drawCDKViewer (viewer, ObjOf (viewer)->box);
 -}
 -
--static void PatternNotFound (CDKVIEWER *viewer, char *pattern)
+-static void PatternNotFound (CDKVIEWER *viewer, const char *pattern)
 -{
--   CDK_CSTRING tempInfo[2];
--   char *temp = (char *)malloc (80 + strlen (pattern));
--   tempInfo[0] = temp;
--   tempInfo[1] = 0;
--   sprintf (temp, "</U/5>Pattern '%s' not found.<!U!5>", pattern);
--   popUpLabel (viewer, tempInfo);
--   free (temp);
+-   if (pattern == 0)
+-   {
+-      PatternNotFound (viewer, "");
+-   }
+-   else
+-   {
+-      CDK_CSTRING tempInfo[2];
+-      char *temp = (char *)malloc (80 + strlen (pattern));
+-      tempInfo[0] = temp;
+-      tempInfo[1] = 0;
+-      sprintf (temp, "</U/5>Pattern '%s' not found.<!U!5>", pattern);
+-      popUpLabel (viewer, tempInfo);
+-      free (temp);
+-   }
 -}
 -
 -/*
@@ -4187,7 +4131,7 @@ diff -r c40f79827990 viewer.c
 -   char temp[500];
 -   chtype input;
 -   boolean functionKey;
--   int x, REFRESH;
+-   int x;
 -
 -   /* Create the information about the file stats. */
 -   sprintf (temp, "</5>      </U>File Statistics<!U>     <!5>");
@@ -4217,7 +4161,7 @@ diff -r c40f79827990 viewer.c
 -   for (;;)
 -   {
 -      /* Reset the refresh flag. */
--      REFRESH = FALSE;
+-      int REFRESH = FALSE;
 -
 -      input = (chtype)getchCDKObject (ObjOf (widget), &functionKey);
 -      if (!checkCDKObjectBind (vVIEWER, widget, input))
@@ -4442,7 +4386,7 @@ diff -r c40f79827990 viewer.c
 -	 case 'i':
 -	 case 's':
 -	 case 'S':
--	    popUpLabel (widget, (CDK_CSTRING2) fileInfo);
+-	    popUpLabel (widget, (CDK_CSTRING2)fileInfo);
 -	    REFRESH = TRUE;
 -	    break;
 -
@@ -4519,7 +4463,7 @@ diff -r c40f79827990 viewer.c
 -   list = activateCDKEntry (getPattern, 0);
 -
 -   /* Save the list. */
--   if ((list != 0) || (strlen (list) != 0))
+-   if ((list != 0) && (strlen (list) != 0))
 -   {
 -      SearchPattern = copyChar (list);
 -   }
@@ -4534,12 +4478,14 @@ diff -r c40f79827990 viewer.c
 - */
 -static int searchForWord (CDKVIEWER *viewer, char *pattern, int direction)
 -{
--   int x, y, pos, len, plen;
 -   int found = 0;
+-   int plen;
 -
 -   /* If the pattern is empty then return. */
 -   if (pattern != 0 && (plen = (int)strlen (pattern)) != 0)
 -   {
+-      int x, y, pos, len;
+-
 -      if (direction == DOWN)
 -      {
 -	 /* Start looking from 'here' down. */
@@ -4626,7 +4572,7 @@ diff -r c40f79827990 viewer.c
 -
 -   /* Set up variables. */
 -   label = newCDKLabel (ScreenOf (viewer), CENTER, CENTER,
--			(CDK_CSTRING2) mesg,
+-			(CDK_CSTRING2)mesg,
 -			(int)CDKcountStrings (mesg),
 -			TRUE, FALSE);
 -
@@ -4827,7 +4773,6 @@ diff -r c40f79827990 viewer.c
 -{
 -   int listAdjust = 0;
 -   int lastLine = 0;
--   char temp[256];
 -   int x;
 -
 -   /* Clear the window. */
@@ -4838,6 +4783,8 @@ diff -r c40f79827990 viewer.c
 -   /* Draw in the current line at the top. */
 -   if (viewer->showLineInfo == TRUE)
 -   {
+-      char temp[256];
+-
 -      /* Set up the info line and draw it. */
 -      if (viewer->inProgress)
 -      {
