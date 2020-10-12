@@ -655,8 +655,8 @@ function convert_eols(buffer, mode) end
 function copy(buffer) end
 
 ---
--- Copies the range of text between positions *start_pos* and *end_pos* to the
--- clipboard.
+-- Copies to the clipboard the range of text between positions *start_pos* and
+-- *end_pos*.
 -- @param buffer A buffer.
 -- @param start_pos The start position of the range of text in *buffer* to copy.
 -- @param end_pos The end position of the range of text in *buffer* to copy.
@@ -1789,6 +1789,7 @@ function reload(buffer) end
 
 ---
 -- Saves the buffer to its file.
+-- If the buffer does not have a file, the user is prompted for one.
 -- Emits `FILE_BEFORE_SAVE` and `FILE_AFTER_SAVE` events.
 -- @param buffer A buffer.
 -- @name save
@@ -1815,7 +1816,7 @@ function save_as(buffer, filename) end
 function close(buffer, force) end
 
 ---
--- Converts the current buffer's contents to encoding *encoding*.
+-- Converts the buffer's contents to encoding *encoding*.
 -- @param buffer A buffer.
 -- @param encoding The string encoding to set. Valid encodings are ones that GNU
 --   iconv accepts. If `nil`, assumes a binary encoding.

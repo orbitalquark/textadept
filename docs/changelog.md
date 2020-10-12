@@ -116,7 +116,7 @@ Bugfixes:
 
 * Fixed toggling of Find & Replace Pane visibility with `ui.find.focus()`.
 * Fixed potential hangs with `os.spawn()` in the terminal version.
-* Fixed `--line` command line switch.
+* Fixed `--line` command line option.
 * Fixed `ui.dialogs.optionselect()`'s `text` option.
 * Call `os.spawn()` exit callback after `proc:wait()`.
 * Fixed an instance of buffer selection data not being saved to a session.
@@ -496,7 +496,7 @@ Changes:
 * `textadept.editing.highlight_word()` does not select the word by default
   anymore.
 * Changed [file filter][] format to be more flat and intuitive.
-* Added `-l` and `--line` command line switches to jump to a buffer line.
+* Added `-l` and `--line` command line options to jump to a buffer line.
 * Updated to [PDCurses][] 3.6 for the Windows terminal version.
 
 [`textadept.editing.show_documentation()`]: api.html#textadept.editing.show_documentation
@@ -1280,7 +1280,7 @@ Changes:
 Bugfixes:
 
 * Ensure `events.BUFFER_AFTER_SWITCH` is fired before `events.BUFFER_DELETED`.
-* Prevent command line help switches from exiting an open instance of Textadept.
+* Prevent command line help options from exiting an open instance of Textadept.
 
 Changes:
 
@@ -2075,13 +2075,13 @@ Bugfixes:
 
 Changes:
 
-* Added [command line switches][] for loading sessions on startup.
-* Added [command line switches][] for running Lua code on startup.
+* Added [command line options][] for loading sessions on startup.
+* Added [command line options][] for running Lua code on startup.
 * Updated AWK lexer.
 * Updated to [Scintilla][] 3.2.5.
 * Updated to [LuaJIT][] 2.0.1.
 
-[command line switches]: manual.html#command-line-parameters
+[command line options]: manual.html#command-line-parameters
 [Scintilla]: https://scintilla.org
 [LuaJIT]: https://luajit.org
 
@@ -2219,7 +2219,7 @@ Changes:
 
 Bugfixes:
 
-* Disabled `--help` switch to ncurses version due to terminal output mangling.
+* Disabled `--help` option to ncurses version due to terminal output mangling.
 * ncurses replace entry can now be focused.
 * Fixed ncurses memory leaks.
 * Fixed multiple selection in Mac OSX.
@@ -3170,7 +3170,7 @@ Changes:
 
 * Added Dot and JSON lexers.
 * Search `_USERHOME` in addition to `_HOME` for themes.
-* Added command line switch for not loading/saving session.
+* Added command line option for not loading/saving session.
 * Modified key bindings to be more key-layout agnostic.
 * Added `reset_before` and `reset_after` events while `textadept.reset()` is
   being run.

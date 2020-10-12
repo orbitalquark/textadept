@@ -381,6 +381,18 @@ local function unescape(text)
   end) or text
 end
 
+--local function replace_target_re(buffer, rtext)
+--  local patt = lpeg.P{
+--    (lpeg.V('tag') + lpeg.V('upper') + lpeg.V('lower') + lpeg.V('stop') + 1)^1,
+--    tag = '\\' * lpeg.C(lpeg.R('09')) / buffer.tag,
+--    upper = '\\U' * lpeg.V('range') / string.upper,
+--    lower = '\\L' * lpeg.V('range') / string.lower,
+--    range = lpeg.C((1 - lpeg.P('\\') * lpeg.S('ULE0123456789'))^0),
+--    stop = lpeg.P('\\E') / ''
+--  }
+--  buffer:replace_target(lpeg.match(lpeg.Cs(patt), rtext))
+--end
+
 -- Replaces found (selected) text.
 events.connect(events.REPLACE, function(rtext)
   if buffer.selection_empty then return end

@@ -8,6 +8,7 @@ module('string')
 ---
 -- Converts string *text* from encoding *old* to encoding *new* using GNU
 -- libiconv, returning the string result.
+-- Raises an error if the encoding conversion failed.
 -- Valid encodings are [GNU libiconv's encodings][] and include:
 --
 --   * European: ASCII, ISO-8859-{1,2,3,4,5,7,9,10,13,14,15,16}, KOI8-R, KOI8-U,
