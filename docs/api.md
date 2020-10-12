@@ -7996,6 +7996,16 @@ The height in pixels of the command entry.
 
 ### Functions defined by `ui.command_entry`
 
+<a id="ui.command_entry.append_history"></a>
+#### `ui.command_entry.append_history`(*text*)
+
+Appends the given text to the history for the current or most recent command
+entry mode.
+
+Parameters:
+
+* *`text`*: String text to append to history.
+
 <a id="ui.command_entry.focus"></a>
 #### `ui.command_entry.focus`()
 

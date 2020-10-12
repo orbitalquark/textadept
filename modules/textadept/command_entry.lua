@@ -35,6 +35,18 @@ local function cycle_history(prev)
 end
 
 ---
+-- Appends the given text to the history for the current or most recent command
+-- entry mode.
+-- @param text String text to append to history.
+-- @name append_history
+function M.append_history(text)
+  if not history.mode then return end
+  local mode_history = history[history.mode]
+  mode_history[#mode_history + 1] = assert_type(text, 'string', 1)
+  mode_history.pos = #mode_history
+end
+
+---
 -- A metatable with typical platform-specific key bindings for text entries.
 -- This metatable may be used to add basic editing and movement keys to command
 -- entry modes. It is automatically added to command entry modes unless a
@@ -217,9 +229,7 @@ function M.run(f, keys, lang, height)
       if M:auto_c_active() then return false end -- allow Enter to autocomplete
       M.focus() -- hide
       if not f then return end
-      local mode_history = history[history.mode]
-      mode_history[#mode_history + 1] = M:get_text()
-      mode_history.pos = #mode_history
+      M.append_history(M:get_text())
       f(M:get_text())
     end
   end
