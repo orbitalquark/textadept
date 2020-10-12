@@ -1916,6 +1916,7 @@ N/A                        |Added   |[highlight_all_matches][]
 bufstatusbar\_text         |Renamed |[buffer_statusbar_text][]
 **ui.command_entry**       |        |
 N/A                        |Added   |[active][]
+N/A                        |Added   |[append_history][]
 **ui.dialogs**             |        |
 N/A                        |Added   |[progressbar()][]
 **ui.find**                |        |
@@ -1962,6 +1963,7 @@ section below.
 [paths]: api.html#textadept.snippets.paths
 [buffer_statusbar_text]: api.html#ui.buffer_statusbar_text
 [active]: api.html#ui.command_entry.active
+[append_history]: api.html#ui.command_entry.append_history
 [progressbar()]: api.html#ui.dialogs.progressbar
 
 ##### Buffer Indexing Changes
