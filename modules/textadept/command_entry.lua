@@ -37,6 +37,9 @@ end
 ---
 -- Appends the given text to the history for the current or most recent command
 -- entry mode.
+-- This should only be called if `ui.command_entry.run()` is called with a keys
+-- table that has a custom binding for the Enter key ('\n').
+-- Otherwise, history is automatically appended as needed.
 -- @param text String text to append to history.
 -- @name append_history
 function M.append_history(text)
