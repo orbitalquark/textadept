@@ -95,8 +95,8 @@ local M = {}
 --
 --   * _`position`_: The position double-clicked.
 --   * _`line`_: The line number of the position double-clicked.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
---     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
+--   * _`modifiers`_: A bit-mask of any modifier keys held down:
+--     `view.MOD_CTRL`, `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
 --     On macOS, the Command modifier key is reported as `view.MOD_CTRL` and
 --     Ctrl is `view.MOD_META`.
 --     Note: If you set `view.rectangular_selection_modifier` to
@@ -150,8 +150,8 @@ local M = {}
 --   Arguments:
 --
 --   * _`position`_: The clicked text's position.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
---     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
+--   * _`modifiers`_: A bit-mask of any modifier keys held down:
+--     `view.MOD_CTRL`, `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
 --     On macOS, the Command modifier key is reported as `view.MOD_CTRL` and
 --     Ctrl is `view.MOD_META`.
 --     Note: If you set `view.rectangular_selection_modifier` to
@@ -182,8 +182,8 @@ local M = {}
 --
 --   * _`margin`_: The margin number clicked.
 --   * _`position`_: The beginning position of the clicked margin's line.
---   * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
---     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
+--   * _`modifiers`_: A bit-mask of any modifier keys held down:
+--     `view.MOD_CTRL`, `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
 --     On macOS, the Command modifier key is reported as `view.MOD_CTRL` and
 --     Ctrl is `view.MOD_META`.
 --     Note: If you set `view.rectangular_selection_modifier` to

@@ -11,34 +11,34 @@ module('args')]]
 
 events.ARG_NONE = 'arg_none'
 
--- Contains registered command line switches.
+-- Contains registered command line options.
 -- @class table
--- @name switches
-local switches = {}
+-- @name options
+local options = {}
 
 ---
--- Registers a command line switch with short and long versions *short* and
--- *long*, respectively. *narg* is the number of arguments the switch accepts,
--- *f* is the function called when the switch is tripped, and *description* is
--- the switch's description when displaying help.
--- @param short The string short version of the switch.
--- @param long The string long version of the switch.
--- @param narg The number of expected parameters for the switch.
--- @param f The Lua function to run when the switch is tripped. It is passed
---   *narg* string arguments.
--- @param description The string description of the switch for command line
+-- Registers a command line option with short and long versions *short* and
+-- *long*, respectively. *narg* is the number of arguments the option accepts,
+-- *f* is the function called when the option is set, and *description* is
+-- the option's description when displaying help.
+-- @param short The string short version of the option.
+-- @param long The string long version of the option.
+-- @param narg The number of expected parameters for the option.
+-- @param f The Lua function to run when the option is set. It is passed *narg*
+--   string arguments.
+-- @param description The string description of the option for command line
 --   help.
 -- @name register
 function M.register(short, long, narg, f, description)
-  local switch = {
+  local option = {
     narg = assert_type(narg, 'number', 3), f = assert_type(f, 'function', 4),
     description = assert_type(description, 'string', 5)
   }
-  switches[assert_type(short, 'string', 1)] = switch
-  switches[assert_type(long, 'string', 2)] = switch
+  options[assert_type(short, 'string', 1)] = option
+  options[assert_type(long, 'string', 2)] = option
 end
 
--- Processes command line argument table *arg*, handling switches previously
+-- Processes command line argument table *arg*, handling options previously
 -- defined using `args.register()` and treating unrecognized arguments as
 -- filenames to open.
 -- Emits an `ARG_NONE` event when no arguments are present unless
@@ -50,10 +50,10 @@ local function process(arg, no_emit_arg_none)
   local no_args = true
   local i = 1
   while i <= #arg do
-    local switch = switches[arg[i]]
-    if switch then
-      switch.f(table.unpack(arg, i + 1, i + switch.narg))
-      i = i + switch.narg
+    local option = options[arg[i]]
+    if option then
+      option.f(table.unpack(arg, i + 1, i + option.narg))
+      i = i + option.narg
     else
       local filename = lfs.abspath(arg[i], arg[-1] or lfs.currentdir())
       if lfs.attributes(filename, 'mode') ~= 'directory' then
@@ -72,17 +72,17 @@ events.connect(events.INITIALIZED, function() if arg then process(arg) end end)
 events.connect('command_line', function(arg) process(arg, true) end)
 
 if not CURSES then
-  -- Shows all registered command line switches on the command line.
+  -- Shows all registered command line options on the command line.
   M.register('-h', '--help', 0, function()
     print('Usage: textadept [args] [filenames]')
     local list = {}
-    for name in pairs(switches) do list[#list + 1] = name end
+    for name in pairs(options) do list[#list + 1] = name end
     table.sort(
       list, function(a, b) return a:match('[^-]+') < b:match('[^-]+') end)
     for _, name in ipairs(list) do
-      local switch = switches[name]
+      local option = options[name]
       print(string.format(
-        '  %s [%d args]: %s', name, switch.narg, switch.description))
+        '  %s [%d args]: %s', name, option.narg, option.description))
     end
     os.exit()
   end, 'Shows this')
@@ -92,12 +92,12 @@ if not CURSES then
     quit()
   end, 'Prints Textadept version and copyright')
   -- After Textadept finishes initializing and processes arguments, remove the
-  -- help and version switches in order to prevent another instance from sending
+  -- help and version options in order to prevent another instance from sending
   -- '-h', '--help', '-v', and '--version' to the first instance, killing the
   -- latter.
   events.connect(events.INITIALIZED, function()
-    switches['-h'], switches['--help'] = nil, nil
-    switches['-v'], switches['--version'] = nil, nil
+    options['-h'], options['--help'] = nil, nil
+    options['-v'], options['--version'] = nil, nil
   end)
 end
 
@@ -105,8 +105,8 @@ end
 -- This needs to be set as soon as possible since the processing of arguments is
 -- positional.
 _USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE') .. '/.textadept'
-for i, switch in ipairs(arg) do
-  if (switch == '-u' or switch == '--userhome') and arg[i + 1] then
+for i, option in ipairs(arg) do
+  if (option == '-u' or option == '--userhome') and arg[i + 1] then
     _USERHOME = arg[i + 1]
     break
   end

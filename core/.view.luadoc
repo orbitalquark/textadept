@@ -88,8 +88,8 @@
 --   Color the background of the line that contains the caret a different color.
 --   The default value is `false`.
 -- @field caret_line_visible_always (bool)
---   Always show the caret line, even when the window is not in focus.
---   The default value is `false`, showing the line only when the window is in
+--   Always show the caret line, even when the view is not in focus.
+--   The default value is `false`, showing the line only when the view is in
 --   focus.
 -- @field caret_period (number)
 --   The time between caret blinks in milliseconds.

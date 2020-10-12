@@ -557,19 +557,19 @@ Emitted when no command line arguments are passed to Textadept on startup.
 <a id="args.register"></a>
 #### `args.register`(*short, long, narg, f, description*)
 
-Registers a command line switch with short and long versions *short* and
-*long*, respectively. *narg* is the number of arguments the switch accepts,
-*f* is the function called when the switch is tripped, and *description* is
-the switch's description when displaying help.
+Registers a command line option with short and long versions *short* and
+*long*, respectively. *narg* is the number of arguments the option accepts,
+*f* is the function called when the option is set, and *description* is
+the option's description when displaying help.
 
 Parameters:
 
-* *`short`*: The string short version of the switch.
-* *`long`*: The string long version of the switch.
-* *`narg`*: The number of expected parameters for the switch.
-* *`f`*: The Lua function to run when the switch is tripped. It is passed
-  *narg* string arguments.
-* *`description`*: The string description of the switch for command line
+* *`short`*: The string short version of the option.
+* *`long`*: The string long version of the option.
+* *`narg`*: The number of expected parameters for the option.
+* *`f`*: The Lua function to run when the option is set. It is passed *narg*
+  string arguments.
+* *`description`*: The string description of the option for command line
   help.
 
 
@@ -1860,8 +1860,8 @@ Parameters:
 <a id="buffer.copy_range"></a>
 #### `buffer.copy_range`(*buffer, start\_pos, end\_pos*)
 
-Copies the range of text between positions *start_pos* and *end_pos* to the
-clipboard.
+Copies to the clipboard the range of text between positions *start_pos* and
+*end_pos*.
 
 Parameters:
 
@@ -3125,6 +3125,7 @@ Parameters:
 #### `buffer.save`(*buffer*)
 
 Saves the buffer to its file.
+If the buffer does not have a file, the user is prompted for one.
 Emits `FILE_BEFORE_SAVE` and `FILE_AFTER_SAVE` events.
 
 Parameters:
@@ -3266,7 +3267,7 @@ Parameters:
 <a id="buffer.set_encoding"></a>
 #### `buffer.set_encoding`(*buffer, encoding*)
 
-Converts the current buffer's contents to encoding *encoding*.
+Converts the buffer's contents to encoding *encoding*.
 
 Parameters:
 
@@ -3943,8 +3944,8 @@ Emitted after double-clicking the mouse button.
 
   * _`position`_: The position double-clicked.
   * _`line`_: The line number of the position double-clicked.
-  * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
-    `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
+  * _`modifiers`_: A bit-mask of any modifier keys held down:
+    `view.MOD_CTRL`, `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
     On macOS, the Command modifier key is reported as `view.MOD_CTRL` and
     Ctrl is `view.MOD_META`.
     Note: If you set `view.rectangular_selection_modifier` to
@@ -4010,8 +4011,8 @@ Emitted when clicking the mouse on text that has an indicator present.
   Arguments:
 
   * _`position`_: The clicked text's position.
-  * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
-    `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
+  * _`modifiers`_: A bit-mask of any modifier keys held down:
+    `view.MOD_CTRL`, `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
     On macOS, the Command modifier key is reported as `view.MOD_CTRL` and
     Ctrl is `view.MOD_META`.
     Note: If you set `view.rectangular_selection_modifier` to
@@ -4054,8 +4055,8 @@ Emitted when clicking the mouse inside a sensitive margin.
 
   * _`margin`_: The margin number clicked.
   * _`position`_: The beginning position of the clicked margin's line.
-  * _`modifiers`_: A bit-mask of any modifier keys used: `view.MOD_CTRL`,
-    `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
+  * _`modifiers`_: A bit-mask of any modifier keys held down:
+    `view.MOD_CTRL`, `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`.
     On macOS, the Command modifier key is reported as `view.MOD_CTRL` and
     Ctrl is `view.MOD_META`.
     Note: If you set `view.rectangular_selection_modifier` to
@@ -6416,6 +6417,7 @@ Extends Lua's `string` library to provide character set conversions.
 
 Converts string *text* from encoding *old* to encoding *new* using GNU
 libiconv, returning the string result.
+Raises an error if the encoding conversion failed.
 Valid encodings are [GNU libiconv's encodings][] and include:
 
   * European: ASCII, ISO-8859-{1,2,3,4,5,7,9,10,13,14,15,16}, KOI8-R, KOI8-U,
@@ -10040,8 +10042,8 @@ Color the background of the line that contains the caret a different color.
 <a id="view.caret_line_visible_always"></a>
 #### `view.caret_line_visible_always` (bool)
 
-Always show the caret line, even when the window is not in focus.
-  The default value is `false`, showing the line only when the window is in
+Always show the caret line, even when the view is not in focus.
+  The default value is `false`, showing the line only when the view is in
   focus.
 
 <a id="view.caret_period"></a>

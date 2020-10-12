@@ -263,7 +263,7 @@ XFCE, etc. button or menu launcher. Textadept's *src/textadept.desktop* and
 Textadept accepts a variety of command line arguments, which are listed in the
 table below.
 
-Switch             |Arguments|Description
+Option             |Arguments|Description
 -------------------|:-------:|-----------
 `-e`, `--execute`  |    1    |Run the given Lua code
 `-f`, `--force`    |    0    |Forces unique instance
