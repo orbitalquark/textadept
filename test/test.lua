@@ -2536,6 +2536,45 @@ function test_ui_find_replace_all()
   buffer:close(true)
 end
 
+function test_find_replace_regex_transforms()
+  buffer.new()
+  buffer:set_text('foObaRbaz')
+  ui.find.find_entry_text = 'f([oO]+)ba(..)'
+  ui.find.regex = true
+  local replacements = {
+    ['f\\1ba\\2'] = 'foObaRbaz',
+    ['f\\u\\1ba\\l\\2'] = 'fOObarbaz',
+    ['f\\U\\1ba\\2'] = 'fOOBARBaz',
+    ['f\\U\\1ba\\l\\2'] = 'fOOBArBaz',
+    ['f\\U\\1\\Eba\\2'] = 'fOObaRbaz',
+    ['f\\L\\1ba\\2'] = 'foobarbaz',
+    ['f\\L\\1ba\\u\\2'] = 'foobaRbaz',
+    ['f\\L\\1ba\\U\\2'] = 'foobaRBaz',
+    ['f\\L\\1\\Eba\\2'] = 'foobaRbaz',
+    ['f\\L\\u\\1ba\\2'] = 'fOobarbaz',
+    ['f\\L\\u\\1ba\\U\\l\\2'] = 'fOobarBaz',
+    ['f\\L\\u\\1\\Eba\\2'] = 'fOobaRbaz',
+    ['f\\1ba\\U\\2'] = 'foObaRBaz',
+    ['f\\1ba\\L\\2'] = 'foObarbaz',
+    ['f\\1ba\\U\\l\\2'] = 'foObarBaz',
+    [''] = 'az',
+    ['\\0'] = 'foObaRbaz'
+  }
+  for regex, replacement in pairs(replacements) do
+    ui.find.replace_entry_text = regex
+    ui.find.find_next()
+    ui.find.replace()
+    assert_equal(buffer:get_text(), replacement)
+    buffer:undo()
+    ui.find.replace_all()
+    assert_equal(buffer:get_text(), replacement)
+    buffer:undo()
+  end
+  ui.find.find_entry_text, ui.find.replace_entry_text = '', ''
+  ui.find.regex = false
+  buffer:close(true)
+end
+
 function test_history()
   local filename1 = _HOME .. '/test/modules/textadept/history/1'
   io.open_file(filename1)

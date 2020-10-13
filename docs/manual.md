@@ -527,9 +527,15 @@ While the pane is open in the GUI, the following key bindings apply:
 * Perform "Find Next" and "Find Prev" in the "Find" entry via `Enter` and
   `Shift+Enter`, respectively.
 * Perform "Replace" and "Replace All" in the "Replace" entry via `Enter` and
-  `Shift+Enter`, respectively. When the "Regex" find option is enabled, `\`*`n`*
-  in the "Replace" entry represents the *n*th captured matching region's text,
-  and `\0` represents all matched text.
+  `Shift+Enter`, respectively. When the "Regex" find option is enabled,
+
+  + `\`*`n`* in the "Replace" entry represents the *n*th captured matching
+    region's text, and `\0` represents all matched text.
+  + `\U` and `\L` converts everything up to the next `\L`, `\U`, or `\E` to
+    uppercase and lowercase, respectively. (`\E` turns off conversion.)
+  + `\u` and `\l` converts the next character to uppercase and lowercase,
+    respectively. These may appear within `\U` and `\L` constructs.
+
 * For at least the English locale, toggle the find options using their button
   mnemonics: `Alt+M`, `Alt+W`, `Alt+X`, `Alt+I` on Windows, Linux, and BSD, and
   `⌘M`, `⌘W`, `⌘X`, and `⌘I`, respectively, on macOS.

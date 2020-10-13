@@ -381,11 +381,32 @@ local function unescape(text)
   end) or text
 end
 
+-- Replaces the text in the target range with string *text* subject to:
+-- * "\d" sequences replaced with the text of capture number *d* from the
+--   regular expression (or the entire match for *d* = 0)
+-- * "\U" and "\L" sequences convert everything up to the next "\U", "\L", or
+--   "\E" to uppercase and lowercase, respectively.
+-- * "\u" and "\l" sequences convert the next character to uppercase and
+--   lowercase, respectively. They may appear within "\U" and "\L" constructs.
+local function replace_target_re(buffer, rtext)
+  rtext = rtext:gsub('\\0', buffer.target_text):gsub('\\(%d)', buffer.tag)
+  local P, V, upper, lower = lpeg.P, lpeg.V, string.upper, string.lower
+  local patt = lpeg.Cs(P{
+    (V('text') + V('u') + V('l') + V('U') + V('L'))^1,
+    text = (1 - '\\' * lpeg.S('uUlLE'))^1,
+    u = '\\u' * lpeg.C(1) / upper, l = '\\l' * lpeg.C(1) / lower,
+    U = P('\\U') / '' * (V('text') / upper + V('u') + V('l'))^0 * V('E')^-1,
+    L = P('\\L') / '' * (V('text') / lower + V('u') + V('l'))^0 * V('E')^-1,
+    E = P('\\E') / '',
+  })
+  buffer:replace_target(lpeg.match(patt, rtext) or rtext)
+end
+
 -- Replaces found (selected) text.
 events.connect(events.REPLACE, function(rtext)
   if buffer.selection_empty then return end
   buffer:target_from_selection()
-  local f = not M.regex and buffer.replace_target or buffer.replace_target_re
+  local f = not M.regex and buffer.replace_target or replace_target_re
   f(buffer, unescape(rtext))
   buffer:set_sel(buffer.target_start, buffer.target_end)
 end)
@@ -405,7 +426,7 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
     buffer:indicator_fill_range(e, 1)
   end
   local EOF = replace_in_sel and e == buffer.length + 1 -- no indicator at EOF
-  local f = not M.regex and buffer.replace_target or buffer.replace_target_re
+  local f = not M.regex and buffer.replace_target or replace_target_re
   rtext, repl_text = unescape(rtext), rtext -- save for ui.find.focus()
 
   -- Perform the search and replace.
