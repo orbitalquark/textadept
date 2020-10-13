@@ -1880,6 +1880,8 @@ AUTO\_C\_CANCELLED         |Renamed |AUTO\_C\_CANCELED
 N/A                        |Added   |[COMMAND_TEXT_CHANGED][]
 N/A                        |Added   |[FILE_BEFORE_RELOAD][]
 N/A                        |Added   |[FILE_AFTER_RELOAD][]
+N/A                        |Added   |[FIND_RESULT_FOUND][]
+N/A                        |Added   |[FIND_TEXT_CHANGED][]
 N/A                        |Added   |[SESSION_SAVE][]
 N/A                        |Added   |[SESSION_LOAD][]
 **io**                     |        |
@@ -1927,6 +1929,7 @@ N/A                        |Added   |[append_history][]
 N/A                        |Added   |[progressbar()][]
 **ui.find**                |        |
 find\_in\_files\_timeout   |Removed |N/A
+N/A                        |Added   |[active][]
 **view**                   |        |
 N/A                        |Added   |_buffer functions and fields_<sup>d</sup>
 
@@ -1941,6 +1944,8 @@ section below.
 [COMMAND_TEXT_CHANGED]: api.html#events.COMMAND_TEXT_CHANGED
 [FILE_BEFORE_RELOAD]: api.html#events.FILE_BEFORE_RELOAD
 [FILE_AFTER_RELOAD]: api.html#events.FILE_AFTER_RELOAD
+[FIND_RESULT_FOUND]: api.html#events.FIND_RESULT_FOUND
+[FIND_TEXT_CHANGED]: api.html#events.FIND_TEXT_CHANGED
 [SESSION_SAVE]: api.html#events.SESSION_SAVE
 [SESSION_LOAD]: api.html#events.SESSION_LOAD
 [buffer:reload()]: api.html#buffer.reload
@@ -1971,6 +1976,7 @@ section below.
 [active]: api.html#ui.command_entry.active
 [append_history]: api.html#ui.command_entry.append_history
 [progressbar()]: api.html#ui.dialogs.progressbar
+[active]: api.html#ui.find.active
 
 ##### Buffer Indexing Changes
 
