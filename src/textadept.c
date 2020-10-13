@@ -1321,7 +1321,10 @@ static int buffer_index(lua_State *L) {
 //#elif CURSES
     // TODO: tabs
 #endif
-  } else if (strcmp(lua_tostring(L, 2), "height") == 0 &&
+  } else if (strcmp(lua_tostring(L, 2), "active") == 0 &&
+             lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
+    lua_pushboolean(L, command_entry_focused);
+  else if (strcmp(lua_tostring(L, 2), "height") == 0 &&
              lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
     // Return the command entry's pixel height.
 #if GTK

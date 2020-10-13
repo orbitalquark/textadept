@@ -253,7 +253,6 @@ end
 local orig_focus = M.focus
 M.focus = function()
   keys.mode = prev_key_mode
-  M.active = not M.active
   orig_focus()
 end
 
