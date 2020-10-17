@@ -1914,6 +1914,8 @@ find\_incremental()        |Replaced|[incremental][]<sup>c</sup>
 find\_incremental\_keys    |Removed |
 N/A                        |Added   |[highlight_all_matches][]
 **textadept.history**      |Added   |[textadept.history][]
+**textadept.run**          |        |
+N/A                        |Added   |[set_arguments][]
 **textadept.snippets**     |        |
 \_insert()                 |Renamed |[insert()][]
 \_previous()               |Renamed |[previous()][]
@@ -1967,6 +1969,7 @@ section below.
 [incremental]: api.html#ui.find.incremental
 [highlight_all_matches]: api.html#ui.find.highlight_all_matches
 [textadept.history]: api.html#textadept.history
+[set_arguments]: api.html#textadept.run.set_arguments
 [insert()]: api.html#textadept.snippets.insert
 [previous()]: api.html#textadept.snippets.previous
 [cancel_current()]: api.html#textadept.snippets.cancel_current
