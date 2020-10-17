@@ -2892,13 +2892,9 @@ end
 
 function test_menu_functions_interactive()
   buffer.new()
-  buffer.filename = '/tmp/test.lua'
-  textadept.menu.menubar[_L['Tools']][_L['Set Arguments...']][2]()
   textadept.menu.menubar[_L['Help']][_L['About']][2]()
   buffer:close(true)
 end
-
--- TODO: test set arguments more thoroughly.
 
 function test_menu_select_command_interactive()
   local num_buffers = #_BUFFERS
@@ -2969,6 +2965,37 @@ function test_run_compile_run()
 
   assert_raises(function() textadept.run.compile({}) end, 'string/nil expected, got table')
   assert_raises(function() textadept.run.run({}) end, 'string/nil expected, got table')
+end
+
+function test_run_set_arguments()
+  local lua_run_command = textadept.run.run_commands.lua
+  local lua_compile_command = textadept.run.compile_commands.lua
+
+  buffer.new()
+  buffer.filename = '/tmp/test.lua'
+  textadept.run.set_arguments(nil, '-i', '-p')
+  assert_equal(textadept.run.run_commands[buffer.filename], lua_run_command .. ' -i')
+  assert_equal(textadept.run.compile_commands[buffer.filename], lua_compile_command .. ' -p')
+  textadept.run.set_arguments(buffer.filename, '', '')
+  assert_equal(textadept.run.run_commands[buffer.filename], lua_run_command .. ' ')
+  assert_equal(textadept.run.compile_commands[buffer.filename], lua_compile_command .. ' ')
+  buffer:close(true)
+
+  assert_raises(function() textadept.run.set_arguments(1) end, 'string/nil expected, got number')
+  assert_raises(function() textadept.run.set_arguments('', true) end, 'string/nil expected, got boolean')
+  assert_raises(function() textadept.run.set_arguments('', '', {}) end, 'string/nil expected, got table')
+end
+
+function test_run_set_arguments_interactive()
+  local lua_run_command = textadept.run.run_commands.lua
+  local lua_compile_command = textadept.run.compile_commands.lua
+  buffer.new()
+  buffer.filename = '/tmp/test.lua'
+  textadept.run.set_arguments(nil, '-i', '-p')
+  textadept.run.set_arguments()
+  assert_equal(textadept.run.run_commands[buffer.filename], lua_run_command .. ' -i')
+  assert_equal(textadept.run.compile_commands[buffer.filename], lua_compile_command .. ' -p')
+  buffer:close(true)
 end
 
 function test_run_build()

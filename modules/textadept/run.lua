@@ -271,6 +271,51 @@ end
 events.connect(events.RUN_OUTPUT, print_output)
 
 ---
+-- Appends the command line argument strings *run* and *compile* to their
+-- respective run and compile commands for file *filename* or the current file.
+-- If either is `nil`, prompts the user for missing the arguments. Each filename
+-- has its own set of compile and run arguments.
+-- @param filename Optional path to the file to set run/compile arguments for.
+-- @param run Optional string run arguments to set. If `nil`, the user is
+--   prompted for them. Pass the empty string for no run arguments.
+-- @param compile Optional string compile arguments to set. If `nil`, the user
+--   is prompted for them. Pass the empty string for no compile arguments.
+-- @see run_commands
+-- @see compile_commands
+-- @name set_arguments
+function M.set_arguments(filename, run, compile)
+  assert_type(filename, 'string/nil', 1)
+  assert_type(run, 'string/nil', 2)
+  assert_type(compile, 'string/nil', 3)
+  if not filename then filename = buffer.filename end
+  local base_commands, utf8_args = {}, {}
+  for i, commands in ipairs{M.run_commands, M.compile_commands} do
+    -- Compare the base run/compile command with the one for the current
+    -- file. The difference is any additional arguments set previously.
+    base_commands[i] = commands[filename:match('[^.]+$')] or
+      commands[buffer:get_lexer()] or ''
+    local current_command = commands[filename] or ''
+    local args = (i == 1 and run or compile) or
+      current_command:sub(#base_commands[i] + 2)
+    utf8_args[i] = args:iconv('UTF-8', _CHARSET)
+  end
+  if not run or not compile then
+    local button, utf8_args = ui.dialogs.inputbox{
+      title = _L['Set Arguments...']:gsub('_', ''), informative_text = {
+        _L['Command line arguments'], _L['For Run:'], _L['For Compile:']
+      }, text = utf8_args, width = not CURSES and 400 or nil
+    }
+    if button ~= 1 then return end
+  end
+  for i, commands in ipairs{M.run_commands, M.compile_commands} do
+    -- Add the additional arguments to the base run/compile command and set
+    -- the new command to be the one used for the current file.
+    commands[filename] = string.format('%s %s', base_commands[i],
+      utf8_args[i]:iconv(_CHARSET, 'UTF-8'))
+  end
+end
+
+---
 -- Map of project root paths and "makefiles" to their associated "build" shell
 -- command line strings or functions that return such strings.
 -- Functions may also return a working directory to operate in. By default, it
