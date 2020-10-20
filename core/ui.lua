@@ -37,6 +37,12 @@ module('ui')]]
 
 ui.silent_print = false
 
+-- Helper function for jumping to another view to print to, or creating a new
+-- view to print to (the latter depending on settings).
+local function prepare_view()
+  if #_VIEWS > 1 then ui.goto_view(1) elseif not ui.tabs then view:split() end
+end
+
 -- Helper function for printing messages to buffers.
 -- @see ui._print
 local function _print(buffer_type, ...)
@@ -45,21 +51,19 @@ local function _print(buffer_type, ...)
     if buf._type == buffer_type then buffer = buf break end
   end
   if not buffer then
-    if not ui.tabs then view:split() end
+    prepare_view()
     buffer = _G.buffer.new()
     buffer._type = buffer_type
   elseif not ui.silent_print then
     for _, view in ipairs(_VIEWS) do
-      if view.buffer._type == buffer_type then ui.goto_view(view) break end
-    end
-    if view.buffer._type ~= buffer_type then
-      if #_VIEWS > 1 then
-        ui.goto_view(1)
-      elseif not ui.tabs then
-        view:split()
+      if view.buffer._type == buffer_type then
+        ui.goto_view(view)
+        goto view_found
       end
-      view:goto_buffer(buffer)
     end
+    prepare_view()
+    view:goto_buffer(buffer)
+    ::view_found::
   end
   local args, n = {...}, select('#', ...)
   for i = 1, n do args[i] = tostring(args[i]) end
@@ -115,8 +119,7 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
     -- Transform key-value pairs into command line arguments.
     local args = {}
     for option, value in pairs(options) do
-      assert_type(value, 'string/number/table/boolean', option)
-      if value then
+      if assert_type(value, 'string/number/table/boolean', option) then
         args[#args + 1] = '--' .. option:gsub('_', '-')
         if type(value) == 'table' then
           for i, val in ipairs(value) do
@@ -139,7 +142,7 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
     if k == 'progressbar' then
       args[#args + 1] = assert_type(f, 'function', 2)
     end
-    -- Call gtdialog, stripping any trailing newline in the standard output.
+    -- Call gtdialog, stripping any trailing newline in the output.
     local result = ui.dialog(
       k:gsub('_', '-'), table.unpack(args)):match('^(.-)\n?$')
     -- Depending on the dialog type, transform the result into Lua objects.
@@ -185,12 +188,10 @@ ui.dialogs = setmetatable({}, {__index = function(_, k)
   end
 end})
 
-local events, events_connect = events, events.connect
-
 local buffers_zorder = {}
 
 -- Adds new buffers to the z-order list.
-events_connect(events.BUFFER_NEW, function()
+events.connect(events.BUFFER_NEW, function()
   if buffer ~= ui.command_entry then table.insert(buffers_zorder, 1, buffer) end
 end)
 
@@ -206,13 +207,14 @@ local function update_zorder()
   end
   table.insert(buffers_zorder, 1, buffer)
 end
-events_connect(events.BUFFER_AFTER_SWITCH, update_zorder)
-events_connect(events.VIEW_AFTER_SWITCH, update_zorder)
+events.connect(events.BUFFER_AFTER_SWITCH, update_zorder)
+events.connect(events.VIEW_AFTER_SWITCH, update_zorder)
+events.connect(events.BUFFER_DELETED, update_zorder)
 
 -- Saves and restores buffer zorder data during a reset.
-events_connect(
+events.connect(
   events.RESET_BEFORE, function(persist) persist.ui_zorder = buffers_zorder end)
-events_connect(
+events.connect(
   events.RESET_AFTER, function(persist) buffers_zorder = persist.ui_zorder end)
 
 ---
@@ -237,9 +239,8 @@ function ui.switch_buffer(zorder)
   local button, i = ui.dialogs.filteredlist{
     title = _L['Switch Buffers'], columns = columns, items = utf8_list
   }
-  if button == 1 and i then
-    view:goto_buffer(buffers[not zorder and i or i + 1])
-  end
+  if button ~= 1 or not i then return end
+  view:goto_buffer(buffers[not zorder and i or i + 1])
 end
 
 ---
@@ -290,10 +291,10 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
 end
 
 -- Ensure title, statusbar, etc. are updated for new views.
-events_connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI, 3) end)
+events.connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI, 3) end)
 
 -- Switches between buffers when a tab is clicked.
-events_connect(
+events.connect(
   events.TAB_CLICKED, function(index) view:goto_buffer(_BUFFERS[index]) end)
 
 -- Sets the title of the Textadept window to the buffer's filename.
@@ -309,11 +310,11 @@ local function set_title()
 end
 
 -- Changes Textadept title to show the buffer as being "clean" or "dirty".
-events_connect(events.SAVE_POINT_REACHED, set_title)
-events_connect(events.SAVE_POINT_LEFT, set_title)
+events.connect(events.SAVE_POINT_REACHED, set_title)
+events.connect(events.SAVE_POINT_LEFT, set_title)
 
 -- Open uri(s).
-events_connect(events.URI_DROPPED, function(utf8_uris)
+events.connect(events.URI_DROPPED, function(utf8_uris)
   for utf8_path in utf8_uris:gmatch('file://([^\r\n]+)') do
     local path = utf8_path:gsub('%%(%x%x)', function(hex)
       return string.char(tonumber(hex, 16))
@@ -325,25 +326,25 @@ events_connect(events.URI_DROPPED, function(utf8_uris)
   end
   ui.goto_view(view) -- work around any view focus synchronization issues
 end)
-events_connect(events.APPLEEVENT_ODOC, function(uri)
+events.connect(events.APPLEEVENT_ODOC, function(uri)
   return events.emit(events.URI_DROPPED, 'file://' .. uri)
 end)
 
 -- Sets buffer statusbar text.
-events_connect(events.UPDATE_UI, function(updated)
+events.connect(events.UPDATE_UI, function(updated)
   if updated & 3 == 0 then return end -- ignore scrolling
   local text = not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
     '%s %d/%d  %s %d  %s  %s  %s  %s'
-  local pos = buffer.selection_n_caret[buffer.main_selection]
+  local pos = buffer.current_pos
   local line, max = buffer:line_from_position(pos), buffer.line_count
   local col = buffer.column[pos]
   local lang = buffer:get_lexer()
   local eol = buffer.eol_mode == buffer.EOL_CRLF and _L['CRLF'] or _L['LF']
   local tabs = string.format(
     '%s %d', buffer.use_tabs and _L['Tabs:'] or _L['Spaces:'], buffer.tab_width)
-  local enc = buffer.encoding or ''
+  local encoding = buffer.encoding or ''
   ui.buffer_statusbar_text = string.format(
-    text, _L['Line:'], line, max, _L['Col:'], col, lang, eol, tabs, enc)
+    text, _L['Line:'], line, max, _L['Col:'], col, lang, eol, tabs, encoding)
 end)
 
 -- Save buffer properties.
@@ -357,19 +358,17 @@ local function save_buffer_state()
   buffer._x_offset = view.x_offset
   -- Save fold state.
   local folds, i = {}, view:contracted_fold_next(1)
-  while i >= 1 do
-    folds[#folds + 1], i = i, view:contracted_fold_next(i + 1)
-  end
+  while i >= 1 do folds[#folds + 1], i = i, view:contracted_fold_next(i + 1) end
   buffer._folds = folds
 end
-events_connect(events.BUFFER_BEFORE_SWITCH, save_buffer_state)
-events_connect(events.FILE_BEFORE_RELOAD, save_buffer_state)
+events.connect(events.BUFFER_BEFORE_SWITCH, save_buffer_state)
+events.connect(events.FILE_BEFORE_RELOAD, save_buffer_state)
 
 -- Restore buffer properties.
 local function restore_buffer_state()
   if not buffer._folds then return end
   -- Restore fold state.
-  for i = 1, #buffer._folds do view:toggle_fold(buffer._folds[i]) end
+  for _, line in ipairs(buffer._folds) do view:toggle_fold(line) end
   -- Restore view state.
   buffer:set_sel(buffer._anchor, buffer._current_pos)
   buffer.selection_n_anchor_virtual_space[1] = buffer._anchor_virtual_space
@@ -379,17 +378,17 @@ local function restore_buffer_state()
   view:line_scroll(0, view:visible_from_doc_line(_top_line) - top_line)
   view.x_offset = buffer._x_offset or 0
 end
-events_connect(events.BUFFER_AFTER_SWITCH, restore_buffer_state)
-events_connect(events.FILE_AFTER_RELOAD, restore_buffer_state)
+events.connect(events.BUFFER_AFTER_SWITCH, restore_buffer_state)
+events.connect(events.FILE_AFTER_RELOAD, restore_buffer_state)
 
 -- Updates titlebar and statusbar.
 local function update_bars()
   set_title()
   events.emit(events.UPDATE_UI, 3)
 end
-events_connect(events.BUFFER_NEW, update_bars)
-events_connect(events.BUFFER_AFTER_SWITCH, update_bars)
-events_connect(events.VIEW_AFTER_SWITCH, update_bars)
+events.connect(events.BUFFER_NEW, update_bars)
+events.connect(events.BUFFER_AFTER_SWITCH, update_bars)
+events.connect(events.VIEW_AFTER_SWITCH, update_bars)
 
 -- Save view state.
 local function save_view_state()
@@ -400,8 +399,8 @@ local function save_view_state()
     buffer._margin_width_n[i] = view.margin_width_n[i]
   end
 end
-events_connect(events.BUFFER_BEFORE_SWITCH, save_view_state)
-events_connect(events.VIEW_BEFORE_SWITCH, save_view_state)
+events.connect(events.BUFFER_BEFORE_SWITCH, save_view_state)
+events.connect(events.VIEW_BEFORE_SWITCH, save_view_state)
 
 -- Restore view state.
 local function restore_view_state()
@@ -412,21 +411,21 @@ local function restore_view_state()
     view.margin_width_n[i] = buffer._margin_width_n[i]
   end
 end
-events_connect(events.BUFFER_AFTER_SWITCH, restore_view_state)
-events_connect(events.VIEW_AFTER_SWITCH, restore_view_state)
+events.connect(events.BUFFER_AFTER_SWITCH, restore_view_state)
+events.connect(events.VIEW_AFTER_SWITCH, restore_view_state)
 
-events_connect(
+events.connect(
   events.RESET_AFTER, function() ui.statusbar_text = _L['Lua reset'] end)
 
 -- Prompts for confirmation if any buffers are modified.
-events_connect(events.QUIT, function()
+events.connect(events.QUIT, function()
   local utf8_list = {}
   for _, buffer in ipairs(_BUFFERS) do
-    if buffer.modify then
-      local filename = buffer.filename or buffer._type or _L['Untitled']
-      if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
-      utf8_list[#utf8_list + 1] = filename
-    end
+    if not buffer.modify then goto continue end
+    local filename = buffer.filename or buffer._type or _L['Untitled']
+    if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
+    utf8_list[#utf8_list + 1] = filename
+    ::continue::
   end
   if #utf8_list == 0 then return end
   local button = ui.dialogs.msgbox{
@@ -440,10 +439,10 @@ events_connect(events.QUIT, function()
   if button ~= 2 then return true end -- prevent quit
 end)
 
--- Keeps track of and switches back to the previous buffer after buffer close.
-events_connect(
+-- Keeps track of, and switches back to the previous buffer after buffer close.
+events.connect(
   events.BUFFER_BEFORE_SWITCH, function() view._prev_buffer = buffer end)
-events_connect(events.BUFFER_DELETED, function()
+events.connect(events.BUFFER_DELETED, function()
   if _BUFFERS[view._prev_buffer] and buffer ~= view._prev_buffer then
     view:goto_buffer(view._prev_buffer)
   end
@@ -452,19 +451,20 @@ end)
 -- Properly handle clipboard text between views in curses, enables and disables
 -- mouse mode, and focuses and resizes views based on mouse events.
 if CURSES then
-  local clip_text
-  events.connect(
-    events.VIEW_BEFORE_SWITCH, function() clip_text = ui.clipboard_text end)
-  events.connect(
-    events.VIEW_AFTER_SWITCH, function() ui.clipboard_text = clip_text end)
+  events.connect(events.VIEW_BEFORE_SWITCH, function()
+    ui._clipboard_text = ui.clipboard_text
+  end)
+  events.connect(events.VIEW_AFTER_SWITCH, function()
+    ui.clipboard_text = ui._clipboard_text
+  end)
 
   if not WIN32 then
     local function enable_mouse() io.stdout:write("\x1b[?1002h"):flush() end
     local function disable_mouse() io.stdout:write("\x1b[?1002l"):flush() end
     enable_mouse()
-    events_connect(events.SUSPEND, disable_mouse)
-    events_connect(events.RESUME, enable_mouse)
-    events_connect(events.QUIT, disable_mouse)
+    events.connect(events.SUSPEND, disable_mouse)
+    events.connect(events.RESUME, enable_mouse)
+    events.connect(events.QUIT, disable_mouse)
   end
 
   -- Retrieves the view or split at the given terminal coordinates.
@@ -486,7 +486,7 @@ if CURSES then
   end
 
   local resize
-  events_connect(events.MOUSE, function(event, button, y, x)
+  events.connect(events.MOUSE, function(event, button, y, x)
     if event == view.MOUSE_RELEASE or button ~= 1 then return end
     if event == view.MOUSE_PRESS then
       local view = get_view(ui.get_split_table(), y - 1, x) -- title is at y = 1
@@ -511,7 +511,7 @@ events.connect(events.INITIALIZED, function()
   -- Print internal Lua error messages as they are reported.
   -- Attempt to mimic the Lua interpreter's error message format so tools that
   -- look for it can recognize these errors too.
-  events_connect(events.ERROR, function(text)
+  events.connect(events.ERROR, function(text)
     if text and text:find(lua_error) then text = 'lua: ' .. text end
     ui.print(text)
   end)

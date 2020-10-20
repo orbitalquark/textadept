@@ -22,33 +22,6 @@ lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!
 -- @param level Utility value indicating the directory level this function is
 --   at.
 local function walk(dir, filter, n, include_dirs, level)
-  if not level then
-    -- Convert filter to a table from nil or string arguments.
-    if not filter then filter = lfs.default_filter end
-    if type(filter) == 'string' then filter = {filter} end
-    -- Process the given filter into something that can match files more easily
-    -- and/or quickly. For example, convert '.ext' shorthand to '%.ext$',
-    -- substitute '/' with '[/\\]', and enable hash lookup for file extensions
-    -- to include or exclude.
-    local processed_filter = {
-      consider_any = true,
-      exts = setmetatable({}, {__index = function() return true end})
-    }
-    for _, patt in ipairs(filter) do
-      patt = patt:gsub('^(!?)%%?%.([^.]+)$', '%1%%.%2$') -- '.lua' to '%.lua$'
-      patt = patt:gsub('/([^\\])', '[/\\]%1') -- '/' to '[/\\]'
-      local include = not patt:find('^!')
-      local ext = patt:match('^!?%%.([^.]+)%$$')
-      if ext then
-        processed_filter.exts[ext] = include
-        if include then setmetatable(processed_filter.exts, nil) end
-      else
-        if include then processed_filter.consider_any = false end
-        processed_filter[#processed_filter + 1] = patt
-      end
-    end
-    filter = processed_filter
-  end
   for basename in lfs.dir(dir) do
     if basename:find('^%.%.?$') then goto continue end -- ignore . and ..
     local filename = dir .. (dir ~= '/' and '/' or '') .. basename
@@ -68,14 +41,15 @@ local function walk(dir, filter, n, include_dirs, level)
       -- Treat inclusive patterns as logical OR.
       include = include or (not patt:find('^!') and filename:find(patt))
     end
+    if not include then goto continue end
     local sep = not WIN32 and '/' or '\\'
     local os_filename = not WIN32 and filename or filename:gsub('/', sep)
-    if include and mode == 'directory' then
+    if mode == 'file' then
+      coroutine.yield(os_filename)
+    elseif mode == 'directory' then
       if include_dirs then coroutine.yield(os_filename .. sep) end
       if n and (level or 0) >= n then goto continue end
       walk(filename, filter, n, include_dirs, (level or 0) + 1)
-    elseif include and mode == 'file' then
-      coroutine.yield(os_filename)
     end
     ::continue::
   end
@@ -104,9 +78,33 @@ end
 -- @name walk
 function lfs.walk(dir, filter, n, include_dirs)
   assert_type(dir, 'string', 1)
-  assert_type(filter, 'string/table/nil', 2)
+  if not assert_type(filter, 'string/table/nil', 2) then
+    filter = lfs.default_filter
+  end
   assert_type(n, 'number/nil', 3)
-  local co = coroutine.create(function() walk(dir, filter, n, include_dirs) end)
+  -- Process the given filter into something that can match files more easily
+  -- and/or quickly. For example, convert '.ext' shorthand to '%.ext$',
+  -- substitute '/' with '[/\\]', and enable hash lookup for file extensions
+  -- to include or exclude.
+  local processed_filter = {
+    consider_any = true,
+    exts = setmetatable({}, {__index = function() return true end})
+  }
+  for _, patt in ipairs(type(filter) == 'table' and filter or {filter}) do
+    patt = patt:gsub('^(!?)%%?%.([^.]+)$', '%1%%.%2$') -- '.lua' to '%.lua$'
+    patt = patt:gsub('/([^\\])', '[/\\]%1') -- '/' to '[/\\]'
+    local include = not patt:find('^!')
+    local ext = patt:match('^!?%%.([^.]+)%$$')
+    if ext then
+      processed_filter.exts[ext] = include
+      if include then setmetatable(processed_filter.exts, nil) end
+    else
+      if include then processed_filter.consider_any = false end
+      processed_filter[#processed_filter + 1] = patt
+    end
+  end
+  local co = coroutine.create(
+    function() walk(dir, processed_filter, n, include_dirs) end)
   return function() return select(2, coroutine.resume(co)) end
 end
 

@@ -11,8 +11,8 @@ local M = {}
 
 local recording, macro
 
--- Commands bound to keys to ignore during macro recording, as the command(s)
--- ultimately executed will be recorded in some form.
+-- List of commands bound to keys to ignore during macro recording, as the
+-- command(s) ultimately executed will be recorded in some form.
 local ignore
 events.connect(events.INITIALIZED, function()
   local m_tools = textadept.menu.menubar[_L['Tools']]

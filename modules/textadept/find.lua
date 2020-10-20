@@ -77,8 +77,7 @@ local M = ui.find
 module('ui.find')]]
 
 local _L = _L
-M.find_label_text = _L['Find:']
-M.replace_label_text = _L['Replace:']
+M.find_label_text, M.replace_label_text = _L['Find:'], _L['Replace:']
 M.find_next_button_text = not CURSES and _L['Find Next'] or _L['[Next]']
 M.find_prev_button_text = not CURSES and _L['Find Prev'] or _L['[Prev]']
 M.replace_button_text = not CURSES and _L['Replace'] or _L['[Replace]']
@@ -92,7 +91,8 @@ M.highlight_all_matches = false
 M.INDIC_FIND = _SCINTILLA.next_indic_number()
 
 -- Events.
-events.FIND_RESULT_FOUND, events.FIND_WRAPPED = 'find_found', 'find_wrapped'
+local find_events = {'find_result_found', 'find_wrapped'}
+for _, v in ipairs(find_events) do events[v:upper()] = v end
 
 -- When finding in files, note the current view since results are shown in a
 -- split view. Jumping between results should be done in the original view.
@@ -113,7 +113,7 @@ M.find_in_files_filters = {}
 -- text has changed, the user is still typing; if text is the same, the user
 -- clicked "Find Next" or "Find Prev"). Keep track of repl_text for
 -- non-"In files" in order to restore it from filter text as necessary.
-local find_text, found_text, repl_text = nil, nil, ''
+local find_text, found_text, repl_text = nil, nil, ui.find.replace_entry_text
 
 -- Returns a reasonable initial directory for use with Find in Files.
 local function ff_dir()
@@ -137,7 +137,7 @@ function M.focus(options)
     local filter = M.find_in_files_filters[ff_dir()] or lfs.default_filter
     M.replace_entry_text = type(filter) == 'string' and filter or
       table.concat(filter, ',')
-  elseif repl_text and M.replace_entry_text ~= repl_text then
+  elseif M.replace_entry_text ~= repl_text then
     M.replace_entry_text = repl_text -- restore
   end
   orig_focus()
@@ -226,12 +226,10 @@ local function find(text, next, flags, no_wrap, wrapped)
       view:line_scroll(0, first_visible_line - view.first_visible_line)
       buffer:goto_pos(incremental_orig_pos or anchor)
     end
-  elseif not wrapped then
-    ui.statusbar_text = ''
   end
 
   -- Count and optionally highlight all found occurrences.
-  local count, current = 0
+  local count, current = 0, 1
   clear_highlighted_matches()
   if pos ~= -1 then
     buffer.search_flags = flags
@@ -260,7 +258,7 @@ end
 events.connect(events.FIND, find)
 events.connect(events.FIND_TEXT_CHANGED, function()
   if not M.incremental then return end
-  return events.emit(events.FIND, M.find_entry_text, true) or true -- refresh
+  return events.emit(events.FIND, M.find_entry_text, true) -- refresh
 end)
 events.connect(
   events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wrapped'] end)
@@ -341,24 +339,24 @@ function M.find_in_files(dir, filter)
       found = true
       if binary == nil then binary = buffer:text_range(1, 65536):find('\0') end
       if binary then
-        _G.buffer:append_text(string.format(
+        _G.buffer:add_text(string.format(
           '%s:1:%s\n', utf8_filenames[i], _L['Binary file matches.']))
         break
       end
       local line_num = buffer:line_from_position(buffer.target_start)
       local line = buffer:get_line(line_num)
-      _G.buffer:append_text(
+      _G.buffer:add_text(
         string.format('%s:%d:%s', utf8_filenames[i], line_num, line))
-      local pos = _G.buffer.length + 1 - #line +
+      local pos = _G.buffer.current_pos - #line +
         buffer.target_start - buffer:position_from_line(line_num)
       _G.buffer:indicator_fill_range(
         pos, buffer.target_end - buffer.target_start)
-      if not line:find('\n$') then _G.buffer:append_text('\n') end
+      if not line:find('\n$') then _G.buffer:add_text('\n') end
       buffer:set_target_range(buffer.target_end, buffer.length + 1)
     end
     buffer:clear_all()
     buffer:empty_undo_buffer()
-    _G.buffer:goto_pos(_G.buffer.length + 1) -- [Files Found Buffer]
+    view:scroll_caret() -- [Files Found Buffer]
     i = i + 1
     if i > #filenames then return nil end
     return i * 100 / #filenames, utf8_filenames[i]
@@ -370,44 +368,37 @@ function M.find_in_files(dir, filter)
     not found and _L['No results found'] .. '\n' or '')
 end
 
--- Unescapes \uXXXX sequences in the string *text* and returns the result.
--- Just like with \n, \t, etc., escape sequence interpretation only happens for
--- regex search and replace.
--- @param text String text to unescape.
--- @return unescaped text
-local function unescape(text)
-  return M.regex and text:gsub('%f[\\]\\u(%x%x%x%x)', function(code)
-    return utf8.char(tonumber(code, 16))
-  end) or text
-end
-
-local P, V, upper, lower = lpeg.P, lpeg.V, string.upper, string.lower
+local P, V, C, upper, lower = lpeg.P, lpeg.V, lpeg.C, string.upper, string.lower
 local re_patt = lpeg.Cs(P{
   (V('text') + V('u') + V('l') + V('U') + V('L'))^1,
   text = (1 - '\\' * lpeg.S('uUlLE'))^1,
-  u = '\\u' * lpeg.C(1) / upper, l = '\\l' * lpeg.C(1) / lower,
+  u = '\\u' * C(1) / upper, l = '\\l' * C(1) / lower,
   U = P('\\U') / '' * (V('text') / upper + V('u') + V('l'))^0 * V('E')^-1,
   L = P('\\L') / '' * (V('text') / lower + V('u') + V('l'))^0 * V('E')^-1,
-  E = P('\\E') / '',
+  E = P('\\E') / ''
 })
--- Replaces the text in the target range with string *text* subject to:
+-- Returns string *text* with the following sequences unescaped:
+-- * "\uXXXX" sequences replaced with the equivalent UTF-8 character.
 -- * "\d" sequences replaced with the text of capture number *d* from the
---   regular expression (or the entire match for *d* = 0)
+--   regular expression (or the entire match for *d* = 0).
 -- * "\U" and "\L" sequences convert everything up to the next "\U", "\L", or
 --   "\E" to uppercase and lowercase, respectively.
 -- * "\u" and "\l" sequences convert the next character to uppercase and
 --   lowercase, respectively. They may appear within "\U" and "\L" constructs.
-local function replace_target_re(buffer, rtext)
-  rtext = rtext:gsub('\\0', buffer.target_text):gsub('\\(%d)', buffer.tag)
-  buffer:replace_target(lpeg.match(re_patt, rtext) or rtext)
+-- @param text String text to unescape.
+-- @return unescaped text
+local function unescape(text)
+  text = text:gsub('%f[\\]\\u(%x%x%x%x)', function(code)
+    return utf8.char(tonumber(code, 16))
+  end):gsub('\\0', buffer.target_text):gsub('\\(%d)', buffer.tag)
+  return re_patt:match(text) or text
 end
 
 -- Replaces found (selected) text.
-events.connect(events.REPLACE, function(rtext)
+events.connect(events.REPLACE, function(text)
   if buffer.selection_empty then return end
   buffer:target_from_selection()
-  local f = not M.regex and buffer.replace_target or replace_target_re
-  f(buffer, unescape(rtext))
+  buffer:replace_target(not M.regex and text or unescape(text))
   buffer:set_sel(buffer.target_start, buffer.target_end)
 end)
 
@@ -426,8 +417,7 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
     buffer:indicator_fill_range(e, 1)
   end
   local EOF = replace_in_sel and e == buffer.length + 1 -- no indicator at EOF
-  local f = not M.regex and buffer.replace_target or replace_target_re
-  rtext, repl_text = unescape(rtext), rtext -- save for ui.find.focus()
+  repl_text = rtext -- save for ui.find.focus()
 
   -- Perform the search and replace.
   buffer:begin_undo_action()
@@ -436,7 +426,7 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
   while buffer:search_in_target(ftext) ~= -1 and (not replace_in_sel or
         buffer.target_end <= buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
     if buffer.target_start == buffer.target_end then break end -- prevent loops
-    f(buffer, rtext)
+    buffer:replace_target(not M.regex and rtext or unescape(rtext))
     count = count + 1
     buffer:set_target_range(buffer.target_end, buffer.length + 1)
   end
@@ -493,8 +483,7 @@ function M.goto_file_found(line_num, next)
   local line = buffer:get_cur_line()
   local utf8_filename, pos
   utf8_filename, line_num, pos = line:match('^(.+):(%d+):()')
-  if not utf8_filename then return end
-  line_num = tonumber(line_num)
+  if not utf8_filename then return else line_num = tonumber(line_num) end
   textadept.editing.select_line()
   pos = buffer.selection_start + pos - 1 -- absolute pos of result text on line
   local s = buffer:indicator_end(M.INDIC_FIND, buffer.selection_start)

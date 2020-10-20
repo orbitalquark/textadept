@@ -29,7 +29,8 @@ module('textadept.session')]]
 M.save_on_quit = true
 
 -- Events.
-events.SESSION_SAVE, events.SESSION_LOAD = 'session_save', 'session_load'
+local session_events = {'session_save', 'session_load'}
+for _, v in ipairs(session_events) do events[v:upper()] = v end
 
 local session_file = _USERHOME .. (not CURSES and '/session' or '/session_term')
 
@@ -51,7 +52,6 @@ function M.load(filename)
     }
     if not filename then return end
   end
-
   local f = loadfile(filename, 't', {})
   if not f or not io.close_all_buffers() then return end -- fail silently
   local session = f()
@@ -86,12 +86,12 @@ function M.load(filename)
   local function unserialize_split(split)
     if type(split) ~= 'table' then
       view:goto_buffer(_BUFFERS[math.min(split, #_BUFFERS)])
-      return
-    end
-    for i, view in ipairs{view:split(split.vertical)} do
-      view.size = split.size
-      ui.goto_view(view)
-      unserialize_split(split[i])
+    else
+      for i, view in ipairs{view:split(split.vertical)} do
+        view.size = split.size
+        ui.goto_view(view)
+        unserialize_split(split[i])
+      end
     end
   end
   unserialize_split(session.views[1])

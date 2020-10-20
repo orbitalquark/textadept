@@ -391,11 +391,10 @@ end
 
 -- Handles Scintilla notifications.
 M.connect('SCN', function(notification)
-  local f = _SCINTILLA.events[notification.code]
-  if not f then return end
+  local iface = _SCINTILLA.events[notification.code]
   local args = {}
-  for i = 2, #f do args[i - 1] = notification[f[i]] end
-  return M.emit(f[1], table.unpack(args))
+  for i = 2, #iface do args[i - 1] = notification[iface[i]] end
+  return M.emit(iface[1], table.unpack(args))
 end)
 
 -- Set event constants.

@@ -26,11 +26,7 @@ M.tags = {
 M.autocomplete_snippets = true
 
 local XPM = textadept.editing.XPM_IMAGES
-local xpms = setmetatable({
-  c = XPM.CLASS, d = XPM.SLOT, e = XPM.VARIABLE, f = XPM.METHOD,
-  g = XPM.TYPEDEF, m = XPM.VARIABLE, s = XPM.STRUCT, t = XPM.TYPEDEF,
-  v = XPM.VARIABLE
-}, {__index = function() return 0 end})
+local xpms = setmetatable({c=XPM.CLASS,d=XPM.SLOT,e=XPM.VARIABLE,f=XPM.METHOD,g=XPM.TYPEDEF,m=XPM.VARIABLE,s=XPM.STRUCT,t=XPM.TYPEDEF,v=XPM.VARIABLE},{__index=function()return 0 end})
 
 textadept.editing.autocompleters.ansi_c = function()
   -- Retrieve the symbol behind the caret.
@@ -85,10 +81,9 @@ textadept.editing.autocompleters.ansi_c = function()
   return #part, list
 end
 
-local api_files = textadept.editing.api_files
-api_files.ansi_c[#api_files.ansi_c + 1] = _HOME .. '/modules/ansi_c/api'
-api_files.ansi_c[#api_files.ansi_c + 1] = _HOME .. '/modules/ansi_c/lua_api'
-api_files.ansi_c[#api_files.ansi_c + 1] = _USERHOME .. '/modules/ansi_c/api'
+for _, tags in ipairs(M.tags) do
+  table.insert(textadept.editing.api_files.ansi_c, (tags:gsub('tags$', 'api')))
+end
 
 -- Commands.
 

@@ -22,10 +22,8 @@ local function ta_api(filename)
   local userhome = '^' .. _USERHOME:gsub('%p', '%%%0'):gsub('%%[/\\]', '[/\\]')
   return function()
     local buffer_filename = buffer.filename or ''
-    if buffer_filename:find(home) or buffer_filename:find(userhome) or
-       buffer == ui.command_entry or buffer._type then
-      return filename
-    end
+    return (buffer_filename:find(home) or buffer_filename:find(userhome) or
+      buffer == ui.command_entry or buffer._type) and filename
   end
 end
 
@@ -73,11 +71,11 @@ textadept.editing.autocompleters.lua = function()
   local assignment = '%f[%w_]' .. symbol:gsub('(%p)', '%%%1') .. '%s*=%s*(.*)$'
   for i = buffer:line_from_position(buffer.current_pos) - 1, 1, -1 do
     local expr = buffer:get_line(i):match(assignment)
-    if expr then
-      for patt, type in pairs(M.expr_types) do
-        if expr:find(patt) then symbol = type break end
-      end
+    if not expr then goto continue end
+    for patt, type in pairs(M.expr_types) do
+      if expr:find(patt) then symbol = type break end
     end
+    ::continue::
   end
   -- Search through ctags for completions for that symbol.
   local name_patt = '^' .. part
@@ -87,14 +85,13 @@ textadept.editing.autocompleters.lua = function()
     if not filename or not lfs.attributes(filename) then goto continue end
     for tag_line in io.lines(filename) do
       local name = tag_line:match('^%S+')
-      if name:find(name_patt) and not list[name] then
-        local fields = tag_line:match(';"\t(.*)$')
-        local k, class = fields:sub(1, 1), fields:match('class:(%S+)') or ''
-        if class == symbol and (op ~= ':' or k == 'f') then
-          list[#list + 1] = name .. sep .. xpms[k]
-          list[name] = true
-        end
+      if not name:find(name_patt) or list[name] then goto continue end
+      local fields = tag_line:match(';"\t(.*)$')
+      local k, class = fields:sub(1, 1), fields:match('class:(%S+)') or ''
+      if class == symbol and (op ~= ':' or k == 'f') then
+        list[#list + 1], list[name] = name .. sep .. xpms[k], true
       end
+      ::continue::
     end
     ::continue::
   end
@@ -102,10 +99,10 @@ textadept.editing.autocompleters.lua = function()
   return #part, list
 end
 
-local api_files = textadept.editing.api_files
-api_files.lua[#api_files.lua + 1] = _HOME .. '/modules/lua/api'
-api_files.lua[#api_files.lua + 1] = _USERHOME .. '/modules/lua/api'
-api_files.lua[#api_files.lua + 1] = ta_api(_HOME .. '/modules/lua/ta_api')
+local api_files = textadept.editing.api_files.lua
+table.insert(api_files, _HOME .. '/modules/lua/api')
+table.insert(api_files, _USERHOME .. '/modules/lua/api')
+table.insert(api_files, ta_api(_HOME .. '/modules/lua/ta_api'))
 
 -- Commands.
 

@@ -12,8 +12,7 @@ local M = {}
 -- assigned to string text.
 module('textadept.menu')]]
 
-local _L = _L
-local SEPARATOR = {''}
+local _L, SEPARATOR = _L, {''}
 
 -- The following buffer and view functions need to be made constant in order for
 -- menu items to identify the key associated with the functions.
@@ -26,16 +25,16 @@ local sel_enc = textadept.editing.select_enclosed
 local enc = textadept.editing.enclose
 local function set_indentation(i)
   buffer.tab_width = i
-  events.emit(events.UPDATE_UI, 0) -- for updating statusbar
+  events.emit(events.UPDATE_UI, 1) -- for updating statusbar
 end
 local function set_eol_mode(mode)
   buffer.eol_mode = mode
   buffer:convert_eols(mode)
-  events.emit(events.UPDATE_UI, 0) -- for updating statusbar
+  events.emit(events.UPDATE_UI, 1) -- for updating statusbar
 end
 local function set_encoding(encoding)
   buffer:set_encoding(encoding)
-  events.emit(events.UPDATE_UI, 0) -- for updating statusbar
+  events.emit(events.UPDATE_UI, 1) -- for updating statusbar
 end
 local function open_page(url)
   local cmd = (WIN32 and 'start ""') or (OSX and 'open') or 'xdg-open'
@@ -205,9 +204,8 @@ local default_menubar = {
       {_L['Quickly Open User Home'], function() io.quick_open(_USERHOME) end},
       {_L['Quickly Open Textadept Home'], function() io.quick_open(_HOME) end},
       {_L['Quickly Open Current Directory'], function()
-        if buffer.filename then
-          io.quick_open(buffer.filename:match('^(.+)[/\\]'))
-        end
+        if not buffer.filename then return end
+        io.quick_open(buffer.filename:match('^(.+)[/\\]'))
       end},
       {_L['Quickly Open Current Project'], io.quick_open},
     },
@@ -228,8 +226,8 @@ local default_menubar = {
     end},
     {_L['Show Documentation'], textadept.editing.show_documentation},
     {_L['Show Style'], function()
-      local char = buffer:text_range(buffer.current_pos,
-        buffer:position_after(buffer.current_pos))
+      local char = buffer:text_range(
+        buffer.current_pos, buffer:position_after(buffer.current_pos))
       if char == '' then return end -- end of buffer
       local bytes = string.rep(' 0x%X', #char):format(char:byte(1, #char))
       local style = buffer.style_at[buffer.current_pos]
@@ -255,7 +253,7 @@ local default_menubar = {
       SEPARATOR,
       {_L['Toggle Use Tabs'], function()
         buffer.use_tabs = not buffer.use_tabs
-        events.emit(events.UPDATE_UI, 0) -- for updating statusbar
+        events.emit(events.UPDATE_UI, 1) -- for updating statusbar
       end},
       {_L['Convert Indentation'], textadept.editing.convert_indentation}
     },
@@ -306,12 +304,12 @@ local default_menubar = {
     end},
     SEPARATOR,
     {_L['Toggle Show Indent Guides'], function()
-      local off = view.indentation_guides == 0
-      view.indentation_guides = off and view.IV_LOOKBOTH or 0
+      view.indentation_guides =
+        view.indentation_guides == 0 and view.IV_LOOKBOTH or 0
     end},
     {_L['Toggle Virtual Space'], function()
-      local off = buffer.virtual_space_options == 0
-      buffer.virtual_space_options = off and buffer.VS_USERACCESSIBLE or 0
+      buffer.virtual_space_options =
+        buffer.virtual_space_options == 0 and buffer.VS_USERACCESSIBLE or 0
     end},
     SEPARATOR,
     {_L['Zoom In'], view.zoom_in},
@@ -399,8 +397,7 @@ end
 -- @return GTK menu that can be passed to `ui.menu()`.
 -- @see ui.menu
 local function read_menu_table(menu, contextmenu)
-  local gtkmenu = {}
-  gtkmenu.title = menu.title
+  local gtkmenu = {title = menu.title}
   for _, item in ipairs(menu) do
     if item.title then
       gtkmenu[#gtkmenu + 1] = read_menu_table(item, contextmenu)
@@ -465,8 +462,8 @@ local function set_menubar(menubar)
   key_shortcuts, menu_items = {}, {} -- reset
   for key, f in pairs(keys) do key_shortcuts[tostring(f)] = key end
   local _menubar = {}
-  for i = 1, #menubar do
-    _menubar[#_menubar + 1] = ui.menu(read_menu_table(menubar[i]))
+  for _, menu in ipairs(menubar) do
+    _menubar[#_menubar + 1] = ui.menu(read_menu_table(menu))
   end
   ui.menubar = _menubar
   proxies.menubar = proxy_menu(menubar, set_menubar)
@@ -513,11 +510,9 @@ proxies.tab_context_menu = proxy_menu(default_tab_context_menu, function() end)
 
 -- Performs the appropriate action when clicking a menu item.
 events.connect(events.MENU_CLICKED, function(menu_id)
-  local menu_item = menu_id < 1000 and menu_items or contextmenu_items
-  local action = menu_item[menu_id < 1000 and menu_id or menu_id - 1000][2]
-  assert(type(action) == 'function', string.format(
-    '%s %s', _L['Unknown command:'], action))
-  action()
+  local items = menu_id < 1000 and menu_items or contextmenu_items
+  local f = items[menu_id < 1000 and menu_id or menu_id - 1000][2]
+  assert_type(f, 'function', 'command')()
 end)
 
 ---

@@ -9,19 +9,11 @@ textadept = M -- forward declaration
 -- It provides utilities for editing text in Textadept.
 module('textadept')]]
 
-M.bookmarks = require('textadept.bookmarks')
-require('textadept.command_entry')
-M.editing = require('textadept.editing')
-M.file_types = require('textadept.file_types')
-require('textadept.find')
-M.history = require('textadept.history')
-M.macros = require('textadept.macros')
-M.run = require('textadept.run')
-M.session = require('textadept.session')
-M.snippets = require('textadept.snippets')
-
--- These need to be loaded last.
-M.menu = require('textadept.menu')
-M.keys = require('textadept.keys')
+local modules = {
+  'bookmarks', 'command_entry', 'editing', 'file_types', 'find', 'history',
+  'macros', 'run', 'session', 'snippets', --[[need to be last]] 'menu', 'keys'
+}
+for _, name in ipairs(modules) do M[name] = require('textadept.' .. name) end
+M.command_entry, M.find = nil, nil -- ui.command_entry, ui.find
 
 return M
