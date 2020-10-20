@@ -23,14 +23,14 @@ assert(f, '"core/locale.conf" not found')
 for line in f:lines() do
   -- Any line that starts with a non-word character except '[' is considered a
   -- comment.
-  if not line:find('^%s*[^%w_%[]') then
-    local id, str = line:match('^(.-)%s*=%s*(.-)\r?$')
-    if id and str and assert(not M[id], 'duplicate locale key "%s"', id) then
-      M[id] = not CURSES and str or str:gsub('_', '')
-    end
+  if not line:find('^%s*[%w_%[]') then goto continue end
+  local id, str = line:match('^(.-)%s*=%s*(.-)\r?$')
+  if id and str and assert(not M[id], 'duplicate locale key "%s"', id) then
+    M[id] = not CURSES and str or str:gsub('_', '')
   end
+  ::continue::
 end
 f:close()
 
-setmetatable(M, {__index = function(_, k) return 'No Localization:' .. k end})
-return M
+return setmetatable(
+  M, {__index = function(_, k) return 'No Localization:' .. k end})

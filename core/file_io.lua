@@ -42,13 +42,8 @@
 module('io')]]
 
 -- Events.
-local events, events_connect = events, events.connect
-events.FILE_OPENED = 'file_opened'
-events.FILE_BEFORE_RELOAD = 'file_before_reload'
-events.FILE_AFTER_RELOAD = 'file_after_reload'
-events.FILE_BEFORE_SAVE = 'file_before_save'
-events.FILE_AFTER_SAVE = 'file_after_save'
-events.FILE_CHANGED = 'file_changed'
+local file_io_events = {'file_opened','file_before_reload','file_after_reload','file_before_save','file_after_save','file_changed'}
+for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 
 io.quick_open_max = 1000
 
@@ -137,7 +132,7 @@ function io.open_file(filenames, encodings)
     buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
     -- Detect EOL mode.
     local s, e = text:find('\r?\n')
-    if s then buffer.eol_mode = buffer[s < e and 'EOL_CRLF' or 'EOL_LF'] end
+    if s then buffer.eol_mode = buffer[s ~= e and 'EOL_CRLF' or 'EOL_LF'] end
     -- Insert buffer text and set properties.
     buffer:append_text(text)
     buffer:empty_undo_buffer()
@@ -225,22 +220,17 @@ end
 -- @see buffer.save
 -- @name save_all_files
 function io.save_all_files()
-  local current_buffer = buffer
   for _, buffer in ipairs(_BUFFERS) do
-    if buffer.filename and buffer.modify then
-      view:goto_buffer(buffer)
-      buffer:save()
-    end
+    if buffer.filename and buffer.modify then buffer:save() end
   end
-  view:goto_buffer(current_buffer)
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function close(buffer, force)
   if not buffer then buffer = _G.buffer end
-  local filename = buffer.filename or buffer._type or _L['Untitled']
-  if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
   if buffer.modify and not force then
+    local filename = buffer.filename or buffer._type or _L['Untitled']
+    if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
     local button = ui.dialogs.msgbox{
       title = _L['Close without saving?'],
       text = _L['There are unsaved changes in'], informative_text = filename,
@@ -262,15 +252,12 @@ end
 -- @see buffer.close
 -- @name close_all_buffers
 function io.close_all_buffers()
-  while #_BUFFERS > 1 do
-    view:goto_buffer(_BUFFERS[#_BUFFERS])
-    if not buffer:close() then return nil end -- do not propagate key command
-  end
+  while #_BUFFERS > 1 do if not buffer:close() then return nil end end
   return buffer:close() -- the last one
 end
 
 -- Sets buffer io methods and the default buffer encoding.
-events_connect(events.BUFFER_NEW, function()
+events.connect(events.BUFFER_NEW, function()
   buffer.reload = reload
   buffer.set_encoding, buffer.encoding = set_encoding, 'UTF-8'
   buffer.save, buffer.save_as, buffer.close = save, save_as, close
@@ -286,20 +273,19 @@ io._reload, io._save, io._save_as, io._close = reload, save, save_as, close
 local function update_modified_file()
   if not buffer.filename then return end
   local mod_time = lfs.attributes(buffer.filename, 'modification')
-  if not mod_time or not buffer.mod_time then return end
-  if buffer.mod_time < mod_time then
+  if mod_time and buffer.mod_time and buffer.mod_time < mod_time then
     buffer.mod_time = mod_time
     events.emit(events.FILE_CHANGED, buffer.filename)
   end
 end
-events_connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
-events_connect(events.VIEW_AFTER_SWITCH, update_modified_file)
-events_connect(events.FOCUS, update_modified_file)
-events_connect(events.RESUME, update_modified_file)
+events.connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
+events.connect(events.VIEW_AFTER_SWITCH, update_modified_file)
+events.connect(events.FOCUS, update_modified_file)
+events.connect(events.RESUME, update_modified_file)
 
 -- Prompts the user to reload the current file if it has been externally
 -- modified.
-events_connect(events.FILE_CHANGED, function(filename)
+events.connect(events.FILE_CHANGED, function(filename)
   local button = ui.dialogs.msgbox{
     title = _L['Reload?'], text = _L['Reload modified file?'],
     informative_text = string.format(
@@ -312,12 +298,10 @@ events_connect(events.FILE_CHANGED, function(filename)
 end)
 
 -- Closes the initial "Untitled" buffer when another buffer is opened.
-events_connect(events.FILE_OPENED, function()
-  local buf = _BUFFERS[1]
-  if #_BUFFERS == 2 and not (buf.filename or buf._type or buf.modify) then
-    view:goto_buffer(_BUFFERS[1])
-    buffer:close()
-  end
+events.connect(events.FILE_OPENED, function()
+  if #_BUFFERS > 2 then return end
+  local first = _BUFFERS[1]
+  if not (first.filename or first._type or first.modify) then first:close() end
 end)
 
 ---
@@ -392,8 +376,8 @@ io.quick_open_filters = {}
 --   search. The default value is the current project's root directory, if
 --   available.
 -- @param filter Optional filter for files and directories to include and/or
---   exclude. The default value is `lfs.default_filter` unless *paths* is a
---   string and a filter for it is defined in `io.quick_open_filters`.
+--   exclude. The default value is `lfs.default_filter` unless a filter for
+--   *paths* is defined in `io.quick_open_filters`.
 -- @param opts Optional table of additional options for
 --   `ui.dialogs.filteredlist()`.
 -- @usage io.quick_open(buffer.filename:match('^(.+)[/\\]')) -- list all files
@@ -412,15 +396,13 @@ function io.quick_open(paths, filter, opts)
     paths = io.get_project_root()
     if not paths then return end
   end
-  if type(paths) == 'string' then
-    if not filter then filter = io.quick_open_filters[paths] end
-    paths = {paths}
+  if not assert_type(filter, 'string/table/nil', 2) then
+    filter = io.quick_open_filters[paths] or lfs.default_filter
   end
-  assert_type(filter, 'string/table/nil', 2)
   assert_type(opts, 'table/nil', 3)
   local utf8_list = {}
-  for i = 1, #paths do
-    for filename in lfs.walk(paths[i], filter or lfs.default_filter) do
+  for _, path in ipairs(type(paths) == 'table' and paths or {paths}) do
+    for filename in lfs.walk(path, filter) do
       if #utf8_list >= io.quick_open_max then break end
       utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
     end

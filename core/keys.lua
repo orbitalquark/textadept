@@ -112,8 +112,8 @@ local M = {}
 --   The default value is `nil`.
 module('keys')]]
 
-local CTRL, ALT, SHIFT = 'ctrl+', not CURSES and 'alt+' or 'meta+', 'shift+'
-local CMD = 'cmd+'
+local CTRL, ALT, CMD, SHIFT = 'ctrl+', 'alt+', 'cmd+', 'shift+'
+if CURSES then ALT = 'meta+' end
 M.CLEAR = 'esc'
 
 ---
@@ -151,7 +151,7 @@ local INVALID, PROPAGATE, CHAIN, HALT = -1, 0, 1, 2
 -- Error handler for key commands that simply emits the error. This is needed
 -- so `key_command()` can return `HALT` instead of never returning due to the
 -- error.
-local function key_error(e) events.emit(events.ERROR, e) end
+local function key_error(errmsg) events.emit(events.ERROR, errmsg) end
 
 -- Runs a key command associated with the current keychain.
 -- @param prefix Optional prefix name for mode/lexer-specific commands.
@@ -171,19 +171,11 @@ local function key_command(prefix)
   return select(2, xpcall(key, key_error)) == false and PROPAGATE or HALT
 end
 
--- Handles Textadept keypresses.
--- It is called every time a key is pressed, and based on a mode or lexer,
--- executes a command. The command is looked up in the `_G.keys` table.
--- @param code The keycode.
--- @param shift Whether or not the Shift modifier is pressed.
--- @param control Whether or not the Control modifier is pressed.
--- @param alt Whether or not the Alt/option modifier is pressed.
--- @param cmd Whether or not the Command modifier on macOS is pressed.
--- @param caps_lock Whether or not Caps Lock is enabled.
--- @return `true` to stop handling the key; `nil` otherwise.
-local function keypress(code, shift, control, alt, cmd, caps_lock)
-  --print(code, M.KEYSYMS[code], shift, control, alt, cmd, caps_lock)
-  if caps_lock and (shift or control or alt or cmd) and code < 256 then
+-- Handles Textadept keypresses, executing commands based on a mode or lexer as
+-- necessary.
+events.connect(events.KEYPRESS, function(code, shift, control, alt, cmd, caps)
+  --print(code, M.KEYSYMS[code], shift, control, alt, cmd, caps)
+  if caps and (shift or control or alt or cmd) and code < 256 then
     code = string[shift and 'upper' or 'lower'](string.char(code)):byte()
   end
   local key = code >= 32 and code < 256 and string.char(code) or M.KEYSYMS[code]
@@ -216,8 +208,7 @@ local function keypress(code, shift, control, alt, cmd, caps_lock)
     return true
   end
   -- PROPAGATE otherwise.
-end
-events.connect(events.KEYPRESS, keypress)
+end)
 
 --[[ This comment is for LuaDoc.
 ---

@@ -59,8 +59,7 @@ end
 -- @name editing_keys
 M.editing_keys = {__index = {}}
 
--- Fill in default platform-specific key bindings.
-local ekeys, plat = M.editing_keys.__index, CURSES and 3 or OSX and 2 or 1
+-- Fill in default key bindings for Linux/Win32, macOS, Terminal.
 local bindings = {
   -- Note: cannot use `M.cut`, `M.copy`, etc. since M is never considered the
   -- global buffer.
@@ -81,8 +80,9 @@ local bindings = {
   [function() M:line_end() end] = {nil, 'ctrl+e', 'ctrl+e'},
   [function() M:clear() end] = {nil, 'ctrl+d', 'ctrl+d'}
 }
+local plat = CURSES and 3 or OSX and 2 or 1
 for f, plat_keys in pairs(bindings) do
-  if plat_keys[plat] then ekeys[plat_keys[plat]] = f end
+  if plat_keys[plat] then M.editing_keys.__index[plat_keys[plat]] = f end
 end
 
 -- Environment for abbreviated Lua commands.
@@ -100,13 +100,13 @@ local env = setmetatable({}, {
   __newindex = function(self, k, v)
     local ok, value = pcall(function() return buffer[k] end)
     if ok and value ~= nil or not ok and value:find('write-only property') then
-      buffer[k] = v
+      buffer[k] = v -- buffer and view are interchangeable in this case
       return
     end
     if view[k] ~= nil then view[k] = v return end
     if ui[k] ~= nil then ui[k] = v return end
     rawset(self, k, v)
-  end,
+  end
 })
 
 -- Executes string *code* as Lua code that is subject to an "abbreviated"
@@ -135,7 +135,7 @@ local function run_lua(code)
     end
   end
   if result ~= nil or code:find('^return ') then ui.print(result) end
-  events.emit(events.UPDATE_UI, 0)
+  events.emit(events.UPDATE_UI, 1) -- update UI if necessary (e.g. statusbar)
 end
 args.register('-e', '--execute', 1, run_lua, 'Execute Lua code')
 
@@ -151,8 +151,8 @@ local function complete_lua()
   if (not ok or type(result) ~= 'table') and symbol ~= '' then return end
   local cmpls = {}
   part = '^' .. part
-  local sep = string.char(M.auto_c_type_separator)
   local XPM = textadept.editing.XPM_IMAGES
+  local sep = string.char(M.auto_c_type_separator)
   if not ok or symbol == 'buffer' or symbol == 'view' then
     local sci = _SCINTILLA
     local global_envs = not ok and {
@@ -161,11 +161,11 @@ local function complete_lua()
     } or op == ':' and {sci.functions} or {sci.properties, sci.constants}
     for _, env in ipairs(global_envs) do
       for k, v in pairs(env) do
-        if type(k) == 'string' and k:find(part) then
-          local xpm = (type(v) == 'function' or env == sci.functions) and
-            XPM.METHOD or XPM.VARIABLE
-          cmpls[#cmpls + 1] = k .. sep .. xpm
-        end
+        if type(k) ~= 'string' or not k:find(part) then goto continue end
+        local xpm = (type(v) == 'function' or env == sci.functions) and
+          XPM.METHOD or XPM.VARIABLE
+        cmpls[#cmpls + 1] = k .. sep .. xpm
+        ::continue::
       end
     end
   else
@@ -216,7 +216,6 @@ local prev_key_mode
 -- @usage ui.command_entry.run(ui.print)
 -- @name run
 function M.run(f, keys, lang, height)
-  if M:auto_c_active() then M:auto_c_cancel() end -- may happen in curses
   if not assert_type(f, 'function/nil', 1) and not keys then
     f, keys, lang = run_lua, lua_keys, 'lua'
   elseif type(assert_type(keys, 'table/string/nil', 2)) == 'string' then
@@ -231,9 +230,8 @@ function M.run(f, keys, lang, height)
     keys['\n'] = function()
       if M:auto_c_active() then return false end -- allow Enter to autocomplete
       M.focus() -- hide
-      if not f then return end
       M.append_history(M:get_text())
-      f(M:get_text())
+      if f then f(M:get_text()) end
     end
   end
   if not getmetatable(keys) then setmetatable(keys, M.editing_keys) end
@@ -242,7 +240,7 @@ function M.run(f, keys, lang, height)
   local mode_history = history[history.mode]
   M:set_text(mode_history and mode_history[mode_history.pos] or '')
   M:select_all()
-  prev_key_mode = _G.keys.mode
+  prev_key_mode = _G.keys.mode -- save before M.focus()
   M.focus()
   M:set_lexer(lang or 'text')
   M.height = M:text_height(1) * (height or 1)

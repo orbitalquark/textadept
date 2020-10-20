@@ -12,8 +12,8 @@ package.cpath = table.concat({
 
 -- Populate initial `_G.buffer` with temporarily exported io functions now that
 -- it exists. This is needed for menus and key bindings.
-for _, name in ipairs{'reload', 'save', 'save_as', 'close'} do
-  buffer[name], io['_' .. name] = io['_' .. name], nil
+for name, f in pairs(io) do
+  if name:find('^_') then buffer[name:sub(2)], io[name] = f, nil end
 end
 
 textadept = require('textadept')
@@ -51,11 +51,12 @@ buffer.set_theme=function(...)view:set_theme(select(2,...));events.connect(event
 local function en_au_to_us()for au,us in pairs{CASEINSENSITIVEBEHAVIOUR_IGNORECASE=buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE,CASEINSENSITIVEBEHAVIOUR_RESPECTCASE=buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE,INDIC_GRADIENTCENTRE=buffer.INDIC_GRADIENTCENTER,MARGIN_COLOUR=buffer.MARGIN_COLOR,auto_c_case_insensitive_behaviour=buffer.auto_c_case_insensitive_behavior,colourise=buffer.colorize,edge_colour=buffer.edge_color,set_fold_margin_colour=function()ui.dialogs.msgbox{title='Compatibility issue',text="Please update your theme's use of renamed buffer/view fields"};return buffer.set_fold_margin_color end,set_fold_margin_hi_colour=buffer.set_fold_margin_hi_color,vertical_centre_caret=buffer.vertical_center_caret}do buffer[au]=us;view[au]=us end end;events.connect(events.BUFFER_NEW,en_au_to_us);en_au_to_us()
 events.connect(events.INITIALIZED,function()if _NOCOMPAT then return end;local update_keys={};local function translate_keys(keys,new_keys)for k,v in pairs(keys)do if type(k)=='string'and k:find('^[cmas]+.$')and not k:find('ctrl')and not k:find('cmd')and not k:find('alt')and not k:find('meta')and not k:find('shift')and k~='css'then update_keys[#update_keys+1]=k;k=k:gsub('^(c?m?a?)s(.)','%1shift+%2'):gsub('^(c?m?)a(.)','%1alt+%2'):gsub('^(c?)m(.)',string.format('%%1%s%%2',OSX and'cmd+'or'meta+')):gsub('^c(.)','ctrl+%1')end rawset(new_keys,k,type(v)=='table'and translate_keys(v,setmetatable({},getmetatable(v)))or v)end return new_keys end;for k,v in pairs(translate_keys(keys,{}))do keys[k]=v end;if#update_keys>0then ui.dialogs.msgbox{title='Compatibility issue',text='Please update your keys to use the new modifiers:\n'..table.concat(update_keys,'\n')..'\n\nSet _NOCOMPAT=true to disable this warning'}end end)
 
--- The remainder of this file defines default buffer properties and applies them
--- to subsequent buffers. Normally, a setting like `buffer.use_tabs = false`
--- only applies to the current (initial) buffer. However, temporarily tap into
--- buffer's metatable in order to capture these initial buffer settings (both
--- from Textadept's init.lua and from the user's init.lua).
+-- The remainder of this file defines default buffer and view properties and
+-- applies them to subsequent buffers and views. Normally, a setting like
+-- `buffer.use_tabs = false` only applies to the current (initial) buffer.
+-- However, temporarily tap into buffer and view's metatables in order to
+-- capture these initial settings (both from Textadept's init.lua and from the
+-- user's init.lua) so they can be applied to subsequent buffers and views.
 
 local settings = {}
 
@@ -119,8 +120,7 @@ local styles = setmetatable({}, {__newindex = function(_, name, props)
 end})
 lexer = setmetatable({colors = colors, styles = styles}, {
   __newindex = function(_, k, v)
-    if k == 'folding' then k = 'fold' end
-    property[k:gsub('_', '.')] = v and '1' or '0'
+    property[k ~= 'folding' and k:gsub('_', '.') or 'fold'] = v and '1' or '0'
   end
 })
 
@@ -130,8 +130,7 @@ local buffer, view = buffer, view
 view:set_theme(not CURSES and 'light' or 'term')
 
 -- Multiple Selection and Virtual Space
-buffer.multiple_selection = true
-buffer.additional_selection_typing = true
+buffer.multiple_selection, buffer.additional_selection_typing = true, true
 buffer.multi_paste = buffer.MULTIPASTE_EACH
 --buffer.virtual_space_options = buffer.VS_RECTANGULARSELECTION |
 --  buffer.VS_USERACCESSIBLE
@@ -198,8 +197,7 @@ view.margin_mask_n[3] = view.MASK_FOLDERS
 -- Other Margins.
 for i = 2, view.margins do
   view.margin_type_n[i] = view.MARGIN_SYMBOL
-  view.margin_sensitive_n[i] = true
-  view.margin_cursor_n[i] = view.CURSORARROW
+  view.margin_sensitive_n[i], view.margin_cursor_n[i] = true, view.CURSORARROW
   if i > 3 then view.margin_width_n[i] = 0 end
 end
 
@@ -215,11 +213,9 @@ buffer.buffered_draw = not CURSES and not OSX -- Quartz buffers drawing on macOS
 
 -- Tabs and Indentation Guides.
 -- Note: tab and indentation settings apply to individual buffers.
-buffer.tab_width = 2
-buffer.use_tabs = false
+buffer.tab_width, buffer.use_tabs = 2, false
 --buffer.indent = 2
-buffer.tab_indents = true
-buffer.back_space_un_indents = true
+buffer.tab_indents, buffer.back_space_un_indents = true, true
 view.indentation_guides = not CURSES and view.IV_LOOKBOTH or view.IV_NONE
 
 -- Margin Markers.
@@ -265,16 +261,13 @@ view:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, view.MARK_TCORNER)
 
 -- Indicators.
 view.indic_style[ui.find.INDIC_FIND] = view.INDIC_ROUNDBOX
-if not CURSES then view.indic_under[ui.find.INDIC_FIND] = true end
-local INDIC_BRACEMATCH = textadept.editing.INDIC_BRACEMATCH
-view.indic_style[INDIC_BRACEMATCH] = view.INDIC_BOX
-view:brace_highlight_indicator(not CURSES, INDIC_BRACEMATCH)
-local INDIC_HIGHLIGHT = textadept.editing.INDIC_HIGHLIGHT
-view.indic_style[INDIC_HIGHLIGHT] = view.INDIC_ROUNDBOX
-if not CURSES then view.indic_under[INDIC_HIGHLIGHT] = true end
-local INDIC_PLACEHOLDER = textadept.snippets.INDIC_PLACEHOLDER
-view.indic_style[INDIC_PLACEHOLDER] = not CURSES and view.INDIC_DOTBOX or
-  view.INDIC_STRAIGHTBOX
+view.indic_under[ui.find.INDIC_FIND] = not CURSES
+view.indic_style[textadept.editing.INDIC_BRACEMATCH] = view.INDIC_BOX
+view:brace_highlight_indicator(not CURSES, textadept.editing.INDIC_BRACEMATCH)
+view.indic_style[textadept.editing.INDIC_HIGHLIGHT] = view.INDIC_ROUNDBOX
+view.indic_under[textadept.editing.INDIC_HIGHLIGHT] = not CURSES
+view.indic_style[textadept.snippets.INDIC_PLACEHOLDER] =
+  not CURSES and view.INDIC_DOTBOX or view.INDIC_STRAIGHTBOX
 
 -- Autocompletion.
 --buffer.auto_c_separator =
@@ -332,19 +325,19 @@ if lfs.attributes(user_init) then
 end
 
 -- Generate default buffer settings for subsequent buffers and remove temporary
--- buffer metatable listener.
+-- buffer and view metatable listeners.
 local load_settings = load(table.concat(settings, '\n'))
 for _, mt in ipairs{buffer_mt, view_mt} do
   mt.__index, mt.__newindex = mt.__orig_index, mt.__orig_newindex
 end
 
+local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
+local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
+local SETLUASTATE = _SCINTILLA.functions.change_lexer_state[1]
+local LOADLEXERLIBRARY = _SCINTILLA.functions.load_lexer_library[1]
 -- Sets default properties for a Scintilla document.
 events.connect(events.BUFFER_NEW, function()
   local buffer = _G.buffer
-  local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
-  local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
-  local SETLUASTATE = _SCINTILLA.functions.change_lexer_state[1]
-  local LOADLEXERLIBRARY = _SCINTILLA.functions.load_lexer_library[1]
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLUASTATE, _LUA)

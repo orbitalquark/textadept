@@ -859,6 +859,7 @@ selection_n_start_virtual_space	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"
 selection_start	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 selections	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 session	_HOME/modules/textadept/session.lua	/^module('textadept.session')]]$/;"	m	class:textadept
+set_arguments	_HOME/modules/textadept/run.lua	/^function M.set_arguments(filename, run, compile)$/;"	f	class:textadept.run
 set_chars_default	_HOME/core/.buffer.luadoc	/^function set_chars_default(buffer) end$/;"	f	class:buffer
 set_default_fold_display_text	_HOME/core/.view.luadoc	/^function set_default_fold_display_text(view, text) end$/;"	f	class:view
 set_empty_selection	_HOME/core/.buffer.luadoc	/^function set_empty_selection(buffer, pos) end$/;"	f	class:buffer

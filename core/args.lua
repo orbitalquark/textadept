@@ -11,7 +11,7 @@ module('args')]]
 
 events.ARG_NONE = 'arg_none'
 
--- Contains registered command line options.
+-- Map of registered command line options.
 -- @class table
 -- @name options
 local options = {}
@@ -44,6 +44,8 @@ end
 -- Emits an `ARG_NONE` event when no arguments are present unless
 -- *no_emit_arg_none* is `true`.
 -- @param arg Argument table.
+-- @param no_emit_arg_none When `true`, do not emit `ARG_NONE` when no arguments
+--   are present. The default value is `false`.
 -- @see register
 -- @see _G.events
 local function process(arg, no_emit_arg_none)
@@ -135,7 +137,7 @@ M.register('-t', '--test', 1, function(patterns)
     local arg = {}
     for patt in (patterns or ''):gmatch('[^,]+') do arg[#arg + 1] = patt end
     local env = setmetatable({arg = arg}, {__index = _G})
-    assert(loadfile(_HOME..'/test/test.lua', 't', env))()
+    assert(loadfile(_HOME .. '/test/test.lua', 't', env))()
   end)
 end, 'Runs unit tests indicated by comma-separated list of patterns (or all)')
 

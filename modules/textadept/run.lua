@@ -51,8 +51,8 @@ M.MARK_WARNING = _SCINTILLA.next_marker_number()
 M.MARK_ERROR = _SCINTILLA.next_marker_number()
 
 -- Events.
-events.COMPILE_OUTPUT, events.RUN_OUTPUT = 'compile_output', 'run_output'
-events.BUILD_OUTPUT = 'build_output'
+local run_events = {'compile_output', 'run_output', 'build_output'}
+for _, v in ipairs(run_events) do events[v:upper()] = v end
 
 -- Keep track of: the last process spawned in order to kill it if requested; the
 -- cwd of that process in order to jump to relative file paths in recognized
@@ -284,10 +284,12 @@ events.connect(events.RUN_OUTPUT, print_output)
 -- @see compile_commands
 -- @name set_arguments
 function M.set_arguments(filename, run, compile)
-  assert_type(filename, 'string/nil', 1)
+  if not assert_type(filename, 'string/nil', 1) then
+    filename = buffer.filename
+    if not filename then return end
+  end
   assert_type(run, 'string/nil', 2)
   assert_type(compile, 'string/nil', 3)
-  if not filename then filename = buffer.filename end
   local base_commands, utf8_args = {}, {}
   for i, commands in ipairs{M.run_commands, M.compile_commands} do
     -- Compare the base run/compile command with the one for the current
@@ -300,7 +302,8 @@ function M.set_arguments(filename, run, compile)
     utf8_args[i] = args:iconv('UTF-8', _CHARSET)
   end
   if not run or not compile then
-    local button, utf8_args = ui.dialogs.inputbox{
+    local button
+    button, utf8_args = ui.dialogs.inputbox{
       title = _L['Set Arguments...']:gsub('_', ''), informative_text = {
         _L['Command line arguments'], _L['For Run:'], _L['For Compile:']
       }, text = utf8_args, width = not CURSES and 400 or nil
@@ -365,10 +368,13 @@ events.connect(events.BUILD_OUTPUT, print_output)
 -- @name stop
 function M.stop() if proc then proc:kill() end end
 
+-- Returns whether or not the given buffer is the message buffer.
+local function is_msg_buf(buf) return buf._type == _L['[Message Buffer]'] end
+
 -- Send line as input to process stdin on return.
 events.connect(events.CHAR_ADDED, function(code)
   if code == string.byte('\n') and proc and proc:status() == 'running' and
-     buffer._type == _L['[Message Buffer]'] then
+     is_msg_buf(buffer) then
     local line_num = buffer:line_from_position(buffer.current_pos) - 1
     proc:write(buffer:get_line(line_num))
   end
@@ -392,8 +398,6 @@ M.error_patterns = {actionscript={'^(.-)%((%d+)%): col: (%d+) (.+)$'},ada={'^(.-
 -- Note: ASP,CSS,Desktop,diff,django,gettext,Gtkrc,HTML,ini,JSON,JSP,Markdown,Postscript,Properties,R,RHTML,XML don't have parse-able errors.
 -- Note: Batch,BibTeX,ConTeXt,Dockerfile,GLSL,Inform,Io,Lisp,MoonScript,Scheme,SQL,TeX cannot be parsed for one reason or another.
 
--- Returns whether or not the given buffer is a message buffer.
-local function is_msg_buf(buf) return buf._type == _L['[Message Buffer]'] end
 ---
 -- Jumps to the source of the recognized compile/run warning or error on line
 -- number *line_num* in the message buffer.
@@ -458,12 +462,10 @@ function M.goto_error(line_num, next)
   if detail.column then
     buffer:goto_pos(buffer:find_column(detail.line, detail.column))
   end
-  if detail.message then
-    buffer.annotation_text[detail.line] = detail.message
-    if not detail.warning then
-      buffer.annotation_style[detail.line] = buffer:style_of_name('error')
-    end
-  end
+  if not detail.message then return end
+  buffer.annotation_text[detail.line] = detail.message
+  if detail.warning then return end
+  buffer.annotation_style[detail.line] = buffer:style_of_name('error')
 end
 events.connect(events.KEYPRESS, function(code)
   if keys.KEYSYMS[code] == '\n' and is_msg_buf(buffer) and

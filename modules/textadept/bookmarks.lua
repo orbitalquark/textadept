@@ -28,10 +28,10 @@ function M.clear() buffer:marker_delete_all(M.MARK_BOOKMARK) end
 
 -- Returns an iterator for all bookmarks in the given buffer.
 local function bookmarks(buffer)
-  return function(_, line)
+  return function(buffer, line)
     line = buffer:marker_next(line + 1, 1 << M.MARK_BOOKMARK - 1)
     return line >= 1 and line or nil
-  end, nil, 0
+  end, buffer, 0
 end
 
 ---
@@ -46,17 +46,17 @@ end
 function M.goto_mark(next)
   if next ~= nil then
     local f = next and buffer.marker_next or buffer.marker_previous
-    local current_line = buffer:line_from_position(buffer.current_pos)
+    local line = buffer:line_from_position(buffer.current_pos)
     local BOOKMARK_BIT = 1 << M.MARK_BOOKMARK - 1
-    local line = f(buffer, current_line + (next and 1 or -1), BOOKMARK_BIT)
+    line = f(buffer, line + (next and 1 or -1), BOOKMARK_BIT)
     if line == -1 then
       line = f(buffer, (next and 1 or buffer.line_count), BOOKMARK_BIT)
     end
     if line >= 1 then textadept.editing.goto_line(line) end
     return
   end
-  local scan_this_buffer, utf8_list, buffers = true, {}, {}
   -- List the current buffer's marks, and then all other buffers' marks.
+  local scan_this_buffer, utf8_list, buffers = true, {}, {}
   ::rescan::
   for _, buffer in ipairs(_BUFFERS) do
     if not (scan_this_buffer == (buffer == _G.buffer)) then goto continue end

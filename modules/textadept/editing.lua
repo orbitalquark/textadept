@@ -155,8 +155,7 @@ events.connect(events.KEYPRESS, function(code)
       local pos = buffer.selection_n_caret[i]
       local complement = M.auto_pairs[buffer.char_at[pos - 1]]
       if complement and buffer.char_at[pos] == string.byte(complement) then
-        buffer:set_target_range(pos, pos + 1)
-        buffer:replace_target('')
+        buffer:delete_range(pos, 1)
       end
     end
     buffer:end_undo_action()
@@ -166,14 +165,13 @@ end, 1) -- need index of 1 because default key handler halts propagation
 -- Highlights matching braces.
 events.connect(events.UPDATE_UI, function(updated)
   if updated & 3 == 0 then return end -- ignore scrolling
-  local pos = buffer.selection_n_caret[buffer.main_selection]
-  if M.brace_matches[buffer.char_at[pos]] then
-    local match = buffer:brace_match(pos, 0)
+  if M.brace_matches[buffer.char_at[buffer.current_pos]] then
+    local match = buffer:brace_match(buffer.current_pos, 0)
     local f = match ~= -1 and view.brace_highlight or view.brace_bad_light
-    f(buffer, pos, match)
-    return
+    f(buffer, buffer.current_pos, match)
+  else
+    view:brace_bad_light(-1)
   end
-  view:brace_bad_light(-1)
 end)
 
 -- Clears highlighted word indicators.
@@ -221,10 +219,10 @@ events.connect(events.KEYPRESS, function(code)
     local handled = false
     for i = 1, buffer.selections do
       local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
-      if s == e and buffer.char_at[s] == code then
-        buffer.selection_n_start[i], buffer.selection_n_end[i] = s + 1, s + 1
-        handled = true
-      end
+      if s ~= e or buffer.char_at[s] ~= code then goto continue end
+      buffer.selection_n_start[i], buffer.selection_n_end[i] = s + 1, s + 1
+      handled = true
+      ::continue::
     end
     if handled then return true end -- prevent typing
   end
@@ -414,9 +412,9 @@ function M.goto_line(line)
   view:ensure_visible_enforce_policy(line)
   buffer:goto_line(line)
 end
-args.register(
-  '-l', '--line', 1, function(line) M.goto_line(tonumber(line) or line) end,
-  'Go to line')
+args.register('-l', '--line', 1, function(line)
+  M.goto_line(tonumber(line) or line)
+end, 'Go to line')
 
 ---
 -- Transposes characters intelligently.
@@ -424,7 +422,6 @@ args.register(
 -- the caret. Otherwise, the characters to the left and right are.
 -- @name transpose_chars
 function M.transpose_chars()
-  if buffer.current_pos == 1 then return end
   local pos = buffer.current_pos
   local line_end = buffer.line_end_position[buffer:line_from_position(pos)]
   if pos == line_end then pos = buffer:position_before(pos) end
@@ -525,10 +522,9 @@ function M.select_enclosed(left, right)
       s = s - 1
     end
   end
-  if s >= 1 and e >= 1 then
-    if s + #left == anchor and e == pos then s, e = s - #left, e + #right end
-    buffer:set_sel(s + #left, e)
-  end
+  if s == -1 or e == -1 then return end
+  if s + #left == anchor and e == pos then s, e = s - #left, e + #right end
+  buffer:set_sel(s + #left, e)
 end
 
 ---
@@ -545,7 +541,7 @@ function M.select_word(all)
   buffer.search_flags = buffer.FIND_MATCHCASE
   if buffer.selection_empty or
      buffer:is_range_word(buffer.selection_start, buffer.selection_end) then
-    buffer.search_flags = buffer.search_flags + buffer.FIND_WHOLEWORD
+    buffer.search_flags = buffer.search_flags | buffer.FIND_WHOLEWORD
     if all then buffer:multiple_select_add_next() end -- select word first
   end
   buffer['multiple_select_add_' .. (not all and 'next' or 'each')](buffer)
@@ -590,10 +586,10 @@ function M.convert_indentation()
     else
       new_indentation = string.rep(' ', indent)
     end
-    if current_indentation ~= new_indentation then
-      buffer:set_target_range(s, e)
-      buffer:replace_target(new_indentation)
-    end
+    if current_indentation == new_indentation then goto continue end
+    buffer:set_target_range(s, e)
+    buffer:replace_target(new_indentation)
+    ::continue::
   end
   buffer:end_undo_action()
 end
@@ -727,19 +723,19 @@ function M.show_documentation(pos, ignore_case)
   if symbol ~= '' then
     local symbol_patt = '^' .. symbol:gsub('(%p)', '%%%1')
     if ignore_case then
-      symbol_patt = symbol_patt:gsub('%a', function(ch)
-        return string.format('[%s%s]', ch:upper(), ch:lower())
+      symbol_patt = symbol_patt:gsub('%a', function(letter)
+        return string.format('[%s%s]', letter:upper(), letter:lower())
       end)
     end
     for _, file in ipairs(api_files) do
       if type(file) == 'function' then file = file() end
-      if file and lfs.attributes(file) then
-        for line in io.lines(file) do
-          if line:find(symbol_patt) then
-            api_docs[#api_docs + 1] = line:match(symbol_patt .. '%s+(.+)$')
-          end
-        end
+      if not file or not lfs.attributes(file) then goto continue end
+      for line in io.lines(file) do
+        if not line:find(symbol_patt) then goto continue end
+        api_docs[#api_docs + 1] = line:match(symbol_patt .. '%s+(.+)$')
+        ::continue::
       end
+      ::continue::
     end
   end
   -- Search backwards for an open function call and show API documentation for

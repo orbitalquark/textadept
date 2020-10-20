@@ -610,7 +610,7 @@ helpful error messages.
 Parameters:
 
 * *`v`*: Value to assert the type of.
-* *`expected_type`*: String type to assert. It may be a punctuation-delimited
+* *`expected_type`*: String type to assert. It may be a non-letter-delimited
   list of type options.
 * *`narg`*: The positional argument number *v* is associated with. This is
   not required to be a number.
@@ -4465,8 +4465,8 @@ Parameters:
   search. The default value is the current project's root directory, if
   available.
 * *`filter`*: Optional filter for files and directories to include and/or
-  exclude. The default value is `lfs.default_filter` unless *paths* is a
-  string and a filter for it is defined in `io.quick_open_filters`.
+  exclude. The default value is `lfs.default_filter` unless a filter for
+  *paths* is defined in `io.quick_open_filters`.
 * *`opts`*: Optional table of additional options for
   `ui.dialogs.filteredlist()`.
 
@@ -7402,6 +7402,27 @@ See also:
 
 * [`textadept.run.run_commands`](#textadept.run.run_commands)
 * [`events`](#events)
+
+<a id="textadept.run.set_arguments"></a>
+#### `textadept.run.set_arguments`(*filename, run, compile*)
+
+Appends the command line argument strings *run* and *compile* to their
+respective run and compile commands for file *filename* or the current file.
+If either is `nil`, prompts the user for missing the arguments. Each filename
+has its own set of compile and run arguments.
+
+Parameters:
+
+* *`filename`*: Optional path to the file to set run/compile arguments for.
+* *`run`*: Optional string run arguments to set. If `nil`, the user is
+  prompted for them. Pass the empty string for no run arguments.
+* *`compile`*: Optional string compile arguments to set. If `nil`, the user
+  is prompted for them. Pass the empty string for no compile arguments.
+
+See also:
+
+* [`textadept.run.run_commands`](#textadept.run.run_commands)
+* [`textadept.run.compile_commands`](#textadept.run.compile_commands)
 
 <a id="textadept.run.stop"></a>
 #### `textadept.run.stop`()

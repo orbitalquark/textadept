@@ -31,7 +31,7 @@ end
 -- This is intended to be used with API function arguments so users receive more
 -- helpful error messages.
 -- @param v Value to assert the type of.
--- @param expected_type String type to assert. It may be a punctuation-delimited
+-- @param expected_type String type to assert. It may be a non-letter-delimited
 --   list of type options.
 -- @param narg The positional argument number *v* is associated with. This is
 --   not required to be a number.

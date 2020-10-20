@@ -34,21 +34,19 @@ local view_history = setmetatable({}, {__index = function(t, view)
 end})
 
 -- Listens for text insertion and deletion events and records their locations.
-events.connect(events.MODIFIED, function(position, mod_type, text, length)
+events.connect(events.MODIFIED, function(position, mod, text, length)
   local buffer = buffer
   -- Only interested in text insertion or deletion.
-  if mod_type & buffer.MOD_INSERTTEXT > 0 then
+  if mod & buffer.MOD_INSERTTEXT > 0 then
     if length == buffer.length then return end -- ignore file loading
     position = position + length
-  elseif mod_type & buffer.MOD_DELETETEXT > 0 then
+  elseif mod & buffer.MOD_DELETETEXT > 0 then
     if buffer.length == 0 then return end -- ignore replacing buffer contents
   else
     return
   end
   -- Ignore undo/redo.
-  if mod_type & (buffer.PERFORMED_UNDO | buffer.PERFORMED_REDO) > 0 then
-    return
-  end
+  if mod & (buffer.PERFORMED_UNDO | buffer.PERFORMED_REDO) > 0 then return end
   M.record(nil, buffer:line_from_position(position), buffer.column[position])
 end)
 
@@ -56,13 +54,11 @@ end)
 -- forwards.
 local jumping = false
 
--- Jumps to the current position in the current view's history after adjusting
--- that position backwards or forwards.
-local function goto_record()
+-- Jumps to the given record in the current view's history.
+-- @param record History record to jump to.
+local function jump(record)
   jumping = true
-  local history = view_history[view]
-  local record = history[history.pos]
-  local filename, line, column = record.filename, record.line, record.column
+  local filename = record.filename
   if lfs.attributes(filename) then
     io.open_file(filename)
   else
@@ -75,7 +71,7 @@ local function goto_record()
       end
     end
   end
-  buffer:goto_pos(buffer:find_column(line, column))
+  buffer:goto_pos(buffer:find_column(record.line, record.column))
   jumping = false
 end
 
@@ -91,13 +87,13 @@ function M.back()
      math.abs(record.line - line) > M.minimum_line_distance then
     -- When navigated away from the most recent record, and if that record is
     -- not a soft record, jump back to it first, then navigate backwards.
-    if not record.soft then goto_record() return end
+    if not record.soft then jump(record) return end
     -- Otherwise, update the soft record with the current position and
     -- immediately navigate backwards.
     M.record(record.filename, nil, nil, record.soft)
   end
   if history.pos > 1 then history.pos = history.pos - 1 end
-  goto_record()
+  jump(history[history.pos])
 end
 
 ---
@@ -109,7 +105,7 @@ function M.forward()
   local record = history[history.pos]
   if record.soft then M.record(record.filename, nil, nil, record.soft) end
   history.pos = history.pos + 1
-  goto_record()
+  jump(history[history.pos])
 end
 
 ---

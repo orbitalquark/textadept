@@ -786,6 +786,23 @@ function test_ui_print()
   ui.silent_print = silent_print
 end
 
+function test_ui_print_to_other_view()
+  local silent_print = ui.silent_print
+
+  ui.silent_print = false
+  view:split()
+  ui.goto_view(-1)
+  assert_equal(_VIEWS[view], 1)
+  ui.print('foo') -- should print to other view, not split again
+  assert_equal(#_VIEWS, 2)
+  assert_equal(_VIEWS[view], 2)
+  buffer:close()
+  ui.goto_view(-1)
+  view:unsplit()
+
+  ui.silent_print = silent_print
+end
+
 function test_ui_dialogs_colorselect_interactive()
   local color = ui.dialogs.colorselect{title = 'Blue', color = 0xFF0000}
   assert_equal(color, 0xFF0000)
@@ -1729,6 +1746,12 @@ function test_editing_transpose_chars()
   buffer:char_left()
   textadept.editing.transpose_chars()
   assert_equal(buffer:get_text(), '⌘⇧⌥')
+  buffer:clear_all()
+  textadept.editing.transpose_chars()
+  assert_equal(buffer:get_text(), '')
+  buffer:add_text('a')
+  textadept.editing.transpose_chars()
+  assert_equal(buffer:get_text(), 'a')
   -- TODO: multiple selection?
   buffer:close(true)
 end

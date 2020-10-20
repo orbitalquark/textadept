@@ -44,22 +44,20 @@ end
 -- argument.
 -- Documentation is in core/.buffer.luadoc.
 local function text_range(buffer, start_pos, end_pos)
-  assert_type(start_pos, 'number', 2)
-  assert_type(end_pos, 'number', 3)
   local target_start, target_end = buffer.target_start, buffer.target_end
-  if start_pos < 1 then start_pos = 1 end
-  if end_pos > buffer.length + 1 then end_pos = buffer.length + 1 end
-  buffer:set_target_range(start_pos, end_pos)
+  buffer:set_target_range(
+    math.max(1, assert_type(start_pos, 'number', 2)),
+    math.min(assert_type(end_pos, 'number', 3), buffer.length + 1))
   local text = buffer.target_text
   buffer:set_target_range(target_start, target_end) -- restore
   return text
 end
 
+local GETNAMEDSTYLE = _SCINTILLA.properties.named_styles[1]
 -- Documentation is in core/.buffer.luadoc.
 local function style_of_name(buffer, style_name)
-  assert_type(style_name, 'string', 2)
-  local GETNAMEDSTYLE = _SCINTILLA.properties.named_styles[1]
-  return buffer:private_lexer_call(GETNAMEDSTYLE, style_name)
+  return buffer:private_lexer_call(
+    GETNAMEDSTYLE, assert_type(style_name, 'string', 2))
 end
 
 events.connect(events.BUFFER_NEW, function()

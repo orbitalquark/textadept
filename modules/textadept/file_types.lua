@@ -93,13 +93,13 @@ events.connect(events.VIEW_AFTER_SWITCH, restore_lexer)
 events.connect(events.VIEW_NEW, restore_lexer)
 events.connect(events.RESET_AFTER, restore_lexer)
 
+local LEXERNAMES = _SCINTILLA.functions.property_names[1]
 ---
 -- Prompts the user to select a lexer for the current buffer.
 -- @see buffer.set_lexer
 -- @name select_lexer
 function M.select_lexer()
   local lexers = {}
-  local LEXERNAMES = _SCINTILLA.functions.property_names[1]
   for name in buffer:private_lexer_call(LEXERNAMES):gmatch('[^\n]+') do
     lexers[#lexers + 1] = name
   end
