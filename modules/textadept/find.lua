@@ -158,6 +158,7 @@ local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 
 -- Clears highlighted match indicators.
 local function clear_highlighted_matches()
+  if is_ff_buf(buffer) then return end
   buffer.indicator_current = M.INDIC_FIND
   buffer:indicator_clear_range(1, buffer.length)
 end
@@ -237,7 +238,7 @@ local function find(text, next, flags, no_wrap, wrapped)
     while buffer:search_in_target(text) ~= -1 do
       local s, e = buffer.target_start, buffer.target_end
       if s == e then e = e + 1 end -- prevent loops for zero-length results
-      if M.highlight_all_matches and e - s > 1 then
+      if M.highlight_all_matches and e - s > 1 and not is_ff_buf(buffer) then
         buffer:indicator_fill_range(s, e - s)
       end
       buffer:set_target_range(e, buffer.length + 1)
