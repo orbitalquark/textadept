@@ -9,7 +9,8 @@ local M = {}
 --   Match the previous line's indentation level after inserting a new line.
 --   The default value is `true`.
 -- @field strip_trailing_spaces (bool)
---   Strip trailing whitespace before saving files.
+--   Strip trailing whitespace before saving files. (Does not apply to binary
+--   files.)
 --   The default value is `false`.
 -- @field autocomplete_all_words (bool)
 --   Autocomplete the current word using words from all open buffers.
@@ -269,7 +270,7 @@ end
 -- Prepares the buffer for saving to a file by stripping trailing whitespace,
 -- ensuring a final newline, and normalizing line endings.
 events.connect(events.FILE_BEFORE_SAVE, function()
-  if not M.strip_trailing_spaces then return end
+  if not M.strip_trailing_spaces or not buffer.encoding then return end
   buffer:begin_undo_action()
   -- Strip trailing whitespace.
   for line = 1, buffer.line_count do
