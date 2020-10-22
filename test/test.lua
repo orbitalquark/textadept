@@ -1481,6 +1481,9 @@ function test_editing_strip_trailing_spaces()
   assert_equal(buffer.current_pos, buffer.line_end_position[2])
   buffer:undo()
   assert_equal(buffer:get_text(), text)
+  buffer.encoding = nil -- treat as a binary file
+  events.emit(events.FILE_BEFORE_SAVE)
+  assert_equal(buffer:get_text(), text)
   buffer:close(true)
   textadept.editing.strip_trailing_spaces = strip -- restore
 end
