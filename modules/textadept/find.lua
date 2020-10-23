@@ -158,7 +158,6 @@ local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 
 -- Clears highlighted match indicators.
 local function clear_highlighted_matches()
-  if is_ff_buf(buffer) then return end
   buffer.indicator_current = M.INDIC_FIND
   buffer:indicator_clear_range(1, buffer.length)
 end
@@ -231,7 +230,7 @@ local function find(text, next, flags, no_wrap, wrapped)
 
   -- Count and optionally highlight all found occurrences.
   local count, current = 0, 1
-  clear_highlighted_matches()
+  if not is_ff_buf(buffer) then clear_highlighted_matches() end
   if pos ~= -1 then
     buffer.search_flags = flags
     buffer:target_whole_document()
