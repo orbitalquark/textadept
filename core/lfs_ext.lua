@@ -24,9 +24,9 @@ lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!
 -- @param level Utility value indicating the directory level this function is
 --   at.
 local function walk(dir, filter, n, include_dirs, seen, level)
+  if not seen then seen = {} end
   local sep = not WIN32 and '/' or '\\'
-  local os_dir = not WIN32 and dir or dir:gsub('/', sep)
-  seen[os_dir], seen[os_dir .. sep] = true, true
+  seen[not WIN32 and dir or dir:gsub('/', sep)] = true
   for basename in lfs.dir(dir) do
     if basename:find('^%.%.?$') then goto continue end -- ignore . and ..
     local filename = dir .. (dir ~= '/' and '/' or '') .. basename
@@ -50,8 +50,11 @@ local function walk(dir, filter, n, include_dirs, seen, level)
     local os_filename = not WIN32 and filename or filename:gsub('/', sep)
     if mode == 'file' then
       coroutine.yield(os_filename)
-    elseif mode == 'directory' and
-           not seen[lfs.symlinkattributes(filename, 'target')] then
+    elseif mode == 'directory' then
+      local link = lfs.symlinkattributes(filename, 'target')
+      if link and seen[lfs.abspath(link .. sep, dir):gsub('[/\\]+$', '')] then
+        goto continue
+      end
       if include_dirs then coroutine.yield(os_filename .. sep) end
       if n and (level or 0) >= n then goto continue end
       walk(filename, filter, n, include_dirs, seen, (level or 0) + 1)
@@ -109,7 +112,7 @@ function lfs.walk(dir, filter, n, include_dirs)
     end
   end
   local co = coroutine.create(
-    function() walk(dir, processed_filter, n, include_dirs, {}) end)
+    function() walk(dir, processed_filter, n, include_dirs) end)
   return function() return select(2, coroutine.resume(co)) end
 end
 

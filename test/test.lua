@@ -742,6 +742,21 @@ function test_lfs_ext_walk_symlinks()
   table.sort(expected_files)
   assert_equal(files, expected_files)
   os.execute('rm -r ' .. dir)
+
+  lfs.mkdir(dir)
+  io.open(dir .. '/foo', 'w'):close()
+  local cwd = lfs.currentdir()
+  lfs.chdir(dir)
+  lfs.link('.', 'bar', true)
+  lfs.mkdir(dir .. '/baz')
+  lfs.mkdir(dir .. '/baz/quux')
+  lfs.chdir(dir .. '/baz/quux')
+  lfs.link('../../baz/', 'foobar', true)
+  lfs.chdir(cwd)
+  local count = 0
+  for filename in lfs.walk(dir) do count = count + 1 end
+  assert_equal(count, 1)
+  os.execute('rm -r ' .. dir)
 end
 
 function test_lfs_ext_abs_path()
