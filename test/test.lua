@@ -720,6 +720,30 @@ function test_lfs_ext_walk_win32()
   _G.WIN32 = win32 -- reset just in case
 end
 
+function test_lfs_ext_walk_symlinks()
+  local dir = os.tmpname()
+  os.remove(dir)
+  lfs.mkdir(dir)
+  lfs.mkdir(dir .. '/1')
+  io.open(dir .. '/1/foo', 'w'):close()
+  lfs.mkdir(dir .. '/1/bar')
+  io.open(dir .. '/1/bar/baz', 'w'):close()
+  lfs.link(dir .. '/1/', dir .. '/1/bar/quux', true) -- trailing '/' on purpose
+  lfs.mkdir(dir .. '/2')
+  io.open(dir .. '/2/foobar', 'w'):close()
+  lfs.link(dir .. '/2/foobar', dir .. '/2/foobaz', true)
+  lfs.link(dir .. '/2', dir .. '/1/2', true)
+  local files = {}
+  for filename in lfs.walk(dir .. '/1/') do -- trailing '/' on purpose
+    files[#files + 1] = filename
+  end
+  table.sort(files)
+  local expected_files = {dir .. '/1/foo', dir .. '/1/bar/baz', dir .. '/1/2/foobar', dir .. '/1/2/foobaz'}
+  table.sort(expected_files)
+  assert_equal(files, expected_files)
+  os.execute('rm -r ' .. dir)
+end
+
 function test_lfs_ext_abs_path()
   assert_equal(lfs.abspath('bar', '/foo'), '/foo/bar')
   assert_equal(lfs.abspath('./bar', '/foo'), '/foo/bar')
