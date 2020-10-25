@@ -19,9 +19,14 @@ module('lfs')]]
 lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!.exe','!.gif','!.gz','!.jar','!.jpeg','!.jpg','!.o','!.pdf','!.png','!.so','!.tar','!.tgz','!.tif','!.tiff','!.xz','!.zip',--[[Directories]]'!/%.bzr$','!/%.git$','!/%.hg$','!/%.svn$','!/_FOSSIL_$','!/node_modules$'}
 
 -- Documentation is in `lfs.walk()`.
+-- @param seen Utility table that holds directories seen. If there is a
+--   duplicate, stop walking down that path (it's probably a recursive symlink).
 -- @param level Utility value indicating the directory level this function is
 --   at.
-local function walk(dir, filter, n, include_dirs, level)
+local function walk(dir, filter, n, include_dirs, seen, level)
+  local sep = not WIN32 and '/' or '\\'
+  local os_dir = not WIN32 and dir or dir:gsub('/', sep)
+  seen[os_dir], seen[os_dir .. sep] = true, true
   for basename in lfs.dir(dir) do
     if basename:find('^%.%.?$') then goto continue end -- ignore . and ..
     local filename = dir .. (dir ~= '/' and '/' or '') .. basename
@@ -42,14 +47,14 @@ local function walk(dir, filter, n, include_dirs, level)
       include = include or (not patt:find('^!') and filename:find(patt))
     end
     if not include then goto continue end
-    local sep = not WIN32 and '/' or '\\'
     local os_filename = not WIN32 and filename or filename:gsub('/', sep)
     if mode == 'file' then
       coroutine.yield(os_filename)
-    elseif mode == 'directory' then
+    elseif mode == 'directory' and
+           not seen[lfs.symlinkattributes(filename, 'target')] then
       if include_dirs then coroutine.yield(os_filename .. sep) end
       if n and (level or 0) >= n then goto continue end
-      walk(filename, filter, n, include_dirs, (level or 0) + 1)
+      walk(filename, filter, n, include_dirs, seen, (level or 0) + 1)
     end
     ::continue::
   end
@@ -77,7 +82,7 @@ end
 -- @see filter
 -- @name walk
 function lfs.walk(dir, filter, n, include_dirs)
-  assert_type(dir, 'string', 1)
+  dir = assert_type(dir, 'string', 1):match('^(.-)[/\\]?$')
   if not assert_type(filter, 'string/table/nil', 2) then
     filter = lfs.default_filter
   end
@@ -104,7 +109,7 @@ function lfs.walk(dir, filter, n, include_dirs)
     end
   end
   local co = coroutine.create(
-    function() walk(dir, processed_filter, n, include_dirs) end)
+    function() walk(dir, processed_filter, n, include_dirs, {}) end)
   return function() return select(2, coroutine.resume(co)) end
 end
 
