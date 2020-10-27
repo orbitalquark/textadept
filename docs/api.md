@@ -6189,6 +6189,9 @@ defined by lexers.
   `regex`, `string`, `type`, `variable`, `whitespace`: Some token names used
   by lexers. Some lexers may define more token names, so this list is not
   exhaustive.
+* *`lang`*`_whitespace`: A special style for whitespace tokens in lexer name
+  *lang*. It inherits from `whitespace`, and is used in place of it for all
+  lexers.
 
 Style definition tables may contain the following fields:
 
@@ -6556,7 +6559,8 @@ The word highlight mode.
 <a id="textadept.editing.strip_trailing_spaces"></a>
 #### `textadept.editing.strip_trailing_spaces` (bool)
 
-Strip trailing whitespace before saving files.
+Strip trailing whitespace before saving files. (Does not apply to binary
+  files.)
   The default value is `false`.
 
 
