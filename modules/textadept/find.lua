@@ -185,6 +185,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   if not flags then flags = get_flags() end
   if flags >= 1 << 31 then M.find_in_files() return end -- not performed here
   local first_visible_line = view.first_visible_line -- for 'no results found'
+  if not is_ff_buf(buffer) then clear_highlighted_matches() end
 
   if M.incremental and not wrapped then
     local pos = buffer.current_pos
@@ -210,7 +211,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   local pos = f(buffer, flags, text)
   view:ensure_visible_enforce_policy(buffer:line_from_position(pos))
   view:scroll_range(buffer.anchor, buffer.current_pos)
-  events.emit(events.FIND_RESULT_FOUND)
+  if pos ~= -1 then events.emit(events.FIND_RESULT_FOUND) end
   -- Track find text and found text for "replace all" and incremental find.
   find_text, found_text = text, buffer:get_sel_text()
   repl_text = ui.find.replace_entry_text -- save for ui.find.focus()
@@ -228,37 +229,35 @@ local function find(text, next, flags, no_wrap, wrapped)
     end
   end
 
-  -- Count and optionally highlight all found occurrences.
-  local count, current = 0, 1
-  if not is_ff_buf(buffer) then clear_highlighted_matches() end
-  if pos ~= -1 then
-    buffer.search_flags = flags
-    buffer:target_whole_document()
-    while buffer:search_in_target(text) ~= -1 do
-      local s, e = buffer.target_start, buffer.target_end
-      if s == e then e = e + 1 end -- prevent loops for zero-length results
-      if M.highlight_all_matches and e - s > 1 and not is_ff_buf(buffer) then
-        buffer:indicator_fill_range(s, e - s)
-      end
-      buffer:set_target_range(e, buffer.length + 1)
-      count = count + 1
-      if s == pos then current = count end
-    end
-    ui.statusbar_text = string.format('%s %d/%d', _L['Match'], current, count)
-    -- For regex searches, `buffer.tag` was clobbered. It needs to be filled in
-    -- again for any subsequent replace operations that need it.
-    if ui.find.regex then
-      buffer:set_target_range(buffer.selection_start, buffer.length + 1)
-      buffer:search_in_target(text)
-    end
-  end
-
   return pos
 end
 events.connect(events.FIND, find)
 events.connect(events.FIND_TEXT_CHANGED, function()
   if not M.incremental then return end
   return events.emit(events.FIND, M.find_entry_text, true) -- refresh
+end)
+events.connect(events.FIND_RESULT_FOUND, function()
+  -- Count and optionally highlight all occurrences.
+  local text, count, current = M.find_entry_text, 0, 1
+  buffer.search_flags = get_flags()
+  buffer:target_whole_document()
+  while buffer:search_in_target(text) ~= -1 do
+    local s, e = buffer.target_start, buffer.target_end
+    if s == e then e = e + 1 end -- prevent loops for zero-length results
+    if M.highlight_all_matches and e - s > 1 and not is_ff_buf(buffer) then
+      buffer:indicator_fill_range(s, e - s)
+    end
+    buffer:set_target_range(e, buffer.length + 1)
+    count = count + 1
+    if s == buffer.current_pos then current = count end
+  end
+  ui.statusbar_text = string.format('%s %d/%d', _L['Match'], current, count)
+  -- For regex searches, `buffer.tag` was clobbered. It needs to be filled in
+  -- again for any subsequent replace operations that need it.
+  if ui.find.regex then
+    buffer:set_target_range(buffer.selection_start, buffer.length + 1)
+    buffer:search_in_target(text)
+  end
 end)
 events.connect(
   events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wrapped'] end)
