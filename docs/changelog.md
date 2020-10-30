@@ -8,10 +8,62 @@ development.**
 [donate]: https://gum.co/textadept
 [book]: book.html
 
-### 11.0 beta (01 Oct 2020)
+### 11.0 beta 2 (01 Nov 2020)
 
 Please see the [10 to 11 migration guide][] for upgrading from Textadept 10 to
 Textadept 11.
+
+Download:
+
+* [Textadept 11.0 beta 2 -- Win32][]
+* [Textadept 11.0 beta 2 -- Mac OSX 10.7+][]
+* [Textadept 11.0 beta 2 -- Linux][]
+* [Textadept 11.0 beta 2 -- Modules][]
+
+Bugfixes:
+
+* Fixed the listing of bookmarks for all open buffers.
+* Fixed "Enclose as XML Tags" with multiple selections.
+* Fixed clearing of "Replace" entry in Find & Replace pane on reset in the GUI.
+* Fixed lack of statusbar updating when setting options like buffer EOL mode,
+  indentation, and encoding from the menu.
+* Do not clear highlighting when searching inside the "Find in Files" buffer.
+* `textadept.editing.strip_trailing_spaces` should not apply to binary files.
+* Handle recursive symlinks in `lfs.walk()`.
+* Modules: Fixed Lua debugger crash when inspecting variables with very large
+  string representations.
+* Modules: Support non-UTF-8 spelling dictionaries.
+* Modules: Fixed YAML syntax checking notification.
+* Modules: Fixed various small issues with the C debugger.
+
+Changes:
+
+* New [`textadept.history`][] module.
+* Updated German and Russian translations.
+* Added [`ui.command_entry.append_history()`][] for special command entry modes
+  that need to manually append history.
+* Implement `\U`, `\L`, `\u`, and `\l` case transformations in regex
+  replacements.
+* Added [`textadept.run.set_arguments()`][].
+* Modules: Each module in the separate modules download has its own repository
+  now, but all are still bundled into a single archive for release.
+* Modules: Greatly improved the speed of file comparison.
+* Modules: Added ability to switch spelling dictionaries on the fly.
+* Updated to [CDK][] 5.0-20200923.
+* Updated to [LuaFileSystem][] 1.8.0.
+
+[10 to 11 migration guide]: manual.html#migrating-from-textadept-10-to-11
+[Textadept 11.0 beta 2 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta_2/textadept_11.0_beta_2.win32.zip
+[Textadept 11.0 beta 2 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta_2/textadept_11.0_beta_2.macOS.zip
+[Textadept 11.0 beta 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta_2/textadept_11.0_beta_2.linux.tgz
+[Textadept 11.0 beta 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta_2/textadept_11.0_beta_2.modules.zip
+[`textadept.history`]: api.html#textadept.history
+[`textadept.run.set_arguments()`]: api.html#textadept.run.set_arguments
+[`ui.command_entry.append_history()`]: api.html#ui.command_entry.append_history
+[CDK]: https://invisible-island.net/cdk/
+[LuaFileSystem]: https://github.com/keplerproject/luafilesystem
+
+### 11.0 beta (01 Oct 2020)
 
 Download:
 
@@ -84,7 +136,6 @@ Changes:
 * Updated to [Scintilla][] 4.4.5.
 * Switched back to utilizing [Scintillua][] and [Scinterm][].
 
-[10 to 11 migration guide]: manual.html#migrating-from-textadept-10-to-11
 [Textadept 11.0 beta -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.win32.zip
 [Textadept 11.0 beta -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.macOS.zip
 [Textadept 11.0 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta/textadept_11.0_beta.linux.tgz
