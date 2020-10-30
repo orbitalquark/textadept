@@ -1,6 +1,6 @@
 -- Copyright 2007-2020 Mitchell. See LICENSE.
 
-_RELEASE = 'Textadept 11.0 beta'
+_RELEASE = 'Textadept 11.0 beta 2'
 _COPYRIGHT = 'Copyright © 2007-2020 Mitchell. See LICENSE.\n' ..
   'https://orbitalquark.github.io/textadept'
 

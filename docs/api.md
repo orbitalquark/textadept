@@ -1,4 +1,4 @@
-## Textadept 11.0 beta API Documentation
+## Textadept 11.0 beta 2 API Documentation
 
 1. [_G](#_G)
 1. [_L](#_L)
