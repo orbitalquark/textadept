@@ -383,7 +383,7 @@ else
 endif
 
 scintilla_tgz = scintilla445.tgz
-scinterm_zip = 9e2ffa159299899c9345aea15c17ba1941953871.zip
+scinterm_zip = 6a774158d8a3c7bc7ea120bc01cdb016fa351a7e.zip
 scintillua_zip = scintillua_4.4.5-1.zip
 lua_tgz = lua-5.3.5.tar.gz
 lpeg_tgz = lpeg-1.0.2.tar.gz
