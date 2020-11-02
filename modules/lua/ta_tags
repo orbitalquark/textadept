@@ -335,7 +335,7 @@ ansi_c	_HOME/modules/ansi_c/init.lua	/^module('_M.ansi_c')]]$/;"	m	class:_M
 ansi_c	_HOME/modules/ansi_c/init.lua	/^snippets.ansi_c = {$/;"	t	class:snippets
 any	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 api_files	_HOME/modules/textadept/editing.lua	/^M.api_files = setmetatable({}, {__index = function(t, k)$/;"	t	class:textadept.editing
-append_history	_HOME/modules/textadept/command_entry.lua	/^function M.append_history(text)$/;"	f	class:ui.command_entry
+append_history	_HOME/modules/textadept/command_entry.lua	/^function M.append_history(f, text)$/;"	f	class:ui.command_entry
 append_text	_HOME/core/.buffer.luadoc	/^function append_text(buffer, text) end$/;"	f	class:buffer
 arg	_HOME/core/init.lua	/^local arg$/;"	t	
 args	_HOME/core/args.lua	/^module('args')]]$/;"	m	

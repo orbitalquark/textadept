@@ -1413,7 +1413,16 @@ function test_command_entry_history_append()
   assert_equal(ui.command_entry:get_text(), 'bar') -- no further history
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 
-  assert_raises(function() ui.command_entry:append_history('text') end, 'string expected, got table')
+  -- Verify no previous mode or history is needed for adding history.
+  local f2 = function() end
+  ui.command_entry.append_history(f2, 'baz')
+  ui.command_entry.run(f2, keys)
+  assert_equal(ui.command_entry:get_text(), 'baz')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+
+  assert_raises(function() ui.command_entry.append_history(1) end, 'string expected, got number')
+  assert_raises(function() ui.command_entry:append_history('text') end, 'function expected, got table')
+  assert_raises(function() ui.command_entry.append_history(function() end, true) end, 'string/nil expected, got boolean')
 end
 
 function test_command_entry_mode_restore()
