@@ -18,7 +18,10 @@ module('ui.command_entry')]]
 -- The current mode is in the `mode` field.
 -- @class table
 -- @name history
-local history = {}
+local history = setmetatable({}, {__index = function(t, k)
+  if type(k) == 'function' then t[k] = {pos = 0} else return nil end
+  return t[k]
+end})
 
 -- Cycles through command history for the current mode.
 -- @param prev Flag that indicates whether to cycle to the previous command or
@@ -35,18 +38,23 @@ local function cycle_history(prev)
 end
 
 ---
--- Appends the given text to the history for the current or most recent command
--- entry mode.
+-- Appends string *text* to the history for command entry mode *f* or the
+-- current or most recent mode.
 -- This should only be called if `ui.command_entry.run()` is called with a keys
 -- table that has a custom binding for the Enter key ('\n').
 -- Otherwise, history is automatically appended as needed.
+-- @param f Optional command entry mode to append history to. This is a function
+--   passed to `ui.command_entry_run()`. If omitted, uses the current or most
+--   recent mode.
 -- @param text String text to append to history.
 -- @name append_history
-function M.append_history(text)
-  if not history.mode then return end
-  local mode_history = history[history.mode]
-  mode_history[#mode_history + 1] = assert_type(text, 'string', 1)
-  mode_history.pos = #mode_history
+function M.append_history(f, text)
+  if not assert_type(text, 'string/nil', 2) then
+    f, text = history.mode, assert_type(f, 'string', 1)
+    if not f then return end
+  end
+  local mode_history = history[assert_type(f, 'function', 1)]
+  mode_history[#mode_history + 1], mode_history.pos = text, #mode_history + 1
 end
 
 ---
@@ -235,7 +243,6 @@ function M.run(f, keys, lang, height)
     end
   end
   if not getmetatable(keys) then setmetatable(keys, M.editing_keys) end
-  if f and not history[f] then history[f] = {pos = 0} end
   history.mode = f
   local mode_history = history[history.mode]
   M:set_text(mode_history and mode_history[mode_history.pos] or '')

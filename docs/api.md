@@ -8022,16 +8022,19 @@ The height in pixels of the command entry.
 ### Functions defined by `ui.command_entry`
 
 <a id="ui.command_entry.append_history"></a>
-#### `ui.command_entry.append_history`(*text*)
+#### `ui.command_entry.append_history`(*f, text*)
 
-Appends the given text to the history for the current or most recent command
-entry mode.
+Appends string *text* to the history for command entry mode *f* or the
+current or most recent mode.
 This should only be called if `ui.command_entry.run()` is called with a keys
 table that has a custom binding for the Enter key ('\n').
 Otherwise, history is automatically appended as needed.
 
 Parameters:
 
+* *`f`*: Optional command entry mode to append history to. This is a function
+  passed to `ui.command_entry_run()`. If omitted, uses the current or most
+  recent mode.
 * *`text`*: String text to append to history.
 
 <a id="ui.command_entry.focus"></a>
