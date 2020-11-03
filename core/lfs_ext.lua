@@ -85,7 +85,7 @@ end
 -- @see filter
 -- @name walk
 function lfs.walk(dir, filter, n, include_dirs)
-  dir = assert_type(dir, 'string', 1):match('^(.-)[/\\]?$')
+  dir = assert_type(dir, 'string', 1):match('^(..-)[/\\]?$')
   if not assert_type(filter, 'string/table/nil', 2) then
     filter = lfs.default_filter
   end
