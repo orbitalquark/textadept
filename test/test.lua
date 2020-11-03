@@ -759,6 +759,11 @@ function test_lfs_ext_walk_symlinks()
   os.execute('rm -r ' .. dir)
 end
 
+function test_lfs_ext_walk_root()
+  local filename = lfs.walk('/', nil, 0, true)()
+  assert(not filename:find('lfs_ext.lua:'), 'coroutine error')
+end
+
 function test_lfs_ext_abs_path()
   assert_equal(lfs.abspath('bar', '/foo'), '/foo/bar')
   assert_equal(lfs.abspath('./bar', '/foo'), '/foo/bar')
