@@ -71,7 +71,7 @@ FILE_OPENED events.FILE_OPENED (string)\nEmitted after opening a file in a new b
 FIND events.FIND (string)\nEmitted to find text via the Find & Replace Pane.\nArguments:\n\n* _`text`_: The text to search for.\n* _`next`_: Whether or not to search forward.
 FIND_MATCHCASE buffer.FIND_MATCHCASE (number, Read-only)\n
 FIND_REGEXP buffer.FIND_REGEXP (number, Read-only)\n
-FIND_RESULT_FOUND events.FIND_RESULT_FOUND (string)\nEmitted when a result is found. It is selected and has been scrolled into\nview.
+FIND_RESULT_FOUND events.FIND_RESULT_FOUND (string)\nEmitted when a result is found. It is selected and has been scrolled into\nview.\nArguments:\n\n* _`find_text`_: The text originally searched for.
 FIND_TEXT_CHANGED events.FIND_TEXT_CHANGED (string)\nEmitted when the text in the "Find" field of the Find & Replace Pane\nchanges.\n`ui.find.find_entry_text` contains the current text.
 FIND_WHOLEWORD buffer.FIND_WHOLEWORD (number, Read-only)\n
 FIND_WORDSTART buffer.FIND_WORDSTART (number, Read-only)\n

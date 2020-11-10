@@ -8791,6 +8791,9 @@ The find results highlight indicator number.
 
 Emitted when a result is found. It is selected and has been scrolled into
   view.
+  Arguments:
+
+  * _`find_text`_: The text originally searched for.
 
 <a id="events.FIND_WRAPPED"></a>
 #### `events.FIND_WRAPPED` (string)
