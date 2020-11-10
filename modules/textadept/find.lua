@@ -68,6 +68,9 @@ local M = ui.find
 -- @field _G.events.FIND_RESULT_FOUND (string)
 --   Emitted when a result is found. It is selected and has been scrolled into
 --   view.
+--   Arguments:
+--
+--   * _`find_text`_: The text originally searched for.
 -- @field _G.events.FIND_WRAPPED (string)
 --   Emitted when a text search wraps (passes through the beginning of the
 --   buffer), either from bottom to top (when searching for a next occurrence),
@@ -211,7 +214,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   local pos = f(buffer, flags, text)
   view:ensure_visible_enforce_policy(buffer:line_from_position(pos))
   view:scroll_range(buffer.anchor, buffer.current_pos)
-  if pos ~= -1 then events.emit(events.FIND_RESULT_FOUND) end
+  if pos ~= -1 then events.emit(events.FIND_RESULT_FOUND, text) end
   -- Track find text and found text for "replace all" and incremental find.
   find_text, found_text = text, buffer:get_sel_text()
   repl_text = ui.find.replace_entry_text -- save for ui.find.focus()
@@ -236,9 +239,9 @@ events.connect(events.FIND_TEXT_CHANGED, function()
   if not M.incremental then return end
   return events.emit(events.FIND, M.find_entry_text, true) -- refresh
 end)
-events.connect(events.FIND_RESULT_FOUND, function()
+events.connect(events.FIND_RESULT_FOUND, function(text)
   -- Count and optionally highlight all occurrences.
-  local text, count, current = M.find_entry_text, 0, 1
+  local count, current = 0, 1
   buffer.search_flags = get_flags()
   buffer:target_whole_document()
   while buffer:search_in_target(text) ~= -1 do
