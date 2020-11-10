@@ -330,9 +330,7 @@ annotation_lines	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 annotation_style	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 annotation_text	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 annotation_visible	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
-ansi_c	_HOME/modules/ansi_c/init.lua	/^keys.ansi_c = {}$/;"	t	class:keys
 ansi_c	_HOME/modules/ansi_c/init.lua	/^module('_M.ansi_c')]]$/;"	m	class:_M
-ansi_c	_HOME/modules/ansi_c/init.lua	/^snippets.ansi_c = {$/;"	t	class:snippets
 any	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 api_files	_HOME/modules/textadept/editing.lua	/^M.api_files = setmetatable({}, {__index = function(t, k)$/;"	t	class:textadept.editing
 append_history	_HOME/modules/textadept/command_entry.lua	/^function M.append_history(f, text)$/;"	f	class:ui.command_entry
@@ -658,9 +656,7 @@ load	_HOME/modules/textadept/macros.lua	/^function M.load(filename)$/;"	f	class:
 load	_HOME/modules/textadept/session.lua	/^function M.load(filename)$/;"	f	class:textadept.session
 lower	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 lower_case	_HOME/core/.buffer.luadoc	/^function lower_case(buffer) end$/;"	f	class:buffer
-lua	_HOME/modules/lua/init.lua	/^keys.lua = {}$/;"	t	class:keys
 lua	_HOME/modules/lua/init.lua	/^module('_M.lua')]]$/;"	m	class:_M
-lua	_HOME/modules/lua/init.lua	/^snippets.lua = {$/;"	t	class:snippets
 macros	_HOME/modules/textadept/macros.lua	/^module('textadept.macros')]]$/;"	m	class:textadept
 main_selection	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 margin_back_n	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view

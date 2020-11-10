@@ -299,13 +299,11 @@ C++ module might have a feature to add a ';' to the end of the current line
 and insert a new line. This command could be bound to the `Shift+Enter` (`⇧↩`
 on macOS | `S-Enter` in the terminal version) key for easy access:
 
-    keys.cpp = {
-      ['s\n'] = function()
-        buffer:line_end()
-        buffer:add_text(';')
-        buffer:new_line()
-      end
-    }
+    keys.cpp['shift+\n'] = function()
+      buffer:line_end()
+      buffer:add_text(';')
+      buffer:new_line()
+    end
 
 When defining key bindings for other commands, you may make use of a `Ctrl+L`
 (`⌘L` on macOS | `M-L` in the terminal version) keychain. Traditionally this
@@ -352,16 +350,6 @@ Whether or not to include snippets in autocompletion lists.
 
 ### Tables defined by `_M.ansi_c`
 
-<a id="keys.ansi_c"></a>
-#### `keys.ansi_c`
-
-Table of C-specific key bindings.
-
-<a id="snippets.ansi_c"></a>
-#### `snippets.ansi_c`
-
-Table of C-specific snippets.
-
 <a id="_M.ansi_c.tags"></a>
 #### `_M.ansi_c.tags`
 
@@ -386,16 +374,6 @@ Whether or not to include snippets in autocompletion lists.
 
 
 ### Tables defined by `_M.lua`
-
-<a id="keys.lua"></a>
-#### `keys.lua`
-
-Container for Lua-specific key bindings.
-
-<a id="snippets.lua"></a>
-#### `snippets.lua`
-
-Container for Lua-specific snippets.
 
 <a id="_M.lua.expr_types"></a>
 #### `_M.lua.expr_types`
