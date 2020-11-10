@@ -104,30 +104,17 @@ table.insert(api_files, _HOME .. '/modules/lua/api')
 table.insert(api_files, _USERHOME .. '/modules/lua/api')
 table.insert(api_files, ta_api(_HOME .. '/modules/lua/ta_api'))
 
--- Commands.
-
----
--- Container for Lua-specific key bindings.
--- @class table
--- @name _G.keys.lua
-keys.lua = {}
-
 -- Snippets.
 
----
--- Container for Lua-specific snippets.
--- @class table
--- @name _G.snippets.lua
-snippets.lua = {
-  func = 'function %1(name)(%2(args))\n\t%0\nend',
-  ['if'] = 'if %1 then\n\t%0\nend',
-  eif = 'elseif %1 then\n\t',
-  ['for'] = 'for %1(i) = %2(1), %3(10)%4(, %5(-1)) do\n\t%0\nend',
-  forp = 'for %1(k), %2(v) in pairs(%3(t)) do\n\t%0\nend',
-  fori = 'for %1(i), %2(v) in ipairs(%3(t)) do\n\t%0\nend',
-  ['while'] = 'while %1 do\n\t%0\nend',
-  ['repeat'] = 'repeat\n\t%0\nuntil %1',
-  ['do'] = 'do\n\t%0\nend',
-}
+local snip = snippets.lua
+snip.func = 'function %1(name)(%2(args))\n\t%0\nend'
+snip['if'] = 'if %1 then\n\t%0\nend'
+snip.eif = 'elseif %1 then\n\t'
+snip['for'] = 'for %1(i) = %2(1), %3(10)%4(, %5(-1)) do\n\t%0\nend'
+snip.forp = 'for %1(k), %2(v) in pairs(%3(t)) do\n\t%0\nend'
+snip.fori = 'for %1(i), %2(v) in ipairs(%3(t)) do\n\t%0\nend'
+snip['while'] = 'while %1 do\n\t%0\nend'
+snip['repeat'] = 'repeat\n\t%0\nuntil %1'
+snip['do'] = 'do\n\t%0\nend'
 
 return M

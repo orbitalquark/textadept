@@ -99,13 +99,11 @@
 -- and insert a new line. This command could be bound to the `Shift+Enter` (`⇧↩`
 -- on macOS | `S-Enter` in the terminal version) key for easy access:
 --
---     keys.cpp = {
---       ['s\n'] = function()
---         buffer:line_end()
---         buffer:add_text(';')
---         buffer:new_line()
---       end
---     }
+--     keys.cpp['shift+\n'] = function()
+--       buffer:line_end()
+--       buffer:add_text(';')
+--       buffer:new_line()
+--     end
 --
 -- When defining key bindings for other commands, you may make use of a `Ctrl+L`
 -- (`⌘L` on macOS | `M-L` in the terminal version) keychain. Traditionally this

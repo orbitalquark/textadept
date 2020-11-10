@@ -328,8 +328,6 @@ annotation_lines buffer.annotation_lines (table, Read-only)\nTable of the number
 annotation_style buffer.annotation_style (table)\nTable of style numbers for annotation text per line number.\nOnly some style attributes are active in annotations: font,\nsize/size_fractional, bold/weight, italics, fore, back, and character_set.
 annotation_text buffer.annotation_text (table)\nTable of annotation text per line number.
 annotation_visible view.annotation_visible (number)\nThe annotation visibility mode.\n\n* `view.ANNOTATION_HIDDEN`\n  Annotations are invisible.\n* `view.ANNOTATION_STANDARD`\n  Draw annotations left-justified with no decoration.\n* `view.ANNOTATION_BOXED`\n  Indent annotations to match the annotated text and outline them with a\n  box.\n* `view.ANNOTATION_INDENTED`\n  Indent non-decorated annotations to match the annotated text.\n\nThe default value is `view.ANNOTATION_HIDDEN`.
-ansi_c _G.keys.ansi_c (table)\nTable of C-specific key bindings.
-ansi_c _G.snippets.ansi_c (table)\nTable of C-specific snippets.
 ansi_c _M.ansi_c (module)\nThe ansi_c module.\nIt provides utilities for editing C code.
 any lexer.any (pattern)\nA pattern that matches any single character.
 api_files textadept.editing.api_files (table)\nMap of lexer names to API documentation file tables.\nFile tables contain API file paths or functions that return such paths.\nEach line in an API file consists of a symbol name (not a fully qualified\nsymbol name), a space character, and that symbol's documentation. "\\n"\nrepresents a newline character.\n@see show_documentation
@@ -656,8 +654,6 @@ load textadept.macros.load(filename)\nLoads a macro from file *filename* or the 
 load textadept.session.load(filename)\nLoads session file *filename* or the user-selected session, returning `true`\nif a session file was opened and read.\nTextadept restores split views, opened buffers, cursor information, recent\nfiles, and bookmarks.\n@param filename Optional absolute path to the session file to load. If `nil`,\n  the user is prompted for one.\n@usage textadept.session.load(filename)\n@return `true` if the session file was opened and read; `nil` otherwise.
 lower lexer.lower (pattern)\nA pattern that matches any lower case character ('a'-'z').
 lower_case buffer.lower_case(buffer)\nConverts the selected text to lower case letters.\n@param buffer A buffer.
-lua _G.keys.lua (table)\nContainer for Lua-specific key bindings.
-lua _G.snippets.lua (table)\nContainer for Lua-specific snippets.
 lua _M.lua (module)\nThe lua module.\nIt provides utilities for editing Lua code.
 macros textadept.macros (module)\nA module for recording, playing, saving, and loading keyboard macros.\nMenu commands are also recorded.\nAt this time, typing into multiple cursors during macro playback is not\nsupported.
 main_selection buffer.main_selection (number)\nThe number of the main or most recent selection.\nOnly an existing selection can be made main.
