@@ -77,6 +77,7 @@ FIND_WHOLEWORD buffer.FIND_WHOLEWORD (number, Read-only)\n
 FIND_WORDSTART buffer.FIND_WORDSTART (number, Read-only)\n
 FIND_WRAPPED events.FIND_WRAPPED (string)\nEmitted when a text search wraps (passes through the beginning of the\nbuffer), either from bottom to top (when searching for a next occurrence),\nor from top to bottom (when searching for a previous occurrence).\nThis is useful for implementing a more visual or audible notice when a\nsearch wraps in addition to the statusbar message.
 FOCUS events.FOCUS (string)\nEmitted when Textadept receives focus.\nThis event is never emitted when Textadept is running in the terminal.
+FOCUS_LOST events.FOCUS_LOST (string)\nEmitted when Textadept loses focus.\nThis event is never emitted when Textadept is running in the terminal.
 FOLDACTION_CONTRACT view.FOLDACTION_CONTRACT (number, Read-only)\n
 FOLDACTION_EXPAND view.FOLDACTION_EXPAND (number, Read-only)\n
 FOLDACTION_TOGGLE view.FOLDACTION_TOGGLE (number, Read-only)\n

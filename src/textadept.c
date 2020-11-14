@@ -2284,6 +2284,7 @@ static GtkWidget *new_findbox() {
  * losing focus or the application is quitting.
  */
 static bool focus_lost(GtkWidget *widget, GdkEvent *_, void *L) {
+  if (widget == window) emit(lua, "focus_lost", -1);
   if (widget == window && command_entry_focused) return true; // halt
   if (widget != command_entry || closing) return false;
   return (emit(L, "keypress", LUA_TNUMBER, GDK_KEY_Escape, -1), false);

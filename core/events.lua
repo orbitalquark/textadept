@@ -399,7 +399,7 @@ end)
 
 -- Set event constants.
 for _, v in pairs(_SCINTILLA.events) do M[v[1]:upper()] = v[1] end
-local textadept_events = {'appleevent_odoc','buffer_after_switch','buffer_before_switch','buffer_deleted','buffer_new','csi','command_text_changed','error','find','find_text_changed','focus','initialized','keypress','menu_clicked','mouse','quit','replace','replace_all','reset_after','reset_before','resume','suspend', 'tab_clicked','view_after_switch','view_before_switch','view_new'}
+local textadept_events = {'appleevent_odoc','buffer_after_switch','buffer_before_switch','buffer_deleted','buffer_new','csi','command_text_changed','error','find','find_text_changed','focus','focus_lost','initialized','keypress','menu_clicked','mouse','quit','replace','replace_all','reset_after','reset_before','resume','suspend','tab_clicked','view_after_switch','view_before_switch','view_new'}
 for _, v in pairs(textadept_events) do M[v:upper()] = v end
 
 return M

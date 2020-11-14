@@ -8,6 +8,12 @@ development.**
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### Next
+
+Changes:
+
+* New [`events.FOCUS_LOST`][] event for when Textadept's window loses focus.
+
 ### 11.0 beta 2 (01 Nov 2020)
 
 Please see the [10 to 11 migration guide][] for upgrading from Textadept 10 to

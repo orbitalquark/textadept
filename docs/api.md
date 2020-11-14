@@ -3982,6 +3982,12 @@ Emitted when the text in the "Find" field of the Find & Replace Pane
 Emitted when Textadept receives focus.
   This event is never emitted when Textadept is running in the terminal.
 
+<a id="events.FOCUS_LOST"></a>
+#### `events.FOCUS_LOST` (string)
+
+Emitted when Textadept loses focus.
+  This event is never emitted when Textadept is running in the terminal.
+
 <a id="events.INDICATOR_CLICK"></a>
 #### `events.INDICATOR_CLICK` (string)
 
