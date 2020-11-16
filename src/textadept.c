@@ -1643,10 +1643,8 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
 #if GTK
 /** Signal for a Textadept window focus change. */
 static bool window_focused(GtkWidget *_, GdkEventFocus *__, void *L) {
-  if (command_entry_focused) return false; // keep command entry focused
-  if (focused_view && !gtk_widget_has_focus(focused_view))
-    gtk_widget_grab_focus(focused_view);
-  return (emit(L, "focus", -1), false);
+  if (!command_entry_focused) emit(L, "focus", -1);
+  return false;
 }
 
 /** Signal for a Textadept keypress. */
@@ -2352,6 +2350,7 @@ static void new_window() {
   gtk_box_pack_start(GTK_BOX(vboxp), hbox, true, true, 0);
 
   gtk_box_pack_start(GTK_BOX(hbox), new_view(0), true, true, 0);
+  gtk_widget_grab_focus(focused_view);
 
   gtk_box_pack_start(GTK_BOX(vboxp), new_findbox(), false, false, 5);
 
