@@ -253,6 +253,7 @@ TD_STRIKEOUT view.TD_STRIKEOUT (number, Read-only)\n
 TIME_FOREVER view.TIME_FOREVER (number, Read-only)\n
 TYPE lexer.TYPE (string)\nThe token name for type tokens.
 TYPEDEF textadept.editing.XPM_IMAGES.TYPEDEF (table)\nThe image number for type definitions.
+UNFOCUS events.UNFOCUS (string)\nEmitted when Textadept loses focus.\nThis event is never emitted when Textadept is running in the terminal.
 UPDATE_CONTENT buffer.UPDATE_CONTENT (number, Read-only)\n
 UPDATE_H_SCROLL view.UPDATE_H_SCROLL (number, Read-only)\n
 UPDATE_SELECTION buffer.UPDATE_SELECTION (number, Read-only)\n
