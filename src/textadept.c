@@ -189,7 +189,7 @@ static lua_State *lua;
 #if CURSES
 static bool quitting;
 #endif
-static bool initing, closing, show_tabs = true, tab_sync;
+static bool initing, closing, show_tabs = true, tab_sync, dialog_active;
 enum {SVOID, SINT, SLEN, SINDEX, SCOLOR, SBOOL, SKEYMOD, SSTRING, SSTRINGRET};
 
 // Forward declarations.
@@ -590,7 +590,8 @@ static int dialog(lua_State *L) {
       gtdialog_set_progressbar_callback(work, L);
     } else argv[i++] = luaL_checkstring(L, j);
   argv[argc] = NULL;
-  char *out = gtdialog(type, argc, argv);
+  char *out;
+  dialog_active = true, out = gtdialog(type, argc, argv), dialog_active = false;
   return (lua_pushstring(L, out), free(out), 1);
 }
 
@@ -2278,13 +2279,17 @@ static GtkWidget *new_findbox() {
 }
 
 /**
+ * Signal for window or command entry focus loss.
  * Emit "Escape" key for the command entry on focus lost unless the window is
  * losing focus or the application is quitting.
  */
 static bool focus_lost(GtkWidget *widget, GdkEvent *_, void *L) {
-  if (widget == window && command_entry_active) return true; // halt
-  if (widget != command_entry || closing) return false;
-  return (emit(L, "keypress", LUA_TNUMBER, GDK_KEY_Escape, -1), false);
+  if (widget == window) {
+    if (!dialog_active) emit(L, "unfocus", -1);
+    if (command_entry_active) return true; // keep focus if window losing focus
+  } else if (!closing)
+    emit(L, "keypress", LUA_TNUMBER, GDK_KEY_Escape, -1);
+  return false;
 }
 #endif // if GTK
 

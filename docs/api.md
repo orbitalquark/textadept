@@ -4158,6 +4158,12 @@ Emitted when the user clicks on a buffer tab.
   * _`alt`_: The "Alt"/"Option" modifier key is held down.
   * _`cmd`_: The "Command" modifier key on macOS is held down.
 
+<a id="events.UNFOCUS"></a>
+#### `events.UNFOCUS` (string)
+
+Emitted when Textadept loses focus.
+  This event is never emitted when Textadept is running in the terminal.
+
 <a id="events.UPDATE_UI"></a>
 #### `events.UPDATE_UI` (string)
 

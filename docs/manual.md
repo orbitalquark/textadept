@@ -1884,6 +1884,7 @@ N/A                        |Added   |[FIND_RESULT_FOUND][]
 N/A                        |Added   |[FIND_TEXT_CHANGED][]
 N/A                        |Added   |[SESSION_SAVE][]
 N/A                        |Added   |[SESSION_LOAD][]
+N/A                        |Added   |[UNFOCUS][]
 **io**                     |        |
 reload_file()              |Renamed |[buffer:reload()][]
 save_file()                |Renamed |[buffer:save()][]
@@ -1950,6 +1951,7 @@ section below.
 [FIND_TEXT_CHANGED]: api.html#events.FIND_TEXT_CHANGED
 [SESSION_SAVE]: api.html#events.SESSION_SAVE
 [SESSION_LOAD]: api.html#events.SESSION_LOAD
+[UNFOCUS]: api.html#events.UNFOCUS
 [buffer:reload()]: api.html#buffer.reload
 [buffer:save()]: api.html#buffer.save
 [buffer:save_as()]: api.html#buffer.save_as
