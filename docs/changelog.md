@@ -8,10 +8,39 @@ development.**
 [donate]: https://gum.co/textadept
 [book]: book.html
 
-### 11.0 beta 2 (01 Nov 2020)
+### 11.0 (01 Dec 2020)
 
 Please see the [10 to 11 migration guide][] for upgrading from Textadept 10 to
 Textadept 11.
+
+Download:
+
+* [Textadept 11.0 -- Win32][]
+* [Textadept 11.0 -- Mac OSX 10.7+][]
+* [Textadept 11.0 -- Linux][]
+* [Textadept 11.0 -- Modules][]
+
+Bugfixes:
+
+* Fixed find & replace entry unfocus when window is refocused.
+* Modules: Fixed bug initializing spellcheck module in some instances.
+
+Changes:
+
+* Added optional mode parameter to `ui.command_entry.append_history()`.
+* `keys[`*`lexer`*`]` and `snippets[`*`lexer`*`]` tables are present on init.
+* Added [`events.FIND_RESULT_FOUND`][].
+* Added [`events.UNFOCUS`][].
+
+[10 to 11 migration guide]: manual.html#migrating-from-textadept-10-to-11
+[Textadept 11.0 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0/textadept_11.0.win32.zip
+[Textadept 11.0 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0/textadept_11.0.macOS.zip
+[Textadept 11.0 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0/textadept_11.0.linux.tgz
+[Textadept 11.0 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0/textadept_11.0.modules.zip
+[`events.FIND_RESULT_FOUND`]: api.html#events.FIND_RESULT_FOUND
+[`events.UNFOCUS`]: api.html#events.UNFOCUS
+
+### 11.0 beta 2 (01 Nov 2020)
 
 Download:
 
@@ -52,7 +81,6 @@ Changes:
 * Updated to [CDK][] 5.0-20200923.
 * Updated to [LuaFileSystem][] 1.8.0.
 
-[10 to 11 migration guide]: manual.html#migrating-from-textadept-10-to-11
 [Textadept 11.0 beta 2 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta_2/textadept_11.0_beta_2.win32.zip
 [Textadept 11.0 beta 2 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta_2/textadept_11.0_beta_2.macOS.zip
 [Textadept 11.0 beta 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta_2/textadept_11.0_beta_2.linux.tgz
