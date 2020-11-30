@@ -834,7 +834,7 @@ function get_text(buffer) end
 
 ---
 -- Moves the caret to the beginning of line number *line* and scrolls it into
--- view, regardless of whether or not *line* is hidden.
+-- view, event if *line* is hidden.
 -- @param buffer A buffer.
 -- @param line The line number in *buffer* to go to.
 function goto_line(buffer, line) end

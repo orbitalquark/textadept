@@ -60,7 +60,7 @@
 -- @field call_tip_fore_hlt (number, Write-only)
 --   A call tip's highlighted text foreground color, in "0xBBGGRR" format.
 -- @field call_tip_pos_start (number, Write-only)
---   The position in which backspacing beyond it hides a visible call tip.
+--   The position at which backspacing beyond it hides a visible call tip.
 -- @field call_tip_position (boolean)
 --   Display a call tip above the current line instead of below it.
 --   The default value is `false`.
@@ -460,7 +460,8 @@
 --   The alternative string representations of characters.
 --   Representations are displayed in the same way control characters are. Use
 --   the empty string for the '\0' character when assigning its representation.
---   Characters are strings, not numeric codes.
+--   Characters are strings, not numeric codes, and can be multi-byte
+--   characters.
 --   Call [`view.clear_representation()`]() to remove a representation.
 -- @field rgba_image_height (number)
 --   The height of the RGBA image to be defined using
@@ -1027,7 +1028,8 @@ function call_tip_show(view, pos, text) end
 function clear_registered_images(view) end
 
 ---
--- Removes the alternate string representation for character *char*.
+-- Removes the alternate string representation for character *char* (which may
+--   be a multi-byte character).
 -- @param view A view.
 -- @param char The string character in `buffer.representations` to remove the
 --   alternate string representation for.

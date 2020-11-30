@@ -231,14 +231,14 @@ local M = {}
 --   * _`find_text`_: The text to search for.
 --   * _`repl_text`_: The replacement text.
 -- @field RESET_AFTER (string)
---   Emitted after resetting the Lua state.
+--   Emitted after resetting Textadept's Lua state.
 --   Emitted by [`reset()`]().
 --   Arguments:
 --
 --   * _`persist`_: Table of data persisted by `events.RESET_BEFORE`. All
 --     handlers will have access to this same table.
 -- @field RESET_BEFORE (string)
---   Emitted before resetting the Lua state.
+--   Emitted before resetting Textadept's Lua state.
 --   Emitted by [`reset()`]().
 --   Arguments:
 --
