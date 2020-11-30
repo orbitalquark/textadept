@@ -190,7 +190,7 @@ local function complete_lua()
   M:auto_c_show(#part - 1, table.concat(cmpls, string.char(M.auto_c_separator)))
 end
 
--- Key mode for entering Lua commands.
+-- Mode for entering Lua commands.
 -- @class table
 -- @name lua_keys
 local lua_keys = {['\t'] = complete_lua}

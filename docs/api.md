@@ -2166,7 +2166,7 @@ Parameters:
 #### `buffer.goto_line`(*buffer, line*)
 
 Moves the caret to the beginning of line number *line* and scrolls it into
-view, regardless of whether or not *line* is hidden.
+view, event if *line* is hidden.
 
 Parameters:
 
@@ -4100,7 +4100,7 @@ Emitted to replace all occurrences of found text.
 <a id="events.RESET_AFTER"></a>
 #### `events.RESET_AFTER` (string)
 
-Emitted after resetting the Lua state.
+Emitted after resetting Textadept's Lua state.
   Emitted by [`reset()`](#reset).
   Arguments:
 
@@ -4110,7 +4110,7 @@ Emitted after resetting the Lua state.
 <a id="events.RESET_BEFORE"></a>
 #### `events.RESET_BEFORE` (string)
 
-Emitted before resetting the Lua state.
+Emitted before resetting Textadept's Lua state.
   Emitted by [`reset()`](#reset).
   Arguments:
 
@@ -10018,7 +10018,7 @@ A call tip's highlighted text foreground color, in "0xBBGGRR" format.
 <a id="view.call_tip_pos_start"></a>
 #### `view.call_tip_pos_start` (number, Write-only)
 
-The position in which backspacing beyond it hides a visible call tip.
+The position at which backspacing beyond it hides a visible call tip.
 
 <a id="view.call_tip_position"></a>
 #### `view.call_tip_position` (boolean)
@@ -10592,7 +10592,8 @@ The modifier key used in combination with a mouse drag in order to create a
 The alternative string representations of characters.
   Representations are displayed in the same way control characters are. Use
   the empty string for the '\0' character when assigning its representation.
-  Characters are strings, not numeric codes.
+  Characters are strings, not numeric codes, and can be multi-byte
+  characters.
   Call [`view.clear_representation()`](#view.clear_representation) to remove a representation.
 
 <a id="view.rgba_image_height"></a>
@@ -10996,7 +10997,8 @@ Parameters:
 <a id="view.clear_representation"></a>
 #### `view.clear_representation`(*view, char*)
 
-Removes the alternate string representation for character *char*.
+Removes the alternate string representation for character *char* (which may
+  be a multi-byte character).
 
 Parameters:
 
