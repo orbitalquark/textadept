@@ -131,10 +131,9 @@ Your [donation][] or purchase of the [book][] helps fund Textadept's continuous
 development.
 
 Textadept is [open source][]. Feel free to discuss features, report bugs, and
-submit patches either to the [mailing list][], or to me personally
+submit patches. You can also contact me personally
 (orbitalquark.att.triplequasar.com).
 
 [donation]: https://gum.co/textadept
 [book]: https://orbitalquark.github.io/textadept/book.html
 [open source]: https://github.com/orbitalquark/textadept
-[mailing list]: https://foicica.com/lists
