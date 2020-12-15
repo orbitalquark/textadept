@@ -3149,6 +3149,41 @@ function test_session_save()
   events.disconnect(events.SESSION_SAVE, handler)
 end
 
+function test_session_save_before_load()
+  local test_output_text = buffer:get_text()
+  local foo = os.tmpname()
+  local bar = os.tmpname()
+  local baz = os.tmpname()
+  buffer.new()
+  buffer.filename = foo
+  local session1 = os.tmpname()
+  textadept.session.save(session1)
+  buffer:close()
+  buffer.new()
+  buffer.filename = bar
+  local session2 = os.tmpname()
+  textadept.session.save(session2)
+  buffer.new()
+  buffer.filename = baz
+  textadept.session.load(session1) -- should save baz to session
+  assert_equal(#_BUFFERS, 1 + 1) -- test output buffer is open
+  assert_equal(buffer.filename, foo)
+  for i = 1, 2 do
+    textadept.session.load(session2) -- when i == 2, reload; should not re-save
+    assert_equal(#_BUFFERS, 2 + 1) -- test output buffer is open
+    assert_equal(_BUFFERS[#_BUFFERS - 1].filename, bar)
+    assert_equal(_BUFFERS[#_BUFFERS].filename, baz)
+    buffer:close()
+    buffer:close()
+  end
+  os.remove(foo)
+  os.remove(bar)
+  os.remove(baz)
+  os.remove(session1)
+  os.remove(session2)
+  buffer:add_text(test_output_text)
+end
+
 function test_snippets_find_snippet()
   snippets.foo = 'bar'
   textadept.snippets.paths[1] = _HOME .. '/test/modules/textadept/snippets'

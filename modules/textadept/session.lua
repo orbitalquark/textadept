@@ -52,6 +52,7 @@ function M.load(filename)
     }
     if not filename then return end
   end
+  if session_file ~= filename then M.save(session_file) end
   local f = loadfile(filename, 't', {})
   if not f or not io.close_all_buffers() then return end -- fail silently
   local session = f()
