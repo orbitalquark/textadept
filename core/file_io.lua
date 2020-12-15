@@ -244,30 +244,6 @@ local function close(buffer, force)
   return true
 end
 
----
--- Closes all open buffers, prompting the user to continue if there are unsaved
--- buffers, and returns `true` if the user did not cancel.
--- No buffers are saved automatically. They must be saved manually.
--- @return `true` if user did not cancel; `nil` otherwise.
--- @see buffer.close
--- @name close_all_buffers
-function io.close_all_buffers()
-  while #_BUFFERS > 1 do if not buffer:close() then return nil end end
-  return buffer:close() -- the last one
-end
-
--- Sets buffer io methods and the default buffer encoding.
-events.connect(events.BUFFER_NEW, function()
-  buffer.reload = reload
-  buffer.set_encoding, buffer.encoding = set_encoding, 'UTF-8'
-  buffer.save, buffer.save_as, buffer.close = save, save_as, close
-end)
--- Export for later storage into the first buffer, which does not exist yet.
--- Cannot rely on `events.BUFFER_NEW` because init scripts (e.g. menus and key
--- bindings) can access buffer functions before the first `events.BUFFER_NEW` is
--- emitted.
-io._reload, io._save, io._save_as, io._close = reload, save, save_as, close
-
 -- Detects if the current file has been externally modified and, if so, emits a
 -- `FILE_CHANGED` event.
 local function update_modified_file()
@@ -282,6 +258,32 @@ events.connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
 events.connect(events.VIEW_AFTER_SWITCH, update_modified_file)
 events.connect(events.FOCUS, update_modified_file)
 events.connect(events.RESUME, update_modified_file)
+
+---
+-- Closes all open buffers, prompting the user to continue if there are unsaved
+-- buffers, and returns `true` if the user did not cancel.
+-- No buffers are saved automatically. They must be saved manually.
+-- @return `true` if user did not cancel; `nil` otherwise.
+-- @see buffer.close
+-- @name close_all_buffers
+function io.close_all_buffers()
+  events.disconnect(events.BUFFER_AFTER_SWITCH, update_modified_file)
+  while #_BUFFERS > 1 do if not buffer:close() then return nil end end
+  events.connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
+  return buffer:close() -- the last one
+end
+
+-- Sets buffer io methods and the default buffer encoding.
+events.connect(events.BUFFER_NEW, function()
+  buffer.reload = reload
+  buffer.set_encoding, buffer.encoding = set_encoding, 'UTF-8'
+  buffer.save, buffer.save_as, buffer.close = save, save_as, close
+end)
+-- Export for later storage into the first buffer, which does not exist yet.
+-- Cannot rely on `events.BUFFER_NEW` because init scripts (e.g. menus and key
+-- bindings) can access buffer functions before the first `events.BUFFER_NEW` is
+-- emitted.
+io._reload, io._save, io._save_as, io._close = reload, save, save_as, close
 
 -- Prompts the user to reload the current file if it has been externally
 -- modified.
