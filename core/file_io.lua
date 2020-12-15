@@ -311,9 +311,15 @@ end)
 -- @see recent_files
 -- @name open_recent_file
 function io.open_recent_file()
-  local utf8_list = {}
-  for i = 1, #io.recent_files do
-    utf8_list[#utf8_list + 1] = io.recent_files[i]:iconv('UTF-8', _CHARSET)
+  local utf8_list, i = {}, 1
+  while i <= #io.recent_files do
+    local filename = io.recent_files[i]
+    if lfs.attributes(filename) then
+      utf8_list[#utf8_list + 1] = io.recent_files[i]:iconv('UTF-8', _CHARSET)
+      i = i + 1
+    else
+      table.remove(io.recent_files, i)
+    end
   end
   local button, i = ui.dialogs.filteredlist{
     title = _L['Open File'], columns = _L['Filename'], items = utf8_list
