@@ -43,14 +43,6 @@ view.set_theme = set_theme -- needed for the first view
 -- to work properly.
 if not arg then view:goto_buffer(buffer) end
 
--- Temporary compatibility.
-function lfs.dir_foreach(dir,f,filter,n,include_dirs)ui.dialogs.msgbox{title='Compatibility issue',text='Please change your use of "lfs.dir_foreach()" to "for filename in lfs.walk()"'};for filename in lfs.walk(dir,filter,n,include_dirs)do if f(filename)==false then return end end end
-setmetatable(_L,{__index=function(t,k)return rawget(t,k:gsub('_',''))or'No Localization:'..k end})
-setmetatable(textadept.snippets,{__index=function(t,k)return rawget(t,k:gsub('^_',''))end})
-buffer.set_theme=function(...)view:set_theme(select(2,...));events.connect(events.INITIALIZED,function()ui.dialogs.msgbox{title='Compatibility issue',text='Please change your use of "buffer:set_theme()" to "view:set_theme()"'}end)end
-local function en_au_to_us()for au,us in pairs{CASEINSENSITIVEBEHAVIOUR_IGNORECASE=buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE,CASEINSENSITIVEBEHAVIOUR_RESPECTCASE=buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE,INDIC_GRADIENTCENTRE=buffer.INDIC_GRADIENTCENTER,MARGIN_COLOUR=buffer.MARGIN_COLOR,auto_c_case_insensitive_behaviour=buffer.auto_c_case_insensitive_behavior,colourise=buffer.colorize,edge_colour=buffer.edge_color,set_fold_margin_colour=function()ui.dialogs.msgbox{title='Compatibility issue',text="Please update your theme's use of renamed buffer/view fields"};return buffer.set_fold_margin_color end,set_fold_margin_hi_colour=buffer.set_fold_margin_hi_color,vertical_centre_caret=buffer.vertical_center_caret}do buffer[au]=us;view[au]=us end end;events.connect(events.BUFFER_NEW,en_au_to_us);en_au_to_us()
-events.connect(events.INITIALIZED,function()if _NOCOMPAT then return end;local update_keys={};local function translate_keys(keys,new_keys)for k,v in pairs(keys)do if type(k)=='string'and k:find('^[cmas]+.$')and not k:find('ctrl')and not k:find('cmd')and not k:find('alt')and not k:find('meta')and not k:find('shift')and k~='css'and k~='asp'and k~='sass'and k~='sml'then update_keys[#update_keys+1]=k;k=k:gsub('^(c?m?a?)s(.)','%1shift+%2'):gsub('^(c?m?)a(.)','%1alt+%2'):gsub('^(c?)m(.)',string.format('%%1%s%%2',OSX and'cmd+'or'meta+')):gsub('^c(.)','ctrl+%1')end rawset(new_keys,k,type(v)=='table'and translate_keys(v,setmetatable({},getmetatable(v)))or v)end return new_keys end;for k,v in pairs(translate_keys(keys,{}))do keys[k]=v end;if#update_keys>0then ui.dialogs.msgbox{title='Compatibility issue',text='Please update your keys to use the new modifiers:\n'..table.concat(update_keys,'\n')..'\n\nSet _NOCOMPAT=true to disable this warning'}end end)
-
 -- The remainder of this file defines default buffer and view properties and
 -- applies them to subsequent buffers and views. Normally, a setting like
 -- `buffer.use_tabs = false` only applies to the current (initial) buffer.
