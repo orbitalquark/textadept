@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="style.css" type="text/css" />
     <link rel="icon" href="icon.png" type="image/png" />
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <style type="text/css">
       #left, #right {
         margin: -1em 0 1em 0;
@@ -37,6 +38,10 @@
       #main div.left-col h3, #main div.right-col h3 { text-align: center; }
       #main div.left-col .center, #main div.right-col .center {
         text-align: center;
+      }
+
+      @media screen and (max-width: 1000px) {
+        #main div.left-col, #main div.right-col { width: 100%; }
       }
     </style>
   </head>
