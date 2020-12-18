@@ -65,6 +65,8 @@ table, th, td {
   max-width: 1000px;
 }
 
+#content img { max-width: 100%; }
+
 #header h1 {
   background-color: #d9d9d9;
   border-width: 0 0 1px 0;
