@@ -127,13 +127,14 @@ end
 local orig_focus = M.focus
 ---
 -- Displays and focuses the Find & Replace Pane.
--- @param options Optional table of options to initially set.
+-- @param options Optional table of `ui.find` field options to initially set.
 -- @name focus
 function M.focus(options)
   local already_in_files = M.in_files
-  if assert_type(options, 'table/nil', 1) then
-    for k, v in pairs(options) do M[k] = v end
-  end
+  if not assert_type(options, 'table/nil', 1) then options = {} end
+  if not options.in_files then options.in_files = false end -- reset
+  if not options.incremental then options.incremental = false end -- reset
+  for k, v in pairs(options) do M[k] = v end
   M.replace_label_text = not M.in_files and _L['Replace:'] or _L['Filter:']
   if M.in_files then
     if not already_in_files then repl_text = M.replace_entry_text end -- save
