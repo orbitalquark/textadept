@@ -2656,6 +2656,23 @@ function test_find_replace_regex_transforms()
   buffer:close(true)
 end
 
+function test_ui_find_focus()
+  buffer:new()
+  buffer:append_text(' foo\n\n foo')
+  ui.find.focus{incremental = true}
+  ui.find.find_entry_text = 'foo'
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
+  assert_equal(buffer:line_from_position(buffer.current_pos), 1)
+  buffer:line_down()
+  ui.find.focus() -- should turn off incremental find
+  ui.find.find_entry_text = 'f'
+  if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
+  assert_equal(buffer:line_from_position(buffer.current_pos), 2)
+  buffer:close(true)
+
+  assert_raises(function() ui.find.focus(1) end, 'table/nil expected, got number')
+end
+
 function test_history()
   local filename1 = _HOME .. '/test/modules/textadept/history/1'
   io.open_file(filename1)

@@ -8977,7 +8977,7 @@ Displays and focuses the Find & Replace Pane.
 
 Parameters:
 
-* *`options`*: Optional table of options to initially set.
+* *`options`*: Optional table of `ui.find` field options to initially set.
 
 <a id="ui.find.goto_file_found"></a>
 #### `ui.find.goto_file_found`(*line\_num, next*)
