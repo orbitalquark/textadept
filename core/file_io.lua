@@ -162,7 +162,8 @@ local function reload(buffer)
   local text = f:read('a')
   f:close()
   if buffer.encoding then text = text:iconv('UTF-8', buffer.encoding) end
-  buffer:set_text(text)
+  buffer:clear_all()
+  buffer:append_text(text)
   buffer:set_save_point()
   buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
   if buffer == _G.buffer then events.emit(events.FILE_AFTER_RELOAD) end
