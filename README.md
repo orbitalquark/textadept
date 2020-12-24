@@ -30,7 +30,8 @@ In its bid for minimalism, Textadept depends on very little to run. On Windows
 and macOS, it has no external dependencies. On Linux and BSD, the GUI version
 depends only on [GTK][] (a cross-platform GUI toolkit) version 2.24 or later
 (circa early 2011), and the terminal version depends only on a wide-character
-implementation of curses like [ncurses][](w).
+implementation of curses like [ncurses][](w). Lua and any other third-party
+dependencies are compiled into the application itself.
 
 [GTK]: https://gtk.org
 [ncurses]: https://invisible-island.net/ncurses/ncurses.html
