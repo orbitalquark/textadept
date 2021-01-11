@@ -325,7 +325,7 @@ end
 -- is the project's root directory.
 -- @class table
 -- @name build_commands
-M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='docker build .',--[[Make]]Makefile='make',GNUmakefile='make',makefile='make',--[[Maven]]['pom.xml']='mvn',--[[Ruby]]Rakefile='rake'}
+M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='docker build .',--[[Make]]Makefile='make',GNUmakefile='make',makefile='make',--[[Meson]]['meson.build']='meson compile',--[[Maven]]['pom.xml']='mvn',--[[Ruby]]Rakefile='rake'}
 
 ---
 -- Builds the project whose root path is *root_directory* or the current project
