@@ -3130,6 +3130,25 @@ function test_run_goto_internal_lua_error()
   buffer:close()
 end
 
+function test_run_commands_function()
+  local filename = os.tmpname()
+  io.open_file(filename)
+  textadept.run.run_commands.text = function()
+    return [[lua -e 'print(os.getenv("FOO"))']], '/tmp', {FOO = 'bar'}
+  end
+  textadept.run.run()
+  assert_equal(#_BUFFERS, 3) -- including [Test Output]
+  assert_equal(buffer._type, _L['[Message Buffer]'])
+  ui.update() -- process output
+  assert(buffer:get_text():find('> cd /tmp'), 'cwd not set properly')
+  assert(buffer:get_text():find('bar'), 'env not set properly')
+  if #_VIEWS > 1 then view:unsplit() end
+  buffer:close()
+  buffer:close()
+  textadept.run.run_commands.text = nil -- reset
+  os.remove(filename)
+end
+
 -- TODO: test textadept.run.run_in_background
 
 function test_session_save()

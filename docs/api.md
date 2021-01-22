@@ -6019,7 +6019,7 @@ Parameters:
 * *`s`*: String or pattern start of a range.
 * *`e`*: Optional string or pattern end of a range. The default value is *s*.
 * *`single_line`*: Optional flag indicating whether or not the range must be
-  on a single line.
+  on a single line. The default value is `false`.
 * *`escapes`*: Optional flag indicating whether or not the range end may
   be escaped by a '\' character.
   The default value is `false` unless *s* and *e* are identical,
@@ -6051,8 +6051,8 @@ Parameters:
 
 Usage:
 
-* `local preproc = token(lexer.PREPROCESSOR, lexer.starts_line('#') *
-  lexer.nonnewline^0)`
+* `local preproc = token(lexer.PREPROCESSOR,
+  lexer.starts_line(lexer.to_eol('#')))`
 
 Return:
 
@@ -6075,7 +6075,7 @@ Parameters:
 Usage:
 
 * `local line_comment = lexer.to_eol('//')`
-* `local line_comment = lexer.to_eol(P('#') + ';')`
+* `local line_comment = lexer.to_eol(S('#;'))`
 
 Return:
 
@@ -6294,7 +6294,7 @@ Parameters:
 * *`cwd`*: Optional current working directory (cwd) for the child
   process. When omitted, the parent's cwd is used.
 * *`env`*: Optional map of environment variables for the child process.
-  When omitted, the parent's environment is used.
+  When omitted, Textadept's environment is used.
 * *`stdout_cb`*: Optional Lua function that accepts a string parameter for a
   block of standard output read from the child. Stdout is read asynchronously
   in 1KB or 0.5KB blocks (depending on the platform), or however much data is
@@ -7425,8 +7425,9 @@ Stops the currently running process, if any.
 
 Map of project root paths and "makefiles" to their associated "build" shell
 command line strings or functions that return such strings.
-Functions may also return a working directory to operate in. By default, it
-is the project's root directory.
+Functions may also return a working directory and process environment table
+to operate in. By default, the working directory is the project's root
+directory and the environment is Textadept's environment.
 
 <a id="textadept.run.compile_commands"></a>
 #### `textadept.run.compile_commands`
@@ -7440,8 +7441,9 @@ Command line strings may have the following macros:
   + `%d`: The file's directory path.
   + `%p`: The file's full path.
 
-Functions may also return a working directory to operate in. By default, it
-is the current file's parent directory.
+Functions may also return a working directory and process environment table
+to operate in. By default, the working directory is the current file's parent
+directory and the environment is Textadept's environment.
 
 <a id="textadept.run.error_patterns"></a>
 #### `textadept.run.error_patterns`
@@ -7469,8 +7471,9 @@ Command line strings may have the following macros:
   + `%d`: The file's directory path.
   + `%p`: The file's full path.
 
-Functions may also return a working directory to operate in. By default, it
-is the current file's parent directory.
+Functions may also return a working directory and process environment table
+to operate in. By default, the working directory is the current file's parent
+directory and the environment is Textadept's environment.
 
 ---
 <a id="textadept.session"></a>
