@@ -4376,7 +4376,7 @@ See also:
 * [`buffer.close`](#buffer.close)
 
 <a id="io.get_project_root"></a>
-#### `io.get_project_root`(*path*)
+#### `io.get_project_root`(*path, submodule*)
 
 Returns the root directory of the project that contains filesystem path
 *path*.
@@ -4387,7 +4387,10 @@ Parameters:
 
 * *`path`*: Optional filesystem path to a project or a file contained within
   a project. The default value is the buffer's filename or the current
-  working directory.
+  working directory. This parameter may be omitted.
+* *`submodule`*: Optional flag that indicates whether or not to return the
+  root of the current submodule (if applicable). The default value is
+  `false`.
 
 Return:
 

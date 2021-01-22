@@ -521,6 +521,20 @@ function test_file_io_get_project_root()
   assert_equal(io.get_project_root(_HOME .. '/core'), _HOME)
   assert_equal(io.get_project_root(_HOME .. '/core/init.lua'), _HOME)
   assert_equal(io.get_project_root('/tmp'), nil)
+  lfs.chdir(cwd)
+
+  -- Test git submodules.
+  local dir = os.tmpname()
+  os.remove(dir)
+  lfs.mkdir(dir)
+  lfs.mkdir(dir .. '/.git')
+  lfs.mkdir(dir .. '/foo')
+  io.open(dir .. '/foo/.git', 'w'):write():close() -- simulate submodule
+  assert_equal(io.get_project_root(dir .. '/foo/bar.txt'), dir)
+  io.open_file(dir .. '/foo/bar.txt')
+  assert_equal(io.get_project_root(true), dir .. '/foo')
+  buffer:close()
+  os.execute('rm -r ' .. dir)
 
   assert_raises(function() io.get_project_root(1) end, 'string/nil expected, got number')
 end
