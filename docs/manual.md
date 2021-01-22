@@ -7,7 +7,7 @@
 3. [User Interface](#user-interface)
 4. [Working with Files and Projects](#working-with-files-and-projects)
 5. [Adept Editing](#adept-editing)
-6. [Compile, Run, and Build](#compile-run-and-build)
+6. [Compile, Run, Build, and Test](#compile-run-build-and-test)
 7. [Modules](#modules)
 8. [Themes](#themes)
 9. [Scripting](#scripting)
@@ -1272,17 +1272,18 @@ outside that mode until the mode is unset (e.g. Vim-style modal editing). The
 [keys documentation]: api.html#keys
 
 --------------------------------------------------------------------------------
-### Compile, Run, and Build
+### Compile, Run, Build, and Test
 --------------------------------------------------------------------------------
 
 Textadept knows most of the commands that compile and/or run code in source
-files. It also knows some of the commands that build projects. Textadept
-recognizes many of the warning and error messages emitted by those commands and
-marks them as they occur in compile/run/build output. Double-clicking on a line
-with a warning or error jumps to its source.
+files. It also knows some of the commands that build projects, and you can tell
+the editor how to run your project's test suite. Textadept recognizes many of
+the warning and error messages emitted by those commands and marks them as they
+occur in compile/run/build/test output. Double-clicking on a line with a warning
+or error jumps to its source.
 
 The following key bindings apply for compiling and running source files, and
-for building projects:
+for building projects and running tests:
 
 * Compile the current file via `Ctrl+Shift+R` on Windows, Linux, and BSD, `⌘⇧R`
   on macOS, and `M-^R` in the terminal version.
@@ -1295,9 +1296,11 @@ for building projects:
   command and press `Enter` or click `OK`.
 * Build the current project via `Ctrl+Shift+B` on Windows, Linux, and BSD, `⌘⇧B`
   on macOS, and `M-^B` in the terminal version.
-* Stop the currently running compile, run, or build process via `Ctrl+Shift+X`
-  on Windows, Linux, and BSD, `⌘⇧X` on macOS, and `M-^X` in the terminal
-  version.
+* Run tests for the current project via `Ctrl+Shift+T` on Windows, Linux, and
+  BSD, `⌘⇧T` on macOS, and `M-^T` in the terminal version.
+* Stop the currently running compile, run, build, or test process via
+  `Ctrl+Shift+X` on Windows, Linux, and BSD, `⌘⇧X` on macOS, and `M-^X` in the
+  terminal version.
 * Jump to the source of the next recognized warning or error via `Ctrl+Alt+E` on
   Windows, Linux, and BSD, `^⌘E` on macOS, and `M-X` in the terminal version.
 * Jump to the source of the previously recognized warning or error via
@@ -1308,25 +1311,26 @@ for building projects:
 
 ![Runtime Error](images/runerror.png)
 
-When you execute a compile, run, or build command, that command's output is
-printed to a temporary buffer in real-time. You can configure Textadept to print
-output in the background by setting [`textadept.run.run_in_background`][]. For
-example, in your *~/.textadept/init.lua*:
+When you execute a compile, run, build, or test command, that command's output
+is printed to a temporary buffer in real-time. You can configure Textadept to
+print output in the background by setting [`textadept.run.run_in_background`][].
+For example, in your *~/.textadept/init.lua*:
 
     textadept.run.run_in_background = true
 
-You can change or add compile, run, and build commands by modifying the
-[`textadept.run.compile_commands`][], [`textadept.run.run_commands`][], and
-[`textadept.run.build_commands`][] tables, respectively. You can add Lua
-patterns that recognize warning and error output by modifying the
-[`textadept.run.error_patterns`][] table. For example, in your
-*~/.textadept/init.lua*:
+You can change or add compile, run, build, and test commands by modifying the
+[`textadept.run.compile_commands`][], [`textadept.run.run_commands`][],
+[`textadept.run.build_commands`][], and [`textadept.run.test_commands`][]
+tables, respectively. You can add Lua patterns that recognize warning and error
+output by modifying the [`textadept.run.error_patterns`][] table. For example,
+in your *~/.textadept/init.lua*:
 
     textadept.run.compile_commands.foo = 'foo "%f"'
     textadept.run.run_commands.foo = './"%e"'
     textadept.run.error_patterns.foo = {'^(.-):(%d+): (.+)$'} -- bar.foo:1: oops
 
     textadept.run.build_commands['/path/to/project'] = 'make -C src -j4'
+    textadept.run.test_commands['/path/to/project'] = 'lua tests.lua'
 
 **Tip:** you can set compile and run commands on a per-filename basis, and these
 commands can contain arguments so that you do not have to invoke
@@ -1336,6 +1340,7 @@ commands can contain arguments so that you do not have to invoke
 [`textadept.run.compile_commands`]: api.html#textadept.run.compile_commands
 [`textadept.run.run_commands`]: api.html#textadept.run.run_commands
 [`textadept.run.build_commands`]: api.html#textadept.run.build_commands
+[`textadept.run.test_commands`]: api.html#textadept.run.test_commands
 [`textadept.run.error_patterns`]: api.html#textadept.run.error_patterns
 
 --------------------------------------------------------------------------------

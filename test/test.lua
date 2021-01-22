@@ -3120,6 +3120,18 @@ function test_run_build()
   -- TODO: project whose makefile is autodetected.
 end
 
+function test_run_test()
+  textadept.run.test_commands[_HOME] = function()
+    return 'lua modules/textadept/run/test.lua', _HOME .. '/test/' -- intentional trailing '/'
+  end
+  textadept.run.test(_HOME)
+  if #_VIEWS > 1 then view:unsplit() end
+  ui.update() -- process output
+  assert(buffer:get_text():find('test%.lua'), 'did not run test command')
+  assert(buffer:get_text():find('assertion failed!'), 'assertion failure not detected')
+  buffer:close()
+end
+
 function test_run_goto_internal_lua_error()
   xpcall(error, function(message) events.emit(events.ERROR, debug.traceback(message)) end, 'internal error', 2)
   if #_VIEWS > 1 then view:unsplit() end
