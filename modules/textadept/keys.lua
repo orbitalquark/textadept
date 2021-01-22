@@ -347,7 +347,7 @@ local bindings = {
   [m('Edit/Preferences')] = {'ctrl+p', 'cmd+,', 'meta+~'},
 
   -- Search.
-  [m('Search/Find')] = {'ctrl+f', 'cmd+f', {'meta+f', 'meta+F'}},
+  [ui.find.focus] = {'ctrl+f', 'cmd+f', {'meta+f', 'meta+F'}},
   [ui.find.find_next] = {{'ctrl+g', 'f3'}, 'cmd+g', 'meta+g'},
   [ui.find.find_prev] = {{'ctrl+G', 'shift+f3'}, 'cmd+G', 'meta+G'},
   [ui.find.replace] = {'ctrl+alt+r', 'ctrl+r', 'meta+r'},
@@ -364,7 +364,7 @@ local bindings = {
   [textadept.editing.goto_line] = {'ctrl+j', 'cmd+j', 'ctrl+j'},
 
   -- Tools.
-  [m('Tools/Command Entry')] = {'ctrl+e', 'cmd+e', 'meta+c'},
+  [ui.command_entry.run] = {'ctrl+e', 'cmd+e', 'meta+c'},
   [m('Tools/Select Command')] = {'ctrl+E', 'cmd+E', 'meta+C'},
   [textadept.run.run] = {'ctrl+r', 'cmd+r', 'ctrl+r'},
   [textadept.run.compile] = {'ctrl+R', 'cmd+R', 'ctrl+meta+r'},
