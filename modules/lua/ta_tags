@@ -551,7 +551,7 @@ get_default_fold_display_text	_HOME/core/.view.luadoc	/^function get_default_fol
 get_last_child	_HOME/core/.buffer.luadoc	/^function get_last_child(buffer, line, level) end$/;"	f	class:buffer
 get_lexer	_HOME/core/.buffer.luadoc	/^function get_lexer(buffer, current) end$/;"	f	class:buffer
 get_line	_HOME/core/.buffer.luadoc	/^function get_line(buffer, line) end$/;"	f	class:buffer
-get_project_root	_HOME/core/file_io.lua	/^function io.get_project_root(path)$/;"	f	class:io
+get_project_root	_HOME/core/file_io.lua	/^function io.get_project_root(path, submodule)$/;"	f	class:io
 get_rule	_HOME/lexers/lexer.lua	/^function M.get_rule(lexer, id)$/;"	f	class:lexer
 get_sel_text	_HOME/core/.buffer.luadoc	/^function get_sel_text(buffer) end$/;"	f	class:buffer
 get_split_table	_HOME/core/ui.lua	/^local get_split_table$/;"	f	class:ui

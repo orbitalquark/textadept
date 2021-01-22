@@ -338,17 +338,22 @@ local vcs = {'.bzr', '.git', '.hg', '.svn', '_FOSSIL_'}
 -- VCSes are Bazaar, Fossil, Git, Mercurial, and SVN.
 -- @param path Optional filesystem path to a project or a file contained within
 --   a project. The default value is the buffer's filename or the current
---   working directory.
+--   working directory. This parameter may be omitted.
+-- @param submodule Optional flag that indicates whether or not to return the
+--   root of the current submodule (if applicable). The default value is
+--   `false`.
 -- @return string root or nil
 -- @name get_project_root
-function io.get_project_root(path)
+function io.get_project_root(path, submodule)
+  if type(path) == 'boolean' then path, submodule = nil, path end
   if not assert_type(path, 'string/nil', 1) then
     path = buffer.filename or lfs.currentdir()
   end
   local dir = path:match('^(.+)[/\\]?')
   while dir do
     for i = 1, #vcs do
-      if lfs.attributes(dir .. '/' .. vcs[i], 'mode') then return dir end
+      local mode = lfs.attributes(dir .. '/' .. vcs[i], 'mode')
+      if mode and (submodule or mode == 'directory') then return dir end
     end
     dir = dir:match('^(.+)[/\\]')
   end
