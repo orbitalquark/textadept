@@ -7009,6 +7009,7 @@ Ctrl+R          |⌘R     |^R           |Run
 Ctrl+Shift+R    |⌘⇧R    |M-^R         |Compile
 Ctrl+Shift+A    |⌘⇧A    |None         |Set Arguments...
 Ctrl+Shift+B    |⌘⇧B    |M-^B         |Build
+Ctrl+Shift+T    |⌘⇧T    |M-^T         |Run tests
 Ctrl+Shift+X    |⌘⇧X    |M-^X         |Stop
 Ctrl+Alt+E      |^⌘E    |M-X          |Next Error
 Ctrl+Alt+Shift+E|^⌘⇧E   |M-S-X        |Previous Error
@@ -7250,7 +7251,8 @@ number.
 Compile and run source code files with Textadept.
 [Language modules](#compile-and-run) may tweak the `compile_commands`,
 `run_commands`, and `error_patterns` tables for particular languages.
-The user may tweak `build_commands` for particular projects.
+The user may tweak `build_commands` and `test_commands` for particular
+projects.
 
 ### Fields defined by `textadept.run`
 
@@ -7298,6 +7300,16 @@ Emitted when executing a language's run shell command.
   * `output`: A line of string output from the command.
   * `ext_or_lexer`: The file extension or lexer name associated with the
     executed run command.
+
+<a id="events.TEST_OUTPUT"></a>
+#### `events.TEST_OUTPUT` (string)
+
+Emitted when executing a project's shell command for running tests.
+  By default, output is printed to the message buffer. In order to override
+  this behavior, connect to the event with an index of `1` and return `true`.
+  Arguments:
+
+  * `output`: A line of string output from the command.
 
 <a id="textadept.run.run_in_background"></a>
 #### `textadept.run.run_in_background` (bool)
@@ -7417,6 +7429,25 @@ See also:
 
 Stops the currently running process, if any.
 
+<a id="textadept.run.test"></a>
+#### `textadept.run.test`(*root\_directory*)
+
+Runs tests for the project whose root path is *root_directory* or the current
+project using the shell command from the `test_commands` table.
+The current project is determined by either the buffer's filename or the
+current working directory.
+Emits `TEST_OUTPUT` events.
+
+Parameters:
+
+* *`root_directory`*: The path to the project to run tests for. The default
+  value is the current project.
+
+See also:
+
+* [`textadept.run.test_commands`](#textadept.run.test_commands)
+* [`events`](#events)
+
 
 ### Tables defined by `textadept.run`
 
@@ -7473,6 +7504,15 @@ Command line strings may have the following macros:
 
 Functions may also return a working directory and process environment table
 to operate in. By default, the working directory is the current file's parent
+directory and the environment is Textadept's environment.
+
+<a id="textadept.run.test_commands"></a>
+#### `textadept.run.test_commands`
+
+Map of project root paths to their associated "test" shell command line
+strings or functions that return such strings.
+Functions may also return a working directory and process environment table
+to operate in. By default, the working directory is the project's root
 directory and the environment is Textadept's environment.
 
 ---

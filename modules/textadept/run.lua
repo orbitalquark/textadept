@@ -7,7 +7,8 @@ local M = {}
 -- Compile and run source code files with Textadept.
 -- [Language modules](#compile-and-run) may tweak the `compile_commands`,
 -- `run_commands`, and `error_patterns` tables for particular languages.
--- The user may tweak `build_commands` for particular projects.
+-- The user may tweak `build_commands` and `test_commands` for particular
+-- projects.
 -- @field run_in_background (bool)
 --   Run shell commands silently in the background.
 --   This only applies when the message buffer is open, though it does not have
@@ -43,6 +44,13 @@ local M = {}
 --   Arguments:
 --
 --   * `output`: A line of string output from the command.
+-- @field _G.events.TEST_OUTPUT (string)
+--   Emitted when executing a project's shell command for running tests.
+--   By default, output is printed to the message buffer. In order to override
+--   this behavior, connect to the event with an index of `1` and return `true`.
+--   Arguments:
+--
+--   * `output`: A line of string output from the command.
 module('textadept.run')]]
 
 M.run_in_background = false
@@ -51,7 +59,9 @@ M.MARK_WARNING = _SCINTILLA.next_marker_number()
 M.MARK_ERROR = _SCINTILLA.next_marker_number()
 
 -- Events.
-local run_events = {'compile_output', 'run_output', 'build_output'}
+local run_events = {
+  'compile_output', 'run_output', 'build_output', 'test_output'
+}
 for _, v in ipairs(run_events) do events[v:upper()] = v end
 
 -- Keep track of: the last process spawned in order to kill it if requested; the
@@ -92,10 +102,10 @@ local function scan_for_error(message, ext_or_lexer)
         message:lower():find('warning') and not message:lower():find('error')
       -- Compile and run commands specify the file extension or lexer name used
       -- to determine the command, so the error patterns used are guaranteed to
-      -- be correct. Build commands have no such context and instead iterate
-      -- through all possible error patterns. Only consider the error/warning
-      -- valid if the extracted filename's extension or lexer name matches the
-      -- error pattern's extension or lexer name.
+      -- be correct. Build and test commands have no such context and instead
+      -- iterate through all possible error patterns. Only consider the
+      -- error/warning valid if the extracted filename's extension or lexer name
+      -- matches the error pattern's extension or lexer name.
       if ext_or_lexer then return detail end
       local ext = detail.filename:match('[^/\\.]+$')
       local lexer_name = textadept.file_types.extensions[ext]
@@ -107,7 +117,7 @@ local function scan_for_error(message, ext_or_lexer)
   return nil
 end
 
--- Prints an output line from a compile, run, or build shell command.
+-- Prints an output line from a compile, run, build, or test shell command.
 -- Assume output is UTF-8 unless there's a recognized warning or error message.
 -- In that case assume it is encoded in _CHARSET and mark it.
 -- All stdout and stderr from the command is printed silently.
@@ -129,8 +139,8 @@ local function print_line(line, ext_or_lexer)
 end
 
 local output_buffer
--- Prints the output from a compile, run, or build shell command as a series of
--- lines, performing buffering as needed.
+-- Prints the output from a compile, run, build, or test shell command as a
+-- series of lines, performing buffering as needed.
 -- @param output The output to print, or `nil` to flush any buffered output.
 -- @param ext_or_lexer Optional file extension or lexer name associated with the
 --   executed command. This is used for better error detection in compile and
@@ -367,6 +377,38 @@ function M.build(root_directory)
   run_command(command, root_directory, events.BUILD_OUTPUT)
 end
 events.connect(events.BUILD_OUTPUT, print_output)
+
+---
+-- Map of project root paths to their associated "test" shell command line
+-- strings or functions that return such strings.
+-- Functions may also return a working directory and process environment table
+-- to operate in. By default, the working directory is the project's root
+-- directory and the environment is Textadept's environment.
+-- @class table
+-- @name test_commands
+M.test_commands = {}
+
+---
+-- Runs tests for the project whose root path is *root_directory* or the current
+-- project using the shell command from the `test_commands` table.
+-- The current project is determined by either the buffer's filename or the
+-- current working directory.
+-- Emits `TEST_OUTPUT` events.
+-- @param root_directory The path to the project to run tests for. The default
+--   value is the current project.
+-- @see test_commands
+-- @see _G.events
+-- @name test
+function M.test(root_directory)
+  if not assert_type(root_directory, 'string/nil', 1) then
+    root_directory = io.get_project_root()
+    if not root_directory then return end
+  end
+  for i = 1, #_BUFFERS do _BUFFERS[i]:annotation_clear_all() end
+  run_command(
+    M.test_commands[root_directory], root_directory, events.TEST_OUTPUT)
+end
+events.connect(events.TEST_OUTPUT, print_output)
 
 ---
 -- Stops the currently running process, if any.
