@@ -3670,6 +3670,24 @@ function test_ui_maximized()
 end
 expected_failure(test_ui_maximized)
 
+function test_ui_restore_view_state()
+  buffer.new() -- 1
+  view.view_ws = view.WS_VISIBLEALWAYS
+  buffer.new() -- 2
+  assert(view.view_ws ~= view.WS_VISIBLEALWAYS, 'view whitespace settings not reset')
+  view:goto_buffer(-1) -- go back to 1
+  assert_equal(view.view_ws, view.WS_VISIBLEALWAYS)
+  view.view_ws = view.WS_INVISIBLE -- reset
+  buffer.new() -- 3
+  view.view_ws = view.WS_VISIBLEALWAYS
+  buffer:close() -- switches back to 1 (after briefly switching to 2)
+  assert_equal(view.view_ws, view.WS_INVISIBLE)
+  view:goto_buffer(1) -- go back to 2
+  assert_equal(view.view_ws, view.WS_INVISIBLE)
+  buffer:close()
+  buffer:close()
+end
+
 function test_reset()
   local _persist
   _G.foo = 'bar'

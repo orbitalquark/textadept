@@ -444,6 +444,7 @@ events.connect(
   events.BUFFER_BEFORE_SWITCH, function() view._prev_buffer = buffer end)
 events.connect(events.BUFFER_DELETED, function()
   if _BUFFERS[view._prev_buffer] and buffer ~= view._prev_buffer then
+    restore_view_state() -- events.BUFFER_AFTER_SWITCH is not emitted in time
     view:goto_buffer(view._prev_buffer)
   end
 end)
