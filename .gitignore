@@ -1,0 +1,17 @@
+# Binaries.
+src/*.o
+src/*.tar.gz
+src/*.tgz
+src/*.zip
+textadept*
+
+# Lexers.
+lexers/
+
+# Dependencies.
+src/cdk/
+src/gtdialog/
+src/LexLPeg.*
+src/lua/
+src/scintilla/
+src/termkey/
