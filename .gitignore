@@ -3,6 +3,8 @@ src/*.o
 src/*.tar.gz
 src/*.tgz
 src/*.zip
+textadept
+textadept-curses
 
 # Lexers.
 lexers/
