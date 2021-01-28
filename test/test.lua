@@ -2847,6 +2847,18 @@ function test_history_per_view()
   buffer:close(true)
 end
 
+function test_history_print_buffer()
+  local tabs = ui.tabs
+  ui.tabs = true
+  ui.print('hi')
+  textadept.history.back()
+  assert(buffer._type ~= _L['[Message Buffer]'])
+  textadept.history.forward()
+  assert_equal(buffer._type, _L['[Message Buffer]'])
+  buffer:close()
+  ui.tabs = tabs -- restore
+end
+
 function test_macro_record_play_save_load()
   textadept.macros.save() -- should not do anything
   textadept.macros.play() -- should not do anything

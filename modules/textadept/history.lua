@@ -83,7 +83,7 @@ function M.back()
   if #history == 0 then return end -- nothing to do
   local record = history[history.pos]
   local line = buffer:line_from_position(buffer.current_pos)
-  if buffer.filename ~= record.filename or
+  if buffer.filename ~= record.filename and buffer._type ~= record.filename or
      math.abs(record.line - line) > M.minimum_line_distance then
     -- When navigated away from the most recent record, and if that record is
     -- not a soft record, jump back to it first, then navigate backwards.
