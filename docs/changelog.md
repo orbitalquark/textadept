@@ -8,6 +8,46 @@ development.**
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.1 (01 Feb 2021)
+
+Download:
+
+* [Textadept 11.1 -- Win32][]
+* [Textadept 11.1 -- Mac OSX 10.7+][]
+* [Textadept 11.1 -- Linux][]
+* [Textadept 11.1 -- Modules][]
+
+Bugfixes:
+
+* Do not prompt for file reload during `io.close_all_buffers()`.
+* Ensure a bare `ui.find.focus()` call resets incremental and in files options.
+* Fixed `buffer:reload()` only reloading up to a NUL byte, if present.
+* Fixed minor file extension issues.
+* Fixed bug restoring view state in an intermediate buffer after closing one.
+* Fixed navigating back through history from a print buffer.
+* Modules: Fixed incorrect LSP mouse hover query position.
+* Modules: Only notify LSP servers about opened files after startup in order to
+  avoid overwhelming the connection.
+
+Changes:
+
+* Save the current session prior to loading another one.
+* Do not show deleted files in recent file list.
+* Updated various lexers and fixed various small lexer issues.
+* Added support for Clojure, Elm, Fantom, fstab, Julia, Meson, Pony, Reason,
+  RouterOS, Spin, systemd, systemd-networkd, Xs, and Zig.
+* Compile, run, and build command functions can also return environment tables.
+* Added [`textadept.run.test()`][] and [`textadept.run.test_commands`][].
+* `io.get_project_root()` accepts an optional flag for returning a submodule
+  root.
+
+[Textadept 11.1 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.1/textadept_11.1.win32.zip
+[Textadept 11.1 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.1/textadept_11.1.macOS.zip
+[Textadept 11.1 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.1/textadept_11.1.linux.tgz
+[Textadept 11.1 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.1/textadept_11.1.modules.zip
+[`textadept.run.test()`]: api.html#textadept.run.test
+[`textadept.run.test_commands`]: api.html#textadept.run.test_commands
+
 ### 11.0 (01 Dec 2020)
 
 Please see the [10 to 11 migration guide][] for upgrading from Textadept 10 to
