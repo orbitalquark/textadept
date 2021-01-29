@@ -1,4 +1,4 @@
--- Copyright 2007-2020 Mitchell. See LICENSE.
+-- Copyright 2007-2021 Mitchell. See LICENSE.
 -- Terminal theme for Textadept.
 -- Contributions by Ana Balan.
 

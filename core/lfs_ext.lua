@@ -1,4 +1,4 @@
--- Copyright 2007-2020 Mitchell. See LICENSE.
+-- Copyright 2007-2021 Mitchell. See LICENSE.
 
 --[[ This comment is for LuaDoc.
 ---
