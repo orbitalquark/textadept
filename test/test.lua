@@ -2850,7 +2850,7 @@ end
 function test_history_print_buffer()
   local tabs = ui.tabs
   ui.tabs = true
-  ui.print('hi')
+  ui.print('foo')
   textadept.history.back()
   assert(buffer._type ~= _L['[Message Buffer]'])
   textadept.history.forward()
