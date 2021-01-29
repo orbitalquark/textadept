@@ -1,4 +1,4 @@
-## Textadept 11.0 Manual
+## Textadept 11.1 Manual
 
 **Contents**
 
