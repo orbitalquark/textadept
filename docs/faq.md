@@ -2,7 +2,8 @@
 
 **Q:**
 If Textadept is so minimalist, why are the downloads around 10MB in size and the
-unzipped folders 10s of MBs in size?
+unzipped folders 10s of MBs in size? Why is the Git repository more than 50MB in
+size?
 
 **A:**
 Each download contains 2 executables: a GUI version and a terminal version.
@@ -13,6 +14,11 @@ run on older Linux systems whose libstdc++ does not support newer C++ symbols,
 the Linux executables statically link in a newer version of libstdc++. Finally,
 nightly builds are compiled with debug symbols enabled in order to aid debugging
 of various issues.
+
+The Git repository is an export of an underlying Mercurial repository and is not
+compressed or optimized for size. After the initial clone, you can run
+`git gc --aggressive` to reduce its footprint to about a third of the original
+size.
 
 - - -
 
