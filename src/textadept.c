@@ -1894,16 +1894,17 @@ static void emit_notification(lua_State *L, SCNotification *n) {
   if (n->text)
     lua_pushlstring(L, n->text, n->length ? n->length : strlen(n->text)),
       lua_setfield(L, -2, "text");
-  lua_pushinteger(L, n->length), lua_setfield(L, -2, "length"); // SCN_MODIFIED
-  //lua_pushinteger(L, n->linesAdded), lua_setfield(L, -2, "lines_added");
+  lua_pushinteger(L, n->length), lua_setfield(L, -2, "length");
+  lua_pushinteger(L, n->linesAdded), lua_setfield(L, -2, "lines_added");
   //lua_pushinteger(L, n->message), lua_setfield(L, -2, "message");
-  lua_pushinteger(L, n->listType), lua_setfield(L, -2, "list_type");
+  //lua_pushinteger(L, n->wParam), lua_setfield(L, -2, "wParam");
   //lua_pushinteger(L, n->lParam), lua_setfield(L, -2, "lParam");
   lua_pushinteger(L, n->line + 1), lua_setfield(L, -2, "line");
   //lua_pushinteger(L, n->foldLevelNow), lua_setfield(L, -2, "fold_level_now");
   //lua_pushinteger(L, n->foldLevelPrev),
   //  lua_setfield(L, -2, "fold_level_prev");
   lua_pushinteger(L, n->margin + 1), lua_setfield(L, -2, "margin");
+  lua_pushinteger(L, n->listType), lua_setfield(L, -2, "list_type");
   lua_pushinteger(L, n->x), lua_setfield(L, -2, "x");
   lua_pushinteger(L, n->y), lua_setfield(L, -2, "y");
   //lua_pushinteger(L, n->token), lua_setfield(L, -2, "token");
@@ -1912,6 +1913,8 @@ static void emit_notification(lua_State *L, SCNotification *n) {
   lua_pushinteger(L, n->updated), lua_setfield(L, -2, "updated");
   //lua_pushinteger(L, n->listCompletionMethod),
   //  lua_setfield(L, -2, "list_completion_method");
+  //lua_pushinteger(L, n->characterSource),
+  //  lua_setfield(L, -2, "character_source");
   emit(L, "SCN", LUA_TTABLE, luaL_ref(L, LUA_REGISTRYINDEX), -1);
 }
 
