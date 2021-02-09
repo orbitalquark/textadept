@@ -1613,7 +1613,7 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
   if (platform) lua_pushboolean(L, true), lua_setglobal(L, platform);
 #if CURSES
   lua_pushboolean(L, true), lua_setglobal(L, "CURSES");
-  show_tabs = 0; // TODO: tabs
+  tabs = 0; // TODO: tabs
 #endif
   const char *charset = NULL;
 #if GTK
