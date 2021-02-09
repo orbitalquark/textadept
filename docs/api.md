@@ -7795,6 +7795,12 @@ Utilities for interacting with Textadept's user interface.
 
 ### Fields defined by `ui`
 
+<a id="ui.SHOW_ALL_TABS"></a>
+#### `ui.SHOW_ALL_TABS` (number)
+
+
+
+
 <a id="ui.buffer_statusbar_text"></a>
 #### `ui.buffer_statusbar_text` (string, Write-only)
 
@@ -7844,6 +7850,8 @@ The context menu for the buffer's tab, a [`ui.menu()`](#ui.menu).
 
 Whether or not to display the tab bar when multiple buffers are open.
   The default value is `true`.
+  A third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar,
+  even if only one buffer is open.
 
 <a id="ui.title"></a>
 #### `ui.title` (string, Write-only)

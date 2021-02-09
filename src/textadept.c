@@ -189,7 +189,9 @@ static lua_State *lua;
 #if CURSES
 static bool quitting;
 #endif
-static bool initing, closing, show_tabs = true, tab_sync, dialog_active;
+static bool initing, closing, tab_sync, dialog_active;
+static int tabs = 1; // int for more options than true/false
+#define show_tabs(condition) tabs && (condition || tabs > 1)
 enum {SVOID, SINT, SLEN, SINDEX, SCOLOR, SBOOL, SKEYMOD, SSTRING, SSTRINGRET};
 
 // Forward declarations.
@@ -679,8 +681,8 @@ static void sync_tabbar() {
     lua_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)),
     lua_gettable(lua, -2), lua_tointeger(lua, -1) - 1);
   lua_pop(lua, 2); // index and buffers
-  GtkNotebook *tabs = GTK_NOTEBOOK(tabbar);
-  tab_sync = true, gtk_notebook_set_current_page(tabs, i), tab_sync = false;
+  GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
+  tab_sync = true, gtk_notebook_set_current_page(notebook, i), tab_sync = false;
 //#elif CURSES
   // TODO: tabs
 #endif
@@ -864,7 +866,7 @@ static int ui_index(lua_State *L) {
     lua_pushinteger(L, width), lua_rawseti(L, -2, 1);
     lua_pushinteger(L, height), lua_rawseti(L, -2, 2);
   } else if (strcmp(key, "tabs") == 0)
-    lua_pushboolean(L, show_tabs);
+    tabs <= 1 ? lua_pushboolean(L, tabs) : lua_pushinteger(L, tabs);
   else
     lua_rawget(L, 1);
   return 1;
@@ -937,10 +939,10 @@ static int ui_newindex(lua_State *L) {
     if (w > 0 && h > 0) gtk_window_resize(GTK_WINDOW(window), w, h);
 #endif
   } else if (strcmp(key, "tabs") == 0) {
-    show_tabs = lua_toboolean(L, 3);
+    tabs = !lua_isinteger(L, 3) ? lua_toboolean(L, 3) : lua_tointeger(L, 3);
 #if GTK
     gtk_widget_set_visible(
-      tabbar, show_tabs && gtk_notebook_get_n_pages(GTK_NOTEBOOK(tabbar)) > 1);
+      tabbar, show_tabs(gtk_notebook_get_n_pages(GTK_NOTEBOOK(tabbar)) > 1));
 //#elif CURSES
     // TODO: tabs
 #endif
@@ -1059,7 +1061,7 @@ static void remove_doc(lua_State *L, sptr_t doc) {
 #if GTK
       // Remove the tab from the tabbar.
       gtk_notebook_remove_page(GTK_NOTEBOOK(tabbar), i - 1);
-      gtk_widget_set_visible(tabbar, show_tabs && lua_rawlen(L, -2) > 2);
+      gtk_widget_set_visible(tabbar, show_tabs(lua_rawlen(L, -2) > 2));
 //#elif CURSES
       // TODO: tabs
 #endif
@@ -1225,10 +1227,10 @@ static void show_context_menu(lua_State *L, GdkEventButton *event, char *k) {
 
 /** Signal for a tab label mouse click. */
 static bool tab_clicked(GtkWidget *label, GdkEventButton *event, void *L) {
-  GtkNotebook *tabs = GTK_NOTEBOOK(tabbar);
-  for (int i = 0; i < gtk_notebook_get_n_pages(tabs); i++) {
-    GtkWidget *page = gtk_notebook_get_nth_page(tabs, i);
-    if (label != gtk_notebook_get_tab_label(tabs, page)) continue;
+  GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
+  for (int i = 0; i < gtk_notebook_get_n_pages(notebook); i++) {
+    GtkWidget *page = gtk_notebook_get_nth_page(notebook, i);
+    if (label != gtk_notebook_get_tab_label(notebook, page)) continue;
     emit(
       L, "tab_clicked", LUA_TNUMBER, i + 1, LUA_TNUMBER, event->button,
       LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
@@ -1426,7 +1428,7 @@ static void new_buffer(sptr_t doc) {
     lua_getfield(lua, -1, "tab_pointer"), lua_touserdata(lua, -1));
   tab_sync = true;
   int i = gtk_notebook_append_page(GTK_NOTEBOOK(tabbar), tab, NULL);
-  gtk_widget_show(tab), gtk_widget_set_visible(tabbar, show_tabs && i > 0);
+  gtk_widget_show(tab), gtk_widget_set_visible(tabbar, show_tabs(i > 0));
   gtk_notebook_set_current_page(GTK_NOTEBOOK(tabbar), i);
   tab_sync = false;
   lua_pop(lua, 2); // tab_pointer and buffer
@@ -1611,7 +1613,7 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
   if (platform) lua_pushboolean(L, true), lua_setglobal(L, platform);
 #if CURSES
   lua_pushboolean(L, true), lua_setglobal(L, "CURSES");
-  show_tabs = false; // TODO: tabs
+  show_tabs = 0; // TODO: tabs
 #endif
   const char *charset = NULL;
 #if GTK

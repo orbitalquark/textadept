@@ -26,6 +26,8 @@ local ui = ui
 -- @field tabs (bool)
 --   Whether or not to display the tab bar when multiple buffers are open.
 --   The default value is `true`.
+--   A third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar,
+--   even if only one buffer is open.
 -- @field silent_print (bool)
 --   Whether or not to print messages to buffers silently.
 --   This is not guaranteed to be a constant value, as Textadept may change it
@@ -33,7 +35,11 @@ local ui = ui
 --   with a group of [`ui.print()`]() and [`ui._print()`]() function calls.
 --   The default value is `false`, and focuses buffers when messages are printed
 --   to them.
+-- @field SHOW_ALL_TABS (number)
+--
 module('ui')]]
+
+ui.SHOW_ALL_TABS = 2 -- ui.tabs options must be greater than 1
 
 ui.silent_print = false
 
