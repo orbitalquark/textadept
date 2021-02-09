@@ -233,6 +233,7 @@ SEL_STREAM buffer.SEL_STREAM (number, Read-only)\n
 SEL_THIN buffer.SEL_THIN (number, Read-only)\n
 SESSION_LOAD events.SESSION_LOAD (string)\nEmitted when loading a session.\nArguments:\n\n* `session`: Table of session data to load. All handlers will have access\n  to this same table.
 SESSION_SAVE events.SESSION_SAVE (string)\nEmitted when saving a session.\nArguments:\n\n* `session`: Table of session data to save. All handlers will have access\n  to this same table, and Textadept's default handler reserves the use of\n  some keys.\n  Note that functions, userdata, and circular table values cannot be saved.\n  The latter case is not recognized at all, so beware.
+SHOW_ALL_TABS ui.SHOW_ALL_TABS (number)\n
 SIGNAL textadept.editing.XPM_IMAGES.SIGNAL (table)\nThe image number for signals.
 SLOT textadept.editing.XPM_IMAGES.SLOT (table)\nThe image number for slots.
 STRING lexer.STRING (string)\nThe token name for string tokens.
@@ -927,7 +928,7 @@ tab_draw_mode view.tab_draw_mode (number)\nThe draw mode of visible tabs.\n\n* `
 tab_indents buffer.tab_indents (bool)\nIndent text when tabbing within indentation.\nThe default value is `false`.
 tab_label buffer.tab_label (string)\nThe buffer's tab label in the tab bar.
 tab_width buffer.tab_width (number)\nThe number of space characters represented by a tab character.\nThe default value is `8`.
-tabs ui.tabs (bool)\nWhether or not to display the tab bar when multiple buffers are open.\nThe default value is `true`.
+tabs ui.tabs (bool)\nWhether or not to display the tab bar when multiple buffers are open.\nThe default value is `true`.\nA third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar,\neven if only one buffer is open.
 tag buffer.tag (table, Read-only)\nList of capture text for capture numbers from a regular expression search.
 tags _M.ansi_c.tags (table)\nList of ctags files to use for autocompletion in addition to the current\nproject's top-level *tags* file or the current directory's *tags* file.
 tags _M.lua.tags (table)\nList of "fake" ctags files (or functions that return such files) to use for\nautocompletion.\nThe kind 'm' is recognized as a module, 'f' as a function, 't' as a table and\n'F' as a module or table field.\nThe *modules/lua/tadoc.lua* script can generate *tags* and\n*api* files for Lua modules via LuaDoc.
