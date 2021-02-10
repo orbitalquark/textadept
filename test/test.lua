@@ -3172,7 +3172,7 @@ function test_run_commands_function()
   local filename = os.tmpname()
   io.open_file(filename)
   textadept.run.run_commands.text = function()
-    return [[lua -e 'print(os.getenv("FOO"))']], '/tmp', {FOO = 'bar'}
+    return [[lua -e "print(os.getenv('FOO'))"]], '/tmp', {FOO = 'bar'}
   end
   textadept.run.run()
   assert_equal(#_BUFFERS, 3) -- including [Test Output]
