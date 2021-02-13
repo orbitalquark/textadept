@@ -3,7 +3,6 @@ Scintilla changes:
 * Hijack SCI_LOADLEXERLIBRARY for programmatically setting input method.
   This is helpful on newer versions of macOS, where changing the input method is
   flaky.
-* Update DrawTabArrowFn() signature in order to draw strikeout tabs.
 * Handle leading whitespace in XPM images in order to prevent crashes.
 
 diff -r 6e368ee248e4 gtk/ScintillaGTK.cxx
@@ -20,30 +19,6 @@ diff -r 6e368ee248e4 gtk/ScintillaGTK.cxx
 +
  		case SCI_TARGETASUTF8:
  			return TargetAsUTF8(CharPtrFromSPtr(lParam));
- 
-diff -r 22b6bbb36280 src/EditView.cxx
---- a/src/EditView.cxx	Sat Sep 05 07:55:08 2020 +1000
-+++ b/src/EditView.cxx	Fri Oct 02 19:34:46 2020 -0400
-@@ -1951,7 +1951,7 @@
- 							if (!customDrawTabArrow)
- 								DrawTabArrow(surface, rcTab, segmentTop, vsDraw);
- 							else
--								customDrawTabArrow(surface, rcTab, segmentTop);
-+								customDrawTabArrow(surface, rcTab, segmentTop, vsDraw);
- 						}
- 					}
- 				} else {
-diff -r 22b6bbb36280 src/EditView.h
---- a/src/EditView.h	Sat Sep 05 07:55:08 2020 +1000
-+++ b/src/EditView.h	Fri Oct 02 19:34:46 2020 -0400
-@@ -40,7 +40,7 @@
- void DrawStyledText(Surface *surface, const ViewStyle &vs, int styleOffset, PRectangle rcText,
- 	const StyledText &st, size_t start, size_t length, DrawPhase phase);
- 
--typedef void (*DrawTabArrowFn)(Surface *surface, PRectangle rcTab, int ymid);
-+typedef void (*DrawTabArrowFn)(Surface *surface, PRectangle rcTab, int ymid, const ViewStyle &vsDraw);
- 
- class LineTabstops;
  
 diff -r 22b6bbb36280 src/XPM.cxx
 --- a/src/XPM.cxx	Sat Sep 05 07:55:08 2020 +1000

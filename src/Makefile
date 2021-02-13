@@ -410,7 +410,9 @@ scintilla: scintilla.patch | $(scintilla_tgz)
 	for patch in $^; do echo Applying $$patch; patch -d $@ -N -p1 < $$patch; done
 $(scinterm_zip): ; $(WGET) $(scinterm_url) -O $@
 scinterm: scintilla/curses
-scintilla/curses: | $(scinterm_zip) ; unzip -d $@ -j $| "*/*.cxx" "*/*.h"
+scintilla/curses: | $(scinterm_zip)
+	unzip -d $@ $| && mv $@/*/* $@
+	make -C $@ patch
 $(scintillua_zip): ; $(WGET) $(scintillua_url) -O $@
 scintillua: ../lexers $(LexLPeg)
 ../lexers: | $(scintillua_zip) ; unzip -d $@ -j $| "*/lexers/*" -x "*/themes/*"
