@@ -364,6 +364,8 @@ static void refresh_all() {
   refresh_pane(pane);
   if (command_entry_active) scintilla_noutrefresh(command_entry);
   refresh();
+  if (findbox) return;
+  scintilla_update_cursor(!command_entry_active ? focused_view : command_entry);
 }
 
 /**
@@ -455,7 +457,6 @@ static int focus_find(lua_State *L) {
   setCDKEntryPostProcess(find_entry, find_keypress, NULL);
   char *clipboard = scintilla_get_clipboard(focused_view, NULL);
   GPasteBuffer = copyChar(clipboard); // set the CDK paste buffer
-  curs_set(1);
   refreshCDKScreen(findbox), activateCDKEntry(focused_entry = find_entry, NULL);
   while (focused_entry->exitType == vNORMAL ||
          focused_entry->exitType == vNEVER_ACTIVATED) {
@@ -466,7 +467,6 @@ static int focus_find(lua_State *L) {
     find_entry->exitType = repl_entry->exitType = vNEVER_ACTIVATED;
     refreshCDKScreen(findbox), activateCDKEntry(focused_entry, NULL);
   }
-  curs_set(0);
   // Set Scintilla clipboard with new CDK paste buffer if necessary.
   if (strcmp(clipboard, GPasteBuffer) != 0)
     SS(focused_view, SCI_COPYTEXT, strlen(GPasteBuffer), (sptr_t)GPasteBuffer);
@@ -2504,7 +2504,6 @@ int main(int argc, char **argv) {
   ta_tk = termkey_new(0, 0);
   setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
-  curs_set(0); // disable cursor when Scintilla has focus
 #if NCURSES_REENTRANT
   ESCDELAY = getenv("ESCDELAY") ? atoi(getenv("ESCDELAY")) : 100;
 #endif

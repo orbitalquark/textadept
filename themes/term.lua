@@ -29,7 +29,7 @@ colors.light_white = 0xFFFFFF
 -- Predefined styles.
 styles.default = {fore = colors.white, back = colors.black}
 styles.line_number = {fore = colors.black, bold = true}
-styles.brace_light = {fore = colors.black, back = colors.white}
+styles.brace_light = {fore = colors.yellow, bold = true}
 --styles.control_char =
 --styles.indent_guide =
 styles.call_tip = {fore = colors.white, back = colors.black}
