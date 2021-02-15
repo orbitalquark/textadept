@@ -2653,7 +2653,8 @@ function test_find_replace_regex_transforms()
     ['f\\1ba\\L\\2'] = 'foObarbaz',
     ['f\\1ba\\U\\l\\2'] = 'foObarBaz',
     [''] = 'az',
-    ['\\0'] = 'foObaRbaz'
+    ['\\0'] = 'foObaRbaz',
+    ['\\r\\n\\t'] = '\r\n\taz'
   }
   for regex, replacement in pairs(replacements) do
     ui.find.replace_entry_text = regex
