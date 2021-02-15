@@ -372,13 +372,14 @@ function M.find_in_files(dir, filter)
 end
 
 local P, V, C, upper, lower = lpeg.P, lpeg.V, lpeg.C, string.upper, string.lower
+local esc = {b = '\b', f = '\f', n = '\n', r = '\r', t = '\t', v = '\v'}
 local re_patt = lpeg.Cs(P{
-  (V('text') + V('u') + V('l') + V('U') + V('L'))^1,
-  text = (1 - '\\' * lpeg.S('uUlLE'))^1,
+  (V('text') + V('u') + V('l') + V('U') + V('L') + V('esc'))^1,
+  text = (1 - '\\' * lpeg.S('uUlLEbfnrtv'))^1,
   u = '\\u' * C(1) / upper, l = '\\l' * C(1) / lower,
   U = P('\\U') / '' * (V('text') / upper + V('u') + V('l'))^0 * V('E')^-1,
   L = P('\\L') / '' * (V('text') / lower + V('u') + V('l'))^0 * V('E')^-1,
-  E = P('\\E') / ''
+  E = P('\\E') / '', esc = '\\' * C(1) / esc
 })
 -- Returns string *text* with the following sequences unescaped:
 -- * "\uXXXX" sequences replaced with the equivalent UTF-8 character.
