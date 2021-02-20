@@ -1,4 +1,4 @@
-# Lua 5.3 symbols to retain. (LUA_API, LUALIB_API, LUAMOD_API)
+# Lua 5.4 symbols to retain. (LUA_API, LUALIB_API, LUAMOD_API)
 lua_absindex
 lua_arith
 lua_atpanic
@@ -20,13 +20,13 @@ lua_gethookcount
 lua_gethookmask
 lua_geti
 lua_getinfo
+lua_getiuservalue
 lua_getlocal
 lua_getmetatable
 lua_getstack
 lua_gettable
 lua_gettop
 lua_getupvalue
-lua_getuservalue
 lua_iscfunction
 lua_isinteger
 lua_isnumber
@@ -37,7 +37,7 @@ lua_len
 lua_load
 lua_newstate
 lua_newthread
-lua_newuserdata
+lua_newuserdatauv
 lua_next
 lua_pcallk
 lua_pushboolean
@@ -60,6 +60,7 @@ lua_rawlen
 lua_rawset
 lua_rawseti
 lua_rawsetp
+lua_resetthread
 lua_resume
 lua_rotate
 lua_setallocf
@@ -67,16 +68,18 @@ lua_setfield
 lua_setglobal
 lua_sethook
 lua_seti
+lua_setiuservalue
 lua_setlocal
 lua_setmetatable
 lua_settable
 lua_settop
 lua_setupvalue
-lua_setuservalue
+lua_setwarnf
 lua_status
 lua_stringtonumber
 lua_toboolean
 lua_tocfunction
+lua_toclose
 lua_tointegerx
 lua_tolstring
 lua_tonumberx
@@ -88,8 +91,10 @@ lua_typename
 lua_upvalueid
 lua_upvaluejoin
 lua_version
+lua_warning
 lua_xmove
 lua_yieldk
+luaL_addgsub
 luaL_addlstring
 luaL_addstring
 luaL_addvalue
@@ -105,7 +110,7 @@ luaL_checkoption
 luaL_checkstack
 luaL_checktype
 luaL_checkudata
-luaL_checkversion_
+luaL_checkversion
 luaL_error
 luaL_execresult
 luaL_fileresult
@@ -118,13 +123,11 @@ luaL_loadfilex
 luaL_loadstring
 luaL_newmetatable
 luaL_newstate
-luaL_openlib
 luaL_openlibs
 luaL_optinteger
 luaL_optlstring
 luaL_optnumber
 luaL_prepbuffsize
-luaL_pushmodule
 luaL_pushresult
 luaL_pushresultsize
 luaL_ref
@@ -134,10 +137,10 @@ luaL_setmetatable
 luaL_testudata
 luaL_tolstring
 luaL_traceback
+luaL_typeerror
 luaL_unref
 luaL_where
 luaopen_base
-luaopen_bit32
 luaopen_coroutine
 luaopen_debug
 luaopen_io
