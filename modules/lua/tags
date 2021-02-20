@@ -36,14 +36,15 @@ char	_HOME/modules/lua/lua.luadoc	/^function utf8.char(···) end$/;"	f	class:u
 charpattern	_HOME/modules/lua/lua.luadoc	/^function utf8.char(···) end$/;"	F	class:utf8
 chdir	_HOME/modules/lua/lua.luadoc	/^function lfs.chdir(path) end$/;"	f	class:lfs
 clock	_HOME/modules/lua/lua.luadoc	/^function os.clock() end$/;"	f	class:os
+close	_HOME/modules/lua/lua.luadoc	/^function coroutine.close(co) end$/;"	f	class:coroutine
 close	_HOME/modules/lua/lua.luadoc	/^function file:close() end$/;"	f	class:file
 close	_HOME/modules/lua/lua.luadoc	/^function io.close([file]) end$/;"	f	class:io
-codepoint	_HOME/modules/lua/lua.luadoc	/^function utf8.codepoint(s [, i [, j]]) end$/;"	f	class:utf8
-codes	_HOME/modules/lua/lua.luadoc	/^function utf8.codes(s) end$/;"	f	class:utf8
+codepoint	_HOME/modules/lua/lua.luadoc	/^function utf8.codepoint(s [, i [, j [, lax]]]) end$/;"	f	class:utf8
+codes	_HOME/modules/lua/lua.luadoc	/^function utf8.codes(s [, lax]) end$/;"	f	class:utf8
 collectgarbage	_HOME/modules/lua/lua.luadoc	/^function collectgarbage([opt [, arg]]) end$/;"	f	
 concat	_HOME/modules/lua/lua.luadoc	/^function table.concat(list [, sep [, i [, j]]]) end$/;"	f	class:table
 config	_HOME/modules/lua/lua.luadoc	/^function package.loadlib(libname, funcname) end$/;"	F	class:package
-coroutine	_HOME/modules/lua/lua.luadoc	/^function coroutine.create(f) end$/;"	m	
+coroutine	_HOME/modules/lua/lua.luadoc	/^function coroutine.close(co) end$/;"	m	
 cos	_HOME/modules/lua/lua.luadoc	/^function math.cos(x) end$/;"	f	class:math
 cosh	_HOME/modules/lua/lua.luadoc	/^function math.cosh(x) end$/;"	f	class:math
 cpath	_HOME/modules/lua/lua.luadoc	/^function package.loadlib(libname, funcname) end$/;"	F	class:package
@@ -79,18 +80,18 @@ getmetatable	_HOME/modules/lua/lua.luadoc	/^function debug.getmetatable(value) e
 getmetatable	_HOME/modules/lua/lua.luadoc	/^function getmetatable(object) end$/;"	f	
 getregistry	_HOME/modules/lua/lua.luadoc	/^function debug.getregistry() end$/;"	f	class:debug
 getupvalue	_HOME/modules/lua/lua.luadoc	/^function debug.getupvalue(f, up) end$/;"	f	class:debug
-getuservalue	_HOME/modules/lua/lua.luadoc	/^function debug.getuservalue(u) end$/;"	f	class:debug
-gmatch	_HOME/modules/lua/lua.luadoc	/^function string.gmatch(s, pattern) end$/;"	f	class:string
+getuservalue	_HOME/modules/lua/lua.luadoc	/^function debug.getuservalue(u, n) end$/;"	f	class:debug
+gmatch	_HOME/modules/lua/lua.luadoc	/^function string.gmatch(s, pattern [, init]) end$/;"	f	class:string
 gsub	_HOME/modules/lua/lua.luadoc	/^function string.gsub(s, pattern, repl [, n]) end$/;"	f	class:string
 huge	_HOME/modules/lua/lua.luadoc	/^function math.abs(x) end$/;"	F	class:math
 input	_HOME/modules/lua/lua.luadoc	/^function io.input([file]) end$/;"	f	class:io
 insert	_HOME/modules/lua/lua.luadoc	/^function table.insert(list, [pos,] value) end$/;"	f	class:table
 io	_HOME/modules/lua/lua.luadoc	/^function io.close([file]) end$/;"	m	
 ipairs	_HOME/modules/lua/lua.luadoc	/^function ipairs(t) end$/;"	f	
-isyieldable	_HOME/modules/lua/lua.luadoc	/^function coroutine.isyieldable() end$/;"	f	class:coroutine
+isyieldable	_HOME/modules/lua/lua.luadoc	/^function coroutine.isyieldable([co]) end$/;"	f	class:coroutine
 ldexp	_HOME/modules/lua/lua.luadoc	/^function math.ldexp(m, e) end$/;"	f	class:math
 len	_HOME/modules/lua/lua.luadoc	/^function string.len(s) end$/;"	f	class:string
-len	_HOME/modules/lua/lua.luadoc	/^function utf8.len(s [, i [, j]]) end$/;"	f	class:utf8
+len	_HOME/modules/lua/lua.luadoc	/^function utf8.len(s [, i [, j [, lax]]]) end$/;"	f	class:utf8
 lfs	_HOME/modules/lua/lua.luadoc	/^function lfs.attributes(filepath [, aname | atable]) end$/;"	m	
 lines	_HOME/modules/lua/lua.luadoc	/^function file:lines(···) end$/;"	f	class:file
 lines	_HOME/modules/lua/lua.luadoc	/^function io.lines([filename, ···]) end$/;"	f	class:io
@@ -141,7 +142,7 @@ preload	_HOME/modules/lua/lua.luadoc	/^function package.loadlib(libname, funcnam
 print	_HOME/modules/lua/lua.luadoc	/^function print(···) end$/;"	f	
 rad	_HOME/modules/lua/lua.luadoc	/^function math.rad(x) end$/;"	f	class:math
 random	_HOME/modules/lua/lua.luadoc	/^function math.random([m [, n]]) end$/;"	f	class:math
-randomseed	_HOME/modules/lua/lua.luadoc	/^function math.randomseed(x) end$/;"	f	class:math
+randomseed	_HOME/modules/lua/lua.luadoc	/^function math.randomseed([x [, y]]) end$/;"	f	class:math
 rawequal	_HOME/modules/lua/lua.luadoc	/^function rawequal(v1, v2) end$/;"	f	
 rawget	_HOME/modules/lua/lua.luadoc	/^function rawget(table, index) end$/;"	f	
 rawlen	_HOME/modules/lua/lua.luadoc	/^function rawlen(v) end$/;"	f	
@@ -175,7 +176,7 @@ setmetatable	_HOME/modules/lua/lua.luadoc	/^function debug.setmetatable(value, t
 setmetatable	_HOME/modules/lua/lua.luadoc	/^function setmetatable(table, metatable) end$/;"	f	
 setmode	_HOME/modules/lua/lua.luadoc	/^function lfs.setmode(file, mode) end$/;"	f	class:lfs
 setupvalue	_HOME/modules/lua/lua.luadoc	/^function debug.setupvalue(f, up, value) end$/;"	f	class:debug
-setuservalue	_HOME/modules/lua/lua.luadoc	/^function debug.setuservalue(udata, value) end$/;"	f	class:debug
+setuservalue	_HOME/modules/lua/lua.luadoc	/^function debug.setuservalue(udata, value, n) end$/;"	f	class:debug
 setvbuf	_HOME/modules/lua/lua.luadoc	/^function file:setvbuf(mode [, size]) end$/;"	f	class:file
 sin	_HOME/modules/lua/lua.luadoc	/^function math.sin(x) end$/;"	f	class:math
 sinh	_HOME/modules/lua/lua.luadoc	/^function math.sinh(x) end$/;"	f	class:math
@@ -213,6 +214,7 @@ upvalueid	_HOME/modules/lua/lua.luadoc	/^function debug.upvalueid(f, n) end$/;"	
 upvaluejoin	_HOME/modules/lua/lua.luadoc	/^function debug.upvaluejoin(f1, n1, f2, n2) end$/;"	f	class:debug
 utf8	_HOME/modules/lua/lua.luadoc	/^function utf8.char(···) end$/;"	m	
 version	_HOME/modules/lua/lua.luadoc	/^function lpeg.version() end$/;"	f	class:lpeg
+warn	_HOME/modules/lua/lua.luadoc	/^function warn(msg1, ···) end$/;"	f	
 wrap	_HOME/modules/lua/lua.luadoc	/^function coroutine.wrap(f) end$/;"	f	class:coroutine
 write	_HOME/modules/lua/lua.luadoc	/^function file:write(···) end$/;"	f	class:file
 write	_HOME/modules/lua/lua.luadoc	/^function io.write(···) end$/;"	f	class:io

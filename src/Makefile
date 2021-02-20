@@ -133,8 +133,8 @@ textadept_objs = $(textadept_gtk_objs) $(textadept_curses_objs)
 lua_objs = lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o \
            linit.o llex.o lmem.o lobject.o lopcodes.o lparser.o lstate.o \
            lstring.o ltable.o ltm.o lundump.o lvm.o lzio.o \
-           lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o \
-           lmathlib.o loadlib.o lstrlib.o ltablib.o lutf8lib.o
+           lauxlib.o lbaselib.o lcorolib.o ldblib.o liolib.o lmathlib.o \
+           loadlib.o lstrlib.o ltablib.o lutf8lib.o
 lua_oslib_objs = loslib.o loslib-curses.o
 lua_lib_objs = lpcap.o lpcode.o lpprint.o lptree.o lpvm.o lfs.o
 gtdialog_objs = gtdialog.o gtdialog-curses.o
@@ -385,7 +385,7 @@ endif
 scintilla_tgz = scintilla445.tgz
 scinterm_zip = 6a774158d8a3c7bc7ea120bc01cdb016fa351a7e.zip
 scintillua_zip = scintillua_4.4.5-2.zip
-lua_tgz = lua-5.3.5.tar.gz
+lua_tgz = lua-5.4.2.tar.gz
 lpeg_tgz = lpeg-1.0.2.tar.gz
 lfs_zip = v1_8_0.zip
 gtdialog_zip = 64587546482a1a6324706d75c80b77d2f87118a4.zip

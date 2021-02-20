@@ -8,13 +8,13 @@
 --   not affect any environment, nor vice versa.
 -- @field _VERSION (string)
 --   A global variable (not a function) that holds a string containing the
---   running Lua version. The current value of this variable is "`Lua 5.3`".
+--   running Lua version. The current value of this variable is "`Lua 5.4`".
 local _G
 
 ---
--- Calls `error` if the value of its argument `v` is false (i.e., nil or false);
--- otherwise, returns all its arguments. In case of error, `message` is the
--- error object; when absent, it defaults to "assertion failed!".
+-- Raises an error if the value of its argument `v` is false (i.e., nil or
+-- false); otherwise, returns all its arguments. In case of error, `message` is
+-- the error object; when absent, it defaults to "assertion failed!".
 function assert(v [, message]) end
 
 ---
@@ -26,32 +26,37 @@ function assert(v [, message]) end
 --   "restart": restarts automatic execution of the garbage collector.
 --   "count": returns the total memory in use by Lua in Kbytes. The value has a
 --            fractional part, so that it multiplied by 1024 gives the exact
---            number of bytes in use by Lua (except for overflows).
+--            number of bytes in use by Lua.
 --   "step": performs a garbage-collection step. The step "size" is controlled
 --           by `arg`. With a zero value, the collector will perform one basic
 --           (indivisible) step. For non-zero values, the collector will perform
---           as if that amount of memory (in KBytes) had been allocated by Lua.
+--           as if that amount of memory (in Kbytes) had been allocated by Lua.
 --           Returns true if the step finished a collection cycle.
---   "setpause": sets `arg` as the new value for the *pause* of the collector
---               (see §2.5). Returns the previous value for *pause*.
---   "setstepmul": sets `arg` as the new value for the *step multiplier*
---                 of the collector (see §2.5). Returns the previous value for
---                 *step*.
 --   "isrunning": returns a boolean that tells whether the collector is running
 --                (i.e., not stopped).
+--   "incremental": change the collector mode to incremental. This option can be
+--                  followed by three numbers: the garbage-collector pause, the
+--                  step multiplier, and the step size (see §2.5.1). A zero means to not
+--                  change that value.
+--   "generational": change the collector mode to generational. This option can
+--                   be followed by two numbers: the garbage-collector minor
+--                   multiplier and the major multiplier (see §2.5.2). A zero
+--                   means to not change that value.
+--
+-- See §2.5 for more details about garbage collection and some of these options.
 function collectgarbage([opt [, arg]]) end
 
 ---
--- Opens the named file and executes its contents as a Lua chunk. When
+-- Opens the named file and executes its content as a Lua chunk. When
 -- called without arguments,
--- `dofile` executes the contents of the standard input (`stdin`). Returns
+-- `dofile` executes the content of the standard input (`stdin`). Returns
 -- all values returned by the chunk. In case of errors, `dofile` propagates
--- the error to its caller (that is, `dofile` does not run in protected mode).
+-- the error to its caller. (That is, `dofile` does not run in protected mode.)
 function dofile([filename]) end
 
 ---
--- Terminates the last protected function called and returns `message`
--- as the error object. Function `error` never returns.
+-- Raises an error (see §2.3) with `message` as the error object. This function
+-- never returns.
 --
 -- Usually, `error` adds some information about the error position at the
 -- beginning of the message, if the message is a string. The `level` argument
@@ -85,39 +90,43 @@ function getmetatable(object) end
 --   for i,v in ipairs(t) do *body* end
 --
 -- will iterate over the key-value pairs (`1,t[1]`), (`2,t[2]`), ···, up to the
--- first nil value.
+-- first absent index.
 function ipairs(t) end
 
 ---
 -- Loads a chunk.
 --
--- If `chunk` is a string, the chunk is this string. If `chunk` is a function, `load`
--- calls it repeatedly to get the chunk pieces. Each call to `chunk` must return a
--- string that concatenates with previous results. A return of an empty string,
--- nil, or no value signals the end of the chunk.
+-- If `chunk` is a string, the chunk is this string. If `chunk` is a function,
+-- `load` calls it repeatedly to get the chunk pieces. Each call to `chunk` must
+-- return a string that concatenates with previous results. A return of an empty
+-- string, nil, or no value signals the end of the chunk.
 --
--- If there are no syntactic errors, returns the compiled chunk as a function;
--- otherwise, returns nil plus the error message.
+-- If there are no syntactic errors, `load` returns the compiled chunk as a
+-- function; otherwise, it returns nil plus the error message.
 --
--- If the resulting function has upvalues, the first upvalue is set to the value
--- of `env`, if that parameter is given, or to the value of the global
--- environment. Other upvalues are initialized with nil. (When you load a main
--- chunk, the resulting function will always have exactly one upvalue, the
--- `_ENV` variable (see §2.2). However, when you load a binary chunk created
--- from a function (see `string.dump`), the resulting function can have an
--- arbitrary number of upvalues.) All upvalues are fresh, that is, they are not
--- shared with any other function.
+-- When you load a main chunk, the resulting function will always have exactly
+-- one upvalue, the `_ENV` variable (see §2.2). However, when you load a binary
+-- chunk created from a function (see `string.dump`), the resulting function can
+-- have an arbitrary number of upvalues, and there is no guarantee that its
+-- first upvalue will be the `_ENV` variable. (A non-main function may not even
+-- have an `_ENV` upvalue.)
+--
+-- Regardless, if the resulting function has any upvalues, its first upvalue is
+-- set to the value of `env`, if that parameter is given, or to the value of the
+-- global environment. Other upvalues are initialized with nil. All upvalues are
+-- fresh, that is, they are not shared with any other function.
 --
 -- `chunkname` is used as the name of the chunk for error messages and debug
--- information (see §4.9). When absent, it defaults to `chunk`, if `chunk` is a
+-- information (see §4.7). When absent, it defaults to `chunk`, if `chunk` is a
 -- string, or to "`=(load)`" otherwise.
 --
 -- The string `mode` controls whether the chunk can be text or binary (that is,
 -- a precompiled chunk). It may be the string "`b`" (only binary chunks), "`t`"
 -- (only text chunks), or "`bt`" (both binary and text). The default is "`bt`".
 --
--- Lua does not check the consistency of binary chunks. Maliciously crafted
--- binary chunks can crash the interpreter.
+-- It is safe to load malformed binary chunks; `load` signals an appropriate
+-- error. However, Lua does not check the consistency of the code inside binary
+-- chunks; running maliciously crafted bytecode can crash the interpreter.
 function load(chunk [, chunkname [, mode [, env]]]) end
 
 ---
@@ -155,12 +164,13 @@ function module(name [, ···]) end
 
 ---
 -- Allows a program to traverse all fields of a table. Its first argument is
--- a table and its second argument is an index in this table. `next` returns
--- the next index of the table and its associated value. When called with nil
--- as its second argument, `next` returns an initial index and its associated
--- value. When called with the last index, or with nil in an empty table, `next`
--- returns nil. If the second argument is absent, then it is interpreted as
--- nil. In particular, you can use `next(t)` to check whether a table is empty.
+-- a table and its second argument is an index in this table. A call to `next`
+-- returns the next index of the table and its associated value. When called
+-- with nil as its second argument, `next` returns an initial index and its
+-- associated value. When called with the last index, or with nil in an empty
+-- table, `next` returns nil. If the second argument is absent, then it is
+-- interpreted as nil. In particular, you can use `next(t)` to check whether a
+-- table is empty.
 --
 -- The order in which the indices are enumerated is not specified, *even for
 -- numeric indices*. (To traverse a table in numeric order, use a numerical
@@ -168,7 +178,7 @@ function module(name [, ···]) end
 --
 -- The behavior of `next` is undefined if, during the traversal, you assign any
 -- value to a non-existent field in the table. You may however modify existing
--- fields. In particular, you may clear existing fields.
+-- fields. In particular, you may set existing fields to nil.
 function next(table [, index]) end
 
 ---
@@ -187,20 +197,22 @@ function next(table [, index]) end
 function pairs(t) end
 
 ---
--- Calls function `f` with the given arguments in *protected mode*. This
+-- Calls the function `f` with the given arguments in *protected mode*. This
 -- means that any error inside `f` is not propagated; instead, `pcall` catches
 -- the error and returns a status code. Its first result is the status code (a
 -- boolean), which is true if the call succeeds without errors. In such case,
 -- `pcall` also returns all results from the call, after this first result. In
--- case of any error, `pcall` returns false plus the error message.
+-- case of any error, `pcall` returns false plus the error object. Note that
+-- errors caught by `pcall` do not call a message handler.
 function pcall(f [, arg1, ···]) end
 
 ---
--- Receives any number of arguments and prints their values to `stdout`, using
--- the `tostring` function to convert each argument to a string. `print` is not
--- intended for formatted output, but only as a quick way to show a value,
--- for instance for debugging. For complete control over the output, use
--- `string.format` and `io.write`.
+-- Receives any number of arguments and prints their values to `stdout`,
+-- converting each argument to a string following the same rules of `tostring`.
+--
+-- The function `print` is not intended for formatted output, but only as a
+-- quick way to show a value, for instance for debugging. For complete control
+-- over the output, use `string.format` and `io.write`.
 function print(···) end
 
 ---
@@ -209,8 +221,8 @@ function print(···) end
 function rawequal(v1, v2) end
 
 ---
--- Gets the real value of `table[index]`, without invoking the `__index`
--- metamethod. `table` must be a table; `index` may be any value.
+-- Gets the real value of `table[index]`, without using the `__index`
+-- metavalue. `table` must be a table; `index` may be any value.
 function rawget(table, index) end
 
 ---
@@ -223,8 +235,8 @@ function rawget(table, index) end
 function rawlen(v) end
 
 ---
--- Sets the real value of `table[index]` to `value`, without invoking the
--- `__newindex` metamethod. `table` must be a table, `index` any value different
+-- Sets the real value of `table[index]` to `value`, without using the
+-- `__newindex` metavalue. `table` must be a table, `index` any value different
 -- from nil and NaN, and `value` any Lua value.
 --
 -- This function returns `table`.
@@ -248,12 +260,14 @@ function setfenv(f, table) end
 function select(index, ···) end
 
 ---
--- Sets the metatable for the given table. (To change the metatable of other
--- types from Lua code, you must use the debug library.) If `metatable` is nil,
--- removes the metatable of the given table. If the original metatable has a
--- `__metatable` field, raises an error.
+-- Sets the metatable for the given table. If `metatable` is nil, removes the
+-- metatable of the given table. If the original metatable has a `__metatable`
+-- field, raises an error.
 --
 -- This function returns `table`.
+--
+-- To change the metatable of other types from Lua code, you must use the debug
+-- library (see §6.10).
 function setmetatable(table, metatable) end
 
 ---
@@ -263,8 +277,8 @@ function setmetatable(table, metatable) end
 -- returns nil.
 --
 -- The conversion of strings can result in integers or floats, according to the
--- lexical conventions of Lua (see §3.1). (The string may have leading and
--- trailing spaces and a sign.)
+-- lexical conventions of Lua (see §3.1). The string may have leading and
+-- trailing spaces and a sign.
 --
 -- When called with `base`, then `e` must be a string to be interpreted as an
 -- integer numeral in that base. The base may be any integer between 2 and 36,
@@ -277,12 +291,14 @@ function tonumber(e [, base]) end
 ---
 -- Receives a value of any type and converts it to a string in a human-readable
 -- format. Floats always produce strings with some floating-point indication
--- (either a decimal dot or an exponent). (For complete control of how numbers
--- are converted, use `string.format`.)
+-- (either a decimal dot or an exponent).
 --
 -- If the metatable of `v` has a `__tostring` field, then `tostring` calls the
 -- corresponding value with `v` as argument, and uses the result of the call as
--- its result.
+-- its result. Otherwise, if the metatable of `v` has a `__name` field with a
+-- string value, `tostring` may use that string in its final result.
+--
+-- For complete control of how numbers are converted, use `string.format`.
 function tostring(v) end
 
 ---
@@ -303,9 +319,29 @@ function type(v) end
 function unpack(list [, i [, j]]) end
 
 ---
+-- Emits a warning with a message composed by the concatenation of all its
+-- arguments (which should be strings).
+--
+-- By convention, a one-piece message starting with '`@`' is intended to be a
+-- *control message*, which is a message to the warning system itself. In
+-- particular, the standard warning function in Lua recognizes the control
+-- messages "`@off`", to stop the emission of warnings, and "`@on`", to
+-- (re)start the emission; it ignores unknown control messages.
+--
+-- New in Lua 5.4.
+function warn(msg1, ···) end
+
+---
 -- This function is similar to `pcall`, except that it sets a new message
 -- handler `msgh`.
 function xpcall(f, msgh [, arg1, ···]) end
+
+---
+-- Closes coroutine `co`, that is, closes all its pending to-be-closed variables
+-- and puts the coroutine in a dead state. The given coroutine must be dead or
+-- suspended. In case of error closing some variable, returns false plus the
+-- error object; otherwise returns true.
+function coroutine.close(co) end
 
 ---
 -- Creates a new coroutine, with body `f`. `f` must be a Lua
@@ -313,13 +349,14 @@ function xpcall(f, msgh [, arg1, ···]) end
 function coroutine.create(f) end
 
 ---
--- Returns true when the running coroutine can yield.
+-- Returns true when the coroutine `co` can yield. The default for `co` is the
+-- running coroutine.
 --
--- A running coroutine is yieldable if it is not the main thread and it is not
--- inside a non-yieldable C function.
+-- A coroutine is yieldable if it is not the main thread and it is not inside a
+-- non-yieldable C function.
 --
 -- New in Lua 5.3.
-function coroutine.isyieldable() end
+function coroutine.isyieldable([co]) end
 
 ---
 -- Starts or continues the execution of coroutine `co`. The first time
@@ -340,20 +377,21 @@ function coroutine.resume(co [, val1, ···]) end
 function coroutine.running() end
 
 ---
--- Returns the status of coroutine `co`, as a string: `"running"`, if
--- the coroutine is running (that is, it called `status`); `"suspended"`, if
--- the coroutine is suspended in a call to `yield`, or if it has not started
--- running yet; `"normal"` if the coroutine is active but not running (that
--- is, it has resumed another coroutine); and `"dead"` if the coroutine has
--- finished its body function, or if it has stopped with an error.
+-- Returns the status of the coroutine `co`, as a string: `"running"`, if
+-- the coroutine is running (that is, it is the one that called `status`);
+-- `"suspended"`, if the coroutine is suspended in a call to `yield`, or if it
+-- has not started running yet; `"normal"` if the coroutine is active but not
+-- running (that is, it has resumed another coroutine); and `"dead"` if the
+-- coroutine has finished its body function, or if it has stopped with an error.
 function coroutine.status(co) end
 
 ---
--- Creates a new coroutine, with body `f`. `f` must be a Lua
+-- Creates a new coroutine, with body `f`; `f` must be a Lua
 -- function. Returns a function that resumes the coroutine each time it is
--- called. Any arguments passed to the function behave as the extra arguments to
--- `resume`. Returns the same values returned by `resume`, except the first
--- boolean. In case of error, propagates the error.
+-- called. Any arguments passed to this function behave as the extra arguments
+-- to `resume`. The function returns the same values returned by `resume`,
+-- except the first boolean. In case of error, the function closes the coroutine
+-- and propagates the error.
 function coroutine.wrap(f) end
 
 ---
@@ -363,14 +401,16 @@ function coroutine.yield(···) end
 
 ---
 -- Loads the given module. The function starts by looking into the
--- `package.loaded` table to determine whether `modname` is already
--- loaded. If it is, then `require` returns the value stored at
--- `package.loaded[modname]`. Otherwise, it tries to find a *loader* for
--- the module.
+-- `package.loaded` table to determine whether `modname` is already loaded. If
+-- it is, then `require` returns the value stored at `package.loaded[modname]`.
+-- (The absence of a second result in this case signals that this call did not
+-- have to load the module.) Otherwise, it tries to find a *loader* for the
+-- module.
 --
--- To find a loader, `require` is guided by the `package.searchers` sequence. By
--- changing this sequence, we can change how `require` looks for a module. The
--- following explanation is based on the default configuration for
+-- To find a loader, `require` is guided by the table `package.searchers`. Each
+-- item in this table is a search function, that searches for the module in a
+-- particular way. By changing this table, we can change how `require` looks for
+-- a module. The following explanation is based on the default configuration for
 -- `package.searchers`.
 --
 -- First `require` queries `package.preload[modname]`. If it has a value,
@@ -381,13 +421,17 @@ function coroutine.yield(···) end
 -- `package.searchers`).
 --
 -- Once a loader is found, `require` calls the loader with two arguments:
--- `modname` and an extra value dependent on how it got the loader. (If the
--- loader came from a file, this extra value is the file name.) If the loader
+-- `modname` and an extra value, a *loader data*, also returned by the searcher.
+-- The loader data can be any value useful to the module; for the default
+-- searchers, it indicates where the loader was found. (For instance, if the
+-- loader came from a file, this extra value is the file path.) If the loader
 -- returns any non-nil value, `require` assigns the returned value to
 -- `package.loaded[modname]`. If the loader does not return a non-nil value and
 -- has not assigned any value to `package.loaded[modname]`, then `require`
 -- assigns true to this entry. In any case, `require` returns the final value of
--- `package.loaded[modname]`.
+-- `package.loaded[modname]`. Besides that value, `require` also returns as a
+-- second result the loader data returned by the searcher, which indicates how
+-- `require` found the module.
 --
 -- If there is any error loading or running the module, or if it cannot find
 -- any loader for the module, then `require` raises an error.
@@ -413,9 +457,9 @@ function require(modname) end
 --
 --   New in Lua 5.2.
 -- @field cpath (string)
---   The path used by `require` to search for a C loader.
+--   A string with the path used by `require` to search for a C loader.
 --   Lua initializes the C path `package.cpath` in the same way it initializes
---   the Lua path `package.path`, using the environment variable `LUA_CPATH_5_3`
+--   the Lua path `package.path`, using the environment variable `LUA_CPATH_5_4`
 --   or the environment variable `LUA_CPATH` or a default path defined in
 --   `luaconf.h`.
 -- @field loaded (table)
@@ -429,24 +473,26 @@ function require(modname) end
 --
 --   Deprecated in Lua 5.2.
 -- @field path (string)
---   The path used by `require` to search for a Lua loader.
+--   A string with the path used by `require` to search for a Lua loader.
 --   At start-up, Lua initializes this variable with the value of the
---   environment variable `LUA_PATH_5_3` or the environment variable `LUA_PATH`
+--   environment variable `LUA_PATH_5_4` or the environment variable `LUA_PATH`
 --   or with a default path defined in `luaconf.h`, if those environment
---   variables are not defined. Any "`;;`" in the value of the environment
+--   variables are not defined. A "`;;`" in the value of the environment
 --   variable is replaced by the default path.
 -- @field preload (table)
 --   A table to store loaders for specific modules (see `require`).
 --   This variable is only a reference to the real table; assignments to this
 --   variable do not change the table used by `require`.
 -- @field searchers (table)
---   A table used by `require` to control how to load modules.
+--   A table used by `require` to control how to find modules.
 --   Each entry in this table is a *searcher function*. When looking for a
 --   module, `require` calls each of these searchers in ascending order, with
---   the module name (the argument given to `require`) as its sole parameter.
---   The function can return another function (the module *loader*) plus an
---   extra value that will be passed to that loader, or a string explaining why
---   it did not find that module (or nil if it has nothing to say).
+--   the module name (the argument given to `require`) as its sole argument.
+--   If the searcher finds the module, it returns another function, the module
+--   *loader*, plus an extra value, a *loader data*, that will be passed to that
+--   loader and returned as a second result by `require`. If it cannot find the
+--   module, it returns a string explaining why (or nil if it has nothing to
+--   say).
 --   Lua initializes this table with four functions.
 --   The first searcher simply looks for a loader in the `package.preload`
 --   table.
@@ -474,8 +520,11 @@ function require(modname) end
 --   can pack several C submodules into one single library, with each submodule
 --   keeping its original open function.
 --   All searchers except the first one (preload) return as the extra value the
---   file name where the module was found, as returned by `package.searchpath`.
---   The first searcher returns no extra value.
+--   file path where the module was found, as returned by `package.searchpath`.
+--   The first searcher always returns the string "`:preload:`".
+--   Searchers should raise no errors and have no side effects in Lua. (They may
+--   have side effects in C, for instance by linking the application with a
+--   library.)
 --
 --   New in Lua 5.2.
 local package
@@ -499,6 +548,12 @@ local package
 -- This function is not supported by Standard C. As such, it is only available
 -- on some platforms (Windows, Linux, Mac OS X, Solaris, BSD, plus other Unix
 -- systems that support the `dlfcn` standard).
+--
+-- This function is inherently insecure, as it allows Lua to call any function
+-- in any readable dynamic library in the system. (Lua calls any function
+-- assuming the function has a proper prototype and respects a proper protocol
+-- (see lua_CFunction). Therefore, calling an arbitrary function in an arbitrary
+-- dynamic library more often than not results in an access violation.)
 function package.loadlib(libname, funcname) end
 
 ---
@@ -553,9 +608,10 @@ function string.char(···) end
 -- variable names, lines, etc.).
 --
 -- Functions with upvalues have only their number of upvalues saved. When
--- (re)loaded, those upvalues receive fresh instances containing nil. (You can
--- use the debug library to serialize and reload the upvalues of a function in a
--- way adequate to your needs.)
+-- (re)loaded, those upvalues receive fresh instances. (See the `load` function
+-- for details about how these upvalues are initialized. You can use the debug
+-- library to serialize and reload the upvalues of a function in a way adequate
+-- to your needs.)
 function string.dump(function [, strip]) end
 
 ---
@@ -566,7 +622,7 @@ function string.dump(function [, strip]) end
 -- and can be negative. A value of true as a fourth, optional argument `plain`
 -- turns off the pattern matching facilities, so the function does a plain
 -- "find substring" operation, with no characters in `pattern` being considered
--- magic. Note that if `plain` is given, then `init` must be given as well.
+-- magic.
 --
 -- If the pattern has captures, then in a successful match the captured values
 -- are also returned, after the two indices.
@@ -574,14 +630,17 @@ function string.find(s, pattern [, init [, plain]]) end
 
 ---
 -- Returns a formatted version of its variable number of arguments following the
--- description given in its first argument (which must be a string). The format
+-- description given in its first argument, which must be a string. The format
 -- string follows the same rules as the ISO C function `sprintf`. The only
--- differences are that the options/modifiers `*`, `h`, `L`, `l`, `n`, and `p`
--- are not supported and that there is an extra option, `q`.
+-- differences are that the conversion specifiers and modifiers `*`, `h`, `L`,
+-- `l`, and `n` are not supported and that there is an extra specifier, `q`.
 --
--- The `q` option formats a string between double quotes, using escape sequences
--- when necessary to ensure that it can safely be read back by the Lua
--- interpreter. For instance, the call
+-- The specifier `q` formats booleans, nil, numbers, and strings in a way that
+-- the result is a valid constant in Lua source code. Booleans and nil are
+-- written in the obvious way (`true`, `false`, `nil`). Floats are written in
+-- hexadecimal, to preserve full precision. A string is written between double
+-- quotes, using escape sequences when necessary to ensure that it can safely be
+-- read back by the Lua interpreter. For instance, the call
 --
 --   string.format('%q', 'a string with "quotes" and \n new line')
 --
@@ -590,18 +649,30 @@ function string.find(s, pattern [, init [, plain]]) end
 --   "a string with \"quotes\" and \
 --       new line"
 --
--- Options `A` and `a` (when available), `E`, `e`, `f`, `G`, and `g` all expect
--- a number as argument. Options `c`, `d`, `i`, `o`, `u`, `X`, and `x` expect an
--- integer. Option `q` expects a string. Option `s` expects a string; if its
--- argument is not a string, it is converted to one following the same rules of
--- `tostring`. If the option has any modifier (flags, width, length), the string
--- argument should not contain zeros.
+-- This specifier does not support modifiers (flags, width, length).
+--
+-- The conversion specifiers `A` and `a` (when available), `E`, `e`, `f`, `G`,
+-- and `g` all expect a number as argument. The specifiers `c`, `d`, `i`, `o`,
+-- `u`, `X`, and `x` expect an integer. When Lua is compiled with a C89
+-- compiler, the specifiers `A` and `a` (hexadecimal floats) do not support
+-- modifiers.
+--
+-- The specifier `s` expects a string; if its argument is not a string, it is
+-- converted to one following the same rules of `tostring`. If the specifier has
+-- any modifier, the corresponding string argument should not contain zeros.
+--
+-- The specifier `p` formats the pointer returned by `lua_topointer`. That gives
+-- a unique string identifier for tables, userdata, threads, strings, and
+-- functions. For other values (numbers, nil, booleans), this specifier results
+-- in a string representing the pointer `NULL`.
 function string.format(formatstring, ···) end
 
 ---
 -- Returns an iterator function that, each time it is called, returns the
 -- next captures from `pattern` (see §6.4.1) over the string `s`. If `pattern`
--- specifies no captures, then the whole match is produced in each call.
+-- specifies no captures, then the whole match is produced in each call. A
+-- third, optional argument `init` specifies where to start the search; its
+-- default value is 1 and can be negative.
 --
 -- As an example, the following loop will iterate over all the words from string
 -- `s`, printing one per line:
@@ -622,7 +693,7 @@ function string.format(formatstring, ···) end
 --
 -- For this function, a caret '`^`' at the start of a pattern does not work as
 -- an anchor, as this would prevent the iteration.
-function string.gmatch(s, pattern) end
+function string.gmatch(s, pattern [, init]) end
 
 ---
 -- Returns a copy of `s` in which all (or the first `n`, if given)
@@ -634,7 +705,7 @@ function string.gmatch(s, pattern) end
 -- If `repl` is a string, then its value is used for replacement. The character
 -- `%` works as an escape character: any sequence in `repl` of the form `%d`,
 -- with `d` between 1 and 9, stands for the value of the `d`-th captured
--- substring. The sequence `%0` stands for the whole match. The sequence `%%`
+-- substring; the sequence `%0` stands for the whole match; the sequence `%%`
 -- stands for a single `%`.
 --
 -- If `repl` is a table, then the table is queried for every match, using
@@ -665,9 +736,9 @@ function string.gmatch(s, pattern) end
 --         return load(s)()
 --       end)
 --   --> x="4+5 = 9"
---   local t = {name="lua", version="5.3"}
+--   local t = {name="lua", version="5.4"}
 --   x = string.gsub("$name-$version.tar.gz", "%$(%w+)", t)
---   --> x="lua-5.3.tar.gz"
+--   --> x="lua-5.4.tar.gz"
 function string.gsub(s, pattern, repl [, n]) end
 
 ---
@@ -682,17 +753,16 @@ function string.len(s) end
 function string.lower(s) end
 
 ---
--- Looks for the first *match* of `pattern` (see §6.4.1) in the string `s`. If
--- it finds one, then `match` returns the captures from the pattern; otherwise
--- it returns nil. If `pattern` specifies no captures, then the whole match
--- is returned. A third, optional numerical argument `init` specifies where
--- to start the search; its default value is 1 and can be negative.
+-- Looks for the first *match* of the `pattern` (see §6.4.1) in the string `s`.
+-- If it finds one, then `match` returns the captures from the pattern;
+-- otherwise it returns nil. If `pattern` specifies no captures, then the whole
+-- match is returned. A third, optional numerical argument `init` specifies
+-- where to start the search; its default value is 1 and can be negative.
 function string.match(s, pattern [, init]) end
 
 ---
--- Returns a binary string containing the values `v1`, `v2`, etc. packed (that
--- is, serialized in binary form) according to the format string `fmt` (see
--- §6.4.2).
+-- Returns a binary string containing the values `v1`, `v2`, etc. serialized in
+-- binary form (packed) according to the format string `fmt` (see §6.4.2).
 --
 -- New in Lua 5.3.
 function string.pack(fmt, v1, v2, ···) end
@@ -752,7 +822,7 @@ function string.upper(s) end
 -- @class table
 -- @name utf8
 -- @field charpattern (string)
---   The pattern (a string, not a function) "[\0-\x7F\xC2-\xF4][\x80-\xBF]*"
+--   The pattern (a string, not a function) "[\0-\x7F\xC2-\xFD][\x80-\xBF]*"
 --   (see §6.4.1), which matches exactly one UTF-8 byte sequence, assuming that
 --   the subject is a valid UTF-8 string.
 --
@@ -771,29 +841,47 @@ function utf8.char(···) end
 --
 --     for p, c in utf8.codes(s) do *body* end
 --
--- will iterate over all characters in string `s`, with `p` being the position
--- (in bytes) and `c` the code point of each character. It raises an error if it
--- meets any invalid byte sequence.
+-- will iterate over all UTF-8 characters in string `s`, with `p` being the
+-- position (in bytes) and `c` the code point of each character. It raises an
+-- error if it meets any invalid byte sequence.
+--
+-- This function only accepts valid sequences (well formed and not overlong).
+-- By default, it only accepts byte sequences that result in valid Unicode code
+-- points, rejecting values greater than `10FFFF` and surrogates. The boolean
+-- argument `lax` lifts these checks, so that all values up to `0x7FFFFFFF` are
+-- accepted. (Not well formed and overlong sequences are still rejected.)
 --
 -- New in Lua 5.3.
-function utf8.codes(s) end
+function utf8.codes(s [, lax]) end
 
 ---
 -- Returns the codepoints (as integers) from all characters in `s` that start
 -- between byte position `i` and `j` (both included). The default for `i` is 1
 -- and for `j` is `i`. It raises an error if it meets any invalid byte sequence.
 --
+-- This function only accepts valid sequences (well formed and not overlong).
+-- By default, it only accepts byte sequences that result in valid Unicode code
+-- points, rejecting values greater than `10FFFF` and surrogates. The boolean
+-- argument `lax` lifts these checks, so that all values up to `0x7FFFFFFF` are
+-- accepted. (Not well formed and overlong sequences are still rejected.)
+--
 -- New in Lua 5.3.
-function utf8.codepoint(s [, i [, j]]) end
+function utf8.codepoint(s [, i [, j [, lax]]]) end
 
 ---
 -- Returns the number of UTF-8 characters in string `s` that start between
 -- positions `i` and `j` (both inclusive). The default for `i` is 1 and for `j`
--- is -1. If it finds any invalid byte sequence, returns a false value plus the
--- position of the first invalid byte.
+-- is -1. If it finds any invalid byte sequence, returns nil plus the position
+-- of the first invalid byte.
+--
+-- This function only accepts valid sequences (well formed and not overlong).
+-- By default, it only accepts byte sequences that result in valid Unicode code
+-- points, rejecting values greater than `10FFFF` and surrogates. The boolean
+-- argument `lax` lifts these checks, so that all values up to `0x7FFFFFFF` are
+-- accepted. (Not well formed and overlong sequences are still rejected.)
 --
 -- New in Lua 5.3.
-function utf8.len(s [, i [, j]]) end
+function utf8.len(s [, i [, j [, lax]]]) end
 
 ---
 -- Returns the position (in bytes) where the encoding of the `n`-th character of
@@ -821,8 +909,8 @@ function table.concat(list [, sep [, i [, j]]]) end
 ---
 -- Inserts element `value` at position `pos` in `list`, shifting up the elements
 -- `list[pos], list[pos+1], ···, list[#list]`. The default value for `pos` is
--- `#list+1`, so that a call `table.insert(t,x)` inserts `x` at the end of list
--- `t`.
+-- `#list+1`, so that a call `table.insert(t,x)` inserts `x` at the end of the
+-- list `t`.
 function table.insert(list, [pos,] value) end
 
 ---
@@ -834,10 +922,10 @@ function table.insert(list, [pos,] value) end
 function table.maxn(table) end
 
 ---
--- Moves elements from table `a1` to table `a2`, performing the equivalent to
--- the following multiple assignment: `a2[t], ··· = a1[f], ···, a1[e]`. The
--- default for `a2` is `a1`. The destination range can overlap with the source
--- range. Index `f` must be positive.
+-- Moves elements from the table `a1` to the table `a2`, performing the
+-- equivalent to the following multiple assignment: `a2[t], ··· = a1[f], ···,
+-- a1[e]`. The default for `a2` is `a1`. The destination range can overlap with
+-- the source range. Index `f` must be positive.
 --
 -- Returns the destination table `a2`.
 --
@@ -847,7 +935,7 @@ function table.move(a1, f, e, t [,a2]) end
 ---
 -- Returns a new table with all parameters stored into keys 1, 2, etc. and with
 -- a field "`n`" with the total number of parameters. Note that the resulting
--- table may not be a sequence.
+-- table may not be a sequence, if some arguments are nil.
 --
 -- New in Lua 5.2.
 function table.pack(···) end
@@ -857,14 +945,14 @@ function table.pack(···) end
 -- removed element. When `pos` is an integer between 1 and `#list`, it shifts
 -- down the elements `list[pos+1], list[pos+2], ···, list[#list]` and erases
 -- element `list[#list]`; The index `pos` can also be 0 when `#list` is 0, or
--- `#list + 1`; in those cases, the function erases the element `list[pos]`.
+-- `#list + 1`.
 --
 -- The default value for `pos` is `#list`, so that a call `table.remove(l)`
--- removes the last element of list `l`.
+-- removes the last element of the list `l`.
 function table.remove(list [, pos]) end
 
 ---
--- Sorts list elements in a given order, *in-place*, from `list[1]` to
+-- Sorts the list elements in a given order, *in-place*, from `list[1]` to
 -- `list[#list]`. If `comp` is given, then it must be a function that receives
 -- two list elements and returns true when the first element must come before
 -- the second in the final order (so that, after the sort, `i < j` implies
@@ -895,7 +983,7 @@ function table.unpack(list [, i [, j]]) end
 -- @class table
 -- @name math
 -- @field huge (number)
---   The float value `HUGE_VAL`, a value larger than any other numerical value.
+--   The float value `HUGE_VAL`, a value greater than any other numerical value.
 -- @field maxinteger (number)
 --   An integer with the maximum value for an integer.
 --
@@ -909,7 +997,7 @@ function table.unpack(list [, i [, j]]) end
 local math
 
 ---
--- Returns the absolute value of `x`. (integer/float)
+-- Returns the maximum value between `x` and `-x`. (integer/float)
 function math.abs(x) end
 
 ---
@@ -922,8 +1010,8 @@ function math.asin(x) end
 
 ---
 -- Returns the arc tangent of `y/x` (in radians), but uses the signs
--- of both parameters to find the quadrant of the result. (It also handles
--- correctly the case of `x` being zero.)
+-- of both parameters to find the quadrant of the result. It also handles
+-- correctly the case of `x` being zero.
 --
 -- The default value for `x` is 1, so that the call `math.atan(y)` returns the
 -- arc tangent of `y`.
@@ -938,7 +1026,7 @@ function math.atan(y [, x]) end
 function math.atan2(y, x) end
 
 ---
--- Returns the smallest integral value larger than or equal to `x`.
+-- Returns the smallest integral value greater than or equal to `x`.
 function math.ceil(x) end
 
 ---
@@ -960,7 +1048,7 @@ function math.deg(x) end
 function math.exp(x) end
 
 ---
--- Returns the largest integral value smaller than or equal to `x`.
+-- Returns the largest integral value less than or equal to `x`.
 function math.floor(x) end
 
 ---
@@ -994,12 +1082,12 @@ function math.log10(x) end
 
 ---
 -- Returns the argument with the maximum value, according to the Lua operator
--- `<`. (integer/float)
+-- `<`.
 function math.max(x, ···) end
 
 ---
 -- Returns the argument with the minimum value, according to the Lua operator
--- `<`. (integer/float)
+-- `<`.
 function math.min(x, ···) end
 
 ---
@@ -1022,17 +1110,35 @@ function math.rad(x) end
 -- When called without arguments, returns a pseudo-random float with uniform
 -- distribution in the range [0,1). When called with two integers `m` and `n`,
 -- `math.random` returns a pseudo-random integer with uniform distribution in
--- the range `[m, n]. (The value `n-m` cannot be negative and must fit in a Lua
--- integer.) The call `math.random(n)` is equivalent to `math.random(1, n)`.
+-- the range `[m, n]. The call `math.random(n)`, for a positive `n`, is
+-- equivalent to `math.random(1,n)`. The call `math.random(0)` produces an
+-- integer with all bits (pseudo)random.
 --
--- This function is an interface to the underling pseudo-random generator
--- function provided by C.
+-- This function uses the `xoshiro256**` algorithm to produce pseudo-random
+-- 64-bit integers, which are the results of calls with argument 0. Other
+-- results (ranges and floats) are unbiased extracted from these integers.
+--
+-- Lua initializes its pseudo-random generator with the equivalent of a call to
+-- `math.randomseed` with no arguments, so that `math.random` should generate
+-- different sequences of results each time the program runs.
 function math.random([m [, n]]) end
 
 ---
--- Sets `x` as the "seed" for the pseudo-random generator: equal seeds
--- produce equal sequences of numbers.
-function math.randomseed(x) end
+-- When called with at least one argument, the integer parameters `x` and `y`
+-- are joined into a 128-bit *seed* that is used to reinitialize the
+-- pseudo-random generator; equal seeds produce equal sequences of numbers. The
+-- default for `y` is zero.
+--
+-- When called with no arguments, Lua generates a seed with a weak attempt for
+-- randomness.
+--
+-- This function returns the two seed components that were effectively used, so
+-- that setting them again repeats the sequence.
+--
+-- To ensure a required level of randomness to the initial state (or contrarily,
+-- to have a deterministic sequence, for instance when debugging a program), you
+-- should call `math.randomseed` with explicit arguments.
+function math.randomseed([x [, y]]) end
 
 ---
 -- Returns the sine of `x` (assumed to be in radians).
@@ -1246,15 +1352,18 @@ function io.input([file]) end
 ---
 -- Opens the given file name in read mode and returns an iterator function that
 -- works like `file:lines(···)` over the opened file. When the iterator function
--- detects -- the end of file, it returns no values (to finish the loop) and
--- automatically closes the file.
+-- fails to read any value, it automatically closes the file. Besides the
+-- iterator function, `io.lines` returns three other values: two nil values as
+-- placeholders, plus the created file handle. Therefore, when used in a generic
+-- for loop, the file is closed also if the loop is interrupted by an error or a
+-- `break`.
 --
 -- The call `io.lines()` (with no file name) is equivalent to
 -- `io.input():lines("l")`; that is, it iterates over the lines of the default
 -- input file. In this case it does not close the file when the loop ends.
 --
--- In case of errors this function raises the error, instead of returning an
--- error code.
+-- In case of errors opening the file, this function raises the error, instead
+-- of returning an error code.
 function io.lines([filename, ···]) end
 
 ---
@@ -1279,7 +1388,7 @@ function io.open(filename [, mode]) end
 function io.output([file]) end
 
 ---
--- Starts program `prog` in a separated process and returns a file handle
+-- Starts the program `prog` in a separated process and returns a file handle
 -- that you can use to read data from this program (if `mode` is `"r"`,
 -- the default) or to write data to this program (if `mode` is `"w"`).
 --
@@ -1328,9 +1437,6 @@ function file:flush() end
 -- will iterate over all characters of the file, starting at the current
 -- position. Unlike `io.lines`, this function does not close the file when the
 -- loop ends.
---
--- In case of errors this function raises the error, instead of returning an
--- error code.
 function file:lines(···) end
 
 ---
@@ -1338,18 +1444,19 @@ function file:lines(···) end
 -- what to read. For each format, the function returns a string or a number
 -- with the characters read, or nil if it cannot read data with the specified
 -- format. (In this latter case, the function does not read subsequent formats.)
--- When called without formats, it uses a default format that reads the next
+-- When called without arguments, it uses a default format that reads the next
 -- line (see below).
 --
 -- The available formats are
 --   "n": reads a numeral and returns it as a float or an integer, following the
---        lexical conventions of Lua. (The numeral may have leading spaces and a
---        sign.) This format always reads the longest input sequence that is a
---        valid prefix for a number; if that prefix does not form a valid number
---        (e.g., an empty string, "0x", or "3.4e-"), it is discarded and the
---        function returns nil.
+--        lexical conventions of Lua. (The numeral may have leading whitespaces
+--        and a sign.) This format always reads the longest input sequence that
+--        is a valid prefix for a number; if that prefix does not form a valid
+--        number (e.g., an empty string, "0x", or "3.4e-") or it is too long
+--        (more than 200 characters), it is discarded and the format returns
+--        nil.
 --   "a": reads the whole file, starting at the current position. On end of
---        file, it returns the empty string.
+--        file, it returns the empty string; this format never fails.
 --   "l": reads the next line skipping the end of line, returning nil on
 --        end of file. This is the default format.
 --   "L": reads the next line keeping the end-of-line character (if present),
@@ -1381,18 +1488,16 @@ function file:read(···) end
 function file:seek([whence [, offset]]) end
 
 ---
--- Sets the buffering mode for an output file. There are three available
--- modes:
---   "no": no buffering; the result of any output operation appears immediately.
---   "full": full buffering; output operation is performed only when the
---           buffer is full or when you explicitly `flush` the file (see
---           `io.flush`).
---   "line": line buffering; output is buffered until a newline is output or
---           there is any input from some special files (such as a terminal
---           device).
+-- Sets the buffering mode for a file. There are three available modes:
+--   "no": no buffering
+--   "full": full buffering
+--   "line": line buffering
 --
--- For the last two cases, `size` specifies the size of the buffer, in
+-- For the last two cases, `size` is a hint for the size of the buffer, in
 -- bytes. The default is an appropriate size.
+--
+-- The specific behavior of each mode is non portable; check the underlying
+-- ISO C function `setvbuf` in your platform for more details.
 function file:setvbuf(mode [, size]) end
 
 ---
@@ -1405,7 +1510,7 @@ function file:write(···) end
 
 ---
 -- Returns an approximation of the amount in seconds of CPU time used by
--- the program.
+-- the program, as returned by the underlying ISO C function `clock`.
 function os.clock() end
 
 ---
@@ -1419,17 +1524,16 @@ function os.clock() end
 -- If `format` starts with '`!`', then the date is formatted in Coordinated
 -- Universal Time. After this optional character, if `format` is the string
 -- "`*t`", then `date` returns a table with the following fields: `year`,
--- `month` (1-12), `day` (1-31), `hour` (0-23), `min` (0-59), `sec` (0-61),
--- `wday` (weekday, 1-7, Sunday is 1), `yday` (day of the year, 1-366), and
--- `isdst` (daylight saving flag, a boolean). This last field may be absent if
--- the information is not available.
+-- `month` (1-12), `day` (1-31), `hour` (0-23), `min` (0-59), `sec` (0-61, due
+-- to leap seconds), `wday` (weekday, 1-7, Sunday is 1), `yday` (day of the
+-- year, 1-366), and `isdst` (daylight saving flag, a boolean). This last field
+-- may be absent if the information is not available.
 --
 -- If `format` is not "`*t`", then `date` returns the date as a string,
 -- formatted according to the same rules as the ISO C function `strftime`.
 --
--- When called without arguments, `date` returns a reasonable date and time
--- representation that depends on the host system and on the current locale.
--- (More specifically, `os.date()` is equivalent to `os.date("%c")`.)
+-- If `format` is absent, it defaults to "`%c`", which gives a human-readable
+-- date and time representation using the current locale.
 --
 -- On non-POSIX systems, this function may be not thread safe because of its
 -- reliance on C function `gmtime` and C function `localtime`.
@@ -1507,11 +1611,20 @@ function os.setlocale(locale [, category]) end
 -- (default is nil). For a description of these fields, see the `os.date`
 -- function.
 --
+-- When the function is called, the values in these fields do not need to be
+-- inside their valid ranges. For instance, if `sec` is -10, it means 10 seconds
+-- before the time specified by the other fields; if `hour` is 1000, it means
+-- 1000 hours after the time specified by the other fields.
+--
 -- The returned value is a number, whose meaning depends on your system. In
 -- POSIX, Windows, and some other systems, this number counts the number of
 -- seconds since some given start time (the "epoch"). In other systems, the
 -- meaning is not specified, and the number returned by `time` can be used only
 -- as an argument to `os.date` and `os.difftime`.
+--
+-- When called with a table, `os.time` also normalizes all the fields documented
+-- in the `os.date` function, so that they represent the same time as before the
+-- call but with values inside their valid ranges.
 function os.time([table]) end
 
 ---
@@ -1547,8 +1660,10 @@ function debug.getfenv(o) end
 
 ---
 -- Returns the current hook settings of the thread, as three values: the
--- current hook function, the current hook mask, and the current hook count
--- (as set by the `debug.sethook` function).
+-- current hook function, the current hook mask, and the current hook count,
+-- as set by the `debug.sethook` function.
+--
+-- Returns nil if there is no active hook.
 function debug.gethook([thread]) end
 
 ---
@@ -1556,8 +1671,9 @@ function debug.gethook([thread]) end
 -- function directly or you can give a number as the value of `f`, which means
 -- the function running at level `f` of the call stack of the given thread:
 -- level 0 is the current function (`getinfo` itself); level 1 is the function
--- that called `getinfo` and so on. If `f` is a number larger than the number of
--- active functions, then `getinfo` returns nil.
+-- that called `getinfo` (except for tail calls, which do not count in the
+-- stack); and so on. If `f` is a number greater than the number of active
+-- functions, then `getinfo` returns nil.
 --
 -- The returned table can contain all the fields returned by `lua_getinfo`,
 -- with the string `what` describing which fields to fill in. The default for
@@ -1575,15 +1691,16 @@ function debug.getinfo([thread,] f [, what]) end
 ---
 -- This function returns the name and the value of the local variable with index
 -- `local` of the function at level `f` of the stack. This function accesses not
--- only explicit local variables, but also parameters, temporaries, etc.
+-- only explicit local variables, but also parameters and temporary values.
 --
 -- The first parameter or local variable has index 1, and so on, following the
 -- order that they are declared in the code, counting only the variables that
--- are active in the current scope of the function. Negative indices refer to
--- vararg parameters; -1 is the first vararg parameter. The function returns nil
--- if there is no variable with the given index, and raises an error when called
--- with a level out of range. (You can call `debug.getinfo` to check whether the
--- level is valid.)
+-- are active in the current scope of the function. Compile-time constants may
+-- not appear in this listing, if they were optimized away by the compiler.
+-- Negative indices refer to vararg parameters; -1 is the first vararg
+-- parameter. The function returns nil if there is no variable with the given
+-- index, and raises an error when called with a level out of range. (You can
+-- call `debug.getinfo` to check whether the level is valid.)
 --
 -- Variable names starting with '(' (open parenthesis) represent variables with
 -- no known names (internal variables such as loop control variables, and
@@ -1599,7 +1716,7 @@ function debug.getlocal([thread,] f, local) end
 function debug.getmetatable(value) end
 
 ---
--- Returns the registry table (see §4.5).
+-- Returns the registry table (see §4.3).
 function debug.getregistry() end
 
 ---
@@ -1607,16 +1724,22 @@ function debug.getregistry() end
 -- `up` of the function `f`. The function returns nil if there is no upvalue
 -- with the given index.
 --
--- Variable names starting with '(' (open parenthesis) represent variables with
--- no known names (variables from chunks saved without debug information).
+-- (For Lua functions, upvalues are the external local variables that the
+-- function uses, and that are consequently included in its closure.)
+--
+-- For C functions, this function uses the empty string `""` as a name for all
+-- upvalues.
+--
+-- Variable name '`?`' (interrogation mark) represents variables with no known
+-- names (variables from chunks saved without debug information).
 function debug.getupvalue(f, up) end
 
 ---
--- Returns the Lua value associated to `u`. If `u` is not a userdata, returns
--- nil.
+-- Returns the `n`-th user value associated to the userdata `u` plus a boolean,
+-- false, if the userdata does not have that value.
 --
 -- New in Lua 5.2.
-function debug.getuservalue(u) end
+function debug.getuservalue(u, n) end
 
 ---
 -- Sets the environment of the given `object` to the given `table`. Returns
@@ -1626,7 +1749,7 @@ function debug.getuservalue(u) end
 function debug.setfenv(object, table) end
 
 ---
--- Sets the given function as a hook. The string `mask` and the number
+-- Sets the given function as the debug hook. The string `mask` and the number
 -- `count` describe when the hook will be called. The string mask may have any
 -- combination of the following characters, with the given meaning:
 --   "c": the hook is called every time Lua calls a function;
@@ -1639,11 +1762,11 @@ function debug.setfenv(object, table) end
 -- When called without arguments, `debug.sethook` turns off the hook.
 --
 -- When the hook is called, its first parameter is a string describing
--- the event that has triggered its call: `"call"` (or `"tail call"`),
--- `"return"`, `"line"`, and `"count"`. For line events, the hook also gets the
--- new line number as its second parameter. Inside a hook, you can call
--- `getinfo` with level 2 to get more information about the running function
--- (level 0 is the `getinfo` function, and level 1 is the hook function).
+-- the event that has triggered its call: `"call"`, `"tail call"`, `"return"`,
+-- `"line"`, and `"count"`. For line events, the hook also gets the new line
+-- number as its second parameter. Inside a hook, you can call `getinfo` with
+-- level 2 to get more information about the running function. (Level 0 is the
+-- `getinfo` function, and level 1 is the hook function.)
 function debug.sethook([thread,] hook, mask [, count]) end
 
 ---
@@ -1666,16 +1789,18 @@ function debug.setmetatable(value, table) end
 -- This function assigns the value `value` to the upvalue with index `up`
 -- of the function `f`. The function returns nil if there is no upvalue with the
 -- given index. Otherwise, it returns the name of the upvalue.
+--
+-- See `debug.getupvalue` for more information about upvalues.
 function debug.setupvalue(f, up, value) end
 
 ---
--- Sets the given `value` as the Lua value associated to the given `udata`.
--- `udata` must be a full userdata.
+-- Sets the given `value` as the `n`-th user value associated to the given
+-- `udata`. `udata` must be a full userdata.
 --
--- Returns `udata`.
+-- Returns `udata`, or nil if the userdata does not have that value.
 --
 -- New in Lua 5.2.
-function debug.setuservalue(udata, value) end
+function debug.setuservalue(udata, value, n) end
 
 ---
 -- If `message` is present but is neither a string nor nil, this function
