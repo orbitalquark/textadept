@@ -110,7 +110,7 @@ luaL_checkoption
 luaL_checkstack
 luaL_checktype
 luaL_checkudata
-luaL_checkversion
+luaL_checkversion_
 luaL_error
 luaL_execresult
 luaL_fileresult
