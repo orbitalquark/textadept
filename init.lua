@@ -22,6 +22,7 @@ local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
 
 -- Documentation is in core/.view.luadoc.
 local function set_theme(view, name, env)
+  for k in pairs(lexer.colors) do lexer.colors[k] = nil end -- clear mimic
   if not assert_type(name, 'string', 2):find('[/\\]') then
     name = package.searchpath(name, string.format(
       '%s/themes/?.lua;%s/themes/?.lua', _USERHOME, _HOME))
