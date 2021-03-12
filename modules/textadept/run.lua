@@ -98,8 +98,10 @@ local function scan_for_error(message, ext_or_lexer)
         end
         i = i + 1
       end
+      local lower_message = message:lower()
       detail.warning =
-        message:lower():find('warning') and not message:lower():find('error')
+        (lower_message:find('warning') or lower_message:find('note')) and
+        not lower_message:find('error')
       -- Compile and run commands specify the file extension or lexer name used
       -- to determine the command, so the error patterns used are guaranteed to
       -- be correct. Build and test commands have no such context and instead
