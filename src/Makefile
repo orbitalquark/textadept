@@ -107,15 +107,15 @@ WGET = wget -O $@
 
 # Scintilla.
 
-sci_flags = -pedantic $(plat_flag) -DSCI_LEXER -DSCI_EMPTYCATALOGUE -DNDEBUG \
-            -Iscintilla/include -Iscintilla/src -Iscintilla/lexlib -Wall
+sci_flags = -pedantic $(plat_flag) -DSCI_LEXER -DNDEBUG -Iscintilla/include \
+            -Iscintilla/src -Ilexilla/include -Ilexilla/lexlib -Wall
 
-sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o Catalogue.o \
-           CellBuffer.o CharClassify.o ContractionState.o Decoration.o \
-           Document.o EditModel.o Editor.o EditView.o ExternalLexer.o \
-           Indicator.o KeyMap.o LineMarker.o MarginView.o PerLine.o \
-           PositionCache.o RESearch.o RunStyles.o ScintillaBase.o Selection.o \
-           Style.o UniConversion.o ViewStyle.o UniqueString.o XPM.o
+sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o CellBuffer.o \
+           CharClassify.o ContractionState.o Decoration.o Document.o \
+           EditModel.o Editor.o EditView.o Indicator.o KeyMap.o LineMarker.o \
+           MarginView.o PerLine.o PositionCache.o RESearch.o RunStyles.o \
+           ScintillaBase.o Selection.o Style.o UniConversion.o UniqueString.o \
+           ViewStyle.o XPM.o
 sci_lex_objs = Accessor.o CharacterCategory.o CharacterSet.o DefaultLexer.o \
                LexerBase.o LexerModule.o LexerNoExceptions.o LexerSimple.o \
                PropSetSimple.o StyleContext.o WordList.o
@@ -173,7 +173,7 @@ osx-curses: textadept-curses
 
 $(sci_objs): %.o: scintilla/src/%.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $< -o $@
-$(sci_lex_objs): %.o: scintilla/lexlib/%.cxx
+$(sci_lex_objs): %.o: lexilla/lexlib/%.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(sci_flags) $< -o $@
 $(sci_lexer_objs): LexLPeg.cxx
 	$(CROSS)$(CXX) -c $(CXXFLAGS) $(LUA_CFLAGS) $(sci_flags) -DNO_SCITE -DNO_DLL \
@@ -366,7 +366,7 @@ osx-app: ../textadept ../textadept-curses ../scripts/osx/textadept_osx
 
 # External dependencies.
 
-base_deps = scintilla scinterm scintillua lua lualibs gtdialog cdk
+base_deps = scintilla lexilla scinterm scintillua lua lualibs gtdialog cdk
 deps: $(base_deps) termkey
 win32-deps: $(base_deps) win32gtk win32curses
 osx-deps: $(base_deps) gtkosx termkey
@@ -382,9 +382,10 @@ else
   gtdialog_url = $(root_url)/gtdialog/archive/default.zip
 endif
 
-scintilla_tgz = scintilla445.tgz
-scinterm_zip = 6a774158d8a3c7bc7ea120bc01cdb016fa351a7e.zip
-scintillua_zip = scintillua_4.4.5-2.zip
+scintilla_tgz = scintilla500.tgz
+lexilla_tgz = lexilla500.tgz
+scinterm_zip = 2d933ee889151de637853ba606b92a5c2ad433a1.zip
+scintillua_zip = 8584c7d1f067b514cfcee0a253be7554ee63aeac.zip
 lua_tgz = lua-5.4.2.tar.gz
 lpeg_tgz = lpeg-1.0.2.tar.gz
 lfs_zip = v1_8_0.zip
@@ -408,6 +409,8 @@ scintilla: scintilla.patch | $(scintilla_tgz)
 		tar xzf $|; \
 	fi
 	for patch in $^; do echo Applying $$patch; patch -d $@ -N -p1 < $$patch; done
+$(lexilla_tgz): ; $(WGET) https://www.scintilla.org/$@
+lexilla: | $(lexilla_tgz) ; tar xzf $|
 $(scinterm_zip): ; $(WGET) $(scinterm_url) -O $@
 scinterm: scintilla/curses
 scintilla/curses: | $(scinterm_zip)
