@@ -4004,7 +4004,9 @@ end
 
 function test_debugger_ansi_c()
   local debugger = require('debugger')
-  require('debugger.ansi_c').logging = true
+  local project_commands = debugger.project_commands
+  debugger.project_commands = {} -- reset
+  require('debugger.gdb').logging = true
   local function wait()
     os.spawn('sleep 0.2'):wait()
     ui.update()
@@ -4109,10 +4111,13 @@ function test_debugger_ansi_c()
   buffer:close(true)
   os.execute('rm -r ' .. dir)
   ui.tabs = tabs
+  debugger.project_commands = project_commands -- restore
 end
 
 function test_debugger_lua()
   local debugger = require('debugger')
+  local project_commands = debugger.project_commands
+  debugger.project_commands = {} -- reset
   local function wait()
     for i = 1, 10 do
       os.spawn('sleep 0.1'):wait()
@@ -4203,6 +4208,7 @@ function test_debugger_lua()
   view:unsplit()
   buffer:close(true)
   ui.tabs = tabs
+  debugger.project_commands = project_commands -- restore
 end
 
 function test_export_interactive()
