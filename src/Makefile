@@ -465,8 +465,9 @@ gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 $(cloc): ; $(WGET) http://prdownloads.sourceforge.net/cloc/$@
 
 clean-deps:
-	rm -rf scintilla ../lexers $(LexLPeg) lua gtdialog cdk termkey win32gtk \
-		win32curses gtkosx $(scinterm_zip) $(scintillua_zip) $(gtdialog_zip)
+	rm -rf scintilla ../lexers lexilla $(LexLPeg) lua gtdialog cdk termkey \
+		win32gtk win32curses gtkosx $(scinterm_zip) $(scintillua_zip) \
+		$(gtdialog_zip)
 
 # Count lines of code.
 
