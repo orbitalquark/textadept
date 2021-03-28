@@ -3846,12 +3846,11 @@ function test_lexer_fold_properties()
   assert(not lexer.folding)
   lexer.folding = true
   assert(lexer.property['fold'] == '1')
-  -- Lexer fold properties and view fold properties do not mirror because
-  -- Scintilla forwards view property settings to lexers, not vice-versa.
+  -- Verify view and lexer properties are synchronized.
   view.property['fold'] = '0'
   assert(not lexer.folding)
   lexer.folding = true
-  assert_equal(view.property['fold'], '0')
+  assert_equal(view.property['fold'], '1')
 end
 
 function test_lexer_fold_line_groups()
