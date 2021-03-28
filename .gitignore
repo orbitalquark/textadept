@@ -12,6 +12,7 @@ lexers/
 # Dependencies.
 src/cdk/
 src/gtdialog/
+src/lexilla/
 src/LexLPeg.*
 src/lua/
 src/scintilla/
