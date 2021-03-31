@@ -16,7 +16,7 @@ with [Lua Quick Reference][] -- $27 USD<br/>
 Order the print book via Amazon [US][], [CA][], [UK][], [DE][], [FR][], [IT][],
 [ES][], [JP][] -- ~$25 USD
 
-Published: Dec 2020 <span style="color: #ef373a;">[New!]</span><br/>
+Published: Dec 2020<br/>
 ISBN: 978-0-9912379-6-8<br/>
 Pages: 179
 
