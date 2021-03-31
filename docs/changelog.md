@@ -8,6 +8,47 @@ development.**
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.2 beta (01 Apr 2021)
+
+Download:
+
+* [Textadept 11.2 beta -- Win32][]
+* [Textadept 11.2 beta -- Mac OSX 10.7+][]
+* [Textadept 11.2 beta -- Linux][]
+* [Textadept 11.2 beta -- Modules][]
+
+Bugfixes:
+
+* Fixed inability to replace found text with escapes like '\n' and '\t'.
+* Fixed custom theme's overriding of default theme's colors.
+* Do not mark GCC-style "note:" output as compile/run/build/test errors.
+* Modules: Fixed inability to handle large LSP notifications.
+* Modules: Prefer asynchronous LSP response reading on Windows in order to
+  prevent hanging.
+* Modules: Fixed bug where LSP is not notified of files opened during a session.
+* Modules: Fixed LSP startup errors if the LSP command is ultimately nil.
+* Modules: Fixed debugger status when paused.
+
+Changes:
+
+* Added `ui.SHOW_ALL_TABS` option for `ui.tabs`.
+* Added support for TypeScript.
+* The terminal version now uses a native terminal cursor instead of an
+  artificially drawn one.
+* Modules: Keep current line's scroll position when displaying LSP diagnostics.
+* Modules: Added option to turn off LSP diagnostic display completely.
+* Modules: Added `debugger.project_commands` for making project-specific
+  debugging easier.
+* Updated to [Lua][] 5.4.2.
+* Updated to [Scintilla][] 5.0.0.
+
+[Textadept 11.2 beta -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta/textadept_11.2_beta.win32.zip
+[Textadept 11.2 beta -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta/textadept_11.2_beta.macOS.zip
+[Textadept 11.2 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta/textadept_11.2_beta.linux.tgz
+[Textadept 11.2 beta -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta/textadept_11.2_beta.modules.zip
+[Lua]: https://lua.org
+[Scintilla]: https://scintilla.org
+
 ### 11.1 (01 Feb 2021)
 
 Download:
