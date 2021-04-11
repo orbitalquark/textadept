@@ -22,9 +22,9 @@ jobs:
       - name: Git init if necessary
         shell: bash
         run: |
-          # If git version is less than 2.18, a git clone will not be made in
-          # this container. In that case, make a temporary repository so
-          # "make release" can archive the repo's contents for release.
+          # If git version is less than 2.18, a git clone will not be made in this container. In
+          # that case, make a temporary repository so "make release" can archive the repo's
+          # contents for release.
           if [[ -d .git ]]; then exit 0; fi
           git init
           git add .
@@ -59,24 +59,22 @@ jobs:
           # Output version information for use in later steps.
           version="${{ github.event.inputs.tag }}"
           if [[ -z $version ]]; then
-            version=`ls -1 src/textadept_*.zip | head -1 |
-              sed 's/[^_]\+_\(.\+\)\.[^.]\+\.zip/\1/;'`
+            version=`ls -1 src/textadept_*.zip | head -1 | sed 's/[^_]\+_\(.\+\)\.[^.]\+\.zip/\1/;'`
           fi
           echo "::set-output name=version::$version"
       - name: Package modules
         shell: bash
         run: |
           mkdir textadept-modules
-          modules="css ctags debugger export file_diff html lsp lua_repl \
-            open_file_mode python rest ruby spellcheck yaml"
+          modules="css ctags debugger export file_diff html lsp lua_repl open_file_mode python \
+            rest ruby spellcheck yaml"
           for module in $modules; do
             gh_name="`echo -n $module | sed -e 's/_/-/g;'`"
             gh_prefix="https://github.com/orbitalquark/textadept-$gh_name"
             wget $gh_prefix/releases/download/latest/$module.zip
             unzip -d textadept-modules $module.zip
           done
-          zip -r src/textadept_${{ steps.build.outputs.version }}.modules.zip \
-            textadept-modules
+          zip -r src/textadept_${{ steps.build.outputs.version }}.modules.zip textadept-modules
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:

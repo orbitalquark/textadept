@@ -14,10 +14,8 @@ for rev in `hg tags | awk '{print $2}' | cut -d: -f1 | tac`; do
   date=`hg log -r $rev | grep ^date | cut -d: -f2- | tr + - | cut -d- -f1`
   hg update -r $rev -q
   timestamp=`date -d "$date" "+%s"`
-  counts=`cloc --force-lang=C,h --quiet --csv \
-    --exclude-dir=doc,docs,scripts,themes,test,.github \
-    --not-match-f=adeptsensedoc\\|tadoc . \
-    | tail -n +3 | cut -d, -f2- | sort | tr '\n' ,`
+  counts=`cloc --force-lang=C,h --quiet --csv --exclude-dir=doc,docs,scripts,themes,test,.github \
+    --not-match-f=adeptsensedoc\\|tadoc . | tail -n +3 | cut -d, -f2- | sort | tr '\n' ,`
   echo $timestamp,$counts
 done | lua -e "
   -- Filter counts from cloc into a data format readable by gnuplot.

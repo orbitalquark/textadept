@@ -5,14 +5,12 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Compile and run source code files with Textadept.
--- [Language modules](#compile-and-run) may tweak the `compile_commands`,
--- `run_commands`, and `error_patterns` tables for particular languages.
--- The user may tweak `build_commands` and `test_commands` for particular
--- projects.
+-- [Language modules](#compile-and-run) may tweak the `compile_commands`, `run_commands`, and
+-- `error_patterns` tables for particular languages.
+-- The user may tweak `build_commands` and `test_commands` for particular projects.
 -- @field run_in_background (bool)
 --   Run shell commands silently in the background.
---   This only applies when the message buffer is open, though it does not have
---   to be visible.
+--   This only applies when the message buffer is open, though it does not have to be visible.
 --   The default value is `false`.
 -- @field MARK_WARNING (number)
 --   The run or compile warning marker number.
@@ -20,34 +18,32 @@ local M = {}
 --   The run or compile error marker number.
 -- @field _G.events.COMPILE_OUTPUT (string)
 --   Emitted when executing a language's compile shell command.
---   By default, compiler output is printed to the message buffer. In order to
---   override this behavior, connect to the event with an index of `1` and
---   return `true`.
+--   By default, compiler output is printed to the message buffer. In order to override this
+--   behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
 --   * `output`: A line of string output from the command.
---   * `ext_or_lexer`: The file extension or lexer name associated with the
---     executed compile command.
+--   * `ext_or_lexer`: The file extension or lexer name associated with the executed compile
+--     command.
 -- @field _G.events.RUN_OUTPUT (string)
 --   Emitted when executing a language's run shell command.
---   By default, output is printed to the message buffer. In order to override
---   this behavior, connect to the event with an index of `1` and return `true`.
+--   By default, output is printed to the message buffer. In order to override this behavior,
+--   connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
 --   * `output`: A line of string output from the command.
---   * `ext_or_lexer`: The file extension or lexer name associated with the
---     executed run command.
+--   * `ext_or_lexer`: The file extension or lexer name associated with the executed run command.
 -- @field _G.events.BUILD_OUTPUT (string)
 --   Emitted when executing a project's build shell command.
---   By default, output is printed to the message buffer. In order to override
---   this behavior, connect to the event with an index of `1` and return `true`.
+--   By default, output is printed to the message buffer. In order to override this behavior,
+--   connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
 --   * `output`: A line of string output from the command.
 -- @field _G.events.TEST_OUTPUT (string)
 --   Emitted when executing a project's shell command for running tests.
---   By default, output is printed to the message buffer. In order to override
---   this behavior, connect to the event with an index of `1` and return `true`.
+--   By default, output is printed to the message buffer. In order to override this behavior,
+--   connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
 --   * `output`: A line of string output from the command.
@@ -59,26 +55,23 @@ M.MARK_WARNING = _SCINTILLA.next_marker_number()
 M.MARK_ERROR = _SCINTILLA.next_marker_number()
 
 -- Events.
-local run_events = {
-  'compile_output', 'run_output', 'build_output', 'test_output'
-}
+local run_events = {'compile_output', 'run_output', 'build_output', 'test_output'}
 for _, v in ipairs(run_events) do events[v:upper()] = v end
 
--- Keep track of: the last process spawned in order to kill it if requested; the
--- cwd of that process in order to jump to relative file paths in recognized
--- warning or error messages; and the view the process was spawned from in order
--- to jump to messages (which are displayed in a split view) in the original
--- view.
+-- Keep track of: the last process spawned in order to kill it if requested; the cwd of that
+-- process in order to jump to relative file paths in recognized warning or error messages;
+-- and the view the process was spawned from in order to jump to messages (which are displayed
+-- in a split view) in the original view.
 local proc, cwd, preferred_view
 
--- Scans the given message for a warning or error message and, if one is found,
--- returns table of the warning/error's details.
--- @param message The message to parse for warnings or errors. The message
---   is assumed to be encoded in _CHARSET.
--- @param ext_or_lexer Optional file extension or lexer name associated with the
---   shell command that produced the warning/error.
--- @return error details table with 'filename', 'line', 'column', and 'message'
---   fields along with a 'warning' flag.
+-- Scans the given message for a warning or error message and, if one is found, returns table
+-- of the warning/error's details.
+-- @param message The message to parse for warnings or errors. The message is assumed to be
+--   encoded in _CHARSET.
+-- @param ext_or_lexer Optional file extension or lexer name associated with the shell command
+--   that produced the warning/error.
+-- @return error details table with 'filename', 'line', 'column', and 'message' fields along
+--   with a 'warning' flag.
 -- @see error_patterns
 local function scan_for_error(message, ext_or_lexer)
   for key, patterns in pairs(M.error_patterns) do
@@ -99,15 +92,13 @@ local function scan_for_error(message, ext_or_lexer)
         i = i + 1
       end
       local lower_message = message:lower()
-      detail.warning =
-        (lower_message:find('warning') or lower_message:find('note')) and
+      detail.warning = (lower_message:find('warning') or lower_message:find('note')) and
         not lower_message:find('error')
-      -- Compile and run commands specify the file extension or lexer name used
-      -- to determine the command, so the error patterns used are guaranteed to
-      -- be correct. Build and test commands have no such context and instead
-      -- iterate through all possible error patterns. Only consider the
-      -- error/warning valid if the extracted filename's extension or lexer name
-      -- matches the error pattern's extension or lexer name.
+      -- Compile and run commands specify the file extension or lexer name used to determine
+      -- the command, so the error patterns used are guaranteed to be correct. Build and
+      -- test commands have no such context and instead iterate through all possible error
+      -- patterns. Only consider the error/warning valid if the extracted filename's extension
+      -- or lexer name matches the error pattern's extension or lexer name.
       if ext_or_lexer then return detail end
       local ext = detail.filename:match('[^/\\.]+$')
       local lexer_name = textadept.file_types.extensions[ext]
@@ -120,33 +111,30 @@ local function scan_for_error(message, ext_or_lexer)
 end
 
 -- Prints an output line from a compile, run, build, or test shell command.
--- Assume output is UTF-8 unless there's a recognized warning or error message.
--- In that case assume it is encoded in _CHARSET and mark it.
+-- Assume output is UTF-8 unless there's a recognized warning or error message. In that case
+-- assume it is encoded in _CHARSET and mark it.
 -- All stdout and stderr from the command is printed silently.
 -- @param line The output line to print.
--- @param ext_or_lexer Optional file extension or lexer name associated with the
---   executed command. This is used for better error detection in compile and
---   run commands.
+-- @param ext_or_lexer Optional file extension or lexer name associated with the executed command.
+--   This is used for better error detection in compile and run commands.
 local function print_line(line, ext_or_lexer)
   local error = scan_for_error(line, ext_or_lexer)
-  ui.silent_print = M.run_in_background or ext_or_lexer or
-    not line:find('^> ') or line:find('^> exit')
+  ui.silent_print = M.run_in_background or ext_or_lexer or not line:find('^> ') or
+    line:find('^> exit')
   ui.print(not error and line or line:iconv('UTF-8', _CHARSET))
   ui.silent_print = false
   if error then
     -- Current position is one line below the error due to ui.print()'s '\n'.
-    buffer:marker_add(
-      buffer.line_count - 1, error.warning and M.MARK_WARNING or M.MARK_ERROR)
+    buffer:marker_add(buffer.line_count - 1, error.warning and M.MARK_WARNING or M.MARK_ERROR)
   end
 end
 
 local output_buffer
--- Prints the output from a compile, run, build, or test shell command as a
--- series of lines, performing buffering as needed.
+-- Prints the output from a compile, run, build, or test shell command as a series of lines,
+-- performing buffering as needed.
 -- @param output The output to print, or `nil` to flush any buffered output.
--- @param ext_or_lexer Optional file extension or lexer name associated with the
---   executed command. This is used for better error detection in compile and
---   run commands.
+-- @param ext_or_lexer Optional file extension or lexer name associated with the executed command.
+--   This is used for better error detection in compile and run commands.
 local function print_output(output, ext_or_lexer)
   if output then
     if output_buffer then output = output_buffer .. output end
@@ -162,17 +150,15 @@ local function print_output(output, ext_or_lexer)
   end
 end
 
--- Runs command *command* in working directory *dir*, emitting events of type
--- *event* with any output received.
--- @param command String command to run, or a function returning such a string
---   and optional working directory and environment table. A returned working
---   directory overrides *dir*.
+-- Runs command *command* in working directory *dir*, emitting events of type *event* with any
+-- output received.
+-- @param command String command to run, or a function returning such a string and optional
+--   working directory and environment table. A returned working directory overrides *dir*.
 -- @param dir String working directory to run *command* in.
 -- @param event String event name to emit command output with.
 -- @param macros Optional table of '%[char]' macros to expand within *command*.
--- @param ext_or_lexer Optional file extension or lexer name associated with the
---   executed command. This is used for better error detection in compile and
---   run commands.
+-- @param ext_or_lexer Optional file extension or lexer name associated with the executed command.
+--   This is used for better error detection in compile and run commands.
 local function run_command(command, dir, event, macros, ext_or_lexer)
   local working_dir, env
   if type(command) == 'function' then command, working_dir, env = command() end
@@ -183,10 +169,12 @@ local function run_command(command, dir, event, macros, ext_or_lexer)
   cwd = (working_dir or dir):gsub('[/\\]$', '')
   events.emit(event, string.format('> cd %s\n', cwd))
   events.emit(event, string.format('> %s\n', command:iconv('UTF-8', _CHARSET)))
-  local args = {command, cwd, emit, emit, function(status)
-    emit() -- flush
-    events.emit(event, string.format('> exit status: %d\n', status))
-  end}
+  local args = {
+    command, cwd, emit, emit, function(status)
+      emit() -- flush
+      events.emit(event, string.format('> exit status: %d\n', status))
+    end
+  }
   if env then table.insert(args, 3, env) end
   proc = assert(os.spawn(table.unpack(args)))
 end
@@ -204,21 +192,18 @@ local function compile_or_run(filename, commands)
     textadept.file_types.extensions[ext]
   local command = commands[filename] or commands[ext] or commands[lang]
   local dirname, basename = '', filename
-  if filename:find('[/\\]') then
-    dirname, basename = filename:match('^(.+)[/\\]([^/\\]+)$')
-  end
-  local event = commands == M.compile_commands and events.COMPILE_OUTPUT or
-    events.RUN_OUTPUT
+  if filename:find('[/\\]') then dirname, basename = filename:match('^(.+)[/\\]([^/\\]+)$') end
+  local event = commands == M.compile_commands and events.COMPILE_OUTPUT or events.RUN_OUTPUT
   local macros = {
-    ['%p'] = filename, ['%d'] = dirname, ['%f'] = basename,
-    ['%e'] = basename:match('^(.+)%.') -- no extension
+    ['%p'] = filename, ['%d'] = dirname, ['%f'] = basename, ['%e'] = basename:match('^(.+)%.') -- no extension
   }
   run_command(command, dirname, event, macros, commands[ext] and ext or lang)
 end
 
+-- LuaFormatter off
 ---
--- Map of filenames, file extensions, and lexer names to their associated
--- "compile" shell command line strings or functions that return such strings.
+-- Map of filenames, file extensions, and lexer names to their associated "compile" shell
+-- command line strings or functions that return such strings.
 -- Command line strings may have the following macros:
 --
 --   + `%f`: The file's name, including its extension.
@@ -226,21 +211,21 @@ end
 --   + `%d`: The file's directory path.
 --   + `%p`: The file's full path.
 --
--- Functions may also return a working directory and process environment table
--- to operate in. By default, the working directory is the current file's parent
--- directory and the environment is Textadept's environment.
+-- Functions may also return a working directory and process environment table to operate in. By
+-- default, the working directory is the current file's parent directory and the environment
+-- is Textadept's environment.
 -- @class table
 -- @name compile_commands
 M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc -o "%e" "%f"',antlr='antlr4 "%f"',g='antlr3 "%f"',applescript='osacompile "%f" -o "%e.scpt"',asm='nasm "%f"'--[[ && ld "%e.o" -o "%e"']],boo='booc "%f"',caml='ocamlc -o "%e" "%f"',csharp=WIN32 and 'csc "%f"' or 'mcs "%f"',coffeescript='coffee -c "%f"',context='context --nonstopmode "%f"',cpp='g++ -o "%e" "%f"',cuda=WIN32 and 'nvcc -o "%e.exe" "%f"' or 'nvcc -o "%e" "%f"',dmd='dmd "%f"',dot='dot -Tps "%f" -o "%e.ps"',eiffel='se c "%f"',elixir='elixirc "%f"',erlang='erl -compile "%e"',faust='faust -o "%e.cpp" "%f"',fsharp=WIN32 and 'fsc.exe "%f"' or 'mono fsc.exe "%f"',fortran='gfortran -o "%e" "%f"',gap='gac -o "%e" "%f"',go='go build "%f"',groovy='groovyc "%f"',haskell=WIN32 and 'ghc -o "%e.exe" "%f"' or 'ghc -o "%e" "%f"',inform=function() return 'inform -c "'..buffer.filename:match('^(.+%.inform[/\\])Source')..'"' end,java='javac "%f"',ltx='pdflatex -file-line-error -halt-on-error "%f"',less='lessc --no-color "%f" "%e.css"',lilypond='lilypond "%f"',lisp='clisp -c "%f"',litcoffee='coffee -c "%f"',lua='luac -o "%e.luac" "%f"',moon='moonc "%f"',markdown='markdown "%f" > "%e.html"',myr='mbld -b "%e" "%f"',nemerle='ncc "%f" -out:"%e.exe"',nim='nim c "%f"',nsis='MakeNSIS "%f"',objective_c='gcc -o "%e" "%f"',pascal='fpc "%f"',perl='perl -c "%f"',php='php -l "%f"',pony='ponyc "%f"',prolog='gplc --no-top-level "%f"',python='python -m py_compile "%f"',ruby='ruby -c "%f"',rust='rustc "%f"',sass='sass "%f" "%e.css"',scala='scalac "%f"',sml='mlton "%f"',tex='pdflatex -file-line-error -halt-on-error "%f"',typescript='tsc "%f"',vala='valac "%f"',vb=WIN32 and 'vbc "%f"' or 'vbnc "%f"',zig='zig build-exe "%f"'}
+-- LuaFormatter on
 
 ---
--- Compiles file *filename* or the current file using an appropriate shell
--- command from the `compile_commands` table.
--- The shell command is determined from the file's filename, extension, or
--- language in that order.
+-- Compiles file *filename* or the current file using an appropriate shell command from the
+-- `compile_commands` table.
+-- The shell command is determined from the file's filename, extension, or language in that order.
 -- Emits `COMPILE_OUTPUT` events.
--- @param filename Optional path to the file to compile. The default value is
---   the current file's filename.
+-- @param filename Optional path to the file to compile. The default value is the current
+--   file's filename.
 -- @see compile_commands
 -- @see _G.events
 -- @name compile
@@ -251,9 +236,10 @@ function M.compile(filename)
 end
 events.connect(events.COMPILE_OUTPUT, print_output)
 
+-- LuaFormatter off
 ---
--- Map of filenames, file extensions, and lexer names to their associated "run"
--- shell command line strings or functions that return strings.
+-- Map of filenames, file extensions, and lexer names to their associated "run" shell command
+-- line strings or functions that return strings.
 -- Command line strings may have the following macros:
 --
 --   + `%f`: The file's name, including its extension.
@@ -261,21 +247,21 @@ events.connect(events.COMPILE_OUTPUT, print_output)
 --   + `%d`: The file's directory path.
 --   + `%p`: The file's full path.
 --
--- Functions may also return a working directory and process environment table
--- to operate in. By default, the working directory is the current file's parent
--- directory and the environment is Textadept's environment.
+-- Functions may also return a working directory and process environment table to operate in. By
+-- default, the working directory is the current file's parent directory and the environment
+-- is Textadept's environment.
 -- @class table
 -- @name run_commands
 M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "file://%e.swf"' or 'xdg-open "%e.swf"',ada=WIN32 and '"%e"' or './"%e"',ansi_c=WIN32 and '"%e"' or './"%e"',applescript='osascript "%f"',asm='./"%e"',awk='awk -f "%f"',batch='"%f"',boo='booi "%f"',caml='ocamlrun "%e"',csharp=WIN32 and '"%e"' or 'mono "%e.exe"',chuck='chuck "%f"',clojure='clj -M "%f"',cmake='cmake -P "%f"',coffeescript='coffee "%f"',context=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',cpp=WIN32 and '"%e"' or './"%e"',crystal='crystal "%f"',cuda=WIN32 and '"%e"' or './"%e"',dart='dart "%f"',dmd=WIN32 and '"%e"' or './"%e"',eiffel="./a.out",elixir='elixir "%f"',fsharp=WIN32 and '"%e"' or 'mono "%e.exe"',fantom='fan "%f"',fennel='fennel "%f"',forth='gforth "%f" -e bye',fortran=WIN32 and '"%e"' or './"%e"',gnuplot='gnuplot "%f"',go='go run "%f"',groovy='groovy "%f"',haskell=WIN32 and '"%e"' or './"%e"',html=WIN32 and 'start "" "%f"' or OSX and 'open "file://%f"' or 'xdg-open "%f"',icon='icont "%e" -x',idl='idl -batch "%f"',Io='io "%f"',java='java "%e"',javascript='node "%f"',jq='jq -f "%f"',julia='julia "%f"',ltx=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',less='lessc --no-color "%f"',lilypond=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',lisp='clisp "%f"',litcoffee='coffee "%f"',lua='lua -e "io.stdout:setvbuf(\'no\')" "%f"',makefile=WIN32 and 'nmake -f "%f"' or 'make -f "%f"',markdown='markdown "%f"',moon='moon "%f"',myr=WIN32 and '"%e"' or './"%e"',nemerle=WIN32 and '"%e"' or 'mono "%e.exe"',nim='nim c -r "%f"',objective_c=WIN32 and '"%e"' or './"%e"',pascal=WIN32 and '"%e"' or './"%e"',perl='perl "%f"',php='php "%f"',pike='pike "%f"',pkgbuild='makepkg -p "%f"',pony=WIN32 and '"%e"' or './"%e"',prolog=WIN32 and '"%e"' or './"%e"',pure='pure "%f"',python=function() return buffer:get_line(1):find('^#!.-python3') and 'python3 -u "%f"' or 'python -u "%f"' end,rstats=WIN32 and 'Rterm -f "%f"' or 'R -f "%f"',rebol='REBOL "%f"',rexx=WIN32 and 'rexx "%f"' or 'regina "%f"',ruby='ruby "%f"',rust=WIN32 and '"%e"' or './"%e"',sass='sass "%f"',scala='scala "%e"',bash='bash "%f"',csh='tcsh "%f"',ksh='ksh "%f"',mksh='mksh "%f"',sh='sh "%f"',zsh='zsh "%f"',rc='rc "%f"',smalltalk='gst "%f"',sml=WIN32 and '"%e"' or './"%e"',snobol4='snobol4 -b "%f"',tcl='tclsh "%f"',tex=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',vala=WIN32 and '"%e"' or './"%e"',vb=WIN32 and '"%e"' or 'mono "%e.exe"',xs='xs "%f"',zig=WIN32 and '"%e"' or './"%e"'}
+-- LuaFormatter on
 
 ---
--- Runs file *filename* or the current file using an appropriate shell command
--- from the `run_commands` table.
--- The shell command is determined from the file's filename, extension, or
--- language in that order.
+-- Runs file *filename* or the current file using an appropriate shell command from the
+-- `run_commands` table.
+-- The shell command is determined from the file's filename, extension, or language in that order.
 -- Emits `RUN_OUTPUT` events.
--- @param filename Optional path to the file to run. The default value is the
---   current file's filename.
+-- @param filename Optional path to the file to run. The default value is the current file's
+--   filename.
 -- @see run_commands
 -- @see _G.events
 -- @name run
@@ -287,15 +273,15 @@ end
 events.connect(events.RUN_OUTPUT, print_output)
 
 ---
--- Appends the command line argument strings *run* and *compile* to their
--- respective run and compile commands for file *filename* or the current file.
--- If either is `nil`, prompts the user for missing the arguments. Each filename
--- has its own set of compile and run arguments.
+-- Appends the command line argument strings *run* and *compile* to their respective run and
+-- compile commands for file *filename* or the current file.
+-- If either is `nil`, prompts the user for missing the arguments. Each filename has its own
+-- set of compile and run arguments.
 -- @param filename Optional path to the file to set run/compile arguments for.
--- @param run Optional string run arguments to set. If `nil`, the user is
---   prompted for them. Pass the empty string for no run arguments.
--- @param compile Optional string compile arguments to set. If `nil`, the user
---   is prompted for them. Pass the empty string for no compile arguments.
+-- @param run Optional string run arguments to set. If `nil`, the user is prompted for them. Pass
+--   the empty string for no run arguments.
+-- @param compile Optional string compile arguments to set. If `nil`, the user is prompted
+--   for them. Pass the empty string for no compile arguments.
 -- @see run_commands
 -- @see compile_commands
 -- @name set_arguments
@@ -308,52 +294,49 @@ function M.set_arguments(filename, run, compile)
   assert_type(compile, 'string/nil', 3)
   local base_commands, utf8_args = {}, {}
   for i, commands in ipairs{M.run_commands, M.compile_commands} do
-    -- Compare the base run/compile command with the one for the current
-    -- file. The difference is any additional arguments set previously.
-    base_commands[i] = commands[filename:match('[^.]+$')] or
-      commands[buffer:get_lexer()] or ''
+    -- Compare the base run/compile command with the one for the current file. The difference
+    -- is any additional arguments set previously.
+    base_commands[i] = commands[filename:match('[^.]+$')] or commands[buffer:get_lexer()] or ''
     local current_command = commands[filename] or ''
-    local args = (i == 1 and run or compile) or
-      current_command:sub(#base_commands[i] + 2)
+    local args = (i == 1 and run or compile) or current_command:sub(#base_commands[i] + 2)
     utf8_args[i] = args:iconv('UTF-8', _CHARSET)
   end
   if not run or not compile then
     local button
     button, utf8_args = ui.dialogs.inputbox{
-      title = _L['Set Arguments...']:gsub('_', ''), informative_text = {
-        _L['Command line arguments'], _L['For Run:'], _L['For Compile:']
-      }, text = utf8_args, width = not CURSES and 400 or nil
+      title = _L['Set Arguments...']:gsub('_', ''),
+      informative_text = {_L['Command line arguments'], _L['For Run:'], _L['For Compile:']},
+      text = utf8_args, width = not CURSES and 400 or nil
     }
     if button ~= 1 then return end
   end
   for i, commands in ipairs{M.run_commands, M.compile_commands} do
-    -- Add the additional arguments to the base run/compile command and set
-    -- the new command to be the one used for the current file.
+    -- Add the additional arguments to the base run/compile command and set the new command to
+    -- be the one used for the current file.
     commands[filename] = string.format('%s %s', base_commands[i],
       utf8_args[i]:iconv(_CHARSET, 'UTF-8'))
   end
 end
 
+-- LuaFormatter off
 ---
--- Map of project root paths and "makefiles" to their associated "build" shell
--- command line strings or functions that return such strings.
--- Functions may also return a working directory and process environment table
--- to operate in. By default, the working directory is the project's root
--- directory and the environment is Textadept's environment.
+-- Map of project root paths and "makefiles" to their associated "build" shell command line
+-- strings or functions that return such strings.
+-- Functions may also return a working directory and process environment table to operate
+-- in. By default, the working directory is the project's root directory and the environment
+-- is Textadept's environment.
 -- @class table
 -- @name build_commands
 M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='docker build .',--[[Make]]Makefile='make',GNUmakefile='make',makefile='make',--[[Meson]]['meson.build']='meson compile',--[[Maven]]['pom.xml']='mvn',--[[Ruby]]Rakefile='rake'}
+-- LuaFormatter on
 
 ---
--- Builds the project whose root path is *root_directory* or the current project
--- using the shell command from the `build_commands` table.
--- If a "makefile" type of build file is found, prompts the user for the full
--- build command.
--- The current project is determined by either the buffer's filename or the
--- current working directory.
+-- Builds the project whose root path is *root_directory* or the current project using the
+-- shell command from the `build_commands` table.
+-- If a "makefile" type of build file is found, prompts the user for the full build command. The
+-- current project is determined by either the buffer's filename or the current working directory.
 -- Emits `BUILD_OUTPUT` events.
--- @param root_directory The path to the project to build. The default value is
---   the current project.
+-- @param root_directory The path to the project to build. The default value is the current project.
 -- @see build_commands
 -- @see _G.events
 -- @name build
@@ -368,8 +351,8 @@ function M.build(root_directory)
     for build_file, build_command in pairs(M.build_commands) do
       if lfs.attributes(string.format('%s/%s', root_directory, build_file)) then
         local button, utf8_command = ui.dialogs.inputbox{
-          title = _L['Command'], informative_text = root_directory,
-          text = build_command, button1 = _L['OK'], button2 = _L['Cancel']
+          title = _L['Command'], informative_text = root_directory, text = build_command,
+          button1 = _L['OK'], button2 = _L['Cancel']
         }
         if button == 1 then command = utf8_command:iconv(_CHARSET, 'UTF-8') end
         break
@@ -381,23 +364,23 @@ end
 events.connect(events.BUILD_OUTPUT, print_output)
 
 ---
--- Map of project root paths to their associated "test" shell command line
--- strings or functions that return such strings.
--- Functions may also return a working directory and process environment table
--- to operate in. By default, the working directory is the project's root
--- directory and the environment is Textadept's environment.
+-- Map of project root paths to their associated "test" shell command line strings or functions
+-- that return such strings.
+-- Functions may also return a working directory and process environment table to operate
+-- in. By default, the working directory is the project's root directory and the environment
+-- is Textadept's environment.
 -- @class table
 -- @name test_commands
 M.test_commands = {}
 
 ---
--- Runs tests for the project whose root path is *root_directory* or the current
--- project using the shell command from the `test_commands` table.
--- The current project is determined by either the buffer's filename or the
--- current working directory.
+-- Runs tests for the project whose root path is *root_directory* or the current project using
+-- the shell command from the `test_commands` table.
+-- The current project is determined by either the buffer's filename or the current working
+-- directory.
 -- Emits `TEST_OUTPUT` events.
--- @param root_directory The path to the project to run tests for. The default
---   value is the current project.
+-- @param root_directory The path to the project to run tests for. The default value is the
+--   current project.
 -- @see test_commands
 -- @see _G.events
 -- @name test
@@ -407,8 +390,7 @@ function M.test(root_directory)
     if not root_directory then return end
   end
   for i = 1, #_BUFFERS do _BUFFERS[i]:annotation_clear_all() end
-  run_command(
-    M.test_commands[root_directory], root_directory, events.TEST_OUTPUT)
+  run_command(M.test_commands[root_directory], root_directory, events.TEST_OUTPUT)
 end
 events.connect(events.TEST_OUTPUT, print_output)
 
@@ -422,56 +404,63 @@ local function is_msg_buf(buf) return buf._type == _L['[Message Buffer]'] end
 
 -- Send line as input to process stdin on return.
 events.connect(events.CHAR_ADDED, function(code)
-  if code == string.byte('\n') and proc and proc:status() == 'running' and
-     is_msg_buf(buffer) then
+  if code == string.byte('\n') and proc and proc:status() == 'running' and is_msg_buf(buffer) then
     local line_num = buffer:line_from_position(buffer.current_pos) - 1
     proc:write(buffer:get_line(line_num))
   end
 end)
 
+-- LuaFormatter off
 ---
--- Map of file extensions and lexer names to their associated lists of string
--- patterns that match warning and error messages emitted by compile and run
--- commands for those file extensions and lexers.
--- Patterns match single lines and contain captures for a filename, line number,
--- column number (optional), and warning or error message (optional).
--- Double-clicking a warning or error message takes the user to the source of
--- that warning/error.
--- Note: `(.-)` captures in patterns are interpreted as filenames; `(%d+)`
--- captures are interpreted as line numbers first, and then column numbers; and
--- any other capture is treated as warning/error message text.
+-- Map of file extensions and lexer names to their associated lists of string patterns that
+-- match warning and error messages emitted by compile and run commands for those file extensions
+-- and lexers.
+-- Patterns match single lines and contain captures for a filename, line number, column number
+-- (optional), and warning or error message (optional). Double-clicking a warning or error
+-- message takes the user to the source of that warning/error.
+-- Note: `(.-)` captures in patterns are interpreted as filenames; `(%d+)` captures are
+-- interpreted as line numbers first, and then column numbers; and any other capture is treated
+-- as warning/error message text.
 -- @class table
 -- @name error_patterns
 M.error_patterns = {actionscript={'^(.-)%((%d+)%): col: (%d+) (.+)$'},ada={'^(.-):(%d+):(%d+):%s*(.*)$','^[^:]+: (.-):(%d+) (.+)$'},ansi_c={'^(.-):(%d+):(%d+): (.+)$'},antlr={'^error%(%d+%): (.-):(%d+):(%d+): (.+)$','^warning%(%d+%): (.-):(%d+):(%d+): (.+)$'},--[[ANTLR]]g={'^error%(%d+%): (.-):(%d+):(%d+): (.+)$','^warning%(%d+%): (.-):(%d+):(%d+): (.+)$'},asm={'^(.-):(%d+): (.+)$'},awk={'^awk: (.-):(%d+): (.+)$'},boo={'^(.-)%((%d+),(%d+)%): (.+)$'},caml={'^%s*File "(.-)", line (%d+), characters (%d+)'},chuck={'^(.-)line%((%d+)%)%.char%((%d+)%): (.+)$'},clojure={' error .- at .-%((.-):(%d+)'},cmake={'^CMake Error at (.-):(%d+)','^(.-):(%d+):$'},coffeescript={'^(.-):(%d+):(%d+): (.+)$'},context={'error on line (%d+) in file (.-): (.+)$'},cpp={'^(.-):(%d+):(%d+): (.+)$'},csharp={'^(.-)%((%d+),(%d+)%): (.+)$'},cuda={'^(.-)%((%d+)%): (error.+)$'},dart={"^'(.-)': error: line (%d+) pos (%d+): (.+)$",'%(file://(.-):(%d+):(%d+)%)'},dmd={'^(.-)%((%d+)%): (Error.+)$'},dot={'^Warning: (.-): (.+) in line (%d+)'},eiffel={'^Line (%d+) columns? .- in .- %((.-)%):$','^line (%d+) column (%d+) file (.-)$'},elixir={'^(.-):(%d+): (.+)$','Error%) (.-):(%d+): (.+)$'},erlang={'^(.-):(%d+): (.+)$'},fantom={'^(.-)%((%d+),(%d+)%): (.+)$'},faust={'^(.-):(%d+):(.+)$'},fennel={'^%S+ error in (.-):(%d+)'},forth={'^(.-):(%d+): (.+)$'},fortran={'^(.-):(%d+)%D+(%d+):%s*(.*)$'},fsharp={'^(.-)%((%d+),(%d+)%): (.+)$'},gap={'^(.+) in (.-) line (%d+)$'},gnuplot={'^"(.-)", line (%d+): (.+)$'},go={'^(.-):(%d+):(%d+): (.+)$'},groovy={'^%s+at .-%((.-):(%d+)%)$','^(.-):(%d+): (.+)$'},haskell={'^(.-):(%d+):(%d+):%s*(.*)$'},icon={'^File (.-); Line (%d+) # (.+)$','^.-from line (%d+) in (.-)$'},java={'^%s+at .-%((.-):(%d+)%)$','^(.-):(%d+): (.+)$'},javascript={'^%s+at .-%((.-):(%d+):(%d+)%)$','^%s+at (.-):(%d+):(%d+)$','^(.-):(%d+):?$'},jq={'^jq: error: (.+) at (.-), line (%d+)'},julia={'^%s+%[%d+%].- at (.-):(%d+)$'},ltx={'^(.-):(%d+): (.+)$'},less={'^(.+) in (.-) on line (%d+), column (%d+):$'},lilypond={'^(.-):(%d+):(%d+):%s*(.*)$'},litcoffee={'^(.-):(%d+):(%d+): (.+)$'},lua={'^luac?: (.-):(%d+): (.+)$'},makefile={'^(.-):(%d+): (.+)$'},nemerle={'^(.-)%((%d+),(%d+)%): (.+)$'},nim={'^(.-)%((%d+), (%d+)%) (%w+:.+)$'},objective_c={'^(.-):(%d+):(%d+): (.+)$'},pascal={'^(.-)%((%d+),(%d+)%) (%w+:.+)$'},perl={'^(.+) at (.-) line (%d+)'},php={'^(.+) in (.-) on line (%d+)$'},pike={'^(.-):(%d+):(.+)$'},pony={'^(.-):(%d+):(%d+): (.+)$'},prolog={'^(.-):(%d+):(%d+): (.+)$','^(.-):(%d+): (.+)$'},pure={'^(.-), line (%d+): (.+)$'},python={'^%s*File "(.-)", line (%d+)'},rexx={'^Error %d+ running "(.-)", line (%d+): (.+)$'},ruby={'^%s+from (.-):(%d+):','^(.-):(%d+):%s*(.+)$'},rust={'^(.-):(%d+):(%d+): (.+)$',"panicked at '([^']+)', (.-):(%d+)"},sass={'^WARNING on line (%d+) of (.-):$','^%s+on line (%d+) of (.-)$'},scala={'^%s+at .-%((.-):(%d+)%)$','^(.-):(%d+): (.+)$'},sh={'^(.-): (%d+): %1: (.+)$'},bash={'^(.-): line (%d+): (.+)$'},zsh={'^(.-):(%d+): (.+)$'},smalltalk={'^(.-):(%d+): (.+)$','%((.-):(%d+)%)$'},snobol4={'^(.-):(%d+): (.+)$'},tcl={'^%s*%(file "(.-)" line (%d+)%)$'},tex={'^(.-):(%d+): (.+)$'},typescript={'^(.-):(%d+):(%d+) %- (.+)$'},vala={'^(.-):(%d+)%.(%d+)[%-%.%d]+: (.+)$','^(.-):(%d+):(%d+): (.+)$'},vb={'^(.-)%((%d+),(%d+)%): (.+)$'},xs={'^(.-):(%d+)%S* (.+)$'},zig={'^(.-):(%d+):(%d+): (.+)$'}}
 -- Note: APDL,IDL,REBOL,RouterOS,Spin,Verilog,VHDL are proprietary.
 -- Note: ASP,CSS,Desktop,diff,django,elm,fstab,gettext,Gtkrc,HTML,ini,JSON,JSP,Markdown,Networkd,Postscript,Properties,R,Reason,RHTML,Systemd,XML don't have parse-able errors.
 -- Note: Batch,BibTeX,ConTeXt,Dockerfile,GLSL,Inform,Io,Lisp,MoonScript,Scheme,SQL,TeX cannot be parsed for one reason or another.
+-- LuaFormatter on
 
 ---
--- Jumps to the source of the recognized compile/run warning or error on line
--- number *line_num* in the message buffer.
--- If *line_num* is `nil`, jumps to the next or previous warning or error,
--- depending on boolean *next*. Displays an annotation with the warning or error
--- message if possible.
--- @param line_num Optional line number in the message buffer that contains the
---   compile/run warning or error to go to. This parameter may be omitted
---   completely.
--- @param next Optional flag indicating whether to go to the next recognized
---   warning/error or the previous one. Only applicable when *line_num* is
---   `nil`.
+-- Jumps to the source of the recognized compile/run warning or error on line number *line_num*
+-- in the message buffer.
+-- If *line_num* is `nil`, jumps to the next or previous warning or error, depending on boolean
+-- *next*. Displays an annotation with the warning or error message if possible.
+-- @param line_num Optional line number in the message buffer that contains the compile/run
+--   warning or error to go to. This parameter may be omitted completely.
+-- @param next Optional flag indicating whether to go to the next recognized warning/error or
+--   the previous one. Only applicable when *line_num* is `nil`.
 -- @see error_patterns
 -- @name goto_error
 function M.goto_error(line_num, next)
   if type(line_num) == 'boolean' then line_num, next = nil, line_num end
   local msg_view, msg_buf = nil, nil
   for i = 1, #_VIEWS do
-    if is_msg_buf(_VIEWS[i].buffer) then msg_view = _VIEWS[i] break end
+    if is_msg_buf(_VIEWS[i].buffer) then
+      msg_view = _VIEWS[i]
+      break
+    end
   end
   for i = 1, #_BUFFERS do
-    if is_msg_buf(_BUFFERS[i]) then msg_buf = _BUFFERS[i] break end
+    if is_msg_buf(_BUFFERS[i]) then
+      msg_buf = _BUFFERS[i]
+      break
+    end
   end
   if not msg_view and not msg_buf then return end
-  if msg_view then ui.goto_view(msg_view) else view:goto_buffer(msg_buf) end
+  if msg_view then
+    ui.goto_view(msg_view)
+  else
+    view:goto_buffer(msg_buf)
+  end
 
   -- If no line number was given, find the next warning or error marker.
   if not assert_type(line_num, 'number/nil', 1) and next ~= nil then
@@ -486,7 +475,11 @@ function M.goto_error(line_num, next)
       wline = f(buffer, next and 1 or buffer.line_count, WARN_BIT)
       eline = f(buffer, next and 1 or buffer.line_count, ERROR_BIT)
     elseif wline == -1 or eline == -1 then
-      if wline == -1 then wline = eline else eline = wline end
+      if wline == -1 then
+        wline = eline
+      else
+        eline = wline
+      end
     end
     line_num = (next and math.min or math.max)(wline, eline)
     if line_num == -1 and not wrapped then
@@ -508,9 +501,7 @@ function M.goto_error(line_num, next)
   local sloppy = not detail.filename:find(not WIN32 and '^/' or '^%a:[/\\]')
   ui.goto_file(detail.filename, true, preferred_view, sloppy)
   textadept.editing.goto_line(detail.line)
-  if detail.column then
-    buffer:goto_pos(buffer:find_column(detail.line, detail.column))
-  end
+  if detail.column then buffer:goto_pos(buffer:find_column(detail.line, detail.column)) end
   if not detail.message then return end
   buffer.annotation_text[detail.line] = detail.message
   if detail.warning then return end
@@ -518,13 +509,12 @@ function M.goto_error(line_num, next)
 end
 events.connect(events.KEYPRESS, function(code)
   if keys.KEYSYMS[code] == '\n' and is_msg_buf(buffer) and
-     scan_for_error(buffer:get_cur_line():match('^[^\r\n]*')) then
+    scan_for_error(buffer:get_cur_line():match('^[^\r\n]*')) then
     M.goto_error(buffer:line_from_position(buffer.current_pos))
     return true
   end
 end)
-events.connect(events.DOUBLE_CLICK, function(_, line)
-  if is_msg_buf(buffer) then M.goto_error(line) end
-end)
+events.connect(events.DOUBLE_CLICK,
+  function(_, line) if is_msg_buf(buffer) then M.goto_error(line) end end)
 
 return M

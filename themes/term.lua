@@ -30,8 +30,8 @@ colors.light_white = 0xFFFFFF
 styles.default = {fore = colors.white, back = colors.black}
 styles.line_number = {fore = colors.black, bold = true}
 styles.brace_light = {fore = colors.yellow, bold = true}
---styles.control_char =
---styles.indent_guide =
+-- styles.control_char =
+-- styles.indent_guide =
 styles.call_tip = {fore = colors.white, back = colors.black}
 styles.fold_display_text = {fore = colors.black, bold = true}
 
@@ -55,19 +55,19 @@ styles.variable = {fore = colors.blue, bold = true}
 styles.whitespace = {}
 
 -- Multiple Selection and Virtual Space
---view.additional_sel_fore =
---view.additional_sel_back =
---view.additional_caret_fore =
+-- view.additional_sel_fore =
+-- view.additional_sel_back =
+-- view.additional_caret_fore =
 
 -- Caret and Selection Styles.
---view:set_sel_fore(true, colors.white)
---view:set_sel_back(true, colors.black)
---view.caret_fore = colors.black
---view.caret_line_back =
+-- view:set_sel_fore(true, colors.white)
+-- view:set_sel_back(true, colors.black)
+-- view.caret_fore = colors.black
+-- view.caret_line_back =
 
 -- Fold Margin.
---view:set_fold_margin_color(true, colors.white)
---view:set_fold_margin_hi_color(true, colors.white)
+-- view:set_fold_margin_color(true, colors.white)
+-- view:set_fold_margin_hi_color(true, colors.white)
 
 -- Markers.
 view.marker_back[textadept.bookmarks.MARK_BOOKMARK] = colors.blue

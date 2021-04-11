@@ -9,12 +9,11 @@
 *Textadept Quick Reference*<br/>
 Fifth Edition
 
-Order the <a href="https://gum.co/textadept_ebook" target="_blank">e-book</a> --
-$15 USD<br/>
-Order the <a href="https://gum.co/qr_bundle" target="_blank">e-book bundle</a>
-with [Lua Quick Reference][] -- $27 USD<br/>
-Order the print book via Amazon [US][], [CA][], [UK][], [DE][], [FR][], [IT][],
-[ES][], [JP][] -- ~$25 USD
+Order the <a href="https://gum.co/textadept_ebook" target="_blank">e-book</a> -- $15 USD<br/>
+Order the <a href="https://gum.co/qr_bundle" target="_blank">e-book bundle</a> with
+[Lua Quick Reference][] -- $27 USD<br/>
+Order the print book via Amazon [US][], [CA][], [UK][], [DE][], [FR][], [IT][], [ES][], [JP][] --
+~$25 USD
 
 Published: Dec 2020<br/>
 ISBN: 978-0-9912379-6-8<br/>
@@ -22,11 +21,10 @@ Pages: 179
 
 [Excerpt][]
 
-Textadept is a fast, minimalist, and remarkably extensible cross-platform text
-editor for programmers. This quick reference contains a wealth of knowledge on
-how to script and configure Textadept using the Lua programming language. It
-groups the editor's rich API into a series of tasks in a convenient and
-easy-to-use manner.
+Textadept is a fast, minimalist, and remarkably extensible cross-platform text editor for
+programmers. This quick reference contains a wealth of knowledge on how to script and configure
+Textadept using the Lua programming language. It groups the editor's rich API into a series of
+tasks in a convenient and easy-to-use manner.
 
 This book covers how to:
 
@@ -40,8 +38,8 @@ This book covers how to:
 * Define lexers for highlighting source code
 * And much more
 
-It serves as the perfect complement to Textadept's comprehensive Manual and
-exhaustive API documentation.
+It serves as the perfect complement to Textadept's comprehensive Manual and exhaustive API
+documentation.
 
 [Lua Quick Reference]: https://orbitalquark.github.io/lua-quick-reference
 [US]: https://www.amazon.com/dp/099123796X/

@@ -18,15 +18,15 @@ local SEE = '* [`%s`](#%s)\n'
 local TABLE = '<a id="%s"></a>\n#### `%s`\n\n'
 local TFIELD = '* `%s`: %s\n'
 local titles = {
-  [PARAM] = 'Parameters', [USAGE] = 'Usage', [RETURN] = 'Return',
-  [SEE] = 'See also', [TFIELD] = 'Fields'
+  [PARAM] = 'Parameters', [USAGE] = 'Usage', [RETURN] = 'Return', [SEE] = 'See also',
+  [TFIELD] = 'Fields'
 }
 
 -- Writes a LuaDoc description to the given file.
 -- @param f The markdown file being written to.
 -- @param description The description.
--- @param name The name of the module the description belongs to. Used for
---   headers in module descriptions.
+-- @param name The name of the module the description belongs to. Used for headers in module
+--   descriptions.
 local function write_description(f, description, name)
   -- Substitute custom [`code`]() link convention with [`code`](#code) links.
   local self_link = '(%[`([^`(]+)%(?%)?`%])%(%)'
@@ -67,9 +67,7 @@ end
 local function write_hashmap(f, fmt, hashmap)
   if not hashmap or #hashmap == 0 then return end
   f:write(string.format(LIST_TITLE, titles[fmt]))
-  for _, name in ipairs(hashmap) do
-    f:write(string.format(fmt, name, hashmap[name] or ''))
-  end
+  for _, name in ipairs(hashmap) do f:write(string.format(fmt, name, hashmap[name] or '')) end
   f:write('\n')
 end
 
@@ -81,13 +79,10 @@ function M.start(doc)
   f:write('## Textadept API Documentation\n\n')
 
   -- Create the table of contents.
-  for _, name in ipairs(modules) do
-    f:write(string.format(TOC, name, '#' .. name))
-  end
+  for _, name in ipairs(modules) do f:write(string.format(TOC, name, '#' .. name)) end
   f:write('\n')
 
-  -- Create a map of doc objects to file names so their Markdown doc comments
-  -- can be extracted.
+  -- Create a map of doc objects to file names so their Markdown doc comments can be extracted.
   local filedocs = {}
   for _, name in ipairs(files) do filedocs[files[name].doc] = name end
 
@@ -150,13 +145,12 @@ function M.start(doc)
       f:write('### Tables defined by `', name, '`\n\n')
       for _, tname in ipairs(tables) do
         local tbl = tables[tname]
-        if not tbl.name:find('%.') and
-           (name ~= '_G' or tbl.name == 'buffer' or tbl.name == 'view') then
-          tbl.name = name .. '.' .. tbl.name -- absolute name
-        elseif tbl.name ~= '_G.keys' and tbl.name ~= '_G.snippets' then
-          tbl.name = tbl.name:gsub('^_G%.', '') -- strip _G required for Luadoc
+        if not tname:find('%.') and (name ~= '_G' or tname == 'buffer' or tname == 'view') then
+          tname = name .. '.' .. tname -- absolute name
+        elseif tname ~= '_G.keys' and tname ~= '_G.snippets' then
+          tname = tname:gsub('^_G%.', '') -- strip _G required for Luadoc
         end
-        f:write(string.format(TABLE, tbl.name, tbl.name))
+        f:write(string.format(TABLE, tname, tname))
         write_description(f, tbl.description)
         write_hashmap(f, TFIELD, tbl.field)
         write_list(f, USAGE, tbl.usage)

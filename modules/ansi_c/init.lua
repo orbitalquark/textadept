@@ -14,8 +14,8 @@ module('_M.ansi_c')]]
 -- Autocompletion and documentation.
 
 ---
--- List of ctags files to use for autocompletion in addition to the current
--- project's top-level *tags* file or the current directory's *tags* file.
+-- List of ctags files to use for autocompletion in addition to the current project's top-level
+-- *tags* file or the current directory's *tags* file.
 -- @class table
 -- @name tags
 M.tags = {
@@ -25,14 +25,15 @@ M.tags = {
 
 M.autocomplete_snippets = true
 
+-- LuaFormatter off
 local XPM = textadept.editing.XPM_IMAGES
 local xpms = setmetatable({c=XPM.CLASS,d=XPM.SLOT,e=XPM.VARIABLE,f=XPM.METHOD,g=XPM.TYPEDEF,m=XPM.VARIABLE,s=XPM.STRUCT,t=XPM.TYPEDEF,v=XPM.VARIABLE},{__index=function()return 0 end})
+-- LuaFormatter on
 
 textadept.editing.autocompleters.ansi_c = function()
   -- Retrieve the symbol behind the caret.
   local line, pos = buffer:get_cur_line()
-  local symbol, op, part = line:sub(1, pos - 1):match(
-    '([%w_]-)([%.%->]*)([%w_]*)$')
+  local symbol, op, part = line:sub(1, pos - 1):match('([%w_]-)([%.%->]*)([%w_]*)$')
   if symbol == '' and part == '' then return nil end -- nothing to complete
   if op ~= '' and op ~= '.' and op ~= '->' then return nil end
   -- Attempt to identify the symbol type.
@@ -40,14 +41,17 @@ textadept.editing.autocompleters.ansi_c = function()
     local decl = '([%w_]+)[%s%*&]+' .. symbol:gsub('%p', '%%%0') .. '[^%w_]'
     for i = buffer:line_from_position(buffer.current_pos) - 1, 1, -1 do
       local class = buffer:get_line(i):match(decl)
-      if class then symbol = class break end
+      if class then
+        symbol = class
+        break
+      end
     end
   end
   -- Search through ctags for completions for that symbol.
   local tags_files = {}
   for i = 1, #M.tags do tags_files[#tags_files + 1] = M.tags[i] end
-  tags_files[#tags_files + 1] =
-    (io.get_project_root(buffer.filename) or lfs.currentdir()) .. '/tags'
+  tags_files[#tags_files + 1] = (io.get_project_root(buffer.filename) or lfs.currentdir()) ..
+    '/tags'
   local name_patt = '^' .. part
   local sep = string.char(buffer.auto_c_type_separator)
   ::rescan::
@@ -57,16 +61,15 @@ textadept.editing.autocompleters.ansi_c = function()
     for tag_line in io.lines(filename) do
       local name = tag_line:match('^%S+')
       if (name:find(name_patt) and not name:find('^!') and not list[name]) or
-         name == symbol and op == '' then
+        (name == symbol and op == '') then
         local fields = tag_line:match(';"\t(.*)$')
-        local type = fields:match('class:(%S+)') or
-          fields:match('enum:(%S+)') or fields:match('struct:(%S+)') or ''
+        local type = fields:match('class:(%S+)') or fields:match('enum:(%S+)') or
+          fields:match('struct:(%S+)') or ''
         if type == symbol then
           list[#list + 1] = name .. sep .. xpms[fields:sub(1, 1)]
           list[name] = true
         elseif name == symbol and fields:match('typeref:') then
-          -- For typeref, change the lookup symbol to the referenced name and
-          -- rescan tags files.
+          -- For typeref, change the lookup symbol to the referenced name and rescan tags files.
           symbol = fields:match('[^:]+$')
           goto rescan
         end
@@ -95,8 +98,7 @@ snip['if'] = 'if (%1) {\n\t%0\n}'
 snip.eif = 'else if (%1) {\n\t%0\n}'
 snip['else'] = 'else {\n\t%0\n}'
 snip['for'] = 'for (%1; %2; %3) {\n\t%0\n}'
-snip['fori'] =
-  'for (%1(int) %2(i) = %3(0); %2 %4(<) %5(count); %2%6(++)) {\n\t%0\n}'
+snip['fori'] = 'for (%1(int) %2(i) = %3(0); %2 %4(<) %5(count); %2%6(++)) {\n\t%0\n}'
 snip['while'] = 'while (%1) {\n\t%0\n}'
 snip['do'] = 'do {\n\t%0\n} while (%1);'
 snip.sw = 'switch (%1) {\n\tcase %2:\n\t\t%0\n\t\tbreak;\n}'

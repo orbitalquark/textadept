@@ -13,27 +13,25 @@ module('_M.lua')]]
 
 -- Autocompletion and documentation.
 
--- Returns a function that, when called from a Textadept Lua file, the Lua
--- command entry, or a special Lua buffer (e.g. a REPL), returns the given
--- Textadept tags or API file for use in autocompletion and documentation.
+-- Returns a function that, when called from a Textadept Lua file, the Lua command entry, or
+-- a special Lua buffer (e.g. a REPL), returns the given Textadept tags or API file for use in
+-- autocompletion and documentation.
 -- @param filename Textadept tags or api file to return.
 local function ta_api(filename)
   local home = '^' .. _HOME:gsub('%p', '%%%0'):gsub('%%[/\\]', '[/\\]')
   local userhome = '^' .. _USERHOME:gsub('%p', '%%%0'):gsub('%%[/\\]', '[/\\]')
   return function()
-    local buffer_filename = buffer.filename or ''
-    return (buffer_filename:find(home) or buffer_filename:find(userhome) or
-      buffer == ui.command_entry or buffer._type) and filename
+    local ta_file = (buffer.filename or ''):find(home) or (buffer.filename or ''):find(userhome)
+    return (ta_file or buffer == ui.command_entry or buffer._type) and filename
   end
 end
 
 ---
--- List of "fake" ctags files (or functions that return such files) to use for
--- autocompletion.
--- The kind 'm' is recognized as a module, 'f' as a function, 't' as a table and
--- 'F' as a module or table field.
--- The *modules/lua/tadoc.lua* script can generate *tags* and
--- [*api*](#textadept.editing.api_files) files for Lua modules via LuaDoc.
+-- List of "fake" ctags files (or functions that return such files) to use for autocompletion.
+-- The kind 'm' is recognized as a module, 'f' as a function, 't' as a table and 'F' as a module
+-- or table field.
+-- The *modules/lua/tadoc.lua* script can generate *tags* and [*api*](#textadept.editing.api_files)
+-- files for Lua modules via LuaDoc.
 -- @class table
 -- @name tags
 M.tags = {
@@ -43,8 +41,8 @@ M.tags = {
 
 ---
 -- Map of expression patterns to their types.
--- Used for type-hinting when showing autocompletions for variables.
--- Expressions are expected to match after the '=' sign of a statement.
+-- Used for type-hinting when showing autocompletions for variables. Expressions are expected
+-- to match after the '=' sign of a statement.
 -- @class table
 -- @name expr_types
 -- @usage _M.lua.expr_types['^spawn%b()%s*$'] = 'proc'
@@ -59,8 +57,7 @@ textadept.editing.autocompleters.lua = function()
   local list = {}
   -- Retrieve the symbol behind the caret.
   local line, pos = buffer:get_cur_line()
-  local symbol, op, part = line:sub(1, pos - 1):match(
-    '([%w_%.]-)([%.:]?)([%w_]*)$')
+  local symbol, op, part = line:sub(1, pos - 1):match('([%w_%.]-)([%.:]?)([%w_]*)$')
   if symbol == '' and part == '' then return nil end -- nothing to complete
   if symbol == '' and M.autocomplete_snippets then
     local _, snippets = textadept.editing.autocompleters.snippet()
@@ -73,7 +70,10 @@ textadept.editing.autocompleters.lua = function()
     local expr = buffer:get_line(i):match(assignment)
     if not expr then goto continue end
     for patt, type in pairs(M.expr_types) do
-      if expr:find(patt) then symbol = type break end
+      if expr:find(patt) then
+        symbol = type
+        break
+      end
     end
     ::continue::
   end
