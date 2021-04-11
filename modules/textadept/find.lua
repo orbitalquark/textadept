@@ -9,14 +9,12 @@ local M = ui.find
 --   The text in the "Find" entry.
 -- @field replace_entry_text (string)
 --   The text in the "Replace" entry.
---   When searching for text in a directory of files, this is the current file
---   and directory filter.
+--   When searching for text in a directory of files, this is the current file and directory filter.
 -- @field match_case (bool)
 --   Match search text case sensitively.
 --   The default value is `false`.
 -- @field whole_word (bool)
---   Match search text only when it is surrounded by non-word characters in
---   searches.
+--   Match search text only when it is surrounded by non-word characters in searches.
 --   The default value is `false`.
 -- @field regex (bool)
 --   Interpret search text as a Regular Expression.
@@ -60,23 +58,21 @@ local M = ui.find
 -- @field active (boolean)
 --   Whether or not the Find & Replace pane is active.
 -- @field highlight_all_matches (boolean)
---   Whether or not to highlight all occurrences of found text in the current
---   buffer.
+--   Whether or not to highlight all occurrences of found text in the current buffer.
 --   The default value is `false`.
 -- @field INDIC_FIND (number)
 --   The find results highlight indicator number.
 -- @field _G.events.FIND_RESULT_FOUND (string)
---   Emitted when a result is found. It is selected and has been scrolled into
---   view.
+--   Emitted when a result is found. It is selected and has been scrolled into view.
 --   Arguments:
 --
 --   * _`find_text`_: The text originally searched for.
 -- @field _G.events.FIND_WRAPPED (string)
---   Emitted when a text search wraps (passes through the beginning of the
---   buffer), either from bottom to top (when searching for a next occurrence),
---   or from top to bottom (when searching for a previous occurrence).
---   This is useful for implementing a more visual or audible notice when a
---   search wraps in addition to the statusbar message.
+--   Emitted when a text search wraps (passes through the beginning of the buffer), either
+--   from bottom to top (when searching for a next occurrence), or from top to bottom (when
+--   searching for a previous occurrence).
+--   This is useful for implementing a more visual or audible notice when a search wraps in
+--   addition to the statusbar message.
 module('ui.find')]]
 
 local _L = _L
@@ -97,31 +93,29 @@ M.INDIC_FIND = _SCINTILLA.next_indic_number()
 local find_events = {'find_result_found', 'find_wrapped'}
 for _, v in ipairs(find_events) do events[v:upper()] = v end
 
--- When finding in files, note the current view since results are shown in a
--- split view. Jumping between results should be done in the original view.
+-- When finding in files, note the current view since results are shown in a split view. Jumping
+-- between results should be done in the original view.
 local preferred_view
 
 ---
 -- Map of directory paths to filters used in `ui.find.find_in_files()`.
--- This table is updated when the user manually specifies a filter in the
--- "Filter" entry during an "In files" search.
+-- This table is updated when the user manually specifies a filter in the "Filter" entry during
+-- an "In files" search.
 -- @class table
 -- @name find_in_files_filters
 -- @see find_in_files
 M.find_in_files_filters = {}
 
--- Keep track of find text and found text so that "replace all" works as
--- expected during a find session ("replace all" with selected text normally
--- does "replace in selection"). Also track find text for incremental find (if
--- text has changed, the user is still typing; if text is the same, the user
--- clicked "Find Next" or "Find Prev"). Keep track of repl_text for
--- non-"In files" in order to restore it from filter text as necessary.
+-- Keep track of find text and found text so that "replace all" works as expected during a find
+-- session ("replace all" with selected text normally does "replace in selection"). Also track
+-- find text for incremental find (if text has changed, the user is still typing; if text is
+-- the same, the user clicked "Find Next" or "Find Prev"). Keep track of repl_text for non-"In
+-- files" in order to restore it from filter text as necessary.
 local find_text, found_text, repl_text = nil, nil, ui.find.replace_entry_text
 
 -- Returns a reasonable initial directory for use with Find in Files.
 local function ff_dir()
-  return io.get_project_root() or (buffer.filename or ''):match('^.+[/\\]') or
-    lfs.currentdir()
+  return io.get_project_root() or (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir()
 end
 
 local orig_focus = M.focus
@@ -139,22 +133,21 @@ function M.focus(options)
   if M.in_files then
     if not already_in_files then repl_text = M.replace_entry_text end -- save
     local filter = M.find_in_files_filters[ff_dir()] or lfs.default_filter
-    M.replace_entry_text = type(filter) == 'string' and filter or
-      table.concat(filter, ',')
+    M.replace_entry_text = type(filter) == 'string' and filter or table.concat(filter, ',')
   elseif M.replace_entry_text ~= repl_text then
     M.replace_entry_text = repl_text -- restore
   end
   orig_focus()
 end
 
--- Returns a bit-mask of search flags to use in Scintilla search functions based
--- on the checkboxes in the find box.
+-- Returns a bit-mask of search flags to use in Scintilla search functions based on the checkboxes
+-- in the find box.
 -- The "Find in Files" flag is unused by Scintilla, but used by Textadept.
 -- @return search flag bit-mask
 local function get_flags()
   return (M.match_case and buffer.FIND_MATCHCASE or 0) |
-    (M.whole_word and buffer.FIND_WHOLEWORD or 0) |
-    (M.regex and buffer.FIND_REGEXP or 0) | (M.in_files and 1 << 31 or 0)
+    (M.whole_word and buffer.FIND_WHOLEWORD or 0) | (M.regex and buffer.FIND_REGEXP or 0) |
+    (M.in_files and 1 << 31 or 0)
 end
 
 -- Returns whether or not the given buffer is a files found buffer.
@@ -174,20 +167,22 @@ local incremental_orig_pos
 -- Finds and selects text in the current buffer.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
--- @param flags Search flags. This is a bit-mask of 4 flags:
---   `buffer.FIND_MATCHCASE`, `buffer.FIND_WHOLEWORD`, `buffer.FIND_REGEXP`, and
---   1 << 31 (in files), each joined with binary OR.
---   If `nil`, this is determined based on the checkboxes in the find box.
+-- @param flags Search flags. This is a bit-mask of 4 flags: `buffer.FIND_MATCHCASE`,
+--   `buffer.FIND_WHOLEWORD`, `buffer.FIND_REGEXP`, and 1 << 31 (in files), each joined with
+--   binary OR. If `nil`, this is determined based on the checkboxes in the find box.
 -- @param no_wrap Flag indicating whether or not the search will not wrap.
--- @param wrapped Utility flag indicating whether or not the search has wrapped
---   for displaying useful statusbar information. This flag is used and set
---   internally, and should not be set otherwise.
+-- @param wrapped Utility flag indicating whether or not the search has wrapped for displaying
+--   useful statusbar information. This flag is used and set internally, and should not be
+--   set otherwise.
 -- @return position of the found text or `-1`
 local function find(text, next, flags, no_wrap, wrapped)
   -- Note: cannot use assert_type(), as event errors are handled silently.
   if text == '' then return end
   if not flags then flags = get_flags() end
-  if flags >= 1 << 31 then M.find_in_files() return end -- not performed here
+  if flags >= 1 << 31 then
+    M.find_in_files() -- performed here
+    return
+  end
   local first_visible_line = view.first_visible_line -- for 'no results found'
   if not is_ff_buf(buffer) then clear_highlighted_matches() end
 
@@ -205,8 +200,8 @@ local function find(text, next, flags, no_wrap, wrapped)
     incremental_orig_pos = nil
   end
 
-  -- If text is selected, assume it is from the current search and move the
-  -- caret appropriately for the next search.
+  -- If text is selected, assume it is from the current search and move the caret appropriately
+  -- for the next search.
   buffer:goto_pos(next and buffer.selection_end or buffer.selection_start)
 
   -- Scintilla search.
@@ -256,45 +251,39 @@ events.connect(events.FIND_RESULT_FOUND, function(text)
     if s == buffer.current_pos then current = count end
   end
   ui.statusbar_text = string.format('%s %d/%d', _L['Match'], current, count)
-  -- For regex searches, `buffer.tag` was clobbered. It needs to be filled in
-  -- again for any subsequent replace operations that need it.
+  -- For regex searches, `buffer.tag` was clobbered. It needs to be filled in again for any
+  -- subsequent replace operations that need it.
   if ui.find.regex then
     buffer:set_target_range(buffer.selection_start, buffer.length + 1)
     buffer:search_in_target(text)
   end
 end)
-events.connect(
-  events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wrapped'] end)
+events.connect(events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wrapped'] end)
 
 ---
--- Searches directory *dir* or the user-specified directory for files that match
--- search text and search options (subject to optional filter *filter*), and
--- prints the results to a buffer titled "Files Found", highlighting found text.
--- Use the `find_entry_text`, `match_case`, `whole_word`, and `regex` fields to
--- set the search text and option flags, respectively.
+-- Searches directory *dir* or the user-specified directory for files that match search text
+-- and search options (subject to optional filter *filter*), and prints the results to a buffer
+-- titled "Files Found", highlighting found text.
+-- Use the `find_entry_text`, `match_case`, `whole_word`, and `regex` fields to set the search
+-- text and option flags, respectively.
 -- A filter determines which files to search in, with the default filter being
--- `ui.find.find_in_files_filters[dir]` (if it exists) or `lfs.default_filter`.
--- A filter consists of Lua patterns that match file and directory paths to
--- include or exclude. Patterns are inclusive by default. Exclusive patterns
--- begin with a '!'. If no inclusive patterns are given, any filename is
--- initially considered. As a convenience, file extensions can be specified
--- literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/'
--- also matches the Windows directory separator ('[/\\]' is not needed).
--- If *filter* is `nil`, the filter from the `ui.find.find_in_files_filters`
--- table for *dir* is used. If that filter does not exist, `lfs.default_filter`
--- is used.
--- @param dir Optional directory path to search. If `nil`, the user is prompted
---   for one.
--- @param filter Optional filter for files and directories to exclude. The
---   default value is `lfs.default_filter` unless a filter for *dir* is defined
---   in `ui.find.find_in_files_filters`.
+-- `ui.find.find_in_files_filters[dir]` (if it exists) or `lfs.default_filter`. A filter consists
+-- of Lua patterns that match file and directory paths to include or exclude. Patterns are
+-- inclusive by default. Exclusive patterns begin with a '!'. If no inclusive patterns are given,
+-- any filename is initially considered. As a convenience, file extensions can be specified
+-- literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/' also matches the
+-- Windows directory separator ('[/\\]' is not needed). If *filter* is `nil`, the filter from
+-- the `ui.find.find_in_files_filters` table for *dir* is used. If that filter does not exist,
+-- `lfs.default_filter` is used.
+-- @param dir Optional directory path to search. If `nil`, the user is prompted for one.
+-- @param filter Optional filter for files and directories to exclude. The default value is
+--   `lfs.default_filter` unless a filter for *dir* is defined in `ui.find.find_in_files_filters`.
 -- @see find_in_files_filters
 -- @name find_in_files
 function M.find_in_files(dir, filter)
   if not assert_type(dir, 'string/nil', 1) then
     dir = ui.dialogs.fileselect{
-      title = _L['Select Directory'], select_only_directories = true,
-      with_directory = ff_dir()
+      title = _L['Select Directory'], select_only_directories = true, with_directory = ff_dir()
     }
     if not dir then return end
   end
@@ -310,10 +299,10 @@ function M.find_in_files(dir, filter)
 
   if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
   ui.silent_print = false
-  ui._print(_L['[Files Found Buffer]'], string.format(
-    '%s %s\n%s %s\n%s %s', _L['Find:']:gsub('_', ''), M.find_entry_text,
-    _L['Directory:'], dir, _L['Filter:']:gsub('_', ''),
-    type(filter) == 'string' and filter or table.concat(filter, ',')))
+  ui._print(_L['[Files Found Buffer]'],
+    string.format('%s %s\n%s %s\n%s %s', _L['Find:']:gsub('_', ''), M.find_entry_text,
+      _L['Directory:'], dir, _L['Filter:']:gsub('_', ''),
+      type(filter) == 'string' and filter or table.concat(filter, ',')))
   buffer.indicator_current = M.INDIC_FIND
 
   -- Determine which files to search.
@@ -342,18 +331,15 @@ function M.find_in_files(dir, filter)
       found = true
       if binary == nil then binary = buffer:text_range(1, 65536):find('\0') end
       if binary then
-        _G.buffer:add_text(string.format(
-          '%s:1:%s\n', utf8_filenames[i], _L['Binary file matches.']))
+        _G.buffer:add_text(string.format('%s:1:%s\n', utf8_filenames[i], _L['Binary file matches.']))
         break
       end
       local line_num = buffer:line_from_position(buffer.target_start)
       local line = buffer:get_line(line_num)
-      _G.buffer:add_text(
-        string.format('%s:%d:%s', utf8_filenames[i], line_num, line))
-      local pos = _G.buffer.current_pos - #line +
-        buffer.target_start - buffer:position_from_line(line_num)
-      _G.buffer:indicator_fill_range(
-        pos, buffer.target_end - buffer.target_start)
+      _G.buffer:add_text(string.format('%s:%d:%s', utf8_filenames[i], line_num, line))
+      local pos = _G.buffer.current_pos - #line + buffer.target_start -
+        buffer:position_from_line(line_num)
+      _G.buffer:indicator_fill_range(pos, buffer.target_end - buffer.target_start)
       if not line:find('\n$') then _G.buffer:add_text('\n') end
       buffer:set_target_range(buffer.target_end, buffer.length + 1)
     end
@@ -365,36 +351,33 @@ function M.find_in_files(dir, filter)
     return i * 100 / #filenames, utf8_filenames[i]
   end)
   buffer:close(true) -- temporary buffer
-  ui._print(
-    _L['[Files Found Buffer]'],
-    stopped and _L['Find in Files aborted'] .. '\n' or
-    not found and _L['No results found'] .. '\n' or '')
+  local status = stopped and _L['Find in Files aborted'] or not found and _L['No results found']
+  ui._print(_L['[Files Found Buffer]'], status and status .. '\n' or '')
 end
 
 local P, V, C, upper, lower = lpeg.P, lpeg.V, lpeg.C, string.upper, string.lower
 local esc = {b = '\b', f = '\f', n = '\n', r = '\r', t = '\t', v = '\v'}
 local re_patt = lpeg.Cs(P{
   (V('text') + V('u') + V('l') + V('U') + V('L') + V('esc'))^1,
-  text = (1 - '\\' * lpeg.S('uUlLEbfnrtv'))^1,
+  text = (1 - '\\' * lpeg.S('uUlLEbfnrtv'))^1, -- LuaFormatter
   u = '\\u' * C(1) / upper, l = '\\l' * C(1) / lower,
   U = P('\\U') / '' * (V('text') / upper + V('u') + V('l'))^0 * V('E')^-1,
-  L = P('\\L') / '' * (V('text') / lower + V('u') + V('l'))^0 * V('E')^-1,
+  L = P('\\L') / '' * (V('text') / lower + V('u') + V('l'))^0 * V('E')^-1, -- LuaFormatter
   E = P('\\E') / '', esc = '\\' * C(1) / esc
 })
 -- Returns string *text* with the following sequences unescaped:
 -- * "\uXXXX" sequences replaced with the equivalent UTF-8 character.
--- * "\d" sequences replaced with the text of capture number *d* from the
---   regular expression (or the entire match for *d* = 0).
--- * "\U" and "\L" sequences convert everything up to the next "\U", "\L", or
---   "\E" to uppercase and lowercase, respectively.
--- * "\u" and "\l" sequences convert the next character to uppercase and
---   lowercase, respectively. They may appear within "\U" and "\L" constructs.
+-- * "\d" sequences replaced with the text of capture number *d* from the regular expression
+--   (or the entire match for *d* = 0).
+-- * "\U" and "\L" sequences convert everything up to the next "\U", "\L", or "\E" to uppercase
+--   and lowercase, respectively.
+-- * "\u" and "\l" sequences convert the next character to uppercase and lowercase, respectively.
+--   They may appear within "\U" and "\L" constructs.
 -- @param text String text to unescape.
 -- @return unescaped text
 local function unescape(text)
-  text = text:gsub('%f[\\]\\u(%x%x%x%x)', function(code)
-    return utf8.char(tonumber(code, 16))
-  end):gsub('\\0', buffer.target_text):gsub('\\(%d)', buffer.tag)
+  text = text:gsub('%f[\\]\\u(%x%x%x%x)', function(code) return utf8.char(tonumber(code, 16)) end)
+    :gsub('\\0', buffer.target_text):gsub('\\(%d)', buffer.tag)
   return re_patt:match(text) or text
 end
 
@@ -408,14 +391,13 @@ end)
 
 local INDIC_REPLACE = _SCINTILLA.next_indic_number()
 -- Replaces all found text in the current buffer (ignores "Find in Files").
--- If any text is selected (other than text just found), only found text in that
--- selection is replaced.
+-- If any text is selected (other than text just found), only found text in that selection
+-- is replaced.
 events.connect(events.REPLACE_ALL, function(ftext, rtext)
   if ftext == '' then return end
   local count = 0
   local s, e = buffer.selection_start, buffer.selection_end
-  local replace_in_sel =
-    s ~= e and (ftext ~= find_text or buffer:get_sel_text() ~= found_text)
+  local replace_in_sel = s ~= e and (ftext ~= find_text or buffer:get_sel_text() ~= found_text)
   if replace_in_sel then
     buffer.indicator_current = INDIC_REPLACE
     buffer:indicator_fill_range(e, 1)
@@ -427,8 +409,8 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
   buffer:begin_undo_action()
   buffer.search_flags = get_flags()
   buffer:set_target_range(not replace_in_sel and 1 or s, buffer.length + 1)
-  while buffer:search_in_target(ftext) ~= -1 and (not replace_in_sel or
-        buffer.target_end <= buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
+  while buffer:search_in_target(ftext) ~= -1 and
+    (not replace_in_sel or buffer.target_end <= buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
     if buffer.target_start == buffer.target_end then break end -- prevent loops
     buffer:replace_target(not M.regex and rtext or unescape(rtext))
     count = count + 1
@@ -446,30 +428,39 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
 end)
 
 ---
--- Jumps to the source of the find in files search result on line number
--- *line_num* in the buffer titled "Files Found" or, if *line_num* is `nil`,
--- jumps to the next or previous search result, depending on boolean *next*.
--- @param line_num Optional line number in the files found buffer that contains
---   the search result to go to. This parameter may be omitted completely.
--- @param next Optional flag indicating whether to go to the next search result
---   or the previous one. Only applicable when *line_num* is `nil`.
+-- Jumps to the source of the find in files search result on line number *line_num* in the buffer
+-- titled "Files Found" or, if *line_num* is `nil`, jumps to the next or previous search result,
+-- depending on boolean *next*.
+-- @param line_num Optional line number in the files found buffer that contains the search
+--   result to go to. This parameter may be omitted completely.
+-- @param next Optional flag indicating whether to go to the next search result or the previous
+--   one. Only applicable when *line_num* is `nil`.
 -- @name goto_file_found
 function M.goto_file_found(line_num, next)
   if type(line_num) == 'boolean' then line_num, next = nil, line_num end
   local ff_view, ff_buf = nil, nil
   for i = 1, #_VIEWS do
-    if is_ff_buf(_VIEWS[i].buffer) then ff_view = _VIEWS[i] break end
+    if is_ff_buf(_VIEWS[i].buffer) then
+      ff_view = _VIEWS[i]
+      break
+    end
   end
   for i = 1, #_BUFFERS do
-    if is_ff_buf(_BUFFERS[i]) then ff_buf = _BUFFERS[i] break end
+    if is_ff_buf(_BUFFERS[i]) then
+      ff_buf = _BUFFERS[i]
+      break
+    end
   end
   if not ff_view and not ff_buf then return end
-  if ff_view then ui.goto_view(ff_view) else view:goto_buffer(ff_buf) end
+  if ff_view then
+    ui.goto_view(ff_view)
+  else
+    view:goto_buffer(ff_buf)
+  end
 
-  -- If no line number was given, find the next search result, wrapping as
-  -- necessary.
+  -- If no line number was given, find the next search result, wrapping as necessary.
   if not assert_type(line_num, 'number/nil', 1) and next ~= nil then
-    if next then buffer:line_end() else buffer:home() end
+    buffer[next and 'line_end' or 'home'](buffer)
     buffer:search_anchor()
     local f = next and buffer.search_next or buffer.search_prev
     local pos = f(buffer, buffer.FIND_REGEXP, '^.+:\\d+:.+$')
@@ -487,7 +478,8 @@ function M.goto_file_found(line_num, next)
   local line = buffer:get_cur_line()
   local utf8_filename, pos
   utf8_filename, line_num, pos = line:match('^(.+):(%d+):()')
-  if not utf8_filename then return else line_num = tonumber(line_num) end
+  if not utf8_filename then return end
+  line_num = tonumber(line_num)
   textadept.editing.select_line()
   pos = buffer.selection_start + pos - 1 -- absolute pos of result text on line
   local s = buffer:indicator_end(M.INDIC_FIND, buffer.selection_start)
@@ -508,9 +500,8 @@ events.connect(events.KEYPRESS, function(code)
   M.goto_file_found(buffer:line_from_position(buffer.current_pos))
   return true
 end)
-events.connect(events.DOUBLE_CLICK, function(_, line)
-  if is_ff_buf(buffer) then M.goto_file_found(line) end
-end)
+events.connect(events.DOUBLE_CLICK,
+  function(_, line) if is_ff_buf(buffer) then M.goto_file_found(line) end end)
 
 --[[ The functions below are Lua C functions.
 

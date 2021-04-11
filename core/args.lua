@@ -17,17 +17,14 @@ events.ARG_NONE = 'arg_none'
 local options = {}
 
 ---
--- Registers a command line option with short and long versions *short* and
--- *long*, respectively. *narg* is the number of arguments the option accepts,
--- *f* is the function called when the option is set, and *description* is
--- the option's description when displaying help.
+-- Registers a command line option with short and long versions *short* and *long*, respectively.
+-- *narg* is the number of arguments the option accepts, *f* is the function called when the
+-- option is set, and *description* is the option's description when displaying help.
 -- @param short The string short version of the option.
 -- @param long The string long version of the option.
 -- @param narg The number of expected parameters for the option.
--- @param f The Lua function to run when the option is set. It is passed *narg*
---   string arguments.
--- @param description The string description of the option for command line
---   help.
+-- @param f The Lua function to run when the option is set. It is passed *narg* string arguments.
+-- @param description The string description of the option for command line help.
 -- @name register
 function M.register(short, long, narg, f, description)
   local option = {
@@ -38,14 +35,12 @@ function M.register(short, long, narg, f, description)
   options[assert_type(long, 'string', 2)] = option
 end
 
--- Processes command line argument table *arg*, handling options previously
--- defined using `args.register()` and treating unrecognized arguments as
--- filenames to open.
--- Emits an `ARG_NONE` event when no arguments are present unless
--- *no_emit_arg_none* is `true`.
+-- Processes command line argument table *arg*, handling options previously defined using
+-- `args.register()` and treating unrecognized arguments as filenames to open.
+-- Emits an `ARG_NONE` event when no arguments are present unless *no_emit_arg_none* is `true`.
 -- @param arg Argument table.
--- @param no_emit_arg_none When `true`, do not emit `ARG_NONE` when no arguments
---   are present. The default value is `false`.
+-- @param no_emit_arg_none When `true`, do not emit `ARG_NONE` when no arguments are present.
+--   The default value is `false`.
 -- @see register
 -- @see _G.events
 local function process(arg, no_emit_arg_none)
@@ -79,12 +74,10 @@ if not CURSES then
     print('Usage: textadept [args] [filenames]')
     local list = {}
     for name in pairs(options) do list[#list + 1] = name end
-    table.sort(
-      list, function(a, b) return a:match('[^-]+') < b:match('[^-]+') end)
+    table.sort(list, function(a, b) return a:match('[^-]+') < b:match('[^-]+') end)
     for _, name in ipairs(list) do
       local option = options[name]
-      print(string.format(
-        '  %s [%d args]: %s', name, option.narg, option.description))
+      print(string.format('  %s [%d args]: %s', name, option.narg, option.description))
     end
     os.exit()
   end, 'Shows this')
@@ -93,10 +86,9 @@ if not CURSES then
     print(_RELEASE .. '\n' .. _COPYRIGHT)
     quit()
   end, 'Prints Textadept version and copyright')
-  -- After Textadept finishes initializing and processes arguments, remove the
-  -- help and version options in order to prevent another instance from sending
-  -- '-h', '--help', '-v', and '--version' to the first instance, killing the
-  -- latter.
+  -- After Textadept finishes initializing and processes arguments, remove the help and
+  -- version options in order to prevent another instance from sending '-h', '--help', '-v',
+  -- and '--version' to the first instance, killing the latter.
   events.connect(events.INITIALIZED, function()
     options['-h'], options['--help'] = nil, nil
     options['-v'], options['--version'] = nil, nil
@@ -104,8 +96,7 @@ if not CURSES then
 end
 
 -- Set `_G._USERHOME`.
--- This needs to be set as soon as possible since the processing of arguments is
--- positional.
+-- This needs to be set as soon as possible since the processing of arguments is positional.
 _USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE') .. '/.textadept'
 for i, option in ipairs(arg) do
   if (option == '-u' or option == '--userhome') and arg[i + 1] then
@@ -115,23 +106,19 @@ for i, option in ipairs(arg) do
 end
 local mode = lfs.attributes(_USERHOME, 'mode')
 assert(not mode or mode == 'directory', '"%s" is not a directory', _USERHOME)
-if not mode then
-  assert(lfs.mkdir(_USERHOME), 'cannot create "%s"', _USERHOME)
-end
+if not mode then assert(lfs.mkdir(_USERHOME), 'cannot create "%s"', _USERHOME) end
 local user_init = _USERHOME .. '/init.lua'
 mode = lfs.attributes(user_init, 'mode')
 assert(not mode or mode == 'file', '"%s" is not a file (%s)', user_init, mode)
-if not mode then
-  assert(io.open(user_init, 'w'), 'unable to create "%s"', user_init):close()
-end
+if not mode then assert(io.open(user_init, 'w'), 'unable to create "%s"', user_init):close() end
 
 -- Placeholders.
 M.register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
 M.register('-f', '--force', 0, function() end, 'Forces unique instance')
 
 -- Run unit tests.
--- Note: have them run after the last `events.INITIALIZED` handler so everything
--- is completely initialized (e.g. menus, macro module, etc.).
+-- Note: have them run after the last `events.INITIALIZED` handler so everything is completely
+-- initialized (e.g. menus, macro module, etc.).
 M.register('-t', '--test', 1, function(patterns)
   events.connect(events.INITIALIZED, function()
     local arg = {}

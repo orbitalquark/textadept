@@ -6,37 +6,34 @@ local const_patt = '^val ([%w_]+)=([-%dx%x]+)'
 local event_patt = '^evt %a+ ([%w_]+)=(%d+)(%b())'
 local msg_patt = '^(%a+) (%a+) (%w+)=(%d+)%((%a*)%s*([^,]*),%s*(%a*)%s*([^)]*)'
 local types = {
-  [''] = 0, void = 0, int = 1, length = 2, index = 3, position = 3, line = 3,
-  colour = 4, bool = 5, keymod = 6, string = 7, stringresult = 8, cells = 9,
-  pointer = 1, textrange = 10, findtext = 11, formatrange = 12
+  [''] = 0, void = 0, int = 1, length = 2, index = 3, position = 3, line = 3, colour = 4, bool = 5,
+  keymod = 6, string = 7, stringresult = 8, cells = 9, pointer = 1, textrange = 10, findtext = 11,
+  formatrange = 12
 }
 local ignores = { -- constants to ignore
-  '^INDIC[012S]_', '^INVALID_POSITION', '^KEYWORDSET_MAX', '^SC_AC_',
-  '^SC_DOCUMENTOPTION_', '^SC_CACHE_', '^SC_CHARSET_', '^SC_EFF_',
-  '^SC_FONT_SIZE_MULTIPLIER', '^SC_INDIC', '^SC_LINE_END_TYPE_', '^SC_PHASES_',
-  '^SC_POPUP_', '^SC_PRINT_', '^SC_STATUS_', '^SC_TECHNOLOGY_', '^SC_TYPE_',
-  '^SC_WEIGHT_', '^SCE_', '^SCEN_', '^SCFIND_POSIX', '^SCI_', '^SCK_',
-  '^SCLEX_', '^UNDO_MAY_COALESCE'
+  '^INDIC[012S]_', '^INVALID_POSITION', '^KEYWORDSET_MAX', '^SC_AC_', '^SC_DOCUMENTOPTION_',
+  '^SC_CACHE_', '^SC_CHARSET_', '^SC_EFF_', '^SC_FONT_SIZE_MULTIPLIER', '^SC_INDIC',
+  '^SC_LINE_END_TYPE_', '^SC_PHASES_', '^SC_POPUP_', '^SC_PRINT_', '^SC_STATUS_', '^SC_TECHNOLOGY_',
+  '^SC_TYPE_', '^SC_WEIGHT_', '^SCE_', '^SCEN_', '^SCFIND_POSIX', '^SCI_', '^SCK_', '^SCLEX_',
+  '^UNDO_MAY_COALESCE'
 }
 local increments = { -- constants to increment by one
   '^MARKER_MAX', '^MARKNUM_', '^MAX_MARGIN', '^STYLE_', '^INDICATOR_'
 }
 local changed_setter = {} -- holds properties changed to setter functions
 local function to_en_us(name)
-  return name:gsub('([iIlL][oO])[uU]([rR])', '%1%2'):
-    gsub('ise$', 'ize'):gsub('([cC][eE][nN][tT])([rR])([eE])', '%1%3%2'):
-    gsub('CANCELLED', 'CANCELED')
+  return name:gsub('([iIlL][oO])[uU]([rR])', '%1%2'):gsub('ise$', 'ize'):gsub(
+    '([cC][eE][nN][tT])([rR])([eE])', '%1%3%2'):gsub('CANCELLED', 'CANCELED')
 end
 local function to_lua_name(camel_case)
-  return to_en_us(camel_case:gsub('([a-z])([A-Z])', '%1_%2'):
-    gsub('([A-Z])([A-Z][a-z])', '%1_%2'):lower())
+  return to_en_us(camel_case:gsub('([a-z])([A-Z])', '%1_%2'):gsub('([A-Z])([A-Z][a-z])', '%1_%2')
+    :lower())
 end
-local function is_length(ptype, param)
-  return ptype == 'position' and param:find('^length')
-end
+local function is_length(ptype, param) return ptype == 'position' and param:find('^length') end
 local function is_index(ptype, param)
-  return ptype == 'int' and (param == 'style' or param == 'markerNumber' or
-    param == 'margin' or param == 'indicator' or param == 'selection')
+  return ptype == 'int' and
+    (param == 'style' or param == 'markerNumber' or param == 'margin' or param == 'indicator' or
+      param == 'selection')
 end
 
 for line in io.lines('../src/scintilla/include/Scintilla.iface') do
@@ -92,15 +89,13 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
     functions[#functions + 1] = name
     functions[name] = {id, types[rtype], types[wtype], types[ltype]}
   elseif line:find('^get ') or line:find('^set ') then
-    local kind, rtype, name, id, wtype, param, ltype, param2 =
-      line:match(msg_patt)
+    local kind, rtype, name, id, wtype, param, ltype, param2 = line:match(msg_patt)
     if rtype:find('^%u') then rtype = 'int' end
     if wtype:find('^%u') then wtype = 'int' end
     if ltype:find('^%u') then ltype = 'int' end
     name = to_lua_name(name:gsub('[GS]et%f[%u]', ''))
-    if kind == 'get' and types[wtype] == types.int and
-       types[ltype] == types.int or wtype == 'bool' and ltype ~= '' or
-       changed_setter[name] then
+    if kind == 'get' and types[wtype] == types.int and types[ltype] == types.int or
+      (wtype == 'bool' and ltype ~= '') or changed_setter[name] then
       -- Special case getter/setter; handle as function.
       local fname = kind .. '_' .. name
       functions[#functions + 1] = fname
@@ -121,9 +116,7 @@ for line in io.lines('../src/scintilla/include/Scintilla.iface') do
       if wtype ~= '' then prop[4] = types[wtype] end
     else
       prop[2] = id
-      if prop[1] == 0 then
-        prop[3] = types[wtype ~= '' and ltype == '' and wtype or ltype]
-      end
+      if prop[1] == 0 then prop[3] = types[wtype ~= '' and ltype == '' and wtype or ltype] end
       prop[4] = types[ltype ~= '' and wtype or ltype]
     end
   elseif line:find('cat Provisional') then
@@ -136,8 +129,8 @@ end
 functions['auto_c_show'][3] = types.int -- was interpreted as 'length'
 functions['get_cur_line'][2] = types.position -- was interpreted as 'void'
 
--- Manually adjust messages whose param or return types would be interpreted as
--- 1-based numbers, but should not be, or vice-versa.
+-- Manually adjust messages whose param or return types would be interpreted as 1-based numbers,
+-- but should not be, or vice-versa.
 properties['length'][3] = types.int
 properties['style_at'][3] = types.index
 functions['marker_handle_from_line'][4] = types.index
@@ -186,8 +179,7 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Scintilla constants, functions, and properties.
--- Do not modify anything in this module. Doing so will have unpredictable
--- consequences.
+-- Do not modify anything in this module. Doing so will have unpredictable consequences.
 module('_SCINTILLA')]]
 
 ]=])
@@ -202,8 +194,8 @@ f:write(table.concat(constants, ','))
 f:write('}\n\n')
 f:write([[
 ---
--- Map of Scintilla function names to tables containing their IDs, return types,
--- wParam types, and lParam types. Types are as follows:
+-- Map of Scintilla function names to tables containing their IDs, return types, wParam types,
+-- and lParam types. Types are as follows:
 --
 --   + `0`: Void.
 --   + `1`: Integer.
@@ -218,14 +210,13 @@ f:write([[
 -- @name functions
 M.functions = {]])
 for _, func in ipairs(functions) do
-  f:write(
-    string.format('%s={%d,%d,%d,%d},', func, table.unpack(functions[func])))
+  f:write(string.format('%s={%d,%d,%d,%d},', func, table.unpack(functions[func])))
 end
 f:write('}\n\n')
 f:write([[
 ---
--- Map of Scintilla property names to table values containing their "get"
--- function IDs, "set" function IDs, return types, and wParam types.
+-- Map of Scintilla property names to table values containing their "get" function IDs, "set"
+-- function IDs, return types, and wParam types.
 -- The wParam type will be non-zero if the property is indexable.
 -- Types are the same as in the `functions` table.
 -- @see functions
@@ -233,8 +224,7 @@ f:write([[
 -- @name properties
 M.properties = {]])
 for _, property in ipairs(properties) do
-  f:write(string.format(
-    '%s={%d,%d,%d,%d},', property, table.unpack(properties[property])))
+  f:write(string.format('%s={%d,%d,%d,%d},', property, table.unpack(properties[property])))
 end
 f:write('}\n\n')
 f:write([[
@@ -243,17 +233,15 @@ f:write([[
 -- @class table
 -- @name events
 M.events = {]])
-for _, event in ipairs(events) do
-  f:write(string.format('[%s]={%s},', event, events[event]))
-end
+for _, event in ipairs(events) do f:write(string.format('[%s]={%s},', event, events[event])) end
 f:write('}\n\n')
 f:write([[
 local marker_number, indic_number, list_type, image_type = 0, 0, 0, 0
 
 ---
 -- Returns a unique marker number for use with `view.marker_define()`.
--- Use this function for custom markers in order to prevent clashes with
--- identifiers of other custom markers.
+-- Use this function for custom markers in order to prevent clashes with identifiers of other
+-- custom markers.
 -- @usage local marknum = _SCINTILLA.next_marker_number()
 -- @see view.marker_define
 -- @name next_marker_number
@@ -265,8 +253,8 @@ end
 
 ---
 -- Returns a unique indicator number for use with custom indicators.
--- Use this function for custom indicators in order to prevent clashes with
--- identifiers of other custom indicators.
+-- Use this function for custom indicators in order to prevent clashes with identifiers of
+-- other custom indicators.
 -- @usage local indic_num = _SCINTILLA.next_indic_number()
 -- @see view.indic_style
 -- @name next_indic_number
@@ -277,10 +265,9 @@ function M.next_indic_number()
 end
 
 ---
--- Returns a unique user list identier number for use with
--- `buffer.user_list_show()`.
--- Use this function for custom user lists in order to prevent clashes with
--- list identifiers of other custom user lists.
+-- Returns a unique user list identier number for use with `buffer.user_list_show()`.
+-- Use this function for custom user lists in order to prevent clashes with list identifiers
+-- of other custom user lists.
 -- @usage local list_type = _SCINTILLA.next_user_list_type()
 -- @see buffer.user_list_show
 -- @name next_user_list_type
@@ -290,10 +277,10 @@ function M.next_user_list_type()
 end
 
 ---
--- Returns a unique image type identier number for use with
--- `view.register_image()` and `view.register_rgba_image()`.
--- Use this function for custom image types in order to prevent clashes with
--- identifiers of other custom image types.
+-- Returns a unique image type identier number for use with `view.register_image()` and
+-- `view.register_rgba_image()`.
+-- Use this function for custom image types in order to prevent clashes with identifiers of
+-- other custom image types.
 -- @usage local image_type = _SCINTILLA.next_image_type()
 -- @see view.register_image
 -- @see view.register_rgba_image

@@ -6,19 +6,20 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Defines the menus used by Textadept.
--- Menus are simply tables of menu items and submenus and may be edited in
--- place. A menu item itself is a table whose first element is a menu label and
--- whose second element is a menu command to run. Submenus have `title` keys
--- assigned to string text.
+-- Menus are simply tables of menu items and submenus and may be edited in place. A menu item
+-- itself is a table whose first element is a menu label and whose second element is a menu
+-- command to run. Submenus have `title` keys assigned to string text.
 module('textadept.menu')]]
 
 local _L, SEPARATOR = _L, {''}
 
--- The following buffer and view functions need to be made constant in order for
--- menu items to identify the key associated with the functions.
+-- LuaFormatter off
+-- The following buffer and view functions need to be made constant in order for menu items to
+-- identify the key associated with the functions.
 local menu_buffer_functions = {'undo','redo','cut','copy','paste','line_duplicate','clear','select_all','upper_case','lower_case','move_selected_lines_up','move_selected_lines_down'}
 for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 view.zoom_in, view.zoom_out = view.zoom_in, view.zoom_out
+-- LuaFormatter on
 
 -- Commonly used functions in menu commands.
 local sel_enc = textadept.editing.select_enclosed
@@ -41,10 +42,11 @@ local function open_page(url)
   os.spawn(string.format('%s "%s"', cmd, not OSX and url or 'file://' .. url))
 end
 
+-- LuaFormatter off
 ---
 -- The default main menubar.
--- Individual menus, submenus, and menu items can be retrieved by name in
--- addition to table index number.
+-- Individual menus, submenus, and menu items can be retrieved by name in addition to table
+-- index number.
 -- @class table
 -- @name menubar
 -- @usage textadept.menu.menubar[_L['File']][_L['New']]
@@ -89,9 +91,7 @@ local default_menubar = {
       local match_pos = buffer:brace_match(buffer.current_pos, 0)
       if match_pos ~= -1 then buffer:goto_pos(match_pos) end
     end},
-    {_L['Complete Word'], function()
-      textadept.editing.autocomplete('word')
-    end},
+    {_L['Complete Word'], function() textadept.editing.autocomplete('word') end},
     {_L['Toggle Block Comment'], textadept.editing.toggle_comment},
     {_L['Transpose Characters'], textadept.editing.transpose_chars},
     {_L['Join Lines'], textadept.editing.join_lines},
@@ -156,9 +156,7 @@ local default_menubar = {
     SEPARATOR,
     {_L['Find in Files'], function() ui.find.focus{in_files = true} end},
     {_L['Goto Next File Found'], function() ui.find.goto_file_found(true) end},
-    {_L['Goto Previous File Found'], function()
-      ui.find.goto_file_found(false)
-    end},
+    {_L['Goto Previous File Found'], function() ui.find.goto_file_found(false) end},
     SEPARATOR,
     {_L['Jump to'], textadept.editing.goto_line}
   },
@@ -181,9 +179,7 @@ local default_menubar = {
       {_L['Toggle Bookmark'], textadept.bookmarks.toggle},
       {_L['Clear Bookmarks'], textadept.bookmarks.clear},
       {_L['Next Bookmark'], function() textadept.bookmarks.goto_mark(true) end},
-      {_L['Previous Bookmark'], function()
-        textadept.bookmarks.goto_mark(false)
-      end},
+      {_L['Previous Bookmark'], function() textadept.bookmarks.goto_mark(false) end},
       {_L['Goto Bookmark...'], textadept.bookmarks.goto_mark},
     },
     {
@@ -199,8 +195,7 @@ local default_menubar = {
       {_L['Quickly Open User Home'], function() io.quick_open(_USERHOME) end},
       {_L['Quickly Open Textadept Home'], function() io.quick_open(_HOME) end},
       {_L['Quickly Open Current Directory'], function()
-        if not buffer.filename then return end
-        io.quick_open(buffer.filename:match('^(.+)[/\\]'))
+        if buffer.filename then io.quick_open(buffer.filename:match('^(.+)[/\\]')) end
       end},
       {_L['Quickly Open Current Project'], io.quick_open},
     },
@@ -211,25 +206,18 @@ local default_menubar = {
       {_L['Previous Snippet Placeholder'], textadept.snippets.previous},
       {_L['Cancel Snippet'], textadept.snippets.cancel_current},
       SEPARATOR,
-      {_L['Complete Trigger Word'], function()
-        textadept.editing.autocomplete('snippets')
-      end}
+      {_L['Complete Trigger Word'], function() textadept.editing.autocomplete('snippets') end}
     },
     SEPARATOR,
-    {_L['Complete Symbol'], function()
-      textadept.editing.autocomplete(buffer:get_lexer(true))
-    end},
+    {_L['Complete Symbol'], function() textadept.editing.autocomplete(buffer:get_lexer(true)) end},
     {_L['Show Documentation'], textadept.editing.show_documentation},
     {_L['Show Style'], function()
-      local char = buffer:text_range(
-        buffer.current_pos, buffer:position_after(buffer.current_pos))
+      local char = buffer:text_range(buffer.current_pos, buffer:position_after(buffer.current_pos))
       if char == '' then return end -- end of buffer
       local bytes = string.rep(' 0x%X', #char):format(char:byte(1, #char))
       local style = buffer.style_at[buffer.current_pos]
-      local text = string.format(
-        "'%s' (U+%04X:%s)\n%s %s\n%s %s (%d)", char, utf8.codepoint(char),
-        bytes, _L['Lexer'], buffer:get_lexer(true), _L['Style'],
-        buffer:name_of_style(style), style)
+      local text = string.format("'%s' (U+%04X:%s)\n%s %s\n%s %s (%d)", char, utf8.codepoint(char),
+        bytes, _L['Lexer'], buffer:get_lexer(true), _L['Style'], buffer:name_of_style(style), style)
       view:call_tip_show(buffer.current_pos, text)
     end}
   },
@@ -299,12 +287,11 @@ local default_menubar = {
     end},
     SEPARATOR,
     {_L['Toggle Show Indent Guides'], function()
-      view.indentation_guides =
-        view.indentation_guides == 0 and view.IV_LOOKBOTH or 0
+      view.indentation_guides = view.indentation_guides == 0 and view.IV_LOOKBOTH or 0
     end},
     {_L['Toggle Virtual Space'], function()
-      buffer.virtual_space_options =
-        buffer.virtual_space_options == 0 and buffer.VS_USERACCESSIBLE or 0
+      buffer.virtual_space_options = buffer.virtual_space_options == 0 and
+        buffer.VS_USERACCESSIBLE or 0
     end},
     SEPARATOR,
     {_L['Zoom In'], view.zoom_in},
@@ -327,8 +314,7 @@ local default_menubar = {
 
 ---
 -- The default right-click context menu.
--- Submenus, and menu items can be retrieved by name in addition to table index
--- number.
+-- Submenus, and menu items can be retrieved by name in addition to table index number.
 -- @class table
 -- @name context_menu
 -- @usage textadept.menu.context_menu[#textadept.menu.context_menu + 1] = {...}
@@ -346,8 +332,7 @@ local default_context_menu = {
 
 ---
 -- The default tabbar context menu.
--- Submenus, and menu items can be retrieved by name in addition to table index
--- number.
+-- Submenus, and menu items can be retrieved by name in addition to table index number.
 -- @class table
 -- @name tab_context_menu
 local default_tab_context_menu = {
@@ -358,6 +343,7 @@ local default_tab_context_menu = {
   SEPARATOR,
   {_L['Reload'], buffer.reload},
 }
+-- LuaFormatter on
 
 -- Table of proxy tables for menus.
 local proxies = {}
@@ -378,7 +364,10 @@ local function get_gdk_key(key_seq)
   local code = string.byte(key)
   if #key > 1 or code < 32 then
     for i, s in pairs(keys.KEYSYMS) do
-      if s == key and i > 0xFE20 then code = i break end
+      if s == key and i > 0xFE20 then
+        code = i
+        break
+      end
     end
   end
   return code, modifiers
@@ -387,8 +376,8 @@ end
 -- Creates a menu suitable for `ui.menu()` from the menu table format.
 -- Also assigns key bindings.
 -- @param menu The menu to create a GTK menu from.
--- @param contextmenu Flag indicating whether or not the menu is a context menu.
---   If so, menu_id offset is 1000. The default value is `false`.
+-- @param contextmenu Flag indicating whether or not the menu is a context menu. If so, menu_id
+--   offset is 1000. The default value is `false`.
 -- @return GTK menu that can be passed to `ui.menu()`.
 -- @see ui.menu
 local function read_menu_table(menu, contextmenu)
@@ -397,8 +386,7 @@ local function read_menu_table(menu, contextmenu)
     if item.title then
       gtkmenu[#gtkmenu + 1] = read_menu_table(item, contextmenu)
     else -- item = {label, function}
-      local menu_id =
-        not contextmenu and #menu_items + 1 or #contextmenu_items + 1000 + 1
+      local menu_id = not contextmenu and #menu_items + 1 or #contextmenu_items + 1000 + 1
       local key, mods = get_gdk_key(key_shortcuts[tostring(item[2])])
       gtkmenu[#gtkmenu + 1] = {item[1], menu_id, key, mods}
       if item[2] then
@@ -410,13 +398,12 @@ local function read_menu_table(menu, contextmenu)
   return gtkmenu
 end
 
--- Returns a proxy table for menu table *menu* such that when a menu item is
--- changed or added, *update* is called to update the menu in the UI.
+-- Returns a proxy table for menu table *menu* such that when a menu item is changed or added,
+-- *update* is called to update the menu in the UI.
 -- @param menu The menu or table of menus to create a proxy for.
--- @param update The function to call to update the menu in the UI when a menu
---   item is changed or added.
--- @param menubar Used internally to keep track of the top-level menu for
---   calling *update* with.
+-- @param update The function to call to update the menu in the UI when a menu item is changed
+--   or added.
+-- @param menubar Used internally to keep track of the top-level menu for calling *update* with.
 local function proxy_menu(menu, update, menubar)
   return setmetatable({}, {
     __index = function(_, k)
@@ -425,60 +412,59 @@ local function proxy_menu(menu, update, menubar)
         v = menu[k]
       elseif type(k) == 'string' then
         for _, item in ipairs(menu) do
-          if item.title == k or item[1] == k then v = item break end
+          if item.title == k or item[1] == k then
+            v = item
+            break
+          end
         end
       end
       return type(v) == 'table' and proxy_menu(v, update, menubar or menu) or v
-    end,
+    end, -- LuaFormatter
     __newindex = function(_, k, v)
       menu[k] = getmetatable(v) and getmetatable(v).menu or v
-      -- After adding or removing menus or menu items, update the menubar or
-      -- context menu. When updating a menu item's function, do nothing extra.
+      -- After adding or removing menus or menu items, update the menubar or context menu. When
+      -- updating a menu item's function, do nothing extra.
       if type(v) ~= 'function' then update(menubar or menu) end
-    end,
-    __len = function() return #menu end,
-    menu = menu -- store existing menu for copying (e.g. m[#m + 1] = m[#m])
+    end, __len = function() return #menu end, menu = menu -- store existing menu for copying (e.g. m[#m + 1] = m[#m])
   })
 end
 
 -- Sets `ui.menubar` from menu table *menubar*.
--- Each menu is an ordered list of menu items and has a `title` key for the
--- title text. Menu items are tables containing menu text and either a function
--- to call or a table containing a function with its parameters to call when an
--- item is clicked. Menu items may also be sub-menus, ordered lists of menu
--- items with an additional `title` key for the sub-menu's title text.
--- @param menubar The table of menu tables to create the menubar from. If `nil`,
---   clears the menubar from view, but keeps it intact in order for
---   `M.select_command()` to function properly.
+-- Each menu is an ordered list of menu items and has a `title` key for the title text. Menu
+-- items are tables containing menu text and either a function to call or a table containing a
+-- function with its parameters to call when an item is clicked. Menu items may also be sub-menus,
+-- ordered lists of menu items with an additional `title` key for the sub-menu's title text.
+-- @param menubar The table of menu tables to create the menubar from. If `nil`, clears the
+--   menubar from view, but keeps it intact in order for `M.select_command()` to function properly.
 -- @see ui.menubar
 -- @see ui.menu
 local function set_menubar(menubar)
-  if not menubar then ui.menubar = {} return end
+  if not menubar then
+    ui.menubar = {}
+    return
+  end
   key_shortcuts, menu_items = {}, {} -- reset
   for key, f in pairs(keys) do key_shortcuts[tostring(f)] = key end
   local _menubar = {}
-  for _, menu in ipairs(menubar) do
-    _menubar[#_menubar + 1] = ui.menu(read_menu_table(menu))
-  end
+  for _, menu in ipairs(menubar) do _menubar[#_menubar + 1] = ui.menu(read_menu_table(menu)) end
   ui.menubar = _menubar
   proxies.menubar = proxy_menu(menubar, set_menubar)
 end
 events.connect(events.INITIALIZED, function() set_menubar(default_menubar) end)
 -- Define menu proxy for use by keys.lua and user scripts.
--- Do not use an update function because this is expensive at startup, and
--- `events.INITIALIZED` will create the first visible menubar and proper proxy.
+-- Do not use an update function because this is expensive at startup, and `events.INITIALIZED`
+-- will create the first visible menubar and proper proxy.
 proxies.menubar = proxy_menu(default_menubar, function() end)
 
--- Sets `ui.context_menu` and `ui.tab_context_menu` from menu item lists
--- *buffer_menu* and *tab_menu*, respectively.
--- Menu items are tables containing menu text and either a function to call or
--- a table containing a function with its parameters to call when an item is
--- clicked. Menu items may also be sub-menus, ordered lists of menu items with
--- an additional `title` key for the sub-menu's title text.
--- @param buffer_menu Optional menu table to create the buffer context menu
---   from. If `nil`, uses the default context menu.
--- @param tab_menu Optional menu table to create the tabbar context menu from.
---   If `nil`, uses the default tab context menu.
+-- Sets `ui.context_menu` and `ui.tab_context_menu` from menu item lists *buffer_menu* and
+-- *tab_menu*, respectively.
+-- Menu items are tables containing menu text and either a function to call or a table containing a
+-- function with its parameters to call when an item is clicked. Menu items may also be sub-menus,
+-- ordered lists of menu items with an additional `title` key for the sub-menu's title text.
+-- @param buffer_menu Optional menu table to create the buffer context menu from. If `nil`,
+--   uses the default context menu.
+-- @param tab_menu Optional menu table to create the tabbar context menu from. If `nil`, uses
+--   the default tab context menu.
 -- @see ui.context_menu
 -- @see ui.tab_context_menu
 -- @see ui.menu
@@ -497,9 +483,8 @@ local function set_contextmenus(buffer_menu, tab_menu)
 end
 events.connect(events.INITIALIZED, set_contextmenus)
 -- Define menu proxies for use by user scripts.
--- Do not use an update function because this is expensive at startup, and
--- `events.INITIALIZED` will create these visible menus and their proper
--- proxies.
+-- Do not use an update function because this is expensive at startup, and `events.INITIALIZED`
+-- will create these visible menus and their proper proxies.
 proxies.context_menu = proxy_menu(default_context_menu, function() end)
 proxies.tab_context_menu = proxy_menu(default_tab_context_menu, function() end)
 
@@ -522,8 +507,7 @@ function M.select_command()
       if item.title then
         build_command_tables(item)
       elseif item[1] ~= '' then -- item = {label, function}
-        local label =
-          menu.title and string.format('%s: %s', menu.title, item[1]) or item[1]
+        local label = menu.title and string.format('%s: %s', menu.title, item[1]) or item[1]
         items[#items + 1] = label:gsub('_([^_])', '%1')
         items[#items + 1] = key_shortcuts[tostring(item[2])] or ''
       end
@@ -531,15 +515,13 @@ function M.select_command()
   end
   build_command_tables(getmetatable(M.menubar).menu)
   local button, i = ui.dialogs.filteredlist{
-    title = _L['Run Command'], columns = {_L['Command'], _L['Key Binding']},
-    items = items
+    title = _L['Run Command'], columns = {_L['Command'], _L['Key Binding']}, items = items
   }
   if button == 1 and i then events.emit(events.MENU_CLICKED, i) end
 end
 
 return setmetatable(M, {
-  __index = function(_, k) return proxies[k] or rawget(M, k) end,
-  __newindex = function(_, k, v)
+  __index = function(_, k) return proxies[k] or rawget(M, k) end, __newindex = function(_, k, v)
     if k == 'menubar' then
       set_menubar(v)
     elseif k == 'context_menu' then

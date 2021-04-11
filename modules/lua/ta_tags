@@ -301,14 +301,14 @@ _CHARSET	_HOME/core/init.lua	/^module('_G')]]$/;"	F
 _G	_HOME/core/init.lua	/^module('_G')]]$/;"	m	
 _HOME	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
 _L	_HOME/core/locale.lua	/^module('_L')]]$/;"	m	
-_M	_HOME/core/._M.luadoc	/^module('_M')]]$/;"	m	
+_M	_HOME/core/._M.luadoc	/^module('_M')$/;"	m	
 _M.ansi_c	_HOME/modules/ansi_c/init.lua	/^module('_M.ansi_c')]]$/;"	m	
 _M.lua	_HOME/modules/lua/init.lua	/^module('_M.lua')]]$/;"	m	
 _RELEASE	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
 _SCINTILLA	_HOME/core/iface.lua	/^module('_SCINTILLA')]]$/;"	m	
 _USERHOME	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
 _VIEWS	_HOME/core/init.lua	/^local _VIEWS$/;"	t	
-_print	_HOME/core/ui.lua	/^function ui._print(buffer_type, ...)$/;"	f	class:ui
+_print	_HOME/core/ui.lua	/^function ui._print(buffer_type, ...) _print(assert_type(buffer_type, 'string', 1), ...) end$/;"	f	class:ui
 abspath	_HOME/core/lfs_ext.lua	/^function lfs.abspath(filename, prefix)$/;"	f	class:lfs
 active	_HOME/modules/textadept/command_entry.lua	/^module('ui.command_entry')]]$/;"	F	class:ui.command_entry
 active	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
@@ -335,7 +335,7 @@ annotation_text	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 annotation_visible	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 ansi_c	_HOME/modules/ansi_c/init.lua	/^module('_M.ansi_c')]]$/;"	m	class:_M
 any	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-api_files	_HOME/modules/textadept/editing.lua	/^M.api_files = setmetatable({}, {__index = function(t, k)$/;"	t	class:textadept.editing
+api_files	_HOME/modules/textadept/editing.lua	/^M.api_files = setmetatable({}, {$/;"	t	class:textadept.editing
 append_history	_HOME/modules/textadept/command_entry.lua	/^function M.append_history(f, text)$/;"	f	class:ui.command_entry
 append_text	_HOME/core/.buffer.luadoc	/^function append_text(buffer, text) end$/;"	f	class:buffer
 arg	_HOME/core/init.lua	/^local arg$/;"	t	
@@ -424,7 +424,7 @@ char_right_rect_extend	_HOME/core/.buffer.luadoc	/^function char_right_rect_exte
 choose_caret_x	_HOME/core/.buffer.luadoc	/^function choose_caret_x(buffer) end$/;"	f	class:buffer
 clear	_HOME/core/.buffer.luadoc	/^function clear(buffer) end$/;"	f	class:buffer
 clear	_HOME/modules/textadept/bookmarks.lua	/^function M.clear() buffer:marker_delete_all(M.MARK_BOOKMARK) end$/;"	f	class:textadept.bookmarks
-clear	_HOME/modules/textadept/history.lua	/^function M.clear()$/;"	f	class:textadept.history
+clear	_HOME/modules/textadept/history.lua	/^function M.clear() for view in pairs(view_history) do view_history[view] = {pos = 0} end end$/;"	f	class:textadept.history
 clear_all	_HOME/core/.buffer.luadoc	/^function clear_all(buffer) end$/;"	f	class:buffer
 clear_document_style	_HOME/core/.buffer.luadoc	/^function clear_document_style(buffer) end$/;"	f	class:buffer
 clear_registered_images	_HOME/core/.view.luadoc	/^function clear_registered_images(view) end$/;"	f	class:view
@@ -1009,7 +1009,7 @@ word_left	_HOME/core/.buffer.luadoc	/^function word_left(buffer) end$/;"	f	class
 word_left_end	_HOME/core/.buffer.luadoc	/^function word_left_end(buffer) end$/;"	f	class:buffer
 word_left_end_extend	_HOME/core/.buffer.luadoc	/^function word_left_end_extend(buffer) end$/;"	f	class:buffer
 word_left_extend	_HOME/core/.buffer.luadoc	/^function word_left_extend(buffer) end$/;"	f	class:buffer
-word_match	_HOME/lexers/lexer.lua	/^function M.word_match(words, case_insensitive, word_chars)$/;"	f	class:lexer
+word_match	_HOME/lexers/lexer.lua	/^function M.word_match(word_list, case_insensitive, word_chars)$/;"	f	class:lexer
 word_part_left	_HOME/core/.buffer.luadoc	/^function word_part_left(buffer) end$/;"	f	class:buffer
 word_part_left_extend	_HOME/core/.buffer.luadoc	/^function word_part_left_extend(buffer) end$/;"	f	class:buffer
 word_part_right	_HOME/core/.buffer.luadoc	/^function word_part_right(buffer) end$/;"	f	class:buffer

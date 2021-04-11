@@ -29,18 +29,14 @@ function assert_equal(v1, v2)
   error(string.format('%s ~= %s', v1, v2), 2)
 end
 
-
--- Asserts that function *f* raises an error whose error message contains string
--- *expected_errmsg*.
+-- Asserts that function *f* raises an error whose error message contains string *expected_errmsg*.
 -- @param f Function to call.
 -- @param expected_errmsg String the error message should contain.
 function assert_raises(f, expected_errmsg)
   local ok, errmsg = pcall(f)
   if ok then error('error expected', 2) end
-  if expected_errmsg ~= errmsg and
-     not tostring(errmsg):find(expected_errmsg, 1, true) then
-    error(string.format(
-      'error message %q expected, was %q', expected_errmsg, errmsg), 2)
+  if expected_errmsg ~= errmsg and not tostring(errmsg):find(expected_errmsg, 1, true) then
+    error(string.format('error message %q expected, was %q', expected_errmsg, errmsg), 2)
   end
 end
 
@@ -67,11 +63,14 @@ function test_assert_types()
   end
   assert_equal(foo('bar'), 'bar')
   assert_raises(function() foo(1) end, "bad argument #1 to 'foo' (string expected, got number")
-  assert_raises(function() foo('bar', 'baz') end, "bad argument #2 to 'foo' (boolean/nil expected, got string")
-  assert_raises(function() foo('bar', true, 1) end, "bad argument #3 to 'foo' (string/table/nil expected, got number")
+  assert_raises(function() foo('bar', 'baz') end,
+    "bad argument #2 to 'foo' (boolean/nil expected, got string")
+  assert_raises(function() foo('bar', true, 1) end,
+    "bad argument #3 to 'foo' (string/table/nil expected, got number")
 
   function foo(bar) assert_type(bar, string) end
-  assert_raises(function() foo(1) end, "bad argument #2 to 'assert_type' (string expected, got table")
+  assert_raises(function() foo(1) end,
+    "bad argument #2 to 'assert_type' (string expected, got table")
   function foo(bar) assert_type(bar, 'string') end
   assert_raises(function() foo(1) end, "bad argument #3 to 'assert_type' (value expected, got nil")
 end
@@ -167,17 +166,14 @@ local function load_locale(locale_conf)
   for line in io.lines(locale_conf) do
     if not line:find('^%s*[^%w_%[]') then
       local id, str = line:match('^(.-)%s*=%s*(.+)$')
-      if id and str and assert(not L[id], 'duplicate locale id "%s"', id) then
-        L[id] = str
-      end
+      if id and str and assert(not L[id], 'duplicate locale id "%s"', id) then L[id] = str end
     end
   end
   locales[locale_conf] = L
   return L
 end
 
--- Looks for use of localization in the given Lua file and verifies that each
--- use is okay.
+-- Looks for use of localization in the given Lua file and verifies that each use is okay.
 -- @param filename String filename of the Lua file to check.
 -- @param L Table of localizations to read from.
 local function check_localizations(filename, L)
@@ -193,8 +189,7 @@ local function check_localizations(filename, L)
 end
 
 local loaded_extra = {}
--- Records localization assignments in the given Lua file for use in subsequent
--- checks.
+-- Records localization assignments in the given Lua file for use in subsequent checks.
 -- @param L Table of localizations to add to.
 local function load_extra_localizations(filename, L)
   if loaded_extra[filename] then return end
@@ -229,46 +224,36 @@ function test_locale_use_core()
   local ta_dirs = {'core', 'modules/ansi_c', 'modules/lua', 'modules/textadept'}
   for _, dir in ipairs(ta_dirs) do
     dir = _HOME .. '/' .. dir
-    for filename in lfs.walk(dir, '.lua') do
-      check_localizations(filename, L)
-    end
+    for filename in lfs.walk(dir, '.lua') do check_localizations(filename, L) end
   end
   check_localizations(_HOME .. '/init.lua', L)
 end
 
 function test_locale_use_extra()
   local L = load_locale(LOCALE_CONF)
-  for filename in lfs.walk(_HOME, '.lua') do
-    load_extra_localizations(filename, L)
-  end
-  for filename in lfs.walk(_HOME, '.lua') do
-    check_localizations(filename, L)
-  end
+  for filename in lfs.walk(_HOME, '.lua') do load_extra_localizations(filename, L) end
+  for filename in lfs.walk(_HOME, '.lua') do check_localizations(filename, L) end
 end
 
 function test_locale_use_userhome()
   local L = load_locale(LOCALE_CONF)
-  for filename in lfs.walk(_HOME, '.lua') do
-    load_extra_localizations(filename, L)
-  end
-  for filename in lfs.walk(_USERHOME, '.lua') do
-    load_extra_localizations(filename, L)
-  end
+  for filename in lfs.walk(_HOME, '.lua') do load_extra_localizations(filename, L) end
+  for filename in lfs.walk(_USERHOME, '.lua') do load_extra_localizations(filename, L) end
   L['%1'] = true -- snippet
-  for filename in lfs.walk(_USERHOME, '.lua') do
-    check_localizations(filename, L)
-  end
+  for filename in lfs.walk(_USERHOME, '.lua') do check_localizations(filename, L) end
 end
 
 function test_file_io_open_file_detect_encoding()
   io.recent_files = {} -- clear
   local recent_files = {}
+  -- LuaFormatter off
   local files = {
     [_HOME .. '/test/file_io/utf8'] = 'UTF-8',
     [_HOME .. '/test/file_io/cp1252'] = 'CP1252',
     [_HOME .. '/test/file_io/utf16'] = 'UTF-16',
-    [_HOME .. '/test/file_io/binary'] = '',
+    [_HOME .. '/test/file_io/binary'] = ''
   }
+  -- LuaFormatter on
   for filename, encoding in pairs(files) do
     print(string.format('Opening file %s', filename))
     io.open_file(filename)
@@ -277,7 +262,7 @@ function test_file_io_open_file_detect_encoding()
     local contents = f:read('a')
     f:close()
     if encoding ~= '' then
-      --assert_equal(buffer:get_text():iconv(encoding, 'UTF-8'), contents)
+      -- assert_equal(buffer:get_text():iconv(encoding, 'UTF-8'), contents)
       assert_equal(buffer.encoding, encoding)
       assert_equal(buffer.code_page, buffer.CP_UTF8)
     else
@@ -291,15 +276,18 @@ function test_file_io_open_file_detect_encoding()
   assert_equal(io.recent_files, recent_files)
 
   assert_raises(function() io.open_file(1) end, 'string/table/nil expected, got number')
-  assert_raises(function() io.open_file('/tmp/foo', true) end, 'string/table/nil expected, got boolean')
+  assert_raises(function() io.open_file('/tmp/foo', true) end,
+    'string/table/nil expected, got boolean')
   -- TODO: encoding failure
 end
 
 function test_file_io_open_file_detect_newlines()
+  -- LuaFormatter off
   local files = {
     [_HOME .. '/test/file_io/lf'] = buffer.EOL_LF,
-    [_HOME .. '/test/file_io/crlf'] = buffer.EOL_CRLF,
+    [_HOME .. '/test/file_io/crlf'] = buffer.EOL_CRLF
   }
+  -- LuaFormatter on
   for filename, mode in pairs(files) do
     io.open_file(filename)
     assert_equal(buffer.eol_mode, mode)
@@ -309,11 +297,13 @@ end
 
 function test_file_io_open_file_with_encoding()
   local num_buffers = #_BUFFERS
+  -- LuaFormatter off
   local files = {
     _HOME .. '/test/file_io/utf8',
     _HOME .. '/test/file_io/cp1252',
     _HOME .. '/test/file_io/utf16'
   }
+  -- LuaFormatter on
   local encodings = {nil, 'CP1252', 'UTF-16'}
   io.open_file(files, encodings)
   assert_equal(#_BUFFERS, num_buffers + #files)
@@ -346,7 +336,8 @@ end
 
 function test_file_io_open_file_errors()
   if LINUX then
-    assert_raises(function() io.open_file('/etc/group-') end, 'cannot open /etc/group-: Permission denied')
+    assert_raises(function() io.open_file('/etc/group-') end,
+      'cannot open /etc/group-: Permission denied')
   end
   -- TODO: find a case where the file can be opened, but not read
 end
@@ -485,12 +476,14 @@ end
 function test_file_io_recent_files()
   io.recent_files = {} -- clear
   local recent_files = {}
+  -- LuaFormatter off
   local files = {
     _HOME .. '/test/file_io/utf8',
     _HOME .. '/test/file_io/cp1252',
     _HOME .. '/test/file_io/utf16',
     _HOME .. '/test/file_io/binary'
   }
+  -- LuaFormatter on
   for _, filename in ipairs(files) do
     io.open_file(filename)
     buffer:close()
@@ -619,11 +612,13 @@ function test_keys_modes()
   buffer.new()
   local foo, bar = false, false
   keys.a = function() foo = true end
-  keys.test_mode = {a = function()
-    bar = true
-    keys.mode = nil
-    return false -- propagate
-  end}
+  keys.test_mode = {
+    a = function()
+      bar = true
+      keys.mode = nil
+      return false -- propagate
+    end
+  }
   keys.cpp.a = function() keys.mode = 'test_mode' end
   events.emit(events.KEYPRESS, string.byte('a'))
   assert(foo, 'foo not set')
@@ -691,7 +686,8 @@ expected_failure(test_lfs_ext_walk_filter_dir)
 function test_lfs_ext_walk_filter_mixed()
   local count = 0
   for filename in lfs.walk(_HOME .. '/core', {'!/locales', '.lua'}) do
-    assert(not filename:find('/locales/') and filename:find('%.lua$'), '"%s" should not match', filename)
+    assert(not filename:find('/locales/') and filename:find('%.lua$'), '"%s" should not match',
+      filename)
     count = count + 1
   end
   assert(count > 0, 'no matching files found')
@@ -754,7 +750,9 @@ function test_lfs_ext_walk_symlinks()
     files[#files + 1] = filename
   end
   table.sort(files)
-  local expected_files = {dir .. '/1/foo', dir .. '/1/bar/baz', dir .. '/1/2/foobar', dir .. '/1/2/foobaz'}
+  local expected_files = {
+    dir .. '/1/foo', dir .. '/1/bar/baz', dir .. '/1/2/foobar', dir .. '/1/2/foobaz'
+  }
   table.sort(expected_files)
   assert_equal(files, expected_files)
   os.execute('rm -r ' .. dir)
@@ -867,13 +865,14 @@ function test_ui_dialogs_colorselect_interactive()
   local color = ui.dialogs.colorselect{title = 'Blue', color = 0xFF0000}
   assert_equal(color, 0xFF0000)
   color = ui.dialogs.colorselect{
-    title = 'Red', color = '#FF0000', palette = {'#FF0000', 0x00FF00},
-    string_output = true
+    title = 'Red', color = '#FF0000', palette = {'#FF0000', 0x00FF00}, string_output = true
   }
   assert_equal(color, '#FF0000')
 
-  assert_raises(function() ui.dialogs.colorselect{title = function() end} end, "bad argument #title to 'colorselect' (string/number/table/boolean expected, got function")
-  assert_raises(function() ui.dialogs.colorselect{palette = {true}} end, "bad argument #palette[1] to 'colorselect' (string/number expected, got boolean")
+  assert_raises(function() ui.dialogs.colorselect{title = function() end} end,
+    "bad argument #title to 'colorselect' (string/number/table/boolean expected, got function")
+  assert_raises(function() ui.dialogs.colorselect{palette = {true}} end,
+    "bad argument #palette[1] to 'colorselect' (string/number expected, got boolean")
 end
 
 function test_ui_dialogs_dropdown_interactive()
@@ -884,70 +883,62 @@ function test_ui_dialogs_dropdown_interactive()
     assert_equal(type(button), 'number')
     assert_equal(i, 1)
     button, i = ui.dialogs[dropdown]{
-      text = 'foo', items = {'bar', 'baz', 'quux'}, select = 2,
-      no_cancel = true, width = 400, height = 400
+      text = 'foo', items = {'bar', 'baz', 'quux'}, select = 2, no_cancel = true, width = 400,
+      height = 400
     }
     assert_equal(i, 2)
   end
 
-  assert_raises(function() ui.dialogs.dropdown{items = {'foo', 'bar', 'baz'}, select = true} end, "bad argument #select to 'dropdown' (number expected, got boolean")
-  assert_raises(function() ui.dialogs.dropdown{items = {'foo', 'bar', 'baz', true}} end, "bad argument #items[4] to 'dropdown' (string/number expected, got boolean")
+  assert_raises(function() ui.dialogs.dropdown{items = {'foo', 'bar', 'baz'}, select = true} end,
+    "bad argument #select to 'dropdown' (number expected, got boolean")
+  assert_raises(function() ui.dialogs.dropdown{items = {'foo', 'bar', 'baz', true}} end,
+    "bad argument #items[4] to 'dropdown' (string/number expected, got boolean")
 end
 
 function test_ui_dialogs_filesave_fileselect_interactive()
   local test_filename = _HOME .. '/test/ui/empty'
   local test_dir, test_file = test_filename:match('^(.+[/\\])([^/\\]+)$')
   local filename = ui.dialogs.filesave{
-    with_directory = test_dir, with_file = test_file,
-    no_create_directories = true
+    with_directory = test_dir, with_file = test_file, no_create_directories = true
   }
   assert_equal(filename, test_filename)
   filename = ui.dialogs.fileselect{
     with_directory = test_dir, with_file = test_file, select_multiple = true
   }
   assert_equal(filename, {test_filename})
-  filename = ui.dialogs.fileselect{
-    with_directory = test_dir, select_only_directories = true
-  }
+  filename = ui.dialogs.fileselect{with_directory = test_dir, select_only_directories = true}
   assert_equal(filename, test_dir:match('^(.+)/$'))
 end
 
 function test_ui_dialogs_filteredlist_interactive()
   local _, i = ui.dialogs.filteredlist{
-    informative_text = 'foo', columns = '1', items = {'bar', 'baz', 'quux'},
-    text = 'b z'
+    informative_text = 'foo', columns = '1', items = {'bar', 'baz', 'quux'}, text = 'b z'
   }
   assert_equal(i, 2)
   local _, text = ui.dialogs.filteredlist{
-    columns = {'1', '2'},
-    items = {'foo', 'foobar', 'bar', 'barbaz', 'baz', 'bazfoo'},
+    columns = {'1', '2'}, items = {'foo', 'foobar', 'bar', 'barbaz', 'baz', 'bazfoo'},
     search_column = 2, text = 'baz', output_column = 2, string_output = true,
-    select_multiple = true, button1 = _L['OK'], button2 = _L['Cancel'],
-    button3 = 'Other', width = ui.size[1] / 2
+    select_multiple = true, button1 = _L['OK'], button2 = _L['Cancel'], button3 = 'Other',
+    width = ui.size[1] / 2
   }
   assert_equal(text, {'barbaz'})
 end
 
 function test_ui_dialogs_fontselect_interactive()
-  local font = ui.dialogs.fontselect{
-    font_name = 'Monospace', font_size = 14, font_style = 'Bold'
-  }
+  local font = ui.dialogs.fontselect{font_name = 'Monospace', font_size = 14, font_style = 'Bold'}
   assert_equal(font, 'Monospace Bold 14')
 end
 
 function test_ui_dialogs_inputbox_interactive()
   local inputboxes = {
-    'inputbox', 'secure_inputbox', 'standard_inputbox',
-    'secure_standard_inputbox'
+    'inputbox', 'secure_inputbox', 'standard_inputbox', 'secure_standard_inputbox'
   }
   for _, inputbox in ipairs(inputboxes) do
     print('Running ' .. inputbox)
     local button, text = ui.dialogs[inputbox]{text = 'foo'}
     assert_equal(type(button), 'number')
     assert_equal(text, 'foo')
-    button, text = ui.dialogs[inputbox]{
-      text = 'foo', string_output = true, no_cancel = true
-    }
+    button, text = ui.dialogs[inputbox]{text = 'foo', string_output = true, no_cancel = true}
     assert_equal(type(button), 'string')
     assert_equal(text, 'foo')
   end
@@ -958,8 +949,7 @@ function test_ui_dialogs_inputbox_interactive()
   assert_equal(type(button), 'number')
   assert_equal(text, {'bar', 'quux'})
   button = ui.dialogs.inputbox{
-    informative_text = {'info', 'foo', 'baz'}, text = {'bar', 'quux'},
-    string_output = true
+    informative_text = {'info', 'foo', 'baz'}, text = {'bar', 'quux'}, string_output = true
   }
   assert_equal(type(button), 'string')
 end
@@ -972,8 +962,7 @@ function test_ui_dialogs_msgbox_interactive()
     local button = ui.dialogs[msgbox]{icon = icons[i]}
     assert_equal(type(button), 'number')
     button = ui.dialogs[msgbox]{
-      icon_file = _HOME .. '/core/images/ta_32x32.png', string_output = true,
-      no_cancel = true
+      icon_file = _HOME .. '/core/images/ta_32x32.png', string_output = true, no_cancel = true
     }
     assert_equal(type(button), 'string')
   end
@@ -987,7 +976,9 @@ function test_ui_dialogs_optionselect_interactive()
   }
   assert_equal(selected, {'foo', 'baz'})
 
-  assert_raises(function() ui.dialogs.optionselect{items = {'foo', 'bar', 'baz'}, select = {1, 'bar'}} end, "bad argument #select[2] to 'optionselect' (number expected, got string")
+  assert_raises(function()
+    ui.dialogs.optionselect{items = {'foo', 'bar', 'baz'}, select = {1, 'bar'}}
+  end, "bad argument #select[2] to 'optionselect' (number expected, got string")
 end
 
 function test_ui_dialogs_progressbar_interactive()
@@ -999,12 +990,11 @@ function test_ui_dialogs_progressbar_interactive()
     return i, i .. '%'
   end)
 
-  local stopped = ui.dialogs.progressbar({
-    title = 'foo', indeterminite = true, stoppable = true
-  }, function()
-    os.execute('sleep 0.1')
-    return 50
-  end)
+  local stopped = ui.dialogs.progressbar({title = 'foo', indeterminite = true, stoppable = true},
+    function()
+      os.execute('sleep 0.1')
+      return 50
+    end)
   assert(stopped, 'progressbar not stopped')
 
   ui.update() -- allow GTK to remove callback for previous function
@@ -1030,9 +1020,7 @@ function test_ui_dialogs_progressbar_interactive()
 end
 
 function test_ui_dialogs_textbox_interactive()
-  ui.dialogs.textbox{
-    text = 'foo', editable = true, selected = true, monospaced_font = true
-  }
+  ui.dialogs.textbox{text = 'foo', editable = true, selected = true, monospaced_font = true}
   ui.dialogs.textbox{text_from_file = _HOME .. '/LICENSE', scroll_to = 'bottom'}
 end
 
@@ -1100,8 +1088,7 @@ function test_ui_buffer_switch_save_restore_properties()
   local filename = _HOME .. '/test/ui/test.lua'
   io.open_file(filename)
   buffer:goto_pos(10)
-  view:fold_line(
-    buffer:line_from_position(buffer.current_pos), view.FOLDACTION_CONTRACT)
+  view:fold_line(buffer:line_from_position(buffer.current_pos), view.FOLDACTION_CONTRACT)
   view.margin_width_n[1] = 0 -- hide line numbers
   view:goto_buffer(-1)
   assert(view.margin_width_n[1] > 0, 'line numbers are still hidden')
@@ -1257,9 +1244,8 @@ end
 
 function test_command_entry_run()
   local command_run, tab_pressed = false, false
-  ui.command_entry.run(function(command) command_run = command end, {
-    ['\t'] = function() tab_pressed = true end
-  }, nil, 2)
+  ui.command_entry.run(function(command) command_run = command end,
+    {['\t'] = function() tab_pressed = true end}, nil, 2)
   ui.update() -- redraw command entry
   assert_equal(ui.command_entry.active, true)
   assert_equal(ui.command_entry:get_lexer(), 'text')
@@ -1271,10 +1257,14 @@ function test_command_entry_run()
   assert(tab_pressed, '\\t not registered')
   assert_equal(ui.command_entry.active, false)
 
-  assert_raises(function() ui.command_entry.run(function() end, 1) end, 'table/string/nil expected, got number')
-  assert_raises(function() ui.command_entry.run(function() end, {}, 1) end, 'string/nil expected, got number')
-  assert_raises(function() ui.command_entry.run(function() end, {}, 'lua', true) end, 'number/nil expected, got boolean')
-  assert_raises(function() ui.command_entry.run(function() end, 'lua', true) end, 'number/nil expected, got boolean')
+  assert_raises(function() ui.command_entry.run(function() end, 1) end,
+    'table/string/nil expected, got number')
+  assert_raises(function() ui.command_entry.run(function() end, {}, 1) end,
+    'string/nil expected, got number')
+  assert_raises(function() ui.command_entry.run(function() end, {}, 'lua', true) end,
+    'number/nil expected, got boolean')
+  assert_raises(function() ui.command_entry.run(function() end, 'lua', true) end,
+    'number/nil expected, got boolean')
 end
 
 local function run_lua_command(command)
@@ -1323,7 +1313,8 @@ function test_command_entry_run_lua_abbreviated_env()
   run_lua_command('editing')
   assert(buffer:get_text():find('%b{}%s*$'), 'textadept.editing result not a table')
   run_lua_command('editing.select_paragraph')
-  assert(buffer.selection_start ~= buffer.selection_end, 'textadept.editing.select_paragraph() did not select paragraph')
+  assert(buffer.selection_start ~= buffer.selection_end,
+    'textadept.editing.select_paragraph() did not select paragraph')
   buffer:close()
 end
 
@@ -1442,8 +1433,10 @@ function test_command_entry_history_append()
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 
   assert_raises(function() ui.command_entry.append_history(1) end, 'string expected, got number')
-  assert_raises(function() ui.command_entry:append_history('text') end, 'function expected, got table')
-  assert_raises(function() ui.command_entry.append_history(function() end, true) end, 'string/nil expected, got boolean')
+  assert_raises(function() ui.command_entry:append_history('text') end,
+    'function expected, got table')
+  assert_raises(function() ui.command_entry.append_history(function() end, true) end,
+    'string/nil expected, got boolean')
 end
 
 function test_command_entry_mode_restore()
@@ -1533,20 +1526,24 @@ function test_editing_strip_trailing_spaces()
   local strip = textadept.editing.strip_trailing_spaces
   textadept.editing.strip_trailing_spaces = true
   buffer.new()
+  -- LuaFormatter off
   local text = table.concat({
     'foo ',
     '  bar\t\r',
     'baz\t '
   }, '\n')
+  -- LuaFormatter on
   buffer:set_text(text)
   buffer:goto_pos(buffer.line_end_position[2])
   events.emit(events.FILE_BEFORE_SAVE)
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     'foo',
     '  bar',
     'baz',
     ''
   }, '\n'))
+  -- LuaFormatter on
   assert_equal(buffer.current_pos, buffer.line_end_position[2])
   buffer:undo()
   assert_equal(buffer:get_text(), text)
@@ -1558,16 +1555,19 @@ function test_editing_strip_trailing_spaces()
 end
 
 function test_editing_paste_reindent_tabs_to_tabs()
+  -- LuaFormatter off
   ui.clipboard_text = table.concat({
     '\tfoo',
     '',
     '\t\tbar',
     '\tbaz'
   }, '\n')
+  -- LuaFormatter on
   buffer.new()
   buffer.use_tabs, buffer.eol_mode = true, buffer.EOL_CRLF
   buffer:add_text('quux\r\n')
   textadept.editing.paste_reindent()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     'quux',
     'foo',
@@ -1575,11 +1575,13 @@ function test_editing_paste_reindent_tabs_to_tabs()
     '\tbar',
     'baz'
   }, '\r\n'))
+  -- LuaFormatter on
   buffer:clear_all()
   buffer:add_text('\t\tquux\r\n\r\n') -- no auto-indent
   assert_equal(buffer.line_indentation[2], 0)
   assert_equal(buffer.line_indentation[3], 0)
   textadept.editing.paste_reindent()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '\t\tquux',
     '',
@@ -1588,12 +1590,14 @@ function test_editing_paste_reindent_tabs_to_tabs()
     '\t\t\tbar',
     '\t\tbaz'
   }, '\r\n'))
+  -- LuaFormatter on
   buffer:clear_all()
   buffer:add_text('\t\tquux\r\n')
   assert_equal(buffer.line_indentation[2], 0)
   buffer:new_line() -- auto-indent
   assert_equal(buffer.line_indentation[3], 2 * buffer.tab_width)
   textadept.editing.paste_reindent()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '\t\tquux',
     '',
@@ -1602,11 +1606,13 @@ function test_editing_paste_reindent_tabs_to_tabs()
     '\t\t\tbar',
     '\t\tbaz'
   }, '\r\n'))
+  -- LuaFormatter on
   buffer:close(true)
 end
 expected_failure(test_editing_paste_reindent_tabs_to_tabs)
 
 function test_editing_paste_reindent_spaces_to_spaces()
+  -- LuaFormatter off
   ui.clipboard_text = table.concat({
     '    foo',
     '',
@@ -1614,10 +1620,12 @@ function test_editing_paste_reindent_spaces_to_spaces()
     '            baz',
     '    quux'
   }, '\n')
+  -- LuaFormatter on
   buffer.new()
   buffer.use_tabs, buffer.tab_width = false, 2
   buffer:add_text('foobar\n')
   textadept.editing.paste_reindent()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     'foobar',
     'foo',
@@ -1626,11 +1634,13 @@ function test_editing_paste_reindent_spaces_to_spaces()
     '    baz',
     'quux'
   }, '\n'))
+  -- LuaFormatter on
   buffer:clear_all()
   buffer:add_text('    foobar\n\n') -- no auto-indent
   assert_equal(buffer.line_indentation[2], 0)
   assert_equal(buffer.line_indentation[3], 0)
   textadept.editing.paste_reindent()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '    foobar',
     '',
@@ -1640,12 +1650,14 @@ function test_editing_paste_reindent_spaces_to_spaces()
     '        baz',
     '    quux'
   }, '\n'))
+  -- LuaFormatter on
   buffer:clear_all()
   buffer:add_text('    foobar\n')
   assert_equal(buffer.line_indentation[2], 0)
   buffer:new_line() -- auto-indent
   assert_equal(buffer.line_indentation[3], 4)
   textadept.editing.paste_reindent()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '    foobar',
     '',
@@ -1655,31 +1667,37 @@ function test_editing_paste_reindent_spaces_to_spaces()
     '        baz',
     '    quux'
   }, '\n'))
+  -- LuaFormatter on
   buffer:close(true)
 end
 expected_failure(test_editing_paste_reindent_spaces_to_spaces)
 
 function test_editing_paste_reindent_spaces_to_tabs()
+  -- LuaFormatter off
   ui.clipboard_text = table.concat({
     '  foo',
     '    bar',
     '  baz'
   }, '\n')
+  -- LuaFormatter on
   buffer.new()
   buffer.use_tabs, buffer.tab_width = true, 4
   buffer:add_text('\tquux')
   buffer:new_line()
   textadept.editing.paste_reindent()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '\tquux',
     '\tfoo',
     '\t\tbar',
     '\tbaz'
   }, '\n'))
+  -- LuaFormatter on
   buffer:close(true)
 end
 
 function test_editing_paste_reindent_tabs_to_spaces()
+  -- LuaFormatter off
   ui.clipboard_text = table.concat({
     '\tif foo and',
     '\t   bar then',
@@ -1687,6 +1705,7 @@ function test_editing_paste_reindent_tabs_to_spaces()
     '\tend',
     ''
   }, '\n')
+  -- LuaFormatter on
   buffer.new()
   buffer.use_tabs, buffer.tab_width = false, 2
   buffer:set_lexer('lua')
@@ -1695,6 +1714,7 @@ function test_editing_paste_reindent_tabs_to_spaces()
   buffer:insert_text(-1, 'end')
   buffer:colorize(1, -1) -- first line should be a fold header
   textadept.editing.paste_reindent()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     'function quux()',
     '  if foo and',
@@ -1703,6 +1723,7 @@ function test_editing_paste_reindent_tabs_to_spaces()
     '  end',
     'end'
   }, '\n'))
+  -- LuaFormatter on
   buffer:close(true)
 end
 expected_failure(test_editing_paste_reindent_tabs_to_spaces)
@@ -1713,21 +1734,25 @@ function test_editing_toggle_comment_lines()
   textadept.editing.toggle_comment()
   assert_equal(buffer:get_text(), 'foo')
   buffer:set_lexer('lua')
+  -- LuaFormatter off
   local text = table.concat({
     '',
     'local foo = "bar"',
     '  local baz = "quux"',
     ''
   }, '\n')
+  -- LuaFormatter on
   buffer:set_text(text)
   buffer:goto_pos(buffer:position_from_line(2))
   textadept.editing.toggle_comment()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '',
     '--local foo = "bar"',
     '  local baz = "quux"',
     ''
   }, '\n'))
+  -- LuaFormatter on
   assert_equal(buffer.current_pos, buffer:position_from_line(2) + 2)
   textadept.editing.toggle_comment() -- uncomment
   assert_equal(buffer:get_line(2), 'local foo = "bar"\n')
@@ -1735,21 +1760,25 @@ function test_editing_toggle_comment_lines()
   local offset = 5
   buffer:set_sel(buffer:position_from_line(2) + offset, buffer:position_from_line(4) - offset)
   textadept.editing.toggle_comment()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '',
     '--local foo = "bar"',
     '--  local baz = "quux"',
     ''
   }, '\n'))
+  -- LuaFormatter on
   assert_equal(buffer.selection_start, buffer:position_from_line(2) + offset + 2)
   assert_equal(buffer.selection_end, buffer:position_from_line(4) - offset)
   textadept.editing.toggle_comment() -- uncomment
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '',
     'local foo = "bar"',
     '  local baz = "quux"',
     ''
   }, '\n'))
+  -- LuaFormatter on
   assert_equal(buffer.selection_start, buffer:position_from_line(2) + offset)
   assert_equal(buffer.selection_end, buffer:position_from_line(4) - offset)
   buffer:undo() -- comment
@@ -1761,29 +1790,35 @@ end
 function test_editing_toggle_comment()
   buffer.new()
   buffer:set_lexer('ansi_c')
+  -- LuaFormatter off
   buffer:set_text(table.concat({
     '',
     '  const char *foo = "bar";',
     'const char *baz = "quux";',
     ''
   }, '\n'))
+  -- LuaFormatter on
   buffer:set_sel(buffer:position_from_line(2), buffer:position_from_line(4))
   textadept.editing.toggle_comment()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '',
     '  /*const char *foo = "bar";*/',
     '/*const char *baz = "quux";*/',
     ''
   }, '\n'))
+  -- LuaFormatter on
   assert_equal(buffer.selection_start, buffer:position_from_line(2) + 2)
   assert_equal(buffer.selection_end, buffer:position_from_line(4))
   textadept.editing.toggle_comment() -- uncomment
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '',
     '  const char *foo = "bar";',
     'const char *baz = "quux";',
     ''
   }, '\n'))
+  -- LuaFormatter on
   assert_equal(buffer.selection_start, buffer:position_from_line(2))
   assert_equal(buffer.selection_end, buffer:position_from_line(4))
   buffer:close(true)
@@ -1915,6 +1950,7 @@ expected_failure(test_editing_select_enclosed)
 
 function test_editing_select_word()
   buffer.new()
+  -- LuaFormatter off
   buffer:append_text(table.concat({
     'foo',
     'foobar',
@@ -1923,6 +1959,7 @@ function test_editing_select_word()
     'fooquux',
     'foo'
   }, '\n'))
+  -- LuaFormatter on
   textadept.editing.select_word()
   assert_equal(buffer:get_sel_text(), 'foo')
   textadept.editing.select_word()
@@ -1950,6 +1987,7 @@ end
 
 function test_editing_select_paragraph()
   buffer.new()
+  -- LuaFormatter off
   buffer:set_text(table.concat({
     'foo',
     '',
@@ -1958,6 +1996,7 @@ function test_editing_select_paragraph()
     '',
     'quux'
   }, '\n'))
+  -- LuaFormatter on
   buffer:goto_pos(buffer:position_from_line(3))
   textadept.editing.select_paragraph()
   assert_equal(buffer:get_sel_text(), 'bar\nbaz\n\n')
@@ -1966,31 +2005,37 @@ end
 
 function test_editing_convert_indentation()
   buffer.new()
+  -- LuaFormatter off
   local text = table.concat({
     '\tfoo',
     '  bar',
     '\t    baz',
     '    \tquux'
   }, '\n')
+  -- LuaFormatter on
   buffer:set_text(text)
   buffer.use_tabs, buffer.tab_width = true, 4
   textadept.editing.convert_indentation()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '\tfoo',
     '  bar',
     '\t\tbaz',
     '\t\tquux'
   }, '\n'))
+  -- LuaFormatter on
   buffer:undo()
   assert_equal(buffer:get_text(), text) -- verify atomic undo
   buffer.use_tabs, buffer.tab_width = false, 2
   textadept.editing.convert_indentation()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '  foo',
     '  bar',
     '      baz',
     '      quux'
   }, '\n'))
+  -- LuaFormatter on
   buffer:close(true)
 end
 
@@ -2010,6 +2055,7 @@ function test_editing_highlight_word()
   local highlight = textadept.editing.highlight_words
   textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_SELECTED
   buffer.new()
+  -- LuaFormatter off
   buffer:append_text(table.concat({
     'foo',
     'foobar',
@@ -2018,13 +2064,16 @@ function test_editing_highlight_word()
     'fooquux',
     'foo'
   }, '\n'))
+  -- LuaFormatter on
   local function verify_foo()
+    -- LuaFormatter off
     verify{
       buffer:position_from_line(1),
       buffer:position_from_line(3) + 5,
       buffer:position_from_line(4) + 4,
       buffer:position_from_line(6)
     }
+    -- LuaFormatter on
   end
   textadept.editing.select_word()
   update()
@@ -2165,17 +2214,20 @@ function test_editing_show_documentation()
   buffer:close(true)
   textadept.editing.api_files['text'] = nil
 
-  assert_raises(function() textadept.editing.show_documentation(true) end, 'number/nil expected, got boolean')
+  assert_raises(function() textadept.editing.show_documentation(true) end,
+    'number/nil expected, got boolean')
 end
 
 function test_file_types_get_lexer()
   buffer.new()
   buffer:set_lexer('html')
+  -- LuaFormatter off
   buffer:set_text(table.concat({
     '<html><head><style type="text/css">',
     'h1 {}',
     '</style></head></html>'
   }, '\n'))
+  -- LuaFormatter on
   buffer:colorize(1, -1)
   buffer:goto_pos(buffer:position_from_line(2))
   assert_equal(buffer:get_lexer(), 'html')
@@ -2247,12 +2299,14 @@ function test_ui_find_find_text()
   local wrapped = false
   local handler = function() wrapped = true end
   buffer.new()
+  -- LuaFormatter off
   buffer:set_text(table.concat({
     ' foo',
     'foofoo',
     'FOObar',
-    'foo bar baz',
+    'foo bar baz'
   }, '\n'))
+  -- LuaFormatter on
   ui.find.find_entry_text = 'foo'
   ui.find.find_next()
   assert_equal(buffer.selection_start, 1 + 1)
@@ -2304,6 +2358,7 @@ function test_ui_find_highlight_results()
   local highlight_all_matches = ui.find.highlight_all_matches
   ui.find.highlight_all_matches = true
   buffer.new()
+  -- LuaFormatter off
   buffer:append_text(table.concat({
     'foo',
     'foobar',
@@ -2312,25 +2367,30 @@ function test_ui_find_highlight_results()
     'fooquux',
     'foo'
   }, '\n'))
+  -- LuaFormatter on
   -- Normal search.
   ui.find.find_entry_text = 'foo'
   ui.find.find_next()
+  -- LuaFormatter off
   assert_indics{
     buffer:position_from_line(1),
     buffer:position_from_line(3) + 4,
     buffer:position_from_line(4) + 4,
     buffer:position_from_line(6)
   }
+  -- LuaFormatter on
   -- Regex search.
   ui.find.find_entry_text = 'ba.'
   ui.find.regex = true
   ui.find.find_next()
+  -- LuaFormatter off
   assert_indics{
     buffer:position_from_line(2) + 3,
     buffer:position_from_line(3),
     buffer:position_from_line(4),
     buffer:position_from_line(4) + 8,
   }
+  -- LuaFormatter on
   ui.find.regex = false
   -- Do not highlight short searches (potential performance issue).
   ui.find.find_entry_text = 'f'
@@ -2350,12 +2410,14 @@ end
 
 function test_ui_find_incremental()
   buffer.new()
+  -- LuaFormatter off
   buffer:set_text(table.concat({
     ' foo',
     'foobar',
     'FOObaz',
     'FOOquux'
   }, '\n'))
+  -- LuaFormatter on
   assert_equal(buffer.current_pos, 1)
   ui.find.incremental = true
   ui.find.find_entry_text = 'f' -- simulate 'f' keypress
@@ -2403,12 +2465,14 @@ function test_ui_find_incremental_highlight()
   local highlight_all_matches = ui.find.highlight_all_matches
   ui.find.highlight_all_matches = true
   buffer.new()
+  -- LuaFormatter off
   buffer:set_text(table.concat({
     ' foo',
     'foobar',
     'FOObaz',
     'FOOquux'
   }, '\n'))
+  -- LuaFormatter on
   ui.find.incremental = true
   ui.find.find_entry_text = 'f' -- simulate 'f' keypress
   if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
@@ -2416,12 +2480,14 @@ function test_ui_find_incremental_highlight()
   assert_equal(pos, 1) -- too short
   ui.find.find_entry_text = 'fo' -- simulate 'o' keypress
   if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
+  -- LuaFormatter off
   local indics = {
     buffer:position_from_line(1) + 1,
     buffer:position_from_line(2),
     buffer:position_from_line(3),
     buffer:position_from_line(4)
   }
+  -- LuaFormatter on
   local bit = 1 << ui.find.INDIC_FIND - 1
   for _, pos in ipairs(indics) do
     local mask = buffer:indicator_all_on_for(pos)
@@ -2602,12 +2668,14 @@ end
 
 function test_ui_find_replace_all()
   buffer.new()
+  -- LuaFormatter off
   local text = table.concat({
     'foo',
     'foobar',
     'foobaz',
     'foofoo'
   }, '\n')
+  -- LuaFormatter on
   buffer:set_text(text)
   ui.find.find_entry_text, ui.find.replace_entry_text = 'foo', 'bar'
   ui.find.replace_all()
@@ -2636,6 +2704,7 @@ function test_find_replace_regex_transforms()
   buffer:set_text('foObaRbaz')
   ui.find.find_entry_text = 'f([oO]+)ba(..)'
   ui.find.regex = true
+  -- LuaFormatter off
   local replacements = {
     ['f\\1ba\\2'] = 'foObaRbaz',
     ['f\\u\\1ba\\l\\2'] = 'fOObarbaz',
@@ -2656,6 +2725,7 @@ function test_find_replace_regex_transforms()
     ['\\0'] = 'foObaRbaz',
     ['\\r\\n\\t'] = '\r\n\taz'
   }
+  -- LuaFormatter on
   for regex, replacement in pairs(replacements) do
     ui.find.replace_entry_text = regex
     ui.find.find_next()
@@ -2763,8 +2833,10 @@ function test_history()
   buffer:close(true)
 
   assert_raises(function() textadept.history.record(1) end, 'string/nil expected, got number')
-  assert_raises(function() textadept.history.record('', true) end, 'number/nil expected, got boolean')
-  assert_raises(function() textadept.history.record('', 1, '') end, 'number/nil expected, got string')
+  assert_raises(function() textadept.history.record('', true) end,
+    'number/nil expected, got boolean')
+  assert_raises(function() textadept.history.record('', 1, '') end,
+    'number/nil expected, got string')
 end
 
 function test_history_soft_records()
@@ -3050,7 +3122,8 @@ function test_run_compile_run()
   ui.goto_view(1) -- message buffer
   assert_equal(buffer._type, _L['[Message Buffer]'])
   assert(buffer:get_sel_text():find("'end' expected"), 'compile error not selected')
-  assert(buffer:marker_get(buffer:line_from_position(buffer.current_pos)) & 1 << textadept.run.MARK_ERROR - 1 > 0)
+  local markers = buffer:marker_get(buffer:line_from_position(buffer.current_pos))
+  assert(markers & 1 << textadept.run.MARK_ERROR - 1 > 0)
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   assert_equal(buffer.filename, compile_file)
   ui.goto_view(1) -- message buffer
@@ -3079,7 +3152,8 @@ function test_run_compile_run()
   assert_equal(buffer.filename, run_file)
   assert_equal(buffer:line_from_position(buffer.current_pos), 1)
   ui.goto_view(1)
-  assert(buffer:marker_get(buffer:line_from_position(buffer.current_pos)) & 1 << textadept.run.MARK_WARNING - 1 > 0)
+  markers = buffer:marker_get(buffer:line_from_position(buffer.current_pos))
+  assert(markers & 1 << textadept.run.MARK_WARNING - 1 > 0)
   ui.goto_view(-1)
   textadept.run.goto_error(false)
   assert_equal(buffer.filename, compile_file)
@@ -3107,8 +3181,10 @@ function test_run_set_arguments()
   buffer:close(true)
 
   assert_raises(function() textadept.run.set_arguments(1) end, 'string/nil expected, got number')
-  assert_raises(function() textadept.run.set_arguments('', true) end, 'string/nil expected, got boolean')
-  assert_raises(function() textadept.run.set_arguments('', '', {}) end, 'string/nil expected, got table')
+  assert_raises(function() textadept.run.set_arguments('', true) end,
+    'string/nil expected, got boolean')
+  assert_raises(function() textadept.run.set_arguments('', '', {}) end,
+    'string/nil expected, got table')
 end
 
 function test_run_set_arguments_interactive()
@@ -3160,7 +3236,8 @@ function test_run_test()
 end
 
 function test_run_goto_internal_lua_error()
-  xpcall(error, function(message) events.emit(events.ERROR, debug.traceback(message)) end, 'internal error', 2)
+  xpcall(error, function(message) events.emit(events.ERROR, debug.traceback(message)) end,
+    'internal error', 2)
   if #_VIEWS > 1 then view:unsplit() end
   textadept.run.goto_error(1)
   assert(buffer.filename:find('/test/test%.lua$'), 'did not detect internal Lua error')
@@ -3298,12 +3375,14 @@ end
 
 function test_snippets_match_indentation()
   local snippet = '\t    foo'
+  -- LuaFormatter off
   local multiline_snippet = table.concat({
     'foo',
     '\tbar',
     '\t    baz',
     'quux'
   }, '\n')
+  -- LuaFormatter on
   buffer.new()
 
   buffer.use_tabs, buffer.tab_width, buffer.eol_mode = true, 4, buffer.EOL_CRLF
@@ -3316,12 +3395,14 @@ function test_snippets_match_indentation()
   buffer:clear_all()
   buffer:add_text('\t')
   textadept.snippets.insert(multiline_snippet)
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '\tfoo',
     '\t\tbar',
     '\t\t\tbaz',
     '\tquux'
   }, '\r\n'))
+  -- LuaFormatter on
   buffer:clear_all()
 
   buffer.use_tabs, buffer.tab_width, buffer.eol_mode = false, 2, buffer.EOL_LF
@@ -3334,12 +3415,14 @@ function test_snippets_match_indentation()
   buffer:clear_all()
   buffer:add_text('  ')
   textadept.snippets.insert(multiline_snippet)
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '  foo',
     '    bar',
     '        baz',
     '  quux'
   }, '\n'))
+  -- LuaFormatter on
   buffer:close(true)
 
   assert_raises(function() textadept.snippets.insert(true) end, 'string/nil expected, got boolean')
@@ -3351,6 +3434,7 @@ function test_snippets_placeholders()
   local p = io.popen('date')
   local shell_date = p:read()
   p:close()
+  -- LuaFormatter off
   textadept.snippets.insert(table.concat({
     '%0placeholder: %1(foo) %2(bar)',
     'choice: %3{baz,quux}',
@@ -3359,6 +3443,7 @@ function test_snippets_placeholders()
     'Shell: %[date] %1[echo %]',
     'escape: %%1 %4%( %4%{',
   }, '\n'))
+  -- LuaFormatter off
   assert_equal(buffer.selections, 1)
   assert_equal(buffer.selection_start, 1 + 14)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
@@ -3391,6 +3476,7 @@ function test_snippets_placeholders()
   textadept.snippets.insert()
   assert_equal(buffer.selection_start, buffer.selection_end) -- no default placeholder (escaped)
   textadept.snippets.insert()
+  -- LuaFormatter off
   assert_equal(buffer:get_text(), string.format(table.concat({
     'placeholder: baz bar',
     'choice: quux',
@@ -3399,6 +3485,7 @@ function test_snippets_placeholders()
     'Shell: %s baz',
     'escape: %%1 ( {'
   }, '\n'), lua_date, shell_date))
+  -- LuaFormatter on
   assert_equal(buffer.selection_start, 1)
   assert_equal(buffer.selection_start, 1)
   buffer:close(true)
@@ -3619,6 +3706,7 @@ end
 function test_lexer_api()
   buffer.new()
   buffer.use_tabs, buffer.tab_width = true, 4
+  -- LuaFormatter off
   buffer:set_text(table.concat({
     'if foo then',
     '\tbar',
@@ -3626,6 +3714,7 @@ function test_lexer_api()
     'end',
     'baz'
   }, '\n'))
+  -- LuaFormatter on
   buffer:set_lexer('lua')
   buffer:colorize(1, -1)
   local lexer = require('lexer')
@@ -3657,7 +3746,7 @@ function test_lexer_api()
   assert_raises(function() lexer.property = nil end, 'read-only')
   assert_raises(function() lexer.property_int = nil end, 'read-only')
   assert_raises(function() lexer.property_int['foo'] = 1 end, 'read-only')
-  --TODO: assert_raises(function() lexer.property_expanded = nil end, 'read-only')
+  -- TODO: assert_raises(function() lexer.property_expanded = nil end, 'read-only')
   assert_raises(function() lexer.property_expanded['foo'] = 'bar' end, 'read-only')
   assert_raises(function() lexer.style_at = nil end, 'read-only')
   assert_raises(function() lexer.style_at[1] = 0 end, 'read-only')
@@ -3677,8 +3766,8 @@ function test_ui_maximized()
   ui.maximized = not maximized
   local not_maximized = ui.maximized
   ui.maximized = maximized -- reset
-  -- For some reason, the following fails, even though the window maximized
-  -- status is toggled. `ui.update()` does not seem to help.
+  -- For some reason, the following fails, even though the window maximized status is toggled.
+  -- `ui.update()` does not seem to help.
   assert_equal(not_maximized, not maximized)
 end
 expected_failure(test_ui_maximized)
@@ -3712,8 +3801,8 @@ function test_reset()
     _persist = persist -- store
   end)
   reset()
-  -- events.RESET_AFTER has already been run, but there was no opportunity to
-  -- connect to it in this test, so connect and simulate the event again.
+  -- events.RESET_AFTER has already been run, but there was no opportunity to connect to it in
+  -- this test, so connect and simulate the event again.
   events.connect(events.RESET_AFTER, function(persist) _G.foo = persist.foo end)
   events.emit(events.RESET_AFTER, _persist)
   assert_equal(_G.foo, 'bar')
@@ -3795,7 +3884,8 @@ function test_set_theme()
   io.open_file(_HOME .. '/src/textadept.c')
   _VIEWS[2]:set_theme('dark')
   _VIEWS[3]:set_theme('light')
-  assert(_VIEWS[2].style_fore[view.STYLE_DEFAULT] ~= _VIEWS[3].style_fore[view.STYLE_DEFAULT], 'same default styles')
+  assert(_VIEWS[2].style_fore[view.STYLE_DEFAULT] ~= _VIEWS[3].style_fore[view.STYLE_DEFAULT],
+    'same default styles')
   buffer:close(true)
   buffer:close(true)
   ui.goto_view(_VIEWS[1])
@@ -3810,7 +3900,8 @@ function test_set_lexer_style()
   local style = buffer:style_of_name('function')
   assert_equal(buffer.style_at[1], style)
   local default_fore = view.style_fore[view.STYLE_DEFAULT]
-  assert(view.style_fore[style] ~= default_fore, 'function name style_fore same as default style_fore')
+  assert(view.style_fore[style] ~= default_fore,
+    'function name style_fore same as default style_fore')
   view.style_fore[style] = view.style_fore[view.STYLE_DEFAULT]
   assert_equal(view.style_fore[style], default_fore)
   local color = lexer.colors[not CURSES and 'orange' or 'blue']
@@ -3820,8 +3911,7 @@ function test_set_lexer_style()
   buffer:close(true)
   -- Defined in Lua lexer, which is not currently loaded.
   assert(buffer:style_of_name('library'), view.STYLE_DEFAULT)
-  -- Emulate a theme setting to trigger an LPeg lexer style refresh, but without
-  -- a token defined.
+  -- Emulate a theme setting to trigger an LPeg lexer style refresh, but without a token defined.
   view.property['style.library'] = view.property['style.library']
 end
 
@@ -3906,7 +3996,8 @@ function test_ctags()
   local f = io.open(dir .. '/api')
   local contents = f:read('a')
   f:close()
-  assert(contents:find('main int main(int argc, char **argv) {', 1, true), 'did not properly generate api')
+  assert(contents:find('main int main(int argc, char **argv) {', 1, true),
+    'did not properly generate api')
 
   -- Test `ctags.goto_tag()`.
   ctags.goto_tag('main')
@@ -3936,7 +4027,8 @@ function test_ctags()
   ctags.ctags_flags[dir] = '-R ' .. dir -- for writing absolute paths
   textadept.menu.menubar[_L['Search']][_L['Ctags']][_L['Generate Project Tags and API']][2]()
   os.execute(string.format('mv %s/tags %s/src', dir, dir))
-  assert(not lfs.attributes(dir .. '/tags') and lfs.attributes(dir .. '/src/tags'), 'did not move tags file')
+  assert(not lfs.attributes(dir .. '/tags') and lfs.attributes(dir .. '/src/tags'),
+    'did not move tags file')
   ctags[dir] = dir .. '/src/tags'
   ctags.goto_tag('main')
   assert_equal(buffer.filename, foo_c)
@@ -4054,9 +4146,8 @@ function test_debugger_ansi_c()
   assert_equal(buffer:line_from_position(buffer.current_pos), 9)
   assert(buffer:marker_get(9) > 0, 'current line marker not set')
   assert_equal(buffer:marker_get(8), 0) -- current line marker cleared
-  -- TODO: gdb does not print program stdout to its stdout until the end when
-  -- using the mi interface.
-  --assert(msg_buf:get_text():find('^start\n'), 'process stdout not captured')
+  -- TODO: gdb does not print program stdout to its stdout until the end when using the mi interface.
+  -- assert(msg_buf:get_text():find('^start\n'), 'process stdout not captured')
   debugger.step_over()
   wait()
   assert_equal(buffer:line_from_position(buffer.current_pos), 10)
@@ -4081,7 +4172,7 @@ function test_debugger_ansi_c()
   assert(buffer:call_tip_active(), 'no call tip active')
   debugger.step_out()
   wait()
-  --assert(msg_buf:get_text():find('\nfoo 0\n'), 'process stdout not captured')
+  -- assert(msg_buf:get_text():find('\nfoo 0\n'), 'process stdout not captured')
   assert_equal(buffer:line_from_position(buffer.current_pos), 9)
   debugger.set_watch('i')
   debugger.continue()
@@ -4095,14 +4186,14 @@ function test_debugger_ansi_c()
   debugger.continue()
   wait()
   assert_equal(buffer:line_from_position(buffer.current_pos), 10)
-  --assert(msg_buf:get_text():find('\nfoo 1\n'), 'set breakpoint failed')
+  -- assert(msg_buf:get_text():find('\nfoo 1\n'), 'set breakpoint failed')
   assert(not msg_buf:get_text():find('\nfoo 2\n'), 'set breakpoint failed')
   events.emit(events.MARGIN_CLICK, 2, buffer.current_pos, 0) -- simulate breakpoint margin click; clear
   debugger.continue()
   wait()
-  --assert(msg_buf:get_text():find('\nfoo 2\n'), 'process stdout not captured')
-  --assert(msg_buf:get_text():find('\nfoo 3\n'), 'process stdout not captured')
-  --assert(msg_buf:get_text():find('\nend\n'), 'process stdout not captured')
+  -- assert(msg_buf:get_text():find('\nfoo 2\n'), 'process stdout not captured')
+  -- assert(msg_buf:get_text():find('\nfoo 3\n'), 'process stdout not captured')
+  -- assert(msg_buf:get_text():find('\nend\n'), 'process stdout not captured')
   for i = 1, buffer.line_count do assert_equal(buffer:marker_get(i), 0) end
   ui.goto_view(1)
   buffer:close(true)
@@ -4167,12 +4258,12 @@ function test_debugger_lua()
   wait()
   assert_equal(buffer:line_from_position(buffer.current_pos), 2)
   -- TODO: set_frame is not implemented in the Lua debugger.
-  --debugger.set_frame(2)
-  --wait()
-  --assert_equal(buffer:line_from_position(buffer.current_pos), 7)
-  --debugger.set_frame(1)
-  --wait()
-  --assert_equal(buffer:line_from_position(buffer.current_pos), 2)
+  -- debugger.set_frame(2)
+  -- wait()
+  -- assert_equal(buffer:line_from_position(buffer.current_pos), 7)
+  -- debugger.set_frame(1)
+  -- wait()
+  -- assert_equal(buffer:line_from_position(buffer.current_pos), 2)
   buffer:search_anchor()
   local pos = buffer:search_next(buffer.FIND_MATCHCASE | buffer.FIND_WHOLEWORD, 'i')
   assert(pos > 0, "'i' not found")
@@ -4263,6 +4354,7 @@ function test_file_diff()
     end
   end
 
+  -- LuaFormatter off
   -- Verify line markers.
   verify(buffer1, {
     [1] = diff.MARK_MODIFICATION,
@@ -4313,9 +4405,9 @@ function test_file_diff()
     ['have'] = diff.INDIC_ADDITION,
     ['d'] = diff.INDIC_ADDITION
   }, {[17] = ' '})
+  -- LuaFormatter on
 
-  -- Stop comparing, verify the buffers are restored to normal, and then start
-  -- comparing again.
+  -- Stop comparing, verify the buffers are restored to normal, and then start comparing again.
   textadept.menu.menubar[_L['Tools']][_L['Compare Files']][_L['Stop Comparing']][2]()
   verify(buffer1, {}, {}, {})
   verify(buffer2, {}, {}, {})
@@ -4370,6 +4462,7 @@ function test_file_diff()
   assert(buffer1:get_line(1):find('^that'), 'did not merge from right to left')
   local function verify_first_merge()
     for i = 1, 7 do assert_equal(buffer1:get_line(i), buffer2:get_line(i)) end
+    -- LuaFormatter off
     verify(buffer1, {
       [12] = diff.MARK_MODIFICATION,
       [14] = diff.MARK_MODIFICATION,
@@ -4387,6 +4480,7 @@ function test_file_diff()
       ['have'] = diff.INDIC_ADDITION,
       ['d'] = diff.INDIC_ADDITION
     }, {[17] = ' '})
+    -- LuaFormatter on
   end
   verify_first_merge()
   -- Undo, merge left to right, and verify.
@@ -4406,6 +4500,7 @@ function test_file_diff()
   diff.merge(true)
   assert(buffer1:get_line(12):find('^%('), 'did not merge from right to left')
   for i = 12, 13 do assert_equal(buffer1:get_line(i), buffer2:get_line(i)) end
+  -- LuaFormatter off
   verify(buffer1, {
     [14] = diff.MARK_MODIFICATION,
     [16] = diff.MARK_MODIFICATION,
@@ -4421,12 +4516,14 @@ function test_file_diff()
     ['have'] = diff.INDIC_ADDITION,
     ['d'] = diff.INDIC_ADDITION
   }, {[17] = ' '})
+  -- LuaFormatter on
   -- Undo, merge left to right, and verify.
   buffer1:undo()
   buffer1:goto_line(11)
   assert_equal(buffer1:line_from_position(buffer1.current_pos), 11)
   diff.merge()
   assert(buffer2:get_line(12):find('^be changed'), 'did not merge from left to right')
+  -- LuaFormatter off
   verify(buffer1, {
     [12] = diff.MARK_MODIFICATION,
     [14] = diff.MARK_MODIFICATION,
@@ -4442,14 +4539,15 @@ function test_file_diff()
     ['have'] = diff.INDIC_ADDITION,
     ['d'] = diff.INDIC_ADDITION
   }, {[15] = ' '})
+  -- LuaFormatter on
 
-  -- Already on next difference; merge third block from right to left, and
-  -- verify.
+  -- Already on next difference; merge third block from right to left, and verify.
   assert_equal(buffer1:line_from_position(buffer1.current_pos), 12)
   diff.merge(true)
   assert(buffer1:get_line(12):find('into four'), 'did not merge from right to left')
   assert_equal(buffer1:get_line(12), buffer2:get_line(12))
   local function verify_third_merge()
+    -- LuaFormatter off
     verify(buffer1, {
       [14] = diff.MARK_MODIFICATION,
       [15] = diff.MARK_MODIFICATION,
@@ -4459,6 +4557,7 @@ function test_file_diff()
       [14] = diff.MARK_MODIFICATION,
       [15] = diff.MARK_MODIFICATION
     }, {['have'] = diff.INDIC_ADDITION, ['d'] = diff.INDIC_ADDITION}, {[15] = ' '})
+    -- LuaFormatter on
   end
   verify_third_merge()
   -- Undo, merge left to right, and verify.
@@ -4495,9 +4594,7 @@ function test_file_diff()
   assert(buffer1:get_line(16):find('^\n'), 'did not merge from right to left')
   local function verify_fifth_merge()
     assert_equal(buffer1.length, buffer2.length)
-    for i = 1, buffer1.length do
-      assert_equal(buffer1:get_line(i), buffer2:get_line(i))
-    end
+    for i = 1, buffer1.length do assert_equal(buffer1:get_line(i), buffer2:get_line(i)) end
     verify(buffer1, {}, {}, {})
     verify(buffer2, {}, {}, {})
   end
@@ -4605,8 +4702,7 @@ function test_spellcheck_encodings()
   events.emit(events.INDICATOR_CLICK, 8)
   assert_equal(buffer.auto_c_current_text, 'mulțumesc')
   ui.update()
-  events.emit(
-    events.USER_LIST_SELECTION, SPELLING_ID, buffer.auto_c_current_text,
+  events.emit(events.USER_LIST_SELECTION, SPELLING_ID, buffer.auto_c_current_text,
     buffer.current_pos)
   assert_equal(buffer:get_text(), ' mulțumesc')
   assert_equal(buffer.current_pos, 9)
@@ -4620,10 +4716,10 @@ function test_spellcheck_encodings()
     spellcheck.load('de_DE')
     spellcheck.check_spelling(true)
     assert_equal(buffer.auto_c_current_text, 'schön')
-    events.emit(
-      events.USER_LIST_SELECTION, SPELLING_ID, buffer.auto_c_current_text,
+    events.emit(events.USER_LIST_SELECTION, SPELLING_ID, buffer.auto_c_current_text,
       buffer.current_pos)
-    assert_equal(buffer:get_text():iconv(encoding, 'UTF-8'), string.iconv('schön', encoding, 'UTF-8'))
+    assert_equal(buffer:get_text():iconv(encoding, 'UTF-8'),
+      string.iconv('schön', encoding, 'UTF-8'))
     ui.update()
     spellcheck.check_spelling()
     assert_equal(buffer:indicator_end(spellcheck.INDIC_SPELLING, 1), 1)
@@ -4657,7 +4753,9 @@ local function check_property_usage(filename, buffer_props, view_props)
   local line_num, count = 1, 0
   for line in io.lines(filename) do
     for pos, id, prop in line:gmatch('()([%w_]+)[.:]([%w_]+)') do
-      if id == 'M' or id == 'f' or id == 'p' or id == 'lexer' or id == 'spawn_proc' then goto continue end
+      if id == 'M' or id == 'f' or id == 'p' or id == 'lexer' or id == 'spawn_proc' then
+        goto continue
+      end
       if id == 'textadept' and prop == 'MARK_BOOKMARK' then goto continue end
       if (id == 'ui' or id == 'split') and prop == 'size' then goto continue end
       if id == 'keys' and prop == 'home' then goto continue end
@@ -4667,14 +4765,11 @@ local function check_property_usage(filename, buffer_props, view_props)
       if id == 'client' and prop == 'close' then goto continue end
       if (id == 'Foo' or id == 'Array' or id == 'Server') and prop == 'new' then goto continue end
       if buffer_props[prop] then
-        assert(
-          id == 'buffer' or id == 'buf' or id == 'buffer1' or id == 'buffer2',
+        assert(id == 'buffer' or id == 'buf' or id == 'buffer1' or id == 'buffer2',
           'line %d:%d: "%s" should be a buffer property', line_num, pos, prop)
         count = count + 1
       elseif view_props[prop] then
-        assert(
-          id == 'view', 'line %d:%d: "%s" should be a view property', line_num,
-          pos, prop)
+        assert(id == 'view', 'line %d:%d: "%s" should be a view property', line_num, pos, prop)
         count = count + 1
       end
       ::continue::
@@ -4687,9 +4782,8 @@ end
 function test_buffer_view_usage()
   local buffer_props, view_props = load_buffer_view_props()
   local filter = {
-    '.lua', '.luadoc', '!/lexers', '!/modules/lsp/dkjson.lua',
-    '!/modules/lua/lua.luadoc', '!/modules/debugger/lua/mobdebug.lua',
-    '!/modules/yaml/lyaml.lua', '!/scripts', '!/src'
+    '.lua', '.luadoc', '!/lexers', '!/modules/lsp/dkjson.lua', '!/modules/lua/lua.luadoc',
+    '!/modules/debugger/lua/mobdebug.lua', '!/modules/yaml/lyaml.lua', '!/scripts', '!/src'
   }
   for filename in lfs.walk(_HOME, filter) do
     check_property_usage(filename, buffer_props, view_props)
@@ -4713,13 +4807,12 @@ end
 
 -- Determines whether or not to run the test whose name is string *name*.
 -- If no arg patterns are provided, returns true.
--- If only inclusive arg patterns are provided, returns true if *name* matches
--- at least one of those patterns.
--- If only exclusive arg patterns are provided ('-' prefix), returns true if
--- *name* does not match any of them.
--- If both inclusive and exclusive arg patterns are provided, returns true if
--- *name* matches at least one of the inclusive ones, but not any of the
--- exclusive ones.
+-- If only inclusive arg patterns are provided, returns true if *name* matches at least one of
+-- those patterns.
+-- If only exclusive arg patterns are provided ('-' prefix), returns true if *name* does not
+-- match any of them.
+-- If both inclusive and exclusive arg patterns are provided, returns true if *name* matches
+-- at least one of the inclusive ones, but not any of the exclusive ones.
 -- @param name Name of the test to check for inclusion.
 -- @return true or false
 local function include_test(name)
@@ -4738,11 +4831,7 @@ local function include_test(name)
 end
 
 local tests = {}
-for k in pairs(_ENV) do
-  if k:find('^test_') and include_test(k) then
-    tests[#tests + 1] = k
-  end
-end
+for k in pairs(_ENV) do if k:find('^test_') and include_test(k) then tests[#tests + 1] = k end end
 table.sort(tests)
 
 print('Starting test suite')
@@ -4778,17 +4867,16 @@ for i = 1, #tests do
   tests_run = tests_run + 1
   if not ok then
     tests_failed = tests_failed + 1
-    if expected_failures[f] then
-      tests_failed_expected = tests_failed_expected + 1
-    end
+    if expected_failures[f] then tests_failed_expected = tests_failed_expected + 1 end
   end
 end
 
-print(string.format('%d tests run, %d unexpected failures, %d expected failures', tests_run, tests_failed - tests_failed_expected, tests_failed_expected))
+print(string.format('%d tests run, %d unexpected failures, %d expected failures', tests_run,
+  tests_failed - tests_failed_expected, tests_failed_expected))
 
 -- Note: stock luacov crashes on hook.lua lines 51 and 58 every other run.
--- `file.max` and `file.max_hits` are both `nil`, so change comparisons to be
--- `(file.max or 0)` and `(file.max_hits or 0)`, respectively.
+-- `file.max` and `file.max_hits` are both `nil`, so change comparisons to be `(file.max or 0)`
+-- and `(file.max_hits or 0)`, respectively.
 if package.loaded['luacov'] then
   require('luacov').save_stats()
   os.execute('luacov')

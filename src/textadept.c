@@ -64,9 +64,8 @@
 #if GTK
 typedef GtkWidget Scintilla;
 // Translate GTK 2.x API to GTK 3.0 for compatibility.
-#if GTK_CHECK_VERSION(3,0,0)
-#define gtk_combo_box_entry_new_with_model(m,_) \
-  gtk_combo_box_new_with_model_and_entry(m)
+#if GTK_CHECK_VERSION(3, 0, 0)
+#define gtk_combo_box_entry_new_with_model(m, _) gtk_combo_box_new_with_model_and_entry(m)
 #define gtk_combo_box_entry_set_text_column gtk_combo_box_set_entry_text_column
 #define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
 #endif
@@ -75,21 +74,19 @@ typedef GtkWidget Scintilla;
 #else
 #define ID "\\\\.\\pipe\\textadept.editor"
 // Win32 single-instance functionality.
-#define g_application_command_line_get_arguments(_,__) \
-  g_strsplit(buf, "\n", 0); argc = g_strv_length(argv)
+#define g_application_command_line_get_arguments(_, __) \
+  g_strsplit(buf, "\n", 0); \
+  argc = g_strv_length(argv)
 #define g_application_command_line_get_cwd(_) argv[0]
-#define g_application_register(_,__,___) true
-#define g_application_get_is_remote(_) \
-  (WaitNamedPipe(ID, NMPWAIT_WAIT_FOREVER) != 0)
+#define g_application_register(_, __, ___) true
+#define g_application_get_is_remote(_) (WaitNamedPipe(ID, NMPWAIT_WAIT_FOREVER) != 0)
 #define gtk_main() \
   HANDLE pipe = NULL, thread = NULL; \
   if (!g_application_get_is_remote(app)) \
-    pipe = CreateNamedPipe( \
-      ID, PIPE_ACCESS_INBOUND, PIPE_WAIT, 1, 0, 0, INFINITE, NULL), \
-      thread = CreateThread(NULL, 0, &pipe_listener, pipe, 0, NULL); \
+    pipe = CreateNamedPipe(ID, PIPE_ACCESS_INBOUND, PIPE_WAIT, 1, 0, 0, INFINITE, NULL), \
+    thread = CreateThread(NULL, 0, &pipe_listener, pipe, 0, NULL); \
   gtk_main(); \
-  if (pipe && thread) \
-    TerminateThread(thread, 0), CloseHandle(thread), CloseHandle(pipe);
+  if (pipe && thread) TerminateThread(thread, 0), CloseHandle(thread), CloseHandle(pipe);
 #endif
 #elif CURSES
 typedef void Scintilla;
@@ -102,8 +99,7 @@ typedef void Scintilla;
 
 static char *textadept_home, *platform;
 
-// User interface objects and related macros for GTK and curses
-// interoperability.
+// User interface objects and related macros for GTK and curses interoperability.
 static Scintilla *focused_view, *dummy_view, *command_entry;
 #if GTK
 // GTK window.
@@ -120,8 +116,8 @@ typedef GtkWidget Pane;
 static GtkWidget *findbox, *find_entry, *repl_entry, *find_label, *repl_label;
 #define find_text gtk_entry_get_text(GTK_ENTRY(find_entry))
 #define repl_text gtk_entry_get_text(GTK_ENTRY(repl_entry))
-#define set_entry_text(entry, text) gtk_entry_set_text( \
-  GTK_ENTRY(entry == find_text ? find_entry : repl_entry), text)
+#define set_entry_text(entry, text) \
+  gtk_entry_set_text(GTK_ENTRY(entry == find_text ? find_entry : repl_entry), text)
 typedef GtkWidget *FindButton;
 static FindButton find_next, find_prev, replace, replace_all;
 static GtkWidget *match_case, *whole_word, *regex, *in_files;
@@ -139,7 +135,7 @@ static ListStore *find_history, *repl_history;
 // curses window.
 typedef struct Pane {
   int y, x, rows, cols, split_size; // dimensions
-  enum {SINGLE, VSPLIT, HSPLIT} type; // pane type
+  enum { SINGLE, VSPLIT, HSPLIT } type; // pane type
   WINDOW *win; // either the Scintilla curses window or the split bar's window
   Scintilla *view; // Scintilla view for a non-split view
   struct Pane *child1, *child2; // each pane in a split view
@@ -147,37 +143,37 @@ typedef struct Pane {
 static Pane *pane;
 TermKey *ta_tk; // global for CDK use
 #define SS(view, msg, w, l) scintilla_send_message(view, msg, w, l)
-#define focus_view(view) ( \
-  focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, \
-  SS(view, SCI_SETFOCUS, 1, 0))
+#define focus_view(view) \
+  (focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, SS(view, SCI_SETFOCUS, 1, 0))
 // curses find & replace pane.
 static CDKSCREEN *findbox;
 static CDKENTRY *find_entry, *repl_entry, *focused_entry;
 static char *find_text, *repl_text, *find_label, *repl_label;
 #define set_entry_text(entry, text) copyfree(&entry, text)
-typedef enum {find_next, replace, find_prev, replace_all} FindButton;
-static bool find_options[4], *match_case = &find_options[0],
-  *whole_word = &find_options[1], *regex = &find_options[2],
-  *in_files = &find_options[3];
+typedef enum { find_next, replace, find_prev, replace_all } FindButton;
+static bool find_options[4], *match_case = &find_options[0], *whole_word = &find_options[1],
+                             *regex = &find_options[2], *in_files = &find_options[3];
 static char *button_labels[4], *option_labels[4];
 typedef char *ListStore;
 static ListStore find_history[10], repl_history[10];
 #define checked(find_option) *find_option
 // Use pointer arithmetic to highlight/unhighlight options as necessary.
-#define toggle(o, on) do { \
-  if (*o != on) *o = on, option_labels[o - match_case] += *o ? -4 : 4; \
-} while (false)
+#define toggle(o, on) \
+  do { \
+    if (*o != on) *o = on, option_labels[o - match_case] += *o ? -4 : 4; \
+  } while (false)
 #define set_label_text(label, text) copyfree(&label, text)
 #define set_button_label(button, label) copyfree(&button_labels[button], label)
-// Prepend "</R>" to each option label because pointer arithmetic will be used
-// to make the "</R>" visible or invisible (thus highlighting or unhighlighting
-// the label) depending on whether or not the option is enabled by the user.
-#define set_option_label(option, i, label) do { \
-  lua_pushstring(L, "</R>"), lua_pushstring(L, label), lua_concat(L, 2); \
-  if (option_labels[i] && !*option) option_labels[i] -= 4; \
-  copyfree(&option_labels[i], lua_tostring(L, -1)); \
-  if (!*option) option_labels[i] += 4; \
-} while (false)
+// Prepend "</R>" to each option label because pointer arithmetic will be used to make the
+// "</R>" visible or invisible (thus highlighting or unhighlighting the label) depending on
+// whether or not the option is enabled by the user.
+#define set_option_label(option, i, label) \
+  do { \
+    lua_pushstring(L, "</R>"), lua_pushstring(L, label), lua_concat(L, 2); \
+    if (option_labels[i] && !*option) option_labels[i] -= 4; \
+    copyfree(&option_labels[i], lua_tostring(L, -1)); \
+    if (!*option) option_labels[i] += 4; \
+  } while (false)
 #define find_active(w) (w != NULL)
 // Curses command entry and statusbar.
 static bool command_entry_active;
@@ -192,7 +188,7 @@ static bool quitting;
 static bool initing, closing, tab_sync, dialog_active;
 static int tabs = 1; // int for more options than true/false
 #define show_tabs(condition) tabs && (condition || tabs > 1)
-enum {SVOID, SINT, SLEN, SINDEX, SCOLOR, SBOOL, SKEYMOD, SSTRING, SSTRINGRET};
+enum { SVOID, SINT, SLEN, SINDEX, SCOLOR, SBOOL, SKEYMOD, SSTRING, SSTRINGRET };
 
 // Forward declarations.
 static void new_buffer(sptr_t);
@@ -205,13 +201,11 @@ LUALIB_API int os_spawn_pushfds(lua_State *), os_spawn_readfds(lua_State *);
  * Emits an event.
  * @param L The Lua state.
  * @param name The event name.
- * @param ... Arguments to pass with the event. Each pair of arguments should be
- *   a Lua type followed by the data value itself. For LUA_TLIGHTUSERDATA and
- *   LUA_TTABLE types, push the data values to the stack and give the value
- *   returned by luaL_ref(); luaL_unref() will be called appropriately. The list
- *   must be terminated with a -1.
- * @return true or false depending on the boolean value returned by the event
- *   handler, if any.
+ * @param ... Arguments to pass with the event. Each pair of arguments should be a Lua type
+ *   followed by the data value itself. For LUA_TLIGHTUSERDATA and LUA_TTABLE types, push the
+ *   data values to the stack and give the value returned by luaL_ref(); luaL_unref() will be
+ *   called appropriately. The list must be terminated with a -1.
+ * @return true or false depending on the boolean value returned by the event handler, if any.
  */
 static bool emit(lua_State *L, const char *name, ...) {
   bool ret = false;
@@ -221,17 +215,18 @@ static bool emit(lua_State *L, const char *name, ...) {
   int n = 1;
   va_list ap;
   va_start(ap, name);
-  for (int type = va_arg(ap, int); type != -1; type = va_arg(ap, int), n++)
-    switch (type) {
-      case LUA_TBOOLEAN: lua_pushboolean(L, va_arg(ap, int)); break;
-      case LUA_TNUMBER: lua_pushinteger(L, va_arg(ap, int)); break;
-      case LUA_TSTRING: lua_pushstring(L, va_arg(ap, char *)); break;
-      case LUA_TLIGHTUSERDATA: case LUA_TTABLE: {
-        sptr_t arg = va_arg(ap, sptr_t);
-        lua_rawgeti(L, LUA_REGISTRYINDEX, arg);
-        luaL_unref(L, LUA_REGISTRYINDEX, arg);
-        break;
-      } default: lua_pushnil(L);
+  sptr_t arg;
+  for (int type = va_arg(ap, int); type != -1; type = va_arg(ap, int), n++) switch (type) {
+    case LUA_TBOOLEAN: lua_pushboolean(L, va_arg(ap, int)); break;
+    case LUA_TNUMBER: lua_pushinteger(L, va_arg(ap, int)); break;
+    case LUA_TSTRING: lua_pushstring(L, va_arg(ap, char *)); break;
+    case LUA_TLIGHTUSERDATA:
+    case LUA_TTABLE:
+      arg = va_arg(ap, sptr_t);
+      lua_rawgeti(L, LUA_REGISTRYINDEX, arg);
+      luaL_unref(L, LUA_REGISTRYINDEX, arg);
+      break;
+    default: lua_pushnil(L);
     }
   va_end(ap);
   if (lua_pcall(L, n, 1, 0) != LUA_OK) {
@@ -239,7 +234,8 @@ static bool emit(lua_State *L, const char *name, ...) {
     const char *argv[] = {"--title", "Error", "--text", lua_tostring(L, -1)};
     free(gtdialog(GTDIALOG_TEXTBOX, 4, argv));
     return (lua_pop(L, 2), ret); // result, events
-  } else ret = lua_toboolean(L, -1);
+  } else
+    ret = lua_toboolean(L, -1);
   return (lua_pop(L, 2), ret); // result, events
 }
 
@@ -251,8 +247,7 @@ static int process(GApplication *_, GApplicationCommandLine *line, void *buf) {
   char **argv = g_application_command_line_get_arguments(line, &argc);
   if (argc > 1) {
     lua_newtable(lua);
-    lua_pushstring(lua, g_application_command_line_get_cwd(line)),
-      lua_rawseti(lua, -2, -1);
+    lua_pushstring(lua, g_application_command_line_get_cwd(line)), lua_rawseti(lua, -2, -1);
     while (--argc) lua_pushstring(lua, argv[argc]), lua_rawseti(lua, -2, argc);
     emit(lua, "command_line", LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
   }
@@ -263,8 +258,7 @@ static int process(GApplication *_, GApplicationCommandLine *line, void *buf) {
 
 #if CURSES
 /**
- * Copies the given value to the given string after freeing that string's
- * existing value (if any).
+ * Copies the given value to the given string after freeing that string's existing value (if any).
  * The given string must be freed when finished.
  * @param s The address of the string to copy value to.
  * @param value String value to copy. It may be freed immediately.
@@ -280,12 +274,12 @@ static void copyfree(char **s, const char *value) {
  * @param store The ListStore to add the text to.
  * @param text The text to add.
  */
-static void add_to_history(ListStore* store, const char *text) {
+static void add_to_history(ListStore *store, const char *text) {
 #if GTK
-  // Note: GtkComboBoxEntry key navigation behaves contrary to command line
-  // history navigation. Down cycles from newer to older, and up cycles from
-  // older to newer. In order to mimic traditional command line history
-  // navigation, append to the list instead of prepending to it.
+  // Note: GtkComboBoxEntry key navigation behaves contrary to command line history
+  // navigation. Down cycles from newer to older, and up cycles from older to newer. In order to
+  // mimic traditional command line history navigation, append to the list instead of prepending
+  // to it.
   int n = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store), NULL);
   GtkTreeIter iter;
   if (n > 9)
@@ -296,8 +290,7 @@ static void add_to_history(ListStore* store, const char *text) {
     gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(store), &iter, NULL, n - 1),
       gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &last_text, -1);
   if (!last_text || strcmp(text, last_text) != 0)
-    gtk_list_store_append(store, &iter),
-      gtk_list_store_set(store, &iter, 0, text, -1);
+    gtk_list_store_append(store, &iter), gtk_list_store_set(store, &iter, 0, text, -1);
   g_free(last_text);
 #elif CURSES
   if (!text || (store[0] && strcmp(text, store[0]) == 0)) return;
@@ -315,8 +308,7 @@ static void find_clicked(FindButton button, void *L) {
   else
     add_to_history(repl_history, repl_text);
   if (button == find_next || button == find_prev)
-    emit(
-      L, "find", LUA_TSTRING, find_text, LUA_TBOOLEAN, button == find_next, -1);
+    emit(L, "find", LUA_TSTRING, find_text, LUA_TBOOLEAN, button == find_next, -1);
   else if (button == replace) {
     emit(L, "replace", LUA_TSTRING, repl_text, -1);
     emit(L, "find", LUA_TSTRING, find_text, LUA_TBOOLEAN, true, -1);
@@ -325,24 +317,16 @@ static void find_clicked(FindButton button, void *L) {
 }
 
 /** `find.find_next()` Lua function. */
-static int click_find_next(lua_State *L) {
-  return (find_clicked(find_next, L), 0);
-}
+static int click_find_next(lua_State *L) { return (find_clicked(find_next, L), 0); }
 
 /** `find.find_prev()` Lua function. */
-static int click_find_prev(lua_State *L) {
-  return (find_clicked(find_prev, L), 0);
-}
+static int click_find_prev(lua_State *L) { return (find_clicked(find_prev, L), 0); }
 
 /** `find.replace()` Lua function. */
-static int click_replace(lua_State *L) {
-  return (find_clicked(replace, L), 0);
-}
+static int click_replace(lua_State *L) { return (find_clicked(replace, L), 0); }
 
 /** `find.replace_all()` Lua function. */
-static int click_replace_all(lua_State *L) {
-  return (find_clicked(replace_all, L), 0);
-}
+static int click_replace_all(lua_State *L) { return (find_clicked(replace_all, L), 0); }
 
 #if CURSES
 /**
@@ -356,7 +340,8 @@ static void refresh_pane(Pane *pane) {
   } else if (pane->type == HSPLIT) {
     mvwhline(pane->win, 0, 0, 0, pane->cols), wrefresh(pane->win);
     refresh_pane(pane->child1), refresh_pane(pane->child2);
-  } else scintilla_noutrefresh(pane->view);
+  } else
+    scintilla_noutrefresh(pane->view);
 }
 
 /** Refreshes the entire screen. */
@@ -389,10 +374,10 @@ static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
   } else if (key == CDK_PREV || key == CDK_NEXT) {
     ListStore *store = entry == find_entry ? find_history : repl_history;
     int i;
-    for (i = 9; i >= 0; i--) if (store[i] && strcmp(store[i], text) == 0) break;
+    for (i = 9; i >= 0; i--)
+      if (store[i] && strcmp(store[i], text) == 0) break;
     key == CDK_PREV ? i++ : i--;
-    if (i >= 0 && i <= 9 && store[i])
-      setCDKEntryValue(entry, store[i]), drawCDKEntry(entry, false);
+    if (i >= 0 && i <= 9 && store[i]) setCDKEntryValue(entry, store[i]), drawCDKEntry(entry, false);
   } else if (key >= KEY_F(1) && key <= KEY_F(4)) {
     toggle(&find_options[key - KEY_F(1)], !find_options[key - KEY_F(1)]);
     // Redraw the optionbox.
@@ -400,8 +385,7 @@ static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
     int width = (*optionbox)->boxWidth - 1;
     destroyCDKButtonbox(*optionbox);
     *optionbox = newCDKButtonbox(
-      findbox, RIGHT, TOP, 2, width, NULL, 2, 2, option_labels, 4, A_NORMAL,
-      false, false);
+      findbox, RIGHT, TOP, 2, width, NULL, 2, 2, option_labels, 4, A_NORMAL, false, false);
     drawCDKButtonbox(*optionbox, false);
   } else if (key == KEY_UP || key == KEY_DOWN) {
     focused_entry = entry == find_entry ? repl_entry : find_entry;
@@ -433,21 +417,18 @@ static int focus_find(lua_State *L) {
     fmax(strlen(option_labels[2]), strlen(option_labels[3])) + 3;
   int l_width = fmax(strlen(find_label), strlen(repl_label));
   int e_width = COLS - o_width - b_width - l_width - 1;
-  find_entry = newCDKEntry(
-    findbox, l_width - strlen(find_label), TOP, NULL, find_label, A_NORMAL, '_',
-    vMIXED, e_width, 0, 1024, false, false);
-  repl_entry = newCDKEntry(
-    findbox, l_width - strlen(repl_label), BOTTOM, NULL, repl_label, A_NORMAL,
+  find_entry = newCDKEntry(findbox, l_width - strlen(find_label), TOP, NULL, find_label, A_NORMAL,
     '_', vMIXED, e_width, 0, 1024, false, false);
+  repl_entry = newCDKEntry(findbox, l_width - strlen(repl_label), BOTTOM, NULL, repl_label,
+    A_NORMAL, '_', vMIXED, e_width, 0, 1024, false, false);
   CDKBUTTONBOX *buttonbox, *optionbox;
-  buttonbox = newCDKButtonbox(
-    findbox, COLS - o_width - b_width, TOP, 2, b_width, NULL, 2, 2,
+  buttonbox = newCDKButtonbox(findbox, COLS - o_width - b_width, TOP, 2, b_width, NULL, 2, 2,
     button_labels, 4, A_REVERSE, false, false);
   optionbox = newCDKButtonbox(
-    findbox, RIGHT, TOP, 2, o_width, NULL, 2, 2, option_labels, 4, A_NORMAL,
-    false, false);
-  // TODO: ideally no #define here.
-  #define bind(k, d) (bindCDKObject(vENTRY, find_entry, k, find_keypress, d), \
+    findbox, RIGHT, TOP, 2, o_width, NULL, 2, 2, option_labels, 4, A_NORMAL, false, false);
+// TODO: ideally no #define here.
+#define bind(k, d) \
+  (bindCDKObject(vENTRY, find_entry, k, find_keypress, d), \
     bindCDKObject(vENTRY, repl_entry, k, find_keypress, d))
   bind(KEY_TAB, buttonbox), bind(CDK_NEXT, NULL), bind(CDK_PREV, NULL);
   for (int i = 1; i <= 4; i++) bind(KEY_F(i), &optionbox);
@@ -458,8 +439,7 @@ static int focus_find(lua_State *L) {
   char *clipboard = scintilla_get_clipboard(focused_view, NULL);
   GPasteBuffer = copyChar(clipboard); // set the CDK paste buffer
   refreshCDKScreen(findbox), activateCDKEntry(focused_entry = find_entry, NULL);
-  while (focused_entry->exitType == vNORMAL ||
-         focused_entry->exitType == vNEVER_ACTIVATED) {
+  while (focused_entry->exitType == vNORMAL || focused_entry->exitType == vNEVER_ACTIVATED) {
     copyfree(&find_text, getCDKEntryValue(find_entry));
     copyfree(&repl_text, getCDKEntryValue(repl_entry));
     if (focused_entry->exitType == vNORMAL)
@@ -568,7 +548,8 @@ static char *work(void *L) {
         lua_concat(L, 4); // "num str\n"
       char *input = strcpy(malloc(lua_rawlen(L, -1) + 1), lua_tostring(L, -1));
       return (lua_pop(L, 1), input); // will be freed by gtdialog
-    } else lua_pop(L, 2), lua_pushliteral(L, "invalid return values");
+    } else
+      lua_pop(L, 2), lua_pushliteral(L, "invalid return values");
   }
   emit(L, "error", LUA_TSTRING, lua_tostring(L, -1), -1);
   return (lua_pop(L, 1), NULL);
@@ -590,7 +571,8 @@ static int dialog(lua_State *L) {
     else if (lua_isfunction(L, j) && type == GTDIALOG_PROGRESSBAR) {
       lua_pushvalue(L, j), lua_setfield(L, LUA_REGISTRYINDEX, "ta_workf");
       gtdialog_set_progressbar_callback(work, L);
-    } else argv[i++] = luaL_checkstring(L, j);
+    } else
+      argv[i++] = luaL_checkstring(L, j);
   argv[argc] = NULL;
   char *out;
   dialog_active = true, out = gtdialog(type, argc, argv), dialog_active = false;
@@ -605,8 +587,8 @@ static int dialog(lua_State *L) {
  * @see add_view
  */
 static void lua_pushview(lua_State *L, Scintilla *view) {
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_views"),
-    lua_pushlightuserdata(L, view), lua_gettable(L, -2), lua_replace(L, -2);
+  lua_getfield(L, LUA_REGISTRYINDEX, "ta_views"), lua_pushlightuserdata(L, view),
+    lua_gettable(L, -2), lua_replace(L, -2);
 }
 
 /**
@@ -622,10 +604,11 @@ static void lua_pushsplit(lua_State *L, Pane *pane) {
     lua_pushsplit(L, gtk_paned_get_child1(p)), lua_rawseti(L, -2, 1);
     lua_pushsplit(L, gtk_paned_get_child2(p)), lua_rawseti(L, -2, 2);
     lua_pushboolean(
-      L, gtk_orientable_get_orientation(GTK_ORIENTABLE(pane)) ==
-      GTK_ORIENTATION_HORIZONTAL), lua_setfield(L, -2, "vertical");
+      L, gtk_orientable_get_orientation(GTK_ORIENTABLE(pane)) == GTK_ORIENTATION_HORIZONTAL),
+      lua_setfield(L, -2, "vertical");
     lua_pushinteger(L, gtk_paned_get_position(p)), lua_setfield(L, -2, "size");
-  } else lua_pushview(L, pane);
+  } else
+    lua_pushview(L, pane);
 #elif CURSES
   if (pane->type != SINGLE) {
     lua_newtable(L);
@@ -633,7 +616,8 @@ static void lua_pushsplit(lua_State *L, Pane *pane) {
     lua_pushsplit(L, pane->child2), lua_rawseti(L, -2, 2);
     lua_pushboolean(L, pane->type == VSPLIT), lua_setfield(L, -2, "vertical");
     lua_pushinteger(L, pane->split_size), lua_setfield(L, -2, "size");
-  } else lua_pushview(L, pane->view);
+  } else
+    lua_pushview(L, pane->view);
 #endif
 }
 
@@ -641,8 +625,7 @@ static void lua_pushsplit(lua_State *L, Pane *pane) {
 static int get_split_table(lua_State *L) {
 #if GTK
   GtkWidget *pane = focused_view;
-  while (GTK_IS_PANED(gtk_widget_get_parent(pane)))
-    pane = gtk_widget_get_parent(pane);
+  while (GTK_IS_PANED(gtk_widget_get_parent(pane))) pane = gtk_widget_get_parent(pane);
 #endif
   return (lua_pushsplit(L, pane), 1);
 }
@@ -654,8 +637,7 @@ static int get_split_table(lua_State *L) {
  * @return Scintilla view
  */
 static Scintilla *lua_toview(lua_State *L, int index) {
-  Scintilla *view = (lua_getfield(L, index, "widget_pointer"),
-    lua_touserdata(L, -1));
+  Scintilla *view = (lua_getfield(L, index, "widget_pointer"), lua_touserdata(L, -1));
   return (lua_pop(L, 1), view); // widget pointer
 }
 
@@ -667,9 +649,8 @@ static Scintilla *lua_toview(lua_State *L, int index) {
  * @see add_doc
  */
 static void lua_pushdoc(lua_State *L, sptr_t doc) {
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"),
-    lua_pushlightuserdata(L, (sptr_t *)doc), lua_gettable(L, -2),
-    lua_replace(L, -2);
+  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_pushlightuserdata(L, (sptr_t *)doc),
+    lua_gettable(L, -2), lua_replace(L, -2);
 }
 
 /**
@@ -678,13 +659,13 @@ static void lua_pushdoc(lua_State *L, sptr_t doc) {
 static void sync_tabbar() {
 #if GTK
   int i = (lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers"),
-    lua_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)),
-    lua_gettable(lua, -2), lua_tointeger(lua, -1) - 1);
+    lua_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_gettable(lua, -2),
+    lua_tointeger(lua, -1) - 1);
   lua_pop(lua, 2); // index and buffers
   GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
   tab_sync = true, gtk_notebook_set_current_page(notebook, i), tab_sync = false;
 //#elif CURSES
-  // TODO: tabs
+// TODO: tabs
 #endif
 }
 
@@ -702,8 +683,8 @@ static bool is_type(lua_State *L, int index, const char *tname) {
 }
 
 /**
- * Checks whether the function argument arg is a Scintilla view and returns
- * this view cast to a Scintilla.
+ * Checks whether the function argument arg is a Scintilla view and returns this view cast to
+ * a Scintilla.
  * @param L The Lua state.
  * @param arg The stack index of the Scintilla view.
  * @return Scintilla view
@@ -729,9 +710,9 @@ static void view_focused(Scintilla *view, lua_State *L) {
 /** `ui.goto_view()` Lua function. */
 static int goto_view(lua_State *L) {
   if (lua_isnumber(L, 1)) {
-    int n = (lua_getfield(L, LUA_REGISTRYINDEX, "ta_views"),
-      lua_pushview(L, focused_view), lua_gettable(L, -2),
-      lua_tointeger(L, -1)) + lua_tointeger(L, 1);
+    lua_getfield(L, LUA_REGISTRYINDEX, "ta_views");
+    int n = (lua_pushview(L, focused_view), lua_gettable(L, -2), lua_tointeger(L, -1)) +
+      lua_tointeger(L, 1);
     if (n > (int)lua_rawlen(L, -2))
       n = 1;
     else if (n < 1)
@@ -749,8 +730,7 @@ static int goto_view(lua_State *L) {
 }
 
 /**
- * Returns the value t[n] as an integer where t is the value at the given valid
- * index.
+ * Returns the value t[n] as an integer where t is the value at the given valid index.
  * The access is raw; that is, it does not invoke metamethods.
  * @param L The Lua state.
  * @param index The stack index of the table.
@@ -791,14 +771,12 @@ static void lua_pushmenu(lua_State *L, int index, GCallback f, bool submenu) {
     const char *label = (lua_rawgeti(L, -1, 1), lua_tostring(L, -1));
     if (lua_pop(L, 1), !label) continue;
     // Menu item table is of the form {label, id, key, modifiers}.
-    GtkWidget *menu_item = *label ?
-      gtk_menu_item_new_with_mnemonic(label) : gtk_separator_menu_item_new();
+    GtkWidget *menu_item =
+      *label ? gtk_menu_item_new_with_mnemonic(label) : gtk_separator_menu_item_new();
     if (*label && get_int_field(L, -1, 3) > 0)
-      gtk_widget_add_accelerator(
-        menu_item, "activate", accel, get_int_field(L, -1, 3),
+      gtk_widget_add_accelerator(menu_item, "activate", accel, get_int_field(L, -1, 3),
         get_int_field(L, -1, 4), GTK_ACCEL_VISIBLE);
-    g_signal_connect(
-      menu_item, "activate", f, (void*)(long)get_int_field(L, -1, 2));
+    g_signal_connect(menu_item, "activate", f, (void *)(long)get_int_field(L, -1, 2));
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
   }
   lua_pushlightuserdata(L, !submenu_root ? menu : submenu_root);
@@ -839,8 +817,7 @@ static int ui_index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
   if (strcmp(key, "clipboard_text") == 0) {
 #if GTK
-    char *text = gtk_clipboard_wait_for_text(
-      gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
+    char *text = gtk_clipboard_wait_for_text(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
     text ? lua_pushstring(L, text) : lua_pushliteral(L, "");
     g_free(text);
 #elif CURSES
@@ -898,20 +875,17 @@ static int ui_newindex(lua_State *L) {
   } else if (strcmp(key, "clipboard_text") == 0) {
     const char *text = luaL_checkstring(L, 3);
     SS(focused_view, SCI_COPYTEXT, lua_rawlen(L, 3), (sptr_t)text);
-  } else if (strcmp(key, "statusbar_text") == 0 ||
-             strcmp(key, "buffer_statusbar_text") == 0)
+  } else if (strcmp(key, "statusbar_text") == 0 || strcmp(key, "buffer_statusbar_text") == 0)
     set_statusbar_text(lua_tostring(L, 3), *key == 's' ? 0 : 1);
   else if (strcmp(key, "menubar") == 0) {
 #if GTK
     luaL_argcheck(L, lua_istable(L, 3), 3, "table of menus expected");
     for (size_t i = 1; i <= lua_rawlen(L, 3); lua_pop(L, 1), i++)
-      luaL_argcheck(
-        L, lua_rawgeti(L, 3, i) == LUA_TLIGHTUSERDATA, 3,
+      luaL_argcheck(L, lua_rawgeti(L, 3, i) == LUA_TLIGHTUSERDATA, 3,
         "table of menus expected"); // popped on loop
     GtkWidget *new_menubar = gtk_menu_bar_new();
     for (size_t i = 1; i <= lua_rawlen(L, 3); lua_pop(L, 1), i++)
-      gtk_menu_shell_append(
-        GTK_MENU_SHELL(new_menubar),
+      gtk_menu_shell_append(GTK_MENU_SHELL(new_menubar),
         (lua_rawgeti(L, 3, i), lua_touserdata(L, -1))); // popped on loop
     GtkWidget *vbox = gtk_widget_get_parent(menubar);
     gtk_container_remove(GTK_CONTAINER(vbox), menubar);
@@ -923,30 +897,29 @@ static int ui_newindex(lua_State *L) {
     gtk_widget_hide(new_menubar); // hide in window
 #endif
 //#elif CURSES
-    // TODO: menus
+// TODO: menus
 #endif
   } else if (strcmp(key, "maximized") == 0) {
 #if GTK
-    lua_toboolean(L, 3) ? gtk_window_maximize(
-      GTK_WINDOW(window)) : gtk_window_unmaximize(GTK_WINDOW(window));
+    lua_toboolean(L, 3) ? gtk_window_maximize(GTK_WINDOW(window)) :
+                          gtk_window_unmaximize(GTK_WINDOW(window));
 #endif
   } else if (strcmp(key, "size") == 0) {
 #if GTK
     luaL_argcheck(
-      L, lua_istable(L, 3) && lua_rawlen(L, 3) == 2, 3,
-      "{width, height} table expected");
+      L, lua_istable(L, 3) && lua_rawlen(L, 3) == 2, 3, "{width, height} table expected");
     int w = get_int_field(L, 3, 1), h = get_int_field(L, 3, 2);
     if (w > 0 && h > 0) gtk_window_resize(GTK_WINDOW(window), w, h);
 #endif
   } else if (strcmp(key, "tabs") == 0) {
     tabs = !lua_isinteger(L, 3) ? lua_toboolean(L, 3) : lua_tointeger(L, 3);
 #if GTK
-    gtk_widget_set_visible(
-      tabbar, show_tabs(gtk_notebook_get_n_pages(GTK_NOTEBOOK(tabbar)) > 1));
+    gtk_widget_set_visible(tabbar, show_tabs(gtk_notebook_get_n_pages(GTK_NOTEBOOK(tabbar)) > 1));
 //#elif CURSES
-    // TODO: tabs
+// TODO: tabs
 #endif
-  } else lua_rawset(L, 1);
+  } else
+    lua_rawset(L, 1);
   return 0;
 }
 
@@ -957,29 +930,27 @@ static int ui_newindex(lua_State *L) {
  * @return Scintilla document
  */
 static sptr_t lua_todoc(lua_State *L, int index) {
-  sptr_t doc = (lua_getfield(L, index, "doc_pointer"),
-    (sptr_t)lua_touserdata(L, -1));
+  sptr_t doc = (lua_getfield(L, index, "doc_pointer"), (sptr_t)lua_touserdata(L, -1));
   return (lua_pop(L, 1), doc); // doc_pointer
 }
 
 /**
- * Returns for the Scintilla document at the given index a suitable Scintilla
- * view that can operate on it.
- * For non-global, non-command entry documents, loads that document in
- * `dummy_view` for non-global document use (unless it is already loaded).
- * Raises and error if the value is not a Scintilla document or if the document
- * no longer exists.
+ * Returns for the Scintilla document at the given index a suitable Scintilla view that can
+ * operate on it.
+ * For non-global, non-command entry documents, loads that document in `dummy_view` for non-global
+ * document use (unless it is already loaded). Raises and error if the value is not a Scintilla
+ * document or if the document no longer exists.
  * @param L The Lua state.
  * @param index The stack index of the Scintilla document.
  */
 static Scintilla *view_for_doc(lua_State *L, int index) {
-  luaL_argcheck(
-    L, is_type(L, index, "ta_buffer"), index, "Buffer expected");
+  luaL_argcheck(L, is_type(L, index, "ta_buffer"), index, "Buffer expected");
   sptr_t doc = lua_todoc(L, index);
   if (doc == SS(focused_view, SCI_GETDOCPOINTER, 0, 0)) return focused_view;
-  luaL_argcheck(
-    L, (lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_pushdoc(L, doc),
-      lua_gettable(L, -2) != LUA_TNIL), index, "this Buffer does not exist");
+  luaL_argcheck(L,
+    (lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_pushdoc(L, doc),
+      lua_gettable(L, -2) != LUA_TNIL),
+    index, "this Buffer does not exist");
   lua_pop(L, 2); // buffer, ta_buffers
   if (doc == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) return command_entry;
   if (doc == SS(dummy_view, SCI_GETDOCPOINTER, 0, 0)) return dummy_view;
@@ -990,22 +961,23 @@ static Scintilla *view_for_doc(lua_State *L, int index) {
  * Switches to a document in the given view.
  * @param L The Lua state.
  * @param view The Scintilla view.
- * @param n Relative or absolute index of the document to switch to. An absolute
- *   n of -1 represents the last document.
+ * @param n Relative or absolute index of the document to switch to. An absolute n of -1
+ *   represents the last document.
  * @param relative Flag indicating whether or not n is relative.
  */
 static void goto_doc(lua_State *L, Scintilla *view, int n, bool relative) {
   if (relative && n == 0) return;
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
   if (relative) {
-    n = (lua_pushdoc(L, SS(view, SCI_GETDOCPOINTER, 0, 0)), lua_gettable(L, -2),
-      lua_tointeger(L, -1)) + n;
+    lua_pushdoc(L, SS(view, SCI_GETDOCPOINTER, 0, 0));
+    n = (lua_gettable(L, -2), lua_tointeger(L, -1)) + n;
     if (n > (int)lua_rawlen(L, -2))
       n = 1;
     else if (n < 1)
       n = lua_rawlen(L, -2);
     lua_rawgeti(L, -2, n), lua_replace(L, -2); // index
-  } else lua_rawgeti(L, -1, n > 0 ? n : (int)lua_rawlen(L, -1));
+  } else
+    lua_rawgeti(L, -1, n > 0 ? n : (int)lua_rawlen(L, -1));
   luaL_argcheck(L, !lua_isnil(L, -1), 2, "no Buffer exists at that index");
   sptr_t doc = lua_todoc(L, -1);
   SS(view, SCI_SETDOCPOINTER, 0, doc), sync_tabbar();
@@ -1013,20 +985,15 @@ static void goto_doc(lua_State *L, Scintilla *view, int n, bool relative) {
   lua_pop(L, 1); // buffers
 }
 
-/**
- * Adds the command entry's buffer to the 'buffers' registry table at a constant
- * index (0).
- */
+/** Adds the command entry's buffer to the 'buffers' registry table at a constant index (0). */
 static void register_command_entry_doc() {
   sptr_t doc = SS(command_entry, SCI_GETDOCPOINTER, 0, 0);
   lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers");
-  lua_getglobal(lua, "ui"), lua_getfield(lua, -1, "command_entry"),
-    lua_replace(lua, -2);
+  lua_getglobal(lua, "ui"), lua_getfield(lua, -1, "command_entry"), lua_replace(lua, -2);
   lua_pushstring(lua, "doc_pointer"), lua_pushlightuserdata(lua, (sptr_t *)doc),
     lua_rawset(lua, -3);
   // t[doc_pointer] = command_entry, t[0] = command_entry, t[command_entry] = 0
-  lua_pushlightuserdata(lua, (sptr_t *)doc), lua_pushvalue(lua, -2),
-    lua_settable(lua, -4);
+  lua_pushlightuserdata(lua, (sptr_t *)doc), lua_pushvalue(lua, -2), lua_settable(lua, -4);
   lua_pushvalue(lua, -1), lua_rawseti(lua, -3, 0);
   lua_pushinteger(lua, 0), lua_settable(lua, -3);
   lua_pop(lua, 1); // buffers
@@ -1035,8 +1002,8 @@ static void register_command_entry_doc() {
 /**
  * Removes the Scintilla document from the 'buffers' registry table.
  * The document must have been previously added with add_doc.
- * It is removed from any other views showing it first. Therefore, ensure the
- * length of 'buffers' is more than one unless quitting the application.
+ * It is removed from any other views showing it first. Therefore, ensure the length of 'buffers'
+ * is more than one unless quitting the application.
  * @param L The Lua state.
  * @param doc The Scintilla document to remove.
  * @see add_doc
@@ -1053,8 +1020,7 @@ static void remove_doc(lua_State *L, sptr_t doc) {
   for (size_t i = 1; i <= lua_rawlen(L, -1); i++)
     if (doc != (lua_rawgeti(L, -1, i), lua_todoc(L, -1))) {
       // t[doc_pointer] = buffer, t[#t + 1] = buffer, t[buffer] = #t
-      lua_getfield(L, -1, "doc_pointer"), lua_pushvalue(L, -2),
-        lua_settable(L, -5);
+      lua_getfield(L, -1, "doc_pointer"), lua_pushvalue(L, -2), lua_settable(L, -5);
       lua_pushvalue(L, -1), lua_rawseti(L, -4, lua_rawlen(L, -4) + 1);
       lua_pushinteger(L, lua_rawlen(L, -3)), lua_settable(L, -4);
     } else {
@@ -1063,7 +1029,7 @@ static void remove_doc(lua_State *L, sptr_t doc) {
       gtk_notebook_remove_page(GTK_NOTEBOOK(tabbar), i - 1);
       gtk_widget_set_visible(tabbar, show_tabs(lua_rawlen(L, -2) > 2));
 //#elif CURSES
-      // TODO: tabs
+// TODO: tabs
 #endif
       lua_pop(L, 1); // buffer
     }
@@ -1088,8 +1054,7 @@ static int delete_buffer_lua(lua_State *L) {
   Scintilla *view = view_for_doc(L, 1);
   luaL_argcheck(L, view != command_entry, 1, "cannot delete command entry");
   sptr_t doc = SS(view, SCI_GETDOCPOINTER, 0, 0);
-  if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_rawlen(L, -1) == 1)
-    new_buffer(0);
+  if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_rawlen(L, -1) == 1) new_buffer(0);
   if (view == focused_view) goto_doc(L, focused_view, -1, true);
   delete_buffer(doc), emit(L, "buffer_deleted", -1);
   if (view == focused_view) emit(L, "buffer_after_switch", -1);
@@ -1100,13 +1065,13 @@ static int delete_buffer_lua(lua_State *L) {
 static int new_buffer_lua(lua_State *L) {
   if (initing) luaL_error(L, "cannot create buffers during initialization");
   new_buffer(0);
-  return (lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"),
-    lua_rawgeti(L, -1, lua_rawlen(L, -1)), 1);
+  return (
+    lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_rawgeti(L, -1, lua_rawlen(L, -1)), 1);
 }
 
 /**
- * Checks whether the function argument arg is the given Scintilla parameter
- * type and returns it cast to the proper type.
+ * Checks whether the function argument arg is the given Scintilla parameter type and returns
+ * it cast to the proper type.
  * @param L The Lua state.
  * @param arg The stack index of the Scintilla parameter.
  * @param type The Scintilla type to convert to.
@@ -1131,33 +1096,30 @@ static sptr_t luaL_checkscintilla(lua_State *L, int *arg, int type) {
  * @param wtype The type of Scintilla wParam.
  * @param ltype The type of Scintilla lParam.
  * @param rtype The type of the Scintilla return.
- * @param arg The stack index of the first Scintilla parameter. Subsequent
- *   elements will also be passed to Scintilla as needed.
+ * @param arg The stack index of the first Scintilla parameter. Subsequent elements will also
+ *   be passed to Scintilla as needed.
  * @return number of results pushed onto the stack.
  * @see luaL_checkscintilla
  */
 static int call_scintilla(
-  lua_State *L, Scintilla *view, int msg, int wtype, int ltype, int rtype,
-  int arg)
-{
+  lua_State *L, Scintilla *view, int msg, int wtype, int ltype, int rtype, int arg) {
   uptr_t wparam = 0;
   sptr_t lparam = 0, len = 0;
   int params_needed = 2, nresults = 0;
   bool string_return = false;
   char *text = NULL;
 
-  // Even though the SCI_PRIVATELEXERCALL interface has ltype int, the LPeg
-  // lexer API uses different types depending on wparam. Modify ltype
-  // appropriately. See the LPeg lexer API for more information.
-  if (msg == SCI_PRIVATELEXERCALL)
-    switch (luaL_checkinteger(L, arg)) {
-      case SCI_GETDIRECTFUNCTION: case SCI_SETDOCPOINTER:
-      case SCI_CHANGELEXERSTATE:
-        ltype = SINT; break;
-      case SCI_SETLEXERLANGUAGE: case SCI_LOADLEXERLIBRARY:
-        ltype = SSTRING; break;
-      case SCI_GETNAMEDSTYLES: ltype = SSTRING, rtype = SINDEX; break;
-      default: ltype = SSTRINGRET;
+  // Even though the SCI_PRIVATELEXERCALL interface has ltype int, the LPeg lexer API uses
+  // different types depending on wparam. Modify ltype appropriately. See the LPeg lexer API
+  // for more information.
+  if (msg == SCI_PRIVATELEXERCALL) switch (luaL_checkinteger(L, arg)) {
+    case SCI_GETDIRECTFUNCTION:
+    case SCI_SETDOCPOINTER:
+    case SCI_CHANGELEXERSTATE: ltype = SINT; break;
+    case SCI_SETLEXERLANGUAGE:
+    case SCI_LOADLEXERLIBRARY: ltype = SSTRING; break;
+    case SCI_GETNAMEDSTYLES: ltype = SSTRING, rtype = SINDEX; break;
+    default: ltype = SSTRINGRET;
     }
 
   // Set wParam and lParam appropriately for Scintilla based on wtype and ltype.
@@ -1198,10 +1160,8 @@ static int call_scintilla_lua(lua_State *L) {
   else if (is_type(L, 1, "ta_view"))
     view = lua_toview(L, 1);
   // Interface table is of the form {msg, rtype, wtype, ltype}.
-  return call_scintilla(
-    L, view, get_int_field(L, lua_upvalueindex(1), 1),
-    get_int_field(L, lua_upvalueindex(1), 3),
-    get_int_field(L, lua_upvalueindex(1), 4),
+  return call_scintilla(L, view, get_int_field(L, lua_upvalueindex(1), 1),
+    get_int_field(L, lua_upvalueindex(1), 3), get_int_field(L, lua_upvalueindex(1), 4),
     get_int_field(L, lua_upvalueindex(1), 2), lua_istable(L, 1) ? 2 : 1);
 }
 
@@ -1217,12 +1177,12 @@ static void show_context_menu(lua_State *L, GdkEventButton *event, char *k) {
     if (lua_getfield(L, -1, k) == LUA_TLIGHTUSERDATA) {
       GtkWidget *menu = lua_touserdata(L, -1);
       gtk_widget_show_all(menu);
-      gtk_menu_popup(
-        GTK_MENU(menu), NULL, NULL, NULL, NULL, event ? event->button : 0,
+      gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event ? event->button : 0,
         gdk_event_get_time((GdkEvent *)event));
     }
     lua_pop(L, 2); // ui context menu field, ui
-  } else lua_pop(L, 1); // non-table
+  } else
+    lua_pop(L, 1); // non-table
 }
 
 /** Signal for a tab label mouse click. */
@@ -1231,12 +1191,9 @@ static bool tab_clicked(GtkWidget *label, GdkEventButton *event, void *L) {
   for (int i = 0; i < gtk_notebook_get_n_pages(notebook); i++) {
     GtkWidget *page = gtk_notebook_get_nth_page(notebook, i);
     if (label != gtk_notebook_get_tab_label(notebook, page)) continue;
-    emit(
-      L, "tab_clicked", LUA_TNUMBER, i + 1, LUA_TNUMBER, event->button,
-      LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
-      LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK,
-      LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
-      LUA_TBOOLEAN, event->state & GDK_META_MASK, -1);
+    emit(L, "tab_clicked", LUA_TNUMBER, i + 1, LUA_TNUMBER, event->button, LUA_TBOOLEAN,
+      event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
+      event->state & GDK_MOD1_MASK, LUA_TBOOLEAN, event->state & GDK_META_MASK, -1);
     if (event->button == 3) show_context_menu(L, event, "tab_context_menu");
     break;
   }
@@ -1247,10 +1204,11 @@ static bool tab_clicked(GtkWidget *label, GdkEventButton *event, void *L) {
 /** `buffer[k].__index` metamethod. */
 static int property_index(lua_State *L) {
   Scintilla *view = (lua_getfield(L, 1, "_self"), !is_type(L, -1, "ta_view")) ?
-    view_for_doc(L, -1) : lua_toview(L, -1);
+    view_for_doc(L, -1) :
+    lua_toview(L, -1);
   lua_getfield(L, 1, "_iface"); // {get_id, set_id, rtype, wtype}.
-  int msg = get_int_field(L, -1, 1), wtype = get_int_field(L, -1, 4),
-    ltype = SVOID, rtype = get_int_field(L, -1, 3);
+  int msg = get_int_field(L, -1, 1), wtype = get_int_field(L, -1, 4), ltype = SVOID,
+      rtype = get_int_field(L, -1, 3);
   luaL_argcheck(L, msg, 2, "write-only property");
   return (call_scintilla(L, view, msg, wtype, ltype, rtype, 2), 1);
 }
@@ -1258,43 +1216,41 @@ static int property_index(lua_State *L) {
 /** `buffer[k].__newindex` metamethod. */
 static int property_newindex(lua_State *L) {
   Scintilla *view = (lua_getfield(L, 1, "_self"), !is_type(L, -1, "ta_view")) ?
-    view_for_doc(L, -1) : lua_toview(L, -1);
+    view_for_doc(L, -1) :
+    lua_toview(L, -1);
   lua_getfield(L, 1, "_iface"); // {get_id, set_id, rtype, wtype}.
   int msg = get_int_field(L, -1, 2), wtype = get_int_field(L, -1, 4),
-    ltype = get_int_field(L, -1, 3), rtype = SVOID;
+      ltype = get_int_field(L, -1, 3), rtype = SVOID;
   luaL_argcheck(L, msg, 3, "read-only property");
   if (ltype == SSTRINGRET) ltype = SSTRING;
   return (call_scintilla(L, view, msg, wtype, ltype, rtype, 2), 0);
 }
 
-// Helper function for `buffer_index()` and `view_index()` that gets Scintilla
-// properties.
+// Helper function for `buffer_index()` and `view_index()` that gets Scintilla properties.
 static void get_property(lua_State *L) {
-  Scintilla *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) :
-    lua_toview(L, 1);
+  Scintilla *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) : lua_toview(L, 1);
   // Interface table is of the form {get_id, set_id, rtype, wtype}.
-  int msg = get_int_field(L, -1, 1), wtype = get_int_field(L, -1, 4),
-    ltype = SVOID, rtype = get_int_field(L, -1, 3);
+  int msg = get_int_field(L, -1, 1), wtype = get_int_field(L, -1, 4), ltype = SVOID,
+      rtype = get_int_field(L, -1, 3);
   luaL_argcheck(L, msg || wtype != SVOID, 2, "write-only property");
   if (wtype != SVOID) { // indexible property
     lua_createtable(L, 2, 0);
     lua_pushvalue(L, 1), lua_setfield(L, -2, "_self");
     lua_pushvalue(L, -2), lua_setfield(L, -2, "_iface");
     set_metatable(L, -1, "ta_property", property_index, property_newindex);
-  } else call_scintilla(L, view, msg, wtype, ltype, rtype, 2);
+  } else
+    call_scintilla(L, view, msg, wtype, ltype, rtype, 2);
 }
 
-// Helper function for `buffer_newindex()` and `view_newindex()` that sets
-// Scintilla properties.
+// Helper function for `buffer_newindex()` and `view_newindex()` that sets Scintilla properties.
 static void set_property(lua_State *L) {
-  Scintilla *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) :
-    lua_toview(L, 1);
+  Scintilla *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) : lua_toview(L, 1);
   // Interface table is of the form {get_id, set_id, rtype, wtype}.
   int msg = get_int_field(L, -1, 2), wtype = get_int_field(L, -1, 3),
-    ltype = get_int_field(L, -1, 4), rtype = SVOID, temp;
+      ltype = get_int_field(L, -1, 4), rtype = SVOID, temp;
   luaL_argcheck(L, msg && ltype == SVOID, 3, "read-only property");
-  if (wtype == SSTRING || wtype == SSTRINGRET ||
-      msg == SCI_SETMARGINLEFT || msg == SCI_SETMARGINRIGHT)
+  if (wtype == SSTRING || wtype == SSTRINGRET || msg == SCI_SETMARGINLEFT ||
+    msg == SCI_SETMARGINRIGHT)
     temp = wtype != SSTRINGRET ? wtype : SSTRING, wtype = ltype, ltype = temp;
   call_scintilla(L, view, msg, wtype, ltype, rtype, 3);
 }
@@ -1302,34 +1258,32 @@ static void set_property(lua_State *L) {
 /** `buffer.__index` metamethod. */
 static int buffer_index(lua_State *L) {
   if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions"), lua_pushvalue(L, 2),
-      lua_rawget(L, -2) == LUA_TTABLE)
+    lua_rawget(L, -2) == LUA_TTABLE)
     // If the key is a Scintilla function, return a callable closure.
     lua_pushcclosure(L, call_scintilla_lua, 1);
-  else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"),
-           lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
-    // If the key is a Scintilla property, determine if it is an indexible one
-    // or not. If so, return a table with the appropriate metatable; otherwise
-    // call Scintilla to get the property's value.
+  else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"), lua_pushvalue(L, 2),
+    lua_rawget(L, -2) == LUA_TTABLE)
+    // If the key is a Scintilla property, determine if it is an indexible one or not. If so,
+    // return a table with the appropriate metatable; otherwise call Scintilla to get the
+    // property's value.
     get_property(L);
-  else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants"),
-           lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TNUMBER); // pushed
+  else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants"), lua_pushvalue(L, 2),
+    lua_rawget(L, -2) == LUA_TNUMBER) { // pushed
     // If the key is a Scintilla constant, return its value.
-  else if (strcmp(lua_tostring(L, 2), "tab_label") == 0 &&
-           lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
+  } else if (strcmp(lua_tostring(L, 2), "tab_label") == 0 &&
+    lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
     // Return the buffer's tab label.
     lua_getfield(L, 1, "tab_pointer");
 #if GTK
-    lua_pushstring(
-      L, gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(tabbar),
-      lua_touserdata(L, -1)));
+    lua_pushstring(L, gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(tabbar), lua_touserdata(L, -1)));
 //#elif CURSES
-    // TODO: tabs
+// TODO: tabs
 #endif
   } else if (strcmp(lua_tostring(L, 2), "active") == 0 &&
-             lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
+    lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
     lua_pushboolean(L, command_entry_active);
   else if (strcmp(lua_tostring(L, 2), "height") == 0 &&
-             lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
+    lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
     // Return the command entry's pixel height.
 #if GTK
     GtkAllocation allocation;
@@ -1338,19 +1292,20 @@ static int buffer_index(lua_State *L) {
 #elif CURSES
     lua_pushinteger(L, getmaxy(scintilla_get_window(command_entry)));
 #endif
-  } else lua_settop(L, 2), lua_rawget(L, 1);
+  } else
+    lua_settop(L, 2), lua_rawget(L, 1);
   return 1;
 }
 
 /** `buffer.__newindex` metamethod. */
 static int buffer_newindex(lua_State *L) {
   if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"), lua_pushvalue(L, 2),
-      lua_rawget(L, -2) == LUA_TTABLE)
+    lua_rawget(L, -2) == LUA_TTABLE)
     // If the key is a Scintilla property, call Scintilla to set its value.
     // Interface table is of the form {get_id, set_id, rtype, wtype}.
     set_property(L);
   else if (strcmp(lua_tostring(L, 2), "tab_label") == 0 &&
-           lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
+    lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
     // Update the buffer's tab label.
     lua_getfield(L, 1, "tab_pointer");
 #if GTK
@@ -1358,17 +1313,15 @@ static int buffer_newindex(lua_State *L) {
     gtk_event_box_set_visible_window(GTK_EVENT_BOX(box), false);
     GtkWidget *label = gtk_label_new(luaL_checkstring(L, 3));
     gtk_container_add(GTK_CONTAINER(box), label), gtk_widget_show(label);
-    gtk_notebook_set_tab_label(
-      GTK_NOTEBOOK(tabbar), lua_touserdata(L, -1), box);
+    gtk_notebook_set_tab_label(GTK_NOTEBOOK(tabbar), lua_touserdata(L, -1), box);
     g_signal_connect(box, "button-press-event", G_CALLBACK(tab_clicked), L);
 //#elif CURSES
-    // TODO: tabs
+// TODO: tabs
 #endif
   } else if (strcmp(lua_tostring(L, 2), "height") == 0 &&
-             lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
+    lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
     // Set the command entry's pixel height.
-    int height = fmax(
-      luaL_checkinteger(L, 3), SS(command_entry, SCI_TEXTHEIGHT, 0, 0));
+    int height = fmax(luaL_checkinteger(L, 3), SS(command_entry, SCI_TEXTHEIGHT, 0, 0));
 #if GTK
     GtkWidget *paned = gtk_widget_get_parent(command_entry);
     GtkAllocation allocation;
@@ -1379,7 +1332,8 @@ static int buffer_newindex(lua_State *L) {
     WINDOW *win = scintilla_get_window(command_entry);
     wresize(win, height, COLS), mvwin(win, LINES - 1 - height, 0);
 #endif
-  } else lua_settop(L, 3), lua_rawset(L, 1);
+  } else
+    lua_settop(L, 3), lua_rawset(L, 1);
   return 0;
 }
 
@@ -1396,10 +1350,10 @@ static void add_doc(lua_State *L, sptr_t doc) {
   GtkWidget *tab = gtk_vbox_new(false, 0); // placeholder in GtkNotebook
   lua_pushlightuserdata(L, tab), lua_setfield(L, -2, "tab_pointer");
 //#elif CURSES
-  // TODO: tabs
+// TODO: tabs
 #endif
   lua_pushcfunction(L, delete_buffer_lua), lua_setfield(L, -2, "delete");
-  lua_pushcfunction(L, new_buffer_lua) , lua_setfield(L, -2, "new");
+  lua_pushcfunction(L, new_buffer_lua), lua_setfield(L, -2, "new");
   set_metatable(L, -1, "ta_buffer", buffer_index, buffer_newindex);
   // t[doc_pointer] = buffer, t[#t + 1] = buffer, t[buffer] = #t
   lua_getfield(L, -1, "doc_pointer"), lua_pushvalue(L, -2), lua_settable(L, -4);
@@ -1411,9 +1365,8 @@ static void add_doc(lua_State *L, sptr_t doc) {
 /**
  * Creates a new Scintilla document and adds it to the Lua state.
  * Generates 'buffer_before_switch' and 'buffer_new' events.
- * @param doc Almost always zero, except for the first Scintilla view created,
- *   in which its doc pointer would be given here since it already has a
- *   pre-created buffer.
+ * @param doc Almost always zero, except for the first Scintilla view created, in which its
+ *   doc pointer would be given here since it already has a pre-created buffer.
  * @see add_doc
  */
 static void new_buffer(sptr_t doc) {
@@ -1421,7 +1374,8 @@ static void new_buffer(sptr_t doc) {
     emit(lua, "buffer_before_switch", -1);
     add_doc(lua, doc = SS(focused_view, SCI_CREATEDOCUMENT, 0, 0));
     goto_doc(lua, focused_view, -1, false);
-  } else add_doc(lua, doc), SS(focused_view, SCI_ADDREFDOCUMENT, 0, doc);
+  } else
+    add_doc(lua, doc), SS(focused_view, SCI_ADDREFDOCUMENT, 0, doc);
 #if GTK
   // Add a tab to the tabbar.
   GtkWidget *tab = (lua_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)),
@@ -1433,7 +1387,7 @@ static void new_buffer(sptr_t doc) {
   tab_sync = false;
   lua_pop(lua, 2); // tab_pointer and buffer
 //#elif CURSES
-  // TODO: tabs
+// TODO: tabs
 #endif
   SS(focused_view, SCI_SETILEXER, 0, (sptr_t)CreateLexer(NULL));
   lua_pushdoc(lua, doc), lua_setglobal(lua, "buffer");
@@ -1462,9 +1416,7 @@ static bool run_file(lua_State *L, const char *filename) {
   sprintf(file, "%s/%s", textadept_home, filename);
   bool ok = luaL_dofile(L, file) == LUA_OK;
   if (!ok) {
-    const char *argv[] = {
-      "--title", "Initialization Error", "--text", lua_tostring(L, -1)
-    };
+    const char *argv[] = {"--title", "Initialization Error", "--text", lua_tostring(L, -1)};
     free(gtdialog(GTDIALOG_TEXTBOX, 4, argv));
     lua_settop(L, 0);
   }
@@ -1478,8 +1430,7 @@ static int reset(lua_State *L) {
   emit(L, "reset_before", LUA_TTABLE, luaL_ref(L, LUA_REGISTRYINDEX), -1);
   init_lua(L, 0, NULL, true);
   lua_pushview(L, focused_view), lua_setglobal(L, "view");
-  lua_pushdoc(L, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)),
-    lua_setglobal(L, "buffer");
+  lua_pushdoc(L, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(L, "buffer");
   lua_pushnil(L), lua_setglobal(L, "arg");
   run_file(L, "init.lua"), emit(L, "initialized", -1);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_arg"), lua_setglobal(L, "arg");
@@ -1507,8 +1458,7 @@ static int add_timeout(lua_State *L) {
   luaL_argcheck(L, interval > 0, 1, "interval must be > 0");
   luaL_argcheck(L, lua_isfunction(L, 2), 2, "function expected");
   int n = lua_gettop(L), *refs = (int *)calloc(n, sizeof(int));
-  for (int i = 2; i <= n; i++)
-    lua_pushvalue(L, i), refs[i - 2] = luaL_ref(L, LUA_REGISTRYINDEX);
+  for (int i = 2; i <= n; i++) lua_pushvalue(L, i), refs[i - 2] = luaL_ref(L, LUA_REGISTRYINDEX);
   return (g_timeout_add(interval * 1000, timed_out, refs), 0);
 #elif CURSES
   return luaL_error(L, "not implemented in this environment");
@@ -1522,19 +1472,19 @@ static int iconv_lua(lua_State *L) {
   const char *to = luaL_checkstring(L, 2), *from = luaL_checkstring(L, 3);
   iconv_t cd = iconv_open(to, from);
   if (cd == (iconv_t)-1) luaL_error(L, "invalid encoding(s)");
-  // Ensure the minimum buffer size can hold a potential output BOM and one
-  // multibyte character.
+  // Ensure the minimum buffer size can hold a potential output BOM and one multibyte character.
   size_t bufsiz = 4 + (inbytesleft > MB_LEN_MAX ? inbytesleft : MB_LEN_MAX);
   char *outbuf = malloc(bufsiz + 1), *p = outbuf;
   size_t outbytesleft = bufsiz;
   int n = 1; // concat this many converted strings
   while (iconv(cd, &inbuf, &inbytesleft, &p, &outbytesleft) == (size_t)-1)
     if (errno == E2BIG && p - outbuf > 0) {
-      // Buffer was too small to store converted string. Push the partially
-      // converted string for later concatenation.
+      // Buffer was too small to store converted string. Push the partially converted string
+      // for later concatenation.
       lua_checkstack(L, 2), lua_pushlstring(L, outbuf, p - outbuf), n++;
       p = outbuf, outbytesleft = bufsiz;
-    } else free(outbuf), iconv_close(cd), luaL_error(L, "conversion failed");
+    } else
+      free(outbuf), iconv_close(cd), luaL_error(L, "conversion failed");
   lua_pushlstring(L, outbuf, p - outbuf);
   free(outbuf), iconv_close(cd);
   return (lua_concat(L, n), 1);
@@ -1542,8 +1492,7 @@ static int iconv_lua(lua_State *L) {
 
 /**
  * Initializes or re-initializes the Lua state.
- * Populates the state with global variables and functions, then runs the
- * 'core/init.lua' script.
+ * Populates the state with global variables and functions, then runs the 'core/init.lua' script.
  * @param L The Lua state.
  * @param argc The number of command line parameters.
  * @param argv The array of command line parameters.
@@ -1553,8 +1502,7 @@ static int iconv_lua(lua_State *L) {
 static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
   if (!reinit) {
     lua_newtable(L);
-    for (int i = 0; i < argc; i++)
-      lua_pushstring(L, argv[i]), lua_rawseti(L, -2, i);
+    for (int i = 0; i < argc; i++) lua_pushstring(L, argv[i]), lua_rawseti(L, -2, i);
     lua_setfield(L, LUA_REGISTRYINDEX, "ta_arg");
     lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, "ta_buffers");
     lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, "ta_views");
@@ -1602,12 +1550,11 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
   lua_pushcfunction(L, reset), lua_setglobal(L, "reset");
   lua_pushcfunction(L, add_timeout), lua_setglobal(L, "timeout");
 
-  lua_getglobal(L, "string"), lua_pushcfunction(L, iconv_lua),
-    lua_setfield(L, -2, "iconv"), lua_pop(L, 1);
+  lua_getglobal(L, "string"), lua_pushcfunction(L, iconv_lua), lua_setfield(L, -2, "iconv"),
+    lua_pop(L, 1);
 
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_arg"), lua_setglobal(L, "arg");
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"),
-    lua_setglobal(L, "_BUFFERS");
+  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_setglobal(L, "_BUFFERS");
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_views"), lua_setglobal(L, "_VIEWS");
   lua_pushstring(L, textadept_home), lua_setglobal(L, "_HOME");
   if (platform) lua_pushboolean(L, true), lua_setglobal(L, platform);
@@ -1633,12 +1580,9 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
 
   if (!run_file(L, "core/init.lua")) return (lua_close(L), false);
   lua_getglobal(L, "_SCINTILLA");
-  lua_getfield(L, -1, "constants"),
-    lua_setfield(L, LUA_REGISTRYINDEX, "ta_constants");
-  lua_getfield(L, -1, "functions"),
-    lua_setfield(L, LUA_REGISTRYINDEX, "ta_functions");
-  lua_getfield(L, -1, "properties"),
-    lua_setfield(L, LUA_REGISTRYINDEX, "ta_properties");
+  lua_getfield(L, -1, "constants"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_constants");
+  lua_getfield(L, -1, "functions"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_functions");
+  lua_getfield(L, -1, "properties"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_properties");
   lua_pop(L, 1); // _SCINTILLA
   return true;
 }
@@ -1653,7 +1597,7 @@ static bool window_focused(GtkWidget *_, GdkEventFocus *__, void *L) {
 /** Signal for a Textadept keypress. */
 static bool window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
   if (event->keyval != GDK_KEY_Escape || !gtk_widget_get_visible(findbox) ||
-      gtk_widget_has_focus(command_entry))
+    gtk_widget_has_focus(command_entry))
     return false;
   return (gtk_widget_hide(findbox), gtk_widget_grab_focus(focused_view), true);
 }
@@ -1672,11 +1616,11 @@ static void remove_view(lua_State *L, Scintilla *view) {
   for (size_t i = 1; i <= lua_rawlen(L, -1); i++) {
     if (view != (lua_rawgeti(L, -1, i), lua_toview(L, -1))) {
       // t[widget_pointer] = view, t[#t + 1] = view, t[view] = #t
-      lua_getfield(L, -1, "widget_pointer"), lua_pushvalue(L, -2),
-        lua_settable(L, -5);
+      lua_getfield(L, -1, "widget_pointer"), lua_pushvalue(L, -2), lua_settable(L, -5);
       lua_pushvalue(L, -1), lua_rawseti(L, -4, lua_rawlen(L, -4) + 1);
       lua_pushinteger(L, lua_rawlen(L, -3)), lua_settable(L, -4);
-    } else lua_pop(L, 1); // view
+    } else
+      lua_pop(L, 1); // view
   }
   lua_pop(L, 1); // views
   lua_pushvalue(L, -1), lua_setfield(L, LUA_REGISTRYINDEX, "ta_views");
@@ -1688,27 +1632,26 @@ static void remove_view(lua_State *L, Scintilla *view) {
  * @param view The Scintilla view to remove.
  * @see remove_view
  */
-static void delete_view(Scintilla *view) {
-  remove_view(lua, view), scintilla_delete(view);
-}
+static void delete_view(Scintilla *view) { remove_view(lua, view), scintilla_delete(view); }
 
 /**
- * Removes all Scintilla views from the given pane and deletes them along with
- * the child panes themselves.
+ * Removes all Scintilla views from the given pane and deletes them along with the child panes
+ * themselves.
  * @param pane The pane to remove Scintilla views from.
  * @see delete_view
  */
 static void remove_views_from_pane(Pane *pane) {
 #if GTK
   GtkWidget *child1 = gtk_paned_get_child1(GTK_PANED(pane)),
-    *child2 = gtk_paned_get_child2(GTK_PANED(pane));
+            *child2 = gtk_paned_get_child2(GTK_PANED(pane));
   GTK_IS_PANED(child1) ? remove_views_from_pane(child1) : delete_view(child1);
   GTK_IS_PANED(child2) ? remove_views_from_pane(child2) : delete_view(child2);
 #elif CURSES
   if (pane->type == VSPLIT || pane->type == HSPLIT) {
     remove_views_from_pane(pane->child1), remove_views_from_pane(pane->child2);
     delwin(pane->win), pane->win = NULL; // delete split bar
-  } else delete_view(pane->view);
+  } else
+    delete_view(pane->view);
   free(pane);
 #endif
 }
@@ -1737,7 +1680,8 @@ static void resize_pane(Pane *pane, int rows, int cols, int y, int x) {
     resize_pane(pane->child1, ssize, cols, y, x);
     resize_pane(pane->child2, rows - ssize - 1, cols, y + ssize + 1, x);
     wresize(pane->win, 1, cols), mvwin(pane->win, y + ssize, x); // split bar
-  } else wresize(pane->win, rows, cols), mvwin(pane->win, y, x);
+  } else
+    wresize(pane->win, rows, cols), mvwin(pane->win, y, x);
   pane->rows = rows, pane->cols = cols, pane->y = y, pane->x = x;
 }
 
@@ -1751,11 +1695,9 @@ static void resize_pane(Pane *pane, int rows, int cols, int y, int x) {
  */
 static bool unsplit_pane(Pane *pane, Scintilla *view, Pane *parent) {
   if (pane->type != SINGLE)
-    return unsplit_pane(pane->child1, view, pane) ||
-      unsplit_pane(pane->child2, view, pane);
+    return unsplit_pane(pane->child1, view, pane) || unsplit_pane(pane->child2, view, pane);
   if (pane->view != view) return false;
-  remove_views_from_pane(
-    pane == parent->child1 ? parent->child2 : parent->child1);
+  remove_views_from_pane(pane == parent->child1 ? parent->child2 : parent->child1);
   delwin(parent->win); // delete split bar
   // Inherit child's properties.
   parent->type = pane->type, parent->split_size = pane->split_size;
@@ -1790,12 +1732,11 @@ static bool unsplit_view(Scintilla *view) {
   GtkWidget *parent = gtk_widget_get_parent(pane);
   gtk_container_remove(GTK_CONTAINER(parent), pane);
   if (GTK_IS_PANED(parent))
-    !gtk_paned_get_child1(GTK_PANED(parent)) ?
-      gtk_paned_add1(GTK_PANED(parent), view) :
-      gtk_paned_add2(GTK_PANED(parent), view);
+    !gtk_paned_get_child1(GTK_PANED(parent)) ? gtk_paned_add1(GTK_PANED(parent), view) :
+                                               gtk_paned_add2(GTK_PANED(parent), view);
   else
     gtk_container_add(GTK_CONTAINER(parent), view);
-  //gtk_widget_show_all(parent);
+  // gtk_widget_show_all(parent);
   gtk_widget_grab_focus(GTK_WIDGET(view));
   g_object_unref(view), g_object_unref(other);
 #elif CURSES
@@ -1813,7 +1754,7 @@ static bool unsplit_view(Scintilla *view) {
  */
 static void close_lua(lua_State *L) {
   closing = true;
-  while (unsplit_view(focused_view)) ; // need space to fix compiler warning
+  while (unsplit_view(focused_view)) {}
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
   for (size_t i = 1; i <= lua_rawlen(L, -1); i++)
     lua_rawgeti(L, -1, i), delete_buffer(lua_todoc(L, -1)), lua_pop(L, 1);
@@ -1842,7 +1783,7 @@ static bool exiting(GtkWidget *_, GdkEventAny *__, void *L) {
  * Signal for opening files from macOS.
  * Generates an 'appleevent_odoc' event for each document sent.
  */
-static bool open_file(GtkosxApplication*_, char *path, void *L) {
+static bool open_file(GtkosxApplication *_, char *path, void *L) {
   return (emit(L, "appleevent_odoc", LUA_TSTRING, path, -1), true);
 }
 
@@ -1850,9 +1791,7 @@ static bool open_file(GtkosxApplication*_, char *path, void *L) {
  * Signal for block terminating Textadept from macOS.
  * Generates a 'quit' event.
  */
-static bool terminating(GtkosxApplication *_, void *L) {
-  return emit(L, "quit", -1);
-}
+static bool terminating(GtkosxApplication *_, void *L) { return emit(L, "quit", -1); }
 
 /**
  * Signal for terminating Textadept from macOS.
@@ -1869,13 +1808,12 @@ static void terminate(GtkosxApplication *_, void *L) {
 
 /**
  * Signal for switching buffer tabs.
- * When triggered by the user (i.e. not synchronizing the tabbar), switches to
- * the specified buffer.
+ * When triggered by the user (i.e. not synchronizing the tabbar), switches to the specified
+ * buffer.
  * Generates 'buffer_before_switch' and 'buffer_after_switch' events.
  */
 static void tab_changed(GtkNotebook *_, GtkWidget *__, int tab_num, void *L) {
-  if (!tab_sync)
-    emit(L, "tab_clicked", LUA_TNUMBER, tab_num + 1, LUA_TNUMBER, 1, -1);
+  if (!tab_sync) emit(L, "tab_clicked", LUA_TNUMBER, tab_num + 1, LUA_TNUMBER, 1, -1);
 }
 #endif // if GTK
 
@@ -1891,32 +1829,27 @@ static void emit_notification(lua_State *L, SCNotification *n) {
   lua_pushinteger(L, n->position + 1), lua_setfield(L, -2, "position");
   lua_pushinteger(L, n->ch), lua_setfield(L, -2, "ch");
   lua_pushinteger(L, n->modifiers), lua_setfield(L, -2, "modifiers");
-  lua_pushinteger(L, n->modificationType),
-    lua_setfield(L, -2, "modification_type");
+  lua_pushinteger(L, n->modificationType), lua_setfield(L, -2, "modification_type");
   if (n->text)
     lua_pushlstring(L, n->text, n->length ? n->length : strlen(n->text)),
       lua_setfield(L, -2, "text");
   lua_pushinteger(L, n->length), lua_setfield(L, -2, "length");
   lua_pushinteger(L, n->linesAdded), lua_setfield(L, -2, "lines_added");
-  //lua_pushinteger(L, n->message), lua_setfield(L, -2, "message");
-  //lua_pushinteger(L, n->wParam), lua_setfield(L, -2, "wParam");
-  //lua_pushinteger(L, n->lParam), lua_setfield(L, -2, "lParam");
+  // lua_pushinteger(L, n->message), lua_setfield(L, -2, "message");
+  // lua_pushinteger(L, n->wParam), lua_setfield(L, -2, "wParam");
+  // lua_pushinteger(L, n->lParam), lua_setfield(L, -2, "lParam");
   lua_pushinteger(L, n->line + 1), lua_setfield(L, -2, "line");
-  //lua_pushinteger(L, n->foldLevelNow), lua_setfield(L, -2, "fold_level_now");
-  //lua_pushinteger(L, n->foldLevelPrev),
-  //  lua_setfield(L, -2, "fold_level_prev");
+  // lua_pushinteger(L, n->foldLevelNow), lua_setfield(L, -2, "fold_level_now");
+  // lua_pushinteger(L, n->foldLevelPrev), lua_setfield(L, -2, "fold_level_prev");
   lua_pushinteger(L, n->margin + 1), lua_setfield(L, -2, "margin");
   lua_pushinteger(L, n->listType), lua_setfield(L, -2, "list_type");
   lua_pushinteger(L, n->x), lua_setfield(L, -2, "x");
   lua_pushinteger(L, n->y), lua_setfield(L, -2, "y");
-  //lua_pushinteger(L, n->token), lua_setfield(L, -2, "token");
-  //lua_pushinteger(L, n->annotationLinesAdded),
-  //  lua_setfield(L, -2, "annotation_lines_added");
+  // lua_pushinteger(L, n->token), lua_setfield(L, -2, "token");
+  // lua_pushinteger(L, n->annotationLinesAdded), lua_setfield(L, -2, "annotation_lines_added");
   lua_pushinteger(L, n->updated), lua_setfield(L, -2, "updated");
-  //lua_pushinteger(L, n->listCompletionMethod),
-  //  lua_setfield(L, -2, "list_completion_method");
-  //lua_pushinteger(L, n->characterSource),
-  //  lua_setfield(L, -2, "character_source");
+  // lua_pushinteger(L, n->listCompletionMethod), lua_setfield(L, -2, "list_completion_method");
+  // lua_pushinteger(L, n->characterSource), lua_setfield(L, -2, "character_source");
   emit(L, "SCN", LUA_TTABLE, luaL_ref(L, LUA_REGISTRYINDEX), -1);
 }
 
@@ -1924,7 +1857,7 @@ static void emit_notification(lua_State *L, SCNotification *n) {
 static void notified(Scintilla *view, int _, SCNotification *n, void *L) {
   if (view == command_entry) {
     if (n->nmhdr.code == SCN_MODIFIED &&
-        (n->modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)))
+      (n->modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)))
       emit(L, "command_text_changed", -1);
   } else if (view == focused_view || n->nmhdr.code == SCN_URIDROPPED) {
     if (view != focused_view) view_focused(view, L);
@@ -1939,13 +1872,10 @@ static void notified(Scintilla *view, int _, SCNotification *n, void *L) {
  * Note: cannot use bool return value due to modern i686-w64-mingw32-gcc issue.
  */
 static int keypress(GtkWidget *_, GdkEventKey *event, void *L) {
-  return emit(
-    L, "keypress", LUA_TNUMBER, event->keyval,
-    LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
-    LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK,
-    LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
-    LUA_TBOOLEAN, event->state & GDK_META_MASK,
-    LUA_TBOOLEAN, event->state & GDK_LOCK_MASK, -1);
+  return emit(L, "keypress", LUA_TNUMBER, event->keyval, LUA_TBOOLEAN,
+    event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
+    event->state & GDK_MOD1_MASK, LUA_TBOOLEAN, event->state & GDK_META_MASK, LUA_TBOOLEAN,
+    event->state & GDK_LOCK_MASK, -1);
 }
 
 /** Signal for a Scintilla mouse click. */
@@ -1960,13 +1890,12 @@ static int goto_doc_lua(lua_State *L) {
   Scintilla *view = luaL_checkview(L, 1), *prev_view = focused_view;
   bool relative = lua_isnumber(L, 2);
   if (!relative) {
-    lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_pushvalue(L, 2),
-      lua_gettable(L, -2), lua_replace(L, 2);
-    luaL_argcheck(
-      L, lua_isnumber(L, 2), 2, "Buffer or relative index expected");
+    lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_pushvalue(L, 2), lua_gettable(L, -2),
+      lua_replace(L, 2);
+    luaL_argcheck(L, lua_isnumber(L, 2), 2, "Buffer or relative index expected");
   }
-  // If the indexed view is not currently focused, temporarily focus it so
-  // `_G.buffer` in handlers is accurate.
+  // If the indexed view is not currently focused, temporarily focus it so `_G.buffer` in
+  // handlers is accurate.
   if (view != focused_view) focus_view(view);
   if (!initing) emit(L, "buffer_before_switch", -1);
   goto_doc(L, view, lua_tointeger(L, 2), relative);
@@ -1995,9 +1924,7 @@ static Pane *new_pane(Scintilla *view) {
  * @param view2 The second Scintilla view to place in the split view.
  * @see split_view
  */
-static bool split_pane(
-  Pane *pane, bool vertical, Scintilla *view, Scintilla *view2)
-{
+static bool split_pane(Pane *pane, bool vertical, Scintilla *view, Scintilla *view2) {
   if (pane->type != SINGLE)
     return split_pane(pane->child1, vertical, view, view2) ||
       split_pane(pane->child2, vertical, view, view2);
@@ -2009,15 +1936,13 @@ static bool split_pane(
   if (vertical) {
     pane->split_size = pane->cols / 2;
     resize_pane(child1, pane->rows, pane->split_size, pane->y, pane->x);
-    resize_pane(
-      child2, pane->rows, pane->cols - pane->split_size - 1, pane->y,
+    resize_pane(child2, pane->rows, pane->cols - pane->split_size - 1, pane->y,
       pane->x + pane->split_size + 1);
     pane->win = newwin(pane->rows, 1, pane->y, pane->x + pane->split_size);
   } else {
     pane->split_size = pane->rows / 2;
     resize_pane(child1, pane->split_size, pane->cols, pane->y, pane->x);
-    resize_pane(
-      child2, pane->rows - pane->split_size - 1, pane->cols,
+    resize_pane(child2, pane->rows - pane->split_size - 1, pane->cols,
       pane->y + pane->split_size + 1, pane->x);
     pane->win = newwin(1, pane->cols, pane->y + pane->split_size, pane->x);
   }
@@ -2029,15 +1954,13 @@ static bool split_pane(
  * Splits the given Scintilla view into two views.
  * The new view shows the same document as the original one.
  * @param view The Scintilla view to split.
- * @param vertical Flag indicating whether to split the view vertically or
- *   horozontally.
+ * @param vertical Flag indicating whether to split the view vertically or horozontally.
  */
 static void split_view(Scintilla *view, bool vertical) {
   sptr_t curdoc = SS(view, SCI_GETDOCPOINTER, 0, 0);
   int first_line = SS(view, SCI_GETFIRSTVISIBLELINE, 0, 0),
-    x_offset = SS(view, SCI_GETXOFFSET, 0, 0),
-    current_pos = SS(view, SCI_GETCURRENTPOS, 0, 0),
-    anchor = SS(view, SCI_GETANCHOR, 0, 0);
+      x_offset = SS(view, SCI_GETXOFFSET, 0, 0), current_pos = SS(view, SCI_GETCURRENTPOS, 0, 0),
+      anchor = SS(view, SCI_GETANCHOR, 0, 0);
 
 #if GTK
   GtkAllocation allocation;
@@ -2064,8 +1987,7 @@ static void split_view(Scintilla *view, bool vertical) {
   focus_view(view2);
 
   SS(view2, SCI_SETSEL, anchor, current_pos);
-  SS(view2, SCI_LINESCROLL, first_line - SS(
-    view2, SCI_GETFIRSTVISIBLELINE, 0, 0), 0);
+  SS(view2, SCI_LINESCROLL, first_line - SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0), 0);
   SS(view2, SCI_SETXOFFSET, x_offset, 0);
 }
 
@@ -2105,23 +2027,22 @@ static int view_index(lua_State *L) {
     if (GTK_IS_PANED(p = gtk_widget_get_parent(lua_toview(L, 1))))
       lua_pushinteger(L, gtk_paned_get_position(GTK_PANED(p)));
 #elif CURSES
-    if ((p = get_parent_pane(pane, lua_toview(L, 1))))
-      lua_pushinteger(L, p->split_size);
+    if ((p = get_parent_pane(pane, lua_toview(L, 1)))) lua_pushinteger(L, p->split_size);
 #endif
-  } else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions"),
-             lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
+  } else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions"), lua_pushvalue(L, 2),
+    lua_rawget(L, -2) == LUA_TTABLE)
     // If the key is a Scintilla function, return a callable closure.
     lua_pushcclosure(L, call_scintilla_lua, 1);
-  else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"),
-           lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
-    // If the key is a Scintilla property, determine if it is an indexible one
-    // or not. If so, return a table with the appropriate metatable; otherwise
-    // call Scintilla to get the property's value.
+  else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"), lua_pushvalue(L, 2),
+    lua_rawget(L, -2) == LUA_TTABLE)
+    // If the key is a Scintilla property, determine if it is an indexible one or not. If so,
+    // return a table with the appropriate metatable; otherwise call Scintilla to get the
+    // property's value.
     get_property(L);
-  else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants"),
-           lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TNUMBER); // pushed
+  else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants"), lua_pushvalue(L, 2),
+    lua_rawget(L, -2) == LUA_TNUMBER) { // pushed
     // If the key is a Scintilla constant, return its value.
-  else
+  } else
     lua_settop(L, 2), lua_rawget(L, 1);
   return 1;
 }
@@ -2138,10 +2059,10 @@ static int view_newindex(lua_State *L) {
 #elif CURSES
     if ((p = get_parent_pane(pane, lua_toview(L, 1))))
       p->split_size = fmax(luaL_checkinteger(L, 3), 0),
-        resize_pane(p, p->rows, p->cols, p->y, p->x);
+      resize_pane(p, p->rows, p->cols, p->y, p->x);
 #endif
-  } else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"),
-             lua_pushvalue(L, 2), lua_rawget(L, -2) == LUA_TTABLE)
+  } else if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"), lua_pushvalue(L, 2),
+    lua_rawget(L, -2) == LUA_TTABLE)
     set_property(L);
   else
     lua_settop(L, 3), lua_rawset(L, 1);
@@ -2162,8 +2083,7 @@ static void add_view(lua_State *L, Scintilla *view) {
   lua_pushcfunction(L, unsplit_view_lua), lua_setfield(L, -2, "unsplit");
   set_metatable(L, -1, "ta_view", view_index, view_newindex);
   // t[widget_pointer] = view, t[#t + 1] = view, t[view] = #t
-  lua_getfield(L, -1, "widget_pointer"), lua_pushvalue(L, -2),
-    lua_settable(L, -4);
+  lua_getfield(L, -1, "widget_pointer"), lua_pushvalue(L, -2), lua_settable(L, -4);
   lua_pushvalue(L, -1), lua_rawseti(L, -3, lua_rawlen(L, -3) + 1);
   lua_pushinteger(L, lua_rawlen(L, -2)), lua_settable(L, -3);
   lua_pop(L, 1); // views
@@ -2172,8 +2092,8 @@ static void add_view(lua_State *L, Scintilla *view) {
 /**
  * Creates a new Scintilla view.
  * Generates a 'view_new' event.
- * @param doc The document to load in the new view. Almost never zero, except
- *   for the first Scintilla view created, in which there is no doc pointer.
+ * @param doc The document to load in the new view. Almost never zero, except for the first
+ *   Scintilla view created, in which there is no doc pointer.
  * @return Scintilla view
  * @see add_view
  */
@@ -2208,16 +2128,13 @@ static bool find_keypress(GtkWidget *widget, GdkEventKey *event, void *L) {
 }
 
 /**
- * Creates and returns for the findbox a new GtkComboBoxEntry, storing its
- * GtkLabel, GtkEntry, and GtkListStore in the given pointers.
+ * Creates and returns for the findbox a new GtkComboBoxEntry, storing its GtkLabel, GtkEntry,
+ * and GtkListStore in the given pointers.
  */
-static GtkWidget *new_combo(
-  GtkWidget **label, GtkWidget **entry, ListStore **history)
-{
+static GtkWidget *new_combo(GtkWidget **label, GtkWidget **entry, ListStore **history) {
   *label = gtk_label_new(""); // localized label text set later via Lua
   *history = gtk_list_store_new(1, G_TYPE_STRING);
-  GtkWidget *combo = gtk_combo_box_entry_new_with_model(
-    GTK_TREE_MODEL(*history), 0);
+  GtkWidget *combo = gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(*history), 0);
   g_object_unref(*history);
   gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(combo), 0);
   gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(combo), false);
@@ -2234,9 +2151,7 @@ static GtkWidget *new_combo(
 }
 
 /** Signal for a Find entry keypress. */
-static void find_changed(GtkEditable *_, void *L) {
-  emit(L, "find_text_changed", -1);
-}
+static void find_changed(GtkEditable *_, void *L) { emit(L, "find_text_changed", -1); }
 
 /** Creates and returns a new button for the findbox. */
 static GtkWidget *new_button() {
@@ -2258,12 +2173,11 @@ static GtkWidget *new_findbox() {
   findbox = gtk_table_new(2, 6, false);
 
   GtkWidget *find_combo = new_combo(&find_label, &find_entry, &find_history),
-    *replace_combo = new_combo(&repl_label, &repl_entry, &repl_history);
-  g_signal_connect(
-    GTK_EDITABLE(find_entry), "changed", G_CALLBACK(find_changed), lua);
+            *replace_combo = new_combo(&repl_label, &repl_entry, &repl_history);
+  g_signal_connect(GTK_EDITABLE(find_entry), "changed", G_CALLBACK(find_changed), lua);
   find_next = new_button(), find_prev = new_button(), replace = new_button(),
-    replace_all = new_button(), match_case = new_option(),
-    whole_word = new_option(), regex = new_option(), in_files = new_option();
+  replace_all = new_button(), match_case = new_option(), whole_word = new_option(),
+  regex = new_option(), in_files = new_option();
 
   GtkTable *table = GTK_TABLE(findbox);
   int expand = GTK_FILL | GTK_EXPAND, shrink = GTK_FILL | GTK_SHRINK;
@@ -2285,8 +2199,8 @@ static GtkWidget *new_findbox() {
 
 /**
  * Signal for window or command entry focus loss.
- * Emit "Escape" key for the command entry on focus lost unless the window is
- * losing focus or the application is quitting.
+ * Emit "Escape" key for the command entry on focus lost unless the window is losing focus or
+ * the application is quitting.
  */
 static bool focus_lost(GtkWidget *widget, GdkEvent *_, void *L) {
   if (widget == window) {
@@ -2300,9 +2214,8 @@ static bool focus_lost(GtkWidget *widget, GdkEvent *_, void *L) {
 
 /**
  * Creates the Textadept window.
- * The window contains a menubar, frame for Scintilla views, hidden find box,
- * hidden command entry, and two status bars: one for notifications and the
- * other for buffer status.
+ * The window contains a menubar, frame for Scintilla views, hidden find box, hidden command
+ * entry, and two status bars: one for notifications and the other for buffer status.
  */
 static void new_window() {
 #if GTK
@@ -2324,18 +2237,15 @@ static void new_window() {
   g_signal_connect(window, "delete-event", G_CALLBACK(exiting), lua);
   g_signal_connect(window, "focus-in-event", G_CALLBACK(window_focused), lua);
   g_signal_connect(window, "focus-out-event", G_CALLBACK(focus_lost), lua);
-  g_signal_connect(
-    window, "key-press-event", G_CALLBACK(window_keypress), NULL);
+  g_signal_connect(window, "key-press-event", G_CALLBACK(window_keypress), NULL);
   gtdialog_set_parent(GTK_WINDOW(window));
   accel = gtk_accel_group_new();
 
 #if (__APPLE__ && !CURSES)
   gtkosx_application_set_use_quartz_accelerators(osxapp, false);
   g_signal_connect(osxapp, "NSApplicationOpenFile", G_CALLBACK(open_file), lua);
-  g_signal_connect(
-    osxapp, "NSApplicationBlockTermination", G_CALLBACK(terminating), lua);
-  g_signal_connect(
-    osxapp, "NSApplicationWillTerminate", G_CALLBACK(terminate), lua);
+  g_signal_connect(osxapp, "NSApplicationBlockTermination", G_CALLBACK(terminating), lua);
+  g_signal_connect(osxapp, "NSApplicationWillTerminate", G_CALLBACK(terminate), lua);
 #endif
 
   GtkWidget *vbox = gtk_vbox_new(false, 0);
@@ -2368,11 +2278,9 @@ static void new_window() {
   gtk_widget_set_size_request(command_entry, 1, 1);
   g_signal_connect(command_entry, SCINTILLA_NOTIFY, G_CALLBACK(notified), lua);
   g_signal_connect(command_entry, "key-press-event", G_CALLBACK(keypress), lua);
-  g_signal_connect(
-    command_entry, "focus-out-event", G_CALLBACK(focus_lost), lua);
+  g_signal_connect(command_entry, "focus-out-event", G_CALLBACK(focus_lost), lua);
   gtk_paned_add2(GTK_PANED(paned), command_entry);
-  gtk_container_child_set(
-    GTK_CONTAINER(paned), command_entry, "shrink", false, NULL);
+  gtk_container_child_set(GTK_CONTAINER(paned), command_entry, "shrink", false, NULL);
 
   GtkWidget *hboxs = gtk_hbox_new(false, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hboxs, false, false, 1);
@@ -2384,8 +2292,8 @@ static void new_window() {
   gtk_misc_set_alignment(GTK_MISC(statusbar[1]), 1, 0);
 
   gtk_widget_show_all(window);
-  gtk_widget_hide(menubar), gtk_widget_hide(tabbar),
-    gtk_widget_hide(findbox), gtk_widget_hide(command_entry); // hide initially
+  gtk_widget_hide(menubar), gtk_widget_hide(tabbar), gtk_widget_hide(findbox),
+    gtk_widget_hide(command_entry); // hide initially
 
   dummy_view = scintilla_new();
 #elif CURSES
@@ -2405,7 +2313,8 @@ static bool read_pipe(GIOChannel *source, GIOCondition _, HANDLE pipe) {
   char *buf;
   size_t len;
   g_io_channel_read_to_end(source, &buf, &len, NULL);
-  for (char *p = buf; p < buf + len - 2; p++) if (!*p) *p = '\n'; // '\0\0' end
+  for (char *p = buf; p < buf + len - 2; p++)
+    if (!*p) *p = '\n'; // '\0\0' end
   process(NULL, NULL, buf);
   return (g_free(buf), DisconnectNamedPipe(pipe), false);
 }
@@ -2414,10 +2323,8 @@ static bool read_pipe(GIOChannel *source, GIOCondition _, HANDLE pipe) {
 static DWORD WINAPI pipe_listener(HANDLE pipe) {
   while (true)
     if (pipe != INVALID_HANDLE_VALUE && ConnectNamedPipe(pipe, NULL)) {
-      GIOChannel *channel = g_io_channel_win32_new_fd(
-        _open_osfhandle((intptr_t)pipe, _O_RDONLY));
-      g_io_add_watch(channel, G_IO_IN, read_pipe, pipe),
-        g_io_channel_unref(channel);
+      GIOChannel *channel = g_io_channel_win32_new_fd(_open_osfhandle((intptr_t)pipe, _O_RDONLY));
+      g_io_add_watch(channel, G_IO_IN, read_pipe, pipe), g_io_channel_unref(channel);
     }
   return 0;
 }
@@ -2439,8 +2346,7 @@ int g_application_run(GApplication *_, int __, char **___) {
 #if !_WIN32
 /**
  * Signal for a terminal suspend, continue, and resize.
- * libtermkey has been patched to enable suspend as well as enable/disable mouse
- * mode (1002).
+ * libtermkey has been patched to enable suspend as well as enable/disable mouse mode (1002).
  */
 static void signalled(int signal) {
   if (signal != SIGTSTP) {
@@ -2464,8 +2370,7 @@ static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
   bool force = false;
   struct timeval timeout = {0, termkey_get_waittime(tk)};
   while (true) {
-    TermKeyResult res = !force ?
-      termkey_getkey(tk, key) : termkey_getkey_force(tk, key);
+    TermKeyResult res = !force ? termkey_getkey(tk, key) : termkey_getkey_force(tk, key);
     if (res != TERMKEY_RES_AGAIN && res != TERMKEY_RES_NONE) return res;
     if (res == TERMKEY_RES_AGAIN) force = true;
     // Wait for input.
@@ -2490,10 +2395,8 @@ static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
 
 /**
  * Runs Textadept.
- * Initializes the Lua state, creates the user interface, and then runs
- * `core/init.lua` followed by `init.lua`.
- * On Windows, creates a pipe and thread for communication with remote
- * instances.
+ * Initializes the Lua state, creates the user interface, and then runs `core/init.lua` followed
+ * by `init.lua`. On Windows, creates a pipe and thread for communication with remote instances.
  * @param argc The number of command line params.
  * @param argv The array of command line params.
  */
@@ -2554,36 +2457,34 @@ int main(int argc, char **argv) {
   if (!registered || !g_application_get_is_remote(app) || force) {
 #endif
 
-  setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
-  if (lua = luaL_newstate(), !init_lua(lua, argc, argv, false)) return 1;
-  initing = true, new_window(), run_file(lua, "init.lua"), initing = false;
-  emit(lua, "buffer_new", -1), emit(lua, "view_new", -1); // first ones
-  lua_pushdoc(lua, SS(command_entry, SCI_GETDOCPOINTER, 0, 0)),
-    lua_setglobal(lua, "buffer");
-  emit(lua, "buffer_new", -1), emit(lua, "view_new", -1); // command entry
-  lua_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)),
-    lua_setglobal(lua, "buffer");
-  emit(lua, "initialized", -1); // ready
+    setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
+    if (lua = luaL_newstate(), !init_lua(lua, argc, argv, false)) return 1;
+    initing = true, new_window(), run_file(lua, "init.lua"), initing = false;
+    emit(lua, "buffer_new", -1), emit(lua, "view_new", -1); // first ones
+    lua_pushdoc(lua, SS(command_entry, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
+    emit(lua, "buffer_new", -1), emit(lua, "view_new", -1); // command entry
+    lua_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
+    emit(lua, "initialized", -1); // ready
 #if (__APPLE__ && !CURSES)
-  gtkosx_application_ready(osxapp);
+    gtkosx_application_ready(osxapp);
 #endif
 
 #if GTK
     gtk_main();
-  } else g_application_run(app, argc, argv);
+  } else
+    g_application_run(app, argc, argv);
   g_object_unref(app);
 #elif CURSES
   refresh_all();
 
 #if !_WIN32
   freopen("/dev/null", "w", stderr); // redirect stderr
-  // Set terminal suspend, resume, and resize handlers, preventing any signals
-  // in them from causing interrupts.
+  // Set terminal suspend, resume, and resize handlers, preventing any signals in them from
+  // causing interrupts.
   struct sigaction act;
   memset(&act, 0, sizeof(struct sigaction));
   act.sa_handler = signalled, sigfillset(&act.sa_mask);
-  sigaction(SIGTSTP, &act, NULL), sigaction(SIGCONT, &act, NULL),
-    sigaction(SIGWINCH, &act, NULL);
+  sigaction(SIGTSTP, &act, NULL), sigaction(SIGCONT, &act, NULL), sigaction(SIGWINCH, &act, NULL);
 #else
   freopen("NUL", "w", stdout), freopen("NUL", "w", stderr); // redirect
 #endif
@@ -2592,15 +2493,17 @@ int main(int argc, char **argv) {
   int ch = 0, event = 0, button = 0, y = 0, x = 0, millis = 0;
   TermKeyResult res;
   TermKeyKey key;
+  // clang-format off
   int keysyms[] = {0,SCK_BACK,SCK_TAB,SCK_RETURN,SCK_ESCAPE,0,SCK_BACK,SCK_UP,SCK_DOWN,SCK_LEFT,SCK_RIGHT,0,0,SCK_INSERT,SCK_DELETE,0,SCK_PRIOR,SCK_NEXT,SCK_HOME,SCK_END};
+  // clang-format on
   while ((ch = 0, res = textadept_waitkey(ta_tk, &key)) != TERMKEY_RES_EOF) {
     if (res == TERMKEY_RES_ERROR) continue;
     if (key.type == TERMKEY_TYPE_UNICODE)
       ch = key.code.codepoint;
     else if (key.type == TERMKEY_TYPE_FUNCTION)
       ch = 0xFFBD + key.code.number; // use GDK keysym values for now
-    else if (key.type == TERMKEY_TYPE_KEYSYM &&
-             key.code.sym >= 0 && key.code.sym <= TERMKEY_SYM_END)
+    else if (key.type == TERMKEY_TYPE_KEYSYM && key.code.sym >= 0 &&
+      key.code.sym <= TERMKEY_SYM_END)
       ch = keysyms[key.code.sym];
     else if (key.type == TERMKEY_TYPE_UNKNOWN_CSI) {
       long args[16];
@@ -2608,13 +2511,10 @@ int main(int argc, char **argv) {
       unsigned long cmd;
       termkey_interpret_csi(ta_tk, &key, args, &nargs, &cmd);
       lua_newtable(lua);
-      for (size_t i = 0; i < nargs; i++)
-        lua_pushinteger(lua, args[i]), lua_rawseti(lua, -2, i + 1);
-      emit(lua, "csi", LUA_TNUMBER, cmd, LUA_TTABLE, luaL_ref(
-        lua, LUA_REGISTRYINDEX), -1);
+      for (size_t i = 0; i < nargs; i++) lua_pushinteger(lua, args[i]), lua_rawseti(lua, -2, i + 1);
+      emit(lua, "csi", LUA_TNUMBER, cmd, LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
     } else if (key.type == TERMKEY_TYPE_MOUSE) {
-      termkey_interpret_mouse(
-        ta_tk, &key, (TermKeyMouseEvent*)&event, &button, &y, &x), y--, x--;
+      termkey_interpret_mouse(ta_tk, &key, (TermKeyMouseEvent *)&event, &button, &y, &x), y--, x--;
 #if !_WIN32
       struct timeval time = {0, 0};
       gettimeofday(&time, NULL);
@@ -2626,23 +2526,20 @@ int main(int argc, char **argv) {
       ticks.LowPart = time.dwLowDateTime, ticks.HighPart = time.dwHighDateTime;
       millis = ticks.QuadPart / 10000; // each tick is a 100-nanosecond interval
 #endif
-    } else continue; // skip unknown types
+    } else
+      continue; // skip unknown types
     bool shift = key.modifiers & TERMKEY_KEYMOD_SHIFT;
     bool ctrl = key.modifiers & TERMKEY_KEYMOD_CTRL;
     bool alt = key.modifiers & TERMKEY_KEYMOD_ALT;
-    if (ch && !emit(
-          lua, "keypress", LUA_TNUMBER, ch, LUA_TBOOLEAN, shift,
-          LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
+    if (ch &&
+      !emit(lua, "keypress", LUA_TNUMBER, ch, LUA_TBOOLEAN, shift, LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN,
+        alt, -1))
       scintilla_send_key(view, ch, shift, ctrl, alt);
-    else if (!ch && !scintilla_send_mouse(
-               view, event, millis, button, y, x, shift, ctrl, alt) &&
-             !emit(
-               lua, "mouse", LUA_TNUMBER, event, LUA_TNUMBER, button,
-               LUA_TNUMBER, y, LUA_TNUMBER, x, LUA_TBOOLEAN, shift,
-               LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
+    else if (!ch && !scintilla_send_mouse(view, event, millis, button, y, x, shift, ctrl, alt) &&
+      !emit(lua, "mouse", LUA_TNUMBER, event, LUA_TNUMBER, button, LUA_TNUMBER, y, LUA_TNUMBER, x,
+        LUA_TBOOLEAN, shift, LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
       // Try again with possibly another view.
-      scintilla_send_mouse(
-        focused_view, event, millis, button, y, x, shift, ctrl, alt);
+      scintilla_send_mouse(focused_view, event, millis, button, y, x, shift, ctrl, alt);
     if (quitting) {
       close_lua(lua);
       // Free some memory.

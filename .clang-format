@@ -1,0 +1,13 @@
+BasedOnStyle: LLVM
+AlignAfterOpenBracket: DontAlign
+AlignEscapedNewlines: DontAlign
+AlignOperands: DontAlign
+AlignTrailingComments: false
+AllowShortBlocksOnASingleLine: Always
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+BreakBeforeTernaryOperators: false
+ColumnLimit: 100
+ContinuationIndentWidth: 2
+SortIncludes: false

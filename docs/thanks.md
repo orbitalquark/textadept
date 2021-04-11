@@ -1,7 +1,7 @@
 ## Thanks
 
-Thank you everyone for your contributions and feedback. They have helped make
-Textadept the amazing editor that it is today.
+Thank you everyone for your contributions and feedback. They have helped make Textadept the
+amazing editor that it is today.
 
 ### Sponsors
 
@@ -11,15 +11,13 @@ Textadept the amazing editor that it is today.
 
 #### Become a Sponsor
 
-You, your company, or your organization may sponsor a feature in Textadept. The
-feature will be included in subsequent releases of Textadept and will also be
-available under Textadept's open source license. You will be credited on this
-page with an optional link to your website, and will receive a proper receipt or
-invoice for recording and/or tax-related purposes.
+You, your company, or your organization may sponsor a feature in Textadept. The feature will
+be included in subsequent releases of Textadept and will also be available under Textadept's
+open source license. You will be credited on this page with an optional link to your website,
+and will receive a proper receipt or invoice for recording and/or tax-related purposes.
 
-Please send any inquiries by e-mail (see README.md). All correspondence is kept
-strictly confidential. You may also contact me for private contract work related
-to Textadept.
+Please send any inquiries by e-mail (see README.md). All correspondence is kept strictly
+confidential. You may also contact me for private contract work related to Textadept.
 
 ### Code and Documentation Contributors
 
@@ -65,5 +63,4 @@ to Textadept.
 * Vais Salikhov
 * Vladimir Lomov
 
-If I have left off your name, please contact me (see README.md). I am very sorry
-about that.
+If I have left off your name, please contact me (see README.md). I am very sorry about that.

@@ -2,8 +2,7 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
-**Please [donate][] or purchase the [book][] to help fund continuous
-development.**
+**Please [donate][] or purchase the [book][] to help fund continuous development.**
 
 [donate]: https://gum.co/textadept
 [book]: book.html
@@ -23,8 +22,7 @@ Bugfixes:
 * Fixed custom theme's overriding of default theme's colors.
 * Do not mark GCC-style "note:" output as compile/run/build/test errors.
 * Modules: Fixed inability to handle large LSP notifications.
-* Modules: Prefer asynchronous LSP response reading on Windows in order to
-  prevent hanging.
+* Modules: Prefer asynchronous LSP response reading on Windows in order to prevent hanging.
 * Modules: Fixed bug where LSP is not notified of files opened during a session.
 * Modules: Fixed LSP startup errors if the LSP command is ultimately nil.
 * Modules: Fixed debugger status when paused.
@@ -33,12 +31,10 @@ Changes:
 
 * Added `ui.SHOW_ALL_TABS` option for `ui.tabs`.
 * Added support for TypeScript.
-* The terminal version now uses a native terminal cursor instead of an
-  artificially drawn one.
+* The terminal version now uses a native terminal cursor instead of an artificially drawn one.
 * Modules: Keep current line's scroll position when displaying LSP diagnostics.
 * Modules: Added option to turn off LSP diagnostic display completely.
-* Modules: Added `debugger.project_commands` for making project-specific
-  debugging easier.
+* Modules: Added `debugger.project_commands` for making project-specific debugging easier.
 * Updated to [Lua][] 5.4.2.
 * Updated to [Scintilla][] 5.0.0.
 
@@ -67,20 +63,19 @@ Bugfixes:
 * Fixed bug restoring view state in an intermediate buffer after closing one.
 * Fixed navigating back through history from a print buffer.
 * Modules: Fixed incorrect LSP mouse hover query position.
-* Modules: Only notify LSP servers about opened files after startup in order to
-  avoid overwhelming the connection.
+* Modules: Only notify LSP servers about opened files after startup in order to avoid overwhelming
+  the connection.
 
 Changes:
 
 * Save the current session prior to loading another one.
 * Do not show deleted files in recent file list.
 * Updated various lexers and fixed various small lexer issues.
-* Added support for Clojure, Elm, Fantom, fstab, Julia, Meson, Pony, Reason,
-  RouterOS, Spin, systemd, systemd-networkd, Xs, and Zig.
+* Added support for Clojure, Elm, Fantom, fstab, Julia, Meson, Pony, Reason, RouterOS, Spin,
+  systemd, systemd-networkd, Xs, and Zig.
 * Compile, run, and build command functions can also return environment tables.
 * Added [`textadept.run.test()`][] and [`textadept.run.test_commands`][].
-* `io.get_project_root()` accepts an optional flag for returning a submodule
-  root.
+* `io.get_project_root()` accepts an optional flag for returning a submodule root.
 
 [Textadept 11.1 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.1/textadept_11.1.win32.zip
 [Textadept 11.1 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.1/textadept_11.1.macOS.zip
@@ -91,8 +86,7 @@ Changes:
 
 ### 11.0 (01 Dec 2020)
 
-Please see the [10 to 11 migration guide][] for upgrading from Textadept 10 to
-Textadept 11.
+Please see the [10 to 11 migration guide][] for upgrading from Textadept 10 to Textadept 11.
 
 Download:
 
@@ -135,13 +129,13 @@ Bugfixes:
 * Fixed the listing of bookmarks for all open buffers.
 * Fixed "Enclose as XML Tags" with multiple selections.
 * Fixed clearing of "Replace" entry in Find & Replace pane on reset in the GUI.
-* Fixed lack of statusbar updating when setting options like buffer EOL mode,
-  indentation, and encoding from the menu.
+* Fixed lack of statusbar updating when setting options like buffer EOL mode, indentation,
+  and encoding from the menu.
 * Do not clear highlighting when searching inside the "Find in Files" buffer.
 * `textadept.editing.strip_trailing_spaces` should not apply to binary files.
 * Handle recursive symlinks in `lfs.walk()`.
-* Modules: Fixed Lua debugger crash when inspecting variables with very large
-  string representations.
+* Modules: Fixed Lua debugger crash when inspecting variables with very large string
+  representations.
 * Modules: Support non-UTF-8 spelling dictionaries.
 * Modules: Fixed YAML syntax checking notification.
 * Modules: Fixed various small issues with the C debugger.
@@ -150,13 +144,12 @@ Changes:
 
 * New [`textadept.history`][] module.
 * Updated German and Russian translations.
-* Added [`ui.command_entry.append_history()`][] for special command entry modes
-  that need to manually append history.
-* Implement `\U`, `\L`, `\u`, and `\l` case transformations in regex
-  replacements.
+* Added [`ui.command_entry.append_history()`][] for special command entry modes that need to
+  manually append history.
+* Implement `\U`, `\L`, `\u`, and `\l` case transformations in regex replacements.
 * Added [`textadept.run.set_arguments()`][].
-* Modules: Each module in the separate modules download has its own repository
-  now, but all are still bundled into a single archive for release.
+* Modules: Each module in the separate modules download has its own repository now, but all
+  are still bundled into a single archive for release.
 * Modules: Greatly improved the speed of file comparison.
 * Modules: Added ability to switch spelling dictionaries on the fly.
 * Updated to [CDK][] 5.0-20200923.
@@ -186,59 +179,52 @@ Bugfixes:
 * Fixed word left/right key bindings on macOS.
 * Fixed regression with showing "No results found" in searches.
 * Fixed regression in showing images in Lua command entry completions.
-* Fixed restoration of Replace entry text in various instances, such as after
-  "Find in Files" and "Replace All".
+* Fixed restoration of Replace entry text in various instances, such as after "Find in Files"
+  and "Replace All".
 * Prevent infinite loops when highlighting found text.
 * Fixed bugs in `events.KEYPRESS` handlers when command entry is active.
-* Fixed bug in "Find in Files" results highlighting when jumping to a result of
-  length 1.
+* Fixed bug in "Find in Files" results highlighting when jumping to a result of length 1.
 * Fixed emission of `events.UPDATE_UI` when resuming from terminal suspend.
-* Fixed initial query of `ui.find.find_text` and `ui.find.repl_text` in the
-  terminal version.
+* Fixed initial query of `ui.find.find_text` and `ui.find.repl_text` in the terminal version.
 * Fixed incorrect CSS key prefix incompatibility notice.
 * Fixed error reporting the number of zero-length find results.
 * Fixed call tip display in the terminal version.
 * Always refresh during incremental find in the terminal version.
 * Fixed `io.quick_open()` doing nothing when file limit was exceeded.
 * gtDialog: Fixed potential crash when canceling a running progressbar dialog.
-* Scintilla: Fixed position of marker symbols for `view.MARGIN_RTEXT` which were
-  being moved based on width of text.
+* Scintilla: Fixed position of marker symbols for `view.MARGIN_RTEXT` which were being moved
+  based on width of text.
 * Scintilla: Fixed hover indicator appearance when moving out of view.
-* Scintilla: Fixed display of `buffer.INDIC_TEXTFORE` and gradient indicators on
-  hover.
+* Scintilla: Fixed display of `buffer.INDIC_TEXTFORE` and gradient indicators on hover.
 
 Changes:
 
-* Rewrote manual and updated lots of other documentation and the documentation
-  generation pipeline.
+* Rewrote manual and updated lots of other documentation and the documentation generation pipeline.
 * Prefer passing an environment table to `os.spawn()`.
 * Updated find & replace key bindings.
 * Use comma-separated patterns in find & replace pane's "Filter" field.
 * Removed "View EOL" menu item, key binding, and buffer setting.
 * Accept a directory as a command line argument.
 * Save the current working directory to session files.
-* "View > Toggle Fold" toggles folding for the current block, regardless of
-  line.
+* "View > Toggle Fold" toggles folding for the current block, regardless of line.
 * Recognize Fossil projects.
 * Added [`textadept.editing.auto_enclose()`][] for auto-enclosing selected text.
 * Show "Match X/Y" in statusbar when searching for text.
 * Added [`ui.command_entry.active`][].
 * Improved handling of print buffers and splits.
-* Added "Edit > Preferences" menu item and key binding for opening
-  *~/.textadept/init.lua*.
+* Added "Edit > Preferences" menu item and key binding for opening *~/.textadept/init.lua*.
 * Disable `ui.find.highlight_all_matches` by default.
-* GCC 7.1+ is now required for building, added support for
-  [building with Docker][], and dropped automated Linux i386 builds.
+* GCC 7.1+ is now required for building, added support for [building with Docker][], and dropped
+  automated Linux i386 builds.
 * Added [`events.FIND_RESULT_FOUND`][].
 * Added [`ui.find.active`][] and prevent word highlighting when searching.
 * Added support for jq language.
 * Record directory in "Find in Files" searches.
 * Added `ui.update()`, mainly for unit tests.
-* Added [`events.FILE_BEFORE_RELOAD`][] and [`events.FILE_AFTER_RELOAD`][]
-  events, and save/restore bookmarks.
+* Added [`events.FILE_BEFORE_RELOAD`][] and [`events.FILE_AFTER_RELOAD`][] events, and
+  save/restore bookmarks.
 * Added [`events.COMMAND_TEXT_CHANGED`][] for when command entry text changes.
-* Added `_NOCOMPAT` option to disable temporary key shortcut compatibility
-  checking.
+* Added `_NOCOMPAT` option to disable temporary key shortcut compatibility checking.
 * Updated Spanish translation.
 * gtDialog: Improved responsiveness for huge lists (greater than 10,000 items).
 * Scintilla: Added [`view.multi_edge_column`][].
@@ -293,40 +279,37 @@ Changes:
 
 * Renamed `buffer:set_theme()` to [`view:set_theme()`][].
 * Replaced `lfs.dir_foreach()` with [`lfs.walk()`][] generator.
-* Renamed some buffer/view fields to use American English instead of Australian
-  English (e.g. "colour" to "color").
-* Changed key binding modifier keys from `c` (Ctrl), `m` (Meta/Command), `a`
-  (Alt), and `s` (Shift) to `ctrl`, `meta`/`cmd`, `alt`, and `shift`,
-  respectively.
+* Renamed some buffer/view fields to use American English instead of Australian English
+  (e.g. "colour" to "color").
+* Changed key binding modifier keys from `c` (Ctrl), `m` (Meta/Command), `a` (Alt), and `s`
+  (Shift) to `ctrl`, `meta`/`cmd`, `alt`, and `shift`, respectively.
 * Renamed `ui.bufstatusbar_text` to `ui.buffer_statusbar_text`.
 * Only save before compile/run if the buffer has been modified.
 * Added support for Fennel.
 * Added [`buffer:style_of_name()`][] as an analogue to `buffer:name_of_style()`.
-* When requiring modules, read from `LUA_PATH` and `LUA_CPATH` environment
-  variables instead of `TA_LUA_PATH` and `TA_LUA_CPATH`.
-* `ui.goto_file_found()` and `textadept.run.goto_error()` arguments are now
-  optional.
-* Moved Find Incremental into the Find & Replace pane (via
-  [`ui.find.incremental`][]), eliminated `ui.find.find_incremental()` and
-  `ui.find.find_incremental_keys`, and added [`events.FIND_TEXT_CHANGED`][].
-* Replaced `textadept.editing.highlight_word()` with
-  [`textadept.editing.highlight_words`][] auto-highlighting option.
+* When requiring modules, read from `LUA_PATH` and `LUA_CPATH` environment variables instead of
+  `TA_LUA_PATH` and `TA_LUA_CPATH`.
+* `ui.goto_file_found()` and `textadept.run.goto_error()` arguments are now optional.
+* Moved Find Incremental into the Find & Replace pane (via [`ui.find.incremental`][]),
+  eliminated `ui.find.find_incremental()` and `ui.find.find_incremental_keys`, and added
+  [`events.FIND_TEXT_CHANGED`][].
+* Replaced `textadept.editing.highlight_word()` with [`textadept.editing.highlight_words`][]
+  auto-highlighting option.
 * Find & Replace Pane now allows file filters to be specified for Find in Files.
 * Use monospaced font in Find & Replace Pane text entries.
 * Removed legacy "refresh syntax highlighting" feature.
 * Modules: Added documentation for generating ctags and API files.
 * Modules: Improved in-place editing of files during comparison.
-* Scintilla: added [`lexer.colors`][] and [`lexer.styles`][] tables for use in
-  themes. Also added new way to [define and reference styles][].
+* Scintilla: added [`lexer.colors`][] and [`lexer.styles`][] tables for use in themes. Also
+  added new way to [define and reference styles][].
 * Scintilla: Added [`lexer.fold*`][] options instead of setting view properties.
 * Scintilla: Optimized performance when opening huge files.
-* Scintilla: Added [`buffer.eol_annotation_text`][] analogue to
-  `buffer.annotation_text`, but for EOL annotations.
+* Scintilla: Added [`buffer.eol_annotation_text`][] analogue to `buffer.annotation_text`,
+  but for EOL annotations.
 * Scintilla: Display DEL control characters like other control characters.
 * Scintilla: Allow caret width to be up to 20 pixel.
 * Scintilla: Updated markdown and C lexers.
-* Scintilla: Fixed bug with GTK on recent Linux distributions where underscores
-  were invisible.
+* Scintilla: Fixed bug with GTK on recent Linux distributions where underscores were invisible.
 * Scintilla: Fixed GTK on Linux bug when pasting from closed application.
 * Updated to [Scintilla][] 3.21.0.
 
@@ -360,24 +343,21 @@ Download:
 
 Bugfixes:
 
-* Fixed some drive letter case issues on Windows resulting in duplicate open
-  files.
+* Fixed some drive letter case issues on Windows resulting in duplicate open files.
 * Fixed `os.spawn` exit callback and `spawn_proc:wait()` inconsistencies.
 * Restore prior key mode after running the command entry.
-* Fixed regression with word completion not respecting
-  `buffer.auto_c_ignore_case`.
+* Fixed regression with word completion not respecting `buffer.auto_c_ignore_case`.
 * Scintilla: Fixed display of windowed IME on Wayland.
 
 Changes:
 
-* Views can be used as buffers in most places, resulting in new
-  [API suggestions][] for `buffer` and `view`.
+* Views can be used as buffers in most places, resulting in new [API suggestions][] for `buffer`
+  and `view`.
 * Scintilla: Added [`buffer:marker_handle_from_line()`][] and
-  [`buffer:marker_number_from_line()`][] for iterating through the marker
-  handles and marker numbers on a line.
-* Scintilla: Deprecated `lexer.delimited_range()` and `lexer.nested_pair()` in
-  favor of [`lexer.range()`][], and added [`lexer.to_eol()`][] and
-  [`lexer.number`][].
+  [`buffer:marker_number_from_line()`][] for iterating through the marker handles and marker
+  numbers on a line.
+* Scintilla: Deprecated `lexer.delimited_range()` and `lexer.nested_pair()` in favor of
+  [`lexer.range()`][], and added [`lexer.to_eol()`][] and [`lexer.number`][].
 * Scintilla: Automatically scroll text while dragging.
 * Scintilla: Improved behavior of IME.
 * Updated to [Scintilla][] 3.20.0.
@@ -410,21 +390,17 @@ Bugfixes:
 * Fixed `--help` command line option.
 * Fixed Textadept API autocompletion and documentation on Windows.
 * Fixed bug that regards lexer-specific snippet files as global.
-* Fixed hangs on Win32 terminal version with
-  `textadept.editing.filter_through()`.
+* Fixed hangs on Win32 terminal version with `textadept.editing.filter_through()`.
 * Fixed issues with buffer z-order when switching between views.
-* Fixed accidental clipping of first character in a snippet under certain
-  circumstances.
+* Fixed accidental clipping of first character in a snippet under certain circumstances.
 * Fixed C autocompletion error with typerefs.
-* Fixed skipping of event handlers that come directly after one that was just
-  run, but disconnected.
-* Fixed bugs in the return values of `ui.dialogs.standard_dropdown` and `msgbox`
-  dialogs.
+* Fixed skipping of event handlers that come directly after one that was just run, but
+  disconnected.
+* Fixed bugs in the return values of `ui.dialogs.standard_dropdown` and `msgbox` dialogs.
 * Fixed `events.FILE_CHANGED` not emitting a filename.
 * Fixed bug with pipes in `textadept.editing.filter_through()`.
 * Fixed tab label display on Windows.
-* Fixed bug in syntax highlighting with PHP, Django, and other lexers that embed
-  themselves.
+* Fixed bug in syntax highlighting with PHP, Django, and other lexers that embed themselves.
 
 Changes:
 
@@ -432,46 +408,42 @@ Changes:
 * Support more Alt and Shift+Alt keys in the Win32 terminal version.
 * `textadept.editing.api_files` acts as if it already has lexer tables defined.
 * `textadept.run.goto_error()` wraps searches now.
-* Added snippet trigger autocompletion via
-  `textadept.editing.autocomplete('snippet')`.
+* Added snippet trigger autocompletion via `textadept.editing.autocomplete('snippet')`.
 * Improved Lua API documentation generator.
 * Localization keys in `_L` no longer contain GUI mnemonics ('\_').
 * `textadept.snippets` functions no longer have a '\_' prefix.
 * `--help` command line options are alphabetized.
 * The Lua command entry can now run any `view` functions by name (e.g. split).
-* Auto-pair, type-over, and auto-deletion of matching braces now works with
-  multiple selections.
-* Removed `textadept.file_types.lexers` table in favor of asking the LPeg lexer
-  for known lexer names.
+* Auto-pair, type-over, and auto-deletion of matching braces now works with multiple selections.
+* Removed `textadept.file_types.lexers` table in favor of asking the LPeg lexer for known
+  lexer names.
 * Updated German translation.
-* Changed `textadept.bookmarks.toggle()` to only toggle bookmarks on the current
-  line.
-* Removed '=' prefix in command entry that would print results; printing results
-  has been the default behavior for quite some time.
+* Changed `textadept.bookmarks.toggle()` to only toggle bookmarks on the current line.
+* Removed '=' prefix in command entry that would print results; printing results has been the
+  default behavior for quite some time.
 * Replaced `buffer.style_name[]` with [`buffer:name_of_style()`][].
 * Session files are now Lua data files; old formats will no longer work.
-* Added [`events.SESSION_SAVE`][] and [`events.SESSION_LOAD`][] events for
-  saving and loading custom user data to sessions.
-* Removed *~/.textadept/?.lua* and *~/.textadept/?.{so,dll}* from `package.path`
-  and `package.cpath`, respectively.
+* Added [`events.SESSION_SAVE`][] and [`events.SESSION_LOAD`][] events for saving and loading
+  custom user data to sessions.
+* Removed *~/.textadept/?.lua* and *~/.textadept/?.{so,dll}* from `package.path` and
+  `package.cpath`, respectively.
 * Lua errors in Textadept can now be jumped to via double-click or Enter.
 * `ui.dialogs.filteredlist()` dialogs have a reasonable default width.
 * Renamed `keys.MODE` to [`keys.mode`][].
 * Moved individual buffer functions in `io` into `buffer`.
-* Event handlers can now return any non-`nil` value instead of a boolean value
-  and have that value passed back to `events.emit()`.
+* Event handlers can now return any non-`nil` value instead of a boolean value and have that
+  value passed back to `events.emit()`.
 * Lua command entry completions show images just like in Lua autocompletion.
 * Align block comments by column if possible, not indent.
-* Added per-mode command entry history which can be cycled through using the
-  `Up` and `Down` keys.
-* Added [`ui.dialogs.progressbar()`][], utilize it with Find in Files, and
-  removed `ui.find.find_in_files_timeout`.
-* GUI find/replace history Up/Down history key bindings swapped, mimicking
-  traditional command line history navigation.
+* Added per-mode command entry history which can be cycled through using the `Up` and `Down` keys.
+* Added [`ui.dialogs.progressbar()`][], utilize it with Find in Files, and removed
+  `ui.find.find_in_files_timeout`.
+* GUI find/replace history Up/Down history key bindings swapped, mimicking traditional command
+  line history navigation.
 * The statusbar now indicates an active snippet.
 * Updated to [PDCurses][] 3.9.
-* Experimental set of "standard" modules is provided in the modules archive
-  instead of just language modules.
+* Experimental set of "standard" modules is provided in the modules archive instead of just
+  language modules.
 
 [Textadept 11.0 alpha -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_alpha/textadept_11.0_alpha.win32.zip
 [Textadept 11.0 alpha -- Mac OSX 10.6+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_alpha/textadept_11.0_alpha.osx.zip
@@ -502,15 +474,12 @@ Bugfixes:
 
 Changes:
 
-* Changed [`events.TAB_CLICKED`][] to emit button clicked as well as modifier
-  keys.
-* Autocompletion and documentation for Textadept's Lua API only happens in
-  Textadept files now (i.e. files in `_HOME` and `_USERHOME`).
-* `textadept.editing.api_files` and `_M.lua.tags` can contain functions that
-  return file paths.
+* Changed [`events.TAB_CLICKED`][] to emit button clicked as well as modifier keys.
+* Autocompletion and documentation for Textadept's Lua API only happens in Textadept files now
+  (i.e. files in `_HOME` and `_USERHOME`).
+* `textadept.editing.api_files` and `_M.lua.tags` can contain functions that return file paths.
 * Added support for txt2tags.
-* Scintilla: Added access to virtual space at the start and end of multiple
-  selections.
+* Scintilla: Added access to virtual space at the start and end of multiple selections.
 * Scintilla: The target can have virtual space.
 * Updated to [Scintilla][] 3.11.2.
 
@@ -526,8 +495,8 @@ Changes:
 Bugfixes:
 
 * Fixed scroll issues when toggling line wrap.
-* Properly handle absolute paths in run/compile/build output and also
-  case-insensitivity on Windows.
+* Properly handle absolute paths in run/compile/build output and also case-insensitivity
+  on Windows.
 * Restore virtual space state when switching between buffers.
 * Restore rectangular selection state when switching between buffers.
 * Fixed opening of non-UTF-8-encoded filenames dropped into a view.
@@ -538,16 +507,14 @@ Bugfixes:
 Changes:
 
 * Refactored "Replace All" to be more performant.
-* Added back [`textadept.editing.paste_reindent()`][] as a separate
-  menu/key/command from `buffer.paste()`.
-* Enabled all theme colors by default, and changed line number color in the
-  terminal version.
-* Replaced `ui.command_entry.enter_mode()` and `ui.command_entry.finish_mode()`
-  with simplified [`ui.command_entry.run()`][].
-* Added `ui.find.find_incremental_keys` table of key bindings during "Find
-  Incremental" searches.
-* Replaced `textadept.macros.start_recording()` and
-  `textadept.macros.stop_recording()` with [`textadept.macros.record()`][].
+* Added back [`textadept.editing.paste_reindent()`][] as a separate menu/key/command from
+  `buffer.paste()`.
+* Enabled all theme colors by default, and changed line number color in the terminal version.
+* Replaced `ui.command_entry.enter_mode()` and `ui.command_entry.finish_mode()` with simplified
+  [`ui.command_entry.run()`][].
+* Added `ui.find.find_incremental_keys` table of key bindings during "Find Incremental" searches.
+* Replaced `textadept.macros.start_recording()` and `textadept.macros.stop_recording()` with
+  [`textadept.macros.record()`][].
 * Updated C, Rust, Prolog, and Logtalk lexers.
 * Added MediaWiki lexer.
 * Scintilla: Updated case conversion and character categories to Unicode 12.1.
@@ -589,10 +556,9 @@ Changes:
 * Updated the default window size and some default dialog sizes.
 * Updated Markdown lexer.
 * Improved C++ lexer to support single quotes in C++14 integer literals.
-* Scintilla: Improved performance opening and closing large files with fold
-  points.
-* Scintilla: Tweaked behavior of `buffer.style_case`'s `buffer.CASE_CAMEL`
-  option to treat only letters as word characters.
+* Scintilla: Improved performance opening and closing large files with fold points.
+* Scintilla: Tweaked behavior of `buffer.style_case`'s `buffer.CASE_CAMEL` option to treat only
+  letters as word characters.
 * Updated to [Scintilla][] 3.10.6.
 
 [`textadept.editing.show_documentation()`]: api.html#textadept.editing.show_documentation
@@ -642,19 +608,14 @@ Bugfixes:
 * Fixed behavior of `Home` and `Shift+Home` keys on non-OSX platforms.
 * Fixed some instances of snippet next/prev not working correctly.
 * Fixed Alt+Gr key handling in the Windows terminal version.
-* Only pass command entry text to function passed to
-  `ui.command_entry.finish_mode()`.
-* Fixed handling of escaped double-quotes in `os.spawn()` in the terminal
-  version.
-* Ensure long filenames are visible in the reload dialog prompt in the terminal
-  version.
+* Only pass command entry text to function passed to `ui.command_entry.finish_mode()`.
+* Fixed handling of escaped double-quotes in `os.spawn()` in the terminal version.
+* Ensure long filenames are visible in the reload dialog prompt in the terminal version.
 
 Changes:
 
-* Added optional position argument to
-  [`textadept.editing.show_documentation()`][].
-* `textadept.editing.highlight_word()` does not select the word by default
-  anymore.
+* Added optional position argument to [`textadept.editing.show_documentation()`][].
+* `textadept.editing.highlight_word()` does not select the word by default anymore.
 * Changed [file filter][] format to be more flat and intuitive.
 * Added `-l` and `--line` command line options to jump to a buffer line.
 * Updated to [PDCurses][] 3.6 for the Windows terminal version.
@@ -672,20 +633,19 @@ Bugfixes:
 * Fixed key handling on some international keyboards.
 * Fixed tab labels not updating when loading message buffers from a session.
 * Fixed potential crashes in `string.iconv()` with tiny strings.
-* Fixed inability to resize one split view configuration with the mouse in the
-  terminal version.
+* Fixed inability to resize one split view configuration with the mouse in the terminal version.
 
 Changes:
 
 * Renamed `spawn()` to [`os.spawn()`][].
 * `os.spawn()` now allows omission of `cwd` and `env` parameters.
 * `spawn_proc:wait()` returns the process' exit code.
-* `textadept.editing.filter_through()` halts on non-zero status instead of
-  clobbering the buffer or selected text.
-* Removed `textadept.editing.paste()` and `textadept.editing.paste_reindents`
-  option; Textadept no longer reindents pasted text by default.
-* Experimentally added [`textadept.macros`][] module for recording, playing,
-  saving, and loading keyboard macros.
+* `textadept.editing.filter_through()` halts on non-zero status instead of clobbering the buffer
+  or selected text.
+* Removed `textadept.editing.paste()` and `textadept.editing.paste_reindents` option; Textadept
+  no longer reindents pasted text by default.
+* Experimentally added [`textadept.macros`][] module for recording, playing, saving, and loading
+  keyboard macros.
 * Scintilla: Improve efficiency of idle wrapping.
 * Scintilla: Updated case conversion and character categories to Unicode 11.
 * Scintilla: Updated ConTeXt, HTML, and Markdown lexers.
@@ -705,13 +665,12 @@ Bugfixes:
 
 Changes:
 
-* Added ability to save/restore persistent data during a reset event via
-  [`events.RESET_BEFORE`][] and [`events.RESET_AFTER`][].
-* Replaced `ui.find.find_in_files_filter` with
-  [`ui.find.find_in_files_filters`][] table for project-specific filters.
+* Added ability to save/restore persistent data during a reset event via [`events.RESET_BEFORE`][]
+  and [`events.RESET_AFTER`][].
+* Replaced `ui.find.find_in_files_filter` with [`ui.find.find_in_files_filters`][] table for
+  project-specific filters.
 * Added Chinese localization.
-* Updated to GTK 2.24.32 on Windows, which fixes a number of various GTK-related
-  issues.
+* Updated to GTK 2.24.32 on Windows, which fixes a number of various GTK-related issues.
 
 [`events.RESET_BEFORE`]: api.html#events.RESET_BEFORE
 [`events.RESET_AFTER`]: api.html#events.RESET_AFTER
@@ -719,8 +678,7 @@ Changes:
 
 ### 10.0 (01 Aug 2018)
 
-Please see the [9 to 10 migration guide][] for upgrading from Textadept 9 to
-Textadept 10.
+Please see the [9 to 10 migration guide][] for upgrading from Textadept 9 to Textadept 10.
 
 Bugfixes:
 
@@ -734,8 +692,7 @@ Bugfixes:
 Changes:
 
 * Updated German localization.
-* Scintilla: Added new `buffer.INDIC_GRADIENT` and `buffer.INDIC_GRADIENTCENTRE`
-  indicators.
+* Scintilla: Added new `buffer.INDIC_GRADIENT` and `buffer.INDIC_GRADIENTCENTRE` indicators.
 * Scintilla: Added `buffer.WRAPINDENT_DEEPINDENT` line wrapping option.
 * Updated to [Scintilla][] 3.10.0.
 * Updated to [Lua][] 5.3.5.
@@ -752,8 +709,7 @@ Bugfixes:
 * Fixed a potential infinite loop with "replace in selection".
 * Fixed crash on Mac OSX with regex searches.
 * Fixed selection of "find in files" result if it's at the start of the line.
-* Properly handle abbreviated setting of write-only buffer properties via
-  command entry.
+* Properly handle abbreviated setting of write-only buffer properties via command entry.
 
 Changes:
 
@@ -788,12 +744,11 @@ Changes:
 
 * Textadept requires GCC 4.9 (circa early-2014) or later to _compile_ (not run).
 * C++11 regex replaces old TRE library.
-* Scintillua and Scinterm were merged into Scintilla and are no longer
-  dependencies.
+* Scintillua and Scinterm were merged into Scintilla and are no longer dependencies.
 * Emacs-style `^K` for OSX and the terminal version joins lines at EOL.
 * Pasted text reindents an extra level after a fold header.
-* `buffer.set_theme()` now takes an initial buffer argument like all other
-  buffer functions and does not have any call restrictions.
+* `buffer.set_theme()` now takes an initial buffer argument like all other buffer functions
+  and does not have any call restrictions.
 * Scintilla: Added [`events.AUTO_C_SELECTION_CHANGE`][] event.
 * Updated to [Scintilla][] 3.8.0.
 
@@ -806,8 +761,7 @@ Bugfixes:
 
 * Fixed clang build warnings/errors regarding LuaJIT.
 * Fixed busy wait in second instance of Textadept on Windows.
-* Fixed bug in remote-controlled Textadept when no arguments were initially
-  given.
+* Fixed bug in remote-controlled Textadept when no arguments were initially given.
 * Fixed session loading when only it is provided as a command line argument.
 * Fixed copy-paste between views in the terminal version.
 * Fixed crash when attempting to show a badly-encoded filename in the titlebar.
@@ -817,15 +771,13 @@ Bugfixes:
 Changes:
 
 * Added `fold.compact` buffer property.
-* Added [`buffer.move_extends_selection`][] for enhanced modal keyboard
-  movement.
+* Added [`buffer.move_extends_selection`][] for enhanced modal keyboard movement.
 * Auto-detect UTF-16-encoded files automatically.
-* Save to the loaded session on quit and removed the
-  `textadept.session.default_session` option.
+* Save to the loaded session on quit and removed the `textadept.session.default_session` option.
 * Various Makefile improvements.
 * The terminal version can immediately focus on a clicked split view.
-* Textadept only minimally supports GTK3 now -- it still compiles, but
-  deprecated function calls have not been, and will not be migrated.
+* Textadept only minimally supports GTK3 now -- it still compiles, but deprecated function
+  calls have not been, and will not be migrated.
 * The terminal key sequence for `Ctrl+Space` is now `'c '` instead of `'c@'`.
 * The terminal version can now remap `^H` (which was previously locked to
   `Backspace`).
@@ -844,16 +796,14 @@ Bugfixes:
 Changes:
 
 * Textadept requires GTK 2.24 (circa early-2011) or greater.
-* Pasted text is reindented by default via `textadept.editing.paste()`, and is
-  configured with `textadept.editing.paste_reindents`.
+* Pasted text is reindented by default via `textadept.editing.paste()`, and is configured with
+  `textadept.editing.paste_reindents`.
 * Replaced `textadept.editing.match_brace()` with a menu function, enhanced
-  `textadept.editing.select_enclosed()` behavior, and removed redundant
-  "Select in ..." menu items.
-* Removed the need for *~/.textadept/properties.lua*. All `buffer` settings set
-  in *~/.textadept/init.lua* will apply to the first and subsequent buffers.
+  `textadept.editing.select_enclosed()` behavior, and removed redundant "Select in ..." menu items.
+* Removed the need for *~/.textadept/properties.lua*. All `buffer` settings set in
+  *~/.textadept/init.lua* will apply to the first and subsequent buffers.
 * Renamed `ui.set_theme()` to `buffer.set_theme()`.
-* Enforce extra argument to [`buffer.brace_match()`][] added back in Scintilla
-  3.7.0.
+* Enforce extra argument to [`buffer.brace_match()`][] added back in Scintilla 3.7.0.
 * Added [`events.ZOOM`][].
 * New, object-oriented way to [create lexers][].
 
@@ -870,8 +820,8 @@ Bugfixes:
 
 Changes:
 
-* Scintilla: Block caret appears after selection end instead of on it. (Reverts
-  change from Textadept 9.3)
+* Scintilla: Block caret appears after selection end instead of on it. (Reverts change from
+  Textadept 9.3)
 
 ### 9.5 (01 Sep 2017)
 
@@ -890,8 +840,7 @@ Changes:
 * Added optional encoding parameter to [`io.open_file()`][].
 * Improved file associations on Mac OSX.
 * Added support for Myrddin.
-* The terminal version updates its cursor position for display in tools like
-  tmux.
+* The terminal version updates its cursor position for display in tools like tmux.
 
 [`ui.switch_buffer()`]: api.html#ui.switch_buffer
 [`io.open_file()`]: api.html#io.open_file
@@ -903,22 +852,20 @@ Bugfixes:
 * Fixed bug that deleted characters outside of mangled snippets.
 * Fixed start-anchored "Find Prev" regex searches.
 * Correctly handle multiple '!'-prefixed patterns in file filters.
-* Scintilla: Pressing `Esc` while rectangular selection is active does not
-  collapse it.
+* Scintilla: Pressing `Esc` while rectangular selection is active does not collapse it.
 
 Changes:
 
-* Changed "Cancel Snippet" key binding from `Ctrl+Shift+K` (`⌥⇧⇥` on Mac OSX |
-  `M-S-K` in curses) to `Esc`.
+* Changed "Cancel Snippet" key binding from `Ctrl+Shift+K` (`⌥⇧⇥` on Mac OSX | `M-S-K`
+  in curses) to `Esc`.
 * Added [`buffer.caret_line_frame`][] option for outlining the current line.
 * Added [`buffer:line_reverse()`][] for reversing selected lines.
-* Added [`ui.dialogs.colorselect()`][] and [`ui.dialogs.fontselect()`][]
-  dialogs.
+* Added [`ui.dialogs.colorselect()`][] and [`ui.dialogs.fontselect()`][] dialogs.
 * Handle pipes in shell commands for [filter-through][].
-* The [Lua command entry][] prints results like Lua 5.3's interactive prompt
-  (e.g. no need for explicit '=' prefix).
-* The Lua command entry now invokes bare functions as commands (e.g. `copy`
-  invokes `buffer:copy()`, `split` invokes `view:split()`, etc.).
+* The [Lua command entry][] prints results like Lua 5.3's interactive prompt (e.g. no need for
+  explicit '=' prefix).
+* The Lua command entry now invokes bare functions as commands (e.g. `copy` invokes
+  `buffer:copy()`, `split` invokes `view:split()`, etc.).
 * Scintilla: Updated case conversion and character categories to Unicode 9.
 * Scintilla: Update scroll bar when annotations are added, removed, or changed.
 * Effectively updated to [Scintilla][] 3.7.5.
@@ -965,13 +912,11 @@ Bugfixes:
 * Fixed folding in multiple-language lexers.
 * Fixed accidental editing of cached lexers.
 * Scintilla: Minimize redrawing for `buffer.selection_n_*` settings.
-* Scintilla: Fixed individual line selection in files with more than 16.7
-  million lines.
+* Scintilla: Fixed individual line selection in files with more than 16.7 million lines.
 * Scintilla: Various accessibility fixes for GTK on Linux.
 * Scintilla: Fixed a couple of folding regressions.
 * Scintilla: Fixed various issues on GTK 3.22.
-* Scintilla: Fixed inability to extend selection up or down in stream selection
-  mode.
+* Scintilla: Fixed inability to extend selection up or down in stream selection mode.
 
 Changes:
 
@@ -1003,33 +948,27 @@ Bugfixes:
 * Fixed bug in find/replace with consecutive matches.
 * Fixed encoding detection for encodings with NUL bytes (e.g. UTF-16).
 * Fixed duplicate entries in `io.recent_files` when loading sessions.
-* Scintilla: Fixed caret placement after left or right movement with rectangular
-  selection.
+* Scintilla: Fixed caret placement after left or right movement with rectangular selection.
 * Scintilla: Fixed GTK 3 incorrect font size in autocompletion list.
 * Scintilla: Fixed various minor GTK bugs.
 
 Changes:
 
 * Added support for Protobuf and Crystal.
-* On Linux systems that support it, `make install` installs `.desktop` files
-  too.
+* On Linux systems that support it, `make install` installs `.desktop` files too.
 * Removed MacRoman encoding detection and options.
 * Scintilla: Character-based word selection, navigation, and manipulation.
-* Scintilla: Added [`view.EDGE_MULTILINE`][],
-  [`view:multi_edge_add_line()`][], and [`view:multi_edge_clear_all()`][]
-  for multiple edge lines.
-* Scintilla: Added `buffer.MARGIN_COLOUR` and [`buffer.margin_back_n`][] for
-  setting arbitrary margin background colors.
+* Scintilla: Added [`view.EDGE_MULTILINE`][], [`view:multi_edge_add_line()`][], and
+  [`view:multi_edge_clear_all()`][] for multiple edge lines.
+* Scintilla: Added `buffer.MARGIN_COLOUR` and [`buffer.margin_back_n`][] for setting arbitrary
+  margin background colors.
 * Scintilla: Added [`buffer.margins`][] for more margins.
 * Scintilla: Added accessibility support for GTK on Linux.
-* Scintilla: Added [`buffer:toggle_fold_display_text()`][] and
-  [`buffer.fold_display_text_style`][] for showing text next to folded lines.
-* Scintilla: Added new `buffer.INDIC_POINT` and `buffer.INDIC_POINTCHARACTER`
-  indicators.
-* Scintilla: Added [`buffer.tab_draw_mode`][] for changing the appearance of
-  visible tabs.
-* Scintilla: Margin click line selection clears rectangular and multiple
-  selection.
+* Scintilla: Added [`buffer:toggle_fold_display_text()`][] and [`buffer.fold_display_text_style`][]
+  for showing text next to folded lines.
+* Scintilla: Added new `buffer.INDIC_POINT` and `buffer.INDIC_POINTCHARACTER` indicators.
+* Scintilla: Added [`buffer.tab_draw_mode`][] for changing the appearance of visible tabs.
+* Scintilla: Margin click line selection clears rectangular and multiple selection.
 * Updated to [Scintilla][] 3.7.1.
 
 [`view.EDGE_MULTILINE`]: api.html#view.EDGE_MULTILINE
@@ -1044,24 +983,21 @@ Changes:
 
 ### 9.0 (01 Oct 2016)
 
-Please see the [8 to 9 migration guide][] for upgrading from Textadept 8 to
-Textadept 9.
+Please see the [8 to 9 migration guide][] for upgrading from Textadept 8 to Textadept 9.
 
 Bugfixes:
 
 * Better error handling with "filter-through".
 * Fixed error in building projects.
 * Better handling of key bindings on international keyboards.
-* Scintilla: Respect indentation settings when inserting indentation within
-  virtual space.
+* Scintilla: Respect indentation settings when inserting indentation within virtual space.
 * Scintilla: Fixed bug with expanding folds.
 * Scintilla: Fix GTK 3 runtime warning.
 
 Changes:
 
 * Added TaskPaper lexer.
-* Scintilla: Added `buffer.VS_NOWRAPLINESTART` option to
-  `buffer.virtual_space_options`.
+* Scintilla: Added `buffer.VS_NOWRAPLINESTART` option to `buffer.virtual_space_options`.
 * Updated to [Scintilla][] 3.6.7.
 
 [8 to 9 migration guide]: manual.html#textadept-8-to-9
@@ -1076,8 +1012,7 @@ Bugfixes:
 * Fixed passing of quoted arguments to OSX `ta` script.
 * Fixed CapsLock key handling.
 * Fixed button order in the terminal version's dialogs.
-* Fixed potential crash on Windows with `textadept.editing.filter_through()` and
-  some locales.
+* Fixed potential crash on Windows with `textadept.editing.filter_through()` and some locales.
 * Fixed infinite loop in "Replace All" with zero-length regex matches.
 
 Changes:
@@ -1113,40 +1048,32 @@ Bugfixes:
 
 Changes:
 
-* Renamed `io.snapopen()` to [`io.quick_open()`][] and tweaked its arguments,
-  renamed `io.SNAPOPEN_MAX` to [`io.quick_open_max`][], and renamed
-  `io.snapopen_filters` to [`io.quick_open_filters`][].
-* Removed BOM (byte order mark) encoding detection. (BOM use is legacy and
-  discouraged.)
+* Renamed `io.snapopen()` to [`io.quick_open()`][] and tweaked its arguments, renamed
+  `io.SNAPOPEN_MAX` to [`io.quick_open_max`][], and renamed `io.snapopen_filters` to
+  [`io.quick_open_filters`][].
+* Removed BOM (byte order mark) encoding detection. (BOM use is legacy and discouraged.)
 * Removed detection and use of extinct `\r` (CR) line endings.
 * Removed project support for CVS and assume Subversion v1.8+.
-* Key and menu commands [must be Lua functions][]; the table syntax is no longer
-  recognized.
-* Renamed `lfs.FILTER` to [`lfs.default_filter`][] and tweaked arguments to
-  `lfs.dir_foreach()`.
+* Key and menu commands [must be Lua functions][]; the table syntax is no longer recognized.
+* Renamed `lfs.FILTER` to [`lfs.default_filter`][] and tweaked arguments to `lfs.dir_foreach()`.
 * Locale files can optionally use `#` for comments instead of `%`.
 * Renamed `ui.SILENT_PRINT` to [`ui.silent_print`][].
-* Renamed all [`textadept.editing`][]`.[A-Z]+` options to their lower-case
-  equivalents and renamed `textadept.editing.braces` to
-  [`textadept.editing.brace_matches`][].
+* Renamed all [`textadept.editing`][]`.[A-Z]+` options to their lower-case equivalents and
+  renamed `textadept.editing.braces` to [`textadept.editing.brace_matches`][].
 * *post_init.lua* files for language modules are [no longer auto-loaded][]; use
   [`events.LEXER_LOADED`][] to load additional bits instead.
-* Renamed `ui.find.FILTER` to [`ui.find.find_in_files_filter`][] and added an
-  optional argument to [`ui.find.find_in_files()`][].
-* Renamed all [`textadept.session`][]`.[A-Z]+` options to their lower-case
-  equivalents.
+* Renamed `ui.find.FILTER` to [`ui.find.find_in_files_filter`][] and added an optional argument
+  to [`ui.find.find_in_files()`][].
+* Renamed all [`textadept.session`][]`.[A-Z]+` options to their lower-case equivalents.
 * Removed syntax checking support, renamed `textadept.run.RUN_IN_BACKGROUND` to
-  [`textadept.run.run_in_background`][], removed `textadept.run.cwd` and
-  `textadept.run.proc`, added optional arguments to
-  [`textadept.run.compile()`][], [`textadept.run.run()`][], and
-  [`textadept.run.build()`][], and changed the format of
-  [`textadept.run.error_patterns`][].
-* Rewrote sections 7-9 in the [manual][] and added a new part to section 11.
-  Understanding how to configure and script Textadept should be easier now.
-* `textadept.editing.goto_line()` takes a 0-based line number like all
-  Scintilla functions.
-* `ui.goto_view()` and `view:goto_buffer()` now take actual `view` and `buffer`
-  arguments, respectively, or a relative number.
+  [`textadept.run.run_in_background`][], removed `textadept.run.cwd` and `textadept.run.proc`,
+  added optional arguments to [`textadept.run.compile()`][], [`textadept.run.run()`][], and
+  [`textadept.run.build()`][], and changed the format of [`textadept.run.error_patterns`][].
+* Rewrote sections 7-9 in the [manual][] and added a new part to section 11.  Understanding how
+  to configure and script Textadept should be easier now.
+* `textadept.editing.goto_line()` takes a 0-based line number like all Scintilla functions.
+* `ui.goto_view()` and `view:goto_buffer()` now take actual `view` and `buffer` arguments,
+  respectively, or a relative number.
 * Added [file-based snippet][] capabilities.
 * Updated to [Scintilla][] 3.6.6.
 * Updated to [Lua][] 5.3.3
@@ -1184,11 +1111,9 @@ Bugfixes:
 * Added some block comment strings for languages lacking them.
 * Fixed a number of small encoding issues in various corner cases.
 * Fixed bug in `textadept.editing.convert_indentation()` with mixed indentation.
-* Fixed an obscure side-effect that reset buffer properties when working with
-  non-focused buffers.
+* Fixed an obscure side-effect that reset buffer properties when working with non-focused buffers.
 * Fixed incremental find with UTF-8 characters.
-* Fixed bug in session restoration of scroll and caret positions in multiple
-  views.
+* Fixed bug in session restoration of scroll and caret positions in multiple views.
 * Fixed bug where existing files were not closed when a session is loaded.
 * Fixed corner case in "replace within selection".
 * Fixed regression for `%<...>` and `%[...]` in snippets.
@@ -1200,19 +1125,18 @@ Bugfixes:
 
 Changes:
 
-* Support UTF-8 pattern matching in "Lua Pattern" searches by incorporating bits
-  of [luautf8][].
+* Support UTF-8 pattern matching in "Lua Pattern" searches by incorporating bits of [luautf8][].
 * Improved efficiency of autocompleting words from all open buffers.
 * "Find in Files" defaults to the current project's root directory.
-* Submenus and menu items can be accessed by name. (See
-  [`textadept.menu.menubar`][] for an example.)
+* Submenus and menu items can be accessed by name. (See [`textadept.menu.menubar`][] for an
+  example.)
 * Only show snippet trigger and text when selecting from a dialog.
 * More efficient screen refreshes in the terminal version.
 * Save and restore horizontal scroll position when switching buffers.
-* The undocumented `keys.utils` was removed. This will break custom key bindings
-  that depend on it. See [this mailing list post][] for more information.
-* The menubar is loaded on `events.INITIALIZED` now. See the above mailing
-  list post for more information.
+* The undocumented `keys.utils` was removed. This will break custom key bindings that depend
+  on it. See [this mailing list post][] for more information.
+* The menubar is loaded on `events.INITIALIZED` now. See the above mailing list post for more
+  information.
 * Allow file-specific [compile commands][] and [run commands][].
 * Added new dialog for specifying compile/run command arguments to "Tools" menu.
 * `textadept.editing.enclose()` works with multiple selections.
@@ -1232,8 +1156,8 @@ Changes:
 
 Bugfixes:
 
-* Prevent silent crash reports from being generated on Mac OSX when child
-  processes fail to be spawned.
+* Prevent silent crash reports from being generated on Mac OSX when child processes fail to
+  be spawned.
 * Do not "busy wait" for spawned process stdout or stderr on Mac OSX.
 * Fixed bug in escaping `([{<` after mirrors in snippets.
 * Only change spawned process environment if one was specified on Mac OSX.
@@ -1241,23 +1165,20 @@ Bugfixes:
 * Fixed building the terminal version in debug mode.
 * Fixed potential crash with malformed style properties.
 * Fixed unlikely buffer overflow in messages coming from Scintilla.
-* Fixed potential memory access error when closing Textadept while a spawned
-  process is still alive.
-* Fixed bug in setting view properties when restoring sessions with nested
-  splits.
+* Fixed potential memory access error when closing Textadept while a spawned process is still
+  alive.
+* Fixed bug in setting view properties when restoring sessions with nested splits.
 
 Changes:
 
-* Added support for APL, Docker, Faust, Ledger, MoonScript, man/roff, PICO-8,
-  and Pure.
+* Added support for APL, Docker, Faust, Ledger, MoonScript, man/roff, PICO-8, and Pure.
 * Enabled idle-styling of buffers in the background in the GUI version.
 * Undocumented `buffer:clear_cmd_key()` only takes one argument now.
 * Added `-v` and `--version` command line parameters.
 * Added single-instance functionality on Win32.
 * Require GLib 2.28+.
 * Recognize the `weight` [style property][].
-* Added [`lexer.line_state`][] and [`lexer.line_from_position()`][] for
-  [stateful lexers][].
+* Added [`lexer.line_state`][] and [`lexer.line_from_position()`][] for [stateful lexers][].
 * Updated to lspawn 1.4.
 * Updated to [Scintilla][] 3.6.3.
 * Updated to Scinterm 1.7.
@@ -1281,8 +1202,7 @@ Bugfixes:
 
 Changes:
 
-* Allow [compile, run, and build commands][] functions to specify a working
-  directory.
+* Allow [compile, run, and build commands][] functions to specify a working directory.
 * Added support for SNOBOL4.
 * Added support for Icon.
 * Added support for AutoIt.
@@ -1355,12 +1275,10 @@ Changes:
 * Highlight found text in "Find in Files" searches.
 * Added Italian translation and updated French translation.
 * Added automatic syntax checking as source files are saved, along with
-  `textadept.run.CHECK_SYNTAX` and `textadept.run.GOTO_SYNTAX_ERRORS`
-  configuration fields.
-* Scintilla: multiple selection works over more key commands like caret
-  movement, selections, and word and line deletions.
-* Scintilla: new [`events.AUTO_C_COMPLETED`][] event for when autocompleted text
-  has been inserted.
+  `textadept.run.CHECK_SYNTAX` and `textadept.run.GOTO_SYNTAX_ERRORS` configuration fields.
+* Scintilla: multiple selection works over more key commands like caret movement, selections,
+  and word and line deletions.
+* Scintilla: new [`events.AUTO_C_COMPLETED`][] event for when autocompleted text has been inserted.
 * Updated to [Scintilla][] 3.6.0.
 
 [`events.AUTO_C_COMPLETED`]: api.html#events.AUTO_C_COMPLETED
@@ -1381,13 +1299,11 @@ Bugfixes:
 Changes:
 
 * Added support for Elixir and Windows Script Files (WSF).
-* Added parameter to [`textadept.editing.select_word()`][] for selecting all
-  occurrences.
+* Added parameter to [`textadept.editing.select_word()`][] for selecting all occurrences.
 * Scintilla: added [`buffer:multiple_select_add_next()`][] and
-  [`buffer:multiple_select_add_each()`][] for creating multiple selections from
-  selected text.
-* Scintilla: added [`buffer:is_range_word()`][] and
-  [`buffer:target_whole_document()`][] helper functions for search and replace.
+  [`buffer:multiple_select_add_each()`][] for creating multiple selections from selected text.
+* Scintilla: added [`buffer:is_range_word()`][] and [`buffer:target_whole_document()`][] helper
+  functions for search and replace.
 * Updated to [Scintilla][] 3.5.7.
 * Updated to [Lua][] 5.3.1.
 
@@ -1401,8 +1317,7 @@ Changes:
 
 ### 8.0 (01 May 2015)
 
-Please see the [7 to 8 migration guide][] for upgrading from Textadept 7 to
-Textadept 8.
+Please see the [7 to 8 migration guide][] for upgrading from Textadept 7 to Textadept 8.
 
 Bugfixes:
 
@@ -1425,8 +1340,8 @@ Bugfixes:
 
 Changes:
 
-* Added `symlink` filter option for ignoring symlinked files and folders to
-  [`io.snapopen()`][], `lfs.dir_foreach()`, and [`ui.find.FILTER`][].
+* Added `symlink` filter option for ignoring symlinked files and folders to [`io.snapopen()`][],
+  `lfs.dir_foreach()`, and [`ui.find.FILTER`][].
 * Added [`_FOLDBYINDENTATION`][] field for lexers that fold by indentation.
 * Updated to [Scintilla][] 3.5.5.
 
@@ -1445,16 +1360,14 @@ Bugfixes:
 Changes:
 
 * Upgraded to Lua 5.3, LPeg 0.12.2, lfs 1.6.3, and lspawn 1.2.
-* Removed `keys.LANGUAGE_MODULE_PREFIX`, but left that prefix unused on all
-  platforms.
+* Removed `keys.LANGUAGE_MODULE_PREFIX`, but left that prefix unused on all platforms.
 * `textadept.editing.filter_through()` now uses `os.spawn()`.
 * Removed long-hand [compile and run macros][] in favor of shorter ones.
 * [`textadept.bookmarks.toggle()`][] accepts an optional line to bookmark.
 * Added support for Rust and TOML.
 * "Goto Bookmark" now lists bookmarks in all open buffers.
 * [`spawn_proc:kill()`][] can send signals to processes.
-* New [`lexer._FOLDBYINDENTATION`][] field for lexers that fold based on
-  indentation.
+* New [`lexer._FOLDBYINDENTATION`][] field for lexers that fold based on indentation.
 
 [compile and run macros]: api.html#textadept.run.compile\_commands
 [`textadept.bookmarks.toggle()`]: api.html#textadept.bookmarks.toggle
@@ -1465,8 +1378,7 @@ Changes:
 
 Bugfixes:
 
-* Fixed command entry's abbreviated environment to allow functions to return
-  values.
+* Fixed command entry's abbreviated environment to allow functions to return values.
 * Fixed accidental firing of "Escape" key on window focus lost.
 * Fixed tab stop calculation in the terminal version.
 * Improved performance of lexers that fold by indentation.
@@ -1474,21 +1386,18 @@ Bugfixes:
 
 Changes:
 
-* The following view-specific properties are now considered buffer-specific:
-  "view EOL", "view whitespace", "wrap mode", "margin type", and "margin width";
-  updated the "Buffer" and "View" menus appropriately.
+* The following view-specific properties are now considered buffer-specific: "view EOL", "view
+  whitespace", "wrap mode", "margin type", and "margin width"; updated the "Buffer" and "View"
+  menus appropriately.
 * Officially supported language modules moved to a [new repository][].
 * Added Fish lexer and updated PHP and Python lexers.
-* Merged `events.FILE_SAVED_AS` into [`events.FILE_AFTER_SAVE`][] as a new
-  parameter.
-* Merged `textadept.file_types.shebangs` into
-  [`textadept.file_types.patterns`][].
+* Merged `events.FILE_SAVED_AS` into [`events.FILE_AFTER_SAVE`][] as a new parameter.
+* Merged `textadept.file_types.shebangs` into [`textadept.file_types.patterns`][].
 * Removed `io.boms`.
-* Scintilla: added [`buffer.indic_hover_fore`][] and
-  [`buffer.indic_hover_style`][] for styling indicators differently when the
-  mouse is over them.
-* Added new `buffer.INDIC_COMPOSITIONTHIN`, `buffer.INDIC_FULLBOX`, and
-  `buffer.INDIC_TEXTFORE` indicators.
+* Scintilla: added [`buffer.indic_hover_fore`][] and [`buffer.indic_hover_style`][] for styling
+  indicators differently when the mouse is over them.
+* Added new `buffer.INDIC_COMPOSITIONTHIN`, `buffer.INDIC_FULLBOX`, and `buffer.INDIC_TEXTFORE`
+  indicators.
 * Updated to [Scintilla][] 3.5.4.
 
 [new repository]: https://github.com/orbitalquark/textadept-modules
@@ -1506,8 +1415,8 @@ Bugfixes:
 
 Changes:
 
-* Removed language-specific context menus; manipulate
-  `textadept.menu.context_menu` directly from language modules.
+* Removed language-specific context menus; manipulate `textadept.menu.context_menu` directly
+  from language modules.
 
 ### 7.8 beta 3 (21 Jan 2015)
 
@@ -1525,8 +1434,7 @@ Bugfixes:
 Changes:
 
 * Restore `^Z` key binding as "undo" if terminal suspend is disabled.
-* Added [`events.SUSPEND`][] and [`events.RESUME`][] events for terminal suspend
-  and resume.
+* Added [`events.SUSPEND`][] and [`events.RESUME`][] events for terminal suspend and resume.
 * Updated to [Scintilla][] 3.5.3.
 
 [`events.SUSPEND`]: api.html#events.SUSPEND
@@ -1538,8 +1446,7 @@ Changes:
 Bugfixes:
 
 * Improved C module's ctags lookups and autocompletion.
-* Do not select a line when clicking on its first character in the terminal
-  version.
+* Do not select a line when clicking on its first character in the terminal version.
 * Fixed some cases of toggling find options via API in the terminal version.
 * Improved folding by indentation.
 * Scintilla: fixed caret blinking when holding down `Del`.
@@ -1547,14 +1454,12 @@ Bugfixes:
 
 Changes:
 
-* The terminal version can suspend via `^Z` (changed "undo" key binding to
-  `M-Z` and added additional `M-S-Z` "redo" binding).
+* The terminal version can suspend via `^Z` (changed "undo" key binding to `M-Z` and added
+  additional `M-S-Z` "redo" binding).
 * Added [`spawn_proc:close()`][] for sending EOF to spawned processes.
 * Updated Tcl lexer.
-* Scintilla: Added `buffer.ANNOTATION_INDENTED` for indented, non-bordered
-  annotations.
-* Scintilla: tab arrows, wrap markers, and line markers are now drawn in the
-  terminal version.
+* Scintilla: Added `buffer.ANNOTATION_INDENTED` for indented, non-bordered annotations.
+* Scintilla: tab arrows, wrap markers, and line markers are now drawn in the terminal version.
 * Updated to [Scintilla][] 3.5.2.
 
 [`spawn_proc:close()`]: api.html#spawn_proc:close
@@ -1571,30 +1476,24 @@ Bugfixes:
 * Fixed return values from `ui.dialogs.optionselect()`.
 * The command entry does not hide when the window loses focus.
 * Fixed '//' bug when iterating over root directory with `lfs.dir_foreach()`.
-* Fixed bug in jumping to compile/run errors and clear annotations before
-  building projects.
+* Fixed bug in jumping to compile/run errors and clear annotations before building projects.
 * Fixed memory leaks in `ui.dialog()`.
 
 Changes:
 
 * Replaced the command entry text field with a Scintilla buffer and added
-  [`ui.command_entry.editing_keys`][] for changing the editing keys in all
-  modes.
+  [`ui.command_entry.editing_keys`][] for changing the editing keys in all modes.
 * Added lexer and height parameters to `ui.command_entry.enter_mode()`.
 * Support bracketed paste in the terminal version.
 * Allow handling of unknown [CSI events][].
-* Added mouse support for buffers and eliminated many
-  [terminal version incompatibilities][].
-* Added [`_G.LINUX`][] and [`_G.BSD`][] platform flags for the sake of
-  completeness.
-* [Rectangular selections][] with the mouse on Linux use the `Alt` modifier key
-  instead of `Super`.
+* Added mouse support for buffers and eliminated many [terminal version incompatibilities][].
+* Added [`_G.LINUX`][] and [`_G.BSD`][] platform flags for the sake of completeness.
+* [Rectangular selections][] with the mouse on Linux use the `Alt` modifier key instead of `Super`.
 * Display the current working directory in fileselect dialogs.
 * Added [`_SCINTILLA.next_image_type()`][] for registering images.
 * Added Arabic translation.
 * File dialogs in the terminal span the whole view.
-* Added basic UTF-8 support for terminal widgets -- locales such as Russian now
-  display properly.
+* Added basic UTF-8 support for terminal widgets -- locales such as Russian now display properly.
 * Added UTF-8 input mode for Mac OSX (`⌘⇧U`) and the terminal version (`M-U`).
 * Show character information in "Show Style" popup.
 
@@ -1656,8 +1555,7 @@ Changes:
 * New [`events.FOCUS`][] event for when Textadept's window receives focus.
 * Condensed manual and API documentation into single files.
 * Added Polish translation.
-* Scintilla: added [`buffer.auto_c_multi`][] for autocompleting into multiple
-  selections.
+* Scintilla: added [`buffer.auto_c_multi`][] for autocompleting into multiple selections.
 * Updated to [Scintilla][] 3.4.4.
 
 [`events.FOCUS`]: api.html#events.FOCUS
@@ -1675,8 +1573,7 @@ Bugfixes:
 
 Changes:
 
-* Pressing the Enter key in the message buffer and find in files buffer
-  simulates a double-click.
+* Pressing the Enter key in the message buffer and find in files buffer simulates a double-click.
 
 ### 7.3 (01 Jun 2014)
 
@@ -1694,23 +1591,20 @@ Changes:
 * Added reST and YAML lexers and official language modules for each.
 * Use `os.spawn()` for launching help.
 * Renamed `io.set_buffer_encoding()` to [`buffer:set_encoding()`][].
-* Removed Adeptsense in favor of [autocompleter functions][], but kept existing
-  [api file format][].
+* Removed Adeptsense in favor of [autocompleter functions][], but kept existing [api file
+  format][].
 * Renamed `textadept.editing.autocomplete_word()` to
   [`textadept.editing.autocomplete`][]`('word')`.
-* New [`textadept.editing.AUTOCOMPLETE_ALL`][] field for autocompleting words
-  from all open buffers.
-* Dropped support for official java, php, rails, and rhtml modules; they are
-  on the wiki now.
-* Removed `textadept.editing.HIGHLIGHT_BRACES` option, as indicator style can be
-  changed to hide highlighting.
+* New [`textadept.editing.AUTOCOMPLETE_ALL`][] field for autocompleting words from all open
+  buffers.
+* Dropped support for official java, php, rails, and rhtml modules; they are on the wiki now.
+* Removed `textadept.editing.HIGHLIGHT_BRACES` option, as indicator style can be changed to
+  hide highlighting.
 * Removed `textadept.editing.select_indented_block()`.
-* In-place menu editing via [`textadept.menu.menubar`][],
-  [`textadept.menu.context_menu`][], and [`textadept.menu.tab_context_menu`][]
-  tables.
-* Removed `textadept.command_entry.complete_lua()` and
-  `textadept.command_entry.execute_lua()` and moved their key bindings into
-  their module.
+* In-place menu editing via [`textadept.menu.menubar`][], [`textadept.menu.context_menu`][],
+  and [`textadept.menu.tab_context_menu`][] tables.
+* Removed `textadept.command_entry.complete_lua()` and `textadept.command_entry.execute_lua()`
+  and moved their key bindings into their module.
 * Updated D lexer.
 * Scintilla: added `buffer.FOLDFLAG_LINESTATE` for lexer debugging aid.
 * Updated to [Scintilla][] 3.4.2.
@@ -1763,13 +1657,12 @@ Changes:
 * New [optionselect][] dialog.
 * Added [`ui.SILENT_PRINT`][] option for printing messages.
 * The GUI version can [spawn processes][] in separate threads.
-* Removed experimental Windows `io.popen()` and `os.execute()` replacements due
-  to spawning support.
+* Removed experimental Windows `io.popen()` and `os.execute()` replacements due to spawning
+  support.
 * [Snapopen][] now supports projects; added new menu entry and key command.
 * Added support for [building projects][].
 * Scintilla: draw unicode line ends as blobs.
-* Scintilla: added `buffer.WRAP_WHITESPACE` for wrapping on whitespace, not
-  style changes.
+* Scintilla: added `buffer.WRAP_WHITESPACE` for wrapping on whitespace, not style changes.
 * Updated to [LuaJIT][] 2.0.3.
 * Updated to [Scintilla][] 3.4.1.
 
@@ -1804,10 +1697,8 @@ Changes:
 * Added Swedish translation.
 * Added support for multiple entry boxes in [inputdialogs][].
 * Updated LaTeX and Go lexers.
-* Scintilla: added [`buffer:drop_selection_n()`][] for dropping a multiple
-  selection.
-* Scintilla: added `buffer.call_tip_pos_start` for altering call tip
-  backspace behavior.
+* Scintilla: added [`buffer:drop_selection_n()`][] for dropping a multiple selection.
+* Scintilla: added `buffer.call_tip_pos_start` for altering call tip backspace behavior.
 * Scintilla: added `buffer.MARK_BOOKMARK` marker symbol.
 * Scintilla: better marker drawing.
 * Updated to [Scintilla][] 3.3.9.
@@ -1824,8 +1715,7 @@ Bugfixes:
 * Do not halt opening files if one of them is already open.
 * Better key input handling in the terminal version.
 * Fixed Makefile bug in grabbing dependencies with older versions of wget.
-* Recognize lower-case drive letter names for files passed from external
-  programs in Windows.
+* Recognize lower-case drive letter names for files passed from external programs in Windows.
 * Scintilla: fixed some instances of adjacent indicator drawing.
 * Scintilla: fixed scroll width tracking for annotated lines.
 * Scintilla: fixed horizontal scroll bar range.
@@ -1836,23 +1726,21 @@ Changes:
 
 * Added Dart lexer.
 * Do not split the view when printing messages if tabs are enabled.
-* Look for *~/.textadept/osx_env.sh* for [OSX environment variables][] due to
-  changes in Mac OSX 10.9.
-* [Experimental] Replaced Lua's `io.popen()` and `os.execute()` with versions
-  that do not flash the "black box" on Windows.
+* Look for *~/.textadept/osx_env.sh* for [OSX environment variables][] due to changes in Mac
+  OSX 10.9.
+* [Experimental] Replaced Lua's `io.popen()` and `os.execute()` with versions that do not flash
+  the "black box" on Windows.
 * Added read-only access to the current key chain via `keys.keychain`.
 * Renamed "hypertext" lexer and its corresponding module to "html".
 * Added configurable tab context menus via `textadept.menu.set_contextmenus()`.
 * New GUI theme for Mac OSX.
 * [Experimental] Merged separate lexer states into Textadept's Lua state.
 * Updated HTML lexer.
-* Scintilla: the `Ctrl` modifier in Mac OSX mouse clicks is recognized as
-  `buffer.MOD_META`.
-* Scintilla: added [`buffer.representation`][] for changing the representation
-  of characters.
+* Scintilla: the `Ctrl` modifier in Mac OSX mouse clicks is recognized as `buffer.MOD_META`.
+* Scintilla: added [`buffer.representation`][] for changing the representation of characters.
 * Scintilla: added [`buffer:position_relative()`][] for character navigation.
-* Scintilla: added [`buffer.mouse_selection_rectangular_switch`][] for aiding in
-  rectangular selection creation.
+* Scintilla: added [`buffer.mouse_selection_rectangular_switch`][] for aiding in rectangular
+  selection creation.
 * Updated to [Lua][] 5.2.3.
 * Updated to [Scintilla][] 3.3.7.
 
@@ -1876,8 +1764,7 @@ Bugfixes:
 Changes:
 
 * Tabs for multiple buffers along with [`ui.tabs`][] API.
-* Split C/C++ lexer into separate lexers and replaced default "cpp" module with
-  "ansi\_c".
+* Split C/C++ lexer into separate lexers and replaced default "cpp" module with "ansi\_c".
 * Find and replace text may utilize "%0" capture containing the entire match.
 * Disable `textadept.editing.STRIP_TRAILING_SPACES` by default.
 * `ui.clipboard_text` is no longer read-only.
@@ -1888,8 +1775,7 @@ Changes:
 
 ### 7.0 (01 Nov 2013)
 
-Please see the [6 to 7 migration guide][] for upgrading from Textadept 6 to
-Textadept 7.
+Please see the [6 to 7 migration guide][] for upgrading from Textadept 6 to Textadept 7.
 
 Bugfixes:
 
@@ -1920,16 +1806,15 @@ Changes:
 
 * Changed `ui.set_theme()` API to accept a table of property assignments.
 * Added Nimrod lexer and compile and run commands.
-* Use [`textadept.editing.INDIC_BRACEMATCH`][] indicator for brace highlighting
-  instead of styles.
+* Use [`textadept.editing.INDIC_BRACEMATCH`][] indicator for brace highlighting instead of styles.
 * The `buffer` API applies to all buffers now, not just the global one.
 * Added "Save All" to the menu.
 * Updated D lexer.
-* Added additional parameter to [`lexer.load()`][] to allow child lexers to be
-  embedded multiple times with different start/end tokens.
+* Added additional parameter to [`lexer.load()`][] to allow child lexers to be embedded multiple
+  times with different start/end tokens.
 * Lexers do not need an "any\_char" [rule][] anymore; it is included by default.
-* [Child lexers][] do not need an explicit `M._lexer = parent` declaration
-  anymore; it is done automatically.
+* [Child lexers][] do not need an explicit `M._lexer = parent` declaration anymore; it is done
+  automatically.
 
 [`textadept.editing.INDIC_BRACEMATCH`]: api.html#textadept.editing.INDIC_BRACEMATCH
 [`lexer.load()`]: api.html#lexer.load
@@ -1947,34 +1832,28 @@ Bugfixes:
 Changes:
 
 * [`events.disconnect()`][] now accepts function argument instead of ID.
-* `buffer.filename` and all internal filenames are no longer encoded in
-  UTF-8, but in [`_CHARSET`][].
-* Removed many unused Scintilla constants and stripped many constants of `SC`
-  and `SC_` prefixes.
+* `buffer.filename` and all internal filenames are no longer encoded in UTF-8, but in
+  [`_CHARSET`][].
+* Removed many unused Scintilla constants and stripped many constants of `SC` and `SC_` prefixes.
 * Changed marker margin symbols via *properties.lua*.
-* Calling `textadept.editing.select_word()` repeatedly makes multiple
-  selections.
+* Calling `textadept.editing.select_word()` repeatedly makes multiple selections.
 * Renamed `buffer:convert_eo_ls()` to [`convert_eols()`][].
 * Added [`textadept.run.MARK_WARNING`][] marker.
-* Renamed `textadept.run.compile_command` and `textadept.run.run_command` to
-  [`compile_commands`][] and [`run_commands`][], respectively.
-* Renamed `textadept.run.error_detail` to [`error_patterns`][] and changed its
-  internal structure.
-* Compile and run commands for languages that support them are now built-in
-  along with their respective warning and error messages. The supplemental ones
-  on the wiki are no longer needed.
-* New [`ui.dialogs`][] module for more user-friendly dialog support. Removed
-  `ui.filteredlist()` as a result.
-* Changed [`io.open_file()`][] and [`io.snapopen()`][] to accept tables of files
-  and paths instead of "\n" delimited strings.
-* Changed `lexer.get_fold_level()`, `lexer.get_indent_amount()`,
-  `lexer.get_property()`, and `lexer.get_style_at()` functions to be
-  [`lexer.fold_level`][], [`lexer.indent_amount`][], [`lexer.property`][], and
-  [`lexer.style_at`][] tables, respectively.
+* Renamed `textadept.run.compile_command` and `textadept.run.run_command` to [`compile_commands`][]
+  and [`run_commands`][], respectively.
+* Renamed `textadept.run.error_detail` to [`error_patterns`][] and changed its internal structure.
+* Compile and run commands for languages that support them are now built-in along with their
+  respective warning and error messages. The supplemental ones on the wiki are no longer needed.
+* New [`ui.dialogs`][] module for more user-friendly dialog support. Removed `ui.filteredlist()`
+  as a result.
+* Changed [`io.open_file()`][] and [`io.snapopen()`][] to accept tables of files and paths
+  instead of "\n" delimited strings.
+* Changed `lexer.get_fold_level()`, `lexer.get_indent_amount()`, `lexer.get_property()`, and
+  `lexer.get_style_at()` functions to be [`lexer.fold_level`][], [`lexer.indent_amount`][],
+  [`lexer.property`][], and [`lexer.style_at`][] tables, respectively.
 * Added [`lexer.property_int`][] and [`lexer.property_expanded`][] tables.
 * Changed API for [`lexer.delimited_range()`][] and [`lexer.nested_pair()`][].
-* Only enable `fold.by.indentation` property by default in
-  whitespace-significant languages.
+* Only enable `fold.by.indentation` property by default in whitespace-significant languages.
 
 [`events.disconnect()`]: api.html#events.disconnect
 [`_CHARSET`]: api.html#_CHARSET
@@ -1999,8 +1878,7 @@ Changes:
 
 Bugfixes:
 
-* User functions that connect to `events.BUFFER_NEW` and `events.VIEW_NEW` are
-  run on startup.
+* User functions that connect to `events.BUFFER_NEW` and `events.VIEW_NEW` are run on startup.
 * Fixed potential crash caused by split views.
 
 Changes:
@@ -2012,9 +1890,9 @@ Changes:
 * New [`events.INITIALIZED`][] event.
 * Renamed `buffer:get_style_name()` to `buffer.style_name`.
 * Renamed `ui.docstatusbar_text` to `ui.bufstatusbar_text`.
-* Removed `textadept.bookmarks.BOOKMARK_COLOR`,
-  `textadept.editing.HIGHLIGHT_COLOR`, and `textadept.run.ERROR_COLOR` while
-  exposing their respective marker and indicator numbers for customization.
+* Removed `textadept.bookmarks.BOOKMARK_COLOR`, `textadept.editing.HIGHLIGHT_COLOR`, and
+  `textadept.run.ERROR_COLOR` while exposing their respective marker and indicator numbers
+  for customization.
 * Moved buffer IO functions into [`io` module][].
 * Updated to [CDK][] 5.0-20130901.
 
@@ -2056,8 +1934,7 @@ Bugfixes:
 Changes:
 
 * Renamed `_M.textadept.mime_types` to [`_M.textadept.file_types`][].
-* Eliminated *mime_types.conf* files. Add or modify file type tables
-  [directly][].
+* Eliminated *mime_types.conf* files. Add or modify file type tables [directly][].
 * Changed scrollbar look and feel on Mac OSX.
 
 [`_M.textadept.file_types`]: api.html#textadept.file_types
@@ -2074,17 +1951,15 @@ Bugfixes:
 
 Changes:
 
-* Makefile improvements. See [compiling][] for more information. The source
-  release is no longer necessary.
+* Makefile improvements. See [compiling][] for more information. The source release is no
+  longer necessary.
 * Removed `_G._LEXERPATH` and `_L._EXISTS()`.
 * Renamed Adeptsense image fields.
-* Renamed `_M.textadept.editing.STRIP_WHITESPACE_ON_SAVE` to
-  `STRIP_TRAILING_SPACES`.
+* Renamed `_M.textadept.editing.STRIP_WHITESPACE_ON_SAVE` to `STRIP_TRAILING_SPACES`.
 * `_M.textadept.editing.block_comment()` supports block comment delimiters.
-* Block comments for languages is now built-in. The supplemental ones on the
-  wiki are no longer needed.
-* `gui.set_theme()` accepts key-value argument pairs for overriding theme
-  properties.
+* Block comments for languages is now built-in. The supplemental ones on the wiki are no
+  longer needed.
+* `gui.set_theme()` accepts key-value argument pairs for overriding theme properties.
 * Removed `gui.select_theme()` since selected themes do not persist.
 * Removed `_G.RESETTING` flag.
 * Consolidated `_M.textadept.bookmarks.goto_*()` functionality into
@@ -2151,8 +2026,8 @@ Bugfixes:
 
 Changes:
 
-* Textadept supports multiple curses platforms, not just ncurses. Make targets
-  now use "curses" instead of "ncurses".
+* Textadept supports multiple curses platforms, not just ncurses. Make targets now use "curses"
+  instead of "ncurses".
 * Better 16-color terminal support in lexer theme.
 * Reduced the delay when pressing `Esc` in the terminal version.
 * [Messagebox][] dialogs can show icons via `--icon` and `--icon-file`.
@@ -2164,12 +2039,12 @@ Changes:
 * Changed the display of highlighted words, including removing
   `_M.textadept.editing.INDIC_HIGHLIGHT_ALPHA`.
 * Changed `_M.textadept.editing.autocomplete_word()` API.
-* Removed `_M.textadept.menu.menubar`, `_M.textadept.menu.contextmenu`, and
-  `events.handlers` tables from the API.
+* Removed `_M.textadept.menu.menubar`, `_M.textadept.menu.contextmenu`, and `events.handlers`
+  tables from the API.
 * Moved `_M.textadept.filter_through` module functionality into
   [`_M.textadept.editing.filter_through()`][].
-* Mark errors in compile/run commands and added
-  [`_M.textadept.run.goto_error()`][] menu options and key shortcuts.
+* Mark errors in compile/run commands and added [`_M.textadept.run.goto_error()`][] menu options
+  and key shortcuts.
 * Renamed `gui.find.goto_file_in_list()` to [`gui.find.goto_file_found()`][].
 * Consolidated `_M.textadept.editing.grow_selection()` functionality into
   [`_M.textadept.editing.select_enclosed()`][].
@@ -2193,15 +2068,15 @@ Bugfixes:
 
 * Only consider visible directories in *_USERHOME/themes/* as themes.
 * Indicator for highlighted words works in ncurses.
-* Improved message double-clicking behavior for compile and run commands by
-  adding `_M.textadept.run.cwd`.
+* Improved message double-clicking behavior for compile and run commands by adding
+  `_M.textadept.run.cwd`.
 * Fixed disorienting scrolling when wrapping only one search result.
 * Fixed crash when attempting to load a non-existant lexer.
 * Fixed CSS preprocessor styling.
 * Fixed labels for inputbox dialogs.
 * Scintilla: fixed some instances of incorrect folded text display.
-* Scintilla: fixed `buffer:visible_from_doc_line()` to never return a line
-  beyond the end of the buffer.
+* Scintilla: fixed `buffer:visible_from_doc_line()` to never return a line beyond the end of
+  the buffer.
 * Scintilla: fixed `buffer:line_scroll()` for negative columns.
 * Scintilla: fixed tab marker display when indentation lines are visible.
 
@@ -2254,14 +2129,13 @@ Bugfixes:
 * Scintilla: fixed pasting with NULL bytes.
 * Scintilla: autocompletion should only have one undo step.
 * Scintilla: fixed crash when drawing very long lines.
-* Scintilla: fixed unexpected collapse of selections when extending by
-  character.
+* Scintilla: fixed unexpected collapse of selections when extending by character.
 
 Changes:
 
 * Use Scintilla API for ncurses mark mode.
-* Scintilla: added [`buffer.caret_line_visible_always`][] for showing the caret
-  line despite not having focus.
+* Scintilla: added [`buffer.caret_line_visible_always`][] for showing the caret line despite
+  not having focus.
 * Updated to [Scintilla][] 3.2.4.
 * Added [typeover characters][].
 
@@ -2309,8 +2183,7 @@ Changes:
 
 ### 6.0 (01 Nov 2012)
 
-Please see the [5 to 6 migration guide][] for upgrading from Textadept 5 to
-Textadept 6.
+Please see the [5 to 6 migration guide][] for upgrading from Textadept 5 to Textadept 6.
 
 Bugfixes:
 
@@ -2322,11 +2195,9 @@ Bugfixes:
 * Pass `Esc` to Scintilla correctly in ncurses.
 * Fix errors when specifying directories and files for file dialogs.
 * Fixed some operators in Bash lexer.
-* Scintilla: fixed hang when removing all characters from an indicator at the
-  the end of a buffer.
+* Scintilla: fixed hang when removing all characters from an indicator at the the end of a buffer.
 * Scintilla: fixed crash when drawing margins in GTK 3.
-* Scintilla: do not draw spaces after an italic style at the end of a line in
-  the terminal version.
+* Scintilla: do not draw spaces after an italic style at the end of a line in the terminal version.
 
 Changes:
 
@@ -2369,8 +2240,7 @@ Changes:
 * Key Bindings reference moved from Appendix to [`_M.textadept.keys`][] LuaDoc.
 * Plain text lexer name changed from `container` to `text`.
 * New application icon.
-* Removed `./?.lua` and `./?.so` from `package.path` and `package.cpath`,
-  respectively.
+* Removed `./?.lua` and `./?.so` from `package.path` and `package.cpath`, respectively.
 * Added marks for making selections in ncurses.
 
 [`_M.textadept.keys`]: api.html#textadept.keys
@@ -2391,18 +2261,16 @@ Changes:
 
 * Added `make install` and `make uninstall` rules for optional installation.
 * Updated manual with ncurses key bindings.
-* Consolidated `_M.textadept.bookmarks.add()` and
-  `_M.textadept.bookmarks.remove()` into [`_M.textadept.bookmarks.toggle()`][].
+* Consolidated `_M.textadept.bookmarks.add()` and `_M.textadept.bookmarks.remove()` into
+  [`_M.textadept.bookmarks.toggle()`][].
 * Updated manual images.
-* `_M.textadept.snapopen.DEFAULT_DEPTH` is now `99` since `MAX` is the limiting
-  factor.
+* `_M.textadept.snapopen.DEFAULT_DEPTH` is now `99` since `MAX` is the limiting factor.
 * Use constant names in theme options instead of nondescript integers.
-* Added new [`lexer.last_char_includes()`][] function for better regex
-  detection.
+* Added new [`lexer.last_char_includes()`][] function for better regex detection.
 * Updated AWK lexer.
 * Scintilla: added [`buffer.selection_empty`][].
-* Scintilla: added [`buffer:vc_home_display()`][] and
-  [`buffer:vc_home_display_extend()`][] for navigating wrapped lines.
+* Scintilla: added [`buffer:vc_home_display()`][] and [`buffer:vc_home_display_extend()`][]
+  for navigating wrapped lines.
 * Updated to [Scintilla][] 3.2.2.
 
 [`_M.textadept.bookmarks.toggle()`]: api.html#textadept.bookmarks.toggle
@@ -2418,14 +2286,13 @@ Bugfixes:
 
 * Lots of bugfixes to the experimental ncurses version.
 * Fixed bug with `$$` variables in Perl lexer.
-* Scintilla: do not show empty autocompletion list if
-  `buffer.auto_c_choose_single` is set.
+* Scintilla: do not show empty autocompletion list if `buffer.auto_c_choose_single` is set.
 * Scintilla: fixed `buffer:marker_delete()` to only delete one marker per call.
 * Scintilla: fixed caret positioning after undoing multiple deletions.
 * Scintilla: fixed margin drawing after `buffer.margin_style` is altered.
 * Scintilla: fixed margin click handling.
-* Scintilla: fixed hang when drawing block carets on a zero-width space at the
-  beginning of a buffer.
+* Scintilla: fixed hang when drawing block carets on a zero-width space at the beginning of
+  a buffer.
 * Scintilla: fixed crash deleting negative ranges.
 * Scintilla: fixed drawing of overlapping characters.
 
@@ -2433,12 +2300,12 @@ Changes:
 
 * Removed Lua, Ruby, and PHP modules' `goto_required()` functions.
 * Moved `_M.textadept.editing.prepare_for_save()` directly into event handler.
-* Moved `_M.textadept.session.prompt_load()` and `prompt_save()` functionality
-  into [`_M.textadept.session.load()`][] and [`_M.textadept.session.save()`][].
+* Moved `_M.textadept.session.prompt_load()` and `prompt_save()` functionality into
+  [`_M.textadept.session.load()`][] and [`_M.textadept.session.save()`][].
 * Removed `_G.user_dofile()`.
 * Converted some `buffer` "get" and "set" functions into properties.
-* Moved `_M.textadept.adeptsense.complete_symbol()` and `show_documentation()`
-  functionality into `_M.textadept.adeptsense.complete()` and `show_apidoc()`.
+* Moved `_M.textadept.adeptsense.complete_symbol()` and `show_documentation()` functionality into
+  `_M.textadept.adeptsense.complete()` and `show_apidoc()`.
 * New 64-bit Windows version (note: without LuaJIT).
 * Updated Perl lexer.
 * Scintilla: added [`buffer.punctuation_chars`][], [`buffer.word_chars`][], and
@@ -2485,8 +2352,7 @@ Bugfixes:
 
 * Scintilla: fixed boxed annotation drawing.
 * Scintilla: fixed virtual space selection bug in rectangular selections.
-* Scintilla: replacing multiple selections with newlines is a single undo
-  action.
+* Scintilla: replacing multiple selections with newlines is a single undo action.
 * Scintilla: fixed autocompletion list height in GTK 3.
 * Scintilla: fixed mouse scrolling due to recent GTK changes.
 
@@ -2494,11 +2360,10 @@ Changes:
 
 * Identify more file extensions.
 * Updated Batch lexer.
-* Scintilla: `Ctrl+Double Click` and `Ctrl+Triple Click` adds words and lines,
-  respectively, to selections.
+* Scintilla: `Ctrl+Double Click` and `Ctrl+Triple Click` adds words and lines, respectively,
+  to selections.
 * Scintilla: added [`buffer:delete_range()`][] for deleting ranges of text.
-* Scintilla: added `buffer.WRAPVISUALFLAG_MARGIN` for drawing wrap markers in
-  margins.
+* Scintilla: added `buffer.WRAPVISUALFLAG_MARGIN` for drawing wrap markers in margins.
 * Scintilla: improved UTF-8 validity checks.
 * Updated to [Scintilla][] 3.2.0.
 
@@ -2525,8 +2390,8 @@ Changes:
 * Textadept is [single-instance][] by default on Linux and Mac OSX.
 * Textadept requires [GTK][] 2.18 or higher now instead of 2.16.
 * The provided Textadept binaries [require][] [GLib][] 2.28 or higher.
-* Scintilla: added `buffer.auto_c_case_insensitive_behaviour` for
-  controlling case sensitivity in autocompletion lists.
+* Scintilla: added `buffer.auto_c_case_insensitive_behaviour` for controlling case sensitivity
+  in autocompletion lists.
 * Scintilla: `\0` in regex replacements represents the full found text.
 * Updated to [Scintilla][] 3.1.0.
 
@@ -2603,8 +2468,7 @@ Bugfixes:
 
 Changes:
 
-* Added default extension and folder filters in
-  `modules/textadept/snapopen.lua`.
+* Added default extension and folder filters in `modules/textadept/snapopen.lua`.
 * Added ChucK lexer.
 * Updated Lua lexer.
 * Updated to [Scintilla][] 3.0.3.
@@ -2622,8 +2486,7 @@ Bugfixes:
 
 Changes:
 
-* Changed `locale.localize()` to global [`_L`][] table and removed `locale`
-  module.
+* Changed `locale.localize()` to global [`_L`][] table and removed `locale` module.
 * Renamed `_m` to [`_M`][].
 * Do not clear registered images when autocompleting with Adeptsense.
 * Renamed editing module's `current_word()` to [`select_word()`][].
@@ -2718,8 +2581,7 @@ Changes:
 * Added language-specific [context menu][] support.
 * Use [LuaCoco][] patch for Lua 5.1.4.
 * Use lexer at the caret for key bindings and snippets.
-* Added `selected` and `monospaced-font` options for dropdown and textbox
-  dialogs, respectively.
+* Added `selected` and `monospaced-font` options for dropdown and textbox dialogs, respectively.
 * Updated to [Scintilla][] 2.29.
 
 [dwell events]: api.html#events
@@ -2734,8 +2596,7 @@ Changes:
 
 ### 4.0 (01 Sep 2011)
 
-Please see the [3 to 4 migration guide][] for upgrading from Textadept 3 to
-Textadept 4.
+Please see the [3 to 4 migration guide][] for upgrading from Textadept 3 to Textadept 4.
 
 Bugfixes:
 
@@ -2781,8 +2642,7 @@ Bugfixes:
 * Fixed bug when setting both dialog with and height.
 * Scintilla: fixed incorrect mouse cursor changes.
 * Scintilla: fixed bug with annotations beyond the document end.
-* Scintilla: fixed incorrect drawing of background colors and translucent
-  selection.
+* Scintilla: fixed incorrect drawing of background colors and translucent selection.
 * Scintilla: fixed lexer initialization.
 * Scintilla: fixed some instances of fold highlight drawing.
 * Scintilla: fixed some cases of case insensitive searching.
@@ -2792,16 +2652,14 @@ Changes:
 * Mac OSX uses GTK 2.24.
 * Added [`io.open_recent_file()`][].
 * Changes to localization file again.
-* [`buffer`][] functions may omit the first `buffer` argument (e.g.
-  `buffer.line_down()` is allowed).
+* [`buffer`][] functions may omit the first `buffer` argument (e.g.n `buffer.line_down()`
+  is allowed).
 * Complete overhaul of menus and added accelerators to [menu][] items.
 * Renamed `_m.textadept.editing.SAVE_STRIPS_WS` to
   [`_m.textadept.editing.STRIP_WHITESPACE_ON_SAVE`][].
-* Renamed `_m.textadept.editing.select_scope()` to
-  `_m.textadept.editing.select_style()`.
+* Renamed `_m.textadept.editing.select_scope()` to `_m.textadept.editing.select_style()`.
 * *Completely new set of key bindings.*
-* Scintilla: translucent RGBA images can be used in margins and autocompletion
-  and user lists.
+* Scintilla: translucent RGBA images can be used in margins and autocompletion and user lists.
 * Scintilla: added new `buffer.INDIC_DOTBOX` indicator.
 * Scintilla: IME input now works.
 * Scintilla: `Ctrl+Shift+U` used for Unicode input.
@@ -2832,10 +2690,10 @@ Changes:
 
 * Added support for [GTK][] 3.0.
 * Use ID generator [functions][] for marker, indicator, and user list IDs.
-* Scintilla: added [`buffer:set_empty_selection()`][] for setting selections
-  without scrolling or redrawing.
-* Scintilla: added new `buffer.INDIC_DASH`, `buffer.INDIC_DOTS`, and
-  `buffer.INDIC_SQUIGGLELOW` indicators.
+* Scintilla: added [`buffer:set_empty_selection()`][] for setting selections without scrolling
+  or redrawing.
+* Scintilla: added new `buffer.INDIC_DASH`, `buffer.INDIC_DOTS`, and `buffer.INDIC_SQUIGGLELOW`
+  indicators.
 * Scintilla: added option to allow margin clicks to select wrapped lines.
 * Updated to [Scintilla][] 2.27.
 * Use string constants for event names.
@@ -2845,8 +2703,7 @@ Changes:
 * Use [GTK][] 2.22 on Windows.
 * Can localize the labels and buttons in the GUI [find][] frame.
 * Added ConTeXt lexer and updated Coffeescript, HTML, LaTeX, and TeX lexers.
-* Multiple single-line comments can be folded with the `fold.line.comments`
-  property set to `1`.
+* Multiple single-line comments can be folded with the `fold.line.comments` property set to `1`.
 
 [GTK]: https://gtk.org
 [functions]: api.html#_SCINTILLA
@@ -2882,8 +2739,8 @@ Changes:
 * Scintilla: improved text drawing and measuring.
 * Updated to [Scintilla][] 2.26.
 * Writing custom folding for lexers is much [easier][] now.
-* Added native folding for more than 60% of existing lexers. The rest still use
-  folding by indentation by default.
+* Added native folding for more than 60% of existing lexers. The rest still use folding by
+  indentation by default.
 * Added regex support for Coffeescript lexer.
 * Embed Coffeescript lexer in HTML lexer.
 
@@ -2921,25 +2778,23 @@ Changes:
 * Language modules load a user `post_init.lua` script if it exists.
 * Added Ruby on Rails lexer and module.
 * Added RHTML module.
-* Updated mime-types and prioritize by shebang, pattern, and then file
-  extension.
+* Updated mime-types and prioritize by shebang, pattern, and then file extension.
 * `buffer:get_lexer(true)` returns the lexer at the caret position.
 * Adeptsense can be triggered in embedded lexers now.
 * Added C standard library and Lua C API to C/C++ Adeptsense.
 * Lua module fields are now in Lua Adeptsense.
 * Updated to [Scintilla][] 2.25.
 * Rewrote [`_m.textadept.snippets`][] with syntax changes.
-* `Alt+I` (`Ctrl+I` on Mac OSX) is now "Select Snippet" instead of "Show Style".
-  "Show Style" is now `Ctrl+Alt+Shift+I` (`Ctrl+Apple+Shift+I`).
-* Adeptsense can exclude types matched by `sense.syntax.type_declarations`
-  patterns.
-* `Ctrl+T, V` (`Apple+T, V` on Mac OSX) keychain for toggling whitespace, wrap,
-  etc. is now `Ctrl+Shift+B` (`Apple+Shift+B`).
+* `Alt+I` (`Ctrl+I` on Mac OSX) is now "Select Snippet" instead of "Show Style".  "Show Style"
+  is now `Ctrl+Alt+Shift+I` (`Ctrl+Apple+Shift+I`).
+* Adeptsense can exclude types matched by `sense.syntax.type_declarations` patterns.
+* `Ctrl+T, V` (`Apple+T, V` on Mac OSX) keychain for toggling whitespace, wrap, etc. is now
+  `Ctrl+Shift+B` (`Apple+Shift+B`).
 * Key bindings and menu definition syntax changed.
 * Snapopen allows for multiple-selection.
 * `gui.print()` handles `nil` and non-string arguments properly.
-* Officially supported modules have their own [repository][] and are available
-  as a separate download.
+* Officially supported modules have their own [repository][] and are available as a separate
+  download.
 * Added cancel button to standard dialogs.
 
 [Scintilla]: https://scintilla.org
@@ -2976,12 +2831,11 @@ Changes:
 * Added class context completion to Adeptsense.
 * Added class type-inference through variable assignment to Adeptsense.
 * Added Adeptsense tutorial.
-* Added `_m.textadept.adeptsense.always_show_globals` setting for showing
-  globals in completion lists.
+* Added `_m.textadept.adeptsense.always_show_globals` setting for showing globals in completion
+  lists.
 * `Ctrl+H` (highlight word) is now `Ctrl+Shift+H`.
 * `Ctrl+H` now shows Adeptsense documentation.
-* Added Adeptsense `complete()` and `show_documentation()` functions to the
-  menu.
+* Added Adeptsense `complete()` and `show_documentation()` functions to the menu.
 * Language modules condensed into single `init.lua` file.
 * Added `sense.syntax.word_chars` to Adeptsense.
 * Included libpng12 build for 64-bit Debian-based Linux distros (Ubuntu).
@@ -3029,8 +2883,7 @@ Changes:
 
 * `buffer.rectangular_selection_modifier` on Linux is the Super/Windows key.
 * Improved HTML lexer.
-* Added Markdown, BibTeX, CMake, CUDA, Desktop Entry, F#, GLSL, and Nemerle
-  lexers.
+* Added Markdown, BibTeX, CMake, CUDA, Desktop Entry, F#, GLSL, and Nemerle lexers.
 * Added [`_m.textadept.filter_through`][] module for [shell commands][].
 * Moved GUI events from `core/events.lua` to `core/gui.lua`.
 * Separated key command manager from key command definitions.
@@ -3050,8 +2903,7 @@ Changes:
 * Lua files are syntax-checked for errors on save.
 * [Menus][] are easier to create.
 * Changed `_m.textadept.editing.enclose()` behavior.
-* Win32 and Mac OSX packages are all-in-one bundles; GTK is no longer an
-  external dependency.
+* Win32 and Mac OSX packages are all-in-one bundles; GTK is no longer an external dependency.
 * New [manual][].
 * Added [`file_after_save`][] event.
 
@@ -3064,45 +2916,38 @@ Changes:
 Bugfixes:
 
 * Fixed menu item conflicts.
-* Pressing `Cancel` in the [Switch Buffers][] dialog does not jump to the
-  selected buffer anymore.
+* Pressing `Cancel` in the [Switch Buffers][] dialog does not jump to the selected buffer anymore.
 * Autocomplete lists sort properly for machines with a different locale.
 * Statusbar is not cleared when set from a key command.
 * Unreadable files are handled appropriately.
 * Scintilla: fixed scrolling bug where caret was not kept visible.
 * Scintilla: fixed caret position caching after autocompletion.
 * Scintilla: fixed paging up/down in virtual space.
-* Scintilla: fixed crash with negative arguments passed to
-  `buffer:marker_add()` and `buffer:marker_add_set()`.
-* Scintilla: dwell notifications are not emitted when the mouse is outside the
-  view.
+* Scintilla: fixed crash with negative arguments passed to `buffer:marker_add()` and
+  `buffer:marker_add_set()`.
+* Scintilla: dwell notifications are not emitted when the mouse is outside the view.
 
 Changes:
 
-* Multi-language lexers (HTML, PHP, RHTML, etc.) are processed as fast as single
-  language ones, resulting in a huge speed improvement.
+* Multi-language lexers (HTML, PHP, RHTML, etc.) are processed as fast as single language ones,
+  resulting in a huge speed improvement.
 * An `update_ui` event is triggered after a Lua command is entered.
 * `gui.dialog()` can take tables of strings as arguments now.
-* [`_m.textadept.snapopen.open()`][] takes a recursion depth as a parameter and
-  falls back on a `DEFAULT_DEPTH` if necessary.
-* Removed `_m.textadept.editing.smart_cutcopy()` and
-  `_m.textadept.editing.squeeze()` functions.
-* Added `_m.textadept.editing.SAVE_STRIPS_WS` option to disable strip whitespace
-  on save.
+* [`_m.textadept.snapopen.open()`][] takes a recursion depth as a parameter and falls back on a
+  `DEFAULT_DEPTH` if necessary.
+* Removed `_m.textadept.editing.smart_cutcopy()` and `_m.textadept.editing.squeeze()` functions.
+* Added `_m.textadept.editing.SAVE_STRIPS_WS` option to disable strip whitespace on save.
 * Changed locale implementation. Locale files are much easier to create now.
 * `gui.statusbar_text` is now readable instead of being write-only.
 * Can [highlight][] all occurances of a word.
 * Added jsp lexer.
 * More consistant handling of `\` directory separator for Win32.
-* Consolidated `textadept.h` and `lua_interface.c` into single `textadept.c`
-  file.
-* Added [`_G.timeout()`][] function for calling functions and/or events after a
-  period of time.
+* Consolidated `textadept.h` and `lua_interface.c` into single `textadept.c` file.
+* Added [`_G.timeout()`][] function for calling functions and/or events after a period of time.
 * Find in files is accessible through [find API][].
 * Updated XML lexer.
 * Added `search-column` and `output-column` options for filteredlist dialogs.
-* Scintilla: added [`buffer:contracted_fold_next()`][] for retrieving fold
-  states.
+* Scintilla: added [`buffer:contracted_fold_next()`][] for retrieving fold states.
 * Scintilla: added `buffer:vertical_centre_caret()`.
 * Updated to [Scintilla][] 2.22.
 * Renamed `_G.MAC` to [`_G.OSX`][].
@@ -3125,8 +2970,7 @@ Bugfixes:
 
 Changes:
 
-* Added [`_m.textadept.snapopen`][] module with menu options for rapidly opening
-  files.
+* Added [`_m.textadept.snapopen`][] module with menu options for rapidly opening files.
 * Added coffeescript lexer.
 * Updated D and Java lexers.
 
@@ -3154,8 +2998,7 @@ Bugfixes:
 
 * Fixed memory leak in Mac OSX.
 * Scintilla: fixed crash when searching for empty strings.
-* Scintilla: fixed lexing and folding bugs when pressing enter at the beginning
-  of a line.
+* Scintilla: fixed lexing and folding bugs when pressing enter at the beginning of a line.
 * Scintilla: fixed bug in line selection mode.
 * Scintilla: fixed alpha indicator value ranges.
 * Scintilla: fixed compiler errors for some compilers.
@@ -3175,8 +3018,7 @@ Changes:
 
 ### 3.0 (01 Jul 2010)
 
-Please see the [2 to 3 migration guide][] for upgrading from Textadept 2 to
-Textadept 3.
+Please see the [2 to 3 migration guide][] for upgrading from Textadept 2 to Textadept 3.
 
 Bugfixes:
 
@@ -3202,8 +3044,7 @@ Bugfixes:
 * Scintilla: fixed selection bounds returned for rectangular selections.
 * Scintilla: fixed case-insensitive searching for non-ASCII characters.
 * Scintilla: fixed bad-UTF-8 byte handling.
-* Scintilla: fixed bug when rectangular selections were extended into multiple
-  selections.
+* Scintilla: fixed bug when rectangular selections were extended into multiple selections.
 * Scintilla: fixed incorrect caret placement after scrolling.
 * Scintilla: fixed text disappearing after wrapping bug.
 * Scintilla: fixed various regex search bugs.
@@ -3216,11 +3057,9 @@ Changes:
 * Moved core extension modules into [`textadept`][] module.
 * New [API][].
 * `~/.textadept/init.lua` is created for you if one does not exist.
-* No more autoload of `~/.textadept/key_commands.lua` and
-  `~/.textadept/snippets.lua`
+* No more autoload of `~/.textadept/key_commands.lua` and `~/.textadept/snippets.lua`
 * Updated Java and D lexers.
-* Scintilla: added [`buffer.multi_paste`][] for pasting into multiple
-  selections.
+* Scintilla: added [`buffer.multi_paste`][] for pasting into multiple selections.
 * Updated to [Scintilla][] 2.12.
 * [Abbreviated][] Lua commands in the command entry.
 * Dynamic command line [arguments][].
@@ -3244,8 +3083,7 @@ Bugfixes:
 
 Changes:
 
-* `_USERHOME` comes before `_HOME` in `package.path` so `require` searches
-  `~/.textadept/` first.
+* `_USERHOME` comes before `_HOME` in `package.path` so `require` searches `~/.textadept/` first.
 
 ### 2.2 beta 2 (01 May 2010)
 
@@ -3286,14 +3124,13 @@ Bugfixes:
 
 Changes:
 
-* Removed `_m.textadept.mlines` module since Scintilla's multiple selections
-  supercedes it.
+* Removed `_m.textadept.mlines` module since Scintilla's multiple selections supercedes it.
 * Removed side pane.
 * New [`gui.dialog('filteredlist', ...)][] from [gtdialog][].
 * Can select buffer from filteredlist dialog (replacing side pane buffer list).
 * Can select lexer from filteredlist dialog.
-* Can have user `key_commands.lua`, `snippets.lua`, `mime_types.conf`,
-  `locale.conf` that are loaded by their respective modules.
+* Can have user `key_commands.lua`, `snippets.lua`, `mime_types.conf`, `locale.conf` that are
+  loaded by their respective modules.
 * Added Matlab/Octave lexer and updated Haskell lexer.
 * Backspace deletes auto-inserted character pairs.
 * Added notification for session files not found.
@@ -3313,14 +3150,11 @@ Bugfixes:
 * Fixed key command for word autocomplete on Win32.
 * Changed conflicting menu shortcut for Lexers menu.
 * Fixed typos in templates generated by modules PM browser.
-* Scintilla: fixed crash after adding an annotation and then adding a new line
-  below it.
+* Scintilla: fixed crash after adding an annotation and then adding a new line below it.
 * Scintilla: fixed `buffer:get_sel_text()`.
 * Scintilla: fixed some instances of text positioning.
-* Scintilla: fixed various problems with rectangular selections and rectangular
-  pastes.
-* Scintilla: fixed some instances of navigation through and display of wrapped
-  lines.
+* Scintilla: fixed various problems with rectangular selections and rectangular pastes.
+* Scintilla: fixed some instances of navigation through and display of wrapped lines.
 * Scintilla: fixed drag and drop.
 * Scintilla: fixed extra background styling at the end of the buffer.
 * Scintilla: fixed crash when adding markers to non-existant lines.
@@ -3332,16 +3166,14 @@ Changes:
 * Search `_USERHOME` in addition to `_HOME` for themes.
 * Added command line option for not loading/saving session.
 * Modified key bindings to be more key-layout agnostic.
-* Added `reset_before` and `reset_after` events while `textadept.reset()` is
-  being run.
+* Added `reset_before` and `reset_after` events while `textadept.reset()` is being run.
 * Reload current lexer module after `textadept.reset()`.
 * Added `~/.textadept/modules/` to `package.path`.
 * Scintilla: added support for multiple selections and virtual space.
 * Scintilla: `buffer.first_visible_line` is no longer read-only.
-* Scintilla: added [`buffer.whitespace_size`][] for changing the size of visible
-  whitespace.
-* Scintilla: added [`buffer.auto_c_current_text`][] for retrieving the currently
-  selected autocompletion text.
+* Scintilla: added [`buffer.whitespace_size`][] for changing the size of visible whitespace.
+* Scintilla: added [`buffer.auto_c_current_text`][] for retrieving the currently selected
+  autocompletion text.
 * Updated to [Scintilla][] 2.03.
 * Modified quit and close dialogs to be more readable.
 
@@ -3379,27 +3211,23 @@ Bugfixes:
 * Alphabetize lexer list.
 * Fixed some locale issues.
 * Fixed some small memory leaks.
-* Try a [list of encodings][] rather than just UTF-8 so "conversion failed" does
-  not happen so often.
+* Try a [list of encodings][] rather than just UTF-8 so "conversion failed" does not happen
+  so often.
 * Restore a manually set lexer.
 
 Changes:
 
-* Removed `_m.textadept.macros` module and respective PM browser (use Lua
-  instead).
-* Linux version can be installed and run from anywhere; no need to recompile
-  anymore.
+* Removed `_m.textadept.macros` module and respective PM browser (use Lua instead).
+* Linux version can be installed and run from anywhere; no need to recompile anymore.
 * Added many more [events][] to hook into lots of core functionality.
 * Updated to [Scintilla][] 1.79.
 * Run module allows more flexible [compile commands][] and [run commands][].
 * Save project manager cursor over sessions.
-* Allow mime-types and compile and run commands to be user-redefinable in user
-  scripts.
+* Allow mime-types and compile and run commands to be user-redefinable in user scripts.
 * Use `~/.textadept/` for holding user lexers, themes, sessions, etc.
 * Added "Help" menu linking to Manual and LuaDoc.
 * Textadept compiles as C99 code. (Drops Microsoft Visual Studio support.)
-* Sessions functionality moved to `modules/textadept/session.lua` from
-  `core/file_io.lua`.
+* Sessions functionality moved to `modules/textadept/session.lua` from `core/file_io.lua`.
 * The `char_added` event now passes an int, not a string, to handler functions.
 * Replaced [cocoaDialog][] and [lua_dialog][] with my C-based [gtdialog][].
 * [Incremental find][] via the Lua command entry.
@@ -3428,8 +3256,7 @@ Changes:
 
 Bugfixes:
 
-* Fixed `NULL` byte bug associated with Lua interface due to multi-encoding
-  support.
+* Fixed `NULL` byte bug associated with Lua interface due to multi-encoding support.
 * Find marker is colored consistently.
 * Fixed issue with buffer browser cursor saving.
 * Fixed block character insertion issue on GTK-OSX.
@@ -3474,8 +3301,7 @@ Bugfixes:
 
 Updates:
 
-* Consolidated *core/ext/key_commands_{std,mac}.lua* into single
-  *core/ext/key_commands.lua*.
+* Consolidated *core/ext/key_commands_{std,mac}.lua* into single *core/ext/key_commands.lua*.
 * Can use the `Tab` and `Shift+Tab` keys for snippets now.
 * Removed support for Textmate-style snippets in favor of Lua-style snippets.
 * Load drag-and-dropped directories into file browser.
@@ -3513,8 +3339,7 @@ Updates:
 Bugfixes:
 
 * Binary files are opened and handled properly.
-* Drag-and-dropped files are now opened in the correct split view they were
-  dropped in.
+* Drag-and-dropped files are now opened in the correct split view they were dropped in.
 * Fixed some various GTK-OSX UI issues.
 * Fixed a special case of "Replace All".
 * Clicking "Ok" closes any error dialogs on init.
@@ -3546,9 +3371,8 @@ Bugfixes:
 Updates:
 
 * Windows command line support ("Open With Textadept" works too).
-* New [`_m.textadept.run`][] module for compiling and running programs. Output
-  is displayed in a message buffer and you can double-click errors and warnings
-  to go to them in the source file.
+* New [`_m.textadept.run`][] module for compiling and running programs. Output is displayed in
+  a message buffer and you can double-click errors and warnings to go to them in the source file.
 
 [`_m.textadept.run`]: api.html#textadept.run
 
@@ -3563,8 +3387,7 @@ Updates:
 * Dramatic speed increase in lexing for large, single-language files.
 * Added [localization][] support.
 * Added [bookmarks][] support.
-* All `require` statements have been moved to *init.lua* for easy module
-  configuration.
+* All `require` statements have been moved to *init.lua* for easy module configuration.
 * Various improvements to efficiency, speed, and readability of source code.
 * Manually parse *~/.gtkrc-2.0* on Mac since GTK-OSX does not do it.
 
@@ -3611,8 +3434,8 @@ Updates:
 * Some C++ API-simplifying changes.
 * Drag-and-drop files into Textadept works as expected.
 * Revised [manual][].
-* Buffer and View properties are no longer set in C++, but in Lua through
-  "buffer_new" and "view_new" event handlers respectively.
+* Buffer and View properties are no longer set in C++, but in Lua through "buffer_new" and
+  "view_new" event handlers respectively.
 * File types can be recognized by [pattern matching][] the first line.
 
 [Theming]: manual.html#themes
@@ -3629,8 +3452,7 @@ Updates:
 
 * Added user-friendly key bindings and menus.
 * Added 43 more lexers.
-* Moved block-comment commands from language modules to `textadept.editing`
-  module.
+* Moved block-comment commands from language modules to `textadept.editing` module.
 * Updated some Luadoc.
 
 ### 0.4 (25 Jun 2008)
@@ -3643,12 +3465,10 @@ Bugfixes:
 
 Updates:
 
-* Added [bookmark][] support through *modules/textadept/bookmarks.lua* (not
-  loaded by default).
+* Added [bookmark][] support through *modules/textadept/bookmarks.lua* (not loaded by default).
 * Added icons to Textadept.
 * Added a modules browser for adding, deleting, and editing modules easily.
-* Consolidated source files into *textadept.c*, *textadept.h*, and
-  *lua_interface.c*.
+* Consolidated source files into *textadept.c*, *textadept.h*, and *lua_interface.c*.
 * Always load project manager settings from session file if available.
 * Include *liblua5.1.a* for compiling Lua into Textadept.
 * Added true [tab-completion][] to Lua command entry.

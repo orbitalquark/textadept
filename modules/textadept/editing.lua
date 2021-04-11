@@ -9,8 +9,7 @@ local M = {}
 --   Match the previous line's indentation level after inserting a new line.
 --   The default value is `true`.
 -- @field strip_trailing_spaces (bool)
---   Strip trailing whitespace before saving files. (Does not apply to binary
---   files.)
+--   Strip trailing whitespace before saving files. (Does not apply to binary files.)
 --   The default value is `false`.
 -- @field autocomplete_all_words (bool)
 --   Autocomplete the current word using words from all open buffers.
@@ -28,8 +27,8 @@ local M = {}
 --
 --   The default value is `textadept.editing.HIGHLIGHT_NONE`.
 -- @field auto_enclose (bool)
---   Whether or not to auto-enclose selected text when typing a punctuation
---   character, taking [`textadept.editing.auto_pairs`]() into account.
+--   Whether or not to auto-enclose selected text when typing a punctuation character, taking
+--   [`textadept.editing.auto_pairs`]() into account.
 --   The default value is `false`.
 -- @field INDIC_BRACEMATCH (number)
 --   The matching brace highlight indicator number.
@@ -46,6 +45,7 @@ M.auto_enclose = false
 M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
 M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
+-- LuaFormatter off
 ---
 -- Map of image names to registered image numbers.
 -- @field CLASS The image number for classes.
@@ -59,6 +59,7 @@ M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 -- @class table
 -- @name XPM_IMAGES
 M.XPM_IMAGES = {not CURSES and '/* XPM */static char *class[] = {/* columns rows colors chars-per-pixel */"16 16 10 1 ","  c #000000",". c #001CD0","X c #008080","o c #0080E8","O c #00C0C0","+ c #24D0FC","@ c #00FFFF","# c #A4E8FC","$ c #C0FFFF","% c None",/* pixels */"%%%%%  %%%%%%%%%","%%%% ##  %%%%%%%","%%% ###++ %%%%%%","%% +++++.   %%%%","%% oo++.. $$  %%","%% ooo.. $$$@@ %","%% ooo. @@@@@X %","%%%   . OO@@XX %","%%% ##  OOOXXX %","%% ###++ OOXX %%","% +++++.  OX %%%","% oo++.. %  %%%%","% ooo... %%%%%%%","% ooo.. %%%%%%%%","%%  o. %%%%%%%%%","%%%%  %%%%%%%%%%"};' or '*',not CURSES and '/* XPM */static char *namespace[] = {/* columns rows colors chars-per-pixel */"16 16 7 1 ","  c #000000",". c #1D1D1D","X c #393939","o c #555555","O c #A8A8A8","+ c #AAAAAA","@ c None",/* pixels */"@@@@@@@@@@@@@@@@","@@@@+@@@@@@@@@@@","@@@.o@@@@@@@@@@@","@@@ +@@@@@@@@@@@","@@@ +@@@@@@@@@@@","@@+.@@@@@@@+@@@@","@@+ @@@@@@@o.@@@","@@@ +@@@@@@+ @@@","@@@ +@@@@@@+ @@@","@@@.X@@@@@@@.+@@","@@@@+@@@@@@@ @@@","@@@@@@@@@@@+ @@@","@@@@@@@@@@@+ @@@","@@@@@@@@@@@X.@@@","@@@@@@@@@@@+@@@@","@@@@@@@@@@@@@@@@"};' or '@',not CURSES and '/* XPM */static char *method[] = {/* columns rows colors chars-per-pixel */"16 16 5 1 ","  c #000000",". c #E0BC38","X c #F0DC5C","o c #FCFC80","O c None",/* pixels */"OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOO  OOOO","OOOOOOOOO oo  OO","OOOOOOOO ooooo O","OOOOOOO ooooo. O","OOOO  O XXoo.. O","OOO oo  XXX... O","OO ooooo XX.. OO","O ooooo.  X. OOO","O XXoo.. O  OOOO","O XXX... OOOOOOO","O XXX.. OOOOOOOO","OO  X. OOOOOOOOO","OOOO  OOOOOOOOOO"};' or '+',not CURSES and '/* XPM */static char *signal[] = {/* columns rows colors chars-per-pixel */"16 16 6 1 ","  c #000000",". c #FF0000","X c #E0BC38","o c #F0DC5C","O c #FCFC80","+ c None",/* pixels */"++++++++++++++++","++++++++++++++++","++++++++++++++++","++++++++++  ++++","+++++++++ OO  ++","++++++++ OOOOO +","+++++++ OOOOOX +","++++  + ooOOXX +","+++ OO  oooXXX +","++ OOOOO ooXX ++","+ OOOOOX  oX +++","+ ooOOXX +  ++++","+ oooXXX +++++++","+ oooXX +++++..+","++  oX ++++++..+","++++  ++++++++++"};' or '~',not CURSES and '/* XPM */static char *slot[] = {/* columns rows colors chars-per-pixel */"16 16 5 1 ","  c #000000",". c #E0BC38","X c #F0DC5C","o c #FCFC80","O c None",/* pixels */"OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOO  OOOO","OOOOOOOOO oo  OO","OOOOOOOO ooooo O","OOOOOOO ooooo. O","OOOO  O XXoo.. O","OOO oo  XXX... O","OO ooooo XX.. OO","O ooooo.  X. OOO","O XXoo.. O  OOOO","O XXX... OOOOOOO","O XXX.. OOOOO   ","OO  X. OOOOOO O ","OOOO  OOOOOOO   "};' or '-',not CURSES and '/* XPM */static char *variable[] = {/* columns rows colors chars-per-pixel */"16 16 5 1 ","  c #000000",". c #8C748C","X c #9C94A4","o c #ACB4C0","O c None",/* pixels */"OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOO  OOOOO","OOOOOOOO oo  OOO","OOOOOOO ooooo OO","OOOOOO ooooo. OO","OOOOOO XXoo.. OO","OOOOOO XXX... OO","OOOOOO XXX.. OOO","OOOOOOO  X. OOOO","OOOOOOOOO  OOOOO","OOOOOOOOOOOOOOOO"};' or '.',not CURSES and '/* XPM */static char *struct[] = {/* columns rows colors chars-per-pixel */"16 16 14 1 ","  c #000000",". c #008000","X c #00C000","o c #00FF00","O c #808000","+ c #C0C000","@ c #FFFF00","# c #008080","$ c #00C0C0","% c #00FFFF","& c #C0FFC0","* c #FFFFC0","= c #C0FFFF","- c None",/* pixels */"-----  ---------","---- &&  -------","--- &&&oo ------","-- ooooo.   ----","-- XXoo.. ==  --","-- XXX.. ===%% -","-- XXX. %%%%%# -","---   . $$%%## -","--- **  $$$### -","-- ***@@ $$## --","- @@@@@O  $# ---","- ++@@OO -  ----","- +++OOO -------","- +++OO --------","--  +O ---------","----  ----------"};' or '}',not CURSES and '/* XPM */static char *typedef[] = {/* columns rows colors chars-per-pixel */"16 16 10 1 ","  c #000000",". c #404040","X c #6D6D6D","o c #777777","O c #949494","+ c #ACACAC","@ c #BBBBBB","# c #DBDBDB","$ c #EEEEEE","% c None",/* pixels */"%%%%%  %%%%%%%%%","%%%% ##  %%%%%%%","%%% ###++ %%%%%%","%% +++++.   %%%%","%% oo++.. $$  %%","%% ooo.. $$$@@ %","%% ooo. @@@@@X %","%%%   . OO@@XX %","%%% ##  OOOXXX %","%% ###++ OOXX %%","% +++++.  OX %%%","% oo++.. %  %%%%","% ooo... %%%%%%%","% ooo.. %%%%%%%%","%%  o. %%%%%%%%%","%%%%  %%%%%%%%%%"};' or ':',CLASS=1,NAMESPACE=2,METHOD=3,SIGNAL=4,SLOT=5,VARIABLE=6,STRUCT=7,TYPEDEF=8}
+-- LuaFormatter on
 events.connect(events.VIEW_NEW, function()
   local view = buffer ~= ui.command_entry and view or ui.command_entry
   for name, i in pairs(M.XPM_IMAGES) do
@@ -67,21 +68,23 @@ events.connect(events.VIEW_NEW, function()
 end)
 for _ = 1, #M.XPM_IMAGES do _SCINTILLA.next_image_type() end -- sync
 
+-- LuaFormatter off
 ---
--- Map of lexer names to line comment strings for programming languages, used by
--- the `toggle_comment()` function.
--- Keys are lexer names and values are either the language's line comment
--- prefixes or block comment delimiters separated by a '|' character.
+-- Map of lexer names to line comment strings for programming languages, used by the
+-- `toggle_comment()` function.
+-- Keys are lexer names and values are either the language's line comment prefixes or block
+-- comment delimiters separated by a '|' character.
 -- @class table
 -- @name comment_string
 -- @see toggle_comment
 M.comment_string = {actionscript='//',ada='--',apdl='!',ansi_c='/*|*/',antlr='//',apl='#',applescript='--',asp='\'',autoit=';',awk='#',b_lang='//',bash='#',batch=':',bibtex='%',boo='#',chuck='//',clojure=';',cmake='#',coffeescript='#',context='%',cpp='//',crystal='#',csharp='//',css='/*|*/',cuda='//',desktop='#',django='{#|#}',dmd='//',dockerfile='#',dot='//',eiffel='--',elixir='#',elm='--',erlang='%',fantom='//',faust='//',fennel=';',fish='#',forth='|\\',fortran='!',fsharp='//',fstab='#',gap='#',gettext='#',gherkin='#',glsl='//',gnuplot='#',go='//',groovy='//',gtkrc='#',haskell='--',html='<!--|-->',icon='#',idl='//',inform='!',ini='#',Io='#',java='//',javascript='//',jq='#',json='/*|*/',jsp='//',julia='#',latex='%',ledger='#',less='//',lilypond='%',lisp=';',logtalk='%',lua='--',makefile='#',matlab='#',meson='#',moonscript='--',myrddin='//',nemerle='//',networkd='#',nim='#',nsis='#',objective_c='//',pascal='//',perl='#',php='//',pico8='//',pike='//',pkgbuild='#',pony='//',prolog='%',props='#',protobuf='//',ps='%',pure='//',python='#',rails='#',rc='#',reason='//',rebol=';',rest='.. ',rexx='--',rhtml='<!--|-->',routeros='#',rstats='#',ruby='#',rust='//',sass='//',scala='//',scheme=';',smalltalk='"|"',sml='(*)',snobol4='#',spin="'",sql='--',systemd='#',tcl='#',tex='%',text='',toml='#',typescript='//',vala='//',vb='\'',vbscript='\'',verilog='//',vhdl='--',wsf='<!--|-->',xml='<!--|-->',xs='#',xtend='//',yaml='#',zig='//'}
+-- LuaFormatter on
 
 ---
 -- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
--- The ASCII values of opening characters are assigned to strings that contain
--- complement characters. The default auto-paired characters are "()", "[]",
--- "{}", "&apos;&apos;", and "&quot;&quot;".
+-- The ASCII values of opening characters are assigned to strings that contain complement
+-- characters. The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;", and
+-- "&quot;&quot;".
 -- @class table
 -- @name auto_pairs
 -- @usage textadept.editing.auto_pairs[60] = '>' -- pair '<' and '>'
@@ -90,8 +93,8 @@ M.auto_pairs = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
 
 ---
 -- Table of brace characters to highlight.
--- The ASCII values of brace characters are keys and are assigned non-`nil`
--- values. The default brace characters are '(', ')', '[', ']', '{', and '}'.
+-- The ASCII values of brace characters are keys and are assigned non-`nil` values. The default
+-- brace characters are '(', ')', '[', ']', '{', and '}'.
 -- @class table
 -- @name brace_matches
 -- @usage textadept.editing.brace_matches[60] = true -- '<'
@@ -100,8 +103,8 @@ M.brace_matches = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
 
 ---
 -- Table of characters to move over when typed.
--- The ASCII values of characters are keys and are assigned non-`nil` values.
--- The default characters are ')', ']', '}', '&apos;', and '&quot;'.
+-- The ASCII values of characters are keys and are assigned non-`nil` values. The default
+-- characters are ')', ']', '}', '&apos;', and '&quot;'.
 -- @class table
 -- @name typeover_chars
 -- @usage textadept.editing.typeover_chars[62] = true -- '>'
@@ -109,12 +112,10 @@ M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}
 
 ---
 -- Map of autocompleter names to autocompletion functions.
--- Names are typically lexer names and autocompletion functions typically
--- autocomplete symbols.
--- Autocompletion functions must return two values: the number of characters
--- behind the caret that are used as the prefix of the entity to be
--- autocompleted, and a list of completions to be shown. Autocompletion lists
--- are sorted automatically.
+-- Names are typically lexer names and autocompletion functions typically autocomplete symbols.
+-- Autocompletion functions must return two values: the number of characters behind the caret
+-- that are used as the prefix of the entity to be autocompleted, and a list of completions to
+-- be shown. Autocompletion lists are sorted automatically.
 -- @class table
 -- @name autocompleters
 -- @see autocomplete
@@ -122,20 +123,20 @@ M.autocompleters = {}
 
 ---
 -- Map of lexer names to API documentation file tables.
--- File tables contain API file paths or functions that return such paths.
--- Each line in an API file consists of a symbol name (not a fully qualified
--- symbol name), a space character, and that symbol's documentation. "\n"
--- represents a newline character.
+-- File tables contain API file paths or functions that return such paths. Each line in an
+-- API file consists of a symbol name (not a fully qualified symbol name), a space character,
+-- and that symbol's documentation. "\n" represents a newline character.
 -- @class table
 -- @name api_files
 -- @see show_documentation
-M.api_files = setmetatable({}, {__index = function(t, k)
-  t[k] = {}
-  return t[k]
-end})
+M.api_files = setmetatable({}, {
+  __index = function(t, k)
+    t[k] = {}
+    return t[k]
+  end
+})
 
--- Matches characters specified in auto_pairs, taking multiple selections into
--- account.
+-- Matches characters specified in auto_pairs, taking multiple selections into account.
 events.connect(events.CHAR_ADDED, function(code)
   if not M.auto_pairs or not M.auto_pairs[code] then return end
   buffer:begin_undo_action()
@@ -149,8 +150,7 @@ end)
 
 -- Removes matched chars on backspace, taking multiple selections into account.
 events.connect(events.KEYPRESS, function(code)
-  if M.auto_pairs and keys.KEYSYMS[code] == '\b' and
-     not ui.command_entry.active then
+  if M.auto_pairs and keys.KEYSYMS[code] == '\b' and not ui.command_entry.active then
     buffer:begin_undo_action()
     for i = 1, buffer.selections do
       local pos = buffer.selection_n_caret[i]
@@ -206,17 +206,14 @@ events.connect(events.UPDATE_UI, function(updated)
   buffer.search_flags = buffer.FIND_MATCHCASE | buffer.FIND_WHOLEWORD
   buffer:target_whole_document()
   while buffer:search_in_target(word) ~= -1 do
-    buffer:indicator_fill_range(
-      buffer.target_start, buffer.target_end - buffer.target_start)
+    buffer:indicator_fill_range(buffer.target_start, buffer.target_end - buffer.target_start)
     buffer:set_target_range(buffer.target_end, buffer.length + 1)
   end
 end)
 
--- Moves over typeover characters when typed, taking multiple selections into
--- account.
+-- Moves over typeover characters when typed, taking multiple selections into account.
 events.connect(events.KEYPRESS, function(code)
-  if M.typeover_chars and M.typeover_chars[code] and
-     not ui.command_entry.active then
+  if M.typeover_chars and M.typeover_chars[code] and not ui.command_entry.active then
     local handled = false
     for i = 1, buffer.selections do
       local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
@@ -234,7 +231,7 @@ events.connect(events.CHAR_ADDED, function(code)
   if not M.auto_indent or code ~= string.byte('\n') then return end
   local line = buffer:line_from_position(buffer.current_pos)
   if line > 1 and buffer:get_line(line - 1):find('^[\r\n]+$') and
-     buffer:get_line(line):find('^[^\r\n]') then
+    buffer:get_line(line):find('^[^\r\n]') then
     return -- do not auto-indent when pressing enter from start of previous line
   end
   local i = line - 1
@@ -245,8 +242,8 @@ events.connect(events.CHAR_ADDED, function(code)
   end
 end)
 
--- Enables and disables bracketed paste mode in curses and disables auto-pair
--- and auto-indent while pasting.
+-- Enables and disables bracketed paste mode in curses and disables auto-pair and auto-indent
+-- while pasting.
 if CURSES and not WIN32 then
   local function enable_br_paste() io.stdout:write('\x1b[?2004h'):flush() end
   local function disable_br_paste() io.stdout:write('\x1b[?2004l'):flush() end
@@ -267,8 +264,8 @@ if CURSES and not WIN32 then
   end)
 end
 
--- Prepares the buffer for saving to a file by stripping trailing whitespace,
--- ensuring a final newline, and normalizing line endings.
+-- Prepares the buffer for saving to a file by stripping trailing whitespace, ensuring a final
+-- newline, and normalizing line endings.
 events.connect(events.FILE_BEFORE_SAVE, function()
   if not M.strip_trailing_spaces or not buffer.encoding then return end
   buffer:begin_undo_action()
@@ -289,8 +286,8 @@ events.connect(events.FILE_BEFORE_SAVE, function()
 end)
 
 ---
--- Pastes the text from the clipboard, taking into account the buffer's
--- indentation settings and the indentation of the current and preceding lines.
+-- Pastes the text from the clipboard, taking into account the buffer's indentation settings
+-- and the indentation of the current and preceding lines.
 -- @name paste_reindent
 function M.paste_reindent()
   local line = buffer:line_from_position(buffer.selection_start)
@@ -307,31 +304,25 @@ function M.paste_reindent()
   text = text:gsub('\n([ \t]+)', function(indentation)
     if indentation:find('^\t') then
       return buffer.use_tabs and '\n' .. indentation or
-        '\n' .. indentation:gsub('\t', string.rep(' ', buffer.tab_width))
+        ('\n' .. indentation:gsub('\t', string.rep(' ', buffer.tab_width)))
     else
       tab_width = math.min(tab_width, #indentation)
       local indent = math.floor(#indentation / tab_width)
       local spaces = string.rep(' ', math.fmod(#indentation, tab_width))
-      return string.format(
-        '\n%s%s', buffer.use_tabs and string.rep('\t', indent) or
+      return string.format('\n%s%s', buffer.use_tabs and string.rep('\t', indent) or
         string.rep(' ', buffer.tab_width):rep(indent), spaces)
     end
   end)
-  -- Re-indent according to whichever of the current and preceding lines has the
-  -- higher indentation amount. However, if the preceding line is a fold header,
-  -- indent by an extra level.
+  -- Re-indent according to whichever of the current and preceding lines has the higher indentation
+  -- amount. However, if the preceding line is a fold header, indent by an extra level.
   local i = line - 1
   while i >= 1 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
-  if i < 1 or buffer.line_indentation[i] < buffer.line_indentation[line] then
-    i = line
-  end
-  local indentation = buffer:text_range(
-    buffer:position_from_line(i), buffer.line_indent_position[i])
-  local fold_header =
-    i ~= line and buffer.fold_level[i] & buffer.FOLDLEVELHEADERFLAG > 0
+  if i < 1 or buffer.line_indentation[i] < buffer.line_indentation[line] then i = line end
+  local indentation =
+    buffer:text_range(buffer:position_from_line(i), buffer.line_indent_position[i])
+  local fold_header = i ~= line and buffer.fold_level[i] & buffer.FOLDLEVELHEADERFLAG > 0
   if fold_header then
-    indentation = indentation ..
-      (buffer.use_tabs and '\t' or string.rep(' ', buffer.tab_width))
+    indentation = indentation .. (buffer.use_tabs and '\t' or string.rep(' ', buffer.tab_width))
   end
   text = text:gsub('\n', '\n' .. indentation)
   -- Paste the text and adjust first and last line indentation accordingly.
@@ -374,9 +365,7 @@ function M.toggle_comment()
     local uncomment = buffer:text_range(p, p + #prefix) == prefix
     if not uncomment then
       buffer:insert_text(p, prefix)
-      if suffix ~= '' then
-        buffer:insert_text(buffer.line_end_position[line], suffix)
-      end
+      if suffix ~= '' then buffer:insert_text(buffer.line_end_position[line], suffix) end
     else
       buffer:delete_range(p, #prefix)
       if suffix ~= '' then
@@ -392,20 +381,23 @@ function M.toggle_comment()
   -- Keep the anchor and caret on the first line as necessary.
   local start_pos = buffer:position_from_line(s)
   anchor, pos = math.max(anchor, start_pos), math.max(pos, start_pos)
-  if s ~= e then buffer:set_sel(anchor, pos) else buffer:goto_pos(pos) end
+  if s ~= e then
+    buffer:set_sel(anchor, pos)
+  else
+    buffer:goto_pos(pos)
+  end
 end
 
 ---
--- Moves the caret to the beginning of line number *line* or the user-specified
--- line, ensuring *line* is visible.
--- @param line Optional line number to go to. If `nil`, the user is prompted for
---   one.
+-- Moves the caret to the beginning of line number *line* or the user-specified line, ensuring
+-- *line* is visible.
+-- @param line Optional line number to go to. If `nil`, the user is prompted for one.
 -- @name goto_line
 function M.goto_line(line)
   if not assert_type(line, 'number/nil', 1) then
     local button, value = ui.dialogs.inputbox{
-      title = _L['Go To'], informative_text = _L['Line Number:'],
-      button1 = _L['OK'], button2 = _L['Cancel']
+      title = _L['Go To'], informative_text = _L['Line Number:'], button1 = _L['OK'],
+      button2 = _L['Cancel']
     }
     line = tonumber(value)
     if button ~= 1 or not line then return end
@@ -413,14 +405,13 @@ function M.goto_line(line)
   view:ensure_visible_enforce_policy(line)
   buffer:goto_line(line)
 end
-args.register('-l', '--line', 1, function(line)
-  M.goto_line(tonumber(line) or line)
-end, 'Go to line')
+args.register('-l', '--line', 1, function(line) M.goto_line(tonumber(line) or line) end,
+  'Go to line')
 
 ---
 -- Transposes characters intelligently.
--- If the caret is at the end of a line, transposes the two characters before
--- the caret. Otherwise, the characters to the left and right are.
+-- If the caret is at the end of a line, transposes the two characters before the caret. Otherwise,
+-- the characters to the left and right are.
 -- @name transpose_chars
 function M.transpose_chars()
   local pos = buffer.current_pos
@@ -434,10 +425,8 @@ function M.transpose_chars()
 end
 
 ---
--- Joins the currently selected lines or the current line with the line below
--- it.
--- As long as any part of a line is selected, the entire line is eligible for
--- joining.
+-- Joins the currently selected lines or the current line with the line below it.
+-- As long as any part of a line is selected, the entire line is eligible for joining.
 -- @name join_lines
 function M.join_lines()
   buffer:target_from_selection()
@@ -450,8 +439,8 @@ function M.join_lines()
 end
 
 ---
--- Encloses the selected text or the current word within strings *left* and
--- *right*, taking multiple selections into account.
+-- Encloses the selected text or the current word within strings *left* and *right*, taking
+-- multiple selections into account.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
 -- @name enclose
@@ -475,8 +464,8 @@ end
 
 -- Enclose selected text in punctuation or auto-paired characters.
 events.connect(events.KEYPRESS, function(code, shift, ctrl, alt, cmd)
-  if M.auto_enclose and not buffer.selection_empty and code < 256 and
-     not ctrl and not alt and not cmd and not ui.command_entry.active then
+  if M.auto_enclose and not buffer.selection_empty and code < 256 and not ctrl and not alt and
+    not cmd and not ui.command_entry.active then
     local char = string.char(code)
     if char:find('^%P') then return end -- not punctuation
     M.enclose(char, M.auto_pairs[code] or char)
@@ -486,11 +475,9 @@ end, 1)
 
 ---
 -- Selects the text between strings *left* and *right* that enclose the caret.
--- If that range is already selected, toggles between selecting *left* and
--- *right* as well.
--- If *left* and *right* are not provided, they are assumed to be one of the
--- delimiter pairs specified in `auto_pairs` and are inferred from the current
--- position or selection.
+-- If that range is already selected, toggles between selecting *left* and *right* as well.
+-- If *left* and *right* are not provided, they are assumed to be one of the delimiter pairs
+-- specified in `auto_pairs` and are inferred from the current position or selection.
 -- @param left Optional left part of the enclosure.
 -- @param right Optional right part of the enclosure.
 -- @see auto_pairs
@@ -511,7 +498,7 @@ function M.select_enclosed(left, right)
         e = buffer:brace_match(s, 0)
         break
       elseif M.brace_matches[buffer.char_at[s]] or
-             buffer.style_at[s] == buffer.style_at[buffer.selection_start] then
+        (buffer.style_at[s] == buffer.style_at[buffer.selection_start]) then
         buffer.search_flags = 0
         buffer:set_target_range(s + 1, buffer.length + 1)
         if buffer:search_in_target(match) >= buffer.selection_end - 1 then
@@ -529,19 +516,16 @@ function M.select_enclosed(left, right)
 end
 
 ---
--- Selects the current word or, if *all* is `true`, all occurrences of the
--- current word.
--- If a word is already selected, selects the next occurrence as a multiple
--- selection.
--- @param all Whether or not to select all occurrences of the current word.
---   The default value is `false`.
+-- Selects the current word or, if *all* is `true`, all occurrences of the current word.
+-- If a word is already selected, selects the next occurrence as a multiple selection.
+-- @param all Whether or not to select all occurrences of the current word. The default value is
+--   `false`.
 -- @see buffer.word_chars
 -- @name select_word
 function M.select_word(all)
   buffer:target_whole_document()
   buffer.search_flags = buffer.FIND_MATCHCASE
-  if buffer.selection_empty or
-     buffer:is_range_word(buffer.selection_start, buffer.selection_end) then
+  if buffer.selection_empty or buffer:is_range_word(buffer.selection_start, buffer.selection_end) then
     buffer.search_flags = buffer.search_flags | buffer.FIND_WHOLEWORD
     if all then buffer:multiple_select_add_next() end -- select word first
   end
@@ -568,9 +552,8 @@ end
 
 ---
 -- Converts indentation between tabs and spaces according to `buffer.use_tabs`.
--- If `buffer.use_tabs` is `true`, `buffer.tab_width` indenting spaces are
--- converted to tabs. Otherwise, all indenting tabs are converted to
--- `buffer.tab_width` spaces.
+-- If `buffer.use_tabs` is `true`, `buffer.tab_width` indenting spaces are converted to tabs.
+-- Otherwise, all indenting tabs are converted to `buffer.tab_width` spaces.
 -- @see buffer.use_tabs
 -- @name convert_indentation
 function M.convert_indentation()
@@ -596,20 +579,19 @@ function M.convert_indentation()
 end
 
 ---
--- Passes the selected text or all buffer text to string shell command *command*
--- as standard input (stdin) and replaces the input text with the command's
--- standard output (stdout). *command* may contain shell pipes ('|').
+-- Passes the selected text or all buffer text to string shell command *command* as standard input
+-- (stdin) and replaces the input text with the command's standard output (stdout). *command*
+-- may contain shell pipes ('|').
 -- Standard input is as follows:
 --
 -- 1. If no text is selected, the entire buffer is used.
--- 2. If text is selected and spans a single line, only the selected text is
--- used.
--- 3. If text is selected and spans multiple lines, all text on the lines that
--- have text selected is passed as stdin. However, if the end of the selection
--- is at the beginning of a line, only the line ending delimiters from the
--- previous line are included. The rest of the line is excluded.
--- @param command The Linux, BSD, macOS, or Windows shell command to filter text
---   through. May contain pipes.
+-- 2. If text is selected and spans a single line, only the selected text is used.
+-- 3. If text is selected and spans multiple lines, all text on the lines that have text selected
+--   is passed as stdin. However, if the end of the selection is at the beginning of a line,
+--   only the line ending delimiters from the previous line are included. The rest of the line
+--   is excluded.
+-- @param command The Linux, BSD, macOS, or Windows shell command to filter text through. May
+--   contain pipes.
 -- @name filter_through
 function M.filter_through(command)
   assert(not (WIN32 and CURSES), 'not implemented in this environment')
@@ -627,12 +609,14 @@ function M.filter_through(command)
     end
     buffer:set_target_range(s, e)
   end
+  -- LuaFormatter off
   local commands = lpeg.match(lpeg.Ct(lpeg.P{
     lpeg.C(lpeg.V('command')) * ('|' * lpeg.C(lpeg.V('command')))^0,
     command = (1 - lpeg.S('"\'|') + lpeg.V('str'))^1,
     str = '"' * (1 - lpeg.S('"\\') + lpeg.P('\\') * 1)^0 * lpeg.P('"')^-1 +
-      "'" * (1 - lpeg.S("'\\") + lpeg.P('\\') * 1)^0 * lpeg.P("'")^-1,
+      "'" * (1 - lpeg.S("'\\") + lpeg.P('\\') * 1)^0 * lpeg.P("'")^-1
   }), command)
+  -- LuaFormatter on
   local output = buffer.target_text
   for i = 1, #commands do
     local p = assert(os.spawn(commands[i]:match('^%s*(.-)%s*$')))
@@ -640,21 +624,23 @@ function M.filter_through(command)
     p:close()
     output = p:read('a') or ''
     if p:wait() ~= 0 then
-      ui.statusbar_text = string.format(
-        '"%s" %s', commands[i], _L['returned non-zero status'])
+      ui.statusbar_text = string.format('"%s" %s', commands[i], _L['returned non-zero status'])
       return
     end
   end
   buffer:replace_target(output:iconv('UTF-8', _CHARSET))
-  if s == e then buffer:goto_pos(s) return end
+  if s == e then
+    buffer:goto_pos(s)
+    return
+  end
   buffer:set_sel(buffer.target_start, buffer.target_end)
 end
 
 ---
--- Displays an autocompletion list provided by the autocompleter function
--- associated with string *name*, and returns `true` if completions were found.
--- @param name The name of an autocompleter function in the `autocompleters`
---   table to use for providing autocompletions.
+-- Displays an autocompletion list provided by the autocompleter function associated with string
+-- *name*, and returns `true` if completions were found.
+-- @param name The name of an autocompleter function in the `autocompleters` table to use for
+--   providing autocompletions.
 -- @name autocomplete
 -- @see autocompleters
 function M.autocomplete(name)
@@ -662,14 +648,12 @@ function M.autocomplete(name)
   local len_entered, list = M.autocompleters[name]()
   if not len_entered or not list or #list == 0 then return end
   buffer.auto_c_order = buffer.ORDER_PERFORMSORT
-  buffer:auto_c_show(
-    len_entered, table.concat(list, string.char(buffer.auto_c_separator)))
+  buffer:auto_c_show(len_entered, table.concat(list, string.char(buffer.auto_c_separator)))
   return true
 end
 
--- Returns for the word part behind the caret a list of whole word completions
--- constructed from the current buffer or all open buffers (depending on
--- `M.autocomplete_all_words`).
+-- Returns for the word part behind the caret a list of whole word completions constructed from
+-- the current buffer or all open buffers (depending on `M.autocomplete_all_words`).
 -- If `buffer.auto_c_ignore_case` is `true`, completions are not case-sensitive.
 -- @see buffer.word_chars
 -- @see autocomplete
@@ -698,20 +682,23 @@ end
 
 local api_docs
 ---
--- Displays a call tip with documentation for the symbol under or directly
--- behind position *pos* or the caret position.
+-- Displays a call tip with documentation for the symbol under or directly behind position *pos*
+-- or the caret position.
 -- Documentation is read from API files in the `api_files` table.
 -- If a call tip is already shown, cycles to the next one if it exists.
 -- Symbols are determined by using `buffer.word_chars`.
--- @param pos Optional position of the symbol to show documentation for. If
---   omitted, the caret position is used.
--- @param ignore_case Optional flag that indicates whether or not to search
---   API files case-insensitively for symbols. The default value is `false`.
+-- @param pos Optional position of the symbol to show documentation for. If omitted, the caret
+--   position is used.
+-- @param ignore_case Optional flag that indicates whether or not to search API files
+--   case-insensitively for symbols. The default value is `false`.
 -- @name show_documentation
 -- @see api_files
 -- @see buffer.word_chars
 function M.show_documentation(pos, ignore_case)
-  if view:call_tip_active() then events.emit(events.CALL_TIP_CLICK) return end
+  if view:call_tip_active() then
+    events.emit(events.CALL_TIP_CLICK)
+    return
+  end
   local api_files = M.api_files[buffer:get_lexer(true)]
   if not api_files then return end
   if not assert_type(pos, 'number/nil', 1) then pos = buffer.current_pos end
@@ -739,8 +726,8 @@ function M.show_documentation(pos, ignore_case)
       ::continue::
     end
   end
-  -- Search backwards for an open function call and show API documentation for
-  -- that function as well.
+  -- Search backwards for an open function call and show API documentation for that function
+  -- as well.
   while s > 1 and buffer.char_at[s] ~= 40 do s = s - 1 end -- '('
   e = buffer:brace_match(s, 0)
   if s > 1 and (e == -1 or e >= pos) then

@@ -27,12 +27,11 @@
 --   Arguments:
 --
 --   * _`filename`_: The filename of the file being saved.
---   * _`saved_as`_: Whether or not the file was saved under a different
---     filename.
+--   * _`saved_as`_: Whether or not the file was saved under a different filename.
 -- @field _G.events.FILE_CHANGED (string)
 --   Emitted when Textadept detects that an open file was modified externally.
---   When connecting to this event, connect with an index of 1 in order to
---   override the default prompt to reload the file.
+--   When connecting to this event, connect with an index of 1 in order to override the default
+--   prompt to reload the file.
 --   Arguments:
 --
 --   * _`filename`_: The filename externally modified.
@@ -42,7 +41,9 @@
 module('io')]]
 
 -- Events.
+-- LuaFormatter off
 local file_io_events = {'file_opened','file_before_reload','file_after_reload','file_before_save','file_after_save','file_changed'}
+-- LuaFormatter on
 for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 
 io.quick_open_max = 1000
@@ -55,16 +56,15 @@ io.recent_files = {}
 
 ---
 -- List of encodings to attempt to decode files as.
--- You should add to this list if you get a "Conversion failed" error when
--- trying to open a file whose encoding is not recognized. Valid encodings are
--- [GNU iconv's encodings][] and include:
+-- You should add to this list if you get a "Conversion failed" error when trying to open a file
+-- whose encoding is not recognized. Valid encodings are [GNU iconv's encodings][] and include:
 --
---   * European: ASCII, ISO-8859-{1,2,3,4,5,7,9,10,13,14,15,16}, KOI8-R, KOI8-U,
---     KOI8-RU, CP{1250,1251,1252,1253,1254,1257}, CP{850,866,1131},
---     Mac{Roman,CentralEurope,Iceland,Croatian,Romania},
---     Mac{Cyrillic,Ukraine,Greek,Turkish}, Macintosh.
---   * Unicode: UTF-8, UCS-2, UCS-2BE, UCS-2LE, UCS-4, UCS-4BE, UCS-4LE, UTF-16,
---     UTF-16BE, UTF-16LE, UTF-32, UTF-32BE, UTF-32LE, UTF-7, C99, JAVA.
+--   * European: ASCII, ISO-8859-{1,2,3,4,5,7,9,10,13,14,15,16}, KOI8-R,
+--     KOI8-U, KOI8-RU, CP{1250,1251,1252,1253,1254,1257}, CP{850,866,1131},
+--     Mac{Roman,CentralEurope,Iceland,Croatian,Romania}, Mac{Cyrillic,Ukraine,Greek,Turkish},
+--     Macintosh.
+--   * Unicode: UTF-8, UCS-2, UCS-2BE, UCS-2LE, UCS-4, UCS-4BE, UCS-4LE, UTF-16, UTF-16BE,
+--     UTF-16LE, UTF-32, UTF-32BE, UTF-32LE, UTF-7, C99, JAVA.
 --
 -- [GNU iconv's encodings]: https://www.gnu.org/software/libiconv/
 -- @usage io.encodings[#io.encodings + 1] = 'UTF-32'
@@ -73,14 +73,12 @@ io.recent_files = {}
 io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}
 
 ---
--- Opens *filenames*, a string filename or list of filenames, or the
--- user-selected filename(s).
+-- Opens *filenames*, a string filename or list of filenames, or the user-selected filename(s).
 -- Emits a `FILE_OPENED` event.
--- @param filenames Optional string filename or table of filenames to open. If
---   `nil`, the user is prompted with a fileselect dialog.
--- @param encodings Optional string encoding or table of encodings file contents
---   are in (one encoding per file). If `nil`, encoding auto-detection is
---   attempted via `io.encodings`.
+-- @param filenames Optional string filename or table of filenames to open. If `nil`, the user
+--   is prompted with a fileselect dialog.
+-- @param encodings Optional string encoding or table of encodings file contents are in (one
+--   encoding per file). If `nil`, encoding auto-detection is attempted via `io.encodings`.
 -- @see _G.events
 -- @name open_file
 function io.open_file(filenames, encodings)
@@ -88,8 +86,7 @@ function io.open_file(filenames, encodings)
   if not assert_type(filenames, 'string/table/nil', 1) then
     filenames = ui.dialogs.fileselect{
       title = _L['Open File'], select_multiple = true,
-      with_directory = (buffer.filename or ''):match('^.+[/\\]') or
-        lfs.currentdir(),
+      with_directory = (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir(),
       width = CURSES and ui.size[1] - 2 or nil
     }
     if not filenames then return end
@@ -99,7 +96,10 @@ function io.open_file(filenames, encodings)
   for i = 1, #filenames do
     local filename = lfs.abspath((filenames[i]:gsub('^file://', '')))
     for _, buf in ipairs(_BUFFERS) do
-      if filename == buf.filename then view:goto_buffer(buf) goto continue end
+      if filename == buf.filename then
+        view:goto_buffer(buf)
+        goto continue
+      end
     end
 
     local text = ''
@@ -189,7 +189,10 @@ end
 -- LuaDoc is in core/.buffer.luadoc.
 local function save(buffer)
   if not buffer then buffer = _G.buffer end
-  if not buffer.filename then buffer:save_as() return end
+  if not buffer.filename then
+    buffer:save_as()
+    return
+  end
   events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
   local text = buffer:get_text()
   if buffer.encoding then text = text:iconv(buffer.encoding, 'UTF-8') end
@@ -221,9 +224,7 @@ end
 -- @see buffer.save
 -- @name save_all_files
 function io.save_all_files()
-  for _, buffer in ipairs(_BUFFERS) do
-    if buffer.filename and buffer.modify then buffer:save() end
-  end
+  for _, buffer in ipairs(_BUFFERS) do if buffer.filename and buffer.modify then buffer:save() end end
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
@@ -233,9 +234,8 @@ local function close(buffer, force)
     local filename = buffer.filename or buffer._type or _L['Untitled']
     if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
     local button = ui.dialogs.msgbox{
-      title = _L['Close without saving?'],
-      text = _L['There are unsaved changes in'], informative_text = filename,
-      icon = 'gtk-dialog-question', button1 = _L['Cancel'],
+      title = _L['Close without saving?'], text = _L['There are unsaved changes in'],
+      informative_text = filename, icon = 'gtk-dialog-question', button1 = _L['Cancel'],
       button2 = _L['Close without saving'],
       width = CURSES and #filename > 40 and ui.size[1] - 2 or nil
     }
@@ -245,8 +245,8 @@ local function close(buffer, force)
   return true
 end
 
--- Detects if the current file has been externally modified and, if so, emits a
--- `FILE_CHANGED` event.
+-- Detects if the current file has been externally modified and, if so, emits a `FILE_CHANGED`
+-- event.
 local function update_modified_file()
   if not buffer.filename then return end
   local mod_time = lfs.attributes(buffer.filename, 'modification')
@@ -261,8 +261,8 @@ events.connect(events.FOCUS, update_modified_file)
 events.connect(events.RESUME, update_modified_file)
 
 ---
--- Closes all open buffers, prompting the user to continue if there are unsaved
--- buffers, and returns `true` if the user did not cancel.
+-- Closes all open buffers, prompting the user to continue if there are unsaved buffers, and
+-- returns `true` if the user did not cancel.
 -- No buffers are saved automatically. They must be saved manually.
 -- @return `true` if user did not cancel; `nil` otherwise.
 -- @see buffer.close
@@ -281,19 +281,16 @@ events.connect(events.BUFFER_NEW, function()
   buffer.save, buffer.save_as, buffer.close = save, save_as, close
 end)
 -- Export for later storage into the first buffer, which does not exist yet.
--- Cannot rely on `events.BUFFER_NEW` because init scripts (e.g. menus and key
--- bindings) can access buffer functions before the first `events.BUFFER_NEW` is
--- emitted.
+-- Cannot rely on `events.BUFFER_NEW` because init scripts (e.g. menus and key bindings) can
+-- access buffer functions before the first `events.BUFFER_NEW` is emitted.
 io._reload, io._save, io._save_as, io._close = reload, save, save_as, close
 
--- Prompts the user to reload the current file if it has been externally
--- modified.
+-- Prompts the user to reload the current file if it has been externally modified.
 events.connect(events.FILE_CHANGED, function(filename)
   local button = ui.dialogs.msgbox{
     title = _L['Reload?'], text = _L['Reload modified file?'],
-    informative_text = string.format(
-      '"%s"\n%s', filename:iconv('UTF-8', _CHARSET),
-      _L['has been modified. Reload it?']),
+    informative_text = string.format('"%s"\n%s', filename:iconv('UTF-8', _CHARSET),
+      _L['has been modified. Reload it?']), -- LuaFormatter
     icon = 'gtk-dialog-question', button1 = _L['Yes'], button2 = _L['No'],
     width = CURSES and #filename > 40 and ui.size[1] - 2 or nil
   }
@@ -332,23 +329,19 @@ end
 local vcs = {'.bzr', '.git', '.hg', '.svn', '_FOSSIL_'}
 
 ---
--- Returns the root directory of the project that contains filesystem path
--- *path*.
--- In order to be recognized, projects must be under version control. Recognized
--- VCSes are Bazaar, Fossil, Git, Mercurial, and SVN.
--- @param path Optional filesystem path to a project or a file contained within
---   a project. The default value is the buffer's filename or the current
---   working directory. This parameter may be omitted.
--- @param submodule Optional flag that indicates whether or not to return the
---   root of the current submodule (if applicable). The default value is
---   `false`.
+-- Returns the root directory of the project that contains filesystem path *path*.
+-- In order to be recognized, projects must be under version control. Recognized VCSes are
+-- Bazaar, Fossil, Git, Mercurial, and SVN.
+-- @param path Optional filesystem path to a project or a file contained within a project. The
+--   default value is the buffer's filename or the current working directory. This parameter
+--   may be omitted.
+-- @param submodule Optional flag that indicates whether or not to return the root of the
+--   current submodule (if applicable). The default value is `false`.
 -- @return string root or nil
 -- @name get_project_root
 function io.get_project_root(path, submodule)
   if type(path) == 'boolean' then path, submodule = nil, path end
-  if not assert_type(path, 'string/nil', 1) then
-    path = buffer.filename or lfs.currentdir()
-  end
+  if not assert_type(path, 'string/nil', 1) then path = buffer.filename or lfs.currentdir() end
   local dir = path:match('^(.+)[/\\]?')
   while dir do
     for i = 1, #vcs do
@@ -368,38 +361,34 @@ end
 io.quick_open_filters = {}
 
 ---
--- Prompts the user to select files to be opened from *paths*, a string
--- directory path or list of directory paths, using a filtered list dialog.
--- If *paths* is `nil`, uses the current project's root directory, which is
--- obtained from `io.get_project_root()`.
--- String or list *filter* determines which files to show in the dialog, with
--- the default filter being `io.quick_open_filters[path]` (if it exists) or
--- `lfs.default_filter`. A filter consists of Lua patterns that match file and
--- directory paths to include or exclude. Patterns are inclusive by default.
--- Exclusive patterns begin with a '!'. If no inclusive patterns are given, any
--- path is initially considered. As a convenience, file extensions can be
--- specified literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'),
--- and '/' also matches the Windows directory separator ('[/\\]' is not needed).
+-- Prompts the user to select files to be opened from *paths*, a string directory path or list
+-- of directory paths, using a filtered list dialog.
+-- If *paths* is `nil`, uses the current project's root directory, which is obtained from
+-- `io.get_project_root()`.
+-- String or list *filter* determines which files to show in the dialog, with the default
+-- filter being `io.quick_open_filters[path]` (if it exists) or `lfs.default_filter`. A filter
+-- consists of Lua patterns that match file and directory paths to include or exclude. Patterns
+-- are inclusive by default. Exclusive patterns begin with a '!'. If no inclusive patterns are
+-- given, any path is initially considered. As a convenience, file extensions can be specified
+-- literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/' also matches the
+-- Windows directory separator ('[/\\]' is not needed).
 -- The number of files in the list is capped at `quick_open_max`.
 -- If *filter* is `nil` and *paths* is ultimately a string, the filter from the
--- `io.quick_open_filters` table is used. If that filter does not exist,
--- `lfs.default_filter` is used.
--- *opts* is an optional table of additional options for
--- `ui.dialogs.filteredlist()`.
--- @param paths Optional string directory path or table of directory paths to
---   search. The default value is the current project's root directory, if
---   available.
--- @param filter Optional filter for files and directories to include and/or
---   exclude. The default value is `lfs.default_filter` unless a filter for
---   *paths* is defined in `io.quick_open_filters`.
--- @param opts Optional table of additional options for
---   `ui.dialogs.filteredlist()`.
--- @usage io.quick_open(buffer.filename:match('^(.+)[/\\]')) -- list all files
---   in the current file's directory, subject to the default filter
--- @usage io.quick_open(io.get_current_project(), '.lua') -- list all Lua files
---    in the current project
--- @usage io.quick_open(io.get_current_project(), '!/build') -- list all files
---   in the current project except those in the build directory
+-- `io.quick_open_filters` table is used. If that filter does not exist, `lfs.default_filter`
+-- is used.
+-- *opts* is an optional table of additional options for `ui.dialogs.filteredlist()`.
+-- @param paths Optional string directory path or table of directory paths to search. The
+--   default value is the current project's root directory, if available.
+-- @param filter Optional filter for files and directories to include and/or exclude. The
+--   default value is `lfs.default_filter` unless a filter for *paths* is defined in
+--   `io.quick_open_filters`.
+-- @param opts Optional table of additional options for `ui.dialogs.filteredlist()`.
+-- @usage io.quick_open(buffer.filename:match('^(.+)[/\\]')) -- list all files in the current
+--   file's directory, subject to the default filter
+-- @usage io.quick_open(io.get_current_project(), '.lua') -- list all Lua files in the current
+--   project
+-- @usage io.quick_open(io.get_current_project(), '!/build') -- list all files in the current
+--   project except those in the build directory
 -- @see io.quick_open_filters
 -- @see lfs.default_filter
 -- @see quick_open_max
@@ -423,24 +412,20 @@ function io.quick_open(paths, filter, opts)
   end
   if #utf8_list >= io.quick_open_max then
     ui.dialogs.msgbox{
-      title = _L['File Limit Exceeded'],
-      text = string.format(
-        '%d %s %d', io.quick_open_max,
+      title = _L['File Limit Exceeded'], text = string.format('%d %s %d', io.quick_open_max,
         _L['files or more were found. Showing the first'], io.quick_open_max),
       icon = 'gtk-dialog-info'
     }
   end
   local options = {
-    title = _L['Open File'], columns = _L['Filename'], items = utf8_list,
-    button1 = _L['OK'], button2 = _L['Cancel'], select_multiple = true,
-    string_output = true, width = CURSES and ui.size[1] - 2 or nil
+    title = _L['Open File'], columns = _L['Filename'], items = utf8_list, button1 = _L['OK'],
+    button2 = _L['Cancel'], select_multiple = true, string_output = true,
+    width = CURSES and ui.size[1] - 2 or nil
   }
   if opts then for k, v in pairs(opts) do options[k] = v end end
   local button, utf8_filenames = ui.dialogs.filteredlist(options)
   if button ~= _L['OK'] or not utf8_filenames then return end
   local filenames = {}
-  for i = 1, #utf8_filenames do
-    filenames[i] = utf8_filenames[i]:iconv(_CHARSET, 'UTF-8')
-  end
+  for i = 1, #utf8_filenames do filenames[i] = utf8_filenames[i]:iconv(_CHARSET, 'UTF-8') end
   io.open_file(filenames)
 end

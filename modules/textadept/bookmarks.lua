@@ -35,13 +35,13 @@ local function bookmarks(buffer)
 end
 
 ---
--- Prompts the user to select a bookmarked line to move the caret to the
--- beginning of unless *next* is given.
--- If *next* is `true` or `false`, moves the caret to the beginning of the next
--- or previously bookmarked line, respectively.
--- @param next Optional flag indicating whether to go to the next or previous
---   bookmarked line relative to the current line. The default value is `nil`,
---   prompting the user for a bookmarked line to go to.
+-- Prompts the user to select a bookmarked line to move the caret to the beginning of unless
+-- *next* is given.
+-- If *next* is `true` or `false`, moves the caret to the beginning of the next or previously
+-- bookmarked line, respectively.
+-- @param next Optional flag indicating whether to go to the next or previous bookmarked
+--   line relative to the current line. The default value is `nil`, prompting the user for a
+--   bookmarked line to go to.
 -- @name goto_mark
 function M.goto_mark(next)
   if next ~= nil then
@@ -49,9 +49,7 @@ function M.goto_mark(next)
     local line = buffer:line_from_position(buffer.current_pos)
     local BOOKMARK_BIT = 1 << M.MARK_BOOKMARK - 1
     line = f(buffer, line + (next and 1 or -1), BOOKMARK_BIT)
-    if line == -1 then
-      line = f(buffer, (next and 1 or buffer.line_count), BOOKMARK_BIT)
-    end
+    if line == -1 then line = f(buffer, (next and 1 or buffer.line_count), BOOKMARK_BIT) end
     if line >= 1 then textadept.editing.goto_line(line) end
     return
   end
@@ -64,8 +62,8 @@ function M.goto_mark(next)
     if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
     for line in bookmarks(buffer) do
-      utf8_list[#utf8_list + 1] = string.format(
-        '%s:%d: %s', basename, line, buffer:get_line(line):match('^[^\r\n]*'))
+      utf8_list[#utf8_list + 1] = string.format('%s:%d: %s', basename, line,
+        buffer:get_line(line):match('^[^\r\n]*'))
       buffers[#buffers + 1] = buffer
     end
     ::continue::
@@ -83,9 +81,8 @@ end
 
 local lines = {}
 -- Save and restore bookmarks on buffer:reload().
-events.connect(events.FILE_BEFORE_RELOAD, function()
-  for line in bookmarks(buffer) do lines[#lines + 1] = line end
-end)
+events.connect(events.FILE_BEFORE_RELOAD,
+  function() for line in bookmarks(buffer) do lines[#lines + 1] = line end end)
 events.connect(events.FILE_AFTER_RELOAD, function()
   for _, line in ipairs(lines) do buffer:marker_add(line, M.MARK_BOOKMARK) end
   lines = {} -- clear

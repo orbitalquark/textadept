@@ -7,23 +7,21 @@ local M = {}
 -- Session support for Textadept.
 -- @field save_on_quit (bool)
 --   Save the session when quitting.
---   The default value is `true` unless the user passed the command line switch
---   `-n` or `--nosession` to Textadept.
+--   The default value is `true` unless the user passed the command line switch `-n` or
+--   `--nosession` to Textadept.
 -- @field _G.events.SESSION_SAVE (string)
 --   Emitted when saving a session.
 --   Arguments:
 --
---   * `session`: Table of session data to save. All handlers will have access
---     to this same table, and Textadept's default handler reserves the use of
---     some keys.
---     Note that functions, userdata, and circular table values cannot be saved.
---     The latter case is not recognized at all, so beware.
+--   * `session`: Table of session data to save. All handlers will have access to this same
+--     table, and Textadept's default handler reserves the use of some keys.
+--     Note that functions, userdata, and circular table values cannot be saved. The latter
+--     case is not recognized at all, so beware.
 -- @field _G.events.SESSION_LOAD (string)
 --   Emitted when loading a session.
 --   Arguments:
 --
---   * `session`: Table of session data to load. All handlers will have access
---     to this same table.
+--   * `session`: Table of session data to load. All handlers will have access to this same table.
 module('textadept.session')]]
 
 M.save_on_quit = true
@@ -35,12 +33,11 @@ for _, v in ipairs(session_events) do events[v:upper()] = v end
 local session_file = _USERHOME .. (not CURSES and '/session' or '/session_term')
 
 ---
--- Loads session file *filename* or the user-selected session, returning `true`
--- if a session file was opened and read.
--- Textadept restores split views, opened buffers, cursor information, recent
--- files, and bookmarks.
--- @param filename Optional absolute path to the session file to load. If `nil`,
---   the user is prompted for one.
+-- Loads session file *filename* or the user-selected session, returning `true` if a session
+-- file was opened and read.
+-- Textadept restores split views, opened buffers, cursor information, recent files, and bookmarks.
+-- @param filename Optional absolute path to the session file to load. If `nil`, the user is
+--   prompted for one.
 -- @return `true` if the session file was opened and read; `nil` otherwise.
 -- @usage textadept.session.load(filename)
 -- @name load
@@ -116,24 +113,18 @@ function M.load(filename)
   return true
 end
 -- Load session when no args are present.
-local function load_default_session()
-  if M.save_on_quit then M.load(session_file) end
-end
+local function load_default_session() if M.save_on_quit then M.load(session_file) end end
 events.connect(events.ARG_NONE, load_default_session)
 
 -- Returns value *val* serialized as a string.
 -- This is a very simple implementation suitable for session saving only.
--- Ignores function, userdata, and thread types, and does not handle circular
--- tables.
+-- Ignores function, userdata, and thread types, and does not handle circular tables.
 local function _tostring(val)
   if type(val) == 'table' then
     local t = {}
-    for k, v in pairs(val) do
-      t[#t + 1] = string.format('[%s]=%s,', _tostring(k), _tostring(v))
-    end
+    for k, v in pairs(val) do t[#t + 1] = string.format('[%s]=%s,', _tostring(k), _tostring(v)) end
     return string.format('{%s}', table.concat(t))
-  elseif type(val) == 'function' or type(val) == 'userdata' or
-         type(val) == 'thread' then
+  elseif type(val) == 'function' or type(val) == 'userdata' or type(val) == 'thread' then
     val = nil
   end
   return type(val) == 'string' and string.format('%q', val) or tostring(val)
@@ -141,12 +132,11 @@ end
 
 ---
 -- Saves the session to file *filename* or the user-selected file.
--- Saves split views, opened buffers, cursor information, recent files, and
--- bookmarks.
+-- Saves split views, opened buffers, cursor information, recent files, and bookmarks.
 -- Upon quitting, the current session is saved to *filename* again, unless
 -- `textadept.session.save_on_quit` is `false`.
--- @param filename Optional absolute path to the session file to save. If `nil`,
---   the user is prompted for one.
+-- @param filename Optional absolute path to the session file to save. If `nil`, the user is
+--   prompted for one.
 -- @usage textadept.session.save(filename)
 -- @name save
 function M.save(filename)
@@ -174,7 +164,7 @@ function M.save(filename)
       filename = buffer.filename or buffer._type,
       anchor = current and buffer.anchor or buffer._anchor or 1,
       current_pos = current and buffer.current_pos or buffer._current_pos or 1,
-      top_line = current and view.first_visible_line or buffer._top_line or 1,
+      top_line = current and view.first_visible_line or buffer._top_line or 1
     }
     local bookmarks = {}
     local BOOKMARK_BIT = 1 << textadept.bookmarks.MARK_BOOKMARK - 1
@@ -193,13 +183,11 @@ function M.save(filename)
   -- Serialize views.
   local function serialize_split(split)
     return split.buffer and _BUFFERS[split.buffer] or {
-      serialize_split(split[1]), serialize_split(split[2]),
-      vertical = split.vertical, size = split.size
+      serialize_split(split[1]), serialize_split(split[2]), vertical = split.vertical,
+      size = split.size
     }
   end
-  session.views = {
-    serialize_split(ui.get_split_table()), current = _VIEWS[view]
-  }
+  session.views = {serialize_split(ui.get_split_table()), current = _VIEWS[view]}
 
   -- Serialize recent files.
   session.recent_files = io.recent_files
@@ -209,19 +197,14 @@ function M.save(filename)
   session_file = filename
 end
 -- Saves session on quit.
-events.connect(events.QUIT, function()
-  if M.save_on_quit then M.save(session_file) end
-end, 1)
+events.connect(events.QUIT, function() if M.save_on_quit then M.save(session_file) end end, 1)
 
 -- Does not save session on quit.
-args.register('-n', '--nosession', 0, function()
-  M.save_on_quit = false
-end, 'No session functionality')
+args.register('-n', '--nosession', 0, function() M.save_on_quit = false end,
+  'No session functionality')
 -- Loads the given session on startup.
 args.register('-s', '--session', 1, function(name)
-  if not lfs.attributes(name) then
-    name = string.format('%s/%s', _USERHOME, name)
-  end
+  if not lfs.attributes(name) then name = string.format('%s/%s', _USERHOME, name) end
   M.load(name)
   events.disconnect(events.ARG_NONE, load_default_session)
 end, 'Load session')

@@ -52,17 +52,14 @@ colors.light_blue = 0xFFCC80
 
 -- Default font.
 if not font then
-  font = WIN32 and 'Courier New' or OSX and 'Monaco' or
-    'Bitstream Vera Sans Mono'
+  font = WIN32 and 'Courier New' or OSX and 'Monaco' or 'Bitstream Vera Sans Mono'
 end
 if not size then size = not OSX and 10 or 12 end
 
 -- Predefined styles.
-styles.default = {
-  font = font, size = size, fore = colors.light_black, back = colors.white
-}
+styles.default = {font = font, size = size, fore = colors.light_black, back = colors.white}
 styles.line_number = {fore = colors.grey, back = colors.white}
---styles.control_char = {}
+-- styles.control_char = {}
 styles.indent_guide = {fore = colors.dark_white}
 styles.call_tip = {fore = colors.light_black, back = colors.dark_white}
 styles.fold_display_text = {fore = colors.grey}
@@ -87,29 +84,29 @@ styles.variable = {fore = colors.dark_lavender}
 styles.whitespace = {}
 
 -- Multiple Selection and Virtual Space
---view.additional_sel_alpha =
---view.additional_sel_fore =
---view.additional_sel_back =
---view.additional_caret_fore =
+-- view.additional_sel_alpha =
+-- view.additional_sel_fore =
+-- view.additional_sel_back =
+-- view.additional_caret_fore =
 
 -- Caret and Selection Styles.
 view:set_sel_fore(true, colors.light_black)
 view:set_sel_back(true, colors.light_grey)
---view.sel_alpha =
+-- view.sel_alpha =
 view.caret_fore = colors.grey_black
 view.caret_line_back = colors.dark_white
---view.caret_line_back_alpha =
+-- view.caret_line_back_alpha =
 
 -- Fold Margin.
 view:set_fold_margin_color(true, colors.white)
 view:set_fold_margin_hi_color(true, colors.white)
 
 -- Markers.
---view.marker_fore[textadept.bookmarks.MARK_BOOKMARK] = colors.white
+-- view.marker_fore[textadept.bookmarks.MARK_BOOKMARK] = colors.white
 view.marker_back[textadept.bookmarks.MARK_BOOKMARK] = colors.dark_blue
---view.marker_fore[textadept.run.MARK_WARNING] = colors.white
+-- view.marker_fore[textadept.run.MARK_WARNING] = colors.white
 view.marker_back[textadept.run.MARK_WARNING] = colors.light_yellow
---view.marker_fore[textadept.run.MARK_ERROR] = colors.white
+-- view.marker_fore[textadept.run.MARK_ERROR] = colors.white
 view.marker_back[textadept.run.MARK_ERROR] = colors.light_red
 for i = buffer.MARKNUM_FOLDEREND, buffer.MARKNUM_FOLDEROPEN do -- fold margin
   view.marker_fore[i] = colors.white
