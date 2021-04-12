@@ -33,20 +33,35 @@ local view_history = setmetatable({}, {
   end
 })
 
+local restore_position, first_visible_line = false, nil
+-- Restore position after a full-buffer undo/redo operation, e.g. after replacing buffer contents
+-- with a formatting command and then performing an undo.
+events.connect(events.UPDATE_UI, function(updated)
+  if not restore_position or updated & buffer.UPDATE_SELECTION == 0 then return end
+  restore_position = false
+  M.back()
+  view.first_visible_line, first_visible_line = first_visible_line, nil
+end)
+
 -- Listens for text insertion and deletion events and records their locations.
 events.connect(events.MODIFIED, function(position, mod, text, length)
   local buffer = buffer
   -- Only interested in text insertion or deletion.
   if mod & buffer.MOD_INSERTTEXT > 0 then
-    if length == buffer.length then return end -- ignore file loading
+    if length == buffer.length then
+      if mod & buffer.MULTILINEUNDOREDO > 0 then restore_position = true end
+      return -- ignore file loading or replacing buffer contents
+    end
     position = position + length
   elseif mod & buffer.MOD_DELETETEXT > 0 then
     if buffer.length == 0 then return end -- ignore replacing buffer contents
+  elseif mod & (buffer.PERFORMED_UNDO | buffer.PERFORMED_REDO) > 0 and
+      (mod & buffer.MOD_BEFOREDELETE > 0) and length == buffer.length then
+    first_visible_line = view.first_visible_line -- save for potential undo before it's lost
   else
     return
   end
-  -- Ignore undo/redo.
-  if mod & (buffer.PERFORMED_UNDO | buffer.PERFORMED_REDO) > 0 then return end
+  if mod & (buffer.PERFORMED_UNDO | buffer.PERFORMED_REDO) > 0 then return end -- ignore undo/redo
   M.record(nil, buffer:line_from_position(position), buffer.column[position])
 end)
 

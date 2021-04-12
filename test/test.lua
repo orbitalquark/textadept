@@ -2932,6 +2932,33 @@ function test_history_print_buffer()
   ui.tabs = tabs -- restore
 end
 
+function test_history_undo_full_buffer_change()
+  buffer.new()
+  local lines = {}
+  for i = 99, 1, -1 do lines[#lines + 1] = tostring(i) end
+  buffer:add_text(table.concat(lines, '\n'))
+  buffer:goto_line(50)
+  buffer:add_text('1')
+  textadept.editing.filter_through('sort -n')
+  ui.update()
+  assert(buffer:get_line(buffer:line_from_position(buffer.current_pos)) ~= '150\n', 'not sorted')
+  local first_visible_line = view.first_visible_line
+  buffer:undo()
+  -- Verify the view state was restored.
+  ui.update()
+  if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
+  assert_equal(buffer:line_from_position(buffer.current_pos), 50)
+  assert_equal(buffer:get_line(buffer:line_from_position(buffer.current_pos)), '150\n')
+  assert_equal(view.first_visible_line, first_visible_line)
+  buffer:redo()
+  -- Verify the previous view state was kept.
+  ui.update()
+  if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
+  assert_equal(buffer:line_from_position(buffer.current_pos), 50)
+  assert_equal(view.first_visible_line, first_visible_line)
+  buffer:close(true)
+end
+
 function test_macro_record_play_save_load()
   textadept.macros.save() -- should not do anything
   textadept.macros.play() -- should not do anything
