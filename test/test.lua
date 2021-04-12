@@ -3470,7 +3470,7 @@ function test_snippets_placeholders()
     'Shell: %[date] %1[echo %]',
     'escape: %%1 %4%( %4%{',
   }, '\n'))
-  -- LuaFormatter off
+  -- LuaFormatter on
   assert_equal(buffer.selections, 1)
   assert_equal(buffer.selection_start, 1 + 14)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
@@ -3973,7 +3973,7 @@ end
 function test_lexer_fold_line_groups()
   local fold_line_groups = lexer.fold_line_groups
   buffer.new()
-  buffer:add_text[[
+  buffer:add_text [[
     package foo;
 
     import bar;
@@ -4518,7 +4518,8 @@ function test_file_diff()
   assert(buffer2:get_line(1):find('^this'), 'did not merge from left to right')
   verify_first_merge()
 
-  if CURSES then goto curses_skip end do -- TODO: curses chokes trying to automate this
+  local verify_third_merge, verify_fourth_merge, verify_fifth_merge -- forward-declare for label
+  if CURSES then goto curses_skip end -- TODO: curses chokes trying to automate this
 
   -- Go to next difference, merge second block right to left, and verify.
   diff.goto_change(true)
@@ -4573,7 +4574,7 @@ function test_file_diff()
   diff.merge(true)
   assert(buffer1:get_line(12):find('into four'), 'did not merge from right to left')
   assert_equal(buffer1:get_line(12), buffer2:get_line(12))
-  local function verify_third_merge()
+  verify_third_merge = function()
     -- LuaFormatter off
     verify(buffer1, {
       [14] = diff.MARK_MODIFICATION,
@@ -4600,7 +4601,7 @@ function test_file_diff()
   assert_equal(buffer1:line_from_position(buffer1.current_pos), 14)
   diff.merge(true)
   assert(buffer1:get_line(14):find('have'), 'did not merge from right to left')
-  local function verify_fourth_merge()
+  verify_fourth_merge = function()
     for i = 14, 15 do assert_equal(buffer1:get_line(i), buffer2:get_line(i)) end
     verify(buffer1, {[16] = diff.MARK_DELETION}, {}, {})
     verify(buffer2, {}, {}, {[15] = ' '})
@@ -4619,7 +4620,7 @@ function test_file_diff()
   assert_equal(buffer1:line_from_position(buffer1.current_pos), 16)
   diff.merge(true)
   assert(buffer1:get_line(16):find('^\n'), 'did not merge from right to left')
-  local function verify_fifth_merge()
+  verify_fifth_merge = function()
     assert_equal(buffer1.length, buffer2.length)
     for i = 1, buffer1.length do assert_equal(buffer1:get_line(i), buffer2:get_line(i)) end
     verify(buffer1, {}, {}, {})
@@ -4641,7 +4642,7 @@ function test_file_diff()
   _VIEWS[1].x_offset = 0
   -- TODO: test vertical synchronization
 
-  end ::curses_skip::
+  ::curses_skip::
   textadept.menu.menubar[_L['Tools']][_L['Compare Files']][_L['Stop Comparing']][2]()
   ui.goto_view(_VIEWS[#_VIEWS])
   buffer:close(true)
