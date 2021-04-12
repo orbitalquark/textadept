@@ -33,14 +33,14 @@ local view_history = setmetatable({}, {
   end
 })
 
-local restore_position, first_visible_line = false, nil
+local restore_position, pos, first_visible_line = false, nil, nil
 -- Restore position after a full-buffer undo/redo operation, e.g. after replacing buffer contents
 -- with a formatting command and then performing an undo.
 events.connect(events.UPDATE_UI, function(updated)
   if not restore_position or updated & buffer.UPDATE_SELECTION == 0 then return end
   restore_position = false
-  M.back()
-  view.first_visible_line, first_visible_line = first_visible_line, nil
+  buffer:goto_pos(pos)
+  view.first_visible_line, pos, first_visible_line = first_visible_line, nil, nil
 end)
 
 -- Listens for text insertion and deletion events and records their locations.
@@ -56,8 +56,9 @@ events.connect(events.MODIFIED, function(position, mod, text, length)
   elseif mod & buffer.MOD_DELETETEXT > 0 then
     if buffer.length == 0 then return end -- ignore replacing buffer contents
   elseif mod & (buffer.PERFORMED_UNDO | buffer.PERFORMED_REDO) > 0 and
-      (mod & buffer.MOD_BEFOREDELETE > 0) and length == buffer.length then
-    first_visible_line = view.first_visible_line -- save for potential undo before it's lost
+    (mod & buffer.MOD_BEFOREDELETE > 0) and length == buffer.length then
+    -- Save view state for potential undo before it's lost.
+    pos, first_visible_line = buffer.current_pos, view.first_visible_line
   else
     return
   end

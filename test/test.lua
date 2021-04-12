@@ -2942,19 +2942,19 @@ function test_history_undo_full_buffer_change()
   textadept.editing.filter_through('sort -n')
   ui.update()
   assert(buffer:get_line(buffer:line_from_position(buffer.current_pos)) ~= '150\n', 'not sorted')
-  local first_visible_line = view.first_visible_line
+  local pos, first_visible_line = buffer.current_pos, view.first_visible_line
   buffer:undo()
   -- Verify the view state was restored.
   ui.update()
   if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
-  assert_equal(buffer:line_from_position(buffer.current_pos), 50)
+  assert_equal(buffer.current_pos, pos)
   assert_equal(buffer:get_line(buffer:line_from_position(buffer.current_pos)), '150\n')
   assert_equal(view.first_visible_line, first_visible_line)
   buffer:redo()
   -- Verify the previous view state was kept.
   ui.update()
   if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
-  assert_equal(buffer:line_from_position(buffer.current_pos), 50)
+  assert_equal(buffer.current_pos, pos)
   assert_equal(view.first_visible_line, first_visible_line)
   buffer:close(true)
 end
