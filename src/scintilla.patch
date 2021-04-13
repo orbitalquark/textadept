@@ -1,14 +1,31 @@
 Scintilla changes:
 
+* Fix GTK crash on Windows, as it does not support font options.
+  This patch has been submitted upstream.
 * Hijack SCI_CHANGEINSERTION for programmatically setting input method.
-  This is helpful on newer versions of macOS, where changing the input method is
-  flaky.
+  This is helpful on newer versions of macOS, where changing the input method is flaky.
 * Handle leading whitespace in XPM images in order to prevent crashes.
 
-diff -r 6e368ee248e4 gtk/ScintillaGTK.cxx
---- a/gtk/ScintillaGTK.cxx	Fri Oct 26 11:06:34 2018 -0400
-+++ b/gtk/ScintillaGTK.cxx	Sun Nov 25 00:20:58 2018 -0500
-@@ -821,6 +821,11 @@
+diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
+--- a/gtk/ScintillaGTK.cxx	Fri Apr 09 15:11:26 2021 +1000
++++ b/gtk/ScintillaGTK.cxx	Tue Apr 13 16:36:00 2021 -0400
+@@ -177,6 +177,7 @@
+ }
+ 
+ FontOptions::FontOptions(GtkWidget *widget) noexcept {
++#if !PLAT_GTK_WIN32
+ 	PangoContext *pcontext = gtk_widget_create_pango_context(widget);
+ 	PLATFORM_ASSERT(pcontext);
+ 	const cairo_font_options_t *options = pango_cairo_context_get_font_options(pcontext);
+@@ -186,6 +187,7 @@
+ 	order = cairo_font_options_get_subpixel_order(options);
+ 	hint = cairo_font_options_get_hint_style(options);
+ 	g_object_unref(pcontext);
++#endif
+ }
+ 
+ bool FontOptions::operator==(const FontOptions &other) const noexcept {
+@@ -885,6 +887,11 @@
  		case SCI_GETDIRECTPOINTER:
  			return reinterpret_cast<sptr_t>(this);
  
