@@ -2279,7 +2279,7 @@ end
 
 function test_file_types_load_lexers()
   local lexers = {}
-  for name in buffer:private_lexer_call(_SCINTILLA.functions.property_names[1]):gmatch('[^\n]+') do
+  for name in buffer:private_lexer_call(_SCINTILLA.properties.lexer_language[1]):gmatch('[^\n]+') do
     lexers[#lexers + 1] = name
   end
   print('Loading lexers...')

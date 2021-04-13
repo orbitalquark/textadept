@@ -1116,8 +1116,8 @@ static int call_scintilla(
     case SCI_GETDIRECTFUNCTION:
     case SCI_SETDOCPOINTER:
     case SCI_CHANGELEXERSTATE: ltype = SINT; break;
-    case SCI_SETLEXERLANGUAGE:
-    case SCI_LOADLEXERLIBRARY: ltype = SSTRING; break;
+    case SCI_SETILEXER:
+    case SCI_CREATELOADER: ltype = SSTRING; break;
     case SCI_GETNAMEDSTYLES: ltype = SSTRING, rtype = SINDEX; break;
     default: ltype = SSTRINGRET;
     }

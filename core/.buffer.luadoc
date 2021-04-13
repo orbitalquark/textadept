@@ -1734,6 +1734,7 @@ function set_lexer(buffer, name) end
 --   * annotation_style_offset
 --   * annotation_styles
 --   * automatic_fold
+--   * buffered_draw
 --   * call_tip_back
 --   * call_tip_fore
 --   * character_category_optimization
@@ -1745,6 +1746,9 @@ function set_lexer(buffer, name) end
 --   * direct_pointer
 --   * distance_to_secondary_styles
 --   * doc_pointer
+--   * element_allows_translucent
+--   * element_color
+--   * element_is_set
 --   * eol_annotation_style_offset
 --   * focus
 --   * font_quality
@@ -1786,6 +1790,7 @@ function set_lexer(buffer, name) end
 --   * sub_style_bases
 --   * sub_styles_length
 --   * sub_styles_start
+--   * supports_feature
 --   * tab_minimum_width
 --   * technology
 --   * two_phase_draw
@@ -1829,7 +1834,6 @@ function set_lexer(buffer, name) end
 --   * allocate_sub_styles
 --   * assign_cmd_key
 --   * brace_match_next
---   * buffered_draw
 --   * can_paste
 --   * change_insertion
 --   * change_lexer_state
@@ -1883,6 +1887,7 @@ function set_lexer(buffer, name) end
 --   * release_all_extended_styles
 --   * release_document
 --   * release_line_character_index
+--   * reset_element_color
 --   * set_hotspot_active_back
 --   * set_hotspot_active_fore
 --   * set_length_for_encode

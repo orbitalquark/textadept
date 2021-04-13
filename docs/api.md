@@ -9723,8 +9723,27 @@ The EOL annotation visibility mode.
     Draw EOL annotations no decoration.
   * `view.EOLANNOTATION_BOXED`
     Draw EOL annotations outlined with a box.
+  * `view.EOLANNOTATION_STADIUM`
+    Draw EOL annotations outline with curved ends.
+  * `view.EOLANNOTATION_FLAT_CIRCLE`
+    Draw EOL annotations outline with a flat left end and curved right end.
+  * `view.EOLANNOTATION_ANGLE_CIRCLE`
+    Draw EOL annotations outline with an angled left end and curved right end.
+  * `view.EOLANNOTATION_CIRCLE_FLAT`
+    Draw EOL annotations outline with a curved left end and flat right end.
+  * `view.EOLANNOTATION_FLATS`
+    Draw EOL annotations outline with a flat ends.
+  * `view.EOLANNOTATION_ANGLE_FLAT`
+    Draw EOL annotations outline with an angled left end and flat right end.
+  * `view.EOLANNOTATION_CIRCLE_ANGLE`
+    Draw EOL annotations outline with a curved left end and angled right end.
+  * `view.EOLANNOTATION_FLAT_ANGLE`
+    Draw EOL annotations outline with a flat left end and angled right end.
+  * `view.EOLANNOTATION_ANGLES`
+    Draw EOL annotations outline with angled ends.
 
-  The default value is `view.EOLANNOTATION_HIDDEN`.
+  All annotations are drawn with the same shape. The default value is
+  `view.EOLANNOTATION_HIDDEN`.
 
 <a id="view.extra_ascent"></a>
 #### `view.extra_ascent` (number)
@@ -9873,6 +9892,15 @@ Table of outline color alpha values, ranging from `0` (transparent) to `255` (op
   for indicator numbers from `1` to `32` whose styles are either `INDIC_ROUNDBOX`,
   `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
   The default values are `view.ALPHA_NOALPHA`, for no alpha.
+
+<a id="view.indic_stroke_width"></a>
+#### `view.indic_stroke_width` (table)
+
+Table of stroke widths in hundredths of a pixel for indicator numbers from `1` to `32`
+  whose styles are either `INDIC_PLAIN`, `INDIC_SQUIGGLE`, `INDIC_TT`, `INDIC_DIAGONAL`,
+  `INDIC_STRIKE`, `INDIC_BOX`, `INDIC_ROUNDBOX`, `INDIC_STRAIGHTBOX`, `INDIC_FULLBOX`,
+  `INDIC_DASH`, `INDIC_DOTS`,  or `INDIC_SQUIGGLELOW`.
+  The default values are `100`, or 1 pixel.
 
 <a id="view.indic_style"></a>
 #### `view.indic_style` (table)
@@ -10068,10 +10096,32 @@ Table of background colors, in "0xBBGGRR" format, of marker numbers from `1` to 
 Table of background colors, in "0xBBGGRR" format, of markers whose folding blocks are
   selected for marker numbers from `1` to `32`.
 
+<a id="view.marker_back_selected_translucent"></a>
+#### `view.marker_back_selected_translucent` (table, Write-only)
+
+Table of background colors, in "0xAABBGGRR" format, of markers whose folding blocks are
+  selected for marker numbers from `1` to `32`.
+
+<a id="view.marker_back_translucent"></a>
+#### `view.marker_back_translucent` (table, Write-only)
+
+Table of background colors, in "0xAABBGGRR" format, of marker numbers from `1` to `32`.
+
 <a id="view.marker_fore"></a>
 #### `view.marker_fore` (table, Write-only)
 
 Table of foreground colors, in "0xBBGGRR" format, of marker numbers from `1` to `32`.
+
+<a id="view.marker_fore_translucent"></a>
+#### `view.marker_fore_translucent` (table, Write-only)
+
+Table of foreground colors, in "0xAABBGGRR" format, of marker numbers from `1` to `32`.
+
+<a id="view.marker_stroke_width"></a>
+#### `view.marker_stroke_width` (table, Write-only)
+
+Table of stroke widths in hundredths of a pixel for marker numbers from `1` to `32`.
+  The default values are `100`, or 1 pixel.
 
 <a id="view.mouse_dwell_time"></a>
 #### `view.mouse_dwell_time` (number)
