@@ -6,16 +6,16 @@ local const_patt = '^val ([%w_]+)=([-%dx%x]+)'
 local event_patt = '^evt %a+ ([%w_]+)=(%d+)(%b())'
 local msg_patt = '^(%a+) (%a+) (%w+)=(%d+)%((%a*)%s*([^,]*),%s*(%a*)%s*([^)]*)'
 local types = {
-  [''] = 0, void = 0, int = 1, length = 2, index = 3, position = 3, line = 3, colour = 4, bool = 5,
-  keymod = 6, string = 7, stringresult = 8, cells = 9, pointer = 1, textrange = 10, findtext = 11,
-  formatrange = 12
+  [''] = 0, void = 0, int = 1, length = 2, index = 3, position = 3, line = 3, colour = 4,
+  colouralpha = 4, bool = 5, keymod = 6, string = 7, stringresult = 8, cells = 9, pointer = 1,
+  textrange = 10, findtext = 11, formatrange = 12
 }
 local ignores = { -- constants to ignore
   '^INDIC[012S]_', '^INVALID_POSITION', '^KEYWORDSET_MAX', '^SC_AC_', '^SC_DOCUMENTOPTION_',
   '^SC_CACHE_', '^SC_CHARSET_', '^SC_EFF_', '^SC_FONT_SIZE_MULTIPLIER', '^SC_INDIC',
-  '^SC_LINE_END_TYPE_', '^SC_PHASES_', '^SC_POPUP_', '^SC_PRINT_', '^SC_STATUS_', '^SC_TECHNOLOGY_',
-  '^SC_TYPE_', '^SC_WEIGHT_', '^SCE_', '^SCEN_', '^SCFIND_POSIX', '^SCI_', '^SCK_', '^SCLEX_',
-  '^UNDO_MAY_COALESCE'
+  '^SC_LINE_END_TYPE_', '^SC_PHASES_', '^SC_POPUP_', '^SC_PRINT_', '^SC_STATUS_', '^SC_SUPPORTS_',
+  '^SC_TECHNOLOGY_', '^SC_TYPE_', '^SC_WEIGHT_', '^SCE_', '^SCEN_', '^SCFIND_POSIX', '^SCI_',
+  '^SCK_', '^SCLEX_', '^UNDO_MAY_COALESCE'
 }
 local increments = { -- constants to increment by one
   '^MARKER_MAX', '^MARKNUM_', '^MAX_MARGIN', '^STYLE_', '^INDICATOR_'

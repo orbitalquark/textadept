@@ -1773,7 +1773,7 @@ N/A | Added | [active][]
 N/A | Added | _buffer functions and fields_<sup>d</sup>
 
 <sup>a</sup>Returns prefix and function, instead of just function.<br/>
-<sup>b</sup>Use `for name in buffer:private_lexer_call(_SCINTILLA.functions.property_names[1]):gmatch('[^\n]+') do ... end`.<br/>
+<sup>b</sup>Use `for name in buffer:private_lexer_call(_SCINTILLA.properties.lexer_language[1]):gmatch('[^\n]+') do ... end`.<br/>
 <sup>c</sup>Use `textadept.menu.menubar[_L['Search']][_L['Find Incremental']][2]`.<br/>
 <sup>d</sup>Most buffer functions and fields are available in views now. See section below.
 

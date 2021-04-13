@@ -15,7 +15,7 @@ for name, f in pairs(io) do if name:find('^_') then buffer[name:sub(2)], io[name
 
 textadept = require('textadept')
 
-local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
+local SETLEXER = _SCINTILLA.properties.i_lexer[2]
 
 -- Documentation is in core/.view.luadoc.
 local function set_theme(view, name, env)
@@ -32,7 +32,7 @@ local function set_theme(view, name, env)
   -- Force reload of all styles since the current lexer may have defined its own styles. (The
   -- LPeg lexer has only refreshed default lexer styles.)
   -- Note: cannot use `buffer.set_lexer()` because it may not exist yet.
-  buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'text')
+  buffer:private_lexer_call(SETLEXER, buffer._lexer or 'text')
   if view ~= orig_view then ui.goto_view(orig_view) end
 end
 events.connect(events.VIEW_NEW, function() view.set_theme = set_theme end)
@@ -246,8 +246,8 @@ view.indic_style[textadept.editing.INDIC_BRACEMATCH] = view.INDIC_BOX
 view:brace_highlight_indicator(not CURSES, textadept.editing.INDIC_BRACEMATCH)
 view.indic_style[textadept.editing.INDIC_HIGHLIGHT] = view.INDIC_ROUNDBOX
 view.indic_under[textadept.editing.INDIC_HIGHLIGHT] = not CURSES
-view.indic_style[textadept.snippets.INDIC_PLACEHOLDER] =
-  not CURSES and view.INDIC_DOTBOX or view.INDIC_STRAIGHTBOX
+view.indic_style[textadept.snippets.INDIC_PLACEHOLDER] = not CURSES and view.INDIC_DOTBOX or
+  view.INDIC_STRAIGHTBOX
 
 -- Autocompletion.
 -- buffer.auto_c_separator =
@@ -310,17 +310,17 @@ end
 local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
 local SETLUASTATE = _SCINTILLA.functions.change_lexer_state[1]
-local LOADLEXERLIBRARY = _SCINTILLA.functions.load_lexer_library[1]
+local CREATELOADER = _SCINTILLA.functions.create_loader[1]
 -- Sets default properties for a Scintilla document.
 events.connect(events.BUFFER_NEW, function()
   local buffer = _G.buffer
   buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
   buffer:private_lexer_call(SETLUASTATE, _LUA)
-  buffer:private_lexer_call(LOADLEXERLIBRARY, _USERHOME .. '/lexers')
-  buffer:private_lexer_call(LOADLEXERLIBRARY, _HOME .. '/lexers')
+  buffer:private_lexer_call(CREATELOADER, _USERHOME .. '/lexers')
+  buffer:private_lexer_call(CREATELOADER, _HOME .. '/lexers')
   load_settings()
-  buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
+  buffer:private_lexer_call(SETLEXER, 'text')
   _G.lexer = require('lexer') -- replace mimic
   if buffer == ui.command_entry then ui.command_entry.caret_line_visible = false end
 end, 1)
@@ -342,5 +342,5 @@ events.connect(events.VIEW_NEW, function()
   -- thus need refreshing. This is not an issue in BUFFER_NEW since a lexer is set immediately
   -- afterwards, which refreshes styles.
   -- Note: `buffer:set_lexer()` is insufficient for some reason.
-  buffer:private_lexer_call(SETLEXERLANGUAGE, buffer._lexer or 'text')
+  buffer:private_lexer_call(SETLEXER, buffer._lexer or 'text')
 end, 1)

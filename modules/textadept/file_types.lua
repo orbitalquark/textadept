@@ -34,10 +34,10 @@ M.extensions = {--[[Actionscript]]as='actionscript',asc='actionscript',--[[Ada]]
 M.patterns = {['^#!.+[/ ][gm]?awk']='awk',['^#!.+[/ ]lua']='lua',['^#!.+[/ ]octave']='matlab',['^#!.+[/ ]perl']='perl',['^#!.+[/ ]php']='php',['^#!.+[/ ]python']='python',['^#!.+[/ ]ruby']='ruby',['^#!.+[/ ]bash']='bash',['^#!.+/m?ksh']='bash',['^#!.+/sh']='bash',['^%s*class%s+%S+%s*<%s*ApplicationController']='rails',['^%s*class%s+%S+%s*<%s*ActionController::Base']='rails',['^%s*class%s+%S+%s*<%s*ActiveRecord::Base']='rails',['^%s*class%s+%S+%s*<%s*ActiveRecord::Migration']='rails',['^%s*<%?xml%s']='xml',['^#cloud%-config']='yaml'}
 -- LuaFormatter on
 
-local GETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[1]
+local GETLEXER = _SCINTILLA.properties.lexer[1]
 -- LuaDoc is in core/.buffer.luadoc.
 local function get_lexer(buffer, current)
-  local name = buffer:private_lexer_call(GETLEXERLANGUAGE)
+  local name = buffer:private_lexer_call(GETLEXER)
   return current and name:match('[^/]+$') or name:match('^[^/]+')
 end
 
@@ -53,17 +53,17 @@ local function detect_language(buffer)
 end
 
 local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
-local SETLEXERLANGUAGE = _SCINTILLA.properties.lexer_language[2]
+local SETLEXER = _SCINTILLA.properties.i_lexer[2]
 local GETERROR = _SCINTILLA.properties.status[1]
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_lexer(buffer, name)
   assert_type(name, 'string/nil', 2)
   if not name then name = detect_language(buffer) or 'text' end
   buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
-  buffer:private_lexer_call(SETLEXERLANGUAGE, name)
+  buffer:private_lexer_call(SETLEXER, name)
   local errmsg = buffer:private_lexer_call(GETERROR)
   if #errmsg > 0 then
-    buffer:private_lexer_call(SETLEXERLANGUAGE, 'text')
+    buffer:private_lexer_call(SETLEXER, 'text')
     error(errmsg, 2)
   end
   buffer._lexer = name
@@ -89,14 +89,14 @@ events.connect(events.VIEW_AFTER_SWITCH, restore_lexer)
 events.connect(events.VIEW_NEW, restore_lexer)
 events.connect(events.RESET_AFTER, restore_lexer)
 
-local LEXERNAMES = _SCINTILLA.functions.property_names[1]
+local LEXERS = _SCINTILLA.properties.lexer_language[1]
 ---
 -- Prompts the user to select a lexer for the current buffer.
 -- @see buffer.set_lexer
 -- @name select_lexer
 function M.select_lexer()
   local lexers = {}
-  for name in buffer:private_lexer_call(LEXERNAMES):gmatch('[^\n]+') do lexers[#lexers + 1] = name end
+  for name in buffer:private_lexer_call(LEXERS):gmatch('[^\n]+') do lexers[#lexers + 1] = name end
   local button, i = ui.dialogs.filteredlist{
     title = _L['Select Lexer'], columns = _L['Name'], items = lexers
   }

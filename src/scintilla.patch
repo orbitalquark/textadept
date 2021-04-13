@@ -1,6 +1,6 @@
 Scintilla changes:
 
-* Hijack SCI_LOADLEXERLIBRARY for programmatically setting input method.
+* Hijack SCI_CHANGEINSERTION for programmatically setting input method.
   This is helpful on newer versions of macOS, where changing the input method is
   flaky.
 * Handle leading whitespace in XPM images in order to prevent crashes.
@@ -12,7 +12,7 @@ diff -r 6e368ee248e4 gtk/ScintillaGTK.cxx
  		case SCI_GETDIRECTPOINTER:
  			return reinterpret_cast<sptr_t>(this);
  
-+		case SCI_LOADLEXERLIBRARY:
++		case SCI_CHANGEINSERTION:
 +			// Hijack this interface to programmatically set input method.
 +			gtk_im_multicontext_set_context_id(GTK_IM_MULTICONTEXT(im_context), ConstCharPtrFromSPtr(lParam));
 +			break;
