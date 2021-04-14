@@ -319,7 +319,8 @@ function io.open_recent_file()
       table.remove(io.recent_files, i)
     end
   end
-  local button, i = ui.dialogs.filteredlist{
+  local button
+  button, i = ui.dialogs.filteredlist{
     title = _L['Open File'], columns = _L['Filename'], items = utf8_list
   }
   if button == 1 and i then io.open_file(io.recent_files[i]) end
