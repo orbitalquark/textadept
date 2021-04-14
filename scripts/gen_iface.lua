@@ -201,7 +201,7 @@ f:write([[
 --   + `1`: Integer.
 --   + `2`: Length of the given lParam string.
 --   + `3`: Integer position.
---   + `4`: Color, in "0xBBGGRR" format.
+--   + `4`: Color, in "0xBBGGRR" format or "0xAABBGGRR" format where supported.
 --   + `5`: Boolean `true` or `false`.
 --   + `6`: Bitmask of Scintilla key modifiers and a key value.
 --   + `7`: String parameter.
