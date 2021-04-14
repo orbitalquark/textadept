@@ -163,10 +163,10 @@ local function complete_lua()
     local global_envs = not ok and
       {buffer, view, ui, _G, textadept, sci.functions, sci.properties, sci.constants} or op == ':' and
       {sci.functions} or {sci.properties, sci.constants}
-    for _, env in ipairs(global_envs) do
-      for k, v in pairs(env) do
+    for _, t in ipairs(global_envs) do
+      for k, v in pairs(t) do
         if type(k) ~= 'string' or not k:find(part) then goto continue end
-        local xpm = (type(v) == 'function' or env == sci.functions) and XPM.METHOD or XPM.VARIABLE
+        local xpm = (type(v) == 'function' or t == sci.functions) and XPM.METHOD or XPM.VARIABLE
         cmpls[#cmpls + 1] = k .. sep .. xpm
         ::continue::
       end

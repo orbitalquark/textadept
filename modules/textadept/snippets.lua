@@ -168,7 +168,7 @@ local function find_snippet(grep, no_trigger)
         (grep and
           (p1 == lang and p2 and p2:find(name_patt) or p1 and p1:find(name_patt) and p3 == '')) then
         local f = io.open(string.format('%s/%s', M.paths[i], basename))
-        text = f:read('a')
+        local text = f:read('a')
         f:close()
         if not grep then return trigger, text end
         matching_snippets[p1 == lang and p2 or p1] = text
@@ -424,7 +424,7 @@ function snippet:next()
   local text = ph.default or ''
   ::redo::
   for pos in self:each_placeholder(self.index, 'simple') do
-    local e = buffer:indicator_end(M.INDIC_PLACEHOLDER, pos)
+    e = buffer:indicator_end(M.INDIC_PLACEHOLDER, pos)
     buffer:indicator_clear_range(pos, e - pos)
     buffer:set_target_range(pos, pos + 1)
     buffer:replace_target(text)

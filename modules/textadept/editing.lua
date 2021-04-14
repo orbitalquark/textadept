@@ -335,7 +335,7 @@ function M.paste_reindent()
   buffer:replace_sel(text)
   buffer.line_indentation[line] = start_indent
   if text:find('\n') then
-    local line = buffer:line_from_position(buffer.current_pos)
+    line = buffer:line_from_position(buffer.current_pos)
     buffer.line_indentation[line] = end_indent
     buffer:goto_pos(buffer:find_column(line, end_column))
   end

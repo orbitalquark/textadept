@@ -390,8 +390,8 @@ local function read_menu_table(menu, contextmenu)
       local key, mods = get_gdk_key(key_shortcuts[tostring(item[2])])
       gtkmenu[#gtkmenu + 1] = {item[1], menu_id, key, mods}
       if item[2] then
-        local menu_items = not contextmenu and menu_items or contextmenu_items
-        menu_items[menu_id < 1000 and menu_id or menu_id - 1000] = item
+        local items = not contextmenu and menu_items or contextmenu_items
+        items[menu_id < 1000 and menu_id or menu_id - 1000] = item
       end
     end
   end
