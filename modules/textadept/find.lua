@@ -223,7 +223,7 @@ local function find(text, next, flags, no_wrap, wrapped)
     pos = find(text, next, flags, true, true)
     if pos == -1 then
       ui.statusbar_text = _L['No results found']
-      view:line_scroll(0, first_visible_line - view.first_visible_line)
+      view.first_visible_line = first_visible_line
       buffer:goto_pos(incremental_orig_pos or anchor)
     end
   end

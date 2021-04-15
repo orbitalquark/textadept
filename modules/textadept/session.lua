@@ -63,7 +63,7 @@ function M.load(filename)
     if lfs.attributes(buf.filename) then
       io.open_file(buf.filename)
       buffer:set_sel(buf.anchor, buf.current_pos)
-      view:line_scroll(0, buf.top_line - view.first_visible_line)
+      view.first_visible_line = buf.top_line
       for _, line in ipairs(buf.bookmarks) do
         buffer:marker_add(line, textadept.bookmarks.MARK_BOOKMARK)
       end

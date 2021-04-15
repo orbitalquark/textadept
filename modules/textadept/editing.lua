@@ -596,7 +596,7 @@ end
 function M.filter_through(command)
   assert(not (WIN32 and CURSES), 'not implemented in this environment')
   assert_type(command, 'string', 1)
-  local s, e = buffer.selection_start, buffer.selection_end
+  local s, e, top_line = buffer.selection_start, buffer.selection_end, view.first_visible_line
   if s == e then
     -- Use the whole buffer as input.
     buffer:target_whole_document()
@@ -629,6 +629,7 @@ function M.filter_through(command)
     end
   end
   buffer:replace_target(output:iconv('UTF-8', _CHARSET))
+  view.first_visible_line = top_line
   if s == e then
     buffer:goto_pos(s)
     return
