@@ -55,6 +55,9 @@ local M = ui.find
 -- @field in_files_label_text (string, Write-only)
 --   The text of the "In files" label.
 --   This is primarily used for localization.
+-- @field entry_font (string, Write-only)
+--   The font to use in the "Find" and "Replace" entries in "name size" format.
+--   The default value is system-dependent.
 -- @field active (boolean)
 --   Whether or not the Find & Replace pane is active.
 -- @field highlight_all_matches (boolean)

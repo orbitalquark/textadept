@@ -486,9 +486,9 @@ static int find_index(lua_State *L) {
 static int find_newindex(lua_State *L) {
   const char *key = lua_tostring(L, 2);
   if (strcmp(key, "find_entry_text") == 0)
-    set_entry_text(find_text, lua_tostring(L, 3));
+    set_entry_text(find_text, luaL_checkstring(L, 3));
   else if (strcmp(key, "replace_entry_text") == 0)
-    set_entry_text(repl_text, lua_tostring(L, 3));
+    set_entry_text(repl_text, luaL_checkstring(L, 3));
   else if (strcmp(key, "match_case") == 0)
     toggle(match_case, lua_toboolean(L, -1));
   else if (strcmp(key, "whole_word") == 0)
@@ -498,25 +498,32 @@ static int find_newindex(lua_State *L) {
   else if (strcmp(key, "in_files") == 0)
     toggle(in_files, lua_toboolean(L, -1));
   else if (strcmp(key, "find_label_text") == 0)
-    set_label_text(find_label, lua_tostring(L, 3));
+    set_label_text(find_label, luaL_checkstring(L, 3));
   else if (strcmp(key, "replace_label_text") == 0)
-    set_label_text(repl_label, lua_tostring(L, 3));
+    set_label_text(repl_label, luaL_checkstring(L, 3));
   else if (strcmp(key, "find_next_button_text") == 0)
-    set_button_label(find_next, lua_tostring(L, 3));
+    set_button_label(find_next, luaL_checkstring(L, 3));
   else if (strcmp(key, "find_prev_button_text") == 0)
-    set_button_label(find_prev, lua_tostring(L, 3));
+    set_button_label(find_prev, luaL_checkstring(L, 3));
   else if (strcmp(key, "replace_button_text") == 0)
-    set_button_label(replace, lua_tostring(L, 3));
+    set_button_label(replace, luaL_checkstring(L, 3));
   else if (strcmp(key, "replace_all_button_text") == 0)
-    set_button_label(replace_all, lua_tostring(L, 3));
+    set_button_label(replace_all, luaL_checkstring(L, 3));
   else if (strcmp(key, "match_case_label_text") == 0)
-    set_option_label(match_case, 0, lua_tostring(L, 3));
+    set_option_label(match_case, 0, luaL_checkstring(L, 3));
   else if (strcmp(key, "whole_word_label_text") == 0)
-    set_option_label(whole_word, 1, lua_tostring(L, 3));
+    set_option_label(whole_word, 1, luaL_checkstring(L, 3));
   else if (strcmp(key, "regex_label_text") == 0)
-    set_option_label(regex, 2, lua_tostring(L, 3));
+    set_option_label(regex, 2, luaL_checkstring(L, 3));
   else if (strcmp(key, "in_files_label_text") == 0)
-    set_option_label(in_files, 3, lua_tostring(L, 3));
+    set_option_label(in_files, 3, luaL_checkstring(L, 3));
+#if GTK
+  else if (strcmp(key, "entry_font") == 0) {
+    PangoFontDescription *font = pango_font_description_from_string(luaL_checkstring(L, 3));
+    gtk_widget_modify_font(find_entry, font), gtk_widget_modify_font(repl_entry, font);
+    pango_font_description_free(font);
+  }
+#endif
   else
     lua_rawset(L, 1);
   return 0;
@@ -2141,10 +2148,6 @@ static GtkWidget *new_combo(GtkWidget **label, GtkWidget **entry, ListStore **hi
   *entry = gtk_bin_get_child(GTK_BIN(combo));
   gtk_entry_set_text(GTK_ENTRY(*entry), " "),
     gtk_entry_set_text(GTK_ENTRY(*entry), ""); // initialize with non-NULL
-  PangoFontDescription *font = pango_font_description_new();
-  pango_font_description_set_family_static(font, "monospace");
-  gtk_widget_modify_font(*entry, font);
-  pango_font_description_free(font);
   gtk_label_set_mnemonic_widget(GTK_LABEL(*label), *entry);
   g_signal_connect(*entry, "key-press-event", G_CALLBACK(find_keypress), lua);
   return combo;

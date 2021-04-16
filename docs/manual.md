@@ -1298,6 +1298,7 @@ A theme consists of a single Lua file, and is typically responsible for:
   and documentation popups.
 * Specifying what symbols to use for margin markers and how to display visual elements like
   the brace match indicator and snippet placeholders.
+* Specifying the find & replace pane entry font name and size.
 
 [colors]: api.html#lexer.colors
 [text display settings]: api.html#lexer.styles
@@ -1334,7 +1335,8 @@ your changes.
 [`reset()`]: api.html#reset
 
 The widgets in the GUI version of Textadept cannot be themed using Lua theme files. Instead,
-you must use [GTK Resource Files][], which are part of the GUI toolkit Textadept uses.
+you must use [GTK Resource Files][], which are part of the GUI toolkit Textadept uses. The
+exception to this is find & replace entry font, which can be changed.
 
 **Note:** Textadept's pre-built binaries are built for and linked against GTK 2,
 not GTK 3.
