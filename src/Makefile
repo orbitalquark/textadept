@@ -134,9 +134,9 @@ cdk_objs = $(addprefix cdk-, binding.o buttonbox.o cdk.o cdk_display.o cdk_objs.
 # Notes:
 # In order to profile with gprof (-pg), do not retain symbols in LDFLAGS.
 # In order to report code coverage with gcov (-fprofile-arcs -ftest-coverage):
-#   Run test suite with textadept, run gcov textadept.c, then examine
+#   Run test suite with textadept, run gcov-9 textadept.c, then examine
 #     textadept.c.gcov
-#   Run test suite with textadept-curses, run gcov textadept-curses.c, then
+#   Run test suite with textadept-curses, run gcov-9 textadept-curses.c, then
 #     examine textadept.c.gcov.
 ifdef DEBUG
   CFLAGS += -g -O0
