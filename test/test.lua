@@ -2742,6 +2742,7 @@ function test_find_replace_regex_transforms()
 end
 
 function test_ui_find_focus()
+  if CURSES then return end -- there are focus issues in curses
   buffer:new()
   buffer:append_text(' foo\n\n foo')
   ui.find.focus{incremental = true}
@@ -4196,7 +4197,7 @@ function test_debugger_ansi_c()
   assert(pos > 0, "'i' not found")
   debugger.inspect(pos)
   wait()
-  assert(buffer:call_tip_active(), 'no call tip active')
+  assert(view:call_tip_active(), 'no call tip active')
   debugger.step_out()
   wait()
   -- assert(msg_buf:get_text():find('\nfoo 0\n'), 'process stdout not captured')
@@ -4296,7 +4297,7 @@ function test_debugger_lua()
   assert(pos > 0, "'i' not found")
   debugger.inspect(pos)
   wait()
-  assert(buffer:call_tip_active(), 'no call tip active')
+  assert(view:call_tip_active(), 'no call tip active')
   debugger.step_out()
   wait()
   assert(msg_buf:get_text():find('\n"foo"%s1\n'), 'process stdout not captured')
@@ -4788,12 +4789,17 @@ local function check_property_usage(filename, buffer_props, view_props)
       if (id == 'ui' or id == 'split') and prop == 'size' then goto continue end
       if id == 'keys' and prop == 'home' then goto continue end
       if id == 'Rout' and prop == 'save' then goto continue end
-      if id == 'detail' and (prop == 'filename' or prop == 'column') then goto continue end
+      if (id == 'detail' or id == 'record') and (prop == 'filename' or prop == 'column') then
+        goto continue
+      end
       if (id == 'placeholder' or id == 'ph') and prop == 'length' then goto continue end
-      if id == 'client' and prop == 'close' then goto continue end
-      if (id == 'Foo' or id == 'Array' or id == 'Server') and prop == 'new' then goto continue end
+      if (id == 'client' or id == 'server') and prop == 'close' then goto continue end
+      if (id == 'Foo' or id == 'Array' or id == 'Server' or id == 'snippet') and prop == 'new' then
+        goto continue
+      end
+      if id == 'snip' then goto continue end
       if buffer_props[prop] then
-        assert(id == 'buffer' or id == 'buf' or id == 'buffer1' or id == 'buffer2',
+        assert(id == 'buffer' or id:find('buf$') or id == 'buffer1' or id == 'buffer2',
           'line %d:%d: "%s" should be a buffer property', line_num, pos, prop)
         count = count + 1
       elseif view_props[prop] then
@@ -4811,7 +4817,8 @@ function test_buffer_view_usage()
   local buffer_props, view_props = load_buffer_view_props()
   local filter = {
     '.lua', '.luadoc', '!/lexers', '!/modules/lsp/dkjson.lua', '!/modules/lua/lua.luadoc',
-    '!/modules/debugger/lua/mobdebug.lua', '!/modules/yaml/lyaml.lua', '!/scripts', '!/src'
+    '!/modules/debugger/lua/mobdebug.lua', '!/modules/debugger/lua/socket.lua',
+    '!/modules/debugger/luasocket', '!/modules/yaml/lyaml', '!/scripts', '!/src'
   }
   for filename in lfs.walk(_HOME, filter) do
     check_property_usage(filename, buffer_props, view_props)

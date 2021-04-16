@@ -300,8 +300,8 @@ end)
 -- Closes the initial "Untitled" buffer when another buffer is opened.
 events.connect(events.FILE_OPENED, function()
   if #_BUFFERS > 2 then return end
-  local first = _BUFFERS[1]
-  if not (first.filename or first._type or first.modify) then first:close() end
+  local buf = _BUFFERS[1]
+  if not (buf.filename or buf._type or buf.modify) then buf:close() end
 end)
 
 ---
