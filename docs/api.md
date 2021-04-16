@@ -8390,6 +8390,12 @@ Emitted when a text search wraps (passes through the beginning of the buffer), e
 
 Whether or not the Find & Replace pane is active.
 
+<a id="ui.find.entry_font"></a>
+#### `ui.find.entry_font` (string, Write-only)
+
+The font to use in the "Find" and "Replace" entries in "name size" format.
+  The default value is system-dependent.
+
 <a id="ui.find.find_entry_text"></a>
 #### `ui.find.find_entry_text` (string)
 

@@ -127,3 +127,6 @@ view.call_tip_fore_hlt = colors.light_blue
 
 -- Long Lines.
 view.edge_color = colors.grey
+
+-- Find & replace pane entries.
+ui.find.entry_font = font .. ' ' .. size

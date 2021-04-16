@@ -495,6 +495,7 @@ end_styled	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 end_undo_action	_HOME/core/.buffer.luadoc	/^function end_undo_action(buffer) end$/;"	f	class:buffer
 ensure_visible	_HOME/core/.view.luadoc	/^function ensure_visible(view, line) end$/;"	f	class:view
 ensure_visible_enforce_policy	_HOME/core/.view.luadoc	/^function ensure_visible_enforce_policy(view, line) end$/;"	f	class:view
+entry_font	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
 eol_annotation_clear_all	_HOME/core/.buffer.luadoc	/^function eol_annotation_clear_all(buffer) end$/;"	f	class:buffer
 eol_annotation_style	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 eol_annotation_text	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
