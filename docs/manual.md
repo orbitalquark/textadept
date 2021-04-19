@@ -1409,12 +1409,14 @@ You can generate for use with Textadept [autocompletion and
 documentation](#autocompletion-and-documentation) files for your Lua modules. Simply run
 [LuaDoc][] with Textadept's *modules/lua/tadoc.lua* doclet. For example:
 
-    luadoc -d [output_path] --doclet _HOME/modules/lua/tadoc.lua [module(s)]
+    cd _HOME
+    luadoc -d [output_path] --doclet modules/lua/tadoc [/path/to/module(s)]
 
-where `_HOME` is the path where you installed Textadept and `output_path` is an arbitrary
-path to write the generated *tags* and *api* files to. You can then have Textadept load and
-use those autocompletion and documentation files when editing Lua code. For example, in your
-*~/.textadept/init.lua*:
+where `_HOME` is the path where you installed Textadept and `output_path` is an arbitrary path
+to write the generated *tags* and *api* files to. (Note that LuaDoc does not like absolute paths
+to doclets, so running `luadoc` from `_HOME` is one way to get it to work.) You can then have
+Textadept load and use those autocompletion and documentation files when editing Lua code. For
+example, in your *~/.textadept/init.lua*:
 
     local loaded_tags = false
     events.connect(events.LEXER_LOADED, function(name)
