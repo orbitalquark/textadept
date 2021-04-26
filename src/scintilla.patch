@@ -1,6 +1,6 @@
 Scintilla changes:
 
-* Fix GTK crash on Windows, as it does not support font options.
+* Fix GTK crash on Windows and macOS, as they do not support font options.
   This patch has been submitted upstream.
 * Hijack SCI_CHANGEINSERTION for programmatically setting input method.
   This is helpful on newer versions of macOS, where changing the input method is flaky.
@@ -13,7 +13,7 @@ diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
  }
  
  FontOptions::FontOptions(GtkWidget *widget) noexcept {
-+#if !PLAT_GTK_WIN32
++#if !PLAT_GTK_WIN32 && !PLAT_GTK_MACOSX
  	PangoContext *pcontext = gtk_widget_create_pango_context(widget);
  	PLATFORM_ASSERT(pcontext);
  	const cairo_font_options_t *options = pango_cairo_context_get_font_options(pcontext);
