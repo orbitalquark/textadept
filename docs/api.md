@@ -2933,7 +2933,6 @@ Parameters:
 #### `buffer.reload`(*buffer*)
 
 Reloads the buffer's file contents, discarding any changes.
-Emits `FILE_BEFORE_RELOAD` and `FILE_AFTER_RELOAD` events if the buffer is the current one.
 
 Parameters:
 
@@ -3711,12 +3710,28 @@ Emitted as items are highlighted in an autocompletion or user list.
   * _`text`_: The current selection's text.
   * _`position`_: The position the list was displayed at.
 
+<a id="events.BUFFER_AFTER_REPLACE_TEXT"></a>
+#### `events.BUFFER_AFTER_REPLACE_TEXT` (string)
+
+Emitted after replacing the contents of the current buffer.
+  Note that it is not guaranteed that [`events.BUFFER_BEFORE_REPLACE_TEXT`](#events.BUFFER_BEFORE_REPLACE_TEXT) was emitted
+  previously.
+  The buffer **must not** be modified during this event.
+
 <a id="events.BUFFER_AFTER_SWITCH"></a>
 #### `events.BUFFER_AFTER_SWITCH` (string)
 
 Emitted right after switching to another buffer.
   The buffer being switched to is `buffer`.
   Emitted by [`view.goto_buffer()`](#view.goto_buffer).
+
+<a id="events.BUFFER_BEFORE_REPLACE_TEXT"></a>
+#### `events.BUFFER_BEFORE_REPLACE_TEXT` (string)
+
+Emitted before replacing the contents of the current buffer.
+  Note that it is not guaranteed that [`events.BUFFER_AFTER_REPLACE_TEXT`](#events.BUFFER_AFTER_REPLACE_TEXT) will be emitted
+  shortly after this event.
+  The buffer **must not** be modified during this event.
 
 <a id="events.BUFFER_BEFORE_SWITCH"></a>
 #### `events.BUFFER_BEFORE_SWITCH` (string)
@@ -4139,12 +4154,6 @@ Extends Lua's `io` library with Textadept functions for working with files.
 
 ### Fields defined by `io`
 
-<a id="events.FILE_AFTER_RELOAD"></a>
-#### `events.FILE_AFTER_RELOAD` (string)
-
-Emitted after reloading the current file.
-  Emitted by [`buffer:reload()`](#buffer.reload).
-
 <a id="events.FILE_AFTER_SAVE"></a>
 #### `events.FILE_AFTER_SAVE` (string)
 
@@ -4154,12 +4163,6 @@ Emitted right after saving a file to disk.
 
   * _`filename`_: The filename of the file being saved.
   * _`saved_as`_: Whether or not the file was saved under a different filename.
-
-<a id="events.FILE_BEFORE_RELOAD"></a>
-#### `events.FILE_BEFORE_RELOAD` (string)
-
-Emitted before reloading the current file.
-  Emitted by [`buffer:reload()`](#buffer.reload).
 
 <a id="events.FILE_BEFORE_SAVE"></a>
 #### `events.FILE_BEFORE_SAVE` (string)

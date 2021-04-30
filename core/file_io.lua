@@ -9,12 +9,6 @@
 --   Arguments:
 --
 --   * _`filename`_: The opened file's filename.
--- @field _G.events.FILE_BEFORE_RELOAD (string)
---   Emitted before reloading the current file.
---   Emitted by [`buffer:reload()`]().
--- @field _G.events.FILE_AFTER_RELOAD (string)
---   Emitted after reloading the current file.
---   Emitted by [`buffer:reload()`]().
 -- @field _G.events.FILE_BEFORE_SAVE (string)
 --   Emitted right before saving a file to disk.
 --   Emitted by [`buffer:save()`]().
@@ -42,7 +36,7 @@ module('io')]]
 
 -- Events.
 -- LuaFormatter off
-local file_io_events = {'file_opened','file_before_reload','file_after_reload','file_before_save','file_after_save','file_changed'}
+local file_io_events = {'file_opened','file_before_save','file_after_save','file_changed'}
 -- LuaFormatter on
 for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 
@@ -157,16 +151,13 @@ end
 local function reload(buffer)
   if not buffer then buffer = _G.buffer end
   if not buffer.filename then return end
-  if buffer == _G.buffer then events.emit(events.FILE_BEFORE_RELOAD) end
   local f = assert(io.open(buffer.filename, 'rb'))
   local text = f:read('a')
   f:close()
   if buffer.encoding then text = text:iconv('UTF-8', buffer.encoding) end
-  buffer:clear_all()
-  buffer:append_text(text)
+  buffer:set_text(text)
   buffer:set_save_point()
   buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
-  if buffer == _G.buffer then events.emit(events.FILE_AFTER_RELOAD) end
 end
 
 -- LuaDoc is in core/.buffer.luadoc.

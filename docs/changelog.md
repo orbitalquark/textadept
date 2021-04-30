@@ -221,8 +221,8 @@ Changes:
 * Added support for jq language.
 * Record directory in "Find in Files" searches.
 * Added `ui.update()`, mainly for unit tests.
-* Added [`events.FILE_BEFORE_RELOAD`][] and [`events.FILE_AFTER_RELOAD`][] events, and
-  save/restore bookmarks.
+* Added `events.FILE_BEFORE_RELOAD` and `events.FILE_AFTER_RELOAD` events, and save/restore
+  bookmarks.
 * Added [`events.COMMAND_TEXT_CHANGED`][] for when command entry text changes.
 * Added `_NOCOMPAT` option to disable temporary key shortcut compatibility checking.
 * Updated Spanish translation.
@@ -240,8 +240,6 @@ Changes:
 [building with Docker]: manual.html#compiling-using-docker
 [`events.FIND_RESULT_FOUND`]: api.html#events.FIND_RESULT_FOUND
 [`ui.find.active`]: api.html#ui.find.active
-[`events.FILE_BEFORE_RELOAD`]: api.html#events.FILE_BEFORE_RELOAD
-[`events.FILE_AFTER_RELOAD`]: api.html#events.FILE_AFTER_RELOAD
 [`events.COMMAND_TEXT_CHANGED`]: api.html#events.COMMAND_TEXT_CHANGED
 [`view.multi_edge_column`]: api.html#view.multi_edge_column
 [Scintilla]: https://scintilla.org

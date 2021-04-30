@@ -80,10 +80,11 @@ function M.goto_mark(next)
 end
 
 local lines = {}
--- Save and restore bookmarks on buffer:reload().
-events.connect(events.FILE_BEFORE_RELOAD,
+-- Save and restore bookmarks when replacing buffer text (e.g. buffer:reload(),
+-- textadept.editing.filter_through()).
+events.connect(events.BUFFER_BEFORE_REPLACE_TEXT,
   function() for line in bookmarks(buffer) do lines[#lines + 1] = line end end)
-events.connect(events.FILE_AFTER_RELOAD, function()
+events.connect(events.BUFFER_AFTER_REPLACE_TEXT, function()
   for _, line in ipairs(lines) do buffer:marker_add(line, M.MARK_BOOKMARK) end
   lines = {} -- clear
 end)

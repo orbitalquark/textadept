@@ -1718,8 +1718,8 @@ vertical\_centre\_caret | Renamed | vertical\_center\_caret
 **events**||
 AUTO\_C\_CANCELLED | Renamed | AUTO\_C\_CANCELED
 N/A | Added | [COMMAND_TEXT_CHANGED][]
-N/A | Added | [FILE_BEFORE_RELOAD][]
-N/A | Added | [FILE_AFTER_RELOAD][]
+N/A | Added | FILE_BEFORE_RELOAD
+N/A | Added | FILE_AFTER_RELOAD
 N/A | Added | [FIND_RESULT_FOUND][]
 N/A | Added | [FIND_TEXT_CHANGED][]
 N/A | Added | [SESSION_SAVE][]
@@ -1784,8 +1784,6 @@ N/A | Added | _buffer functions and fields_<sup>d</sup>
 [view:set_theme()]: api.html#view.set_theme
 [name_of_style]: api.html#buffer.name_of_style
 [COMMAND_TEXT_CHANGED]: api.html#events.COMMAND_TEXT_CHANGED
-[FILE_BEFORE_RELOAD]: api.html#events.FILE_BEFORE_RELOAD
-[FILE_AFTER_RELOAD]: api.html#events.FILE_AFTER_RELOAD
 [FIND_RESULT_FOUND]: api.html#events.FIND_RESULT_FOUND
 [FIND_TEXT_CHANGED]: api.html#events.FIND_TEXT_CHANGED
 [SESSION_SAVE]: api.html#events.SESSION_SAVE

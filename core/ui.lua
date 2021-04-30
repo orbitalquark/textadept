@@ -358,7 +358,7 @@ local function save_buffer_state()
   buffer._folds = folds
 end
 events.connect(events.BUFFER_BEFORE_SWITCH, save_buffer_state)
-events.connect(events.FILE_BEFORE_RELOAD, save_buffer_state)
+events.connect(events.BUFFER_BEFORE_REPLACE_TEXT, save_buffer_state)
 
 -- Restore buffer properties.
 local function restore_buffer_state()
@@ -375,7 +375,7 @@ local function restore_buffer_state()
   view.x_offset = buffer._x_offset or 0
 end
 events.connect(events.BUFFER_AFTER_SWITCH, restore_buffer_state)
-events.connect(events.FILE_AFTER_RELOAD, restore_buffer_state)
+events.connect(events.BUFFER_AFTER_REPLACE_TEXT, restore_buffer_state)
 
 -- Updates titlebar and statusbar.
 local function update_bars()
