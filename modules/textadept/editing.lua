@@ -628,7 +628,9 @@ function M.filter_through(command)
       return
     end
   end
-  buffer:replace_target(output:iconv('UTF-8', _CHARSET))
+  output = output:iconv('UTF-8', _CHARSET)
+  if buffer:get_text() == output then return end -- do not perform no-op
+  buffer:replace_target(output)
   view.first_visible_line = top_line
   if s == e then
     buffer:goto_pos(s)
