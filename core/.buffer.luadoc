@@ -1671,7 +1671,6 @@ function style_of_name(buffer, style_name) end
 
 ---
 -- Reloads the buffer's file contents, discarding any changes.
--- Emits `FILE_BEFORE_RELOAD` and `FILE_AFTER_RELOAD` events if the buffer is the current one.
 -- @param buffer A buffer.
 -- @name reload
 function reload(buffer) end

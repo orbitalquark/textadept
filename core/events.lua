@@ -59,10 +59,20 @@ local M = {}
 --   Emitted right after switching to another buffer.
 --   The buffer being switched to is `buffer`.
 --   Emitted by [`view.goto_buffer()`]().
+-- @field BUFFER_BEFORE_REPLACE_TEXT (string)
+--   Emitted before replacing the contents of the current buffer.
+--   Note that it is not guaranteed that [`events.BUFFER_AFTER_REPLACE_TEXT`]() will be emitted
+--   shortly after this event.
+--   The buffer **must not** be modified during this event.
 -- @field BUFFER_BEFORE_SWITCH (string)
 --   Emitted right before switching to another buffer.
 --   The buffer being switched from is `buffer`.
 --   Emitted by [`view.goto_buffer()`]().
+-- @field BUFFER_AFTER_REPLACE_TEXT (string)
+--   Emitted after replacing the contents of the current buffer.
+--   Note that it is not guaranteed that [`events.BUFFER_BEFORE_REPLACE_TEXT`]() was emitted
+--   previously.
+--   The buffer **must not** be modified during this event.
 -- @field BUFFER_DELETED (string)
 --   Emitted after deleting a buffer.
 --   Emitted by [`buffer.delete()`]().
@@ -383,8 +393,30 @@ end)
 -- Set event constants.
 for _, v in pairs(_SCINTILLA.events) do M[v[1]:upper()] = v[1] end
 -- LuaFormatter off
-local textadept_events = {'appleevent_odoc','buffer_after_switch','buffer_before_switch','buffer_deleted','buffer_new','csi','command_text_changed','error','find','find_text_changed','focus','initialized','keypress','menu_clicked','mouse','quit','replace','replace_all','reset_after','reset_before','resume','suspend', 'tab_clicked','unfocus','view_after_switch','view_before_switch','view_new'}
+local textadept_events = {'appleevent_odoc','buffer_after_replace_text','buffer_after_switch','buffer_before_replace_text','buffer_before_switch','buffer_deleted','buffer_new','csi','command_text_changed','error','find','find_text_changed','focus','initialized','keypress','menu_clicked','mouse','quit','replace','replace_all','reset_after','reset_before','resume','suspend', 'tab_clicked','unfocus','view_after_switch','view_before_switch','view_new'}
 -- LuaFormatter on
 for _, v in pairs(textadept_events) do M[v:upper()] = v end
+
+-- Implement `events.BUFFER_{BEFORE,AFTER}_REPLACE_TEXT` as a convenience in lieu of the
+-- undocumented `events.MODIFIED`.
+local DELETE, INSERT, UNDOREDO = _SCINTILLA.constants.MOD_BEFOREDELETE,
+  _SCINTILLA.constants.MOD_INSERTTEXT, _SCINTILLA.constants.MULTILINEUNDOREDO
+-- Helper function for emitting `events.BUFFER_AFTER_REPLACE_TEXT` after a full-buffer undo/redo
+-- operation, e.g. after reloading buffer contents and then performing an undo.
+local function emit_after_replace_text()
+  events.disconnect(events.UPDATE_UI, emit_after_replace_text)
+  events.emit(events.BUFFER_AFTER_REPLACE_TEXT)
+end
+-- Emits events prior to and after replacing buffer text.
+M.connect(M.MODIFIED, function(position, mod, text, length)
+  if mod & (DELETE | INSERT) == 0 or length ~= buffer.length then return end
+  if mod & (INSERT | UNDOREDO) > 0 then
+    -- Cannot emit BUFFER_AFTER_REPLACE_TEXT here because Scintilla will do things like update
+    -- the selection afterwards, which could undo what event handlers do.
+    events.connect(events.UPDATE_UI, emit_after_replace_text)
+    return
+  end
+  M.emit(mod & DELETE > 0 and M.BUFFER_BEFORE_REPLACE_TEXT or M.BUFFER_AFTER_REPLACE_TEXT)
+end)
 
 return M
