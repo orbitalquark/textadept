@@ -4835,7 +4835,11 @@ end
 assert(not WIN32 and not OSX, 'Test suite currently only runs on Linux')
 
 local TEST_OUTPUT_BUFFER = '[Test Output]'
-function print(...) ui._print(TEST_OUTPUT_BUFFER, ...) end
+local print_ = print
+function print(...)
+  ui._print(TEST_OUTPUT_BUFFER, ...)
+  print_(...)
+end
 -- Clean up after a previously failed test.
 local function cleanup()
   while #_BUFFERS > 1 do
@@ -4862,7 +4866,7 @@ local function include_test(name)
     if patt:find('^%-') then
       if name:find(patt:sub(2)) then return false end
       excludes = true
-    else
+    elseif patt ~= 'quit' then
       if name:find(patt) then include = true end
       includes = true
     end
@@ -4928,3 +4932,5 @@ else
   buffer:append_text('No LuaCov coverage to report.')
 end
 buffer:set_save_point()
+
+if arg[#arg] == 'quit' then quit() end
