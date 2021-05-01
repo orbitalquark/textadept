@@ -2475,7 +2475,12 @@ int main(int argc, char **argv) {
 #endif
 
     setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
-    if (lua = luaL_newstate(), !init_lua(lua, argc, argv, false)) return 1;
+    if (lua = luaL_newstate(), !init_lua(lua, argc, argv, false)) {
+#if CURSES
+      endwin(), termkey_destroy(ta_tk);
+#endif
+      return (free(textadept_home), 1);
+    }
     initing = true, new_window(), run_file(lua, "init.lua", true), initing = false;
     emit(lua, "buffer_new", -1), emit(lua, "view_new", -1); // first ones
     lua_pushdoc(lua, SS(command_entry, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
@@ -2575,8 +2580,7 @@ int main(int argc, char **argv) {
     refresh_all();
     view = !command_entry_active ? focused_view : command_entry;
   }
-  endwin();
-  termkey_destroy(ta_tk);
+  endwin(), termkey_destroy(ta_tk);
 #endif
 
   return (free(textadept_home), 0);
