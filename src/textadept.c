@@ -1416,15 +1416,20 @@ static int quit(lua_State *L) {
  * Loads and runs the given file.
  * @param L The Lua state.
  * @param filename The file name relative to textadept_home.
+ * @param show_errors Flag indicating whether or not to show Lua errors graphically. If `false`,
+ *   prints errors to stderr.
  * @return true if there are no errors or false in case of errors.
  */
-static bool run_file(lua_State *L, const char *filename) {
+static bool run_file(lua_State *L, const char *filename, bool show_errors) {
   char *file = malloc(strlen(textadept_home) + 1 + strlen(filename) + 1);
   sprintf(file, "%s/%s", textadept_home, filename);
   bool ok = luaL_dofile(L, file) == LUA_OK;
   if (!ok) {
-    const char *argv[] = {"--title", "Initialization Error", "--text", lua_tostring(L, -1)};
-    free(gtdialog(GTDIALOG_TEXTBOX, 4, argv));
+    if (show_errors) {
+      const char *argv[] = {"--title", "Initialization Error", "--text", lua_tostring(L, -1)};
+      free(gtdialog(GTDIALOG_TEXTBOX, 4, argv));
+    } else
+      fprintf(stderr, "Initialization Error: %s\n", lua_tostring(L, 1));
     lua_settop(L, 0);
   }
   return (free(file), ok);
@@ -1439,7 +1444,7 @@ static int reset(lua_State *L) {
   lua_pushview(L, focused_view), lua_setglobal(L, "view");
   lua_pushdoc(L, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(L, "buffer");
   lua_pushnil(L), lua_setglobal(L, "arg");
-  run_file(L, "init.lua"), emit(L, "initialized", -1);
+  run_file(L, "init.lua", true), emit(L, "initialized", -1);
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_arg"), lua_setglobal(L, "arg");
   return (emit(L, "reset_after", LUA_TTABLE, persist_ref, -1), 0);
 }
@@ -1495,6 +1500,20 @@ static int iconv_lua(lua_State *L) {
   lua_pushlstring(L, outbuf, p - outbuf);
   free(outbuf), iconv_close(cd);
   return (lua_concat(L, n), 1);
+}
+
+/**
+ * Returns whether or not one of the given command line options are present.
+ * @param argc The number of command line arguments.
+ * @param argv The command line arguments.
+ * @param short_opt The short version of the option to look for.
+ * @param long_opt The long version of the option to look for.
+ * @return true if one of the options is present
+ */
+static bool has_opt(int argc, char **argv, const char *short_opt, const char *long_opt) {
+  for (int i = 0; i < argc; i++)
+    if (strcmp(argv[i], short_opt) == 0 || strcmp(argv[i], long_opt) == 0) return true;
+  return false;
 }
 
 /**
@@ -1585,7 +1604,8 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
 #endif
   lua_pushstring(L, charset), lua_setglobal(L, "_CHARSET");
 
-  if (!run_file(L, "core/init.lua")) return (lua_close(L), false);
+  if (!run_file(L, "core/init.lua", !has_opt(argc, argv, "-t", "--test")))
+    return (lua_close(L), false);
   lua_getglobal(L, "_SCINTILLA");
   lua_getfield(L, -1, "constants"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_constants");
   lua_getfield(L, -1, "functions"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_functions");
@@ -2448,21 +2468,15 @@ int main(int argc, char **argv) {
 #endif
 
 #if GTK
-  bool force = false;
-  for (int i = 0; i < argc; i++)
-    if (strcmp("-f", argv[i]) == 0 || strcmp("--force", argv[i]) == 0) {
-      force = true;
-      break;
-    }
   GApplication *app = g_application_new(ID, G_APPLICATION_HANDLES_COMMAND_LINE);
   g_signal_connect(app, "command-line", G_CALLBACK(process), NULL);
   bool registered = g_application_register(app, NULL, NULL);
-  if (!registered || !g_application_get_is_remote(app) || force) {
+  if (!registered || !g_application_get_is_remote(app) || has_opt(argc, argv, "-f", "--force")) {
 #endif
 
     setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
     if (lua = luaL_newstate(), !init_lua(lua, argc, argv, false)) return 1;
-    initing = true, new_window(), run_file(lua, "init.lua"), initing = false;
+    initing = true, new_window(), run_file(lua, "init.lua", true), initing = false;
     emit(lua, "buffer_new", -1), emit(lua, "view_new", -1); // first ones
     lua_pushdoc(lua, SS(command_entry, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
     emit(lua, "buffer_new", -1), emit(lua, "view_new", -1); // command entry
