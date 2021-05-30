@@ -1,4 +1,4 @@
-## Textadept 11.2 beta Manual
+## Textadept 11.2 beta 2 Manual
 
 **Contents**
 
