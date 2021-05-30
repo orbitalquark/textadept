@@ -54,16 +54,14 @@ styles.type = {fore = colors.magenta, bold = true}
 styles.variable = {fore = colors.blue, bold = true}
 styles.whitespace = {}
 
--- Multiple Selection and Virtual Space
--- view.additional_sel_fore =
--- view.additional_sel_back =
--- view.additional_caret_fore =
-
--- Caret and Selection Styles.
--- view:set_sel_fore(true, colors.white)
--- view:set_sel_back(true, colors.black)
--- view.caret_fore = colors.black
--- view.caret_line_back =
+-- Element colors.
+-- view.element_color[view.ELEMENT_SELECTION_TEXT] = colors.white
+-- view.element_color[view.ELEMENT_SELECTION_BACK] = colors.black
+-- view.element_color[view.ELEMENT_SELECTION_ADDITIONAL_TEXT] = colors.white
+-- view.element_color[view.ELEMENT_SELECTION_ADDITIONAL_BACK] = colors.black
+-- view.element_color[view.ELEMENT_CARET] = colors.black
+-- view.element_color[view.ELEMENT_CARET_ADDITIONAL] =
+-- view.element_color[view.ELEMENT_CARET_LINE_BACK] =
 
 -- Fold Margin.
 -- view:set_fold_margin_color(true, colors.white)

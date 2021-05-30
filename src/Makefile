@@ -99,10 +99,11 @@ WGET = wget -O $@
 sci_flags = -pedantic $(plat_flag) -DSCI_LEXER -DNDEBUG -Iscintilla/include -Iscintilla/src \
   -Ilexilla/include -Ilexilla/lexlib -Wall
 
-sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o CellBuffer.o CharClassify.o \
-  ContractionState.o Decoration.o Document.o EditModel.o Editor.o EditView.o Geometry.o \
-  Indicator.o KeyMap.o LineMarker.o MarginView.o PerLine.o PositionCache.o RESearch.o RunStyles.o \
-  ScintillaBase.o Selection.o Style.o UniConversion.o UniqueString.o ViewStyle.o XPM.o
+sci_objs = AutoComplete.o CallTip.o CaseConvert.o CaseFolder.o CellBuffer.o CharacterCategoryMap.o \
+  CharacterType.o CharClassify.o ContractionState.o Decoration.o Document.o EditModel.o Editor.o \
+  EditView.o Geometry.o Indicator.o KeyMap.o LineMarker.o MarginView.o PerLine.o PositionCache.o \
+  RESearch.o RunStyles.o ScintillaBase.o Selection.o Style.o UniConversion.o UniqueString.o \
+  ViewStyle.o XPM.o
 sci_lex_objs = Accessor.o CharacterCategory.o CharacterSet.o DefaultLexer.o LexerBase.o \
   LexerModule.o LexerNoExceptions.o LexerSimple.o PropSetSimple.o StyleContext.o WordList.o
 sci_lexer_objs = LexLPeg.o LexLPeg-curses.o
@@ -344,7 +345,7 @@ else
   gtdialog_url = $(root_url)/gtdialog/archive/default.zip
 endif
 
-scintilla_tgz = scintilla501.tgz
+scintilla_tgz = scintilla503.tgz
 lexilla_tgz = lexilla500.tgz
 scinterm_zip = 829b0b17c019b5dc5c52470ab10527642027f4b0.zip
 scintillua_zip = 530a3eb4303745c40aaaf7c3a36e39173688f9af.zip

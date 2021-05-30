@@ -9381,6 +9381,12 @@ initial values for all views.
 
 
 
+<a id="view.UPDATE_NONE"></a>
+#### `view.UPDATE_NONE` (number, Read-only)
+
+
+
+
 <a id="view.UPDATE_V_SCROLL"></a>
 #### `view.UPDATE_V_SCROLL` (number, Read-only)
 
@@ -9513,11 +9519,6 @@ initial values for all views.
 
 
 
-<a id="view.additional_caret_fore"></a>
-#### `view.additional_caret_fore` (number)
-
-The foreground color, in "0xBBGGRR" format, of additional carets.
-
 <a id="view.additional_carets_blink"></a>
 #### `view.additional_carets_blink` (bool)
 
@@ -9529,24 +9530,6 @@ Allow additional carets to blink.
 
 Display additional carets.
   The default value is `true`.
-
-<a id="view.additional_sel_alpha"></a>
-#### `view.additional_sel_alpha` (number)
-
-The alpha value, ranging from `0` (transparent) to `255` (opaque), of additional selections.
-  The default value is `view.ALPHA_NOALPHA`, for no alpha.
-
-<a id="view.additional_sel_back"></a>
-#### `view.additional_sel_back` (number, Write-only)
-
-The background color, in "0xBBGGRR" format, of additional selections.
-  This field has no effect when calling `view:set_sel_back(false, ...)`.
-
-<a id="view.additional_sel_fore"></a>
-#### `view.additional_sel_fore` (number, Write-only)
-
-The foreground color, in "0xBBGGRR" format, of additional selections.
-  This field has no effect when calling `view:set_sel_fore(false, ...)`.
 
 <a id="view.all_lines_visible"></a>
 #### `view.all_lines_visible` (bool, Read-only)
@@ -9605,22 +9588,6 @@ The pixel width of tab characters in call tips.
   `view.STYLE_DEFAULT` for call tip styles.
   The default value is `0`.
 
-<a id="view.caret_fore"></a>
-#### `view.caret_fore` (number)
-
-The caret's foreground color, in "0xBBGGRR" format.
-
-<a id="view.caret_line_back"></a>
-#### `view.caret_line_back` (number)
-
-The background color, in "0xBBGGRR" format, of the line that contains the caret.
-
-<a id="view.caret_line_back_alpha"></a>
-#### `view.caret_line_back_alpha` (number)
-
-The caret line's background alpha value, ranging from `0` (transparent) to `255` (opaque).
-  The default value is `view.ALPHA_NOALPHA`, for no alpha.
-
 <a id="view.caret_line_frame"></a>
 #### `view.caret_line_frame` (number)
 
@@ -9628,6 +9595,20 @@ The caret line's frame width in pixels.
   When non-zero, the line that contains the caret is framed instead of colored in. The
   `view.caret_line_back` and `view.caret_line_back_alpha` properties apply to the frame.
   The default value is `0`.
+
+<a id="view.caret_line_layer"></a>
+#### `view.caret_line_layer` (number)
+
+The caret line layer mode.
+
+  * `view.LAYER_BASE`
+    Draw the caret line opaquely on the background.
+  * `view.LAYER_UNDER_TEXT`
+    Draw the caret line translucently under text.
+  * `view.LAYER_OVER_TEXT`
+    Draw the caret line translucently over text.
+
+  The default value is `view.LAYER_BASE`.
 
 <a id="view.caret_line_visible"></a>
 #### `view.caret_line_visible` (bool)
@@ -9715,6 +9696,60 @@ The long line mark mode.
     Draw vertical lines whose colors and columns are defined by calls to
     [`view:multi_edge_add_line()`](#view.multi_edge_add_line).
 
+<a id="view.element_allows_translucent"></a>
+#### `view.element_allows_translucent` (table)
+
+Table of flags for UI element identifiers that indicate whether or not an element supports
+  translucent colors.
+
+<a id="view.element_base_color"></a>
+#### `view.element_base_color` (table, read-only)
+
+Table of default colors on "0xAABBGGRR" format for UI element identifiers.
+  If the alpha byte is omitted, it is assumed to be `0xFF` (opaque).
+  See [`view.element_color`](#view.element_color) for element identifiers.
+
+<a id="view.element_color"></a>
+#### `view.element_color` (table)
+
+Table of colors in "0xAABBGGRR" format for UI element identifiers.
+  If the alpha byte is omitted, it is assumed to be `0xFF` (opaque).
+
+  * `view.ELEMENT_SELECTION_TEXT`
+    The main selection's text color.
+  * `view.ELEMENT_SELECTION_BACK`
+    The main selection's background color.
+  * `view.ELEMENT_SELECTION_ADDITIONAL_TEXT`
+    The text color of additional selections.
+  * `view.ELEMENT_SELECTION_ADDITIONAL_BACK`
+    The background color of additional selections.
+  * `view.ELEMENT_SELECTION_SECONDARY_TEXT`
+    The text color of selections when another window contains the primary selection.
+    This is only available on Linux.
+  * `view.ELEMENT_SELECTION_SECONDARY_BACK`
+    The background color of selections when another window contains the primary selection.
+    This is only available on Linux.
+  * `view.ELEMENT_SELECTION_INACTIVE_TEXT`
+    The text color of selections when another window has focus.
+  * `view.ELEMENT_SELECTION_INACTIVE_BACK`
+    The background color of selections when another window has focus.
+  * `view.ELEMENT_CARET`
+    The main selection's caret color.
+  * `view.ELEMENT_CARET_ADDITIONAL`
+    The caret color of additional selections.
+  * `view.ELEMENT_CARET_LINE_BACK`
+    The background color of the line that contains the caret.
+  * `view.ELEMENT_WHITE_SPACE`
+    The color of visible whitespace.
+  * `view.ELEMENT_WHITE_SPACE_BACK`
+    The background color of visible whitespace.
+
+<a id="view.element_is_set"></a>
+#### `view.element_is_set` (table)
+
+Table of flags for UI element identifiers that indicate whether or not a color has been
+  manually set.
+
 <a id="view.end_at_last_line"></a>
 #### `view.end_at_last_line` (bool)
 
@@ -9798,6 +9833,8 @@ Table of flags per line number that indicate whether or not fold points are expa
 
 Bit-mask of folding lines to draw in the buffer.
 
+  * `view.FOLDFLAG_NONE`
+    Do not draw folding lines.
   * `view.FOLDFLAG_LINEBEFORE_EXPANDED`
     Draw lines above expanded folds.
   * `view.FOLDFLAG_LINEBEFORE_CONTRACTED`
@@ -9813,7 +9850,7 @@ Bit-mask of folding lines to draw in the buffer.
     Show line state in line margins.
     This option cannot be combined with `FOLDFLAG_LEVELNUMBERS`.
 
-  The default value is `0`.
+  The default value is `view.FOLDFLAG_NONE`.
 
 <a id="view.h_scroll_bar"></a>
 #### `view.h_scroll_bar` (bool)
@@ -10126,6 +10163,21 @@ Table of foreground colors, in "0xBBGGRR" format, of marker numbers from `1` to 
 
 Table of foreground colors, in "0xAABBGGRR" format, of marker numbers from `1` to `32`.
 
+<a id="view.marker_layer"></a>
+#### `view.marker_layer` (table)
+
+Table of layer modes for drawing markers in the text area (not the margin) for marker
+  numbers from `1` to `32`.
+
+  * `view.LAYER_BASE`
+    Draw markers opaquely on the background.
+  * `view.LAYER_UNDER_TEXT`
+    Draw markers translucently under text.
+  * `view.LAYER_OVER_TEXT`
+    Draw markers translucently over text.
+
+  The default values are `view.LAYER_BASE`.
+
 <a id="view.marker_stroke_width"></a>
 #### `view.marker_stroke_width` (table, Write-only)
 
@@ -10240,6 +10292,20 @@ The selection's alpha value, ranging from `0` (transparent) to `255` (opaque).
 
 Extend the selection to the view's right margin.
   The default value is `false`.
+
+<a id="view.selection_layer"></a>
+#### `view.selection_layer` (number)
+
+The layer mode for drawing selections.
+
+  * `view.LAYER_BASE`
+    Draw selections opaquely on the background.
+  * `view.LAYER_UNDER_TEXT`
+    Draw selections translucently under text.
+  * `view.LAYER_OVER_TEXT`
+    Draw selections translucently over text.
+
+  The default value is `view.LAYER_BASE`.
 
 <a id="view.size"></a>
 #### `view.size` (number)
@@ -10875,6 +10941,20 @@ Parameters:
 * *`type`*: Integer type to register the image with.
 * *`pixels`*: The RGBA data as described in `view.marker_define_rgba_image()`.
 
+<a id="view.reset_element_color"></a>
+#### `view.reset_element_color`(*view, element*)
+
+Resets the color of UI element *element* to its default color.
+
+Parameters:
+
+* *`view`*: 
+* *`element`*: One of the UI elements specified in [`view.element_color`]().
+
+See also:
+
+* [`view.element_color`](#view.element_color)
+
 <a id="view.scroll_caret"></a>
 #### `view.scroll_caret`(*view*)
 
@@ -10953,32 +11033,6 @@ Parameters:
 
 Overrides the fold margin's default highlight color with color *color*, in "0xBBGGRR" format,
 if *use_setting* is `true`.
-
-Parameters:
-
-* *`view`*: A view.
-* *`use_setting`*: Whether or not to use *color*.
-* *`color`*: The color in "0xBBGGRR" format.
-
-<a id="view.set_sel_back"></a>
-#### `view.set_sel_back`(*view, use\_setting, color*)
-
-Overrides the selection's default background color with color *color*, in "0xBBGGRR" format,
-if *use_setting* is `true`.
-Overwrites any existing `view.additional_sel_back` color.
-
-Parameters:
-
-* *`view`*: A view.
-* *`use_setting`*: Whether or not to use *color*.
-* *`color`*: The color in "0xBBGGRR" format.
-
-<a id="view.set_sel_fore"></a>
-#### `view.set_sel_fore`(*view, use\_setting, color*)
-
-Overrides the selection's default foreground color with color *color*, in "0xBBGGRR" format,
-if *use_setting* is `true`.
-Overwrites any existing `view.additional_sel_fore` color.
 
 Parameters:
 
