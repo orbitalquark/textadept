@@ -3870,6 +3870,11 @@ Emitted when releasing the mouse after clicking on text that has an indicator pr
   Arguments:
 
   * _`position`_: The clicked text's position.
+  * _`modifiers`_: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
+    `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
+    key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
+    `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
+    reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 
 <a id="events.INITIALIZED"></a>
 #### `events.INITIALIZED` (string)
@@ -9701,6 +9706,7 @@ The long line mark mode.
 
 Table of flags for UI element identifiers that indicate whether or not an element supports
   translucent colors.
+  See [`view.element_color`](#view.element_color) for element identifiers.
 
 <a id="view.element_base_color"></a>
 #### `view.element_base_color` (table, read-only)
@@ -9749,6 +9755,7 @@ Table of colors in "0xAABBGGRR" format for UI element identifiers.
 
 Table of flags for UI element identifiers that indicate whether or not a color has been
   manually set.
+  See [`view.element_color`](#view.element_color) for element identifiers.
 
 <a id="view.end_at_last_line"></a>
 #### `view.end_at_last_line` (bool)
