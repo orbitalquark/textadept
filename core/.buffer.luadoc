@@ -1745,9 +1745,6 @@ function set_lexer(buffer, name) end
 --   * direct_pointer
 --   * distance_to_secondary_styles
 --   * doc_pointer
---   * element_allows_translucent
---   * element_color
---   * element_is_set
 --   * eol_annotation_style_offset
 --   * focus
 --   * font_quality
@@ -1834,6 +1831,10 @@ function set_lexer(buffer, name) end
 --   * assign_cmd_key
 --   * brace_match_next
 --   * can_paste
+--   * caret_fore
+--   * caret_line_back
+--   * caret_line_back_alpha
+--   * caret_line_visible
 --   * change_insertion
 --   * change_lexer_state
 --   * char_position_from_point
@@ -1859,6 +1860,7 @@ function set_lexer(buffer, name) end
 --   * form_feed
 --   * format_range
 --   * free_sub_styles
+--   * get_font_locale
 --   * get_hotspot_active_back
 --   * get_hotspot_active_fore
 --   * get_line_sel_end_position
@@ -1886,10 +1888,13 @@ function set_lexer(buffer, name) end
 --   * release_all_extended_styles
 --   * release_document
 --   * release_line_character_index
---   * reset_element_color
+--   * sel_alpha
+--   * set_font_locale
 --   * set_hotspot_active_back
 --   * set_hotspot_active_fore
 --   * set_length_for_encode
+--   * set_sel_back
+--   * set_sel_fore
 --   * set_styling_ex
 --   * start_record
 --   * stop_record

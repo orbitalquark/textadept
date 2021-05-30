@@ -13,23 +13,12 @@
 -- also exists in [`buffer`](), even if undocumented.
 -- Any view fields set on startup (e.g. in *~/.textadept/init.lua*) will be the default,
 -- initial values for all views.
--- @field additional_caret_fore (number)
---   The foreground color, in "0xBBGGRR" format, of additional carets.
 -- @field additional_carets_blink (bool)
 --   Allow additional carets to blink.
 --   The default value is `true`.
 -- @field additional_carets_visible (bool)
 --   Display additional carets.
 --   The default value is `true`.
--- @field additional_sel_alpha (number)
---   The alpha value, ranging from `0` (transparent) to `255` (opaque), of additional selections.
---   The default value is `view.ALPHA_NOALPHA`, for no alpha.
--- @field additional_sel_back (number, Write-only)
---   The background color, in "0xBBGGRR" format, of additional selections.
---   This field has no effect when calling `view:set_sel_back(false, ...)`.
--- @field additional_sel_fore (number, Write-only)
---   The foreground color, in "0xBBGGRR" format, of additional selections.
---   This field has no effect when calling `view:set_sel_fore(false, ...)`.
 -- @field all_lines_visible (bool, Read-only)
 --   Whether or not all lines are visible.
 -- @field annotation_visible (number)
@@ -63,18 +52,22 @@
 --   When non-zero, also enables the use of style number `view.STYLE_CALLTIP` instead of
 --   `view.STYLE_DEFAULT` for call tip styles.
 --   The default value is `0`.
--- @field caret_fore (number)
---   The caret's foreground color, in "0xBBGGRR" format.
--- @field caret_line_back (number)
---   The background color, in "0xBBGGRR" format, of the line that contains the caret.
--- @field caret_line_back_alpha (number)
---   The caret line's background alpha value, ranging from `0` (transparent) to `255` (opaque).
---   The default value is `view.ALPHA_NOALPHA`, for no alpha.
 -- @field caret_line_frame (number)
 --   The caret line's frame width in pixels.
 --   When non-zero, the line that contains the caret is framed instead of colored in. The
 --   `view.caret_line_back` and `view.caret_line_back_alpha` properties apply to the frame.
 --   The default value is `0`.
+-- @field caret_line_layer (number)
+--   The caret line layer mode.
+--
+--   * `view.LAYER_BASE`
+--     Draw the caret line opaquely on the background.
+--   * `view.LAYER_UNDER_TEXT`
+--     Draw the caret line translucently under text.
+--   * `view.LAYER_OVER_TEXT`
+--     Draw the caret line translucently over text.
+--
+--   The default value is `view.LAYER_BASE`.
 -- @field caret_line_visible (bool)
 --   Color the background of the line that contains the caret a different color.
 --   The default value is `false`.
@@ -134,6 +127,50 @@
 --   * `view.EDGE_MULTILINE`
 --     Draw vertical lines whose colors and columns are defined by calls to
 --     [`view:multi_edge_add_line()`]().
+-- @field element_allows_translucent (table)
+--   Table of flags for UI element identifiers that indicate whether or not an element supports
+--   translucent colors.
+--   See [`view.element_color`]() for element identifiers.
+-- @field element_base_color (table, read-only)
+--   Table of default colors on "0xAABBGGRR" format for UI element identifiers.
+--   If the alpha byte is omitted, it is assumed to be `0xFF` (opaque).
+--   See [`view.element_color`]() for element identifiers.
+-- @field element_color (table)
+--   Table of colors in "0xAABBGGRR" format for UI element identifiers.
+--   If the alpha byte is omitted, it is assumed to be `0xFF` (opaque).
+--
+--   * `view.ELEMENT_SELECTION_TEXT`
+--     The main selection's text color.
+--   * `view.ELEMENT_SELECTION_BACK`
+--     The main selection's background color.
+--   * `view.ELEMENT_SELECTION_ADDITIONAL_TEXT`
+--     The text color of additional selections.
+--   * `view.ELEMENT_SELECTION_ADDITIONAL_BACK`
+--     The background color of additional selections.
+--   * `view.ELEMENT_SELECTION_SECONDARY_TEXT`
+--     The text color of selections when another window contains the primary selection.
+--     This is only available on Linux.
+--   * `view.ELEMENT_SELECTION_SECONDARY_BACK`
+--     The background color of selections when another window contains the primary selection.
+--     This is only available on Linux.
+--   * `view.ELEMENT_SELECTION_INACTIVE_TEXT`
+--     The text color of selections when another window has focus.
+--   * `view.ELEMENT_SELECTION_INACTIVE_BACK`
+--     The background color of selections when another window has focus.
+--   * `view.ELEMENT_CARET`
+--     The main selection's caret color.
+--   * `view.ELEMENT_CARET_ADDITIONAL`
+--     The caret color of additional selections.
+--   * `view.ELEMENT_CARET_LINE_BACK`
+--     The background color of the line that contains the caret.
+--   * `view.ELEMENT_WHITE_SPACE`
+--     The color of visible whitespace.
+--   * `view.ELEMENT_WHITE_SPACE_BACK`
+--     The background color of visible whitespace.
+-- @field element_is_set (table)
+--   Table of flags for UI element identifiers that indicate whether or not a color has been
+--   manually set.
+--   See [`view.element_color`]() for element identifiers.
 -- @field end_at_last_line (bool)
 --   Disable scrolling past the last line.
 --   The default value is `true`.
@@ -194,6 +231,8 @@
 -- @field fold_flags (number, Read-only)
 --   Bit-mask of folding lines to draw in the buffer.
 --
+--   * `view.FOLDFLAG_NONE`
+--     Do not draw folding lines.
 --   * `view.FOLDFLAG_LINEBEFORE_EXPANDED`
 --     Draw lines above expanded folds.
 --   * `view.FOLDFLAG_LINEBEFORE_CONTRACTED`
@@ -209,7 +248,7 @@
 --     Show line state in line margins.
 --     This option cannot be combined with `FOLDFLAG_LEVELNUMBERS`.
 --
---   The default value is `0`.
+--   The default value is `view.FOLDFLAG_NONE`.
 -- @field h_scroll_bar (bool)
 --   Display the horizontal scroll bar.
 --   The default value is `true`.
@@ -428,6 +467,18 @@
 --   Table of foreground colors, in "0xBBGGRR" format, of marker numbers from `1` to `32`.
 -- @field marker_fore_translucent (table, Write-only)
 --   Table of foreground colors, in "0xAABBGGRR" format, of marker numbers from `1` to `32`.
+-- @field marker_layer (table)
+--   Table of layer modes for drawing markers in the text area (not the margin) for marker
+--   numbers from `1` to `32`.
+--
+--   * `view.LAYER_BASE`
+--     Draw markers opaquely on the background.
+--   * `view.LAYER_UNDER_TEXT`
+--     Draw markers translucently under text.
+--   * `view.LAYER_OVER_TEXT`
+--     Draw markers translucently over text.
+--
+--   The default values are `view.LAYER_BASE`.
 -- @field marker_stroke_width (table, Write-only)
 --   Table of stroke widths in hundredths of a pixel for marker numbers from `1` to `32`.
 --   The default values are `100`, or 1 pixel.
@@ -495,6 +546,17 @@
 -- @field sel_eol_filled (bool)
 --   Extend the selection to the view's right margin.
 --   The default value is `false`.
+-- @field selection_layer (number)
+--   The layer mode for drawing selections.
+--
+--   * `view.LAYER_BASE`
+--     Draw selections opaquely on the background.
+--   * `view.LAYER_UNDER_TEXT`
+--     Draw selections translucently under text.
+--   * `view.LAYER_OVER_TEXT`
+--     Draw selections translucently over text.
+--
+--   The default value is `view.LAYER_BASE`.
 -- @field size (number)
 --   The split resizer's pixel position if the view is a split one.
 -- @field style_back (table)
@@ -930,6 +992,8 @@
 --
 -- @field UPDATE_H_SCROLL (number, Read-only)
 --
+-- @field UPDATE_NONE (number, Read-only)
+--
 -- @field UPDATE_V_SCROLL (number, Read-only)
 --
 -- @field VISIBLE_SLOP (number, Read-only)
@@ -1199,6 +1263,12 @@ function register_image(view, type, xpm_data) end
 function register_rgba_image(view, type, pixels) end
 
 ---
+-- Resets the color of UI element *element* to its default color.
+-- @param element One of the UI elements specified in [`view.element_color`]().
+-- @see element_color
+function reset_element_color(view, element) end
+
+---
 -- Scrolls the caret into view based on the policies previously defined in
 -- `view.set_x_caret_policy()` and `view.set_y_caret_policy()`.
 -- @param view A view.
@@ -1248,24 +1318,6 @@ function set_fold_margin_color(view, use_setting, color) end
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
 function set_fold_margin_hi_color(view, use_setting, color) end
-
----
--- Overrides the selection's default background color with color *color*, in "0xBBGGRR" format,
--- if *use_setting* is `true`.
--- Overwrites any existing `view.additional_sel_back` color.
--- @param view A view.
--- @param use_setting Whether or not to use *color*.
--- @param color The color in "0xBBGGRR" format.
-function set_sel_back(view, use_setting, color) end
-
----
--- Overrides the selection's default foreground color with color *color*, in "0xBBGGRR" format,
--- if *use_setting* is `true`.
--- Overwrites any existing `view.additional_sel_fore` color.
--- @param view A view.
--- @param use_setting Whether or not to use *color*.
--- @param color The color in "0xBBGGRR" format.
-function set_sel_fore(view, use_setting, color) end
 
 ---
 -- Defines scrolling policy bit-mask *policy* as the policy for keeping the caret *y* number

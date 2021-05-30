@@ -149,7 +149,6 @@ if not CURSES then view.idle_styling = view.IDLESTYLING_ALL end
 
 -- Caret and Selection Styles.
 -- view.sel_eol_filled = true
-view.caret_line_visible = not CURSES
 -- view.caret_line_visible_always = true
 -- view.caret_period = 0
 -- view.caret_style = view.CARETSTYLE_BLOCK

@@ -1091,6 +1091,10 @@ static sptr_t luaL_checkscintilla(lua_State *L, int *arg, int type) {
     int i = luaL_checkinteger(L, (*arg)++);
     return i >= 0 ? i - 1 : i; // do not adjust significant values like -1
   }
+  if (type == SCOLOR) {
+    int color = luaL_checkinteger(L, (*arg)++);
+    return color > 0xFFFFFF ? color : color | 0xFF000000; // backward compatibility
+  }
   return type >= SINT && type <= SKEYMOD ? luaL_checkinteger(L, (*arg)++) : 0;
 }
 
