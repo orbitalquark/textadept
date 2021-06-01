@@ -7,6 +7,68 @@
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.2 beta 2 (01 Jun 2021)
+
+Download:
+
+* [Textadept 11.2 beta 2 -- Win32][]
+* [Textadept 11.2 beta 2 -- Mac OSX 10.7+][]
+* [Textadept 11.2 beta 2 -- Linux][]
+* [Textadept 11.2 beta 2 -- Modules][]
+
+Bugfixes:
+
+* Fixed some file extension conflicts.
+* Restore view scroll state after `textadept.editing.filter_through()`.
+* Do no clobber user's terminal on initialization error.
+* Modules: Refresh debugger breakpoints when buffer content is replaced and persist breakpoints
+  and watchpoints on reset.
+* Scintilla: Respect system font settings like antialiasing.
+* Scintilla: Fix primary selection on GTK 3 and Wayland.
+
+Changes:
+
+* Save/restore view state when undoing/redoing full-buffer changes (e.g. code formatting).
+* Added ability to specify find & replace pane font via [`ui.find.entry_font`][].
+* Replaced `events.FILE_BEFORE_RELOAD` and `events.FILE_AFTER_RELOAD` with
+  [`events.BUFFER_BEFORE_REPLACE_TEXT`][] and [`events.BUFFER_AFTER_REPLACE_TEXT`][].
+* Added support for Gleam.
+* Scintilla: Added [`view.indic_stroke_width`][], [`view.marker_fore_translucent`][],
+  [`view.marker_back_translucent`][], [`view.marker_back_selected_translucent`][], and
+  [`view.marker_stroke_width`][].
+* Scintilla: Added new EOL annotation styles.
+* Scintilla: Added [`view.element_color`][] for setting UI element colors (e.g. selection,
+  caret, etc.) and deprecated `view:set_sel_fore()`, `view.sel_alpha`, `view.caret_fore`,
+  etc. Also added [`view.element_allows_translucent`][], [`view.element_base_color`][], and
+  [`view.element_is_set`][].
+* Scintilla: `view.MARK_CHARACTER` markers now support unicode characters.
+* Scintilla: added [`view.selection_layer`][], [`view.caret_line_layer`][], and
+  [`view.marker_layer`][] in conjunction with `view.element_color` for alpha transparency.
+* Scintilla: Included modifiers in `events.INDICATOR_RELEASE`.
+* Scintilla: Update to Unicode 13.
+* Updated to [Scintilla][] 5.0.3.
+
+[Textadept 11.2 beta 2 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta/textadept_11.2_beta_2.win32.zip
+[Textadept 11.2 beta 2 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta/textadept_11.2_beta_2.macOS.zip
+[Textadept 11.2 beta 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta/textadept_11.2_beta_2.linux.tgz
+[Textadept 11.2 beta 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta/textadept_11.2_beta_2.modules.zip
+[`ui.find.entry_font`]: api.html#ui.find.entry_font
+[`events.BUFFER_BEFORE_REPLACE_TEXT`]: api.html#events.BUFFER_BEFORE_REPLACE_TEXT
+[`events.BUFFER_AFTER_REPLACE_TEXT`]: api.html#events.BUFFER_AFTER_REPLACE_TEXT
+[`view.indic_stroke_width`]: api.html#view.indic_stroke_width
+[`view.marker_fore_translucent`]: api.html#view.marker_fore_translucent
+[`view.marker_back_translucent`]: api.html#view.marker_back_translucent
+[`view.marker_back_selected_translucent`]: api.html#view.marker_back_selected_translucent
+[`view.marker_stroke_width`]: api.html#view.marker_stroke_width
+[`view.element_color`]: api.html#view.element_color
+[`view.element_allows_translucent`]: api.html#view.element_allows_translucent
+[`view.element_base_color`]: api.html#view.element_base_color
+[`view.element_is_set`]: api.html#view.element_is_set
+[`view.selection_layer`]: api.html#view.selection_layer
+[`view.caret_line_layer`]: api.html#view.caret_line_layer
+[`view.marker_layer`]: api.html#view.marker_layer
+[Scintilla]: https://scintilla.org
+
 ### 11.2 beta (01 Apr 2021)
 
 Download:
