@@ -347,8 +347,8 @@ endif
 
 scintilla_tgz = scintilla503.tgz
 lexilla_tgz = lexilla500.tgz
-scinterm_zip = 829b0b17c019b5dc5c52470ab10527642027f4b0.zip
-scintillua_zip = 530a3eb4303745c40aaaf7c3a36e39173688f9af.zip
+scinterm_zip = f8980f045c16b79b6d7b83c06db2c6195e89e3e6.zip
+scintillua_zip = fff8d49b241b26a291031f34f8d572c276e2b918.zip
 lua_tgz = lua-5.4.2.tar.gz
 lpeg_tgz = lpeg-1.0.2.tar.gz
 lfs_zip = v1_8_0.zip
