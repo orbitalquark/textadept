@@ -20,7 +20,7 @@ Bugfixes:
 
 * Fixed some file extension conflicts.
 * Restore view scroll state after `textadept.editing.filter_through()`.
-* Do no clobber user's terminal on initialization error.
+* Do not clobber user's terminal on initialization error.
 * Modules: Refresh debugger breakpoints when buffer content is replaced and persist breakpoints
   and watchpoints on reset.
 * Scintilla: Respect system font settings like antialiasing.
