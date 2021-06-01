@@ -1,40 +1,22 @@
 Scintilla changes:
 
-* Fix GTK crash on Windows and macOS, as they do not support font options.
-  This patch has been submitted upstream.
-* Hijack SCI_CHANGEINSERTION for programmatically setting input method.
+* Add Message::ChangeInsertion for programmatically setting input method.
   This is helpful on newer versions of macOS, where changing the input method is flaky.
 * Handle leading whitespace in XPM images in order to prevent crashes.
 
 diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
 --- a/gtk/ScintillaGTK.cxx	Fri Apr 09 15:11:26 2021 +1000
 +++ b/gtk/ScintillaGTK.cxx	Tue Apr 13 16:36:00 2021 -0400
-@@ -177,6 +177,7 @@
- }
- 
- FontOptions::FontOptions(GtkWidget *widget) noexcept {
-+#if !PLAT_GTK_WIN32 && !PLAT_GTK_MACOSX
- 	PangoContext *pcontext = gtk_widget_create_pango_context(widget);
- 	PLATFORM_ASSERT(pcontext);
- 	const cairo_font_options_t *options = pango_cairo_context_get_font_options(pcontext);
-@@ -186,6 +187,7 @@
- 	order = cairo_font_options_get_subpixel_order(options);
- 	hint = cairo_font_options_get_hint_style(options);
- 	g_object_unref(pcontext);
-+#endif
- }
- 
- bool FontOptions::operator==(const FontOptions &other) const noexcept {
 @@ -885,6 +887,11 @@
- 		case SCI_GETDIRECTPOINTER:
+ 		case Message::GetDirectPointer:
  			return reinterpret_cast<sptr_t>(this);
  
-+		case SCI_CHANGEINSERTION:
++		case Message::ChangeInsertion:
 +			// Hijack this interface to programmatically set input method.
 +			gtk_im_multicontext_set_context_id(GTK_IM_MULTICONTEXT(im_context), ConstCharPtrFromSPtr(lParam));
 +			break;
 +
- 		case SCI_TARGETASUTF8:
+ 		case Message::TargetAsUTF8:
  			return TargetAsUTF8(CharPtrFromSPtr(lParam));
  
 diff -r 22b6bbb36280 src/XPM.cxx
