@@ -48,10 +48,10 @@ Changes:
 * Scintilla: Update to Unicode 13.
 * Updated to [Scintilla][] 5.0.3.
 
-[Textadept 11.2 beta 2 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta/textadept_11.2_beta_2.win32.zip
-[Textadept 11.2 beta 2 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta/textadept_11.2_beta_2.macOS.zip
-[Textadept 11.2 beta 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta/textadept_11.2_beta_2.linux.tgz
-[Textadept 11.2 beta 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta/textadept_11.2_beta_2.modules.zip
+[Textadept 11.2 beta 2 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta_2/textadept_11.2_beta_2.win32.zip
+[Textadept 11.2 beta 2 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta_2/textadept_11.2_beta_2.macOS.zip
+[Textadept 11.2 beta 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta_2/textadept_11.2_beta_2.linux.tgz
+[Textadept 11.2 beta 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta_2/textadept_11.2_beta_2.modules.zip
 [`ui.find.entry_font`]: api.html#ui.find.entry_font
 [`events.BUFFER_BEFORE_REPLACE_TEXT`]: api.html#events.BUFFER_BEFORE_REPLACE_TEXT
 [`events.BUFFER_AFTER_REPLACE_TEXT`]: api.html#events.BUFFER_AFTER_REPLACE_TEXT
