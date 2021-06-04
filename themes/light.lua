@@ -84,10 +84,12 @@ styles.variable = {fore = colors.dark_lavender}
 styles.whitespace = {}
 
 -- Element colors.
-view.element_color[view.ELEMENT_SELECTION_TEXT] = colors.light_black
-view.element_color[view.ELEMENT_SELECTION_BACK] = colors.light_grey
-view.element_color[view.ELEMENT_SELECTION_ADDITIONAL_TEXT] = colors.light_black
-view.element_color[view.ELEMENT_SELECTION_ADDITIONAL_BACK] = colors.light_grey
+-- view.element_color[view.ELEMENT_SELECTION_TEXT] = colors.light_black
+view.element_color[view.ELEMENT_SELECTION_BACK] = colors.grey_white
+-- view.element_color[view.ELEMENT_SELECTION_ADDITIONAL_TEXT] = colors.light_black
+view.element_color[view.ELEMENT_SELECTION_ADDITIONAL_BACK] = colors.grey_white
+-- view.element_color[view.ELEMENT_SELECTION_INACTIVE_TEXT] = colors.light_black
+view.element_color[view.ELEMENT_SELECTION_INACTIVE_BACK] = colors.dark_white
 view.element_color[view.ELEMENT_CARET] = colors.grey_black
 -- view.element_color[view.ELEMENT_CARET_ADDITIONAL] =
 view.element_color[view.ELEMENT_CARET_LINE_BACK] = colors.dark_white
