@@ -2703,6 +2703,26 @@ function test_ui_find_replace_all()
   buffer:close(true)
 end
 
+function test_find_replace_all_empty_matches()
+  buffer.new()
+  buffer:set_text('1\n2\n3\n4')
+  ui.find.find_entry_text, ui.find.replace_entry_text = '$', ','
+  ui.find.regex = true
+  ui.find.replace_all()
+  assert_equal(buffer:get_text(), '1,\n2,\n3,\n4,')
+  buffer:undo()
+  buffer:set_sel(buffer:position_from_line(2), buffer:position_from_line(4))
+  ui.find.replace_all()
+  assert_equal(buffer:get_text(), '1\n2,\n3,\n4')
+  buffer:undo()
+  ui.find.find_entry_text, ui.find.replace_entry_text = '^', '$'
+  ui.find.replace_all()
+  assert_equal(buffer:get_text(), '$1\n$2\n$3\n$4')
+  ui.find.find_entry_text, ui.find.replace_entry_text = '', ''
+  ui.find.regex = false
+  buffer:close(true)
+end
+
 function test_find_replace_regex_transforms()
   buffer.new()
   buffer:set_text('foObaRbaz')
