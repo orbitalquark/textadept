@@ -414,10 +414,10 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
   buffer:set_target_range(not replace_in_sel and 1 or s, buffer.length + 1)
   while buffer:search_in_target(ftext) ~= -1 and
     (not replace_in_sel or buffer.target_end <= buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
-    if buffer.target_start == buffer.target_end then break end -- prevent loops
+    local offset = buffer.target_start ~= buffer.target_end and 0 or 1 -- for preventing loops
     buffer:replace_target(not M.regex and rtext or unescape(rtext))
     count = count + 1
-    buffer:set_target_range(buffer.target_end, buffer.length + 1)
+    buffer:set_target_range(buffer.target_end + offset, buffer.length + 1)
   end
   buffer:end_undo_action()
 
