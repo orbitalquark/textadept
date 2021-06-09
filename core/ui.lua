@@ -375,8 +375,10 @@ local function restore_buffer_state()
   view.x_offset = buffer._x_offset or 0
 end
 events.connect(events.BUFFER_AFTER_SWITCH, restore_buffer_state)
-events.connect(events.BUFFER_AFTER_REPLACE_TEXT,
-  function() if buffer.length > 1 then restore_buffer_state() end end)
+events.connect(events.BUFFER_AFTER_REPLACE_TEXT, function()
+  local anchor, pos = buffer._anchor or 0, buffer._current_pos or 0
+  if anchor <= buffer.length and pos <= buffer.length then restore_buffer_state() end
+end)
 
 -- Updates titlebar and statusbar.
 local function update_bars()
