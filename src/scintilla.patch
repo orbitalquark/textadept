@@ -3,6 +3,7 @@ Scintilla changes:
 * Add Message::ChangeInsertion for programmatically setting input method.
   This is helpful on newer versions of macOS, where changing the input method is flaky.
 * Handle leading whitespace in XPM images in order to prevent crashes.
+* Add Message::ReplaceRectangular from upstream, which will be in the next release.
 
 diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
 --- a/gtk/ScintillaGTK.cxx	Fri Apr 09 15:11:26 2021 +1000
@@ -32,3 +33,57 @@ diff -r 22b6bbb36280 src/XPM.cxx
  	if ((0 == memcmp(textForm, "/* X", 4)) && (0 == memcmp(textForm, "/* XPM */", 9))) {
  		// Build the lines form out of the text form
  		std::vector<const char *> linesForm = LinesFormFromTextForm(textForm);
+diff -r df18eadcec4b include/Scintilla.h
+--- a/include/Scintilla.h	Mon May 31 11:18:20 2021 +1000
++++ b/include/Scintilla.h	Thu Jun 10 15:51:56 2021 -0400
+@@ -885,6 +885,7 @@
+ #define SCI_TOGGLECARETSTICKY 2459
+ #define SCI_SETPASTECONVERTENDINGS 2467
+ #define SCI_GETPASTECONVERTENDINGS 2468
++#define SCI_REPLACERECTANGULAR 2771
+ #define SCI_SELECTIONDUPLICATE 2469
+ #define SCI_SETCARETLINEBACKALPHA 2470
+ #define SCI_GETCARETLINEBACKALPHA 2471
+diff -r df18eadcec4b include/Scintilla.iface
+--- a/include/Scintilla.iface	Mon May 31 11:18:20 2021 +1000
++++ b/include/Scintilla.iface	Thu Jun 10 15:51:56 2021 -0400
+@@ -2439,6 +2439,9 @@
+ # Get convert-on-paste setting
+ get bool GetPasteConvertEndings=2468(,)
+ 
++# Replace the selection with text like a rectangular paste.
++fun void ReplaceRectangular=2771(position length, string text)
++
+ # Duplicate the selection. If selection empty duplicate the line containing the caret.
+ fun void SelectionDuplicate=2469(,)
+ 
+diff -r df18eadcec4b include/ScintillaMessages.h
+--- a/include/ScintillaMessages.h	Mon May 31 11:18:20 2021 +1000
++++ b/include/ScintillaMessages.h	Thu Jun 10 15:51:56 2021 -0400
+@@ -581,6 +581,7 @@
+ 	ToggleCaretSticky = 2459,
+ 	SetPasteConvertEndings = 2467,
+ 	GetPasteConvertEndings = 2468,
++	ReplaceRectangular = 2771,
+ 	SelectionDuplicate = 2469,
+ 	SetCaretLineBackAlpha = 2470,
+ 	GetCaretLineBackAlpha = 2471,
+diff -r df18eadcec4b src/Editor.cxx
+--- a/src/Editor.cxx	Mon May 31 11:18:20 2021 +1000
++++ b/src/Editor.cxx	Thu Jun 10 15:51:56 2021 -0400
+@@ -5940,6 +5940,15 @@
+ 		EnsureCaretVisible();
+ 		break;
+ 
++	case Message::ReplaceRectangular: {
++		UndoGroup ug(pdoc);
++		if (!sel.Empty()) {
++			ClearSelection(); // want to replace rectangular selection contents
++		}
++		InsertPasteShape(CharPtrFromSPtr(lParam), static_cast<Sci::Position>(wParam), PasteShape::rectangular);
++		break;
++	}
++
+ 	case Message::Clear:
+ 		Clear();
+ 		SetLastXChosen();

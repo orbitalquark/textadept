@@ -585,7 +585,8 @@ end
 -- Standard input is as follows:
 --
 -- 1. If no text is selected, the entire buffer is used.
--- 2. If text is selected and spans a single line, only the selected text is used.
+-- 2. If text is selected and spans a single line, is a multiple selection, or is a rectangular
+--   selection, only the selected text is used.
 -- 3. If text is selected and spans multiple lines, all text on the lines that have text selected
 --   is passed as stdin. However, if the end of the selection is at the beginning of a line,
 --   only the line ending delimiters from the previous line are included. The rest of the line
@@ -600,7 +601,7 @@ function M.filter_through(command)
   if s == e then
     -- Use the whole buffer as input.
     buffer:target_whole_document()
-  else
+  elseif buffer.selections == 1 then
     -- Use the selected lines as input.
     local i, j = buffer:line_from_position(s), buffer:line_from_position(e)
     if i < j then
@@ -617,26 +618,46 @@ function M.filter_through(command)
       "'" * (1 - lpeg.S("'\\") + lpeg.P('\\') * 1)^0 * lpeg.P("'")^-1
   }), command)
   -- LuaFormatter on
-  local output = buffer.target_text
+  local inout = buffer.selections == 1 and buffer.target_text or {}
+  if buffer.selections > 1 then
+    -- Use selected text as input.
+    for i = 1, buffer.selections do
+      inout[#inout + 1] = buffer:text_range(buffer.selection_n_start[i], buffer.selection_n_end[i])
+    end
+    inout = table.concat(inout, '\n')
+  end
   for i = 1, #commands do
     local p = assert(os.spawn(commands[i]:match('^%s*(.-)%s*$')))
-    p:write(output)
+    p:write(inout)
     p:close()
-    output = p:read('a') or ''
+    inout = p:read('a') or ''
     if p:wait() ~= 0 then
       ui.statusbar_text = string.format('"%s" %s', commands[i], _L['returned non-zero status'])
       return
     end
   end
-  output = output:iconv('UTF-8', _CHARSET)
-  if buffer:get_text() == output then return end -- do not perform no-op
-  buffer:replace_target(output)
-  view.first_visible_line = top_line
-  if s == e then
-    buffer:goto_pos(s)
-    return
+  inout = inout:iconv('UTF-8', _CHARSET)
+  if buffer.selections == 1 then
+    if buffer:get_text() == inout then return end -- do not perform no-op
+    buffer:replace_target(inout)
+    view.first_visible_line = top_line
+    if s == e then buffer.target_start, buffer.target_end = s, s end
+    buffer:set_sel(buffer.target_start, buffer.target_end)
+  elseif buffer.selection_is_rectangle then
+    local anchor, pos = buffer.rectangular_selection_anchor, buffer.rectangular_selection_caret
+    buffer:replace_rectangular(inout)
+    buffer.rectangular_selection_anchor, buffer.rectangular_selection_caret = anchor, pos
+  else
+    local lines = {}
+    for line in inout:gmatch('[^\r\n]*') do lines[#lines + 1] = line end
+    buffer:begin_undo_action()
+    for i = 1, buffer.selections do
+      buffer:set_target_range(buffer.selection_n_start[i], buffer.selection_n_end[i])
+      buffer:replace_target(lines[i] or '')
+      buffer.selection_n_end[i] = buffer.selection_n_start[i] + #(lines[i] or '')
+    end
+    buffer:end_undo_action()
   end
-  buffer:set_sel(buffer.target_start, buffer.target_end)
 end
 
 ---
