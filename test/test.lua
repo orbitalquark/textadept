@@ -2143,6 +2143,30 @@ function test_editing_filter_through()
   buffer:set_sel(buffer:position_from_line(2), buffer:position_from_line(5) + 1)
   textadept.editing.filter_through('sort')
   assert_equal(buffer:get_text(), '3|baz\n1|foo\n1|foo\n4|quux\n5|foobar\n2|bar\n')
+  buffer:undo()
+  -- Test multiple selection.
+  buffer:set_text('987654321\n123456789\n')
+  buffer.rectangular_selection_anchor = 4
+  buffer.rectangular_selection_caret = 17
+  textadept.editing.filter_through('sort')
+  assert_equal(buffer:get_text(), '987456321\n123654789\n')
+  assert_equal(buffer.rectangular_selection_anchor, 4)
+  assert_equal(buffer.rectangular_selection_caret, 17)
+  buffer:undo()
+  assert_equal(buffer:get_text(), '987654321\n123456789\n')
+  -- Test rectangular selection.
+  buffer:set_text('foo\n\tfoo\n\t\tfoo\nfoo')
+  textadept.editing.select_word()
+  textadept.editing.select_word()
+  textadept.editing.select_word()
+  textadept.editing.filter_through('tr -d o')
+  assert_equal(buffer:get_text(), 'f\n\tf\n\t\tf\nfoo')
+  assert_equal(buffer.selections, 3)
+  for i = 1, buffer.selections do
+    assert_equal(buffer:text_range(buffer.selection_n_start[i], buffer.selection_n_end[i]), 'f')
+  end
+  buffer:undo()
+  assert_equal(buffer:get_text(), 'foo\n\tfoo\n\t\tfoo\nfoo')
   buffer:close(true)
 
   assert_raises(function() textadept.editing.filter_through() end, 'string expected, got nil')
