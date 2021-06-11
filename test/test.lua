@@ -2715,6 +2715,8 @@ function test_ui_find_replace_all()
   ui.find.find_entry_text, ui.find.replace_entry_text = 'f(.)\\1', 'b\\1\\1'
   ui.find.replace_all() -- replace in selection
   assert_equal(buffer:get_text(), 'foo\nboobar\nboobaz\nboofoo')
+  assert_equal(buffer.selection_start, buffer:position_from_line(2))
+  assert_equal(buffer.selection_end, buffer:position_from_line(4) + 3)
   ui.find.regex = false
   buffer:undo()
   ui.find.find_entry_text, ui.find.replace_entry_text = 'foo', ''
@@ -2723,6 +2725,17 @@ function test_ui_find_replace_all()
   ui.find.find_entry_text, ui.find.replace_entry_text = 'quux', ''
   ui.find.replace_all()
   assert_equal(buffer:get_text(), '\nbar\nbaz\n')
+  buffer:undo()
+  buffer:set_selection(1, 4)
+  buffer:add_selection(buffer:position_from_line(3), buffer:position_from_line(3) + 3)
+  ui.find.find_entry_text, ui.find.replace_entry_text = 'foo', 'quux'
+  ui.find.replace_all() -- replace in multiple selection
+  assert_equal(buffer:get_text(), 'quux\nfoobar\nquuxbaz\nfoofoo')
+  assert_equal(buffer.selections, 2)
+  assert_equal(buffer.selection_n_start[1], 1)
+  assert_equal(buffer.selection_n_end[1], 5)
+  assert_equal(buffer.selection_n_start[2], buffer:position_from_line(3))
+  assert_equal(buffer.selection_n_end[2], buffer:position_from_line(3) + 4)
   ui.find.find_entry_text, ui.find.replace_entry_text = '', ''
   buffer:close(true)
 end
