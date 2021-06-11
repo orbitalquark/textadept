@@ -398,35 +398,38 @@ local INDIC_REPLACE = _SCINTILLA.next_indic_number()
 -- is replaced.
 events.connect(events.REPLACE_ALL, function(ftext, rtext)
   if ftext == '' then return end
-  local count = 0
-  local s, e = buffer.selection_start, buffer.selection_end
-  local replace_in_sel = s ~= e and (ftext ~= find_text or buffer:get_sel_text() ~= found_text)
-  if replace_in_sel then
-    buffer.indicator_current = INDIC_REPLACE
-    buffer:indicator_fill_range(e, 1)
-  end
-  local EOF = replace_in_sel and e == buffer.length + 1 -- no indicator at EOF
   repl_text = rtext -- save for ui.find.focus()
+  local count = 0
+  local replace_in_sel = not buffer.selection_empty and
+    (ftext ~= find_text or buffer:get_sel_text() ~= found_text)
+  if replace_in_sel then buffer.indicator_current = INDIC_REPLACE end
 
-  -- Perform the search and replace.
-  buffer:begin_undo_action()
-  buffer.search_flags = get_flags()
-  buffer:set_target_range(not replace_in_sel and 1 or s, buffer.length + 1)
-  while buffer:search_in_target(ftext) ~= -1 and
-    (not replace_in_sel or buffer.target_end <= buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
-    local offset = buffer.target_start ~= buffer.target_end and 0 or 1 -- for preventing loops
-    buffer:replace_target(not M.regex and rtext or unescape(rtext))
-    count = count + 1
-    buffer:set_target_range(buffer.target_end + offset, buffer.length + 1)
-  end
-  buffer:end_undo_action()
+  for i = 1, buffer.selections do
+    local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
+    if replace_in_sel then buffer:indicator_fill_range(e, 1) end
+    local EOF = replace_in_sel and e == buffer.length + 1 -- no indicator at EOF
 
-  -- Restore any original selection and report the number of replacements made.
-  if replace_in_sel then
-    e = buffer:indicator_end(INDIC_REPLACE, s)
-    buffer:set_sel(s, e > 1 and e or buffer.length + 1)
-    if e > 1 then buffer:indicator_clear_range(e, 1) end
+    -- Perform the search and replace.
+    buffer:begin_undo_action()
+    buffer.search_flags = get_flags()
+    buffer:set_target_range(not replace_in_sel and 1 or s, buffer.length + 1)
+    while buffer:search_in_target(ftext) ~= -1 and
+      (not replace_in_sel or buffer.target_end <= buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
+      local offset = buffer.target_start ~= buffer.target_end and 0 or 1 -- for preventing loops
+      buffer:replace_target(not M.regex and rtext or unescape(rtext))
+      count = count + 1
+      buffer:set_target_range(buffer.target_end + offset, buffer.length + 1)
+    end
+    buffer:end_undo_action()
+
+    -- Restore any original selection.
+    if replace_in_sel then
+      e = buffer:indicator_end(INDIC_REPLACE, s)
+      buffer.selection_n_start[i], buffer.selection_n_end[i] = s, e > 1 and e or buffer.length + 1
+      if e > 1 then buffer:indicator_clear_range(e, 1) end
+    end
   end
+
   ui.statusbar_text = string.format('%d %s', count, _L['replacement(s) made'])
 end)
 

@@ -508,9 +508,8 @@ When the pane is closed, you can quickly perform "Find Next", "Find Prev", "Repl
 on Windows, Linux, and BSD; `⌘G`, `⌘⇧G`, `^R`, and `^⇧R`, respectively, on macOS; and
 `M-G`, `M-S-G`, `M-R`, and `M-S-R` in the terminal version.
 
-**Tip:** by default, "Replace All" replaces all text in the buffer. Selecting a contiguous block
-of text and then performing "Replace All" replaces all text in that selection only. Textadept does
-not currently support "Replace All" within non-contiguous selections (e.g. multiple selections).
+**Tip:** by default, "Replace All" replaces all text in the buffer. Selecting text and then
+performing "Replace All" replaces all text in that selection only.
 
 [`ui.find.highlight_all_matches`]: api.html#ui.find.highlight_all_matches
 
