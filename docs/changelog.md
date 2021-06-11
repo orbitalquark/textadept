@@ -7,6 +7,32 @@
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.2 beta 3 (11 Jun 2021)
+
+Download:
+
+* [Textadept 11.2 beta 3 -- Win32][]
+* [Textadept 11.2 beta 3 -- Mac OSX 10.7+][]
+* [Textadept 11.2 beta 3 -- Linux][]
+* [Textadept 11.2 beta 3 -- Modules][]
+
+Bugfixes:
+
+* Allow "Replace All" for empty regex matches like '^' and '$'.
+* Fixed display of secondary selections on Linux.
+* Fixed instances of incorrect caret/selection placement when typing after clearing buffer text.
+
+Changes:
+
+* Allow syntax highlighting to be preserved in selected text for default themes.
+* `textadept.editing.filter_through()` respects multiple and rectangular selections.
+* Support "Replace All" in multiple and rectangular selection.
+
+[Textadept 11.2 beta 3 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta_3/textadept_11.2_beta_3.win32.zip
+[Textadept 11.2 beta 3 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta_3/textadept_11.2_beta_3.macOS.zip
+[Textadept 11.2 beta 3 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta_3/textadept_11.2_beta_3.linux.tgz
+[Textadept 11.2 beta 3 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2_beta_3/textadept_11.2_beta_3.modules.zip
+
 ### 11.2 beta 2 (01 Jun 2021)
 
 Download:
