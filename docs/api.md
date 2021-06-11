@@ -1,4 +1,4 @@
-## Textadept 11.2 beta 2 API Documentation
+## Textadept 11.2 beta 3 API Documentation
 
 1. [_G](#_G)
 1. [_L](#_L)
@@ -2937,6 +2937,16 @@ Reloads the buffer's file contents, discarding any changes.
 Parameters:
 
 * *`buffer`*: A buffer.
+
+<a id="buffer.replace_rectangular"></a>
+#### `buffer.replace_rectangular`(*buffer, text*)
+
+Replaces the rectangular selection with string *text*.
+
+Parameters:
+
+* *`buffer`*: A buffer.
+* *`text`*: The text to replace the rectangular selection with.
 
 <a id="buffer.replace_sel"></a>
 #### `buffer.replace_sel`(*buffer, text*)
@@ -6282,7 +6292,8 @@ may contain shell pipes ('|').
 Standard input is as follows:
 
 1. If no text is selected, the entire buffer is used.
-2. If text is selected and spans a single line, only the selected text is used.
+2. If text is selected and spans a single line, is a multiple selection, or is a rectangular
+  selection, only the selected text is used.
 3. If text is selected and spans multiple lines, all text on the lines that have text selected
   is passed as stdin. However, if the end of the selection is at the beginning of a line,
   only the line ending delimiters from the previous line are included. The rest of the line
@@ -8770,6 +8781,84 @@ initial values for all views.
 
 <a id="view.EDGE_NONE"></a>
 #### `view.EDGE_NONE` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_CARET"></a>
+#### `view.ELEMENT_CARET` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_CARET_ADDITIONAL"></a>
+#### `view.ELEMENT_CARET_ADDITIONAL` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_CARET_LINE_BACK"></a>
+#### `view.ELEMENT_CARET_LINE_BACK` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_SELECTION_ADDITIONAL_BACK"></a>
+#### `view.ELEMENT_SELECTION_ADDITIONAL_BACK` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_SELECTION_ADDITIONAL_TEXT"></a>
+#### `view.ELEMENT_SELECTION_ADDITIONAL_TEXT` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_SELECTION_BACK"></a>
+#### `view.ELEMENT_SELECTION_BACK` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_SELECTION_INACTIVE_BACK"></a>
+#### `view.ELEMENT_SELECTION_INACTIVE_BACK` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_SELECTION_INACTIVE_TEXT"></a>
+#### `view.ELEMENT_SELECTION_INACTIVE_TEXT` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_SELECTION_SECONDARY_BACK"></a>
+#### `view.ELEMENT_SELECTION_SECONDARY_BACK` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_SELECTION_SECONDARY_TEXT"></a>
+#### `view.ELEMENT_SELECTION_SECONDARY_TEXT` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_SELECTION_TEXT"></a>
+#### `view.ELEMENT_SELECTION_TEXT` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_WHITE_SPACE"></a>
+#### `view.ELEMENT_WHITE_SPACE` (number, Read-only)
+
+
+
+
+<a id="view.ELEMENT_WHITE_SPACE_BACK"></a>
+#### `view.ELEMENT_WHITE_SPACE_BACK` (number, Read-only)
 
 
 
