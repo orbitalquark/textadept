@@ -1275,6 +1275,12 @@ function position_relative(buffer, pos, n) end
 function redo(buffer) end
 
 ---
+-- Replaces the rectangular selection with string *text*.
+-- @param buffer A buffer.
+-- @param text The text to replace the rectangular selection with.
+function replace_rectangular(buffer, text) end
+
+---
 -- Replaces the selected text with string *text*, scrolling the caret into view.
 -- @param buffer A buffer.
 -- @param text The text to replace the selected text with.

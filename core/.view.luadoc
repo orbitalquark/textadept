@@ -728,6 +728,32 @@
 --
 -- @field EDGE_NONE (number, Read-only)
 --
+-- @field ELEMENT_SELECTION_TEXT (number, Read-only)
+--
+-- @field ELEMENT_SELECTION_BACK (number, Read-only)
+--
+-- @field ELEMENT_SELECTION_ADDITIONAL_TEXT (number, Read-only)
+--
+-- @field ELEMENT_SELECTION_ADDITIONAL_BACK (number, Read-only)
+--
+-- @field ELEMENT_SELECTION_SECONDARY_TEXT (number, Read-only)
+--
+-- @field ELEMENT_SELECTION_SECONDARY_BACK (number, Read-only)
+--
+-- @field ELEMENT_SELECTION_INACTIVE_TEXT (number, Read-only)
+--
+-- @field ELEMENT_SELECTION_INACTIVE_BACK (number, Read-only)
+--
+-- @field ELEMENT_CARET (number, Read-only)
+--
+-- @field ELEMENT_CARET_ADDITIONAL (number, Read-only)
+--
+-- @field ELEMENT_CARET_LINE_BACK (number, Read-only)
+--
+-- @field ELEMENT_WHITE_SPACE (number, Read-only)
+--
+-- @field ELEMENT_WHITE_SPACE_BACK (number, Read-only)
+--
 -- @field FOLDACTION_CONTRACT (number, Read-only)
 --
 -- @field FOLDACTION_EXPAND (number, Read-only)
