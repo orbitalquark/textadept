@@ -2144,7 +2144,7 @@ function test_editing_filter_through()
   textadept.editing.filter_through('sort')
   assert_equal(buffer:get_text(), '3|baz\n1|foo\n1|foo\n4|quux\n5|foobar\n2|bar\n')
   buffer:undo()
-  -- Test multiple selection.
+  -- Test rectangular selection.
   buffer:set_text('987654321\n123456789\n')
   buffer.rectangular_selection_anchor = 4
   buffer.rectangular_selection_caret = 17
@@ -2154,8 +2154,9 @@ function test_editing_filter_through()
   assert_equal(buffer.rectangular_selection_caret, 17)
   buffer:undo()
   assert_equal(buffer:get_text(), '987654321\n123456789\n')
-  -- Test rectangular selection.
+  -- Test multiple selection.
   buffer:set_text('foo\n\tfoo\n\t\tfoo\nfoo')
+  buffer:goto_pos(1)
   textadept.editing.select_word()
   textadept.editing.select_word()
   textadept.editing.select_word()
