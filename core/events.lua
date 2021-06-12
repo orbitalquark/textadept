@@ -415,7 +415,7 @@ end
 -- Emits events prior to and after replacing buffer text.
 M.connect(M.MODIFIED, function(position, mod, text, length)
   if mod & (DELETE | INSERT) == 0 or length ~= buffer.length then return end
-  if mod & (INSERT | UNDOREDO) > 0 then
+  if mod & (INSERT | UNDOREDO) == INSERT | UNDOREDO then
     -- Cannot emit BUFFER_AFTER_REPLACE_TEXT here because Scintilla will do things like update
     -- the selection afterwards, which could undo what event handlers do.
     events.connect(events.UPDATE_UI, emit_after_replace_text)
