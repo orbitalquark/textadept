@@ -359,7 +359,7 @@ win32gtk_zip = win32gtk-2.24.32.zip
 win32curses_zip = win32curses39.zip
 pdcurses_zip = PDCurses-3.9.zip
 gtkosx_tgz = gtkosx-2.24.31.tar.gz
-cloc = cloc-1.60.pl
+cloc_zip = v1.90.zip
 
 LexLPeg = LexLPeg.cxx LexLPeg.h
 
@@ -424,7 +424,8 @@ win32curses: pdcurses.patch | $(win32curses_zip) $(pdcurses_zip)
 	cp $@/src/wincon/pdcurses.a $@/lib/
 $(gtkosx_tgz): ; $(WGET) $(root_url)/textadept-build/raw/default/$@
 gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
-$(cloc): ; $(WGET) http://prdownloads.sourceforge.net/cloc/$@
+$(cloc_zip): ; $(WGET) https://github.com/AlDanial/cloc/archive/refs/tags/$@
+cloc: | $(cloc_zip) ; unzip -j $| "*/$@" -x "*/Unix/$@"
 
 clean-deps:
 	rm -rf scintilla ../lexers lexilla $(LexLPeg) lua gtdialog cdk termkey win32gtk win32curses \
@@ -434,5 +435,5 @@ clean-deps:
 
 sources = ../core ../modules/ansi_c ../modules/lua ../modules/textadept textadept.c Makefile \
   ../init.lua
-count: $(cloc) ; perl $< $(sources) --not-match-f=tadoc.lua
+count: cloc ; perl $< $(sources) --not-match-f=tadoc.lua --exclude-lang=SVG
 plots: ; ../scripts/gen_plots.sh
