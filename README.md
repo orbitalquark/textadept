@@ -129,7 +129,7 @@ For more information on compiling Textadept, please see the [manual][].
 Your [donation][] or purchase of the [book][] helps fund Textadept's continuous development.
 
 Textadept is [open source][]. Feel free to discuss features, report bugs, and submit patches. You
-can also contact me personally (orbitalquark.att.triplequasar.com).
+can also contact me personally (orbitalquark att triplequasar.com).
 
 [donation]: https://gum.co/textadept
 [book]: https://orbitalquark.github.io/textadept/book.html
