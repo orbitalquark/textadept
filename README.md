@@ -7,6 +7,11 @@ extensibility without sacrificing speed and disk space, and without succumbing t
 a superabundance of features. The application has both a graphical user interface (GUI) version
 that runs in a desktop environment, and a terminal version that runs within a terminal emulator.
 
+![Linux](https://orbitalquark.github.io/textadept/images/linux.png)
+![macOS](https://orbitalquark.github.io/textadept/images/macosx.png)
+![Windows](https://orbitalquark.github.io/textadept/images/win32.png)
+![Terminal](https://orbitalquark.github.io/textadept/images/ncurses.png)
+
 [Lua]: https://lua.org
 
 ## Features
@@ -20,6 +25,8 @@ that runs in a desktop environment, and a terminal version that runs within a te
 * Powerful snippets and key commands.
 * Code autocompletion and documentation lookup.
 * Remarkably extensible, with a heavily documented Application Programming Interface (API).
+
+![Textadept](https://orbitalquark.github.io/textadept/images/splitviews.png)
 
 ## Requirements
 
