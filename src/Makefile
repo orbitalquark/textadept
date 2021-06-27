@@ -345,10 +345,10 @@ else
   gtdialog_url = $(root_url)/gtdialog/archive/default.zip
 endif
 
-scintilla_tgz = scintilla503.tgz
+scintilla_tgz = scintilla510.tgz
 lexilla_tgz = lexilla500.tgz
-scinterm_zip = f8980f045c16b79b6d7b83c06db2c6195e89e3e6.zip
-scintillua_zip = fff8d49b241b26a291031f34f8d572c276e2b918.zip
+scinterm_zip = scinterm_3.1.zip
+scintillua_zip = scintillua_5.0.zip
 lua_tgz = lua-5.4.2.tar.gz
 lpeg_tgz = lpeg-1.0.2.tar.gz
 lfs_zip = v1_8_0.zip

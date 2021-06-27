@@ -518,6 +518,19 @@
 --   string for the '\0' character when assigning its representation. Characters are strings,
 --   not numeric codes, and can be multi-byte characters.
 --   Call [`view.clear_representation()`]() to remove a representation.
+-- @field representation_appearance (table)
+--   Map of characters to their string representation's appearance.
+--
+--   * `view.REPRESENTATION_PLAIN`
+--     Draw the representation with no decoration.
+--   * `view.REPRESENTATION_BLOB`
+--     Draw the representation within a rounded rectangle and an inverted color.
+--   * `view.REPRESENTATION_COLOR`
+--     Draw the representation using the color set in [`view.representation_color`]().
+--
+--   The default values are `view.REPRESENTATION_BLOB`.
+-- @field representation_color (table)
+--   Map of characters to their string representation's color in "0xBBGGRR" format.
 -- @field rgba_image_height (number)
 --   The height of the RGBA image to be defined using [`view.marker_define_rgba_image()`]().
 -- @field rgba_image_scale (number)
@@ -1110,11 +1123,16 @@ function clear_registered_images(view) end
 
 ---
 -- Removes the alternate string representation for character *char* (which may be a multi-byte
---   character).
+-- character).
 -- @param view A view.
 -- @param char The string character in `buffer.representations` to remove the alternate string
 --   representation for.
 function clear_representation(view, char) end
+
+---
+-- Removes all alternate string representations of characters.
+-- @param view A view.
+function clear_all_representations(view) end
 
 ---
 -- Returns the line number of the next contracted fold point starting from line number *line*,
