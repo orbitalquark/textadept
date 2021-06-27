@@ -1749,6 +1749,7 @@ function set_lexer(buffer, name) end
 --   * control_char_symbol
 --   * direct_function
 --   * direct_pointer
+--   * direct_status_function
 --   * distance_to_secondary_styles
 --   * doc_pointer
 --   * eol_annotation_style_offset

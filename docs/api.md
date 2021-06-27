@@ -10340,6 +10340,25 @@ The alternative string representations of characters.
   not numeric codes, and can be multi-byte characters.
   Call [`view.clear_representation()`](#view.clear_representation) to remove a representation.
 
+<a id="view.representation_appearance"></a>
+#### `view.representation_appearance` (table)
+
+Map of characters to their string representation's appearance.
+
+  * `view.REPRESENTATION_PLAIN`
+    Draw the representation with no decoration.
+  * `view.REPRESENTATION_BLOB`
+    Draw the representation within a rounded rectangle and an inverted color.
+  * `view.REPRESENTATION_COLOR`
+    Draw the representation using the color set in [`view.representation_color`](#view.representation_color).
+
+  The default values are `view.REPRESENTATION_BLOB`.
+
+<a id="view.representation_color"></a>
+#### `view.representation_color` (table)
+
+Map of characters to their string representation's color in "0xBBGGRR" format.
+
 <a id="view.rgba_image_height"></a>
 #### `view.rgba_image_height` (number)
 
@@ -10730,6 +10749,15 @@ Parameters:
 * *`pos`*: The position in *view*'s buffer to show a call tip at.
 * *`text`*: The call tip text to show.
 
+<a id="view.clear_all_representations"></a>
+#### `view.clear_all_representations`(*view*)
+
+Removes all alternate string representations of characters.
+
+Parameters:
+
+* *`view`*: A view.
+
 <a id="view.clear_registered_images"></a>
 #### `view.clear_registered_images`(*view*)
 
@@ -10743,7 +10771,7 @@ Parameters:
 #### `view.clear_representation`(*view, char*)
 
 Removes the alternate string representation for character *char* (which may be a multi-byte
-  character).
+character).
 
 Parameters:
 
