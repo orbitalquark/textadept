@@ -535,7 +535,8 @@ static int focus_command_entry(lua_State *L) {
   if (!gtk_widget_get_visible(command_entry))
     gtk_widget_show(command_entry), gtk_widget_grab_focus(command_entry);
   else
-    gtk_widget_hide(command_entry), gtk_widget_grab_focus(focused_view);
+    SS(command_entry, SCI_CANCEL, 0, 0), gtk_widget_hide(command_entry),
+      gtk_widget_grab_focus(focused_view);
 #elif CURSES
   command_entry_active = !command_entry_active;
   if (!command_entry_active) SS(command_entry, SCI_SETFOCUS, 0, 0);
