@@ -1832,10 +1832,12 @@ function set_lexer(buffer, name) end
 --   * add_tab_stop
 --   * add_undo_action
 --   * allocate
+--   * allocate_lines
 --   * allocate_extended_styles
 --   * allocate_line_character_index
 --   * allocate_sub_styles
 --   * assign_cmd_key
+--   * auto_c_set_options
 --   * brace_match_next
 --   * can_paste
 --   * caret_fore
