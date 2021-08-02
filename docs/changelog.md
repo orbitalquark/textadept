@@ -7,6 +7,36 @@
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.2 (01 Aug 2021)
+
+Download:
+
+* [Textadept 11.2 -- Win32][]
+* [Textadept 11.2 -- Mac OSX 10.7+][]
+* [Textadept 11.2 -- Linux][]
+* [Textadept 11.2 -- Modules][]
+
+Bugfixes:
+
+* Fixed trailing newline bug when filtering through with multiple/rectangular selection.
+* Scintilla: Fixed bug in `buffer:get_last_child()` when level is `-1`.
+* Scintilla: Word searching behaves more consistently at buffer boundaries.
+
+Changes:
+
+* Scintilla: Allow setting the appearance and color of character [representations][].
+* Scintilla: Added [`buffer:replace_rectangular()`][].
+* Scintilla: Optimize search in documents that contain mainly ASCII text.
+* Updated to [Scintilla][] 5.1.1.
+
+[Textadept 11.2 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2/textadept_11.2.win32.zip
+[Textadept 11.2 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2/textadept_11.2.macOS.zip
+[Textadept 11.2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2/textadept_11.2.linux.tgz
+[Textadept 11.2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.2/textadept_11.2.modules.zip
+[representations]: api.html#view.representation
+[`buffer:replace_rectangular()`]: api.html#buffer.replace_rectangular
+[Scintilla]: https://scintilla.org
+
 ### 11.2 beta 3 (11 Jun 2021)
 
 Download:
