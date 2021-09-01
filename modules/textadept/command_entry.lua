@@ -212,6 +212,7 @@ local prev_key_mode
 -- @usage ui.command_entry.run(ui.print)
 -- @name run
 function M.run(f, keys, lang, height)
+  if _G.keys.mode == '_command_entry' then return end -- already in command entry
   if not assert_type(f, 'function/nil', 1) and not keys then
     f, keys, lang = run_lua, lua_keys, 'lua'
   elseif type(assert_type(keys, 'table/string/nil', 2)) == 'string' then
