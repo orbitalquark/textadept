@@ -336,8 +336,8 @@ end
 
 function test_file_io_open_file_errors()
   if LINUX then
-    assert_raises(function() io.open_file('/etc/group-') end,
-      'cannot open /etc/group-: Permission denied')
+    assert_raises(function() io.open_file('/etc/gshadow-') end,
+      'cannot open /etc/gshadow-: Permission denied')
   end
   -- TODO: find a case where the file can be opened, but not read
 end
@@ -4734,7 +4734,7 @@ function test_spellcheck()
   local spellcheck = require('spellcheck')
   local SPELLING_ID = 1 -- not accessible
   buffer:new()
-  buffer:add_text('-- foo bar\nbaz = "quux"')
+  buffer:add_text('-- foose bar\nbaz = "quux"')
 
   -- Test background highlighting.
   spellcheck.check_spelling()
@@ -4749,19 +4749,19 @@ function test_spellcheck()
     end
     return misspellings
   end
-  assert_equal(get_misspellings(), {'foo', 'baz', 'quux'})
+  assert_equal(get_misspellings(), {'foose', 'baz', 'quux'})
   buffer:set_lexer('lua')
   spellcheck.check_spelling()
-  assert_equal(get_misspellings(), {'foo', 'quux'})
+  assert_equal(get_misspellings(), {'foose', 'quux'})
 
   -- Test interactive parts.
   spellcheck.check_spelling(true)
   assert(buffer:auto_c_active(), 'no misspellings')
   local s, e = buffer.current_pos, buffer:word_end_position(buffer.current_pos)
-  assert_equal(buffer:text_range(s, e), 'foo')
+  assert_equal(buffer:text_range(s, e), 'foose')
   buffer:cancel()
-  events.emit(events.USER_LIST_SELECTION, SPELLING_ID, 'goo', s)
-  assert_equal(buffer:text_range(s, e), 'goo')
+  events.emit(events.USER_LIST_SELECTION, SPELLING_ID, 'goose', s)
+  assert_equal(buffer:text_range(s, e), 'goose')
   ui.update()
   if CURSES then spellcheck.check_spelling() end -- not needed when interactive
   spellcheck.check_spelling(true)
