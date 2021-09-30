@@ -90,8 +90,8 @@ may be of help.
 
 Textadept stores all settings and user data in a local user directory that varies, depending
 on the platform. This directory can also be configured using command line arguments. On
-Windows systems, the default user directory is *C:\Users\username\.textadept\\*
-or *C:\Documents and Settings\username\.textadept\\*; on macOS, the default
+Windows systems, the default user directory is *C:\\Users\\username\\.textadept\\*
+or *C:\\Documents and Settings\\username\\.textadept\\*; on macOS, the default
 user directory is */Users/username/.textadept/*; and on Linux and BSD, it is
 */home/username/.textadept/*. (Substitute *username* for your actual user name.)  From this point
 forward, the manual will use *~/.textadept/* in place of any platform-specific user data directory.
