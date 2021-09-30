@@ -1,4 +1,4 @@
-## Textadept 11.2 API Documentation
+## Textadept 11.3 beta API Documentation
 
 1. [_G](#_G)
 1. [_L](#_L)
@@ -9690,6 +9690,13 @@ The caret line's frame width in pixels.
   `view.caret_line_back` and `view.caret_line_back_alpha` properties apply to the frame.
   The default value is `0`.
 
+<a id="view.caret_line_highlight_subline"></a>
+#### `view.caret_line_highlight_subline` (boolean)
+
+Color the background of the subline that contains the caret a different color, rather than
+  the whole line.
+  The defalt value is `false`.
+
 <a id="view.caret_line_layer"></a>
 #### `view.caret_line_layer` (number)
 
@@ -9838,6 +9845,10 @@ Table of colors in "0xAABBGGRR" format for UI element identifiers.
     The color of visible whitespace.
   * `view.ELEMENT_WHITE_SPACE_BACK`
     The background color of visible whitespace.
+  * `view.ELEMENT_FOLD_LINE`
+    The color of fold lines.
+  * `view.ELEMENT_HIDDEN_LINE`
+    The color of lines shown in place of hidden lines.
 
 <a id="view.element_is_set"></a>
 #### `view.element_is_set` (table)
@@ -10303,12 +10314,6 @@ Table of edge column positions per edge column number.
 #### `view.property` (table)
 
 Map of key-value string pairs used by lexers.
-
-<a id="view.property_expanded"></a>
-#### `view.property_expanded` (table, Read-only)
-
-Map of key-value string pairs used by lexers with `$()` and `%()` variable replacement
-  performed in values.
 
 <a id="view.property_int"></a>
 #### `view.property_int` (table, Read-only)
@@ -10906,7 +10911,7 @@ See also:
 #### `view.hide_lines`(*view, start\_line, end\_line*)
 
 Hides the range of lines between line numbers *start_line* to *end_line*.
-This has no effect on fold levels or fold flags and the first line cannot be hidden.
+This has no effect on fold levels or fold flags.
 
 Parameters:
 
