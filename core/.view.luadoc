@@ -57,6 +57,10 @@
 --   When non-zero, the line that contains the caret is framed instead of colored in. The
 --   `view.caret_line_back` and `view.caret_line_back_alpha` properties apply to the frame.
 --   The default value is `0`.
+-- @field caret_line_highlight_subline (boolean)
+--   Color the background of the subline that contains the caret a different color, rather than
+--   the whole line.
+--   The defalt value is `false`.
 -- @field caret_line_layer (number)
 --   The caret line layer mode.
 --
@@ -167,6 +171,10 @@
 --     The color of visible whitespace.
 --   * `view.ELEMENT_WHITE_SPACE_BACK`
 --     The background color of visible whitespace.
+--   * `view.ELEMENT_FOLD_LINE`
+--     The color of fold lines.
+--   * `view.ELEMENT_HIDDEN_LINE`
+--     The color of lines shown in place of hidden lines.
 -- @field element_is_set (table)
 --   Table of flags for UI element identifiers that indicate whether or not a color has been
 --   manually set.
@@ -494,9 +502,6 @@
 --   A position of `-1` means no edge column was found.
 -- @field property (table)
 --   Map of key-value string pairs used by lexers.
--- @field property_expanded (table, Read-only)
---   Map of key-value string pairs used by lexers with `$()` and `%()` variable replacement
---   performed in values.
 -- @field property_int (table, Read-only)
 --   Map of key-value pairs used by lexers with values interpreted as numbers, or `0` if not found.
 -- @field rectangular_selection_modifier (number)
@@ -1203,7 +1208,7 @@ function get_default_fold_display_text(view) end
 
 ---
 -- Hides the range of lines between line numbers *start_line* to *end_line*.
--- This has no effect on fold levels or fold flags and the first line cannot be hidden.
+-- This has no effect on fold levels or fold flags.
 -- @param view A view.
 -- @param start_line The start line of the range of lines in *view* to hide.
 -- @param end_line The end line of the range of lines in *view* to hide.

@@ -1786,6 +1786,7 @@ function set_lexer(buffer, name) end
 --   * print_wrap_mode
 --   * status
 --   * style_character_set
+--   * style_check_monospaced
 --   * style_from_sub_style
 --   * style_hotspot
 --   * style_size_fractional
@@ -1892,6 +1893,7 @@ function set_lexer(buffer, name) end
 --   * position_from_point_close
 --   * position_relative_code_units
 --   * private_lexer_call
+--   * property_expanded
 --   * property_names
 --   * property_type
 --   * release_all_extended_styles
