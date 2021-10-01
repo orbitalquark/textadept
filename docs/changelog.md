@@ -20,6 +20,7 @@ Bugfixes:
 
 * Fixed Windows directory typos in the manual.
 * Prevent running the command entry while in the command entry.
+* Fixed uncommenting comments that are not initially aligned.
 * Scintilla: Fixed display of fold lines when wrapped so they are only drawn once per line.
 * Scintilla: Fixed crash with too many subexpressions in regex searches.
 * Scintilla: Fixed lack of display of underscores in some monospaced fonts on Linux.

@@ -360,10 +360,10 @@ function M.toggle_comment()
   buffer:begin_undo_action()
   for line = s, not ignore_last_line and e or e - 1 do
     local p = buffer.line_indent_position[line]
-    column = math.min(buffer.column[p], column)
-    p = buffer:find_column(line, column)
     local uncomment = buffer:text_range(p, p + #prefix) == prefix
     if not uncomment then
+      column = math.min(buffer.column[p], column)
+      p = buffer:find_column(line, column)
       buffer:insert_text(p, prefix)
       if suffix ~= '' then buffer:insert_text(buffer.line_end_position[line], suffix) end
     else
