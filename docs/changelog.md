@@ -7,6 +7,44 @@
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.3 beta (01 Oct 2021)
+
+Download:
+
+* [Textadept 11.3 beta -- Win32][]
+* [Textadept 11.3 beta -- Mac OSX 10.7+][]
+* [Textadept 11.3 beta -- Linux][]
+* [Textadept 11.3 beta -- Modules][]
+
+Bugfixes:
+
+* Fixed Windows directory typos in the manual.
+* Prevent running the command entry while in the command entry.
+* Scintilla: Fixed display of fold lines when wrapped so they are only drawn once per line.
+* Scintilla: Fixed crash with too many subexpressions in regex searches.
+* Scintilla: Fixed lack of display of underscores in some monospaced fonts on Linux.
+* Scintilla: Respond to changes in Linux font scaling.
+
+Changes:
+
+* Updated Makefile lexer to support multiple targets.
+* Updated VB lexer to support folding.
+* Lexers support more complex folding keywords and improved case-insensitivity.
+* Scintilla: Added to `view.element_color` the ability to color fold lines and hidden lines.
+* Scintilla: Added [`view.caret_line_highlight_subline`][] to highlight just the subline containing
+  the caret.
+* Scintilla: `view:hide_lines()` can now hide the first line or all lines.
+* Scintilla: Make negative settings for extra ascent and descent safer.
+* Scintilla: Deprecated `view.property_expanded` in favor of `lexer.property_expanded`.
+* Updated to [Scintilla][] 5.1.3.
+
+[Textadept 11.3 beta -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3_beta/textadept_11.3_beta.win32.zip
+[Textadept 11.3 beta -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3_beta/textadept_11.3_beta.macOS.zip
+[Textadept 11.3 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3_beta/textadept_11.3_beta.linux.tgz
+[Textadept 11.3 beta -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3_beta/textadept_11.3_beta.modules.zip
+[`view.caret_line_highlight_subline`]: api.html#view.caret_line_highlight_subline
+[Scintilla]: https://scintilla.org
+
 ### 11.2 (01 Aug 2021)
 
 Download:
