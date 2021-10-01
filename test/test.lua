@@ -1788,6 +1788,28 @@ function test_editing_toggle_comment_lines()
   buffer:undo() -- comment
   buffer:undo() -- uncomment
   assert_equal(buffer:get_text(), text) -- verify atomic undo
+  -- LuaFormatter off
+  buffer:set_text(table.concat({
+    '--foo',
+    '  --foo'
+  }, '\n'))
+  -- LuaFormatter on
+  offset = 2
+  buffer:select_all()
+  textadept.editing.toggle_comment()
+  -- LuaFormatter off
+  assert_equal(buffer:get_text(), table.concat({
+    'foo',
+    '  foo'
+  }, '\n'))
+  -- LuaFormatter on
+  textadept.editing.toggle_comment()
+  -- LuaFormatter off
+  assert_equal(buffer:get_text(), table.concat({
+    '--foo',
+    '--  foo'
+  }, '\n'))
+  -- LuaFormatter on
   buffer:close(true)
 end
 
