@@ -4208,7 +4208,9 @@ end
 
 function test_debugger_ansi_c()
   local debugger = require('debugger')
+  local use_status_buffers = debugger.use_status_buffers
   local project_commands = debugger.project_commands
+  debugger.use_status_buffers = false
   debugger.project_commands = {} -- reset
   require('debugger.gdb').logging = true
   local function wait()
@@ -4314,12 +4316,15 @@ function test_debugger_ansi_c()
   buffer:close(true)
   os.execute('rm -r ' .. dir)
   ui.tabs = tabs
+  debugger.use_status_buffers = use_status_buffers -- restore
   debugger.project_commands = project_commands -- restore
 end
 
 function test_debugger_lua()
   local debugger = require('debugger')
+  local use_status_buffers = debugger.use_status_buffers
   local project_commands = debugger.project_commands
+  debugger.use_status_buffers = false
   debugger.project_commands = {} -- reset
   local function wait()
     for i = 1, 10 do
@@ -4411,6 +4416,7 @@ function test_debugger_lua()
   view:unsplit()
   buffer:close(true)
   ui.tabs = tabs
+  debugger.use_status_buffers = use_status_buffers -- restore
   debugger.project_commands = project_commands -- restore
 end
 
