@@ -18,29 +18,6 @@ Download:
 
 Bugfixes:
 
-*
-* Lua REPL: Fixed broken REPL on reset.
-
-Changes:
-
-*
-
-[Textadept 11.3 beta -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3_beta/textadept_11.3_beta.win32.zip
-[Textadept 11.3 beta -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3_beta/textadept_11.3_beta.macOS.zip
-[Textadept 11.3 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3_beta/textadept_11.3_beta.linux.tgz
-[Textadept 11.3 beta -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3_beta/textadept_11.3_beta.modules.zip
-
-### 11.3 beta (01 Oct 2021)
-
-Download:
-
-* [Textadept 11.3 beta -- Win32][]
-* [Textadept 11.3 beta -- Mac OSX 10.7+][]
-* [Textadept 11.3 beta -- Linux][]
-* [Textadept 11.3 beta -- Modules][]
-
-Bugfixes:
-
 * Fixed Windows directory typos in the manual.
 * Prevent running the command entry while in the command entry.
 * Fixed uncommenting comments that are not initially aligned.
