@@ -438,6 +438,7 @@ static int focus_find(lua_State *L) {
   setCDKEntryPostProcess(find_entry, find_keypress, NULL);
   char *clipboard = scintilla_get_clipboard(focused_view, NULL);
   GPasteBuffer = copyChar(clipboard); // set the CDK paste buffer
+  curs_set(1); // ensure visible, even if cursor is out of view in focused_view
   refreshCDKScreen(findbox), activateCDKEntry(focused_entry = find_entry, NULL);
   while (focused_entry->exitType == vNORMAL || focused_entry->exitType == vNEVER_ACTIVATED) {
     copyfree(&find_text, getCDKEntryValue(find_entry));
