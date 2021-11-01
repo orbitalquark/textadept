@@ -7,6 +7,36 @@
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.3 beta 2 (01 Nov 2021)
+
+Download:
+
+* [Textadept 11.3 beta 2 -- Win32][]
+* [Textadept 11.3 beta 2 -- Mac OSX 10.7+][]
+* [Textadept 11.3 beta 2 -- Linux][]
+* [Textadept 11.3 beta 2 -- Modules][]
+
+Bugfixes:
+
+* Fixed accidental drawing of whitespace, tab arrows, and indentation guides in margins when
+  scrolling horizontally in the terminal version.
+* Fixed accidental highlighting in margins when scrolling horizontally in the terminal version.
+* Fixed occasional incorrect drawing when scrolling horizontally in the terminal version.
+* Lua REPL: Fixed broken REPL on reset.
+
+Changes:
+
+* Hide the terminal cursor when the caret is out of view.
+* Format: New module for formatting code and reformatting paragraphs.
+* Debugger: Allow watch expressions without breaking on changes.
+* Debugger: Implement setting stack frames in Lua and pretty-print variable values.
+* Debugger: Prefer status buffers for variables and call stacks.
+
+[Textadept 11.3 beta 2 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3_beta_2/textadept_11.3_beta_2.win32.zip
+[Textadept 11.3 beta 2 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3_beta_2/textadept_11.3_beta_2.macOS.zip
+[Textadept 11.3 beta 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3_beta_2/textadept_11.3_beta_2.linux.tgz
+[Textadept 11.3 beta 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3_beta_2/textadept_11.3_beta_2.modules.zip
+
 ### 11.3 beta (01 Oct 2021)
 
 Download:
