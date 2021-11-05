@@ -378,7 +378,7 @@ auto_c_stops	_HOME/core/.buffer.luadoc	/^function auto_c_stops(buffer, chars) en
 auto_c_type_separator	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 auto_enclose	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	F	class:textadept.editing
 auto_indent	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	F	class:textadept.editing
-auto_pairs	_HOME/modules/textadept/editing.lua	/^M.auto_pairs = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}$/;"	t	class:textadept.editing
+auto_pairs	_HOME/modules/textadept/editing.lua	/^M.auto_pairs = {}$/;"	t	class:textadept.editing
 autocomplete	_HOME/modules/textadept/editing.lua	/^function M.autocomplete(name)$/;"	f	class:textadept.editing
 autocomplete_all_words	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	F	class:textadept.editing
 autocomplete_snippets	_HOME/modules/ansi_c/init.lua	/^module('_M.ansi_c')]]$/;"	F	class:_M.ansi_c
@@ -394,7 +394,7 @@ brace_bad_light_indicator	_HOME/core/.view.luadoc	/^function brace_bad_light_ind
 brace_highlight	_HOME/core/.view.luadoc	/^function brace_highlight(view, pos1, pos2) end$/;"	f	class:view
 brace_highlight_indicator	_HOME/core/.view.luadoc	/^function brace_highlight_indicator(view, use_indicator, indicator) end$/;"	f	class:view
 brace_match	_HOME/core/.buffer.luadoc	/^function brace_match(buffer, pos, max_re_style) end$/;"	f	class:buffer
-brace_matches	_HOME/modules/textadept/editing.lua	/^M.brace_matches = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}$/;"	t	class:textadept.editing
+brace_matches	_HOME/modules/textadept/editing.lua	/^M.brace_matches = {}$/;"	t	class:textadept.editing
 buffer	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	m	
 buffer	_HOME/core/.view.luadoc	/^local buffer$/;"	t	class:view
 buffer	_HOME/core/init.lua	/^local buffer$/;"	t	
@@ -992,7 +992,7 @@ toggle_fold	_HOME/core/.view.luadoc	/^function toggle_fold(view, line) end$/;"	f
 toggle_fold_show_text	_HOME/core/.view.luadoc	/^function toggle_fold_show_text(view, line, text) end$/;"	f	class:view
 token	_HOME/lexers/lexer.lua	/^function M.token(name, patt)$/;"	f	class:lexer
 transpose_chars	_HOME/modules/textadept/editing.lua	/^function M.transpose_chars()$/;"	f	class:textadept.editing
-typeover_chars	_HOME/modules/textadept/editing.lua	/^M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}$/;"	t	class:textadept.editing
+typeover_chars	_HOME/modules/textadept/editing.lua	/^M.typeover_chars = {}$/;"	t	class:textadept.editing
 ui	_HOME/core/ui.lua	/^module('ui')]]$/;"	m	
 ui.command_entry	_HOME/modules/textadept/command_entry.lua	/^module('ui.command_entry')]]$/;"	m	
 ui.dialogs	_HOME/core/.ui.dialogs.luadoc	/^module('ui.dialogs')$/;"	m	

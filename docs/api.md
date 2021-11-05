@@ -6444,12 +6444,12 @@ See also:
 
 Map of auto-paired characters like parentheses, brackets, braces, and quotes.
 The ASCII values of opening characters are assigned to strings that contain complement
-characters. The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;", and
-"&quot;&quot;".
+characters. The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;",
+"&quot;&quot;", and "``".
 
 Usage:
 
-* `textadept.editing.auto_pairs[60] = '>' -- pair '<' and '>'`
+* `textadept.editing.auto_pairs[string.byte('<')] = '>'`
 * `textadept.editing.auto_pairs = nil -- disable completely`
 
 <a id="textadept.editing.autocompleters"></a>
@@ -6469,13 +6469,13 @@ See also:
 #### `textadept.editing.brace_matches`
 
 Table of brace characters to highlight.
-The ASCII values of brace characters are keys and are assigned non-`nil` values. The default
-brace characters are '(', ')', '[', ']', '{', and '}'.
+The ASCII values of brace characters are keys and are assigned `true`. The default brace
+characters are '(', ')', '[', ']', '{', and '}'.
 
 Usage:
 
-* `textadept.editing.brace_matches[60] = true -- '<'`
-* `textadept.editing.brace_matches[62] = true -- '>'`
+* `textadept.editing.brace_matches[string.byte('<')] = true`
+* `textadept.editing.brace_matches[string.byte('>')] = true`
 
 <a id="textadept.editing.comment_string"></a>
 #### `textadept.editing.comment_string`
@@ -6493,12 +6493,12 @@ See also:
 #### `textadept.editing.typeover_chars`
 
 Table of characters to move over when typed.
-The ASCII values of characters are keys and are assigned non-`nil` values. The default
-characters are ')', ']', '}', '&apos;', and '&quot;'.
+The ASCII values of characters are keys and are assigned `true` values. The default characters
+are ')', ']', '}', '&apos;', '&quot;', and '`'.
 
 Usage:
 
-* `textadept.editing.typeover_chars[62] = true -- '>'`
+* `textadept.editing.typeover_chars[string.byte('>')] = true`
 
 ---
 <a id="textadept.file_types"></a>
