@@ -83,32 +83,37 @@ M.comment_string = {actionscript='//',ada='--',apdl='!',ansi_c='/*|*/',antlr='//
 ---
 -- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
 -- The ASCII values of opening characters are assigned to strings that contain complement
--- characters. The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;", and
--- "&quot;&quot;".
+-- characters. The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;",
+-- "&quot;&quot;", and "``".
 -- @class table
 -- @name auto_pairs
--- @usage textadept.editing.auto_pairs[60] = '>' -- pair '<' and '>'
+-- @usage textadept.editing.auto_pairs[string.byte('<')] = '>'
 -- @usage textadept.editing.auto_pairs = nil -- disable completely
-M.auto_pairs = {[40] = ')', [91] = ']', [123] = '}', [39] = "'", [34] = '"'}
+M.auto_pairs = {}
+for k, v in pairs{['('] = ')', ['['] = ']', ['{'] = '}', ["'"] = "'", ['"'] = '"', ['`'] = '`'} do
+  M.auto_pairs[string.byte(k)] = v
+end
 
 ---
 -- Table of brace characters to highlight.
--- The ASCII values of brace characters are keys and are assigned non-`nil` values. The default
--- brace characters are '(', ')', '[', ']', '{', and '}'.
+-- The ASCII values of brace characters are keys and are assigned `true`. The default brace
+-- characters are '(', ')', '[', ']', '{', and '}'.
 -- @class table
 -- @name brace_matches
--- @usage textadept.editing.brace_matches[60] = true -- '<'
--- @usage textadept.editing.brace_matches[62] = true -- '>'
-M.brace_matches = {[40] = 1, [41] = 1, [91] = 1, [93] = 1, [123] = 1, [125] = 1}
+-- @usage textadept.editing.brace_matches[string.byte('<')] = true
+-- @usage textadept.editing.brace_matches[string.byte('>')] = true
+M.brace_matches = {}
+for _, c in utf8.codes('()[]{}') do M.brace_matches[c] = true end
 
 ---
 -- Table of characters to move over when typed.
--- The ASCII values of characters are keys and are assigned non-`nil` values. The default
--- characters are ')', ']', '}', '&apos;', and '&quot;'.
+-- The ASCII values of characters are keys and are assigned `true` values. The default characters
+-- are ')', ']', '}', '&apos;', '&quot;', and '`'.
 -- @class table
 -- @name typeover_chars
--- @usage textadept.editing.typeover_chars[62] = true -- '>'
-M.typeover_chars = {[41] = 1, [93] = 1, [125] = 1, [39] = 1, [34] = 1}
+-- @usage textadept.editing.typeover_chars[string.byte('>')] = true
+M.typeover_chars = {}
+for _, c in utf8.codes([[)]}'"`]]) do M.typeover_chars[c] = true end
 
 ---
 -- Map of autocompleter names to autocompletion functions.
