@@ -347,12 +347,12 @@ endif
 
 scintilla_tgz = scintilla513.tgz
 lexilla_tgz = lexilla510.tgz
-scinterm_zip = e6a9d2b6001198fc44d59bcdee9d23d7eae6e445.zip
-scintillua_zip = c8113f8403c0eafe074de1f0071be6df3a0f1bd3.zip
+scinterm_zip = scinterm_3.2.zip
+scintillua_zip = scintillua_5.3.zip
 lua_tgz = lua-5.4.2.tar.gz
 lpeg_tgz = lpeg-1.0.2.tar.gz
 lfs_zip = v1_8_0.zip
-gtdialog_zip = 64587546482a1a6324706d75c80b77d2f87118a4.zip
+gtdialog_zip = gtdialog_1.5.zip
 cdk_tgz = cdk-5.0-20200923.tgz
 termkey_tgz = libtermkey-0.20.tar.gz
 win32gtk_zip = win32gtk-2.24.32.zip
