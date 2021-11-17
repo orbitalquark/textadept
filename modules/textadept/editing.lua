@@ -448,8 +448,9 @@ end
 -- multiple selections into account.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
+-- @param preserve_sel Optional, if `true` the affected selections are preserved.
 -- @name enclose
-function M.enclose(left, right)
+function M.enclose(left, right, preserve_sel)
   assert_type(left, 'string', 1)
   assert_type(right, 'string', 2)
   buffer:begin_undo_action()
@@ -461,8 +462,13 @@ function M.enclose(left, right)
     end
     buffer:set_target_range(s, e)
     buffer:replace_target(left .. buffer.target_text .. right)
-    buffer.selection_n_start[i] = buffer.target_end
-    buffer.selection_n_end[i] = buffer.target_end
+    if preserve_sel then
+      buffer.selection_n_start[i] = buffer.target_start + string.len(left)
+      buffer.selection_n_end[i] = buffer.target_end - string.len(right)
+    else
+      buffer.selection_n_start[i] = buffer.target_end
+      buffer.selection_n_end[i] = buffer.target_end
+    end
   end
   buffer:end_undo_action()
 end
