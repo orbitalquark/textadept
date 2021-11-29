@@ -345,7 +345,7 @@ else
   gtdialog_url = $(root_url)/gtdialog/archive/default.zip
 endif
 
-scintilla_tgz = scintilla513.tgz
+scintilla_tgz = scintilla514.tgz
 lexilla_tgz = lexilla510.tgz
 scinterm_zip = scinterm_3.2.zip
 scintillua_zip = scintillua_5.3.zip
