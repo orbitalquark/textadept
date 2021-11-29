@@ -3766,17 +3766,22 @@ function test_lua_autocomplete()
   buffer:auto_c_cancel()
   buffer:clear_all()
 
+  local choose_single = buffer.auto_c_choose_single
+  buffer.auto_c_choose_single = true
   local autocomplete_snippets = _M.lua.autocomplete_snippets
   _M.lua.autocomplete_snippets = false
   buffer:add_text('for')
   textadept.editing.autocomplete('lua')
   assert(not buffer:auto_c_active(), 'autocompletions available')
+  assert(buffer:get_cur_line(), 'format')
+  buffer:undo()
   _M.lua.autocomplete_snippets = true
   textadept.editing.autocomplete('lua')
   assert(buffer:auto_c_active(), 'no autocompletions')
   buffer:auto_c_cancel()
   buffer:clear_all()
   _M.lua.autocomplete_snippets = autocomplete_snippets -- restore
+  buffer.auto_c_choose_single = choose_single
 
   buffer:close(true)
 end
