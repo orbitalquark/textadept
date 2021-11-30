@@ -6273,7 +6273,7 @@ See also:
 * [`buffer.use_tabs`](#buffer.use_tabs)
 
 <a id="textadept.editing.enclose"></a>
-#### `textadept.editing.enclose`(*left, right*)
+#### `textadept.editing.enclose`(*left, right, select*)
 
 Encloses the selected text or the current word within strings *left* and *right*, taking
 multiple selections into account.
@@ -6282,6 +6282,8 @@ Parameters:
 
 * *`left`*: The left part of the enclosure.
 * *`right`*: The right part of the enclosure.
+* *`select`*: Optional flag that indicates whether or not to keep enclosed text selected. The
+  default value is `false`.
 
 <a id="textadept.editing.filter_through"></a>
 #### `textadept.editing.filter_through`(*command*)
