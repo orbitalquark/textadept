@@ -448,10 +448,13 @@ end
 -- multiple selections into account.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
+-- @param select Optional flag that indicates whether or not to keep enclosed text selected. The
+--   default value is `false`.
 -- @name enclose
-function M.enclose(left, right)
+function M.enclose(left, right, select)
   assert_type(left, 'string', 1)
   assert_type(right, 'string', 2)
+  assert_type(select, 'boolean/nil', 3)
   buffer:begin_undo_action()
   for i = 1, buffer.selections do
     local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
@@ -461,8 +464,8 @@ function M.enclose(left, right)
     end
     buffer:set_target_range(s, e)
     buffer:replace_target(left .. buffer.target_text .. right)
-    buffer.selection_n_start[i] = buffer.target_end
-    buffer.selection_n_end[i] = buffer.target_end
+    buffer.selection_n_start[i] = not select and buffer.target_end or buffer.target_start + #left
+    buffer.selection_n_end[i] = buffer.target_end - (not select and 0 or #right)
   end
   buffer:end_undo_action()
 end
