@@ -1922,10 +1922,18 @@ function test_editing_enclose()
   buffer:add_selection(buffer:position_from_line(2), buffer.line_end_position[2])
   textadept.editing.enclose('-', '-')
   assert_equal(buffer:get_text(), '-foo bar-\n-foo bar-')
+  assert(buffer.selection_empty, 'enclosed text still selected')
+  buffer:undo()
+  textadept.editing.enclose('*', '*', true)
+  assert_equal(buffer:get_sel_text(), 'bar')
+  textadept.editing.enclose('*', '*')
+  assert_equal(buffer:get_text(), 'foo **bar**\nfoo bar')
   buffer:close(true)
 
   assert_raises(function() textadept.editing.enclose() end, 'string expected, got nil')
   assert_raises(function() textadept.editing.enclose('<', 1) end, 'string expected, got number')
+  assert_raises(function() textadept.editing.enclose('<', '>', 1) end,
+    'boolean/nil expected, got number')
 end
 
 function test_editing_auto_enclose()
