@@ -476,7 +476,7 @@ events.connect(events.KEYPRESS, function(code, shift, ctrl, alt, cmd)
     not cmd and not ui.command_entry.active then
     local char = string.char(code)
     if char:find('^%P') then return end -- not punctuation
-    M.enclose(char, M.auto_pairs[code] or char)
+    M.enclose(char, M.auto_pairs[code] or char, true)
     return true -- prevent typing
   end
 end, 1)
