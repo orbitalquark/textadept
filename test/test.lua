@@ -3494,6 +3494,13 @@ function test_snippets_find_snippet()
   table.remove(textadept.snippets.paths, 1)
 end
 
+function test_snippets_expand_lexer_name()
+  buffer.new()
+  buffer:add_text('lua')
+  assert(textadept.snippets.insert() == nil, 'snippet not inserted')
+  buffer:close(true)
+end
+
 function test_snippets_match_indentation()
   local snippet = '\t    foo'
   -- LuaFormatter off
