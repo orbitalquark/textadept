@@ -160,17 +160,17 @@ if not CURSES then view.idle_styling = view.IDLESTYLING_ALL end
 -- view.margin_right =
 -- Line Number Margin.
 view.margin_type_n[1] = view.MARGIN_NUMBER
-local function resize_line_number_margin()
+local function resize_line_number_margin(shrinkable)
   -- This needs to be evaluated dynamically since themes/styles can change.
   local buffer, view = _G.buffer, _G.view
   local width = math.max(4, #tostring(buffer.line_count)) *
     view:text_width(view.STYLE_LINENUMBER, '9') + (not CURSES and 4 or 0)
-  view.margin_width_n[1] = math.max(view.margin_width_n[1], width)
+  view.margin_width_n[1] = not shrinkable and math.max(view.margin_width_n[1], width) or width
 end
 events.connect(events.BUFFER_NEW, resize_line_number_margin)
 events.connect(events.VIEW_NEW, resize_line_number_margin)
 events.connect(events.FILE_OPENED, resize_line_number_margin)
-events.connect(events.ZOOM, resize_line_number_margin)
+events.connect(events.ZOOM, function() resize_line_number_margin(true) end)
 -- Marker Margin.
 view.margin_width_n[2] = not CURSES and 4 or 1
 -- Fold Margin.
