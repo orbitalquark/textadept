@@ -888,6 +888,12 @@ static int ui_newindex(lua_State *L) {
     set_statusbar_text(lua_tostring(L, 3), *key == 's' ? 0 : 1);
   else if (strcmp(key, "menubar") == 0) {
 #if GTK
+#if __APPLE__
+    // TODO: gtkosx_application_set_menu_bar does not like being called more than once in an app.
+    // Random segfaults will happen after a second reset, even if menubar is g_object_ref/unrefed
+    // properly.
+    if (lua_getglobal(L, "arg") == LUA_TNIL) return 0;
+#endif
     luaL_argcheck(L, lua_istable(L, 3), 3, "table of menus expected");
     for (size_t i = 1; i <= lua_rawlen(L, 3); lua_pop(L, 1), i++)
       luaL_argcheck(L, lua_rawgeti(L, 3, i) == LUA_TLIGHTUSERDATA, 3,
