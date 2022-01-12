@@ -322,7 +322,7 @@ osx-app: ../textadept ../textadept-curses ../scripts/osx/textadept_osx
 	$(call archive,$(osxapp_res))
 	cp -rL ../docs ../lexers $(osxapp_res)
 	mv $(osxapp_res)/core/images/textadept.icns $(osxapp_res)/
-	cp -r gtkosx/etc gtkosx/share $(osxapp_res)/ && mkdir $(osxapp_res)/lib/
+	cp -r gtkosx/etc gtkosx/share $(osxapp_res)/ && mkdir -p $(osxapp_res)/lib/
 	cp -r $(addprefix gtkosx/lib/, $(osxapp_libs)) $(osxapp_res)/lib/
 	rm -r $(osxapp_res)/lib/gtk-2.0/include $(osxapp_res)/lib/gtk-2.0/modules
 	rm $(osxapp_res)/lib/gtk-2.0/2.10.0/printbackends/*
