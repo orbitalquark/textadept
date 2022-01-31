@@ -7,6 +7,32 @@
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.3  (01 Feb 2022)
+
+Download:
+
+* [Textadept 11.3  -- Win32][]
+* [Textadept 11.3  -- Mac OSX 10.7+][]
+* [Textadept 11.3  -- Linux][]
+* [Textadept 11.3  -- Modules][]
+
+Bugfixes:
+
+* Fixed attempted expansion of lexer name snippet that resolves to a table.
+* Allow the line number margin to shrink when zooming out.
+* Fixed menubar reset crash on macOS.
+* Updated Ruby, C++, D, Gleam, Nim, and Verilog lexers to fix binary number parsing.
+
+Changes:
+
+* Improve repeated building of Textadept.app on macOS.
+* Updated Perl lexer to recognize more numbers.
+
+[Textadept 11.3  -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3/textadept_11.3.win32.zip
+[Textadept 11.3  -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3/textadept_11.3.macOS.zip
+[Textadept 11.3  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3/textadept_11.3.linux.tgz
+[Textadept 11.3  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3/textadept_11.3.modules.zip
+
 ### 11.3 beta 3 (01 Dec 2021)
 
 Download:
