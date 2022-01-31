@@ -1,4 +1,4 @@
-// Copyright 2007-2021 Mitchell. See LICENSE.
+// Copyright 2007-2022 Mitchell. See LICENSE.
 
 #if __linux__
 #define _XOPEN_SOURCE 500 // for readlink from unistd.h
