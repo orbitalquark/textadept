@@ -282,6 +282,7 @@ view.wrap_mode = view.WRAP_NONE
 -- view.wrap_visual_flags_location = view.WRAPVISUALFLAGLOC_END_BY_TEXT
 -- view.wrap_indent_mode = view.WRAPINDENT_SAME
 -- view.wrap_start_indent =
+view.layout_threads = 1000 -- will be reduced to system specs
 
 -- Long Lines.
 -- view.edge_mode = not CURSES and view.EDGE_LINE or view.EDGE_BACKGROUND

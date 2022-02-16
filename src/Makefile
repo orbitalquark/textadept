@@ -87,7 +87,7 @@ else
       pkg-config --silence-errors --cflags ncurses || pkg-config --silence-errors --cflags curses)
     CURSES_LIBS = $(shell pkg-config --silence-errors --libs ncursesw || \
       pkg-config --silence-errors --libs ncurses || pkg-config --silence-errors --libs curses || \
-      echo -lncursesw)
+      echo -lncursesw) -lpthread
     install_targets = ../textadept-curses
   endif
 endif
@@ -345,7 +345,7 @@ else
   gtdialog_url = $(root_url)/gtdialog/archive/default.zip
 endif
 
-scintilla_tgz = scintilla514.tgz
+scintilla_tgz = scintilla520.tgz
 lexilla_tgz = lexilla510.tgz
 scinterm_zip = 475d8d43f3418590c28bd2fb07ee9229d1fa2d07.zip
 scintillua_zip = 4cb1464ef738a098f008d6530b776fe780b19c34.zip

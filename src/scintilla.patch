@@ -3,6 +3,8 @@ Scintilla changes:
 * Add Message::ChangeInsertion for programmatically setting input method.
   This is helpful on newer versions of macOS, where changing the input method is flaky.
 * Handle leading whitespace in XPM images in order to prevent crashes.
+* Fix preprocessor condition to enable threading on Linux. This has been committed upstream.
+* Fix crash due to re-entrant painting. This has been committed upstream.
 
 diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
 --- a/gtk/ScintillaGTK.cxx	Fri Apr 09 15:11:26 2021 +1000
@@ -13,7 +15,7 @@ diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
  
 +		case Message::ChangeInsertion:
 +			// Hijack this interface to programmatically set input method.
-+			gtk_im_multicontext_set_context_id(GTK_IM_MULTICONTEXT(im_context), ConstCharPtrFromSPtr(lParam));
++			gtk_im_multicontext_set_context_id(GTK_IM_MULTICONTEXT(im_context.get()), ConstCharPtrFromSPtr(lParam));
 +			break;
 +
  		case Message::TargetAsUTF8:
@@ -32,3 +34,61 @@ diff -r 22b6bbb36280 src/XPM.cxx
  	if ((0 == memcmp(textForm, "/* X", 4)) && (0 == memcmp(textForm, "/* XPM */", 9))) {
  		// Build the lines form out of the text form
  		std::vector<const char *> linesForm = LinesFormFromTextForm(textForm);
+diff -r b0e5467561f7 -r c44165c2283e gtk/PlatGTK.cxx
+--- a/gtk/PlatGTK.cxx	Thu Feb 10 13:57:56 2022 +1100
++++ b/gtk/PlatGTK.cxx	Wed Feb 16 09:13:39 2022 +1100
+@@ -214,7 +214,7 @@
+ 	Supports::FractionalStrokeWidth,
+ 	Supports::TranslucentStroke,
+ 	Supports::PixelModification,
+-#if !defined(PLAT_GTK_WIN32) && !defined(PLAT_GTK_MACOSX)
++#if defined(G_OS_UNIX) && !defined(__APPLE__)
+ 	// Pango is not thread-safe on Win32 or macOS
+ 	Supports::ThreadSafeMeasureWidths,
+ #endif
+diff -r c44165c2283e -r 58bb44ceae61 gtk/ScintillaGTK.cxx
+--- a/gtk/ScintillaGTK.cxx	Wed Feb 16 09:13:39 2022 +1100
++++ b/gtk/ScintillaGTK.cxx	Wed Feb 16 09:32:20 2022 +1100
+@@ -2656,13 +2656,13 @@
+ 
+ 		rcPaint = GetClientRectangle();
+ 
+-		PLATFORM_ASSERT(rgnUpdate == nullptr);
++		cairo_rectangle_list_t *oldRgnUpdate = rgnUpdate;
+ 		rgnUpdate = cairo_copy_clip_rectangle_list(cr);
+ 		if (rgnUpdate && rgnUpdate->status != CAIRO_STATUS_SUCCESS) {
+ 			// If not successful then ignore
+ 			fprintf(stderr, "DrawTextThis failed to copy update region %d [%d]\n", rgnUpdate->status, rgnUpdate->num_rectangles);
+ 			cairo_rectangle_list_destroy(rgnUpdate);
+-			rgnUpdate = 0;
++			rgnUpdate = nullptr;
+ 		}
+ 
+ 		double x1, y1, x2, y2;
+@@ -2687,7 +2687,7 @@
+ 		if (rgnUpdate) {
+ 			cairo_rectangle_list_destroy(rgnUpdate);
+ 		}
+-		rgnUpdate = 0;
++		rgnUpdate = oldRgnUpdate;
+ 		paintState = PaintState::notPainting;
+ 	} catch (...) {
+ 		errorStatus = Status::Failure;
+@@ -2759,7 +2759,7 @@
+ 				  ose->area.x + ose->area.width,
+ 				  ose->area.y + ose->area.height);
+ 
+-		PLATFORM_ASSERT(rgnUpdate == nullptr);
++		GdkRegion *oldRgnUpdate = rgnUpdate;
+ 		rgnUpdate = gdk_region_copy(ose->region);
+ 		const PRectangle rcClient = GetClientRectangle();
+ 		paintingAllText = rcPaint.Contains(rcClient);
+@@ -2779,7 +2779,7 @@
+ 		if (rgnUpdate) {
+ 			gdk_region_destroy(rgnUpdate);
+ 		}
+-		rgnUpdate = nullptr;
++		rgnUpdate = oldRgnUpdate;
+ 	} catch (...) {
+ 		errorStatus = Status::Failure;
+ 	}

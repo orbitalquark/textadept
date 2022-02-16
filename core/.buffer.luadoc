@@ -1882,6 +1882,7 @@ function set_lexer(buffer, name) end
 --   * hide_selection
 --   * index_position_from_line
 --   * indicator_value_at
+--   * layout_threads
 --   * line_from_index_position
 --   * load_lexer_library
 --   * mouse_wheel_captures
