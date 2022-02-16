@@ -1154,8 +1154,6 @@ static int call_scintilla(
     len = SS(view, msg, wparam, 0);
     if (wtype == SLEN) wparam = len;
     text = malloc(len + 1), text[len] = '\0';
-    if (msg == SCI_GETTEXT || msg == SCI_GETSELTEXT || msg == SCI_GETCURLINE)
-      len--; // Scintilla appends '\0' for these messages; compensate
     lparam = (sptr_t)text;
   }
 
