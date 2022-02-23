@@ -1043,10 +1043,10 @@ function test_ui_switch_buffer_interactive()
 end
 
 function test_ui_goto_file()
-  local dir1_file1 = _HOME .. '/core/ui/dir1/file1'
-  local dir1_file2 = _HOME .. '/core/ui/dir1/file2'
-  local dir2_file1 = _HOME .. '/core/ui/dir2/file1'
-  local dir2_file2 = _HOME .. '/core/ui/dir2/file2'
+  local dir1_file1 = _HOME .. '/test/ui/dir1/file1'
+  local dir1_file2 = _HOME .. '/test/ui/dir1/file2'
+  local dir2_file1 = _HOME .. '/test/ui/dir2/file1'
+  local dir2_file2 = _HOME .. '/test/ui/dir2/file2'
   ui.goto_file(dir1_file1) -- current view
   assert_equal(#_VIEWS, 1)
   assert_equal(buffer.filename, dir1_file1)
@@ -1063,7 +1063,7 @@ function test_ui_goto_file()
   ui.goto_file(dir2_file1) -- should go back to first view
   assert_equal(buffer.filename, dir2_file1)
   assert_equal(_VIEWS[2].buffer.filename, dir1_file2)
-  ui.goto_file(dir2_file2, false, _VIEWS[1]) -- should go to second view
+  ui.goto_file(dir2_file2, false, _VIEWS[2]) -- should go to second view
   assert_equal(#_VIEWS, 2)
   assert_equal(buffer.filename, dir2_file2)
   assert_equal(_VIEWS[1].buffer.filename, dir2_file1)
