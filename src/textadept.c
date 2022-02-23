@@ -810,7 +810,19 @@ static int menu(lua_State *L) {
 /** `ui.update()` Lua function. */
 static int update_ui(lua_State *L) {
 #if GTK
+#if !__APPLE__
   while (gtk_events_pending()) gtk_main_iteration();
+#else
+  // The idle event monitor created by os.spawn() on macOS is considered to be a pending event,
+  // so use its provided registry key to help determine when there are no longer any non-idle
+  // events pending.
+  lua_pushboolean(L, false), lua_setfield(L, LUA_REGISTRYINDEX, "spawn_procs_polled");
+  while (gtk_events_pending()) {
+    bool polled = (lua_getfield(L, LUA_REGISTRYINDEX, "spawn_procs_polled"), lua_toboolean(L, -1));
+    if (lua_pop(L, 1), polled) break;
+    gtk_main_iteration();
+  }
+#endif
 #elif (CURSES && !_WIN32)
   struct timeval timeout = {0, 1e5}; // 0.1s
   int nfds = os_spawn_pushfds(L);
@@ -1795,7 +1807,7 @@ static bool exiting(GtkWidget *_, GdkEventAny *__, void *L) {
   return (gtk_main_quit(), false);
 }
 
-#if (__APPLE__ && !CURSES)
+#if __APPLE__
 /**
  * Signal for opening files from macOS.
  * Generates an 'appleevent_odoc' event for each document sent.
@@ -1996,7 +2008,7 @@ static void split_view(Scintilla *view, bool vertical) {
   gtk_widget_show_all(pane);
   g_object_unref(view);
 
-  while (gtk_events_pending()) gtk_main_iteration(); // ensure view2 is painted
+  update_ui(lua); // ensure view2 is painted
 #elif CURSES
   Scintilla *view2 = new_view(curdoc);
   split_pane(pane, vertical, view, view2);
@@ -2254,7 +2266,7 @@ static void new_window() {
   gtdialog_set_parent(GTK_WINDOW(window));
   accel = gtk_accel_group_new();
 
-#if (__APPLE__ && !CURSES)
+#if __APPLE__
   gtkosx_application_set_use_quartz_accelerators(osxapp, false);
   g_signal_connect(osxapp, "NSApplicationOpenFile", G_CALLBACK(open_file), lua);
   g_signal_connect(osxapp, "NSApplicationBlockTermination", G_CALLBACK(terminating), lua);

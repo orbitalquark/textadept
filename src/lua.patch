@@ -50,8 +50,8 @@ diff -r 8a23edc91533 src/luaconf.h
  #endif			/* } */
  
  
---- a/src/loslib.c	2017-04-19 13:29:57.000000000 -0400
-+++ b/src/loslib.c	2020-08-04 16:32:00.029294802 -0400
+--- a/src/loslib.c	2020-11-13 10:32:01.000000000 -0500
++++ b/src/loslib.c	2022-02-18 16:17:50.639380353 -0500
 @@ -4,6 +4,15 @@
  ** See Copyright Notice in lua.h
  */
@@ -68,7 +68,7 @@ diff -r 8a23edc91533 src/luaconf.h
  #define loslib_c
  #define LUA_LIB
  
-@@ -382,6 +391,11 @@
+@@ -403,6 +412,11 @@
    return 0;
  }
  
@@ -80,7 +80,7 @@ diff -r 8a23edc91533 src/luaconf.h
  
  static const luaL_Reg syslib[] = {
    {"clock",     os_clock},
-@@ -393,6 +407,7 @@
+@@ -414,6 +428,7 @@
    {"remove",    os_remove},
    {"rename",    os_rename},
    {"setlocale", os_setlocale},
@@ -88,7 +88,7 @@ diff -r 8a23edc91533 src/luaconf.h
    {"time",      os_time},
    {"tmpname",   os_tmpname},
    {NULL, NULL}
-@@ -404,6 +419,629 @@
+@@ -425,6 +440,638 @@
  
  LUAMOD_API int luaopen_os (lua_State *L) {
    luaL_newlib(L, syslib);
@@ -446,6 +446,13 @@ diff -r 8a23edc91533 src/luaconf.h
 + * Monitors spawned fds when GTK is idle.
 + * This is necessary because at the moment, using GLib on macOS to spawn and
 + * monitor file descriptors mostly blocks when attempting to poll those fds.
++ * Note that this idle event is considered a pending event, so the construct
++ * `while (gtk_events_pending()) gtk_main_iteration();` will cycle for as long
++ * as the monitor is active. To help get around this, this function sets a
++ * "spawn_procs_polled" boolean in the registry after poll. An application can
++ * set this boolean to `false` prior to calling `gtk_main_iteration()`. If there
++ * are still pending events and this boolean is `true`, then there are no
++ * non-idle pending events left.
 + */
 +static int monitor_fds(void *L) {
 +  struct timeval timeout = {0, 1e5}; // 0.1s
@@ -454,6 +461,8 @@ diff -r 8a23edc91533 src/luaconf.h
 +    os_spawn_readfds(L);
 +  lua_pop(L, 1); // fds
 +  if (nfds == 1) monitoring_fds = 0;
++  lua_pushboolean(L, 1);
++  lua_setfield(L, LUA_REGISTRYINDEX, "spawn_procs_polled");
 +  return nfds > 1;
 +}
 +#endif
