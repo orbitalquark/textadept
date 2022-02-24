@@ -79,7 +79,8 @@ else
 endif
 version := $(shell grep -m 1 _RELEASE ../core/init.lua | cut -d ' ' -f4- | tr ' ' '_' | tr -d "'")
 WGET := wget -O $@
-get-objs = $(addsuffix .o, $(basename $(notdir $(wildcard $(1)))))
+objs = $(addsuffix .o, $(filter-out $(2), $(basename $(notdir $(wildcard $(1))))))
+curses-objs = $(addsuffix -curses.o, $(basename $(notdir $(1))))
 
 # Executables.
 
@@ -97,38 +98,41 @@ osx: textadept-osx textadept-osx-curses
 sci_flags := -pedantic -DSCI_LEXER -DNDEBUG -Iscintilla/include -Iscintilla/src -Ilexilla/include \
   -Ilexilla/lexlib -Wall
 
-sci_objs := $(call get-objs, scintilla/src/*.cxx)
-sci_lex_objs := $(call get-objs, lexilla/lexlib/*.cxx)
-sci_lexer_gtk_objs := LexLPeg.o
-sci_lexer_curses_objs := LexLPeg-curses.o
+sci_objs := $(call objs, scintilla/src/*.cxx)
+sci_lexlib_objs := $(call objs, lexilla/lexlib/*.cxx)
+sci_lexer_gtk_objs := $(call objs, LexLPeg.cxx)
+sci_lexer_curses_objs := $(call curses-objs, LexLPeg.cxx)
 sci_lexer_objs := $(sci_lexer_gtk_objs) $(sci_lexer_curses_objs)
-sci_gtk_objs := $(call get-objs, scintilla/gtk/*.cxx)
-sci_gtk_c_objs := $(call get-objs, scintilla/gtk/*.c)
-sci_curses_objs := $(call get-objs, scintilla/curses/*.cxx)
+sci_gtk_objs := $(call objs, scintilla/gtk/*.cxx)
+sci_gtk_c_objs := $(call objs, scintilla/gtk/*.c)
+sci_curses_objs := $(call objs, scintilla/curses/*.cxx)
 
 # Textadept.
 
 ta_flags := -std=c99 -pedantic -Iscintilla/include -Igtdialog -Wall
 
-textadept_gtk_objs := textadept.o
-textadept_curses_objs := textadept-curses.o
+textadept_gtk_objs := $(call objs, textadept.c)
+textadept_curses_objs := $(call curses-objs, textadept.c)
 textadept_objs := $(textadept_gtk_objs) $(textadept_curses_objs)
 textadept_rc_objs := textadept_rc.o
-lua_objs := $(filter-out lua.o luac.o loslib.o, $(call get-objs, lua/src/*.c))
-lua_oslib_gtk_objs := loslib.o
-lua_oslib_curses_objs := loslib.o-curses.o
+lua_objs := $(call objs, lua/src/*.c, lua luac loslib)
+lua_oslib_gtk_objs := $(call objs, lua/src/loslib.c)
+lua_oslib_curses_objs := $(call curses-objs, loslib.c)
 lua_oslib_objs := $(lua_oslib_gtk_objs) $(lua_oslib_curses_objs)
-lua_lib_objs := $(call get-objs, lua/src/lib/*.c)
-gtdialog_gtk_objs := gtdialog.o
-gtdialog_curses_objs := gtdialog-curses.o
+lua_lib_objs := $(call objs, lua/src/lib/*.c)
+gtdialog_gtk_objs := $(call objs, gtdialog/gtdialog.c)
+gtdialog_curses_objs := $(call curses-objs, gtdialog/gtdialog.c)
 gtdialog_objs := $(gtdialog_gtk_objs) $(gtdialog_curses_objs)
-termkey_objs := termkey.o
-termkey_unix_objs := driver-ti.o driver-csi.o
-termkey_win_objs := driver-win32-pdcurses.o
+termkey_objs := $(call objs, termkey/termkey.c)
+termkey_unix_objs := $(call objs, termkey/driver-ti.c termkey/driver-csi.c)
+termkey_win_objs := $(call objs, termkey/driver-win32-pdcurses.c)
 termkey_all_objs := $(termkey_objs) $(termkey_unix_objs) $(termkey_win_objs)
-cdk_objs := $(addprefix cdk-, $(addsuffix .o, binding buttonbox cdk cdk_display cdk_objs cdkscreen \
-  draw entry fselect itemlist label mentry popup_label scroll scroller select_file selection \
-  slider traverse version))
+# Only compile a subset of cdk and use a prefix to avoid object name conflicts on case-insensitive
+# filesystems.
+cdk_src := $(addprefix cdk/, $(addsuffix .c, binding buttonbox cdk cdk_display cdk_objs \
+  cdkscreen draw entry fselect itemlist label mentry popup_label scroll scroller select_file \
+  selection slider traverse version))
+cdk_objs := $(addprefix cdk-, $(call objs, $(cdk_src)))
 
 # Add debugging symbols and disable optimizations when DEBUG=1.
 # Notes:
@@ -148,7 +152,7 @@ endif
 # Target-specific compiler and linker flags.
 
 $(sci_objs): CXXFLAGS += $(sci_flags)
-$(sci_lex_objs): CXXFLAGS += $(sci_flags)
+$(sci_lexlib_objs): CXXFLAGS += $(sci_flags)
 $(sci_lexer_objs): CXXFLAGS += $(sci_flags) $(lua_flags) -DNO_SCITE -DNO_DLL
 $(sci_lexer_gtk_objs): CXXFLAGS += -DGTK
 $(sci_lexer_curses_objs): CXXFLAGS += -DCURSES $(curses_flags)
@@ -188,7 +192,7 @@ define build-exe =
 endef
 
 $(sci_objs): %.o: scintilla/src/%.cxx ; $(build-cxx)
-$(sci_lex_objs): %.o: lexilla/lexlib/%.cxx ; $(build-cxx)
+$(sci_lexlib_objs): %.o: lexilla/lexlib/%.cxx ; $(build-cxx)
 $(sci_lexer_objs): LexLPeg.cxx ; $(build-cxx)
 $(sci_gtk_objs): %.o: scintilla/gtk/%.cxx ; $(build-cxx)
 $(sci_gtk_c_objs): %.o: scintilla/gtk/%.c ; $(build-cc)
@@ -202,7 +206,7 @@ $(cdk_objs): cdk-%.o: cdk/%.c ; $(build-cc)
 $(termkey_all_objs): %.o: termkey/%.c ; $(build-cc)
 $(textadept_rc_objs): textadept.rc ; $(CROSS)$(WINDRES) $< $@
 
-common_objs := $(sci_objs) $(sci_lex_objs) $(lua_objs) $(lua_lib_objs)
+common_objs := $(sci_objs) $(sci_lexlib_objs) $(lua_objs) $(lua_lib_objs)
 gui_objs := $(sci_lexer_gtk_objs) $(sci_gtk_objs) $(sci_gtk_c_objs) $(textadept_gtk_objs) \
   $(lua_oslib_gtk_objs) $(gtdialog_gtk_objs)
 curses_objs := $(sci_lexer_curses_objs) $(sci_curses_objs) $(textadept_curses_objs) \
