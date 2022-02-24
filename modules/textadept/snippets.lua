@@ -170,9 +170,12 @@ local function find_snippet(grep, no_trigger)
         local f = io.open(string.format('%s/%s', M.paths[i], basename))
         local text = f:read('a')
         f:close()
-        if not grep then return trigger, text end
+        if not grep and p1 == lang then return trigger, text end
         matching_snippets[p1 == lang and p2 or p1] = text
       end
+    end
+    if not grep and next(matching_snippets) then
+      return trigger, select(2, next(matching_snippets)) -- non-preferred "trigger.ext" was found
     end
   end
   if not grep then return nil, nil end
