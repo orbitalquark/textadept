@@ -6,7 +6,7 @@ on:
     inputs:
       args:
         description: Make arguments
-        default: release-all
+        default: release
       tag:
         description: Optional release tag (normally auto-detected)
 
