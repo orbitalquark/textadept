@@ -4,7 +4,7 @@
 
 CFLAGS := -Os
 CXXFLAGS := -Os -std=c++17
-WGET := wget -O $@
+WGET = wget -O $@
 
 # Define these once for speed and reference them later.
 ifndef GTK3
@@ -177,7 +177,7 @@ ifdef DEBUG
   sci_flags += -UNDEBUG -DDEBUG
 endif
 
-# Compilers and platform-specific flags.
+# Compilers and platform-specific flags for all objects.
 
 common_objs := $(sci_objs) $(sci_lexlib_objs) $(lua_objs) $(lua_lib_objs)
 gui_objs := $(sci_lexer_gtk_objs) $(sci_gtk_objs) $(sci_gtk_c_objs) $(textadept_gtk_objs) \
@@ -204,21 +204,19 @@ $(linux_objs): glib_flags := $(glib_flags_linux)
 $(linux_objs): curses_flags := $(curses_flags_linux)
 
 # Cross-compile for Win32.
-$(win_objs): CROSS := i686-w64-mingw32-
-$(win_objs): CC := $(CROSS)gcc
-$(win_objs): CXX := $(CROSS)g++
+$(win_objs): CC := i686-w64-mingw32-gcc
+$(win_objs): CXX := i686-w64-mingw32-g++
 $(win_objs): CFLAGS += -mms-bitfields
 $(win_objs): CXXFLAGS += -mms-bitfields
-$(win_objs): WINDRES := $(CROSS)windres
+$(win_objs): WINDRES := i686-w64-mingw32-windres
 $(win_objs): lua_flags += -DLUA_BUILD_AS_DLL -DLUA_LIB
 $(win_objs): gtk_flags := $(gtk_flags_win)
 $(win_objs): glib_flags := $(glib_flags_win)
 $(win_objs): curses_flags := -DLIBICONV_STATIC -Iwin32curses/include
 
 # Cross-compile for macOS.
-$(osx_objs): CROSS := x86_64-apple-darwin17-
-$(osx_objs): CC := $(CROSS)cc
-$(osx_objs): CXX := $(CROSS)c++
+$(osx_objs): CC := x86_64-apple-darwin17-cc
+$(osx_objs): CXX := x86_64-apple-darwin17-c++
 $(osx_objs): CFLAGS += -mdynamic-no-pic
 $(osx_objs): CXXFLAGS += -mdynamic-no-pic -stdlib=libc++ -Wno-register
 $(osx_objs): lua_flags += -DLUA_USE_MACOSX
@@ -238,12 +236,17 @@ curses: ../textadept-curses
 win32: $(win_exes)
 osx: $(osx_exes)
 
-# Linux.
+# Compile natively for Linux or BSD.
 
 $(linux_exes): $(common_objs)
 ../textadept: $(gui_objs)
 ../textadept-curses: $(curses_objs) $(termkey_unix_objs)
 
+ifeq (Linux, $(shell uname -s))
+$(linux_exes): CXX := g++
+else
+$(linux_exes): CXX := c++
+endif
 $(linux_exes): LDFLAGS := -rdynamic -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
 ifndef GTK3
 ../textadept: LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gmodule-2.0)
@@ -261,12 +264,13 @@ endif
 
 $(linux_exes): ; $(build-exe)
 
-# Windows.
+# Cross-compile for Win32.
 
 $(win_exes): $(call win-objs, $(common_objs)) $(textadept_rc_objs)
 ../textadept.exe: $(call win-objs, $(gui_objs))
 ../textadept-curses.exe: $(call win-objs, $(curses_objs)) $(termkey_win_objs)
 
+$(win_exes): CXX := i686-w64-mingw32-g++
 ../textadept.exe: CXXFLAGS += -mwindows
 $(win_exes): LDFLAGS := -static-libgcc -static-libstdc++ \
   -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
@@ -277,12 +281,14 @@ $(win_exes): LDFLAGS := -static-libgcc -static-libstdc++ \
 
 $(win_exes): ; $(build-exe)
 
-# macOS.
+# Cross-compile for macOS.
 
 $(osx_exes): $(call osx-objs, $(common_objs))
 ../textadept-osx: $(call osx-objs, $(gui_objs))
 ../textadept-osx-curses: $(call osx-objs, $(curses_objs) $(termkey_unix_objs))
 
+$(osx_exes): CXX := x86_64-apple-darwin17-c++
+$(osx_exes): CXXFLAGS += -mdynamic-no-pic -stdlib=libc++ -Wno-register
 ../textadept-osx: LDFLAGS += $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
   pkg-config --define-variable=prefix=gtkosx --libs gtk+-2.0 gmodule-2.0 gtk-mac-integration) \
   -framework Cocoa
@@ -407,17 +413,19 @@ $(osx_dir).zip: $(osx_dir) ; zip -r $<.zip $< && rm -r $<
 
 # External dependencies.
 
-.PHONY: deps win32-deps osx-deps scinterm scintillua lualibs
-base_deps := scintilla lexilla scinterm scintillua lua lualibs gtdialog cdk
+.PHONY: deps win32-deps osx-deps
+base_deps := scintilla lexilla ../lexers LexLPeg.h LexLPeg.cxx scintilla/curses lua \
+  $(addprefix lua/src/lib/, lpeg lfs) gtdialog cdk
 deps: $(base_deps) termkey
 win32-deps: $(base_deps) win32gtk win32curses
 osx-deps: $(base_deps) gtkosx termkey
 
 root_url := https://github.com/orbitalquark
+
 ifndef NIGHTLY
-  scinterm_url := $(root_url)/scinterm/archive/$@
-  scintillua_url := $(root_url)/scintillua/archive/$@
-  gtdialog_url := $(root_url)/gtdialog/archive/$@
+  scinterm_url = $(root_url)/scinterm/archive/$@
+  scintillua_url = $(root_url)/scintillua/archive/$@
+  gtdialog_url = $(root_url)/gtdialog/archive/$@
 else
   scinterm_url := $(root_url)/scinterm/archive/default.zip
   scintillua_url := $(root_url)/scintillua/archive/default.zip
@@ -440,8 +448,6 @@ pdcurses_zip := PDCurses-3.9.zip
 gtkosx_tgz := gtkosx-2.24.31.tar.gz
 cloc_zip := v1.90.zip
 
-LexLPeg := LexLPeg.cxx LexLPeg.h
-
 $(scintilla_tgz): ; $(WGET) https://www.scintilla.org/$@
 scintilla: scintilla.patch | $(scintilla_tgz)
 	if [ -d $@/.hg ]; then \
@@ -454,14 +460,12 @@ scintilla: scintilla.patch | $(scintilla_tgz)
 $(lexilla_tgz): ; $(WGET) https://www.scintilla.org/$@
 lexilla: | $(lexilla_tgz) ; tar xzf $|
 $(scinterm_zip): ; $(WGET) $(scinterm_url) -O $@
-scinterm: scintilla/curses
 scintilla/curses: | $(scinterm_zip)
 	unzip -d $@ $| && mv $@/*/* $@
 	$(MAKE) -C $@ patch
 $(scintillua_zip): ; $(WGET) $(scintillua_url) -O $@
-scintillua: ../lexers $(LexLPeg)
 ../lexers: | $(scintillua_zip) ; unzip -d $@ -j $| "*/lexers/*" -x "*/themes/*"
-$(LexLPeg): | $(scintillua_zip) ; unzip -j $| "*/*.cxx" "*/*.h"
+LexLPeg.h LexLPeg.cxx: | $(scintillua_zip) ; unzip -j $| "*/*.cxx" "*/*.h"
 $(lua_tgz): ; $(WGET) https://www.lua.org/ftp/$@
 $(lpeg_tgz): ; $(WGET) http://www.inf.puc-rio.br/~roberto/lpeg/$@
 $(lfs_zip): ; $(WGET) https://github.com/keplerproject/luafilesystem/archive/$@
@@ -469,9 +473,9 @@ lua: lua.patch | $(lua_tgz)
 	if [ -d $@ ]; then rm -rf $@; fi
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 	patch -d $@ -N -p1 < $<
-lualibs: lua/src/lib/lpeg lua/src/lib/lfs
-lua/src/lib/lpeg: | $(lpeg_tgz) ; mkdir -p $@ && tar xzf $| -C $@ && mv $@/*/*.c $@/*/*.h $(dir $@)
-lua/src/lib/lfs: | $(lfs_zip)
+lua/src/lib/lpeg: lua | $(lpeg_tgz)
+	mkdir -p $@ && tar xzf $| -C $@ && mv $@/*/*.c $@/*/*.h $(dir $@)
+lua/src/lib/lfs: lua | $(lfs_zip)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir -p $@ && unzip -d $(dir $@) -j $| "*/src/*.c" "*/src/*.h"
 $(gtdialog_zip): ; $(WGET) $(gtdialog_url) -O $@
@@ -498,8 +502,9 @@ win32curses: pdcurses.patch | $(win32curses_zip) $(pdcurses_zip)
 	mkdir $@/src && unzip -d $@/src $(pdcurses_zip) && mv $@/src/*/* $@/src
 	cp $@/src/curses.h $@/include
 	patch -d $@/src -N -p1 < $<
-	cd $@/src/wincon && $(MAKE) CC="$(CC) $(CFLAGS)" LIBEXE=$(CROSS)ar \
-		LINK="$(CC) $(CFLAGS)" WIDE=Y UTF8=Y libs
+	# TODO: parameterize CROSS, CC, and CFLAGS.
+	cd $@/src/wincon && $(MAKE) CC="i686-w64-mingw32-gcc -Os -mms-bitfields" \
+		LIBEXE=i686-w64-mingw32-ar LINK="i686-w64-mingw32-gcc -Os -mms-bitfields" WIDE=Y UTF8=Y libs
 	cp $@/src/wincon/pdcurses.a $@/lib/
 $(gtkosx_tgz): ; $(WGET) $(root_url)/textadept-build/raw/default/$@
 gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
@@ -508,8 +513,8 @@ cloc: | $(cloc_zip) ; unzip -j $| "*/$@" -x "*/Unix/$@"
 
 .PHONY: clean-deps
 clean-deps:
-	rm -rf scintilla ../lexers lexilla $(LexLPeg) lua gtdialog cdk termkey win32gtk win32curses \
-		gtkosx $(scinterm_zip) $(scintillua_zip) $(gtdialog_zip)
+	rm -rf $(base_deps) termkey win32gtk win32curses gtkosx $(scinterm_zip) $(scintillua_zip) \
+		$(gtdialog_zip)
 
 # Count lines of code.
 
