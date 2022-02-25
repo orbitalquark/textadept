@@ -39,7 +39,7 @@ define build-cc =
   $(CC) $(CFLAGS) -c $< -o $@
 endef
 define build-exe =
-  $(CXX) $(CXXFLAGS) -o ../$@ $^ $(LDFLAGS) $(LDLIBS)
+  $(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 endef
 
 # Textadept.
@@ -227,30 +227,30 @@ $(osx_objs): glib_flags := $(glib_flags_osx)
 
 # Executables.
 
-linux_exes := textadept textadept-curses
-win_exes := textadept.exe textadept-curses.exe
-osx_exes := textadept-osx textadept-osx-curses
+linux_exes := $(addprefix ../, textadept textadept-curses)
+win_exes := $(addprefix ../, textadept.exe textadept-curses.exe)
+osx_exes := $(addprefix ../, textadept-osx textadept-osx-curses)
 
-.PHONY: all curses win32 osx $(linux_exes) $(win_exes) $(osx_exes)
+.PHONY: all curses win32 osx
 .DEFAULT_GOAL := all
 all: $(linux_exes)
-curses: textadept-curses
+curses: ../textadept-curses
 win32: $(win_exes)
 osx: $(osx_exes)
 
 # Linux.
 
 $(linux_exes): $(common_objs)
-textadept: $(gui_objs)
-textadept-curses: $(curses_objs) $(termkey_unix_objs)
+../textadept: $(gui_objs)
+../textadept-curses: $(curses_objs) $(termkey_unix_objs)
 
 $(linux_exes): LDFLAGS := -rdynamic -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
 ifndef GTK3
-textadept: LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gmodule-2.0)
+../textadept: LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gmodule-2.0)
 else
-textadept: LDFLAGS += $(shell pkg-config --libs gtk+-3.0 gmodule-2.0)
+../textadept: LDFLAGS += $(shell pkg-config --libs gtk+-3.0 gmodule-2.0)
 endif
-textadept-curses: LDFLAGS += $(shell pkg-config --silence-errors --libs ncursesw || \
+../textadept-curses: LDFLAGS += $(shell pkg-config --silence-errors --libs ncursesw || \
   pkg-config --silence-errors --libs ncurses || pkg-config --silence-errors --libs curses || \
   echo -lncursesw) -lpthread
 ifeq (Linux, $(shell uname -s))
@@ -264,30 +264,30 @@ $(linux_exes): ; $(build-exe)
 # Windows.
 
 $(win_exes): $(call win-objs, $(common_objs)) $(textadept_rc_objs)
-textadept.exe: $(call win-objs, $(gui_objs))
-textadept-curses.exe: $(call win-objs, $(curses_objs)) $(termkey_win_objs)
+../textadept.exe: $(call win-objs, $(gui_objs))
+../textadept-curses.exe: $(call win-objs, $(curses_objs)) $(termkey_win_objs)
 
-textadept.exe: CXXFLAGS += -mwindows
+../textadept.exe: CXXFLAGS += -mwindows
 $(win_exes): LDFLAGS := -static-libgcc -static-libstdc++ \
   -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
-textadept.exe: LDFLAGS += $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
+../textadept.exe: LDFLAGS += $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
   pkg-config --define-variable=prefix=win32gtk --libs gtk+-2.0 gmodule-2.0)
-textadept.exe: LDLIBS := -liconv
-textadept-curses.exe: LDLIBS := win32curses/lib/pdcurses.a win32curses/lib/libiconv.a
+../textadept.exe: LDLIBS := -liconv
+../textadept-curses.exe: LDLIBS := win32curses/lib/pdcurses.a win32curses/lib/libiconv.a
 
 $(win_exes): ; $(build-exe)
 
 # macOS.
 
 $(osx_exes): $(call osx-objs, $(common_objs))
-textadept-osx: $(call osx-objs, $(gui_objs))
-textadept-osx-curses: $(call osx-objs, $(curses_objs) $(termkey_unix_objs))
+../textadept-osx: $(call osx-objs, $(gui_objs))
+../textadept-osx-curses: $(call osx-objs, $(curses_objs) $(termkey_unix_objs))
 
-textadept-osx: LDFLAGS += $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
+../textadept-osx: LDFLAGS += $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
   pkg-config --define-variable=prefix=gtkosx --libs gtk+-2.0 gmodule-2.0 gtk-mac-integration) \
   -framework Cocoa
 $(osx_exes): LDLIBS := -liconv
-textadept-osx-curses: LDLIBS += -lncurses
+../textadept-osx-curses: LDLIBS += -lncurses
 
 $(osx_exes): ; $(build-exe)
 
@@ -328,9 +328,9 @@ uninstall:
 # Clean.
 
 .PHONY: clean clean-win clean-osx clean-all
-clean: ; rm -f $(linux_objs) $(addprefix ../, $(linux_exes))
-clean-win: ; rm -f $(win_objs) $(addprefix ../, $(win_exes))
-clean-osx: ; rm -f $(osx_objs) $(addprefix ../, $(osx_exes))
+clean: ; rm -f $(linux_objs) $(linux_exes)
+clean-win: ; rm -f $(win_objs) $(win_exes)
+clean-osx: ; rm -f $(osx_objs) $(osx_exes)
 clean-all: clean clean-win clean-osx
 
 # Documentation.
@@ -362,69 +362,48 @@ ifndef NIGHTLY
 else
   basedir := textadept_nightly_$(shell date +"%F")
 endif
-osxapp := Textadept.app
-osxapp_bin := $(osxapp)/Contents/MacOS
-osxapp_res := $(osxapp)/Contents/Resources
-osxapp_libs := libatk-1.0.0.dylib libcairo.2.dylib libexpat.1.dylib libffi.6.dylib \
-  libfontconfig.1.dylib libfreetype.6.dylib libgdk_pixbuf-2.0.0.dylib libgdk-quartz-2.0.0.dylib \
-  libgio-2.0.0.dylib libglib-2.0.0.dylib libgmodule-2.0.0.dylib libgobject-2.0.0.dylib \
-  libgthread-2.0.0.dylib libgtkmacintegration.2.dylib libgtk-quartz-2.0.0.dylib \
-  libharfbuzz.0.dylib libintl.8.dylib libpango-1.0.0.dylib libpangocairo-1.0.0.dylib \
-  libpangoft2-1.0.0.dylib libpixman-1.0.dylib libpng16.16.dylib charset.alias gdk-pixbuf-2.0 gtk-2.0
+linux_dir := $(basedir).linux
+win_dir := $(basedir).win32
+osx_dir := $(basedir).macOS
 
-.PHONY: release-all release win32-release osx-release modules-release
-release-all: release win32-release osx-release #modules-release
+.PHONY: release release-linux release-win release-osx
+release: $(linux_dir).tgz $(win_dir).zip $(osx_dir).zip | deps win32-deps osx-deps docs
 
 ifneq (, $(shell hg summary 2>/dev/null))
   archive = hg archive -X ".hg*" $(1)
 else
   archive = cd ../ && git archive HEAD --prefix src/$(1)/ | tar -xf -
 endif
-modules := css ctags debugger export file_diff html lsp lua_repl open_file_mode python rest ruby \
-  spellcheck yaml
 
-$(basedir).linux: ; $(call archive,$@)
-release: $(basedir).linux
-	$(MAKE) deps clean docs
-	$(MAKE) -j4 CXXFLAGS="$(CXXFLAGS) -static-libstdc++"
-	cp -rL ../docs ../lexers ../textadept ../textadept-curses $<
-	tar czf $<.tgz $< && rm -rf $<
-$(basedir).win32: ; $(call archive,$@)
-win32-release: $(basedir).win32
-	$(MAKE) -j4 clean win32-deps
-	cp win32gtk/bin/*.dll $< && cp -r win32gtk/etc win32gtk/lib win32gtk/share $<
-	rm -r $</lib/*.a $</lib/glib-2.0 $</lib/gtk-2.0/include $</lib/pkgconfig
-	$(MAKE) -j4 win32
-	cp -rL ../docs ../lexers ../textadept*.exe $<
-	zip -r $<.zip $< && rm -rf $<
-$(basedir).macOS: ; mkdir $@ && cp ../scripts/osx/ta $@
-osx-release: $(basedir).macOS
-	$(MAKE) clean osx-deps
-	$(MAKE) -j4 osx
-	$(MAKE) osx-app && mv $(osxapp) $<
-	zip -r $<.zip $< && rm -rf $<
-$(basedir).modules:
-	mkdir -p $@/modules
-	for module in $(modules); do \
-		$(MAKE) -C ../modules/$$module release; \
-		unzip -d $@/modules ../modules/$$module/$$module.zip; \
-	done
-modules-release: $(basedir).modules ; zip -r $<.zip $< && rm -r $<
+# TODO: CXXFLAGS="$(CXXFLAGS) -static-libstdc++"
+$(linux_dir): $(linux_exes) ; $(call archive, $@) && cp -rL ../docs ../lexers $^ $@
+$(linux_dir).tgz: $(linux_dir) ; tar czf $<.tgz $< && rm -r $<
 
-.PHONY: osx-app
-osx-app:
-	mkdir -p $(osxapp_bin) $(osxapp_res)
-	cp Info.plist $(osxapp_bin)/../
-	cp ../textadept-osx $(osxapp_bin)/textadept
-	cp ../textadept-osx-curses $(osxapp_bin)/textadept-curses
-	cp ../scripts/osx/textadept_osx $(osxapp_bin)/
-	$(call archive,$(osxapp_res))
-	cp -rL ../docs ../lexers $(osxapp_res)
-	mv $(osxapp_res)/core/images/textadept.icns $(osxapp_res)/
-	cp -r gtkosx/etc gtkosx/share $(osxapp_res)/ && mkdir -p $(osxapp_res)/lib/
-	cp -r $(addprefix gtkosx/lib/, $(osxapp_libs)) $(osxapp_res)/lib/
-	rm -r $(osxapp_res)/lib/gtk-2.0/include $(osxapp_res)/lib/gtk-2.0/modules
-	rm $(osxapp_res)/lib/gtk-2.0/2.10.0/printbackends/*
+$(win_dir): $(win_exes)
+	$(call archive, $@)
+	cp win32gtk/bin/*.dll $@ && cp -r $(addprefix win32gtk/, etc lib share) $@
+	rm -r $(addprefix $@/lib/, *.a glib-2.0 gtk-2.0/include pkgconfig)
+	cp -rL ../docs ../lexers $^ $@
+$(win_dir).zip: $(win_dir) ; zip -r $<.zip $< && rm -r $<
+
+osxapp := Textadept.app
+osxapp_bin := $(osxapp)/Contents/MacOS
+osxapp_res := $(osxapp)/Contents/Resources
+$(osx_dir): $(osx_exes)
+	mkdir -p $@ $@/$(osxapp_bin) $@/$(osxapp_res)
+	cp ../scripts/osx/ta $@
+	cp Info.plist $@/$(osxapp_bin)/../
+	cp ../textadept-osx $@/$(osxapp_bin)/textadept
+	cp ../textadept-osx-curses $@/$(osxapp_bin)/textadept-curses
+	cp ../scripts/osx/textadept_osx $@/$(osxapp_bin)
+	$(call archive, $@/$(osxapp_res))
+	cp -rL ../docs ../lexers $@/$(osxapp_res)
+	mv $@/$(osxapp_res)/core/images/textadept.icns $@/$(osxapp_res)
+	cp -r $(addprefix gtkosx/, etc lib share) $@/$(osxapp_res)
+	rm -r $(addprefix $@/$(osxapp_res)/lib/, libffi-3.0.10 libgail* libjpeg* libtiff* pkgconfig)
+	# TODO: remove symlinks too
+	rm -r $(addprefix $@/$(osxapp_res)/lib/gtk-2.0/, include modules 2.10.0/printbackends)
+$(osx_dir).zip: $(osx_dir) ; zip -r $<.zip $< && rm -r $<
 
 # External dependencies.
 
