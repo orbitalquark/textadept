@@ -407,7 +407,7 @@ $(osx_dir): $(osx_exes)
 	mv $@/$(osxapp_res)/core/images/textadept.icns $@/$(osxapp_res)
 	cp -r $(addprefix gtkosx/, etc lib share) $@/$(osxapp_res)
 	rm -r $(addprefix $@/$(osxapp_res)/lib/, libffi-3.0.10 libgail* libjpeg* libtiff* pkgconfig)
-	# TODO: remove symlinks too
+	find $@/$(osxapp_res)/lib -type l -delete
 	rm -r $(addprefix $@/$(osxapp_res)/lib/gtk-2.0/, include modules 2.10.0/printbackends)
 $(osx_dir).zip: $(osx_dir) ; zip -r $<.zip $< && rm -r $<
 
