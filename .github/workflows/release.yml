@@ -47,8 +47,9 @@ jobs:
           if [[ ${{ github.event_name }} != schedule ]]; then
             args="${{ github.event.inputs.args }}"
           else
-            args="release-all NIGHTLY=1 DEBUG=1"
+            args="release NIGHTLY=1 DEBUG=1"
           fi
+          make -C src deps win32-deps osx-deps
           make -C src $args
 
           # For nightly builds, strip the date from filenames.
