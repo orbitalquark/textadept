@@ -382,7 +382,9 @@ else
 endif
 
 # TODO: CXXFLAGS="$(CXXFLAGS) -static-libstdc++"
-$(linux_dir): $(linux_exes) ; $(call archive,$@) && cp -rL ../docs ../lexers $^ $@
+$(linux_dir): $(linux_exes)
+	$(call archive,$@)
+	cp -rL ../docs ../lexers $^ $@
 $(linux_dir).tgz: $(linux_dir) ; tar czf $<.tgz $< && rm -r $<
 
 $(win_dir): $(win_exes)
