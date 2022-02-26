@@ -204,8 +204,8 @@ $(linux_objs): glib_flags := $(glib_flags_linux)
 $(linux_objs): curses_flags := $(curses_flags_linux)
 
 # Cross-compile for Win32.
-$(win_objs): CC := i686-w64-mingw32-gcc
-$(win_objs): CXX := i686-w64-mingw32-g++
+$(win_objs): CC := i686-w64-mingw32-gcc-posix
+$(win_objs): CXX := i686-w64-mingw32-g++-posix
 $(win_objs): CFLAGS += -mms-bitfields
 $(win_objs): CXXFLAGS += -mms-bitfields
 $(win_objs): WINDRES := i686-w64-mingw32-windres
@@ -270,7 +270,7 @@ $(win_exes): $(call win-objs, $(common_objs)) $(textadept_rc_objs)
 ../textadept.exe: $(call win-objs, $(gui_objs))
 ../textadept-curses.exe: $(call win-objs, $(curses_objs)) $(termkey_win_objs)
 
-$(win_exes): CXX := i686-w64-mingw32-g++
+$(win_exes): CXX := i686-w64-mingw32-g++-posix
 ../textadept.exe: CXXFLAGS += -mwindows
 $(win_exes): LDFLAGS := -static-libgcc -static-libstdc++ \
   -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
@@ -503,8 +503,9 @@ win32curses: pdcurses.patch | $(win32curses_zip) $(pdcurses_zip)
 	cp $@/src/curses.h $@/include
 	patch -d $@/src -N -p1 < $<
 	# TODO: parameterize CROSS, CC, and CFLAGS.
-	cd $@/src/wincon && $(MAKE) CC="i686-w64-mingw32-gcc -Os -mms-bitfields" \
-		LIBEXE=i686-w64-mingw32-ar LINK="i686-w64-mingw32-gcc -Os -mms-bitfields" WIDE=Y UTF8=Y libs
+	cd $@/src/wincon && $(MAKE) CC="i686-w64-mingw32-gcc-posix -Os -mms-bitfields" \
+		LIBEXE=i686-w64-mingw32-ar LINK="i686-w64-mingw32-gcc-posix -Os -mms-bitfields" WIDE=Y UTF8=Y \
+		libs
 	cp $@/src/wincon/pdcurses.a $@/lib/
 $(gtkosx_tgz): ; $(WGET) $(root_url)/textadept-build/raw/default/$@
 gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
