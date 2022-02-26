@@ -382,11 +382,11 @@ else
 endif
 
 # TODO: CXXFLAGS="$(CXXFLAGS) -static-libstdc++"
-$(linux_dir): $(linux_exes) ; $(call archive, $@) && cp -rL ../docs ../lexers $^ $@
+$(linux_dir): $(linux_exes) ; $(call archive,$@) && cp -rL ../docs ../lexers $^ $@
 $(linux_dir).tgz: $(linux_dir) ; tar czf $<.tgz $< && rm -r $<
 
 $(win_dir): $(win_exes)
-	$(call archive, $@)
+	$(call archive,$@)
 	cp win32gtk/bin/*.dll $@ && cp -r $(addprefix win32gtk/, etc lib share) $@
 	rm -r $(addprefix $@/lib/, *.a glib-2.0 gtk-2.0/include pkgconfig)
 	cp -rL ../docs ../lexers $^ $@
@@ -402,7 +402,7 @@ $(osx_dir): $(osx_exes)
 	cp ../textadept-osx $@/$(osxapp_bin)/textadept
 	cp ../textadept-osx-curses $@/$(osxapp_bin)/textadept-curses
 	cp ../scripts/osx/textadept_osx $@/$(osxapp_bin)
-	$(call archive, $@/$(osxapp_res))
+	$(call archive,$@/$(osxapp_res))
 	cp -rL ../docs ../lexers $@/$(osxapp_res)
 	mv $@/$(osxapp_res)/core/images/textadept.icns $@/$(osxapp_res)
 	cp -r $(addprefix gtkosx/, etc lib share) $@/$(osxapp_res)
