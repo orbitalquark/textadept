@@ -5,6 +5,7 @@ Scintilla changes:
 * Handle leading whitespace in XPM images in order to prevent crashes.
 * Fix preprocessor condition to enable threading on Linux. This has been committed upstream.
 * Fix crash due to re-entrant painting. This has been committed upstream.
+* Fixed pixmap leak. This has been committed upstream.
 
 diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
 --- a/gtk/ScintillaGTK.cxx	Fri Apr 09 15:11:26 2021 +1000
@@ -92,3 +93,45 @@ diff -r c44165c2283e -r 58bb44ceae61 gtk/ScintillaGTK.cxx
  	} catch (...) {
  		errorStatus = Status::Failure;
  	}
+diff -r 81216c20a4d4 -r 8b16ebf10a3e gtk/PlatGTK.cxx
+--- a/gtk/PlatGTK.cxx	Thu Feb 17 21:56:04 2022 +1100
++++ b/gtk/PlatGTK.cxx	Mon Feb 21 09:45:09 2022 +1100
+@@ -125,7 +125,7 @@
+ 	EncodingType et= EncodingType::singleByte;
+ 	WindowID widSave = nullptr;
+ 	cairo_t *context = nullptr;
+-	UniqueCairo pixmapContext;
++	UniqueCairo cairoOwned;
+ 	UniqueCairoSurface surf;
+ 	bool inited = false;
+ 	UniquePangoContext pcontext;
+@@ -303,8 +303,8 @@
+ 		surf.reset(cairo_surface_create_similar(
+ 			psurfContext,
+ 			CAIRO_CONTENT_COLOR_ALPHA, width, height));
+-		pixmapContext.reset(cairo_create(surf.get()));
+-		context = pixmapContext.get();
++		cairoOwned.reset(cairo_create(surf.get()));
++		context = cairoOwned.get();
+ 		pcontext.reset(gtk_widget_create_pango_context(PWidget(wid)));
+ 		PLATFORM_ASSERT(pcontext);
+ 		SetFractionalPositions(pcontext.get());
+@@ -322,7 +322,7 @@
+ 
+ void SurfaceImpl::Release() noexcept {
+ 	et = EncodingType::singleByte;
+-	pixmapContext.reset();
++	cairoOwned.reset();
+ 	context = nullptr;
+ 	surf.reset();
+ 	layout.reset();
+@@ -397,7 +397,8 @@
+ 	PLATFORM_ASSERT(sid);
+ 	Release();
+ 	PLATFORM_ASSERT(wid);
+-	context = cairo_reference(static_cast<cairo_t *>(sid));
++	cairoOwned.reset(cairo_reference(static_cast<cairo_t *>(sid)));
++	context = cairoOwned.get();
+ 	pcontext.reset(gtk_widget_create_pango_context(PWidget(wid)));
+ 	SetFractionalPositions(pcontext.get());
+ 	// update the Pango context in case sid isn't the widget's surface
