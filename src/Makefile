@@ -451,7 +451,7 @@ cloc_zip := v1.90.zip
 $(scintilla_tgz): ; $(WGET) https://www.scintilla.org/$@
 scintilla: scintilla.patch | $(scintilla_tgz)
 	if [ -d $@/.hg ]; then \
-		hg --cwd $@ update -C; \
+		hg --cwd $@ update -C -r `hg --cwd $@ summary | head -1 | cut -d: -f2`; \
 	else \
 		if [ -d $@ ]; then rm -r $@; fi; \
 		tar xzf $|; \
