@@ -495,7 +495,7 @@ if CURSES then
 end
 
 events.connect(events.INITIALIZED, function()
-  local lua_error = (not WIN32 and '^/' or '^%a:[/\\]') .. '.-%.lua:%d+:'
+  local lua_error = (not WIN32 and '^/' or '^%a?:?[/\\][/\\]?') .. '.-%.lua:%d+:'
   -- Print internal Lua error messages as they are reported.
   -- Attempt to mimic the Lua interpreter's error message format so tools that look for it can
   -- recognize these errors too.
