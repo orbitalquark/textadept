@@ -40,6 +40,33 @@ local function assert_raises(f, expected_errmsg)
   end
 end
 
+-- Returns the filename *filename* with directory separators matching the current platform.
+-- This is only needed for filename comparisons. Filenames passed to functions like
+-- `io.open_file()` do not need to be converted if no later filename tests are performed.
+local function file(filename) return not WIN32 and filename or filename:gsub('/', '\\') end
+
+if WIN32 then
+  local os_tmpname = os.tmpname
+  -- Overloads os.tmpname() to prefix names with the temporary directory and creates the file
+  -- too, just like in Linux.
+  function os.tmpname()
+    local filename = os.getenv('TEMP') .. os_tmpname()
+    io.open(filename, 'wb'):close()
+    return filename
+  end
+end
+
+-- Sleeps for *n* number of seconds.
+-- On Windows this has to be an integer so *n* is rounded up as necessary.
+local function sleep(n)
+  if WIN32 then n = math.ceil(n) end
+  os.execute(not WIN32 and 'sleep ' .. n or 'timeout /T ' .. n)
+end
+
+local newlines = ({[buffer.EOL_LF] = '\n', [buffer.EOL_CRLF] = '\r\n'})
+-- Returns a string containing a single newline depending on the current buffer EOL mode.
+local function newline() return newlines[buffer.eol_mode] end
+
 local expected_failures = {}
 local function expected_failure(f) expected_failures[f] = true end
 
@@ -248,10 +275,10 @@ function test_file_io_open_file_detect_encoding()
   local recent_files = {}
   -- LuaFormatter off
   local files = {
-    [_HOME .. '/test/file_io/utf8'] = 'UTF-8',
-    [_HOME .. '/test/file_io/cp1252'] = 'CP1252',
-    [_HOME .. '/test/file_io/utf16'] = 'UTF-16',
-    [_HOME .. '/test/file_io/binary'] = ''
+    [file(_HOME .. '/test/file_io/utf8')] = 'UTF-8',
+    [file(_HOME .. '/test/file_io/cp1252')] = 'CP1252',
+    [file(_HOME .. '/test/file_io/utf16')] = 'UTF-16',
+    [file(_HOME .. '/test/file_io/binary')] = ''
   }
   -- LuaFormatter on
   for filename, encoding in pairs(files) do
@@ -284,8 +311,8 @@ end
 function test_file_io_open_file_detect_newlines()
   -- LuaFormatter off
   local files = {
-    [_HOME .. '/test/file_io/lf'] = buffer.EOL_LF,
-    [_HOME .. '/test/file_io/crlf'] = buffer.EOL_CRLF
+    [file(_HOME .. '/test/file_io/lf')] = buffer.EOL_LF,
+    [file(_HOME .. '/test/file_io/crlf')] = buffer.EOL_CRLF
   }
   -- LuaFormatter on
   for filename, mode in pairs(files) do
@@ -299,9 +326,9 @@ function test_file_io_open_file_with_encoding()
   local num_buffers = #_BUFFERS
   -- LuaFormatter off
   local files = {
-    _HOME .. '/test/file_io/utf8',
-    _HOME .. '/test/file_io/cp1252',
-    _HOME .. '/test/file_io/utf16'
+    file(_HOME .. '/test/file_io/utf8'),
+    file(_HOME .. '/test/file_io/cp1252'),
+    file(_HOME .. '/test/file_io/utf16')
   }
   -- LuaFormatter on
   local encodings = {nil, 'CP1252', 'UTF-16'}
@@ -316,7 +343,7 @@ function test_file_io_open_file_with_encoding()
 end
 
 function test_file_io_open_file_already_open()
-  local filename = _HOME .. '/test/file_io/utf8'
+  local filename = file(_HOME .. '/test/file_io/utf8')
   io.open_file(filename)
   buffer.new()
   local num_buffers = #_BUFFERS
@@ -444,34 +471,34 @@ function test_file_io_file_detect_modified()
   end
   events.connect(events.FILE_CHANGED, handler, 1)
   local filename = os.tmpname()
-  local f = assert(io.open(filename, 'w'))
-  f:write('foo\n'):flush()
+  local f = assert(io.open(filename, 'wb'))
+  f:write('foo\n'):close()
   io.open_file(filename)
   assert_equal(buffer:get_text(), 'foo\n')
   view:goto_buffer(-1)
-  os.execute('sleep 1') -- filesystem mod time has 1-second granularity
-  f:write('bar\n'):flush()
+  sleep(1) -- filesystem mod time has 1-second granularity
+  f = assert(io.open(filename, 'ab'))
+  f:write('bar\n'):close()
   view:goto_buffer(1)
   assert_equal(modified, true)
   buffer:close()
-  f:close()
   os.remove(filename)
   events.disconnect(events.FILE_CHANGED, handler)
 end
 
 function test_file_io_file_detect_modified_interactive()
   local filename = os.tmpname()
-  local f = assert(io.open(filename, 'w'))
-  f:write('foo\n'):flush()
+  local f = assert(io.open(filename, 'wb'))
+  f:write('foo\n'):close()
   io.open_file(filename)
   assert_equal(buffer:get_text(), 'foo\n')
   view:goto_buffer(-1)
-  os.execute('sleep 1') -- filesystem mod time has 1-second granularity
-  f:write('bar\n'):flush()
+  sleep(1) -- filesystem mod time has 1-second granularity
+  f = assert(io.open(filename, 'ab'))
+  f:write('bar\n'):close()
   view:goto_buffer(1)
   assert_equal(buffer:get_text(), 'foo\nbar\n')
   buffer:close()
-  f:close()
   os.remove(filename)
 end
 
@@ -480,10 +507,10 @@ function test_file_io_recent_files()
   local recent_files = {}
   -- LuaFormatter off
   local files = {
-    _HOME .. '/test/file_io/utf8',
-    _HOME .. '/test/file_io/cp1252',
-    _HOME .. '/test/file_io/utf16',
-    _HOME .. '/test/file_io/binary'
+    file(_HOME .. '/test/file_io/utf8'),
+    file(_HOME .. '/test/file_io/cp1252'),
+    file(_HOME .. '/test/file_io/utf16'),
+    file(_HOME .. '/test/file_io/binary')
   }
   -- LuaFormatter on
   for _, filename in ipairs(files) do
@@ -495,7 +522,7 @@ function test_file_io_recent_files()
 end
 
 function test_file_io_open_recent_interactive()
-  local filename = _HOME .. '/test/file_io/utf8'
+  local filename = file(_HOME .. '/test/file_io/utf8')
   io.open_file(filename)
   buffer:close()
   local tmpfile = os.tmpname()
@@ -513,9 +540,9 @@ function test_file_io_get_project_root()
   assert_equal(io.get_project_root(), _HOME)
   lfs.chdir(cwd)
   assert_equal(io.get_project_root(_HOME), _HOME)
-  assert_equal(io.get_project_root(_HOME .. '/core'), _HOME)
-  assert_equal(io.get_project_root(_HOME .. '/core/init.lua'), _HOME)
-  assert_equal(io.get_project_root('/tmp'), nil)
+  assert_equal(io.get_project_root(file(_HOME .. '/core')), _HOME)
+  assert_equal(io.get_project_root(file(_HOME .. '/core/init.lua')), _HOME)
+  assert_equal(io.get_project_root(not WIN32 and '/tmp' or 'C:\\'), nil)
   lfs.chdir(cwd)
 
   -- Test git submodules.
@@ -525,11 +552,11 @@ function test_file_io_get_project_root()
   lfs.mkdir(dir .. '/.git')
   lfs.mkdir(dir .. '/foo')
   io.open(dir .. '/foo/.git', 'w'):write():close() -- simulate submodule
-  assert_equal(io.get_project_root(dir .. '/foo/bar.txt'), dir)
-  io.open_file(dir .. '/foo/bar.txt')
-  assert_equal(io.get_project_root(true), dir .. '/foo')
+  assert_equal(io.get_project_root(file(dir .. '/foo/bar.txt')), dir)
+  io.open_file(file(dir .. '/foo/bar.txt'))
+  assert_equal(io.get_project_root(true), file(dir .. '/foo'))
   buffer:close()
-  os.execute('rm -r ' .. dir)
+  os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q') .. dir)
 
   assert_raises(function() io.get_project_root(1) end, 'string/nil expected, got number')
 end
@@ -537,7 +564,7 @@ end
 function test_file_io_quick_open_interactive()
   local num_buffers = #_BUFFERS
   local cwd = lfs.currentdir()
-  local dir = _HOME .. '/core'
+  local dir = file(_HOME .. '/core')
   lfs.chdir(dir)
   io.quick_open_filters[dir] = '.lua'
   io.quick_open(dir)
@@ -643,7 +670,7 @@ end
 function test_lfs_ext_walk()
   local files, directories = 0, 0
   for filename in lfs.walk(_HOME .. '/core', nil, nil, true) do
-    if not filename:find('/$') then
+    if not filename:find('[/\\]$') then
       files = files + 1
     else
       directories = directories + 1
@@ -678,7 +705,7 @@ end
 function test_lfs_ext_walk_filter_dir()
   local count = 0
   for filename in lfs.walk(_HOME, '/core') do
-    assert(filename:find('/core/'), '"%s" is not in core/', filename)
+    assert(filename:find('[/\\]core[/\\]'), '"%s" is not in core/', filename)
     count = count + 1
   end
   assert(count > 0, 'no core files found')
@@ -705,7 +732,7 @@ function test_lfs_ext_walk_halt()
   local count, count_at_halt = 0, 0
   for filename in lfs.walk(_HOME .. '/core') do
     count = count + 1
-    if filename:find('/locales/.') then
+    if filename:find('[/\\]locales[/\\].') then
       count_at_halt = count
       break
     end
@@ -735,6 +762,7 @@ function test_lfs_ext_walk_win32()
 end
 
 function test_lfs_ext_walk_symlinks()
+  if WIN32 then return end -- not supported
   local dir = os.tmpname()
   os.remove(dir)
   lfs.mkdir(dir)
@@ -776,16 +804,18 @@ function test_lfs_ext_walk_symlinks()
 end
 
 function test_lfs_ext_walk_root()
-  local filename = lfs.walk('/', nil, 0, true)()
+  local filename = lfs.walk(not WIN32 and '/' or 'C:\\', nil, 0, true)()
   assert(not filename:find('lfs_ext.lua:'), 'coroutine error')
 end
 
 function test_lfs_ext_abs_path()
-  assert_equal(lfs.abspath('bar', '/foo'), '/foo/bar')
-  assert_equal(lfs.abspath('./bar', '/foo'), '/foo/bar')
-  assert_equal(lfs.abspath('../bar', '/foo'), '/bar')
-  assert_equal(lfs.abspath('/bar', '/foo'), '/bar')
-  assert_equal(lfs.abspath('../../././baz', '/foo/bar'), '/baz')
+  if not WIN32 then
+    assert_equal(lfs.abspath('bar', '/foo'), '/foo/bar')
+    assert_equal(lfs.abspath('./bar', '/foo'), '/foo/bar')
+    assert_equal(lfs.abspath('../bar', '/foo'), '/bar')
+    assert_equal(lfs.abspath('/bar', '/foo'), '/bar')
+    assert_equal(lfs.abspath('../../././baz', '/foo/bar'), '/baz')
+  end
   local win32 = _G.WIN32
   _G.WIN32 = true
   assert_equal(lfs.abspath('bar', 'C:\\foo'), 'C:\\foo\\bar')
@@ -898,7 +928,7 @@ function test_ui_dialogs_dropdown_interactive()
 end
 
 function test_ui_dialogs_filesave_fileselect_interactive()
-  local test_filename = _HOME .. '/test/ui/empty'
+  local test_filename = file(_HOME .. '/test/ui/empty')
   local test_dir, test_file = test_filename:match('^(.+[/\\])([^/\\]+)$')
   local filename = ui.dialogs.filesave{
     with_directory = test_dir, with_file = test_file, no_create_directories = true
@@ -909,7 +939,7 @@ function test_ui_dialogs_filesave_fileselect_interactive()
   }
   assert_equal(filename, {test_filename})
   filename = ui.dialogs.fileselect{with_directory = test_dir, select_only_directories = true}
-  assert_equal(filename, test_dir:match('^(.+)/$'))
+  assert_equal(filename, test_dir:match('^(.+)[/\\]$'))
 end
 
 function test_ui_dialogs_filteredlist_interactive()
@@ -986,7 +1016,7 @@ end
 function test_ui_dialogs_progressbar_interactive()
   local i = 0
   ui.dialogs.progressbar({title = 'foo'}, function()
-    os.execute('sleep 0.1')
+    sleep(0.1)
     i = i + 10
     if i > 100 then return nil end
     return i, i .. '%'
@@ -994,7 +1024,7 @@ function test_ui_dialogs_progressbar_interactive()
 
   local stopped = ui.dialogs.progressbar({title = 'foo', indeterminite = true, stoppable = true},
     function()
-      os.execute('sleep 0.1')
+      sleep(0.1)
       return 50
     end)
   assert(stopped, 'progressbar not stopped')
@@ -1002,7 +1032,7 @@ function test_ui_dialogs_progressbar_interactive()
   ui.update() -- allow GTK to remove callback for previous function
   i = 0
   ui.dialogs.progressbar({title = 'foo', stoppable = true}, function()
-    os.execute('sleep 0.1')
+    sleep(0.1)
     i = i + 10
     if i > 100 then return nil end
     return i, i <= 50 and "stop disable" or "stop enable"
@@ -1043,10 +1073,10 @@ function test_ui_switch_buffer_interactive()
 end
 
 function test_ui_goto_file()
-  local dir1_file1 = _HOME .. '/test/ui/dir1/file1'
-  local dir1_file2 = _HOME .. '/test/ui/dir1/file2'
-  local dir2_file1 = _HOME .. '/test/ui/dir2/file1'
-  local dir2_file2 = _HOME .. '/test/ui/dir2/file2'
+  local dir1_file1 = file(_HOME .. '/test/ui/dir1/file1')
+  local dir1_file2 = file(_HOME .. '/test/ui/dir1/file2')
+  local dir2_file1 = file(_HOME .. '/test/ui/dir2/file1')
+  local dir2_file2 = file(_HOME .. '/test/ui/dir2/file2')
   ui.goto_file(dir1_file1) -- current view
   assert_equal(#_VIEWS, 1)
   assert_equal(buffer.filename, dir1_file1)
@@ -1073,16 +1103,15 @@ function test_ui_goto_file()
 end
 
 function test_ui_uri_drop()
-  local filename = _HOME .. '/test/ui/uri drop'
-  local uri = 'file://' .. _HOME .. '/test/ui/uri%20drop'
+  local filename = file(_HOME .. '/test/ui/uri drop')
+  local uri = 'file://' .. _HOME:gsub('\\', '/') .. '/test/ui/uri%20drop'
   events.emit(events.URI_DROPPED, uri)
   assert_equal(buffer.filename, filename)
   buffer:close()
   local buffer = buffer
-  events.emit(events.URI_DROPPED, 'file://' .. _HOME)
+  events.emit(events.URI_DROPPED, 'file://' .. _HOME:gsub('\\', '/'))
   assert_equal(buffer, _G.buffer) -- do not open directory
 
-  -- TODO: WIN32
   -- TODO: OSX
 end
 
@@ -1106,20 +1135,25 @@ if CURSES then
 end
 
 function test_spawn_cwd()
-  assert_equal(os.spawn('pwd'):read('a'), lfs.currentdir() .. '\n')
-  assert_equal(os.spawn('pwd', '/tmp'):read('a'), '/tmp\n')
+  local pwd = not WIN32 and 'pwd' or 'cd'
+  local tmp = not WIN32 and '/tmp' or os.getenv('TEMP')
+  local newline = not WIN32 and '\n' or '\r\n'
+  assert_equal(os.spawn(pwd):read('a'), lfs.currentdir() .. newline)
+  assert_equal(os.spawn(pwd, tmp):read('a'), tmp .. newline)
 end
 
 function test_spawn_env()
-  assert(not os.spawn('env'):read('a'):find('^%s*$'), 'empty env')
-  assert(os.spawn('env', {FOO = 'bar'}):read('a'):find('FOO=bar\n'), 'env not set')
-  local output = os.spawn('env', {FOO = 'bar', 'BAR=baz', [true] = 'false'}):read('a')
-  assert(output:find('FOO=bar\n'), 'env not set properly')
-  assert(output:find('BAR=baz\n'), 'env not set properly')
-  assert(not output:find('true=false\n'), 'env not set properly')
+  local env_cmd = not WIN32 and 'env' or 'set'
+  assert(not os.spawn(env_cmd):read('a'):find('^%s*$'), 'empty env')
+  assert(os.spawn(env_cmd, {FOO = 'bar'}):read('a'):find('FOO=bar\r?\n'), 'env not set')
+  local output = os.spawn(env_cmd, {FOO = 'bar', 'BAR=baz', [true] = 'false'}):read('a')
+  assert(output:find('FOO=bar\r?\n'), 'env not set properly')
+  assert(output:find('BAR=baz\r?\n'), 'env not set properly')
+  assert(not output:find('true=false\r?\n'), 'env not set properly')
 end
 
 function test_spawn_stdin()
+  if WIN32 then return end -- TODO:
   local p = os.spawn('lua -e "print(io.read())"')
   p:write('foo\n')
   p:close()
@@ -1130,7 +1164,7 @@ end
 function test_spawn_callbacks()
   local exit_status = -1
   local p = os.spawn('echo foo', ui.print, nil, function(status) exit_status = status end)
-  os.execute('sleep 0.1')
+  sleep(0.1)
   ui.update()
   assert_equal(buffer._type, _L['[Message Buffer]'])
   assert(buffer:get_text():find('^foo'), 'no spawn stdout')
@@ -1139,14 +1173,15 @@ function test_spawn_callbacks()
   view:unsplit()
   -- Verify stdout is not read as stderr.
   p = os.spawn('echo foo', nil, ui.print)
-  os.execute('sleep 0.1')
+  sleep(0.1)
   ui.update()
   assert_equal(#_BUFFERS, 1)
 end
 
 function test_spawn_wait()
   local exit_status = -1
-  local p = os.spawn('sleep 0.1', nil, nil, function(status) exit_status = status end)
+  local p = os.spawn(not WIN32 and 'sleep 0.1' or 'ping 127.0.0.1 -n 2', nil, nil,
+    function(status) exit_status = status end)
   assert_equal(p:status(), "running")
   assert_equal(p:wait(), 0)
   assert_equal(exit_status, 0)
@@ -1156,7 +1191,7 @@ function test_spawn_wait()
 end
 
 function test_spawn_kill()
-  local p = os.spawn('sleep 1')
+  local p = os.spawn(not WIN32 and 'sleep 1' or 'ping 127.0.0.1 -n 2')
   p:kill()
   assert(p:wait() ~= 0)
   assert_equal(p:status(), "terminated")
@@ -1530,6 +1565,7 @@ function test_editing_strip_trailing_spaces()
   local strip = textadept.editing.strip_trailing_spaces
   textadept.editing.strip_trailing_spaces = true
   buffer.new()
+  buffer.eol_mode = buffer.EOL_LF
   -- LuaFormatter off
   local text = table.concat({
     'foo ',
@@ -1565,7 +1601,7 @@ function test_editing_paste_reindent_tabs_to_tabs()
     '',
     '\t\tbar',
     '\tbaz'
-  }, '\n')
+  }, newline())
   -- LuaFormatter on
   buffer.new()
   buffer.use_tabs, buffer.eol_mode = true, buffer.EOL_CRLF
@@ -1623,7 +1659,7 @@ function test_editing_paste_reindent_spaces_to_spaces()
     '        bar',
     '            baz',
     '    quux'
-  }, '\n')
+  }, newline())
   -- LuaFormatter on
   buffer.new()
   buffer.use_tabs, buffer.tab_width = false, 2
@@ -1637,7 +1673,7 @@ function test_editing_paste_reindent_spaces_to_spaces()
     '  bar',
     '    baz',
     'quux'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   buffer:clear_all()
   buffer:add_text('    foobar\n\n') -- no auto-indent
@@ -1653,7 +1689,7 @@ function test_editing_paste_reindent_spaces_to_spaces()
     '      bar',
     '        baz',
     '    quux'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   buffer:clear_all()
   buffer:add_text('    foobar\n')
@@ -1670,7 +1706,7 @@ function test_editing_paste_reindent_spaces_to_spaces()
     '      bar',
     '        baz',
     '    quux'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   buffer:close(true)
 end
@@ -1682,7 +1718,7 @@ function test_editing_paste_reindent_spaces_to_tabs()
     '  foo',
     '    bar',
     '  baz'
-  }, '\n')
+  }, newline())
   -- LuaFormatter on
   buffer.new()
   buffer.use_tabs, buffer.tab_width = true, 4
@@ -1695,7 +1731,7 @@ function test_editing_paste_reindent_spaces_to_tabs()
     '\tfoo',
     '\t\tbar',
     '\tbaz'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   buffer:close(true)
 end
@@ -1708,7 +1744,7 @@ function test_editing_paste_reindent_tabs_to_spaces()
     '\t\tbaz()',
     '\tend',
     ''
-  }, '\n')
+  }, newline())
   -- LuaFormatter on
   buffer.new()
   buffer.use_tabs, buffer.tab_width = false, 2
@@ -1726,7 +1762,7 @@ function test_editing_paste_reindent_tabs_to_spaces()
     '    baz()',
     '  end',
     'end'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   buffer:close(true)
 end
@@ -1744,7 +1780,7 @@ function test_editing_toggle_comment_lines()
     'local foo = "bar"',
     '  local baz = "quux"',
     ''
-  }, '\n')
+  }, newline())
   -- LuaFormatter on
   buffer:set_text(text)
   buffer:goto_pos(buffer:position_from_line(2))
@@ -1755,11 +1791,11 @@ function test_editing_toggle_comment_lines()
     '--local foo = "bar"',
     '  local baz = "quux"',
     ''
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   assert_equal(buffer.current_pos, buffer:position_from_line(2) + 2)
   textadept.editing.toggle_comment() -- uncomment
-  assert_equal(buffer:get_line(2), 'local foo = "bar"\n')
+  assert_equal(buffer:get_line(2), 'local foo = "bar"' .. newline())
   assert_equal(buffer.current_pos, buffer:position_from_line(2))
   local offset = 5
   buffer:set_sel(buffer:position_from_line(2) + offset, buffer:position_from_line(4) - offset)
@@ -1770,7 +1806,7 @@ function test_editing_toggle_comment_lines()
     '--local foo = "bar"',
     '--  local baz = "quux"',
     ''
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   assert_equal(buffer.selection_start, buffer:position_from_line(2) + offset + 2)
   assert_equal(buffer.selection_end, buffer:position_from_line(4) - offset)
@@ -1781,7 +1817,7 @@ function test_editing_toggle_comment_lines()
     'local foo = "bar"',
     '  local baz = "quux"',
     ''
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   assert_equal(buffer.selection_start, buffer:position_from_line(2) + offset)
   assert_equal(buffer.selection_end, buffer:position_from_line(4) - offset)
@@ -1792,7 +1828,7 @@ function test_editing_toggle_comment_lines()
   buffer:set_text(table.concat({
     '--foo',
     '  --foo'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   offset = 2
   buffer:select_all()
@@ -1801,14 +1837,14 @@ function test_editing_toggle_comment_lines()
   assert_equal(buffer:get_text(), table.concat({
     'foo',
     '  foo'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   textadept.editing.toggle_comment()
   -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '--foo',
     '--  foo'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   buffer:close(true)
 end
@@ -1822,7 +1858,7 @@ function test_editing_toggle_comment()
     '  const char *foo = "bar";',
     'const char *baz = "quux";',
     ''
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   buffer:set_sel(buffer:position_from_line(2), buffer:position_from_line(4))
   textadept.editing.toggle_comment()
@@ -1832,7 +1868,7 @@ function test_editing_toggle_comment()
     '  /*const char *foo = "bar";*/',
     '/*const char *baz = "quux";*/',
     ''
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   assert_equal(buffer.selection_start, buffer:position_from_line(2) + 2)
   assert_equal(buffer.selection_end, buffer:position_from_line(4))
@@ -1843,7 +1879,7 @@ function test_editing_toggle_comment()
     '  const char *foo = "bar";',
     'const char *baz = "quux";',
     ''
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   assert_equal(buffer.selection_start, buffer:position_from_line(2))
   assert_equal(buffer.selection_end, buffer:position_from_line(4))
@@ -1992,7 +2028,7 @@ function test_editing_select_word()
     'baz foo bar',
     'fooquux',
     'foo'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   textadept.editing.select_word()
   assert_equal(buffer:get_sel_text(), 'foo')
@@ -2021,6 +2057,7 @@ end
 
 function test_editing_select_paragraph()
   buffer.new()
+  buffer.eol_mode = buffer.EOL_LF
   -- LuaFormatter off
   buffer:set_text(table.concat({
     'foo',
@@ -2045,7 +2082,7 @@ function test_editing_convert_indentation()
     '  bar',
     '\t    baz',
     '    \tquux'
-  }, '\n')
+  }, newline())
   -- LuaFormatter on
   buffer:set_text(text)
   buffer.use_tabs, buffer.tab_width = true, 4
@@ -2056,7 +2093,7 @@ function test_editing_convert_indentation()
     '  bar',
     '\t\tbaz',
     '\t\tquux'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   buffer:undo()
   assert_equal(buffer:get_text(), text) -- verify atomic undo
@@ -2068,7 +2105,7 @@ function test_editing_convert_indentation()
     '  bar',
     '      baz',
     '      quux'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   buffer:close(true)
 end
@@ -2097,7 +2134,7 @@ function test_editing_highlight_word()
     'baz foo bar',
     'fooquux',
     'foo'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   local function verify_foo()
     -- LuaFormatter off
@@ -2155,9 +2192,16 @@ end
 
 function test_editing_filter_through()
   buffer.new()
-  buffer:set_text('3|baz\n1|foo\n5|foobar\n1|foo\n4|quux\n2|bar\n')
-  textadept.editing.filter_through('sort')
-  assert_equal(buffer:get_text(), '1|foo\n1|foo\n2|bar\n3|baz\n4|quux\n5|foobar\n')
+  if not WIN32 then
+    buffer:set_text('3|baz\n1|foo\n5|foobar\n1|foo\n4|quux\n2|bar\n')
+    textadept.editing.filter_through('sort')
+    assert_equal(buffer:get_text(), '1|foo\n1|foo\n2|bar\n3|baz\n4|quux\n5|foobar\n')
+  else
+    buffer:set_text('3|baz\r\n1|foo\r\n5|foobar\r\n1|foo\r\n4|quux\r\n2|bar\r\n')
+    textadept.editing.filter_through('sort')
+    assert_equal(buffer:get_text(), '1|foo\r\n1|foo\r\n2|bar\r\n3|baz\r\n4|quux\r\n5|foobar\r\n')
+    goto done -- it works; remaining commands are predominantly Unix ones
+  end
   buffer:undo()
   textadept.editing.filter_through('sort | uniq|cut -d "|" -f2')
   assert_equal(buffer:get_text(), 'foo\nbar\nbaz\nquux\nfoobar\n')
@@ -2198,6 +2242,7 @@ function test_editing_filter_through()
   end
   buffer:undo()
   assert_equal(buffer:get_text(), 'foo\n\tfoo\n\t\tfoo\nfoo')
+  ::done::
   buffer:close(true)
 
   assert_raises(function() textadept.editing.filter_through() end, 'string expected, got nil')
@@ -2285,7 +2330,7 @@ function test_file_types_get_lexer()
     '<html><head><style type="text/css">',
     'h1 {}',
     '</style></head></html>'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   buffer:colorize(1, -1)
   buffer:goto_pos(buffer:position_from_line(2))
@@ -2364,7 +2409,7 @@ function test_ui_find_find_text()
     'foofoo',
     'FOObar',
     'foo bar baz'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   ui.find.find_entry_text = 'foo'
   ui.find.find_next()
@@ -2425,7 +2470,7 @@ function test_ui_find_highlight_results()
     'baz foo bar',
     'fooquux',
     'foo'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   -- Normal search.
   ui.find.find_entry_text = 'foo'
@@ -2475,7 +2520,7 @@ function test_ui_find_incremental()
     'foobar',
     'FOObaz',
     'FOOquux'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   assert_equal(buffer.current_pos, 1)
   ui.find.incremental = true
@@ -2530,7 +2575,7 @@ function test_ui_find_incremental_highlight()
     'foobar',
     'FOObaz',
     'FOOquux'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   ui.find.incremental = true
   ui.find.find_entry_text = 'f' -- simulate 'f' keypress
@@ -2583,7 +2628,8 @@ function test_ui_find_find_in_files()
   if #_VIEWS > 1 then view:unsplit() end
   local count = 0
   for filename, line, text in buffer:get_text():gmatch('\n([^:]+):(%d+):([^\n]+)') do
-    assert(filename:find('^' .. _HOME .. '/test'), 'invalid filename "%s"', filename)
+    assert(filename:find('^' .. _HOME:gsub('/', '[/\\]') .. '[/\\]test'), 'invalid filename "%s"',
+      filename)
     assert(text:find('foo'), '"foo" not found in "%s"', text)
     count = count + 1
   end
@@ -2626,6 +2672,7 @@ function test_ui_find_find_in_files()
 end
 
 function test_ui_find_find_in_files_interactive()
+  if WIN32 then return end -- TODO: cannot cd to network path
   local cwd = lfs.currentdir()
   lfs.chdir(_HOME)
   local filter = ui.find.find_in_files_filters[_HOME]
@@ -2727,6 +2774,7 @@ end
 
 function test_ui_find_replace_all()
   buffer.new()
+  buffer.eol_mode = buffer.EOL_LF
   -- LuaFormatter off
   local text = table.concat({
     'foo',
@@ -2771,7 +2819,7 @@ function test_ui_find_replace_all()
   buffer:close(true)
 end
 
-function test_find_replace_all_empty_matches()
+function test_ui_find_replace_all_empty_matches()
   buffer.new()
   buffer:set_text('1\n2\n3\n4')
   ui.find.find_entry_text, ui.find.replace_entry_text = '$', ','
@@ -2791,7 +2839,7 @@ function test_find_replace_all_empty_matches()
   buffer:close(true)
 end
 
-function test_find_replace_regex_transforms()
+function test_ui_find_replace_regex_transforms()
   buffer.new()
   buffer:set_text('foObaRbaz')
   ui.find.find_entry_text = 'f([oO]+)ba(..)'
@@ -2852,7 +2900,7 @@ function test_ui_find_focus()
 end
 
 function test_history()
-  local filename1 = _HOME .. '/test/modules/textadept/history/1'
+  local filename1 = file(_HOME .. '/test/modules/textadept/history/1')
   io.open_file(filename1)
   textadept.history.clear() -- clear initial buffer switch record
   buffer:goto_line(5)
@@ -2870,7 +2918,7 @@ function test_history()
   assert_equal(buffer:line_from_position(buffer.current_pos), 5)
   buffer:new_line()
   buffer:add_text('bar') -- close changes should update current history
-  local filename2 = _HOME .. '/test/modules/textadept/history/2'
+  local filename2 = file(_HOME .. '/test/modules/textadept/history/2')
   io.open_file(filename2)
   buffer:goto_line(10)
   buffer:add_text('baz')
@@ -2912,7 +2960,7 @@ function test_history()
   assert_equal(buffer.filename, filename1)
   assert_equal(buffer:line_from_position(buffer.current_pos), 6)
   buffer:target_whole_document()
-  buffer:replace_target(string.rep('\n', buffer.line_count)) -- whole buffer replacements should not affect history (e.g. clang-format)
+  buffer:replace_target(string.rep(newline(), buffer.line_count)) -- whole buffer replacements should not affect history (e.g. clang-format)
   textadept.history.forward()
   assert_equal(buffer.filename, filename1)
   assert_equal(buffer:line_from_position(buffer.current_pos), 15)
@@ -2933,11 +2981,11 @@ function test_history()
 end
 
 function test_history_soft_records()
-  local filename1 = _HOME .. '/test/modules/textadept/history/1'
+  local filename1 = file(_HOME .. '/test/modules/textadept/history/1')
   io.open_file(filename1)
   textadept.history.clear() -- clear initial buffer switch record
   buffer:goto_line(5)
-  local filename2 = _HOME .. '/test/modules/textadept/history/2'
+  local filename2 = file(_HOME .. '/test/modules/textadept/history/2')
   io.open_file(filename2)
   buffer:goto_line(10)
   textadept.history.back()
@@ -2972,7 +3020,7 @@ function test_history_soft_records()
 end
 
 function test_history_per_view()
-  local filename1 = _HOME .. '/test/modules/textadept/history/1'
+  local filename1 = file(_HOME .. '/test/modules/textadept/history/1')
   io.open_file(filename1)
   textadept.history.clear() -- clear initial buffer switch record
   buffer:goto_line(5)
@@ -2983,7 +3031,7 @@ function test_history_per_view()
   textadept.history.back() -- no history for this view
   assert_equal(buffer.filename, filename1)
   assert_equal(buffer:line_from_position(buffer.current_pos), 10)
-  local filename2 = _HOME .. '/test/modules/textadept/history/2'
+  local filename2 = file(_HOME .. '/test/modules/textadept/history/2')
   io.open_file(filename2)
   buffer:goto_line(15)
   buffer:add_text('baz')
@@ -3029,19 +3077,20 @@ function test_history_undo_full_buffer_change()
   buffer.new()
   local lines = {}
   for i = 99, 1, -1 do lines[#lines + 1] = tostring(i) end
-  buffer:add_text(table.concat(lines, '\n'))
+  buffer:add_text(table.concat(lines, newline()))
   buffer:goto_line(50)
   buffer:add_text('1')
-  textadept.editing.filter_through('sort -n')
+  textadept.editing.filter_through(not WIN32 and 'sort -n' or 'sort')
   ui.update()
-  assert(buffer:get_line(buffer:line_from_position(buffer.current_pos)) ~= '150\n', 'not sorted')
+  assert(buffer:get_line(buffer:line_from_position(buffer.current_pos)) ~= '150' .. newline(),
+    'not sorted')
   local pos, first_visible_line = buffer.current_pos, view.first_visible_line
   buffer:undo()
   -- Verify the view state was restored.
   ui.update()
   if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
   assert_equal(buffer.current_pos, pos)
-  assert_equal(buffer:get_line(buffer:line_from_position(buffer.current_pos)), '150\n')
+  assert_equal(buffer:get_line(buffer:line_from_position(buffer.current_pos)), '150' .. newline())
   assert_equal(view.first_visible_line, first_visible_line)
   buffer:redo()
   -- Verify the previous view state was kept.
@@ -3101,6 +3150,7 @@ function test_macro_record_play_with_keys_only()
     return
   end
   buffer.new()
+  buffer.eol_mode = buffer.EOL_LF
   buffer:append_text('foo\nbar\nbaz\n')
   events.emit(events.KEYPRESS, 0xFFC6) -- f9; start recording
   events.emit(events.KEYPRESS, not CURSES and 0xFF57 or 305) -- end
@@ -3146,11 +3196,11 @@ function test_menu_menu_functions()
   buffer:line_end()
   textadept.menu.menubar[_L['Edit']][_L['Complete Word']][2]()
   assert_equal(buffer:get_text(), 'foo foo')
-  buffer:set_text('2\n1\n3\n')
+  buffer:set_text(table.concat({'2', '1', '3', ''}, newline()))
   textadept.menu.menubar[_L['Edit']][_L['Filter Through']][2]()
   ui.command_entry:set_text('sort')
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
-  assert_equal(buffer:get_text(), '1\n2\n3\n')
+  assert_equal(buffer:get_text(), table.concat({'1', '2', '3', ''}, newline()))
   buffer:set_text('foo')
   buffer:line_end()
   textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Enclose as XML Tags']][2]()
@@ -3222,6 +3272,7 @@ function test_menu_select_command_interactive()
 end
 
 function test_run_compile_run()
+  if WIN32 then return end -- TODO:
   textadept.run.compile() -- should not do anything
   textadept.run.run() -- should not do anything
   assert_equal(#_BUFFERS, 1)
@@ -3321,6 +3372,7 @@ function test_run_set_arguments_interactive()
 end
 
 function test_run_build()
+  if WIN32 then return end -- TODO:
   textadept.run.build_commands[_HOME] = function()
     return 'lua modules/textadept/run/build.lua', _HOME .. '/test/' -- intentional trailing '/'
   end
@@ -3328,10 +3380,10 @@ function test_run_build()
   textadept.run.build(_HOME)
   if #_VIEWS > 1 then view:unsplit() end
   assert_equal(buffer._type, _L['[Message Buffer]'])
-  os.execute('sleep 0.1') -- ensure process is running
+  sleep(0.1) -- ensure process is running
   buffer:add_text('foo')
   buffer:new_line() -- should send previous line as stdin
-  os.execute('sleep 0.1') -- ensure process processed stdin
+  sleep(0.1) -- ensure process processed stdin
   textadept.run.stop()
   ui.update() -- process output
   assert(buffer:get_text():find('> cd '), 'did not change directory')
@@ -3345,6 +3397,7 @@ function test_run_build()
 end
 
 function test_run_test()
+  if WIN32 then return end -- TODO:
   textadept.run.test_commands[_HOME] = function()
     return 'lua modules/textadept/run/test.lua', _HOME .. '/test/' -- intentional trailing '/'
   end
@@ -3361,13 +3414,14 @@ function test_run_goto_internal_lua_error()
     'internal error', 2)
   if #_VIEWS > 1 then view:unsplit() end
   textadept.run.goto_error(1)
-  assert(buffer.filename:find('/test/test%.lua$'), 'did not detect internal Lua error')
+  assert(buffer.filename:find('[/\\]test[/\\]test%.lua$'), 'did not detect internal Lua error')
   view:unsplit()
   buffer:close()
   buffer:close()
 end
 
 function test_run_commands_function()
+  if WIN32 then return end -- TODO:
   local filename = os.tmpname()
   io.open_file(filename)
   textadept.run.run_commands.text = function()
@@ -3466,6 +3520,7 @@ function test_snippets_find_snippet()
   textadept.snippets.paths[1] = _HOME .. '/test/modules/textadept/snippets'
 
   buffer.new()
+  buffer.eol_mode = buffer.EOL_LF
   buffer:add_text('foo')
   assert(textadept.snippets.insert() == nil, 'snippet not inserted')
   assert_equal(buffer:get_text(), 'bar') -- from snippets
@@ -3509,7 +3564,7 @@ function test_snippets_match_indentation()
     '\tbar',
     '\t    baz',
     'quux'
-  }, '\n')
+  }, newline())
   -- LuaFormatter on
   buffer.new()
 
@@ -3558,9 +3613,11 @@ end
 
 function test_snippets_placeholders()
   buffer.new()
+  buffer.eol_mode = buffer.EOL_LF
+  local date_cmd = not WIN32 and 'date' or 'date /T'
   local lua_date = os.date()
-  local p = io.popen('date')
-  local shell_date = p:read()
+  local p = io.popen(date_cmd)
+  local shell_date = p:read('l')
   p:close()
   -- LuaFormatter off
   textadept.snippets.insert(table.concat({
@@ -3568,7 +3625,7 @@ function test_snippets_placeholders()
     'choice: %3{baz,quux}',
     'mirror: %2%3',
     'Lua: %<os.date()> %1<text:upper()>',
-    'Shell: %[date] %1[echo %]',
+    'Shell: %[' .. date_cmd .. '] %1[echo %]',
     'escape: %%1 %4%( %4%{',
   }, '\n'))
   -- LuaFormatter on
@@ -3585,7 +3642,7 @@ function test_snippets_placeholders()
     'Lua: %s BAZ', -- verify real-time transforms
     'Shell: %s baz', -- verify real-time transforms
     'escape: %%1  (  { ' -- trailing space for snippet sentinel
-  }, '\n'), lua_date, shell_date))
+  }, newline()), lua_date, shell_date))
   textadept.snippets.insert()
   assert_equal(buffer.selections, 2)
   assert_equal(buffer.selection_start, 1 + 18)
@@ -3846,7 +3903,7 @@ function test_lexer_api()
     '',
     'end',
     'baz'
-  }, '\n'))
+  }, newline()))
   -- LuaFormatter on
   buffer:set_lexer('lua')
   buffer:colorize(1, -1)
@@ -3903,7 +3960,7 @@ function test_ui_maximized()
   -- `ui.update()` does not seem to help.
   assert_equal(not_maximized, not maximized)
 end
-expected_failure(test_ui_maximized)
+if LINUX then expected_failure(test_ui_maximized) end
 
 function test_ui_restore_view_state()
   buffer.new() -- 1
@@ -3954,13 +4011,13 @@ function test_timeout()
   end
   timeout(0.4, f)
   assert_equal(count, 0)
-  os.execute('sleep 0.5')
+  sleep(0.5)
   ui.update()
   assert_equal(count, 1)
-  os.execute('sleep 0.5')
+  sleep(0.5)
   ui.update()
   assert_equal(count, 2)
-  os.execute('sleep 0.5')
+  sleep(0.5)
   ui.update()
   assert_equal(count, 2)
 end
@@ -4111,6 +4168,7 @@ end
 -- TODO: test init.lua's buffer settings
 
 function test_ctags()
+  if WIN32 then return end -- TODO:
   local ctags = require('ctags')
 
   -- Setup project.
@@ -4184,6 +4242,7 @@ function test_ctags()
 end
 
 function test_ctags_lua()
+  if WIN32 then return end -- TODO:
   local ctags = require('ctags')
 
   -- Setup project.
@@ -4227,6 +4286,7 @@ function test_ctags_lua()
 end
 
 function test_debugger_ansi_c()
+  if WIN32 then return end -- TODO:
   local debugger = require('debugger')
   local use_status_buffers = debugger.use_status_buffers
   local project_commands = debugger.project_commands
@@ -4331,6 +4391,7 @@ function test_debugger_ansi_c()
 end
 
 function test_debugger_lua()
+  if WIN32 then return end -- TODO:
   local debugger = require('debugger')
   local use_status_buffers = debugger.use_status_buffers
   local project_commands = debugger.project_commands
@@ -4433,8 +4494,8 @@ end
 function test_file_diff()
   local diff = require('file_diff')
 
-  local filename1 = _HOME .. '/test/modules/file_diff/1'
-  local filename2 = _HOME .. '/test/modules/file_diff/2'
+  local filename1 = file(_HOME .. '/test/modules/file_diff/1')
+  local filename2 = file(_HOME .. '/test/modules/file_diff/2')
   io.open_file(filename1)
   io.open_file(filename2)
   view:split()
@@ -4810,6 +4871,7 @@ function test_spellcheck()
 end
 
 function test_spellcheck_encodings()
+  if WIN32 then return end -- TODO:
   local spellcheck = require('spellcheck')
   local SPELLING_ID = 1 -- not accessible
   buffer:new()
@@ -4917,7 +4979,7 @@ end
 
 --------------------------------------------------------------------------------
 
-assert(not WIN32 and not OSX, 'Test suite currently only runs on Linux')
+assert(not OSX, 'Test suite does not yet run on macOS')
 
 local TEST_OUTPUT_BUFFER = '[Test Output]'
 function print(...) ui._print(TEST_OUTPUT_BUFFER, ...) end
