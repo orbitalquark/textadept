@@ -2,7 +2,7 @@
 
 local _tostring = tostring
 -- Overloads tostring() to print more user-friendly output for `assert_equal()`.
-function tostring(value)
+local function tostring(value)
   if type(value) == 'table' then
     return string.format('{%s}', table.concat(value, ', '))
   elseif type(value) == 'string' then
@@ -14,7 +14,7 @@ end
 
 -- Asserts that values *v1* and *v2* are equal.
 -- Tables are compared by value, not by reference.
-function assert_equal(v1, v2)
+local function assert_equal(v1, v2)
   if v1 == v2 then return end
   if type(v1) == 'table' and type(v2) == 'table' then
     if #v1 == #v2 then
@@ -32,7 +32,7 @@ end
 -- Asserts that function *f* raises an error whose error message contains string *expected_errmsg*.
 -- @param f Function to call.
 -- @param expected_errmsg String the error message should contain.
-function assert_raises(f, expected_errmsg)
+local function assert_raises(f, expected_errmsg)
   local ok, errmsg = pcall(f)
   if ok then error('error expected', 2) end
   if expected_errmsg ~= errmsg and not tostring(errmsg):find(expected_errmsg, 1, true) then
@@ -41,7 +41,7 @@ function assert_raises(f, expected_errmsg)
 end
 
 local expected_failures = {}
-function expected_failure(f) expected_failures[f] = true end
+local function expected_failure(f) expected_failures[f] = true end
 
 --------------------------------------------------------------------------------
 
@@ -55,7 +55,7 @@ function test_assert()
 end
 
 function test_assert_types()
-  function foo(bar, baz, quux)
+  local function foo(bar, baz, quux)
     assert_type(bar, 'string', 1)
     assert_type(baz, 'boolean/nil', 2)
     assert_type(quux, 'string/table/nil', 3)
@@ -68,10 +68,10 @@ function test_assert_types()
   assert_raises(function() foo('bar', true, 1) end,
     "bad argument #3 to 'foo' (string/table/nil expected, got number")
 
-  function foo(bar) assert_type(bar, string) end
+  local function foo(bar) assert_type(bar, string) end
   assert_raises(function() foo(1) end,
     "bad argument #2 to 'assert_type' (string expected, got table")
-  function foo(bar) assert_type(bar, 'string') end
+  local function foo(bar) assert_type(bar, 'string') end
   assert_raises(function() foo(1) end, "bad argument #3 to 'assert_type' (value expected, got nil")
 end
 
