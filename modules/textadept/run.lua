@@ -495,10 +495,10 @@ function M.goto_error(line_num, next)
   if not detail then return end
   buffer:goto_line(line_num)
   textadept.editing.select_line()
-  if not detail.filename:find(not WIN32 and '^/' or '^%a:[/\\]') and cwd then
+  if not detail.filename:find(not WIN32 and '^/' or '^%a?:?[/\\][/\\]?') and cwd then
     detail.filename = cwd .. (not WIN32 and '/' or '\\') .. detail.filename
   end
-  local sloppy = not detail.filename:find(not WIN32 and '^/' or '^%a:[/\\]')
+  local sloppy = not detail.filename:find(not WIN32 and '^/' or '^%a?:?[/\\][/\\]?')
   ui.goto_file(detail.filename, true, preferred_view, sloppy)
   textadept.editing.goto_line(detail.line)
   if detail.column then buffer:goto_pos(buffer:find_column(detail.line, detail.column)) end
