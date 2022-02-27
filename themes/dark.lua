@@ -117,6 +117,7 @@ end
 view.indic_fore[ui.find.INDIC_FIND] = colors.yellow
 view.indic_alpha[ui.find.INDIC_FIND] = 128
 view.indic_fore[textadept.editing.INDIC_BRACEMATCH] = colors.light_grey
+view.indic_outline_alpha[textadept.editing.INDIC_BRACEMATCH] = 128
 view.indic_fore[textadept.editing.INDIC_HIGHLIGHT] = colors.orange
 view.indic_alpha[textadept.editing.INDIC_HIGHLIGHT] = 128
 view.indic_fore[textadept.snippets.INDIC_PLACEHOLDER] = colors.grey
