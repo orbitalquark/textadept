@@ -15,10 +15,11 @@ endif
 glib_flags_linux := $(shell pkg-config --cflags glib-2.0)
 curses_flags_linux := $(shell pkg-config --silence-errors --cflags ncursesw || \
   pkg-config --silence-errors --cflags ncurses || pkg-config --silence-errors --cflags curses)
-gtk_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
-  pkg-config --define-variable=prefix=win32gtk --cflags gtk+-2.0)
-glib_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
-  pkg-config --define-variable=prefix=win32gtk --cflags glib-2.0)
+gtk_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
+  pkg-config --define-variable=prefix=gtkwin --cflags gtk+-3.0)
+$(info gtk_flags_win=$(gtk_flags_win))
+glib_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
+  pkg-config --define-variable=prefix=gtkwin --cflags glib-2.0)
 gtk_flags_osx := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
   pkg-config --define-variable=prefix=gtkosx --cflags gtk+-2.0)
 glib_flags_osx := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
@@ -138,7 +139,7 @@ $(call all-objs, $(gtdialog_objs)): gtdialog/gtdialog.c ; $(build-cc)
 
 termkey_objs := $(call objs, termkey/termkey.c)
 termkey_unix_objs := $(call objs, termkey/driver-ti.c termkey/driver-csi.c)
-termkey_win_objs := $(call objs, termkey/driver-win32-pdcurses.c)
+termkey_win_objs := $(call objs, termkey/driver-win-pdcurses.c)
 termkey_all_objs := $(termkey_objs) $(termkey_unix_objs) $(termkey_win_objs)
 
 $(call all-objs, $(termkey_all_objs)): CFLAGS += -std=c99 $(curses_flags)
@@ -203,16 +204,16 @@ $(linux_objs): gtk_flags := $(gtk_flags_linux)
 $(linux_objs): glib_flags := $(glib_flags_linux)
 $(linux_objs): curses_flags := $(curses_flags_linux)
 
-# Cross-compile for Win32.
-$(win_objs): CC := i686-w64-mingw32-gcc-posix
-$(win_objs): CXX := i686-w64-mingw32-g++-posix
+# Cross-compile for Windows.
+$(win_objs): CC := x86_64-w64-mingw32-gcc-posix
+$(win_objs): CXX := x86_64-w64-mingw32-g++-posix
 $(win_objs): CFLAGS += -mms-bitfields
 $(win_objs): CXXFLAGS += -mms-bitfields
-$(win_objs): WINDRES := i686-w64-mingw32-windres
+$(win_objs): WINDRES := x86_64-w64-mingw32-windres
 $(win_objs): lua_flags += -DLUA_BUILD_AS_DLL -DLUA_LIB
 $(win_objs): gtk_flags := $(gtk_flags_win)
 $(win_objs): glib_flags := $(glib_flags_win)
-$(win_objs): curses_flags := -DLIBICONV_STATIC -Iwin32curses/include
+$(win_objs): curses_flags := -DLIBICONV_STATIC -Ipdcurses
 
 # Cross-compile for macOS.
 $(osx_objs): CC := x86_64-apple-darwin17-cc
@@ -229,11 +230,11 @@ linux_exes := $(addprefix ../, textadept textadept-curses)
 win_exes := $(addprefix ../, textadept.exe textadept-curses.exe)
 osx_exes := $(addprefix ../, textadept-osx textadept-osx-curses)
 
-.PHONY: all curses win32 osx
+.PHONY: all curses win osx
 .DEFAULT_GOAL := all
 all: $(linux_exes)
 curses: ../textadept-curses
-win32: $(win_exes)
+win: $(win_exes)
 osx: $(osx_exes)
 
 # Compile natively for Linux or BSD.
@@ -264,20 +265,20 @@ endif
 
 $(linux_exes): ; $(build-exe)
 
-# Cross-compile for Win32.
+# Cross-compile for Windows.
 
 $(win_exes): $(call win-objs, $(common_objs)) $(textadept_rc_objs)
 ../textadept.exe: $(call win-objs, $(gui_objs))
 ../textadept-curses.exe: $(call win-objs, $(curses_objs)) $(termkey_win_objs)
 
-$(win_exes): CXX := i686-w64-mingw32-g++-posix
+$(win_exes): CXX := x86_64-w64-mingw32-g++-posix
 ../textadept.exe: CXXFLAGS += -mwindows
 $(win_exes): LDFLAGS := -static-libgcc -static-libstdc++ \
   -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
-../textadept.exe: LDFLAGS += $(shell PKG_CONFIG_PATH=`pwd`/win32gtk/lib/pkgconfig \
-  pkg-config --define-variable=prefix=win32gtk --libs gtk+-2.0 gmodule-2.0)
+../textadept.exe: LDFLAGS += $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
+  pkg-config --define-variable=prefix=gtkwin --libs gtk+-3.0 gmodule-2.0)
 ../textadept.exe: LDLIBS := -liconv
-../textadept-curses.exe: LDLIBS := win32curses/lib/pdcurses.a win32curses/lib/libiconv.a
+../textadept-curses.exe: LDLIBS := pdcurses/pdcurses.a pdcurses/libiconv.dll.a
 
 $(win_exes): ; $(build-exe)
 
@@ -369,11 +370,11 @@ else
   basedir := textadept_nightly_$(shell date +"%F")
 endif
 linux_dir := $(basedir).linux
-win_dir := $(basedir).win32
+win_dir := $(basedir).win
 osx_dir := $(basedir).macOS
 
 .PHONY: release release-linux release-win release-osx
-release: $(linux_dir).tgz $(win_dir).zip $(osx_dir).zip | deps win32-deps osx-deps docs
+release: $(linux_dir).tgz $(win_dir).zip $(osx_dir).zip | deps win-deps osx-deps docs
 
 ifneq (, $(shell hg summary 2>/dev/null))
   archive = hg archive -X ".hg*" $(1)
@@ -389,8 +390,8 @@ $(linux_dir).tgz: $(linux_dir) ; tar czf $<.tgz $< && rm -r $<
 
 $(win_dir): $(win_exes)
 	$(call archive,$@)
-	cp win32gtk/bin/*.dll $@ && cp -r $(addprefix win32gtk/, etc lib share) $@
-	rm -r $(addprefix $@/lib/, *.a glib-2.0 gtk-2.0/include pkgconfig)
+	cp gtkwin/bin/*.dll $@ && cp -r $(addprefix gtkwin/, etc lib share) $@
+	rm -r $(addprefix $@/lib/, *.a glib-2.0 pkgconfig)
 	cp -rL ../docs ../lexers $^ $@
 $(win_dir).zip: $(win_dir) ; zip -r $<.zip $< && rm -r $<
 
@@ -415,11 +416,11 @@ $(osx_dir).zip: $(osx_dir) ; zip -r $<.zip $< && rm -r $<
 
 # External dependencies.
 
-.PHONY: deps win32-deps osx-deps
+.PHONY: deps win-deps osx-deps
 base_deps := scintilla lexilla ../lexers LexLPeg.h LexLPeg.cxx scintilla/curses lua \
   $(addprefix lua/src/lib/, lpeg lfs) gtdialog cdk
 deps: $(base_deps) termkey
-win32-deps: $(base_deps) win32gtk win32curses
+win-deps: $(base_deps) gtkwin pdcurses
 osx-deps: $(base_deps) gtkosx termkey
 
 root_url := https://github.com/orbitalquark
@@ -444,8 +445,7 @@ lfs_zip := v1_8_0.zip
 gtdialog_zip := gtdialog_1.5.zip
 cdk_tgz := cdk-5.0-20200923.tgz
 termkey_tgz := libtermkey-0.20.tar.gz
-win32gtk_zip := win32gtk-2.24.32.zip
-win32curses_zip := win32curses39.zip
+gtkwin_zip := gtkwin-3.24.31.zip
 pdcurses_zip := PDCurses-3.9.zip
 gtkosx_tgz := gtkosx-2.24.31.tar.gz
 cloc_zip := v1.90.zip
@@ -495,20 +495,18 @@ termkey: termkey.patch | $(termkey_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@ && chmod +w $@/termkey.h
 	patch -d $@ -N -p1 < $<
-$(win32gtk_zip): ; $(WGET) $(root_url)/textadept-build/raw/default/$@
-win32gtk: | $(win32gtk_zip) ; unzip $|
-$(win32curses_zip): ; $(WGET) $(root_url)/textadept-build/raw/default/$@
+$(gtkwin_zip): ; $(WGET) $(root_url)/textadept-build/raw/default/$@
+gtkwin: | $(gtkwin_zip) ; unzip $|
 $(pdcurses_zip): ; $(WGET) http://prdownloads.sourceforge.net/pdcurses/$@
-win32curses: pdcurses.patch | $(win32curses_zip) $(pdcurses_zip)
-	unzip $(win32curses_zip)
-	mkdir $@/src && unzip -d $@/src $(pdcurses_zip) && mv $@/src/*/* $@/src
-	cp $@/src/curses.h $@/include
-	patch -d $@/src -N -p1 < $<
+pdcurses: pdcurses.patch | $(pdcurses_zip)
+	unzip -d $@ $| && mv $@/PDCurses*/* $@
+	cp gtkwin/include/iconv.h gtkwin/lib/libiconv.dll.a $@
+	patch -d $@ -N -p1 < $<
 	# TODO: parameterize CROSS, CC, and CFLAGS.
-	cd $@/src/wincon && $(MAKE) CC="i686-w64-mingw32-gcc-posix -Os -mms-bitfields" \
-		LIBEXE=i686-w64-mingw32-ar LINK="i686-w64-mingw32-gcc-posix -Os -mms-bitfields" WIDE=Y UTF8=Y \
-		libs
-	cp $@/src/wincon/pdcurses.a $@/lib/
+	cd $@/wincon && $(MAKE) CC="x86_64-w64-mingw32-gcc-posix -Os -mms-bitfields" \
+		LIBEXE=x86_64-w64-mingw32-ar LINK="x86_64-w64-mingw32-gcc-posix -Os -mms-bitfields" WIDE=Y \
+		UTF8=Y libs
+	mv $@/wincon/pdcurses.a $@
 $(gtkosx_tgz): ; $(WGET) $(root_url)/textadept-build/raw/default/$@
 gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
 $(cloc_zip): ; $(WGET) https://github.com/AlDanial/cloc/archive/refs/tags/$@
@@ -516,7 +514,7 @@ cloc: | $(cloc_zip) ; unzip -j $| "*/$@" -x "*/Unix/$@"
 
 .PHONY: clean-deps
 clean-deps:
-	rm -rf $(base_deps) termkey win32gtk win32curses gtkosx $(scinterm_zip) $(scintillua_zip) \
+	rm -rf $(base_deps) termkey gtkwin pdcurses gtkosx $(scinterm_zip) $(scintillua_zip) \
 		$(gtdialog_zip)
 
 # Count lines of code.

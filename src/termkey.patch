@@ -1,12 +1,12 @@
 libtermkey changes:
 
-Added Win32 PDCurses driver.
+Added Windows PDCurses driver.
 
 Prevent ^C from interrupting.
 
-diff -r 49c8684413c0 driver-win32-pdcurses.c
+diff -r 49c8684413c0 driver-win-pdcurses.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/driver-win32-pdcurses.c	Tue Dec 23 13:31:50 2014 -0500
++++ b/driver-win-pdcurses.c	Tue Dec 23 13:31:50 2014 -0500
 @@ -0,0 +1,108 @@
 +// Copyright 2014-2022 Mitchell. See LICENSE.
 +
@@ -110,8 +110,8 @@ diff -r 49c8684413c0 driver-win32-pdcurses.c
 +TermKeyResult termkey_interpret_position(TermKey *tk, const TermKeyKey *key, int *line, int *col) { return TERMKEY_RES_ERROR; }
 +TermKeyResult termkey_interpret_csi(TermKey *tk, const TermKeyKey *key, long args[], size_t *nargs, unsigned long *cmd) { return TERMKEY_RES_ERROR; }
 +
-+struct TermKeyDriver termkey_driver_win32_pdcurses = {
-+  .name = "win32-pdcurses",
++struct TermKeyDriver termkey_driver_win_pdcurses = {
++  .name = "win-pdcurses",
 +  .new_driver = new_driver,
 +  .free_driver = free_driver,
 +  .peekkey = peekkey,
@@ -156,7 +156,7 @@ diff -r 49c8684413c0 termkey-internal.h
  extern struct TermKeyDriver termkey_driver_csi;
  extern struct TermKeyDriver termkey_driver_ti;
 +#else
-+extern struct TermKeyDriver termkey_driver_win32_pdcurses;
++extern struct TermKeyDriver termkey_driver_win_pdcurses;
 +#endif
  
  #endif
@@ -186,7 +186,7 @@ diff -r 49c8684413c0 termkey.c
    &termkey_driver_ti,
    &termkey_driver_csi,
 +#else
-+  &termkey_driver_win32_pdcurses,
++  &termkey_driver_win_pdcurses,
 +#endif
    NULL,
  };
