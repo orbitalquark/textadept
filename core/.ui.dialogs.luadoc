@@ -14,9 +14,9 @@ module('ui.dialogs')
 --   * `title`: The dialog's title text.
 --   * `text`: The dialog's main message text.
 --   * `informative_text`: The dialog's extra informative text.
---   * `icon`: The dialog's GTK stock icon name. Examples are "gtk-dialog-error",
---     "gtk-dialog-info", "gtk-dialog-question", and "gtk-dialog-warning". The dialog does not
---     display an icon by default.
+--   * `icon`: The dialog's icon name, according to the Free Desktop Icon Naming
+--     Specification. Examples are "dialog-error", "dialog-information", "dialog-question",
+--     and "dialog-warning". The dialog does not display an icon by default.
 --   * `icon_file`: The dialog's icon file path. This option has no effect when `icon` is set.
 --   * `button1`: The right-most button's label. The default value is `_L['OK']`.
 --   * `button2`: The middle button's label.
@@ -31,7 +31,7 @@ module('ui.dialogs')
 --     before timing out. Dialogs do not time out by default.
 -- @return selected button or exit code
 -- @usage ui.dialogs.msgbox{title = 'EOL Mode', text = 'Which EOL?',
---   icon = 'gtk-dialog-question', button1 = 'CRLF', button2 = 'CR',
+--   icon = 'dialog-question', button1 = 'CRLF', button2 = 'CR',
 --   button3 = 'LF'}
 function msgbox(options) end
 
@@ -45,9 +45,9 @@ function msgbox(options) end
 --   * `title`: The dialog's title text.
 --   * `text`: The dialog's main message text.
 --   * `informative_text`: The dialog's extra informative text.
---   * `icon`: The dialog's GTK stock icon name. Examples are "gtk-dialog-error",
---     "gtk-dialog-info", "gtk-dialog-question", and "gtk-dialog-warning". The dialog does not
---     display an icon by default.
+--   * `icon`: The dialog's icon name, according to the Free Desktop Icon Naming
+--     Specification. Examples are "dialog-error", "dialog-information", "dialog-question",
+--     and "dialog-warning". The dialog does not display an icon by default.
 --   * `icon_file`: The dialog's icon file path. This option has no effect when `icon` is set.
 --   * `no_cancel`: Do not display the "Cancel" button. The default value is `false`.
 --   * `string_output`: Return the selected button's label (instead of its index) or the dialog's
@@ -71,9 +71,9 @@ function ok_msgbox(options) end
 --   * `title`: The dialog's title text.
 --   * `text`: The dialog's main message text.
 --   * `informative_text`: The dialog's extra informative text.
---   * `icon`: The dialog's GTK stock icon name. Examples are "gtk-dialog-error",
---     "gtk-dialog-info", "gtk-dialog-question", and "gtk-dialog-warning". The dialog does not
---     display an icon by default.
+--   * `icon`: The dialog's icon name, according to the Free Desktop Icon Naming
+--     Specification. Examples are "dialog-error", "dialog-information", "dialog-question",
+--     and "dialog-warning". The dialog does not display an icon by default.
 --   * `icon_file`: The dialog's icon file path. This option has no effect when `icon` is set.
 --   * `no_cancel`: Do not display the "Cancel" button. The default value is `false`.
 --   * `string_output`: Return the selected button's label (instead of its index) or the dialog's

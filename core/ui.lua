@@ -425,7 +425,7 @@ events.connect(events.QUIT, function()
   if #utf8_list == 0 then return end
   local button = ui.dialogs.msgbox{
     title = _L['Quit without saving?'], text = _L['The following buffers are unsaved:'],
-    informative_text = table.concat(utf8_list, '\n'), icon = 'gtk-dialog-question',
+    informative_text = table.concat(utf8_list, '\n'), icon = 'dialog-question',
     button1 = _L['Cancel'], button2 = _L['Quit without saving'],
     width = CURSES and ui.size[1] - 2 or nil
   }
