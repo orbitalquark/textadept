@@ -2333,23 +2333,22 @@ static void new_window() {
 }
 
 #if GTK && _WIN32
-/** Reads and processes a remote Textadept's command line arguments. */
-static bool read_pipe(GIOChannel *source, GIOCondition _, HANDLE pipe) {
-  char *buf;
-  size_t len;
-  g_io_channel_read_to_end(source, &buf, &len, NULL);
-  for (char *p = buf; p < buf + len - 2; p++)
-    if (!*p) *p = '\n'; // '\0\0' end
-  process(NULL, NULL, buf);
-  return (g_free(buf), DisconnectNamedPipe(pipe), false);
-}
+/** Processes a remote Textadept's command line arguments. */
+static int pipe_read(void *buf) { return (process(NULL, NULL, (char *)buf), free(buf), false); }
 
-/** Listens for remote Textadept communications. */
+/**
+ * Listens for remote Textadept communications and reads command line arguments.
+ * Processing can only happen in the GTK main thread because GTK is single-threaded.
+ */
 static DWORD WINAPI pipe_listener(HANDLE pipe) {
   while (true)
     if (pipe != INVALID_HANDLE_VALUE && ConnectNamedPipe(pipe, NULL)) {
-      GIOChannel *channel = g_io_channel_win32_new_fd(_open_osfhandle((intptr_t)pipe, _O_RDONLY));
-      g_io_add_watch(channel, G_IO_IN, read_pipe, pipe), g_io_channel_unref(channel);
+      char *buf = malloc(65536 * sizeof(char)), *p = buf; // arbitrary size
+      DWORD len;
+      while (ReadFile(pipe, p, buf + 65536 - 1 - p, &len, NULL) && len > 0) p += len;
+      for (*p = '\0', len = p - buf - 1, p = buf; p < buf + len; p++)
+        if (!*p) *p = '\n'; // but preserve trailing '\0'
+      g_idle_add(pipe_read, buf), DisconnectNamedPipe(pipe);
     }
   return 0;
 }
