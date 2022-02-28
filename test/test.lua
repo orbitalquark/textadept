@@ -988,7 +988,7 @@ end
 
 function test_ui_dialogs_msgbox_interactive()
   local msgboxes = {'msgbox', 'ok_msgbox', 'yesno_msgbox'}
-  local icons = {'gtk-dialog-info', 'gtk-dialog-warning', 'gtk-dialog-question'}
+  local icons = {'dialog-information', 'dialog-warning', 'dialog-question'}
   for i, msgbox in ipairs(msgboxes) do
     print('Running ' .. msgbox)
     local button = ui.dialogs[msgbox]{icon = icons[i]}

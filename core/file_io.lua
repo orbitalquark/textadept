@@ -226,7 +226,7 @@ local function close(buffer, force)
     if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
     local button = ui.dialogs.msgbox{
       title = _L['Close without saving?'], text = _L['There are unsaved changes in'],
-      informative_text = filename, icon = 'gtk-dialog-question', button1 = _L['Cancel'],
+      informative_text = filename, icon = 'dialog-question', button1 = _L['Cancel'],
       button2 = _L['Close without saving'],
       width = CURSES and #filename > 40 and ui.size[1] - 2 or nil
     }
@@ -282,7 +282,7 @@ events.connect(events.FILE_CHANGED, function(filename)
     title = _L['Reload?'], text = _L['Reload modified file?'],
     informative_text = string.format('"%s"\n%s', filename:iconv('UTF-8', _CHARSET),
       _L['has been modified. Reload it?']), -- LuaFormatter
-    icon = 'gtk-dialog-question', button1 = _L['Yes'], button2 = _L['No'],
+    icon = 'dialog-question', button1 = _L['Yes'], button2 = _L['No'],
     width = CURSES and #filename > 40 and ui.size[1] - 2 or nil
   }
   if button == 1 then buffer:reload() end
@@ -406,7 +406,7 @@ function io.quick_open(paths, filter, opts)
     ui.dialogs.msgbox{
       title = _L['File Limit Exceeded'], text = string.format('%d %s %d', io.quick_open_max,
         _L['files or more were found. Showing the first'], io.quick_open_max),
-      icon = 'gtk-dialog-info'
+      icon = 'dialog-information'
     }
   end
   local options = {
