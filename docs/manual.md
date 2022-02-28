@@ -1516,8 +1516,8 @@ Command | Description
 `make uninstall` | Uninstalls Textadept (from */usr/local* by default)
 `make clean` | Deletes all compiled files, leaving only source files
 `make clean-deps` | Deletes all unpacked dependencies, leaving only downloads
-`make win32-deps` | Downloads and builds Textadept's Windows dependencies
-`make win32` | Cross-compiles Textadept for Windows
+`make win-deps` | Downloads and builds Textadept's Windows dependencies
+`make win` | Cross-compiles Textadept for Windows
 `make osx-deps` | Downloads and builds Textadept's macOS dependencies
 `make osx` | Cross-compiles Textadept for macOS
 `make osx-app` | Builds *Textadept.app*
