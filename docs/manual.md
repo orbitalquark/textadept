@@ -161,8 +161,8 @@ version depends only on a wide-character implementation of curses like [ncurses]
 Linux and BSD systems either already have these dependencies installed, or they are readily
 available from a package manager.
 
-Windows XP and Mac OSX 10.7 (Lion) are the minimum required operating systems.  Linux and BSD
-have no defined minimum.
+Windows XP and Mac OSX 10.10 (Yosemite) are the minimum required operating systems.  Linux and
+BSD have no defined minimum.
 
 [GTK]: https://gtk.org
 [ncurses]: https://invisible-island.net/ncurses/ncurses.html
