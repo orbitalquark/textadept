@@ -17,7 +17,6 @@ curses_flags_linux := $(shell pkg-config --silence-errors --cflags ncursesw || \
   pkg-config --silence-errors --cflags ncurses || pkg-config --silence-errors --cflags curses)
 gtk_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
   pkg-config --define-variable=prefix=gtkwin --cflags gtk+-3.0)
-$(info gtk_flags_win=$(gtk_flags_win))
 glib_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
   pkg-config --define-variable=prefix=gtkwin --cflags glib-2.0)
 gtk_flags_osx := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
