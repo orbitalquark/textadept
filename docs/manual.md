@@ -1520,7 +1520,6 @@ Command | Description
 `make win` | Cross-compiles Textadept for Windows
 `make osx-deps` | Downloads and builds Textadept's macOS dependencies
 `make osx` | Cross-compiles Textadept for macOS
-`make osx-app` | Builds *Textadept.app*
 
 If you want to install Textadept into a non-standard location, you can specify that location
 using the `DESTDIR` variable. For example:
