@@ -101,12 +101,10 @@ Command | Description
 `make GTK3=1` | Builds Textadept using GTK 3.x
 `make DEBUG=1` | Optionally builds Textadept with debug symbols
 `make curses` | Builds the terminal version of Textadept
-`make win32-deps` | Downloads and builds Textadept's Windows dependencies
-`make win32` | Cross-compiles Textadept for Windows
-`make win32-curses` | Cross-compiles the terminal version for Windows
+`make win-deps` | Downloads and builds Textadept's Windows dependencies
+`make win` | Cross-compiles Textadept for Windows
 `make osx-deps` | Downloads and builds Textadept's macOS dependencies
 `make osx` | Cross-compiles Textadept for macOS
-`make osx-curses` | Cross-compiles the terminal version for macOS
 
 When building within Docker, the relevant container [image][] is
 `ghcr.io/orbitalquark/textadept-build:v1.0`.
