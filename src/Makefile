@@ -21,7 +21,7 @@ $(info gtk_flags_win=$(gtk_flags_win))
 glib_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
   pkg-config --define-variable=prefix=gtkwin --cflags glib-2.0)
 gtk_flags_osx := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
-  pkg-config --define-variable=prefix=gtkosx --cflags gtk+-2.0)
+  pkg-config --define-variable=prefix=gtkosx --cflags gtk+-3.0)
 glib_flags_osx := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
   pkg-config --define-variable=prefix=gtkosx --cflags glib-2.0)
 
@@ -291,7 +291,7 @@ $(osx_exes): $(call osx-objs, $(common_objs))
 $(osx_exes): CXX := x86_64-apple-darwin17-c++
 $(osx_exes): CXXFLAGS += -mdynamic-no-pic -stdlib=libc++ -Wno-register
 ../textadept-osx: LDFLAGS += $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
-  pkg-config --define-variable=prefix=gtkosx --libs gtk+-2.0 gmodule-2.0 gtk-mac-integration) \
+  pkg-config --define-variable=prefix=gtkosx --libs gtk+-3.0 gmodule-2.0 gtk-mac-integration) \
   -framework Cocoa
 $(osx_exes): LDLIBS := -liconv
 ../textadept-osx-curses: LDLIBS += -lncurses
@@ -409,9 +409,8 @@ $(osx_dir): $(osx_exes)
 	cp -rL ../docs ../lexers $@/$(osxapp_res)
 	mv $@/$(osxapp_res)/core/images/textadept.icns $@/$(osxapp_res)
 	cp -r $(addprefix gtkosx/, etc lib share) $@/$(osxapp_res)
-	rm -r $(addprefix $@/$(osxapp_res)/lib/, libffi-3.0.10 libgail* libjpeg* libtiff* pkgconfig)
+	rm -r $(addprefix $@/$(osxapp_res)/lib/, glib-2.0 pkgconfig)
 	find $@/$(osxapp_res)/lib -type l -delete
-	rm -r $(addprefix $@/$(osxapp_res)/lib/gtk-2.0/, include modules 2.10.0/printbackends)
 $(osx_dir).zip: $(osx_dir) ; zip -r $<.zip $< && rm -r $<
 
 # External dependencies.
@@ -447,7 +446,7 @@ cdk_tgz := cdk-5.0-20200923.tgz
 termkey_tgz := libtermkey-0.20.tar.gz
 gtkwin_zip := gtkwin-3.24.31.zip
 pdcurses_zip := PDCurses-3.9.zip
-gtkosx_tgz := gtkosx-2.24.31.tar.gz
+gtkosx_tgz := gtkosx-3.24.30.tar.gz
 cloc_zip := v1.90.zip
 
 $(scintilla_tgz): ; $(WGET) https://www.scintilla.org/$@
