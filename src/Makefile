@@ -47,7 +47,7 @@ endef
 textadept_gtk_objs := $(call objs, textadept.c)
 textadept_curses_objs := $(call curses-objs, textadept.c)
 textadept_objs := $(textadept_gtk_objs) $(textadept_curses_objs)
-textadept_rc_objs := textadept_rc.o
+textadept_rc_objs := win-textadept_rc.o
 
 ta_flags := -std=c99 -pedantic -Iscintilla/include -Igtdialog -Wall
 
