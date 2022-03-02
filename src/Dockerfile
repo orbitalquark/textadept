@@ -28,6 +28,7 @@ RUN echo "Building osxcross" \
   && unzip *.zip && mv osxcross-* /opt/osxcross && rm *.zip \
   && wget https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/${sdk}.tar.xz \
   && tar xJf ${sdk}.tar.xz \
+  && cp -r /usr/lib/llvm-10/include/c++/v1 ${sdk}/usr/include/c++ \
   && tar czf /opt/osxcross/tarballs/${sdk}.tar.gz ${sdk} \
   && rm -r ${sdk}* \
   && cd /opt/osxcross \
