@@ -98,7 +98,7 @@ Command | Description
 `make deps` | Downloads and builds all of Textadept's core dependencies
 `make deps NIGHTLY=1` | Optionally downloads and builds bleeding-edge dependencies
 `make` | Builds Textadept, provided all dependencies are in place
-`make GTK3=1` | Builds Textadept using GTK 3.x
+`make GTK2=1` | Builds Textadept using GTK 2.x instead of GTK 3.x
 `make DEBUG=1` | Optionally builds Textadept with debug symbols
 `make curses` | Builds the terminal version of Textadept
 `make win-deps` | Downloads and builds Textadept's Windows dependencies
@@ -107,7 +107,7 @@ Command | Description
 `make osx` | Cross-compiles Textadept for macOS
 
 When building within Docker, the relevant container [image][] is
-`ghcr.io/orbitalquark/textadept-build:v1.0`.
+`ghcr.io/orbitalquark/textadept-build:v2.0`.
 
 For more information on compiling Textadept, please see the [manual][].
 
