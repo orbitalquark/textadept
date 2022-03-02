@@ -1,16 +1,14 @@
 ## FAQ
 
 **Q:**
-If Textadept is so minimalist, why are the downloads around 10MB in size and the unzipped
-folders 10s of MBs in size? Why is the Git repository more than 50MB in size?
+If Textadept is so minimalist, why are the downloads around 20MB in size and the unzipped
+folders more than double that? Why is the Git repository more than 50MB in size?
 
 **A:**
-Each download contains 2 executables: a GUI version and a terminal version.  Furthermore,
-the Windows and macOS packages bundle in GTK runtimes, accounting for some 3/4 of the total
-application size. (GTK is the cross-platform GUI toolkit Textadept uses.) Then, starting in
-version 10, in order to be able to run on older Linux systems whose libstdc++ does not support
-newer C++ symbols, the Linux executables statically link in a newer version of libstdc++. Finally,
-nightly builds are compiled with debug symbols enabled in order to aid debugging of various issues.
+Each download contains 2 executables: a GUI version and a terminal version.  Furthermore, the
+Windows and macOS packages bundle in GTK runtimes, accounting for ~80% of the total application
+size. (GTK is the cross-platform GUI toolkit Textadept uses.) Finally, nightly builds are
+compiled with debug symbols enabled in order to aid debugging of various issues.
 
 The Git repository is an export of an underlying Mercurial repository and is not compressed or
 optimized for size. After the initial clone, you can run `git gc --aggressive` to reduce its
@@ -169,7 +167,7 @@ On my Windows HiDPI display, Textadept's fonts look fuzzy or blurred. How can I 
 like other HiDPI-aware applications?
 
 **A:**
-GTK 2.0, the cross-platform GUI toolkit Textadept uses, is not HiDPI aware, so you need to
+GTK, the cross-platform GUI toolkit Textadept uses, is not HiDPI aware, so you need to
 instruct Windows to take over font rendering. Right-click on the Textadept executable and
 select "Properties". Click on the "Compatibility" tab and then the "Change high DPI settings"
 button. Check the "Override high DPI scaling" checkbox towards the bottom of the pop-up
