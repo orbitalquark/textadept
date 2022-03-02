@@ -37,7 +37,7 @@ jobs:
           else
             args="release NIGHTLY=1 DEBUG=1"
           fi
-          make -C src deps win32-deps osx-deps
+          make -C src deps win-deps osx-deps
           make -C src $args
 
           # For nightly builds, strip the date from filenames.
