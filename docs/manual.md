@@ -156,12 +156,11 @@ connected to events.
 
 In its bid for minimalism, Textadept depends on very little to run. On Windows and macOS,
 it has no external dependencies. On Linux and BSD, the GUI version depends only on [GTK][]
-(a cross-platform GUI toolkit) version 2.24 or later (circa early 2011), and the terminal
-version depends only on a wide-character implementation of curses like [ncurses][](w). Most
-Linux and BSD systems either already have these dependencies installed, or they are readily
-available from a package manager.
+(a cross-platform GUI toolkit), and the terminal version depends only on a wide-character
+implementation of curses like [ncurses][](w). Most Linux and BSD systems either already have
+these dependencies installed, or they are readily available from a package manager.
 
-Windows XP and Mac OSX 10.10 (Yosemite) are the minimum required operating systems.  Linux and
+Windows 7 and Mac OSX 10.10 (Yosemite) are the minimum required operating systems. Linux and
 BSD have no defined minimum.
 
 [GTK]: https://gtk.org
@@ -181,9 +180,9 @@ The following table lists Textadept's approximate download and installation size
 
 Platform | Download Size | Installed Size
 -|-|-
-Linux | 4 MB | 11 MB
-macOS | 11 MB | 35 MB (12 MB without bundled GTK Runtime)
-Windows | 16 MB |41 MB (23 MB without bundled GTK Runtime)
+Linux | 4 MB | 8 MB
+Windows | 21 MB | 57 MB (11 MB without bundled GTK Runtime)
+macOS | 20 MB | 65 MB (9 MB without bundled GTK Runtime)
 
 **Note:** each platform package contains two executables, one for the GUI version of Textadept,
 and one for the terminal version.
@@ -1334,13 +1333,10 @@ your changes.
 [`reset()`]: api.html#reset
 
 The widgets in the GUI version of Textadept cannot be themed using Lua theme files. Instead,
-you must use [GTK Resource Files][], which are part of the GUI toolkit Textadept uses. The
-exception to this is find & replace entry font, which can be changed.
+you must use [GTK CSS][], which is part of the GUI toolkit Textadept uses. The exception to
+this is find & replace entry font, which can be changed.
 
-**Note:** Textadept's pre-built binaries are built for and linked against GTK 2,
-not GTK 3.
-
-[GTK Resource Files]: https://developer.gnome.org/gtk3/stable/gtk3-Resource-Files.html
+[GTK CSS]: https://docs.gtk.org/gtk3/css-overview.html
 
 ---
 ### Scripting
@@ -1446,13 +1442,13 @@ Linux requirements:
 
 * [GNU C compiler][] (*gcc*) 7.1+ (circa mid-2017)
 * [GNU Make][] (*make*)
-* [GTK][] 2.24+ development libraries for the GUI version
+* [GTK][] 3 development libraries for the GUI version (GTK 2.24 is also supported)
 * [ncurses][](w) development libraries (wide character support) for the terminal version
 * _**OR**_
 * [Docker][]
 
 **Note:** on Ubuntu for example, these dependencies would be provided by the `build-essential`,
-`libgtk2.0-dev`, `libncurses5-dev`, `libncursesw5-dev`, and `docker.io` packages.
+`libgtk-3-dev` (or `libgtk2.0-dev`), `libncurses-dev`, and `docker.io` packages.
 
 BSD requirements:
 
@@ -1460,7 +1456,7 @@ BSD requirements:
 * [GNU Make][] (*gmake*)
 * [pkg-config][]
 * [libiconv][]
-* [GTK][] 2.24+ development libraries for the GUI version
+* [GTK][] 3 development libraries for the GUI version (GTK 2.24 is also supported)
 * [ncurses][](w) development libraries (wide character support) for the terminal version
 
 Windows cross-compiling requirements:
