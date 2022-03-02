@@ -7,7 +7,7 @@ CXXFLAGS := -Os -std=c++17
 WGET = wget -O $@
 
 # Define these once for speed and reference them later.
-ifndef GTK3
+ifdef GTK2
   gtk_flags_linux := $(shell pkg-config --cflags gtk+-2.0 gmodule-2.0)
 else
   gtk_flags_linux := $(shell pkg-config --cflags gtk+-3.0 gmodule-2.0) -Wno-deprecated-declarations
@@ -248,7 +248,7 @@ else
 $(linux_exes): CXX := c++
 endif
 $(linux_exes): LDFLAGS := -rdynamic -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
-ifndef GTK3
+ifdef GTK2
 ../textadept: LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gmodule-2.0)
 else
 ../textadept: LDFLAGS += $(shell pkg-config --libs gtk+-3.0 gmodule-2.0)

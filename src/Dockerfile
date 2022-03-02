@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 LABEL maintainer="textadept"
 
 # Fetch packages for:
@@ -13,7 +13,7 @@ RUN echo "Fetching packages" \
     build-essential ca-certificates curl git gnupg mercurial unzip wget zip \
     mingw-w64 \
     clang cmake libc++-dev libssl-dev libxml2-dev llvm-dev lzma-dev uuid-dev \
-    libgtk2.0-dev libncurses5-dev libncursesw5-dev \
+    libgtk2.0-dev libgtk-3-dev libncurses-dev \
     luadoc discount \
   && apt-get clean
 
@@ -28,7 +28,6 @@ RUN echo "Building osxcross" \
   && unzip *.zip && mv osxcross-* /opt/osxcross && rm *.zip \
   && wget https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/${sdk}.tar.xz \
   && tar xJf ${sdk}.tar.xz \
-  && cp -r /usr/include/c++/v1 ${sdk}/usr/include/c++ \
   && tar czf /opt/osxcross/tarballs/${sdk}.tar.gz ${sdk} \
   && rm -r ${sdk}* \
   && cd /opt/osxcross \

@@ -12,25 +12,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
-    container: ghcr.io/orbitalquark/textadept-build:v1.0
+    runs-on: ubuntu-20.04
+    container: ghcr.io/orbitalquark/textadept-build:v2.0
     outputs:
       version: ${{ steps.build.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Git init if necessary
-        shell: bash
-        run: |
-          # If git version is less than 2.18, a git clone will not be made in this container. In
-          # that case, make a temporary repository so "make release" can archive the repo's
-          # contents for release.
-          if [[ -d .git ]]; then exit 0; fi
-          git init
-          git add .
-          git config --global user.email "none@example.com"
-          git config --global user.name "none"
-          git commit -m 'none'
       - name: Checkout textadept-build dependencies
         uses: actions/checkout@v2
         with:

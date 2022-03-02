@@ -1507,7 +1507,7 @@ Command | Description
 `make deps` | Downloads and builds all of Textadept's core dependencies
 `make deps NIGHTLY=1` | Optionally downloads and builds bleeding-edge dependencies
 `make` | Builds Textadept, provided all dependencies are in place
-`make GTK3=1` | Builds Textadept using GTK 3.x
+`make GTK2=1` | Builds Textadept using GTK 2.x instead of GTK 3
 `make DEBUG=1` | Optionally builds Textadept with debug symbols
 `make install` | Optionally installs Textadept (to */usr/local* by default)
 `make textadept` | Builds only the GUI version of Textadept
@@ -1540,9 +1540,9 @@ Also, if you want to compile with Clang, you will have to run something like:
 You can use [Docker][] to build Textadept for Windows, macOS, or Linux. The [image][] required
 to do so is about 2.5GB in size. For example:
 
-    localhost$ docker pull ghcr.io/orbitalquark/textadept-build:v1.0
+    localhost$ docker pull ghcr.io/orbitalquark/textadept-build:v2.0
     localhost$ docker run -t -i -v /path/to/textadept:/ta -w /ta/src \
-      ghcr.io/orbitalquark/textadept-build:v1.0
+      ghcr.io/orbitalquark/textadept-build:v2.0
     container# make deps
     container# make
     container# exit
