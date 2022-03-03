@@ -1537,7 +1537,7 @@ Also, if you want to compile with Clang, you will have to run something like:
 ##### Compiling using Docker
 
 You can use [Docker][] to build Textadept for Windows, macOS, or Linux. The [image][] required
-to do so is about 2.5GB in size. For example:
+to do so is about 3GB in size. For example:
 
     localhost$ docker pull ghcr.io/orbitalquark/textadept-build:v2.0
     localhost$ docker run -t -i -v /path/to/textadept:/ta -w /ta/src \
