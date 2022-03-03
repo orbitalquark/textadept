@@ -397,19 +397,19 @@ $(win_dir).zip: $(win_dir) ; zip -r $<.zip $< && rm -r $<
 osxapp := Textadept.app
 osxapp_bin := $(osxapp)/Contents/MacOS
 osxapp_res := $(osxapp)/Contents/Resources
-$(osx_dir): $(osx_exes)
-	mkdir -p $@ $@/$(osxapp_bin) $@/$(osxapp_res)
-	cp ../scripts/osx/ta $@
-	cp Info.plist $@/$(osxapp_bin)/../
-	cp ../textadept-osx $@/$(osxapp_bin)/textadept
-	cp ../textadept-osx-curses $@/$(osxapp_bin)/textadept-curses
-	cp ../scripts/osx/textadept_osx $@/$(osxapp_bin)
-	$(call archive,$@/$(osxapp_res))
-	cp -rL ../docs ../lexers $@/$(osxapp_res)
-	mv $@/$(osxapp_res)/core/images/textadept.icns $@/$(osxapp_res)
-	cp -r $(addprefix gtkosx/, etc lib share) $@/$(osxapp_res)
-	rm -r $(addprefix $@/$(osxapp_res)/lib/, glib-2.0 pkgconfig)
-	find $@/$(osxapp_res)/lib -type l -delete
+$(osxapp): $(osx_exes)
+	mkdir -p $(osxapp_bin) $(osxapp_res)
+	cp Info.plist $(osxapp_bin)/../
+	cp ../textadept-osx $(osxapp_bin)/textadept
+	cp ../textadept-osx-curses $(osxapp_bin)/textadept-curses
+	cp ../scripts/osx/textadept_osx $(osxapp_bin)
+	$(call archive,$(osxapp_res))
+	cp -rL ../docs ../lexers $(osxapp_res)
+	mv $(osxapp_res)/core/images/textadept.icns $(osxapp_res)
+	cp -r $(addprefix gtkosx/, etc lib share) $(osxapp_res)
+	rm -r $(addprefix $(osxapp_res)/lib/, glib-2.0 pkgconfig)
+	find $(osxapp_res)/lib -type l -delete
+$(osx_dir): $(osxapp) ../scripts/osx/ta ; mkdir -p $@ && cp $^ $@
 $(osx_dir).zip: $(osx_dir) ; zip -r $<.zip $< && rm -r $<
 
 # External dependencies.
