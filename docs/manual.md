@@ -1332,10 +1332,13 @@ your changes.
 [`view.set_theme()`]: api.html#view.set_theme
 [`reset()`]: api.html#reset
 
-The widgets in the GUI version of Textadept cannot be themed using Lua theme files. Instead,
-you must use [GTK CSS][], which is part of the GUI toolkit Textadept uses. The exception to
-this is find & replace entry font, which can be changed.
+The widgets in the GUI version of Textadept cannot be themed using Lua theme files. Instead, you
+must use [GTK Themes][] or [GTK CSS][], which are part of the GUI toolkit Textadept uses. The
+exception to this is find & replace entry font, which can be changed. For Windows and macOS,
+place themes in Textadept's *share/themes/* directory and edit *etc/gtk-3.0/settings.ini*
+to set the `gtk-theme-name` to the directory name of your theme.
 
+[GTK Themes]: https://www.gnome-look.org/browse?cat=135&ord=latest
 [GTK CSS]: https://docs.gtk.org/gtk3/css-overview.html
 
 ---
