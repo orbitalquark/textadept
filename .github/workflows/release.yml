@@ -4,9 +4,18 @@ on:
     - cron: "0 4 * * *"
   workflow_dispatch:
     inputs:
-      args:
-        description: Make arguments
+      target:
+        description: Make target
         default: release
+        type: choice
+        options:
+          - release
+      nightly:
+        description: Nightly build
+        type: boolean
+      debug:
+        description: Debug symbols
+        type: boolean
       tag:
         description: Optional release tag (normally auto-detected)
 
@@ -33,12 +42,16 @@ jobs:
 
           # Build.
           if [[ ${{ github.event_name }} != schedule ]]; then
-            args="${{ github.event.inputs.args }}"
+            target="${{ github.event.inputs.target }}"
+            if [[ ${{ github.event.inputs.nightly }} = true ]]; then nightly="NIGHTLY=1"; fi
+            if [[ ${{ github.event.inputs.debug }} = true ]]; then debug="DEBUG=1"; fi
           else
-            args="release NIGHTLY=1 DEBUG=1"
+            target="release"
+            nightly="NIGHTLY=1"
+            debug="DEBUG=1"
           fi
-          make -C src deps win-deps osx-deps
-          make -C src $args
+          make -C src deps win-deps osx-deps $nightly
+          make -C src $target $debug $nightly
 
           # For nightly builds, strip the date from filenames.
           for file in `ls src/textadept_nightly* 2>/dev/null`; do
