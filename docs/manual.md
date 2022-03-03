@@ -160,8 +160,8 @@ it has no external dependencies. On Linux and BSD, the GUI version depends only 
 implementation of curses like [ncurses][](w). Most Linux and BSD systems either already have
 these dependencies installed, or they are readily available from a package manager.
 
-Windows 7 and Mac OSX 10.10 (Yosemite) are the minimum required operating systems. Linux and
-BSD have no defined minimum.
+Windows 7 (64-bit) and Mac OSX 10.10 (Yosemite) are the minimum required operating systems. Linux
+and BSD have no defined minimum.
 
 [GTK]: https://gtk.org
 [ncurses]: https://invisible-island.net/ncurses/ncurses.html
