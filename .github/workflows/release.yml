@@ -43,8 +43,8 @@ jobs:
           # Build.
           if [[ ${{ github.event_name }} != schedule ]]; then
             target="${{ github.event.inputs.target }}"
-            if [[ ${{ github.event.inputs.nightly }} = true ]]; then nightly="NIGHTLY=1"; fi
-            if [[ ${{ github.event.inputs.debug }} = true ]]; then debug="DEBUG=1"; fi
+            if [[ "${{ github.event.inputs.nightly }}" = true ]]; then nightly="NIGHTLY=1"; fi
+            if [[ "${{ github.event.inputs.debug }}" = true ]]; then debug="DEBUG=1"; fi
           else
             target="release"
             nightly="NIGHTLY=1"
