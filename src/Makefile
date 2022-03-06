@@ -409,7 +409,7 @@ $(osxapp): $(osx_exes)
 	cp -r $(addprefix gtkosx/, etc lib share) $(osxapp_res)
 	rm -r $(addprefix $(osxapp_res)/lib/, glib-2.0 pkgconfig)
 	find $(osxapp_res)/lib -type l -delete
-$(osx_dir): $(osxapp) ../scripts/osx/ta ; mkdir -p $@ && cp $^ $@
+$(osx_dir): $(osxapp) ../scripts/osx/ta ; mkdir -p $@ && cp -r $^ $@
 $(osx_dir).zip: $(osx_dir) ; zip -r $<.zip $< && rm -r $<
 
 # External dependencies.
