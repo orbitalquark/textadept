@@ -63,6 +63,11 @@ local M = ui.find
 -- @field highlight_all_matches (boolean)
 --   Whether or not to highlight all occurrences of found text in the current buffer.
 --   The default value is `false`.
+-- @field show_filenames_in_progressbar (boolean)
+--   Whether to show filenames in the find in files search progressbar.
+--   This can be useful for determining whether or not custom filters are working as expected.
+--   Showing filenames can slow down searches on computers with really fast SSDs.
+--   The default value is `true`.
 -- @field INDIC_FIND (number)
 --   The find results highlight indicator number.
 -- @field _G.events.FIND_RESULT_FOUND (string)
@@ -89,6 +94,7 @@ M.whole_word_label_text = not CURSES and _L['Whole word'] or _L['Word(F2)']
 M.regex_label_text = not CURSES and _L['Regex'] or _L['Regex(F3)']
 M.in_files_label_text = not CURSES and _L['In files'] or _L['Files(F4)']
 M.highlight_all_matches = false
+M.show_filenames_in_progressbar = true
 
 M.INDIC_FIND = _SCINTILLA.next_indic_number()
 
@@ -320,10 +326,11 @@ function M.find_in_files(dir, filter)
   view:goto_buffer(orig_buffer)
   buffer.code_page = 0 -- default is UTF-8
   buffer.search_flags = get_flags()
-  local text, i, found = M.find_entry_text, 1, false
+  local text, i, found, show_names = M.find_entry_text, 1, false, M.show_filenames_in_progressbar
   local stopped = ui.dialogs.progressbar({
     title = string.format('%s: %s', _L['Find in Files']:gsub('_', ''), text),
-    text = utf8_filenames[i], stoppable = true
+    text = show_names and utf8_filenames[i], stoppable = true,
+    width = not show_names and not CURSES and 400
   }, function()
     local f = io.open(filenames[i], 'rb')
     buffer:set_text(f:read('a'))
@@ -351,7 +358,7 @@ function M.find_in_files(dir, filter)
     view:scroll_caret() -- [Files Found Buffer]
     i = i + 1
     if i > #filenames then return nil end
-    return i * 100 / #filenames, utf8_filenames[i]
+    return i * 100 / #filenames, show_names and utf8_filenames[i] or nil
   end)
   buffer:close(true) -- temporary buffer
   local status = stopped and _L['Find in Files aborted'] or not found and _L['No results found']
