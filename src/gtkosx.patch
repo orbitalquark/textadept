@@ -1,0 +1,10 @@
+--- a/share/themes/macOS/gtk-3.0/gtk.css	2022-03-09 19:11:00.663189381 -0500
++++ b/share/themes/macOS/gtk-3.0/gtk.css	2022-03-09 19:13:11.459060519 -0500
+@@ -958,6 +958,7 @@
+     background-color: #e6e6e6; }
+ paned .sidebar.left, paned .sidebar.right, paned .sidebar.left:dir(rtl), paned .sidebar:dir(rtl), paned .sidebar:dir(ltr), paned .sidebar {
+   border-style: none; }
++paned.horizontal > separator, paned.vertical > separator { min-width: 6px; min-height: 6px; background-color: @theme_bg_color; }
+ 
+ overshoot.top {
+   background-image: -gtk-gradient(radial, center top, 0.55, center top, 0.6, from(rgba(46, 124, 247, 0.2)), to(transparent));

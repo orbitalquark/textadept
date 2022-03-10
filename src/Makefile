@@ -506,7 +506,10 @@ pdcurses: pdcurses.patch | $(pdcurses_zip)
 		UTF8=Y libs
 	mv $@/wincon/pdcurses.a $@
 $(gtkosx_tgz): ; $(WGET) $(root_url)/textadept-build/raw/default/$@
-gtkosx: | $(gtkosx_tgz) ; mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
+gtkosx: gtkosx.patch | $(gtkosx_tgz)
+	if [ -d $@ ]; then rm -r $@; fi
+	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
+	patch -d $@ -N -p1 < $<
 $(cloc_zip): ; $(WGET) https://github.com/AlDanial/cloc/archive/refs/tags/$@
 cloc: | $(cloc_zip) ; unzip -j $| "*/$@" -x "*/Unix/$@"
 
