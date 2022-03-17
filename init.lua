@@ -28,6 +28,11 @@ local function set_theme(view, name, env)
   if not assert_type(env, 'table/nil', 3) then env = {} end
   local orig_view = _G.view
   if view ~= orig_view then ui.goto_view(view) end
+  -- In the event the command entry is calling this function, tell the LPeg lexer that this view
+  -- (LexerLPeg instance) is the one to set styles for (as opposed to the command entry's view).
+  -- See note in LexerLPeg::Init(). Otherwise, this call is harmless and does not end up doing
+  -- much extra work.
+  buffer:private_lexer_call(SETLEXER, buffer._lexer or 'text')
   loadfile(name, 't', setmetatable(env, {__index = _G}))()
   -- Force reload of all styles since the current lexer may have defined its own styles. (The
   -- LPeg lexer has only refreshed default lexer styles.)
