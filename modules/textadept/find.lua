@@ -75,6 +75,7 @@ local M = ui.find
 --   Arguments:
 --
 --   * _`find_text`_: The text originally searched for.
+--   * _`wrapped`_: Whether or not the result found is after a text search wrapped.
 -- @field _G.events.FIND_WRAPPED (string)
 --   Emitted when a text search wraps (passes through the beginning of the buffer), either
 --   from bottom to top (when searching for a next occurrence), or from top to bottom (when
@@ -219,7 +220,7 @@ local function find(text, next, flags, no_wrap, wrapped)
   local pos = f(buffer, flags, text)
   view:ensure_visible_enforce_policy(buffer:line_from_position(pos))
   view:scroll_range(buffer.anchor, buffer.current_pos)
-  if pos ~= -1 then events.emit(events.FIND_RESULT_FOUND, text) end
+  if pos ~= -1 then events.emit(events.FIND_RESULT_FOUND, text, wrapped) end
   -- Track find text and found text for "replace all" and incremental find.
   find_text, found_text = text, buffer:get_sel_text()
   repl_text = ui.find.replace_entry_text -- save for ui.find.focus()
@@ -244,7 +245,7 @@ events.connect(events.FIND_TEXT_CHANGED, function()
   if not M.incremental then return end
   return events.emit(events.FIND, M.find_entry_text, true) -- refresh
 end)
-events.connect(events.FIND_RESULT_FOUND, function(text)
+events.connect(events.FIND_RESULT_FOUND, function(text, wrapped)
   -- Count and optionally highlight all occurrences.
   local count, current = 0, 1
   buffer.search_flags = get_flags()
@@ -259,7 +260,9 @@ events.connect(events.FIND_RESULT_FOUND, function(text)
     count = count + 1
     if s == buffer.current_pos then current = count end
   end
-  ui.statusbar_text = string.format('%s %d/%d', _L['Match'], current, count)
+  local message = string.format('%s %d/%d', _L['Match'], current, count)
+  if wrapped then message = string.format('%s (%s)', message, _L['Search wrapped']) end
+  ui.statusbar_text = message
   -- For regex searches, `buffer.tag` was clobbered. It needs to be filled in again for any
   -- subsequent replace operations that need it.
   if ui.find.regex then
