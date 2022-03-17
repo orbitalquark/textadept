@@ -2623,6 +2623,42 @@ function test_ui_find_incremental_not_found()
   buffer:close(true)
 end
 
+function test_ui_find_find_regex_empty()
+  buffer.new()
+  buffer:set_text('foo\n\n\nfoo')
+  ui.find.regex = true
+  for _, text in ipairs{'^', '$', '^.*$'} do
+    buffer:document_start()
+    ui.find.find_entry_text = text
+    for i = 1, buffer.line_count do
+      ui.find.find_next()
+      assert(buffer:line_from_position(buffer.current_pos), i)
+      if #text == 1 then
+        assert(buffer.selection_empty, 'zero-width find result expected')
+      else
+        assert_equal(buffer:get_sel_text(), buffer:get_line(i):match('^[^\r\n]*'))
+      end
+    end
+    if #text > 1 then
+      ui.find.find_next() -- should wrap
+      assert_equal(buffer:line_from_position(buffer.current_pos), 1)
+    end
+  end
+  ui.find.regex = false
+  buffer:close(true)
+end
+
+function test_ui_find_find_prev_regex_empty()
+  buffer.new()
+  buffer:add_text('foo\n\n\nfoo')
+  ui.find.find_entry_text, ui.find.regex = '$', true
+  ui.find.find_prev()
+  assert_equal(buffer:line_from_position(buffer.current_pos), buffer.line_count - 1)
+  ui.find.regex = false
+  buffer:close(true)
+end
+expected_failure(test_ui_find_find_prev_regex_empty) -- Scintilla bug?
+
 function test_ui_find_find_in_files()
   ui.find.find_entry_text = 'foo'
   ui.find.match_case = true
