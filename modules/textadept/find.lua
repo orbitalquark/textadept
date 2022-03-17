@@ -213,6 +213,8 @@ local function find(text, next, flags, no_wrap, wrapped)
   -- If text is selected, assume it is from the current search and move the caret appropriately
   -- for the next search.
   buffer:goto_pos(next and buffer.selection_end or buffer.selection_start)
+  if not M.incremental and M.regex and find_text == text and found_text == '' and next and
+    not wrapped then buffer:goto_pos(buffer.current_pos + (next and 1 or -1)) end
 
   -- Scintilla search.
   buffer:search_anchor()
