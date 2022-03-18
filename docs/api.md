@@ -8396,6 +8396,7 @@ Emitted when a result is found. It is selected and has been scrolled into view.
   Arguments:
 
   * _`find_text`_: The text originally searched for.
+  * _`wrapped`_: Whether or not the result found is after a text search wrapped.
 
 <a id="events.FIND_WRAPPED"></a>
 #### `events.FIND_WRAPPED` (string)
@@ -8511,6 +8512,14 @@ The text in the "Replace" entry.
 
 The text of the "Replace" label.
   This is primarily used for localization.
+
+<a id="ui.find.show_filenames_in_progressbar"></a>
+#### `ui.find.show_filenames_in_progressbar` (boolean)
+
+Whether to show filenames in the find in files search progressbar.
+  This can be useful for determining whether or not custom filters are working as expected.
+  Showing filenames can slow down searches on computers with really fast SSDs.
+  The default value is `true`.
 
 <a id="ui.find.whole_word"></a>
 #### `ui.find.whole_word` (bool)
