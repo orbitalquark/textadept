@@ -990,6 +990,13 @@ and for this kind of selection, Textadept mirrors any typed text on all of those
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Rectangular Edit](images/rectangularselection2.png)
 
+You can also copy rectangular blocks of text and paste them into rectangular blocks of the
+same size.
+
+**Note:** macOS does not support the direct pasting rectangular selections. Instead, use the
+[Lua Command Entry](#lua-command-entry) and enter `replace_rectangular(ui.clipboard_text)`
+after copying a block of text.
+
 #### Text Transformations
 
 Textadept can apply many different transformations to the current word, line, and selected text.
