@@ -134,9 +134,12 @@ local view
 -- The functions below are Lua C functions.
 
 ---
--- Moves the buffer at index *from* to index *to*, shifting other buffers as necessary.
+-- Moves the buffer at index *from* to index *to* in the `_BUFFERS` table, shifting other buffers
+-- as necessary.
+-- This changes the order buffers are displayed in in the tab bar and buffer browser.
 -- @param from Index of the buffer to move.
 -- @param to Index to move the buffer to.
+-- @see _BUFFERS
 -- @class function
 -- @name move_buffer
 local move_buffer
