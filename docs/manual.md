@@ -385,8 +385,9 @@ indicates there are unsaved changes in the marked buffer. There is only one tab 
 entire application, even if there are multiple split views. When two or more views are open, the
 state of the tab bar applies only to the active view, and using the tab bar to switch between
 files also applies only to that view. Right-clicking on the tab bar brings up a configurable
-context menu that is defined by [`textadept.menu.tab_context_menu`][]. You can turn off the
-tab bar by setting [`ui.tabs`][]. For example, in your *~/.textadept/init.lua*:
+context menu that is defined by [`textadept.menu.tab_context_menu`][]. Tabs can be rearranged
+by clicking on their tops and dragging and dropping them. You can turn off the tab bar by setting
+[`ui.tabs`][]. For example, in your *~/.textadept/init.lua*:
 
     ui.tabs = false
 

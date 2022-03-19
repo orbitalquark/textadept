@@ -101,12 +101,18 @@ The path to the user's *~/.textadept/* directory, where all preferences and user
 <a id="move_buffer"></a>
 #### `move_buffer`(*from, to*)
 
-Moves the buffer at index *from* to index *to*, shifting other buffers as necessary.
+Moves the buffer at index *from* to index *to* in the `_BUFFERS` table, shifting other buffers
+as necessary.
+This changes the order buffers are displayed in in the tab bar and buffer browser.
 
 Parameters:
 
 * *`from`*: Index of the buffer to move.
 * *`to`*: Index to move the buffer to.
+
+See also:
+
+* [`_BUFFERS`](#_BUFFERS)
 
 <a id="quit"></a>
 #### `quit`()
