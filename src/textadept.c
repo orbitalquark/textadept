@@ -1432,16 +1432,15 @@ static void new_buffer(sptr_t doc) {
  */
 static void move_buffer(lua_State *L, int from, int to, bool reorder_tabs) {
   lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS);
-  lua_getglobal(L, "table"), lua_getfield(L, -1, "insert"), lua_replace(L, -2);
-  lua_pushvalue(L, -2), lua_pushinteger(L, to);
+  lua_getglobal(L, "table"), lua_getfield(L, -1, "insert"), lua_replace(L, -2),
+    lua_pushvalue(L, -2), lua_pushinteger(L, to);
   // table.remove(_BUFFERS, from) --> buf
   lua_getglobal(L, "table"), lua_getfield(L, -1, "remove"), lua_replace(L, -2),
     lua_pushvalue(L, -5), lua_pushinteger(L, from), lua_call(L, 2, 1);
   lua_call(L, 3, 0); // table.insert(_BUFFERS, to, buf)
   for (int i = 1; i <= lua_rawlen(L, -1); i++)
     lua_rawgeti(L, -1, i), lua_pushinteger(L, i), lua_rawset(L, -3); // _BUFFERS[buf] = i
-  lua_pop(L, 1); // buffers
-  if (!reorder_tabs) return;
+  if (lua_pop(L, 1), !reorder_tabs) return;
 #if GTK
   gtk_notebook_reorder_child(
     GTK_NOTEBOOK(tabbar), gtk_notebook_get_nth_page(GTK_NOTEBOOK(tabbar), from - 1), to - 1);
@@ -1452,11 +1451,11 @@ static void move_buffer(lua_State *L, int from, int to, bool reorder_tabs) {
 
 /** `_G.move_buffer` Lua function. */
 static int move_buffer_lua(lua_State *L) {
-  lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS);
   int from = luaL_checkinteger(L, 1), to = luaL_checkinteger(L, 2);
+  lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS);
   luaL_argcheck(L, from >= 1 && from <= lua_rawlen(L, -1), 1, "position out of bounds");
   luaL_argcheck(L, to >= 1 && to <= lua_rawlen(L, -1), 2, "position out of bounds");
-  return (lua_pop(L, 1), move_buffer(L, lua_tointeger(L, 1), lua_tointeger(L, 2), true), 0);
+  return (lua_pop(L, 1), move_buffer(L, from, to, true), 0);
 }
 
 /** `_G.quit()` Lua function. */
@@ -1881,11 +1880,11 @@ static void tab_changed(GtkNotebook *_, GtkWidget *__, int tab_num, void *L) {
 }
 
 /** Signal for reordering tabs. */
-static void tab_reordered(GtkNotebook *_, GtkWidget *tab, int to, void *L) {
+static void tab_reordered(GtkNotebook *_, GtkWidget *tab, int tab_num, void *L) {
   lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS);
   for (size_t i = 1; i <= lua_rawlen(L, -1); lua_pop(L, 2), i++)
     if (tab == (lua_rawgeti(L, -1, i), lua_getfield(L, -1, "tab_pointer"), lua_touserdata(L, -1))) {
-      lua_pop(L, 3), move_buffer(lua, i, to + 1, false);
+      lua_pop(L, 3), move_buffer(lua, i, tab_num + 1, false);
       break;
     }
 }
