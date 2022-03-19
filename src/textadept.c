@@ -1038,7 +1038,7 @@ static void register_command_entry_doc() {
 static void remove_doc(lua_State *L, sptr_t doc) {
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_views");
   for (size_t i = 1; i <= lua_rawlen(L, -1); lua_pop(L, 1), i++) {
-    Scintilla *view = (lua_rawgeti(L, -1, i), lua_toview(L, -1)); // ^popped
+    Scintilla *view = (lua_rawgeti(L, -1, i), lua_toview(L, -1)); // popped on loop
     if (doc == SS(view, SCI_GETDOCPOINTER, 0, 0)) goto_doc(L, view, -1, true);
   }
   lua_pop(L, 1); // views
@@ -1412,6 +1412,7 @@ static void new_buffer(sptr_t doc) {
   tab_sync = true;
   int i = gtk_notebook_append_page(GTK_NOTEBOOK(tabbar), tab, NULL);
   gtk_widget_show(tab), gtk_widget_set_visible(tabbar, show_tabs(i > 0));
+  gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(tabbar), tab, true);
   gtk_notebook_set_current_page(GTK_NOTEBOOK(tabbar), i);
   tab_sync = false;
   lua_pop(lua, 2); // tab_pointer and buffer
@@ -1421,6 +1422,42 @@ static void new_buffer(sptr_t doc) {
   SS(focused_view, SCI_SETILEXER, 0, (sptr_t)CreateLexer(NULL));
   lua_pushdoc(lua, doc), lua_setglobal(lua, "buffer");
   if (!initing) emit(lua, "buffer_new", -1);
+}
+
+/**
+ * Moves the buffer from the given index to another index, shifting other buffers as necessary.
+ * @param from Index of the buffer to move.
+ * @param to Index to move the buffer to.
+ * @reorder_tabs Flag indicating whether or not to reorder tabs in the GUI. This is `false`
+ *   when responding to a GUI reordering event and `true` when calling from Lua.
+ */
+static void move_buffer(int from, int to, bool reorder_tabs) {
+  lua_getglobal(lua, "table"), lua_getfield(lua, -1, "insert"), lua_replace(lua, -2);
+  lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers"), lua_pushinteger(lua, to);
+  lua_getglobal(lua, "table"), lua_getfield(lua, -1, "remove"), lua_replace(lua, -2);
+  lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers"), lua_pushinteger(lua, from),
+    lua_call(lua, 2, 1); // table.remove(_BUFFERS, from) --> buf
+  lua_call(lua, 3, 0); // table.insert(_BUFFERS, to, buf)
+  lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers");
+  for (int i = 1; i <= lua_rawlen(lua, -1); i++)
+    lua_rawgeti(lua, -1, i), lua_pushinteger(lua, i), lua_settable(lua, -3); // t[buffer] = i
+  lua_pop(lua, 1);
+  if (!reorder_tabs) return;
+#if GTK
+  gtk_notebook_reorder_child(
+    GTK_NOTEBOOK(tabbar), gtk_notebook_get_nth_page(GTK_NOTEBOOK(tabbar), from - 1), to - 1);
+//#elif CURSES
+// TODO: tabs
+#endif
+}
+
+/** `_G.move_buffer` Lua function. */
+static int move_buffer_lua(lua_State *L) {
+  lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers");
+  int from = luaL_checkinteger(L, 1), to = luaL_checkinteger(L, 2);
+  luaL_argcheck(L, from >= 1 && from <= lua_rawlen(L, -1), 1, "position out of bounds");
+  luaL_argcheck(L, to >= 1 && to <= lua_rawlen(L, -1), 2, "position out of bounds");
+  return (lua_pop(L, 1), move_buffer(luaL_checkinteger(L, 1), luaL_checkinteger(L, 2), true), 0);
 }
 
 /** `_G.quit()` Lua function. */
@@ -1575,6 +1612,7 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
   set_metatable(L, -1, "ta_ui", ui_index, ui_newindex);
   lua_setglobal(L, "ui");
 
+  lua_pushcfunction(L, move_buffer_lua), lua_setglobal(L, "move_buffer");
   lua_pushcfunction(L, quit), lua_setglobal(L, "quit");
   lua_pushcfunction(L, reset), lua_setglobal(L, "reset");
   lua_pushcfunction(L, add_timeout), lua_setglobal(L, "timeout");
@@ -1785,8 +1823,8 @@ static void close_lua(lua_State *L) {
   closing = true;
   while (unsplit_view(focused_view)) {}
   lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
-  for (size_t i = 1; i <= lua_rawlen(L, -1); i++)
-    lua_rawgeti(L, -1, i), delete_buffer(lua_todoc(L, -1)), lua_pop(L, 1);
+  for (size_t i = 1; i <= lua_rawlen(L, -1); lua_pop(L, 1), i++)
+    lua_rawgeti(L, -1, i), delete_buffer(lua_todoc(L, -1)); // popped on loop
   lua_pop(L, 1); // buffers
   scintilla_delete(focused_view), scintilla_delete(dummy_view);
   scintilla_delete(command_entry);
@@ -1843,6 +1881,16 @@ static void terminate(GtkosxApplication *_, void *L) {
  */
 static void tab_changed(GtkNotebook *_, GtkWidget *__, int tab_num, void *L) {
   if (!tab_sync) emit(L, "tab_clicked", LUA_TNUMBER, tab_num + 1, LUA_TNUMBER, 1, -1);
+}
+
+/** Signal for reordering tabs. */
+static void tab_reordered(GtkNotebook *_, GtkWidget *tab, int to, void *L) {
+  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
+  for (size_t i = 1; i <= lua_rawlen(L, -1); lua_pop(L, 2), i++)
+    if (tab == (lua_rawgeti(L, -1, i), lua_getfield(L, -1, "tab_pointer"), lua_touserdata(L, -1))) {
+      lua_pop(L, 3), move_buffer(i, to + 1, false);
+      break;
+    }
 }
 #endif // if GTK
 
@@ -2281,6 +2329,7 @@ static void new_window() {
 
   tabbar = gtk_notebook_new();
   g_signal_connect(tabbar, "switch-page", G_CALLBACK(tab_changed), lua);
+  g_signal_connect(tabbar, "page-reordered", G_CALLBACK(tab_reordered), lua);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(tabbar), true);
   gtk_widget_set_can_focus(tabbar, false);
   gtk_box_pack_start(GTK_BOX(vbox), tabbar, false, false, 0);

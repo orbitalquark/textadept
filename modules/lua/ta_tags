@@ -730,6 +730,7 @@ modify	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 modify_rule	_HOME/lexers/lexer.lua	/^function M.modify_rule(lexer, id, rule)$/;"	f	class:lexer
 mouse_dwell_time	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 mouse_selection_rectangular_switch	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+move_buffer	_HOME/core/init.lua	/^local move_buffer$/;"	f	
 move_caret_inside_view	_HOME/core/.buffer.luadoc	/^function move_caret_inside_view(buffer) end$/;"	f	class:buffer
 move_extends_selection	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 move_selected_lines_down	_HOME/core/.buffer.luadoc	/^function move_selected_lines_down(buffer) end$/;"	f	class:buffer

@@ -4021,6 +4021,37 @@ function test_ui_restore_view_state()
   buffer:close()
 end
 
+function test_move_buffer()
+  local buffer1 = buffer.new()
+  buffer1:set_text('1')
+  local buffer2 = buffer.new()
+  buffer2:set_text('2')
+  local buffer3 = buffer.new()
+  buffer3:set_text('3')
+  local buffer4 = buffer.new()
+  buffer4:set_text('4')
+  move_buffer(_BUFFERS[buffer4], _BUFFERS[buffer1])
+  assert(_BUFFERS[buffer4] < _BUFFERS[buffer1], 'buffer4 not before buffer1')
+  assert(_BUFFERS[buffer1] < _BUFFERS[buffer2], 'buffer1 not before buffer2')
+  assert(_BUFFERS[buffer2] < _BUFFERS[buffer3], 'buffer2 not before buffer3')
+  move_buffer(_BUFFERS[buffer2], _BUFFERS[buffer3])
+  assert(_BUFFERS[buffer4] < _BUFFERS[buffer1], 'buffer4 not before buffer1')
+  assert(_BUFFERS[buffer1] < _BUFFERS[buffer3], 'buffer1 not before buffer3')
+  assert(_BUFFERS[buffer3] < _BUFFERS[buffer2], 'buffer3 not before buffer2')
+
+  assert_raises(function() move_buffer('') end, 'number expected')
+  assert_raises(function() move_buffer(1) end, 'number expected')
+  assert_raises(function() move_buffer(1, true) end, 'number expected')
+  assert_raises(function() move_buffer(1, 10) end, 'out of bounds')
+  assert_raises(function() move_buffer(1, -1) end, 'out of bounds')
+  assert_raises(function() move_buffer(10, 1) end, 'out of bounds')
+  assert_raises(function() move_buffer(-1, 1) end, 'out of bounds')
+  buffer1:close(true)
+  buffer2:close(true)
+  buffer3:close(true)
+  buffer4:close(true)
+end
+
 function test_reset()
   local _persist
   _G.foo = 'bar'
