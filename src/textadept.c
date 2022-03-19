@@ -182,6 +182,7 @@ int statusbar_length[2];
 
 // Lua objects.
 static lua_State *lua;
+static const char *BUFFERS = "ta_buffers", *VIEWS = "ta_views", *ARG = "ta_arg"; // registry tables
 #if CURSES
 static bool quitting;
 #endif
@@ -596,8 +597,8 @@ static int dialog(lua_State *L) {
  * @see add_view
  */
 static void lua_pushview(lua_State *L, Scintilla *view) {
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_views"), lua_pushlightuserdata(L, view),
-    lua_gettable(L, -2), lua_replace(L, -2);
+  lua_getfield(L, LUA_REGISTRYINDEX, VIEWS), lua_pushlightuserdata(L, view), lua_gettable(L, -2),
+    lua_replace(L, -2);
 }
 
 /**
@@ -658,7 +659,7 @@ static Scintilla *lua_toview(lua_State *L, int index) {
  * @see add_doc
  */
 static void lua_pushdoc(lua_State *L, sptr_t doc) {
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_pushlightuserdata(L, (sptr_t *)doc),
+  lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_pushlightuserdata(L, (sptr_t *)doc),
     lua_gettable(L, -2), lua_replace(L, -2);
 }
 
@@ -667,7 +668,7 @@ static void lua_pushdoc(lua_State *L, sptr_t doc) {
  */
 static void sync_tabbar() {
 #if GTK
-  int i = (lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers"),
+  int i = (lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS),
     lua_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_gettable(lua, -2),
     lua_tointeger(lua, -1) - 1);
   lua_pop(lua, 2); // index and buffers
@@ -719,7 +720,7 @@ static void view_focused(Scintilla *view, lua_State *L) {
 /** `ui.goto_view()` Lua function. */
 static int goto_view(lua_State *L) {
   if (lua_isnumber(L, 1)) {
-    lua_getfield(L, LUA_REGISTRYINDEX, "ta_views");
+    lua_getfield(L, LUA_REGISTRYINDEX, VIEWS);
     int n = (lua_pushview(L, focused_view), lua_gettable(L, -2), lua_tointeger(L, -1)) +
       lua_tointeger(L, 1);
     if (n > (int)lua_rawlen(L, -2))
@@ -763,8 +764,7 @@ static int get_int_field(lua_State *L, int index, int n) {
 static void lua_pushmenu(lua_State *L, int index, GCallback f, bool submenu) {
   GtkWidget *menu = gtk_menu_new(), *submenu_root = NULL;
   if (lua_getfield(L, index, "title") != LUA_TNIL || submenu) { // submenu title
-    const char *label = !lua_isnil(L, -1) ? lua_tostring(L, -1) : "no title";
-    submenu_root = gtk_menu_item_new_with_mnemonic(label);
+    submenu_root = gtk_menu_item_new_with_mnemonic(luaL_optstring(L, -1, "no title"));
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(submenu_root), menu);
   }
   lua_pop(L, 1); // title
@@ -975,7 +975,7 @@ static Scintilla *view_for_doc(lua_State *L, int index) {
   sptr_t doc = lua_todoc(L, index);
   if (doc == SS(focused_view, SCI_GETDOCPOINTER, 0, 0)) return focused_view;
   luaL_argcheck(L,
-    (lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_pushdoc(L, doc),
+    (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_pushdoc(L, doc),
       lua_gettable(L, -2) != LUA_TNIL),
     index, "this Buffer does not exist");
   lua_pop(L, 2); // buffer, ta_buffers
@@ -994,7 +994,7 @@ static Scintilla *view_for_doc(lua_State *L, int index) {
  */
 static void goto_doc(lua_State *L, Scintilla *view, int n, bool relative) {
   if (relative && n == 0) return;
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
+  lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS);
   if (relative) {
     lua_pushdoc(L, SS(view, SCI_GETDOCPOINTER, 0, 0));
     n = (lua_gettable(L, -2), lua_tointeger(L, -1)) + n;
@@ -1015,14 +1015,14 @@ static void goto_doc(lua_State *L, Scintilla *view, int n, bool relative) {
 /** Adds the command entry's buffer to the 'buffers' registry table at a constant index (0). */
 static void register_command_entry_doc() {
   sptr_t doc = SS(command_entry, SCI_GETDOCPOINTER, 0, 0);
-  lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers");
+  lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS);
   lua_getglobal(lua, "ui"), lua_getfield(lua, -1, "command_entry"), lua_replace(lua, -2);
   lua_pushstring(lua, "doc_pointer"), lua_pushlightuserdata(lua, (sptr_t *)doc),
     lua_rawset(lua, -3);
   // t[doc_pointer] = command_entry, t[0] = command_entry, t[command_entry] = 0
-  lua_pushlightuserdata(lua, (sptr_t *)doc), lua_pushvalue(lua, -2), lua_settable(lua, -4);
+  lua_pushlightuserdata(lua, (sptr_t *)doc), lua_pushvalue(lua, -2), lua_rawset(lua, -4);
   lua_pushvalue(lua, -1), lua_rawseti(lua, -3, 0);
-  lua_pushinteger(lua, 0), lua_settable(lua, -3);
+  lua_pushinteger(lua, 0), lua_rawset(lua, -3);
   lua_pop(lua, 1); // buffers
 }
 
@@ -1036,34 +1036,32 @@ static void register_command_entry_doc() {
  * @see add_doc
  */
 static void remove_doc(lua_State *L, sptr_t doc) {
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_views");
+  lua_getfield(L, LUA_REGISTRYINDEX, VIEWS);
   for (size_t i = 1; i <= lua_rawlen(L, -1); lua_pop(L, 1), i++) {
     Scintilla *view = (lua_rawgeti(L, -1, i), lua_toview(L, -1)); // popped on loop
     if (doc == SS(view, SCI_GETDOCPOINTER, 0, 0)) goto_doc(L, view, -1, true);
   }
   lua_pop(L, 1); // views
-  lua_newtable(L);
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
-  for (size_t i = 1; i <= lua_rawlen(L, -1); i++)
-    if (doc != (lua_rawgeti(L, -1, i), lua_todoc(L, -1))) {
-      // t[doc_pointer] = buffer, t[#t + 1] = buffer, t[buffer] = #t
-      lua_getfield(L, -1, "doc_pointer"), lua_pushvalue(L, -2), lua_settable(L, -5);
-      lua_pushvalue(L, -1), lua_rawseti(L, -4, lua_rawlen(L, -4) + 1);
-      lua_pushinteger(L, lua_rawlen(L, -3)), lua_settable(L, -4);
-    } else {
+  lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS);
+  for (size_t i = 1; i <= lua_rawlen(L, -1); lua_pop(L, 1), i++)
+    if (doc == (lua_rawgeti(L, -1, i), lua_todoc(L, -1))) {
+      lua_pushnil(L), lua_rawset(L, -3); // t[buf] = nil
+      lua_pushlightuserdata(L, doc), lua_pushnil(L), lua_rawset(L, -3); // t[doc_pointer] = nil
+      lua_getglobal(L, "table"), lua_getfield(L, -1, "remove"), lua_replace(L, -2),
+        lua_pushvalue(L, -2), lua_pushinteger(L, i), lua_call(L, 2, 0); // table.remove(t, i)
+      for (int i = 1; i <= lua_rawlen(L, -1); i++)
+        lua_rawgeti(L, -1, i), lua_pushinteger(L, i), lua_rawset(L, -3); // t[buf] = i
 #if GTK
       // Remove the tab from the tabbar.
       gtk_notebook_remove_page(GTK_NOTEBOOK(tabbar), i - 1);
-      gtk_widget_set_visible(tabbar, show_tabs(lua_rawlen(L, -2) > 2));
+      gtk_widget_set_visible(tabbar, show_tabs(lua_rawlen(L, -1) > 1));
 //#elif CURSES
 // TODO: tabs
 #endif
-      lua_pop(L, 1); // buffer
+      break;
     }
   lua_pop(L, 1); // buffers
-  lua_pushvalue(L, -1), lua_setfield(L, LUA_REGISTRYINDEX, "ta_buffers");
   register_command_entry_doc();
-  lua_setglobal(L, "_BUFFERS");
 }
 
 /**
@@ -1081,7 +1079,7 @@ static int delete_buffer_lua(lua_State *L) {
   Scintilla *view = view_for_doc(L, 1);
   luaL_argcheck(L, view != command_entry, 1, "cannot delete command entry");
   sptr_t doc = SS(view, SCI_GETDOCPOINTER, 0, 0);
-  if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_rawlen(L, -1) == 1) new_buffer(0);
+  if (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawlen(L, -1) == 1) new_buffer(0);
   if (view == focused_view) goto_doc(L, focused_view, -1, true);
   delete_buffer(doc), emit(L, "buffer_deleted", -1);
   if (view == focused_view) emit(L, "buffer_after_switch", -1);
@@ -1092,8 +1090,7 @@ static int delete_buffer_lua(lua_State *L) {
 static int new_buffer_lua(lua_State *L) {
   if (initing) luaL_error(L, "cannot create buffers during initialization");
   new_buffer(0);
-  return (
-    lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_rawgeti(L, -1, lua_rawlen(L, -1)), 1);
+  return (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawgeti(L, -1, lua_rawlen(L, -1)), 1);
 }
 
 /**
@@ -1372,7 +1369,7 @@ static int buffer_newindex(lua_State *L) {
  * @param doc The Scintilla document to add.
  */
 static void add_doc(lua_State *L, sptr_t doc) {
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
+  lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS);
   lua_newtable(L);
   lua_pushlightuserdata(L, (sptr_t *)doc), lua_setfield(L, -2, "doc_pointer");
 #if GTK
@@ -1385,9 +1382,9 @@ static void add_doc(lua_State *L, sptr_t doc) {
   lua_pushcfunction(L, new_buffer_lua), lua_setfield(L, -2, "new");
   set_metatable(L, -1, "ta_buffer", buffer_index, buffer_newindex);
   // t[doc_pointer] = buffer, t[#t + 1] = buffer, t[buffer] = #t
-  lua_getfield(L, -1, "doc_pointer"), lua_pushvalue(L, -2), lua_settable(L, -4);
+  lua_getfield(L, -1, "doc_pointer"), lua_pushvalue(L, -2), lua_rawset(L, -4);
   lua_pushvalue(L, -1), lua_rawseti(L, -3, lua_rawlen(L, -3) + 1);
-  lua_pushinteger(L, lua_rawlen(L, -2)), lua_settable(L, -3);
+  lua_pushinteger(L, lua_rawlen(L, -2)), lua_rawset(L, -3);
   lua_pop(L, 1); // buffers
 }
 
@@ -1425,23 +1422,25 @@ static void new_buffer(sptr_t doc) {
 }
 
 /**
- * Moves the buffer from the given index to another index, shifting other buffers as necessary.
+ * Moves the buffer from the given index to another index in the 'buffers' registry table,
+ * shifting other buffers as necessary.
+ * @param L The Lua State.
  * @param from Index of the buffer to move.
  * @param to Index to move the buffer to.
  * @reorder_tabs Flag indicating whether or not to reorder tabs in the GUI. This is `false`
  *   when responding to a GUI reordering event and `true` when calling from Lua.
  */
-static void move_buffer(int from, int to, bool reorder_tabs) {
-  lua_getglobal(lua, "table"), lua_getfield(lua, -1, "insert"), lua_replace(lua, -2);
-  lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers"), lua_pushinteger(lua, to);
-  lua_getglobal(lua, "table"), lua_getfield(lua, -1, "remove"), lua_replace(lua, -2);
-  lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers"), lua_pushinteger(lua, from),
-    lua_call(lua, 2, 1); // table.remove(_BUFFERS, from) --> buf
-  lua_call(lua, 3, 0); // table.insert(_BUFFERS, to, buf)
-  lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers");
-  for (int i = 1; i <= lua_rawlen(lua, -1); i++)
-    lua_rawgeti(lua, -1, i), lua_pushinteger(lua, i), lua_settable(lua, -3); // t[buffer] = i
-  lua_pop(lua, 1);
+static void move_buffer(lua_State *L, int from, int to, bool reorder_tabs) {
+  lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS);
+  lua_getglobal(L, "table"), lua_getfield(L, -1, "insert"), lua_replace(L, -2);
+  lua_pushvalue(L, -2), lua_pushinteger(L, to);
+  // table.remove(_BUFFERS, from) --> buf
+  lua_getglobal(L, "table"), lua_getfield(L, -1, "remove"), lua_replace(L, -2),
+    lua_pushvalue(L, -5), lua_pushinteger(L, from), lua_call(L, 2, 1);
+  lua_call(L, 3, 0); // table.insert(_BUFFERS, to, buf)
+  for (int i = 1; i <= lua_rawlen(L, -1); i++)
+    lua_rawgeti(L, -1, i), lua_pushinteger(L, i), lua_rawset(L, -3); // _BUFFERS[buf] = i
+  lua_pop(L, 1); // buffers
   if (!reorder_tabs) return;
 #if GTK
   gtk_notebook_reorder_child(
@@ -1453,11 +1452,11 @@ static void move_buffer(int from, int to, bool reorder_tabs) {
 
 /** `_G.move_buffer` Lua function. */
 static int move_buffer_lua(lua_State *L) {
-  lua_getfield(lua, LUA_REGISTRYINDEX, "ta_buffers");
+  lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS);
   int from = luaL_checkinteger(L, 1), to = luaL_checkinteger(L, 2);
   luaL_argcheck(L, from >= 1 && from <= lua_rawlen(L, -1), 1, "position out of bounds");
   luaL_argcheck(L, to >= 1 && to <= lua_rawlen(L, -1), 2, "position out of bounds");
-  return (lua_pop(L, 1), move_buffer(luaL_checkinteger(L, 1), luaL_checkinteger(L, 2), true), 0);
+  return (lua_pop(L, 1), move_buffer(L, lua_tointeger(L, 1), lua_tointeger(L, 2), true), 0);
 }
 
 /** `_G.quit()` Lua function. */
@@ -1499,7 +1498,7 @@ static int reset(lua_State *L) {
   lua_pushdoc(L, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(L, "buffer");
   lua_pushnil(L), lua_setglobal(L, "arg");
   run_file(L, "init.lua"), emit(L, "initialized", -1);
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_arg"), lua_setglobal(L, "arg");
+  lua_getfield(L, LUA_REGISTRYINDEX, ARG), lua_setglobal(L, "arg");
   return (emit(L, "reset_after", LUA_TTABLE, persist_ref, -1), 0);
 }
 
@@ -1569,9 +1568,9 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
   if (!reinit) {
     lua_newtable(L);
     for (int i = 0; i < argc; i++) lua_pushstring(L, argv[i]), lua_rawseti(L, -2, i);
-    lua_setfield(L, LUA_REGISTRYINDEX, "ta_arg");
-    lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, "ta_buffers");
-    lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, "ta_views");
+    lua_setfield(L, LUA_REGISTRYINDEX, ARG);
+    lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, BUFFERS);
+    lua_newtable(L), lua_setfield(L, LUA_REGISTRYINDEX, VIEWS);
   } else { // clear package.loaded and _G
     lua_getfield(L, LUA_REGISTRYINDEX, LUA_LOADED_TABLE);
     while (lua_pushnil(L), lua_next(L, -2))
@@ -1601,7 +1600,7 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
     lua_pushcfunction(L, focus_command_entry), lua_setfield(L, -2, "focus");
     set_metatable(L, -1, "ta_buffer", buffer_index, buffer_newindex);
   } else
-    lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_rawgeti(L, -1, 0),
+    lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawgeti(L, -1, 0),
       lua_replace(L, -2); // _BUFFERS[0] == command_entry
   lua_setfield(L, -2, "command_entry");
   lua_pushcfunction(L, dialog), lua_setfield(L, -2, "dialog");
@@ -1620,9 +1619,9 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
   lua_getglobal(L, "string"), lua_pushcfunction(L, iconv_lua), lua_setfield(L, -2, "iconv"),
     lua_pop(L, 1);
 
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_arg"), lua_setglobal(L, "arg");
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_setglobal(L, "_BUFFERS");
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_views"), lua_setglobal(L, "_VIEWS");
+  lua_getfield(L, LUA_REGISTRYINDEX, ARG), lua_setglobal(L, "arg");
+  lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_setglobal(L, "_BUFFERS");
+  lua_getfield(L, LUA_REGISTRYINDEX, VIEWS), lua_setglobal(L, "_VIEWS");
   lua_pushstring(L, textadept_home), lua_setglobal(L, "_HOME");
   if (platform) lua_pushboolean(L, true), lua_setglobal(L, platform);
 #if CURSES
@@ -1678,20 +1677,18 @@ static bool window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
  * @see add_view
  */
 static void remove_view(lua_State *L, Scintilla *view) {
-  lua_newtable(L);
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_views");
-  for (size_t i = 1; i <= lua_rawlen(L, -1); i++) {
-    if (view != (lua_rawgeti(L, -1, i), lua_toview(L, -1))) {
-      // t[widget_pointer] = view, t[#t + 1] = view, t[view] = #t
-      lua_getfield(L, -1, "widget_pointer"), lua_pushvalue(L, -2), lua_settable(L, -5);
-      lua_pushvalue(L, -1), lua_rawseti(L, -4, lua_rawlen(L, -4) + 1);
-      lua_pushinteger(L, lua_rawlen(L, -3)), lua_settable(L, -4);
-    } else
-      lua_pop(L, 1); // view
-  }
+  lua_getfield(L, LUA_REGISTRYINDEX, VIEWS);
+  for (size_t i = 1; i <= lua_rawlen(L, -1); lua_pop(L, 1), i++)
+    if (view == (lua_rawgeti(L, -1, i), lua_toview(L, -1))) {
+      lua_pushnil(L), lua_rawset(L, -3); // t[view] = nil
+      lua_pushlightuserdata(L, view), lua_pushnil(L), lua_rawset(L, -3); // t[widget_pointer] = nil
+      lua_getglobal(L, "table"), lua_getfield(L, -1, "remove"), lua_replace(L, -2),
+        lua_pushvalue(L, -2), lua_pushinteger(L, i), lua_call(L, 2, 0); // table.remove(t, i)
+      for (int i = 1; i <= lua_rawlen(L, -1); i++)
+        lua_rawgeti(L, -1, i), lua_pushinteger(L, i), lua_rawset(L, -3); // t[view] = i
+      break;
+    }
   lua_pop(L, 1); // views
-  lua_pushvalue(L, -1), lua_setfield(L, LUA_REGISTRYINDEX, "ta_views");
-  lua_setglobal(L, "_VIEWS");
 }
 
 /**
@@ -1822,8 +1819,8 @@ static bool unsplit_view(Scintilla *view) {
 static void close_lua(lua_State *L) {
   closing = true;
   while (unsplit_view(focused_view)) {}
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
-  for (size_t i = 1; i <= lua_rawlen(L, -1); lua_pop(L, 1), i++)
+  lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS);
+  for (int i = lua_rawlen(L, -1); i > 0; lua_pop(L, 1), i--)
     lua_rawgeti(L, -1, i), delete_buffer(lua_todoc(L, -1)); // popped on loop
   lua_pop(L, 1); // buffers
   scintilla_delete(focused_view), scintilla_delete(dummy_view);
@@ -1885,10 +1882,10 @@ static void tab_changed(GtkNotebook *_, GtkWidget *__, int tab_num, void *L) {
 
 /** Signal for reordering tabs. */
 static void tab_reordered(GtkNotebook *_, GtkWidget *tab, int to, void *L) {
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers");
+  lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS);
   for (size_t i = 1; i <= lua_rawlen(L, -1); lua_pop(L, 2), i++)
     if (tab == (lua_rawgeti(L, -1, i), lua_getfield(L, -1, "tab_pointer"), lua_touserdata(L, -1))) {
-      lua_pop(L, 3), move_buffer(i, to + 1, false);
+      lua_pop(L, 3), move_buffer(lua, i, to + 1, false);
       break;
     }
 }
@@ -1967,7 +1964,7 @@ static int goto_doc_lua(lua_State *L) {
   Scintilla *view = luaL_checkview(L, 1), *prev_view = focused_view;
   bool relative = lua_isnumber(L, 2);
   if (!relative) {
-    lua_getfield(L, LUA_REGISTRYINDEX, "ta_buffers"), lua_pushvalue(L, 2), lua_gettable(L, -2),
+    lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_pushvalue(L, 2), lua_gettable(L, -2),
       lua_replace(L, 2);
     luaL_argcheck(L, lua_isnumber(L, 2), 2, "Buffer or relative index expected");
   }
@@ -2152,7 +2149,7 @@ static int view_newindex(lua_State *L) {
  * @param view The Scintilla view to add.
  */
 static void add_view(lua_State *L, Scintilla *view) {
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_views");
+  lua_getfield(L, LUA_REGISTRYINDEX, VIEWS);
   lua_newtable(L);
   lua_pushlightuserdata(L, view), lua_setfield(L, -2, "widget_pointer");
   lua_pushcfunction(L, goto_doc_lua), lua_setfield(L, -2, "goto_buffer");
@@ -2160,9 +2157,9 @@ static void add_view(lua_State *L, Scintilla *view) {
   lua_pushcfunction(L, unsplit_view_lua), lua_setfield(L, -2, "unsplit");
   set_metatable(L, -1, "ta_view", view_index, view_newindex);
   // t[widget_pointer] = view, t[#t + 1] = view, t[view] = #t
-  lua_getfield(L, -1, "widget_pointer"), lua_pushvalue(L, -2), lua_settable(L, -4);
+  lua_getfield(L, -1, "widget_pointer"), lua_pushvalue(L, -2), lua_rawset(L, -4);
   lua_pushvalue(L, -1), lua_rawseti(L, -3, lua_rawlen(L, -3) + 1);
-  lua_pushinteger(L, lua_rawlen(L, -2)), lua_settable(L, -3);
+  lua_pushinteger(L, lua_rawlen(L, -2)), lua_rawset(L, -3);
   lua_pop(L, 1); // views
 }
 
