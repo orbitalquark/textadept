@@ -134,6 +134,14 @@ local view
 -- The functions below are Lua C functions.
 
 ---
+-- Moves the buffer at index *from* to index *to*, shifting other buffers as necessary.
+-- @param from Index of the buffer to move.
+-- @param to Index to move the buffer to.
+-- @class function
+-- @name move_buffer
+local move_buffer
+
+---
 -- Emits a `QUIT` event, and unless any handler returns `false`, quits Textadept.
 -- @see events.QUIT
 -- @class function
