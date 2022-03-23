@@ -2473,7 +2473,21 @@ int main(int argc, char **argv) {
 #if GTK
   gtk_init(&argc, &argv);
 #elif CURSES
-  ta_tk = termkey_new(0, 0);
+  int termkey_flags = 0;
+  for (int i = 0; i < argc; i++) {
+    if (strcmp("-p", argv[i]) == 0 || strcmp("--preserve", argv[i]) == 0) {
+      termkey_flags |= TERMKEY_FLAG_FLOWCONTROL;
+
+      // Remove -p/--preserve from the argument list so it doesn't get interpreted as a session
+      // name.
+      memmove(argv + i, argv + i + 1, (argc - 1 - i) * sizeof(*argv));
+      argc--;
+
+      break;
+    }
+  }
+
+  ta_tk = termkey_new(0, termkey_flags);
   setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
 #if NCURSES_REENTRANT
