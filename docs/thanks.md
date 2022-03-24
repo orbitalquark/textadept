@@ -25,6 +25,7 @@ confidential. You may also contact me for private contract work related to Texta
 * Alex Bepple
 * Ana Balan
 * Anton Verbitski
+* Benjamin Barenblat
 * Bill Meahan
 * Brian Schott
 * Callum Wilson
