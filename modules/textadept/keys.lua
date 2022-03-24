@@ -17,14 +17,14 @@ local M = {}
 -- Ctrl+O | ⌘O | ^O | Open file
 -- Ctrl+Alt+O | ^⌘O | M-^O | Open recent file...
 -- Ctrl+Shift+O | ⌘⇧O | M-O | Reload file
--- Ctrl+S | ⌘S | ^S | Save file
+-- Ctrl+S | ⌘S | ^S<br/>M-S^(*) | Save file
 -- Ctrl+Shift+S | ⌘⇧S | M-^S | Save file as..
 -- None | None | None | Save all files
 -- Ctrl+W | ⌘W | ^W | Close file
 -- Ctrl+Shift+W | ⌘⇧W | M-^W | Close all files
 -- None | None | None | Load session...
 -- None | None | None | Save session...
--- Ctrl+Q | ⌘Q | ^Q | Quit
+-- Ctrl+Q | ⌘Q | ^Q<br/>M-Q^(*) | Quit
 -- **Edit**| | |
 -- Ctrl+Z<br/>Alt+Bksp | ⌘Z | ^Z^(†)<br/>M-Z | Undo
 -- Ctrl+Y<br/>Ctrl+Shift+Z | ⌘⇧Z | ^Y<br/>M-S-Z | Redo
@@ -214,6 +214,9 @@ local M = {}
 -- N/A | N/A | F3 | Toggle "Regex"
 -- N/A | N/A | F4 | Toggle "Find in Files"
 --
+-- *: For use when the `-p` or `--preserve` command line option is given to the non-Windows
+-- terminal version, since ^S and ^Q are flow control sequences.
+--
 -- †: Some terminals interpret ^Z as suspend; see FAQ for workaround.
 --
 -- ‡: Ctrl+Enter in Windows terminal version.
@@ -262,7 +265,7 @@ module('textadept.keys')]]
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~  l~            ~
 -- cm:   cd  g~~ k ~   q       yz
--- m:          e          J            qQ  sS    vVw   yY  _          +
+-- m:          e          J             Q   S    vVw   yY  _          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --
 -- c = 'ctrl' (Control ^)
@@ -289,14 +292,14 @@ local bindings = {
   [io.open_file] = {'ctrl+o', 'cmd+o', 'ctrl+o'},
   [io.open_recent_file] = {'ctrl+alt+o', 'ctrl+cmd+o', 'ctrl+alt+o'},
   [buffer.reload] = {'ctrl+O', 'cmd+O', 'meta+o'},
-  [buffer.save] = {'ctrl+s', 'cmd+s', 'ctrl+s'},
+  [buffer.save] = {'ctrl+s', 'cmd+s', {'ctrl+s', 'meta+s'}},
   [buffer.save_as] = {'ctrl+S', 'cmd+S', 'ctrl+meta+s'},
   -- TODO: io.save_all_files
   [buffer.close] = {'ctrl+w', 'cmd+w', 'ctrl+w'},
   [io.close_all_buffers] = {'ctrl+W', 'cmd+W', 'ctrl+meta+w'},
   -- TODO: textadept.sessions.load
   -- TODO: textadept.sessions.save
-  [quit] = {'ctrl+q', 'cmd+q', 'ctrl+q'},
+  [quit] = {'ctrl+q', 'cmd+q', {'ctrl+q', 'meta+q'}},
 
   -- Edit.
   [buffer.undo] = {'ctrl+z', 'cmd+z', {'ctrl+z', 'meta+z'}},

@@ -1,9 +1,10 @@
 * Added Windows PDCurses driver and integrated it with normal libtermkey functionality.
-* Prevent ^C from interrupting.
+* Prevent ^C from interrupting because TERMKEY_FLAG_CTRLC does not work.
+* Added TERMKEY_FLAG_FLOWCONTROL for enabling flow control.
 
 diff -r e0a74e8d32b3 driver-win-pdcurses.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/driver-win-pdcurses.c	Thu Mar 24 11:15:45 2022 -0400
++++ b/driver-win-pdcurses.c	Thu Mar 24 11:45:45 2022 -0400
 @@ -0,0 +1,108 @@
 +// Copyright 2014-2022 Mitchell. See LICENSE.
 +
@@ -115,7 +116,7 @@ diff -r e0a74e8d32b3 driver-win-pdcurses.c
 +};
 diff -r e0a74e8d32b3 termkey-internal.h
 --- a/termkey-internal.h	Thu Mar 24 10:42:57 2022 -0400
-+++ b/termkey-internal.h	Thu Mar 24 11:15:45 2022 -0400
++++ b/termkey-internal.h	Thu Mar 24 11:45:45 2022 -0400
 @@ -44,7 +44,7 @@
  };
  
@@ -139,7 +140,7 @@ diff -r e0a74e8d32b3 termkey-internal.h
  #endif
 diff -r e0a74e8d32b3 termkey.c
 --- a/termkey.c	Thu Mar 24 10:42:57 2022 -0400
-+++ b/termkey.c	Thu Mar 24 11:15:45 2022 -0400
++++ b/termkey.c	Thu Mar 24 11:45:45 2022 -0400
 @@ -12,8 +12,8 @@
  
  #include <stdio.h>
@@ -191,19 +192,30 @@ diff -r e0a74e8d32b3 termkey.c
  
    termkey_set_flags(tk, flags);
  
-@@ -514,9 +518,9 @@
+@@ -501,7 +505,9 @@
+       tk->restore_termios = termios;
+       tk->restore_termios_valid = 1;
+ 
+-      termios.c_iflag &= ~(IXON|INLCR|ICRNL);
++      termios.c_iflag &= ~(INLCR|ICRNL);
++      if (!(tk->flags & TERMKEY_FLAG_FLOWCONTROL))
++        termios.c_iflag &= ~IXON;
+       termios.c_lflag &= ~(ICANON|ECHO
+ #ifdef IEXTEN
+           | IEXTEN
+@@ -514,9 +520,9 @@
          /* want no signal keys at all, so just disable ISIG */
          termios.c_lflag &= ~ISIG;
        else {
 -        /* Disable Ctrl-\==VQUIT and Ctrl-D==VSUSP but leave Ctrl-C as SIGINT */
-+        /* Disable Ctrl-\==VQUIT and Ctrl-C==VINTR but leave Ctrl-Z as SIGTSTP */
++        /* Disable Ctrl-\==VQUIT and Ctrl-C==VINTR */
          termios.c_cc[VQUIT] = _POSIX_VDISABLE;
 -        termios.c_cc[VSUSP] = _POSIX_VDISABLE;
 +        termios.c_cc[VINTR] = _POSIX_VDISABLE;
          /* Some OSes have Ctrl-Y==VDSUSP */
  #ifdef VDSUSP
          termios.c_cc[VDSUSP] = _POSIX_VDISABLE;
-@@ -570,11 +574,18 @@
+@@ -570,11 +576,18 @@
    return tk->is_started;
  }
  
@@ -223,7 +235,7 @@ diff -r e0a74e8d32b3 termkey.c
  int termkey_get_flags(TermKey *tk)
  {
    return tk->flags;
-@@ -1061,10 +1072,9 @@
+@@ -1061,10 +1074,9 @@
    return ret;
  }
  
@@ -235,7 +247,7 @@ diff -r e0a74e8d32b3 termkey.c
      errno = EBADF;
      return TERMKEY_RES_ERROR;
    }
-@@ -1078,6 +1088,7 @@
+@@ -1078,6 +1090,7 @@
        case TERMKEY_RES_ERROR:
          return ret;
  
@@ -243,7 +255,7 @@ diff -r e0a74e8d32b3 termkey.c
        case TERMKEY_RES_NONE:
          ret = termkey_advisereadable(tk);
          if(ret == TERMKEY_RES_ERROR)
-@@ -1116,18 +1127,18 @@
+@@ -1116,18 +1129,18 @@
              return termkey_getkey_force(tk, key);
          }
          break;
@@ -266,7 +278,7 @@ diff -r e0a74e8d32b3 termkey.c
    }
 diff -r e0a74e8d32b3 termkey.h
 --- a/termkey.h	Thu Mar 24 10:42:57 2022 -0400
-+++ b/termkey.h	Thu Mar 24 11:15:45 2022 -0400
++++ b/termkey.h	Thu Mar 24 11:45:45 2022 -0400
 @@ -14,6 +14,14 @@
  #define TERMKEY_CHECK_VERSION \
          termkey_check_version(TERMKEY_VERSION_MAJOR, TERMKEY_VERSION_MINOR)
@@ -282,7 +294,17 @@ diff -r e0a74e8d32b3 termkey.h
  typedef enum {
    TERMKEY_SYM_UNKNOWN = -1,
    TERMKEY_SYM_NONE = 0,
-@@ -164,7 +172,7 @@
+@@ -154,7 +162,8 @@
+   TERMKEY_FLAG_SPACESYMBOL = 1 << 5, /* Sets TERMKEY_CANON_SPACESYMBOL */
+   TERMKEY_FLAG_CTRLC       = 1 << 6, /* Allow Ctrl-C to be read as normal, disabling SIGINT */
+   TERMKEY_FLAG_EINTR       = 1 << 7, /* Return ERROR on signal (EINTR) rather than retry */
+-  TERMKEY_FLAG_NOSTART     = 1 << 8  /* Do not call termkey_start() in constructor */
++  TERMKEY_FLAG_NOSTART     = 1 << 8,  /* Do not call termkey_start() in constructor */
++  TERMKEY_FLAG_FLOWCONTROL = 1 << 9 /* Do not capture Ctrl-S and Ctrl-Q */
+ };
+ 
+ enum {
+@@ -164,7 +173,7 @@
  
  void termkey_check_version(int major, int minor);
  
@@ -291,7 +313,7 @@ diff -r e0a74e8d32b3 termkey.h
  TermKey *termkey_new_abstract(const char *term, int flags);
  void     termkey_free(TermKey *tk);
  void     termkey_destroy(TermKey *tk);
-@@ -177,7 +185,10 @@
+@@ -177,7 +186,10 @@
  int termkey_stop(TermKey *tk);
  int termkey_is_started(TermKey *tk);
  

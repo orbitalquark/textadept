@@ -115,6 +115,7 @@ if not mode then assert(io.open(user_init, 'w'), 'unable to create "%s"', user_i
 -- Placeholders.
 M.register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
 M.register('-f', '--force', 0, function() end, 'Forces unique instance')
+M.register('-p', '--preserve', 0, function() end, 'Preserve ^Q (XON) and ^S (XOFF) flow control')
 
 -- Run unit tests.
 -- Note: have them run after the last `events.INITIALIZED` handler so everything is completely

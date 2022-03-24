@@ -247,11 +247,13 @@ Option | Arguments | Description
 `-h`, `--help` | 0 | Shows this<sup>a</sup>
 `-l`, `--line` | 1 | Jumps to a line in the previously opened file
 `-n`, `--nosession` | 0 | No state saving/restoring functionality
+`-p`, `--preserve` | 0 | Preserve ^Q and ^S flow control sequences<sup>b</sup>
 `-s`, `--session` | 1 | Loads the given session on startup
 `-u`, `--userhome` | 1 | Sets alternate user data directory
 `-v`, `--version` | 0 | Prints version and copyright info<sup>a</sup>
 
-<sup>a</sup>The terminal version does not support these.
+<sup>a</sup>The terminal version does not support these.<br/>
+<sup>b</sup>Non-Windows terminal version only.
 
 You can add your own command line arguments using [`args.register()`][]. For example, in your
 *~/.textadept/init.lua*:
