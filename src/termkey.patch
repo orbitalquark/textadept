@@ -1,12 +1,9 @@
-libtermkey changes:
+* Added Windows PDCurses driver and integrated it with normal libtermkey functionality.
+* Prevent ^C from interrupting.
 
-Added Windows PDCurses driver.
-
-Prevent ^C from interrupting.
-
-diff -r 49c8684413c0 driver-win-pdcurses.c
+diff -r e0a74e8d32b3 driver-win-pdcurses.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
-+++ b/driver-win-pdcurses.c	Tue Dec 23 13:31:50 2014 -0500
++++ b/driver-win-pdcurses.c	Thu Mar 24 11:15:45 2022 -0400
 @@ -0,0 +1,108 @@
 +// Copyright 2014-2022 Mitchell. See LICENSE.
 +
@@ -116,20 +113,10 @@ diff -r 49c8684413c0 driver-win-pdcurses.c
 +  .free_driver = free_driver,
 +  .peekkey = peekkey,
 +};
-diff -r 49c8684413c0 termkey-internal.h
---- a/termkey-internal.h	Tue Dec 23 10:36:54 2014 -0500
-+++ b/termkey-internal.h	Tue Dec 23 13:31:50 2014 -0500
-@@ -4,7 +4,9 @@
- #include "termkey.h"
- 
- #include <stdint.h>
-+#if !_WIN32
- #include <termios.h>
-+#endif
- 
- struct TermKeyDriver
- {
-@@ -31,7 +33,7 @@
+diff -r e0a74e8d32b3 termkey-internal.h
+--- a/termkey-internal.h	Thu Mar 24 10:42:57 2022 -0400
++++ b/termkey-internal.h	Thu Mar 24 11:15:45 2022 -0400
+@@ -44,7 +44,7 @@
  };
  
  struct TermKey {
@@ -138,17 +125,7 @@ diff -r 49c8684413c0 termkey-internal.h
    int    flags;
    int    canonflags;
    unsigned char *buffer;
-@@ -41,7 +43,9 @@
-   size_t hightide; /* Position beyond buffstart at which peekkey() should next start
-                     * normally 0, but see also termkey_interpret_csi */
- 
-+#if !_WIN32
-   struct termios restore_termios;
-+#endif
-   char restore_termios_valid;
- 
-   int waittime; // msec
-@@ -88,7 +92,11 @@
+@@ -106,7 +106,11 @@
    key->code.mouse[3] = (line & 0xf00) >> 8 | (col & 0x300) >> 4;
  }
  
@@ -160,25 +137,21 @@ diff -r 49c8684413c0 termkey-internal.h
 +#endif
  
  #endif
-diff -r 49c8684413c0 termkey.c
---- a/termkey.c	Tue Dec 23 10:36:54 2014 -0500
-+++ b/termkey.c	Tue Dec 23 13:31:50 2014 -0500
-@@ -3,8 +3,14 @@
- 
- #include <ctype.h>
- #include <errno.h>
-+#if !_WIN32
- #include <poll.h>
- #include <unistd.h>
-+#else
-+#define ssize_t int
-+// TODO: _stricmp causes a hang
-+#define strcasecmp strcmp
-+#endif
- #include <string.h>
+diff -r e0a74e8d32b3 termkey.c
+--- a/termkey.c	Thu Mar 24 10:42:57 2022 -0400
++++ b/termkey.c	Thu Mar 24 11:15:45 2022 -0400
+@@ -12,8 +12,8 @@
  
  #include <stdio.h>
-@@ -27,8 +31,12 @@
+ 
+-#ifdef _MSC_VER
+-# define strcaseeq(a,b) (_stricmp(a,b) == 0)
++#ifdef _WIN32
++# define strcaseeq(a,b) (strcmp(a,b) == 0) // TODO: _stricmp causes a hang
+ #else
+ # define strcaseeq(a,b) (strcasecmp(a,b) == 0)
+ #endif
+@@ -36,8 +36,12 @@
  }
  
  static struct TermKeyDriver *drivers[] = {
@@ -191,7 +164,7 @@ diff -r 49c8684413c0 termkey.c
    NULL,
  };
  
-@@ -263,7 +271,7 @@
+@@ -281,7 +285,7 @@
  
    /* Default all the object fields but don't allocate anything */
  
@@ -200,7 +173,7 @@ diff -r 49c8684413c0 termkey.c
    tk->flags      = 0;
    tk->canonflags = 0;
  
-@@ -373,7 +381,7 @@
+@@ -395,7 +399,7 @@
    return 0;
  }
  
@@ -209,7 +182,7 @@ diff -r 49c8684413c0 termkey.c
  {
    TermKey *tk = termkey_alloc();
    if(!tk)
-@@ -414,7 +422,7 @@
+@@ -440,7 +444,7 @@
    if(!tk)
      return NULL;
  
@@ -218,15 +191,7 @@ diff -r 49c8684413c0 termkey.c
  
    termkey_set_flags(tk, flags);
  
-@@ -457,6 +465,7 @@
-   if(tk->is_started)
-     return 1;
- 
-+#if !_WIN32
-   if(tk->fd != -1 && !(tk->flags & TERMKEY_FLAG_NOTERMIOS)) {
-     struct termios termios;
-     if(tcgetattr(tk->fd, &termios) == 0) {
-@@ -472,9 +481,9 @@
+@@ -514,9 +518,9 @@
          /* want no signal keys at all, so just disable ISIG */
          termios.c_lflag &= ~ISIG;
        else {
@@ -238,26 +203,7 @@ diff -r 49c8684413c0 termkey.c
          /* Some OSes have Ctrl-Y==VDSUSP */
  #ifdef VDSUSP
          termios.c_cc[VDSUSP] = _POSIX_VDISABLE;
-@@ -487,6 +496,7 @@
-       tcsetattr(tk->fd, TCSANOW, &termios);
-     }
-   }
-+#endif
- 
-   struct TermKeyDriverNode *p;
-   for(p = tk->drivers; p; p = p->next)
-@@ -512,8 +522,10 @@
-     if(p->driver->stop_driver)
-       (*p->driver->stop_driver)(tk, p->info);
- 
-+#if !_WIN32
-   if(tk->restore_termios_valid)
-     tcsetattr(tk->fd, TCSANOW, &tk->restore_termios);
-+#endif
- 
-   tk->is_started = 0;
- 
-@@ -525,11 +537,18 @@
+@@ -570,11 +574,18 @@
    return tk->is_started;
  }
  
@@ -277,8 +223,11 @@ diff -r 49c8684413c0 termkey.c
  int termkey_get_flags(TermKey *tk)
  {
    return tk->flags;
-@@ -1012,7 +1031,7 @@
+@@ -1061,10 +1072,9 @@
+   return ret;
+ }
  
+-#ifndef _WIN32
  TermKeyResult termkey_waitkey(TermKey *tk, TermKeyKey *key)
  {
 -  if(tk->fd == -1) {
@@ -286,7 +235,7 @@ diff -r 49c8684413c0 termkey.c
      errno = EBADF;
      return TERMKEY_RES_ERROR;
    }
-@@ -1026,6 +1045,7 @@
+@@ -1078,6 +1088,7 @@
        case TERMKEY_RES_ERROR:
          return ret;
  
@@ -294,7 +243,7 @@ diff -r 49c8684413c0 termkey.c
        case TERMKEY_RES_NONE:
          ret = termkey_advisereadable(tk);
          if(ret == TERMKEY_RES_ERROR)
-@@ -1064,6 +1084,7 @@
+@@ -1116,18 +1127,18 @@
              return termkey_getkey_force(tk, key);
          }
          break;
@@ -302,27 +251,22 @@ diff -r 49c8684413c0 termkey.c
      }
    }
  
-@@ -1072,6 +1093,7 @@
+   /* UNREACHABLE */
+ }
+-#endif
  
  TermKeyResult termkey_advisereadable(TermKey *tk)
  {
-+#if !_WIN32
    ssize_t len;
  
-   if(tk->fd == -1) {
-@@ -1109,6 +1131,9 @@
-     tk->buffcount += len;
-     return TERMKEY_RES_AGAIN;
+-  if(tk->fd == -1) {
++  if(tk->fd == FD_NONE) {
+     errno = EBADF;
+     return TERMKEY_RES_ERROR;
    }
-+#else
-+  return TERMKEY_RES_NONE;
-+#endif
- }
- 
- size_t termkey_push_bytes(TermKey *tk, const char *bytes, size_t len)
-diff -r 49c8684413c0 termkey.h
---- a/termkey.h	Tue Dec 23 10:36:54 2014 -0500
-+++ b/termkey.h	Tue Dec 23 13:31:50 2014 -0500
+diff -r e0a74e8d32b3 termkey.h
+--- a/termkey.h	Thu Mar 24 10:42:57 2022 -0400
++++ b/termkey.h	Thu Mar 24 11:15:45 2022 -0400
 @@ -14,6 +14,14 @@
  #define TERMKEY_CHECK_VERSION \
          termkey_check_version(TERMKEY_VERSION_MAJOR, TERMKEY_VERSION_MINOR)
@@ -338,7 +282,7 @@ diff -r 49c8684413c0 termkey.h
  typedef enum {
    TERMKEY_SYM_UNKNOWN = -1,
    TERMKEY_SYM_NONE = 0,
-@@ -161,7 +169,7 @@
+@@ -164,7 +172,7 @@
  
  void termkey_check_version(int major, int minor);
  
@@ -347,7 +291,7 @@ diff -r 49c8684413c0 termkey.h
  TermKey *termkey_new_abstract(const char *term, int flags);
  void     termkey_free(TermKey *tk);
  void     termkey_destroy(TermKey *tk);
-@@ -170,7 +178,10 @@
+@@ -177,7 +185,10 @@
  int termkey_stop(TermKey *tk);
  int termkey_is_started(TermKey *tk);
  
