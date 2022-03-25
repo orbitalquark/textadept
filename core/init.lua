@@ -30,11 +30,16 @@ if CURSES and WIN32 then
     end
     if type(args[i]) == 'table' then i = i + 1 end -- env (ignore)
     local p = io.popen(assert_type(cmd, 'string', 1) .. ' 2>&1')
-    if type(args[i]) == 'function' then args[i](p:read('a')) end -- stdout_cb
+    local output = p:read('a'):gsub('\r?\n', '\r\n') -- ensure \r\n
+    if type(args[i]) == 'function' then args[i](output) end -- stdout_cb
     local status = select(3, p:close())
     if type(args[i + 2]) == 'function' then args[i + 2](status) end -- exit_cb
     lfs.chdir(cwd) -- restore
-    return p
+    local noop = function() end
+    return {
+      read = function() return output end, status = function() return 'terminated' end,
+      wait = function() return status end, write = noop, close = noop, kill = noop
+    }
   end
 end
 

@@ -1141,11 +1141,13 @@ function test_spawn_cwd()
   local pwd = not WIN32 and 'pwd' or 'cd'
   local tmp = not WIN32 and (not OSX and '/tmp' or '/private/tmp') or os.getenv('TEMP')
   local newline = not WIN32 and '\n' or '\r\n'
-  assert_equal(os.spawn(pwd):read('a'), lfs.currentdir() .. newline)
+  local cwd = not (WIN32 and CURSES) and lfs.currentdir() or 'C:\\Windows'
+  assert_equal(os.spawn(pwd):read('a'), cwd .. newline)
   assert_equal(os.spawn(pwd, tmp):read('a'), tmp .. newline)
 end
 
 function test_spawn_env()
+  if WIN32 and CURSES then return end -- not supported
   local env_cmd = not WIN32 and 'env' or 'set'
   assert(not os.spawn(env_cmd):read('a'):find('^%s*$'), 'empty env')
   assert(os.spawn(env_cmd, {FOO = 'bar'}):read('a'):find('FOO=bar\r?\n'), 'env not set')
@@ -1185,7 +1187,7 @@ function test_spawn_wait()
   local exit_status = -1
   local p = os.spawn(not WIN32 and 'sleep 0.1' or 'ping 127.0.0.1 -n 2', nil, nil,
     function(status) exit_status = status end)
-  assert_equal(p:status(), "running")
+  if not (WIN32 and CURSES) then assert_equal(p:status(), "running") end
   assert_equal(p:wait(), 0)
   assert_equal(exit_status, 0)
   assert_equal(p:status(), "terminated")
@@ -1194,16 +1196,11 @@ function test_spawn_wait()
 end
 
 function test_spawn_kill()
+  if WIN32 and CURSES then return end -- not supported
   local p = os.spawn(not WIN32 and 'sleep 1' or 'ping 127.0.0.1 -n 2')
   p:kill()
   assert(p:wait() ~= 0)
   assert_equal(p:status(), "terminated")
-end
-
-if WIN32 and CURSES then
-  function test_spawn()
-    -- TODO:
-  end
 end
 
 function test_buffer_text_range()
@@ -2201,8 +2198,12 @@ function test_editing_filter_through()
     assert_equal(buffer:get_text(), '1|foo\n1|foo\n2|bar\n3|baz\n4|quux\n5|foobar\n')
   else
     buffer:set_text('3|baz\r\n1|foo\r\n5|foobar\r\n1|foo\r\n4|quux\r\n2|bar\r\n')
-    textadept.editing.filter_through('sort')
-    assert_equal(buffer:get_text(), '1|foo\r\n1|foo\r\n2|bar\r\n3|baz\r\n4|quux\r\n5|foobar\r\n')
+    if not CURSES then
+      textadept.editing.filter_through('sort')
+      assert_equal(buffer:get_text(), '1|foo\r\n1|foo\r\n2|bar\r\n3|baz\r\n4|quux\r\n5|foobar\r\n')
+    else
+      assert_raises(function() textadept.editing.filter_through('sort') end, 'not implemented')
+    end
     goto done -- it works; remaining commands are predominantly Unix ones
   end
   buffer:undo()
@@ -3113,6 +3114,7 @@ function test_history_print_buffer()
 end
 
 function test_history_undo_full_buffer_change()
+  if WIN32 and CURSES then return end -- filter_through not implemented
   buffer.new()
   local lines = {}
   for i = 99, 1, -1 do lines[#lines + 1] = tostring(i) end
@@ -3236,10 +3238,12 @@ function test_menu_menu_functions()
   textadept.menu.menubar[_L['Edit']][_L['Complete Word']][2]()
   assert_equal(buffer:get_text(), 'foo foo')
   buffer:set_text(table.concat({'2', '1', '3', ''}, newline()))
-  textadept.menu.menubar[_L['Edit']][_L['Filter Through']][2]()
-  ui.command_entry:set_text('sort')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
-  assert_equal(buffer:get_text(), table.concat({'1', '2', '3', ''}, newline()))
+  if not (WIN32 and CURSES) then
+    textadept.menu.menubar[_L['Edit']][_L['Filter Through']][2]()
+    ui.command_entry:set_text('sort')
+    events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+    assert_equal(buffer:get_text(), table.concat({'1', '2', '3', ''}, newline()))
+  end
   buffer:set_text('foo')
   buffer:line_end()
   textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Enclose as XML Tags']][2]()
@@ -3993,6 +3997,7 @@ function test_ui_size()
 end
 
 function test_ui_maximized()
+  if CURSES then return end -- not applicable
   local maximized = ui.maximized
   ui.maximized = not maximized
   local not_maximized = ui.maximized

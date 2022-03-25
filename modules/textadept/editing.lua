@@ -603,8 +603,8 @@ end
 --   contain pipes.
 -- @name filter_through
 function M.filter_through(command)
-  assert(not (WIN32 and CURSES), 'not implemented in this environment')
   assert_type(command, 'string', 1)
+  assert(not (WIN32 and CURSES), 'not implemented in this environment')
   local s, e, top_line = buffer.selection_start, buffer.selection_end, view.first_visible_line
   if s == e then
     -- Use the whole buffer as input.
