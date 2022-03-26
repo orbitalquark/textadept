@@ -7,6 +7,7 @@ Scintilla changes:
 * Fix crash due to re-entrant painting. This has been committed upstream.
 * Fixed pixmap leak. This has been committed upstream.
 * Shift+Mouse Wheel is horizontal scroll. This has been committed upstream.
+* Experimentally enable threading on Windows and macOS.
 
 diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
 --- a/gtk/ScintillaGTK.cxx	Fri Apr 09 15:11:26 2021 +1000
@@ -164,3 +165,16 @@ diff -r c37b11edab22 gtk/ScintillaGTK.cxx
  
  			// Text font size zoom
  		} else if (event->state & GDK_CONTROL_MASK) {
+--- a/gtk/PlatGTK.cxx	Sat Feb 05 09:08:28 2022 +1100
++++ b/gtk/PlatGTK.cxx	Sat Mar 26 12:34:55 2022 -0400
+@@ -215,10 +215,7 @@
+ 	Supports::FractionalStrokeWidth,
+ 	Supports::TranslucentStroke,
+ 	Supports::PixelModification,
+-#if defined(G_OS_UNIX) && !defined(__APPLE__)
+-	// Pango is not thread-safe on Win32 or macOS
+ 	Supports::ThreadSafeMeasureWidths,
+-#endif
+ };
+ 
+ }
