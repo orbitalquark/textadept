@@ -1044,10 +1044,11 @@ static void remove_doc(lua_State *L, sptr_t doc) {
   lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS);
   for (size_t i = 1; i <= lua_rawlen(L, -1); lua_pop(L, 1), i++)
     if (doc == (lua_rawgeti(L, -1, i), lua_todoc(L, -1))) {
-      lua_pushnil(L), lua_rawset(L, -3); // t[buf] = nil
-      lua_pushlightuserdata(L, doc), lua_pushnil(L), lua_rawset(L, -3); // t[doc_pointer] = nil
+      // t[buf] = nil, t[doc_pointer] = nil, table.remove(t, i)
+      lua_pushnil(L), lua_rawset(L, -3);
+      lua_pushlightuserdata(L, (sptr_t *)doc), lua_pushnil(L), lua_rawset(L, -3);
       lua_getglobal(L, "table"), lua_getfield(L, -1, "remove"), lua_replace(L, -2),
-        lua_pushvalue(L, -2), lua_pushinteger(L, i), lua_call(L, 2, 0); // table.remove(t, i)
+        lua_pushvalue(L, -2), lua_pushinteger(L, i), lua_call(L, 2, 0);
       for (int i = 1; i <= lua_rawlen(L, -1); i++)
         lua_rawgeti(L, -1, i), lua_pushinteger(L, i), lua_rawset(L, -3); // t[buf] = i
 #if GTK
