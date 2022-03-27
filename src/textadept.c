@@ -537,8 +537,7 @@ static int focus_command_entry(lua_State *L) {
   if (!gtk_widget_get_visible(command_entry))
     gtk_widget_show(command_entry), gtk_widget_grab_focus(command_entry);
   else
-    SS(command_entry, SCI_CANCEL, 0, 0), gtk_widget_hide(command_entry),
-      gtk_widget_grab_focus(focused_view);
+    gtk_widget_hide(command_entry), gtk_widget_grab_focus(focused_view);
 #elif CURSES
   command_entry_active = !command_entry_active;
   if (!command_entry_active) SS(command_entry, SCI_SETFOCUS, 0, 0);
@@ -1932,6 +1931,10 @@ static void notified(Scintilla *view, int _, SCNotification *n, void *L) {
     if (n->nmhdr.code == SCN_MODIFIED &&
       (n->modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)))
       emit(L, "command_text_changed", -1);
+#if GTK
+    else if (n->nmhdr.code == SCN_FOCUSOUT) // TODO: do not emit if Esc triggered this
+      emit(L, "keypress", LUA_TNUMBER, GDK_KEY_Escape, -1);
+#endif
   } else if (view == focused_view || n->nmhdr.code == SCN_URIDROPPED) {
     if (view != focused_view) view_focused(view, L);
     emit_notification(L, n);
@@ -2266,18 +2269,10 @@ static GtkWidget *new_findbox() {
   return findbox;
 }
 
-/**
- * Signal for window or command entry focus loss.
- * Emit "Escape" key for the command entry on focus lost unless the window is losing focus or
- * the application is quitting.
- */
-static bool focus_lost(GtkWidget *widget, GdkEvent *_, void *L) {
-  if (widget == window) {
-    if (!dialog_active) emit(L, "unfocus", -1);
-    if (command_entry_active) return true; // keep focus if window losing focus
-  } else if (!closing)
-    emit(L, "keypress", LUA_TNUMBER, GDK_KEY_Escape, -1);
-  return false;
+/** Signal for window or command entry focus loss. */
+static bool focus_lost(GtkWidget *_, GdkEvent *__, void *L) {
+  if (!dialog_active) emit(L, "unfocus", -1);
+  return command_entry_active; // keep focus if the window is losing focus
 }
 #endif // if GTK
 
@@ -2348,7 +2343,6 @@ static void new_window() {
   gtk_widget_set_size_request(command_entry, 1, 1);
   g_signal_connect(command_entry, SCINTILLA_NOTIFY, G_CALLBACK(notified), lua);
   g_signal_connect(command_entry, "key-press-event", G_CALLBACK(keypress), lua);
-  g_signal_connect(command_entry, "focus-out-event", G_CALLBACK(focus_lost), lua);
   gtk_paned_add2(GTK_PANED(paned), command_entry);
   gtk_container_child_set(GTK_CONTAINER(paned), command_entry, "shrink", false, NULL);
 
