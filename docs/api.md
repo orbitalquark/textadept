@@ -6843,7 +6843,7 @@ N/A | N/A | F3 | Toggle "Regex"
 N/A | N/A | F4 | Toggle "Find in Files"
 
 *: For use when the `-p` or `--preserve` command line option is given to the non-Windows
-terminal version since ^S and ^Q are flow control sequences.
+terminal version, since ^S and ^Q are flow control sequences.
 
 †: Some terminals interpret ^Z as suspend; see FAQ for workaround.
 
