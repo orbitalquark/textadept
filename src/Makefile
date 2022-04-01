@@ -436,11 +436,11 @@ endif
 scintilla_tgz := scintilla520.tgz
 lexilla_tgz := lexilla510.tgz
 scinterm_zip := 475d8d43f3418590c28bd2fb07ee9229d1fa2d07.zip
-scintillua_zip := 4cb1464ef738a098f008d6530b776fe780b19c34.zip
+scintillua_zip := 530810c22ab92b2dbc0e0e627a5b9de3cd236475.zip
 lua_tgz := lua-5.4.4.tar.gz
 lpeg_tgz := lpeg-1.0.2.tar.gz
 lfs_zip := v1_8_0.zip
-gtdialog_zip := gtdialog_1.5.zip
+gtdialog_zip := 444af9ca8a73151dbf759e6676d1035af469f01a.zip
 cdk_tgz := cdk-5.0-20200923.tgz
 termkey_tgz := libtermkey-0.22.tar.gz
 gtkwin_zip := gtkwin-3.24.33.zip
