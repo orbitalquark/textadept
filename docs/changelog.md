@@ -7,6 +7,66 @@
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.4 alpha (01 Apr 2022)
+
+Download:
+
+* [Textadept 11.4 alpha  -- Windows][]
+* [Textadept 11.4 alpha  -- Mac OSX 10.10+][]
+* [Textadept 11.4 alpha  -- Linux][]
+* [Textadept 11.4 alpha  -- Modules][]
+
+Bugfixes:
+
+* Fixed bug in `ui.goto_view()` when specifying a preferred view.
+* Fixed busy loop in `ui.update()` on macOS when monitoring output of spawned processes.
+* Ensure preferred "lexer.trigger.ext" snippet files are used over "trigger.ext".
+* Improved Windows network directory path handling.
+* Fixed alpha color value of brace matches.
+* Fixed busy wait on spawned process exit in some cases.
+* Resize line number margin on reset.
+* Fixed search wrapping indicator not showing up in the statusbar.
+* Fixed "Find Next" for zero-width regex searches.
+* Fixed calling `view:set_theme()` from the command entry.
+* Scintilla: Fixed assertion failure with autocompletion lists when order is `ORDER_CUSTOM` or `ORDER_PERFORMSORT`.
+* Scintilla: On Wayland, fixed autocompletion window display on secondary monitor.
+* Scintilla: Fixed some scrollbar inaccuracies with annotations and wrapped lines.
+* Scintilla: Improved Chinese character alignment with roman characters.
+
+Changes:
+
+* Use [GTK][] 3 by default on all platforms.
+* Windows binaries are 64-bit now; dropped support for 32-bit Windows.
+* The minimum required version of macOS is 10.10 (Yosemite).
+* Tabs are now rearrangeable via drag and drop.
+* Makefile allows building both the GUI and terminal versions concurrently.
+* Updated test suite to run on Windows and macOS.
+* Use Free Desktop Icon Naming Specification icon names in dialogs.
+* New [Docker image][] for building with GTK 3.
+* Added [`ui.find.show_filenames_in_progressbar`][] option for hiding filenames during Find in
+Files searches.
+* Added [`move_buffer()`][] function for rearranging buffers.
+* Added support for flow control sequences in the non-Windows terminal version with `-p` and
+`--preserve` command line options.
+* Updated Fennel lexer.
+* Updated Python lexer to highlight class definitions.
+* Scintilla: Improve performance for very long lines.
+* Scintilla: Shift+Mouse Wheel scrolls horizontally.
+* Updated to [Scintilla][] 5.2.0.
+* Updated to [Lua][] 5.4.4.
+* Updated to libtermkey 0.22.
+
+[Textadept 11.4 alpha  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_alpha/textadept_11.4_alpha.win.zip
+[Textadept 11.4 alpha  -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_alpha/textadept_11.4_alpha.macOS.zip
+[Textadept 11.4 alpha  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_alpha/textadept_11.4_alpha.linux.tgz
+[Textadept 11.4 alpha  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_alpha/textadept_11.4_alpha.modules.zip
+[GTK]: https://gtk.org
+[Docker image]: manual.html#compiling-using-docker
+[`ui.find.show_filenames_in_progressbar`]: api.html#ui.find.show_filenames_in_progressbar
+[`move_buffer()`]: api.html#move_buffer
+[Scintilla]: https://scintilla.org
+[Lua]: https://lua.org
+
 ### 11.3  (01 Feb 2022)
 
 Download:
