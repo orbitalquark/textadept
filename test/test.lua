@@ -3841,6 +3841,18 @@ function test_snippets_autocomplete()
   snippets.baz = nil
 end
 
+function test_snippets_mirror_in_placeholder()
+  snippets.foo = '%1(one) %2(two(%1).three)'
+  buffer.new()
+  buffer:add_text('foo')
+  textadept.snippets.insert()
+  textadept.snippets.insert()
+  assert_equal(buffer:get_sel_text(), 'two(one).three')
+  textadept.snippets.cancel_current()
+  buffer:close(true)
+  snippets.foo = nil
+end
+
 function test_lua_autocomplete()
   buffer.new()
   buffer:set_lexer('lua')

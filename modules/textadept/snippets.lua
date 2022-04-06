@@ -263,9 +263,7 @@ function snippet.new(text, trigger)
   -- @field position This placeholder's initial position in its snapshot. This field will not
   --   update until the next snapshot is taken. Use `snippet:each_placeholder()` to determine
   --   a placeholder's current position.
-  -- @field length This placeholder's initial length in its snapshot. This field will never
-  --   update. Use `buffer:indicator_end()` in conjunction with `snippet:each_placeholder()`
-  --   to determine a placeholder's current length.
+  -- @field length This placeholder's current length.
   -- @class table
   -- @name placeholder
   local text_part, placeholder, e = patt:match(text)
@@ -373,14 +371,14 @@ function snippet:next()
   if self.index > 0 and self.start_pos < self.end_pos then
     local text = buffer:text_range(self.start_pos, self.end_pos)
     local placeholders = {}
-    for pos, ph in self:each_placeholder() do
+    for s, e, ph in self:each_placeholder() do
       -- Only the position of placeholders changes between snapshots; save it and keep all
       -- other existing properties.
       -- Note that nested placeholders will return the same placeholder id twice: once before
       -- a nested placeholder, and again after. (e.g. [foo[bar]baz] will will return the '[foo'
       -- and 'baz]' portions of the same placeholder.) Only process the first occurrence.
       if placeholders[ph.id] then goto continue end
-      placeholders[ph.id] = setmetatable({position = pos}, {
+      placeholders[ph.id] = setmetatable({position = s, length = e - s}, {
         __index = self.snapshots[self.index - 1].placeholders[ph.id]
       })
       ::continue::
@@ -390,9 +388,9 @@ function snippet:next()
   self.index = self.index < self.max_index and self.index + 1 or 0
 
   -- Find the default placeholder, which may be the first mirror.
-  local ph = select(2, self:each_placeholder(self.index, 'default')()) or
-    select(2, self:each_placeholder(self.index, 'choice')()) or
-    select(2, self:each_placeholder(self.index, 'simple')()) or
+  local ph = select(3, self:each_placeholder(self.index, 'default')()) or
+    select(3, self:each_placeholder(self.index, 'choice')()) or
+    select(3, self:each_placeholder(self.index, 'simple')()) or
     (self.index == 0 and {position = self.end_pos, length = 0})
   if not ph then
     self:next() -- try next placeholder
@@ -411,9 +409,8 @@ function snippet:next()
 
   -- Jump to the default placeholder and clear its marker.
   buffer:set_sel(ph.position, ph.position + ph.length)
-  local e = buffer:indicator_end(M.INDIC_PLACEHOLDER, ph.position)
   buffer.indicator_current = M.INDIC_PLACEHOLDER
-  buffer:indicator_clear_range(ph.position, e - ph.position)
+  buffer:indicator_clear_range(ph.position, ph.length)
   if not ph.default then buffer:replace_sel('') end -- delete filler ' '
   if ph.choice then
     local sep = buffer.auto_c_separator
@@ -426,12 +423,11 @@ function snippet:next()
   -- Add additional carets at mirrors and clear their markers.
   local text = ph.default or ''
   ::redo::
-  for pos in self:each_placeholder(self.index, 'simple') do
-    e = buffer:indicator_end(M.INDIC_PLACEHOLDER, pos)
-    buffer:indicator_clear_range(pos, e - pos)
-    buffer:set_target_range(pos, pos + 1)
+  for s, e in self:each_placeholder(self.index, 'simple') do
+    buffer:indicator_clear_range(s, e - s)
+    buffer:set_target_range(s, s + 1)
     buffer:replace_target(text)
-    buffer:add_selection(pos, pos + #text)
+    buffer:add_selection(s, s + #text)
     goto redo -- indicator positions have changed
   end
   buffer.main_selection = 1
@@ -473,8 +469,8 @@ function snippet:finish(canceling)
   stack[#stack] = nil
 end
 
--- Returns a generator that returns each placeholder's position and state for all placeholders
--- in this snippet.
+-- Returns a generator that returns each placeholder's start position, end position, and state
+-- for all placeholders in this snippet.
 -- DO NOT modify the buffer while this generator is running. Doing so will affect the generator's
 -- state and cause errors. Re-run the generator each time a buffer edit is made (e.g. via `goto`).
 -- @param index Optional placeholder index to constrain results to.
@@ -494,7 +490,9 @@ function snippet:each_placeholder(index, type)
       end
       local id = buffer:indicator_value_at(M.INDIC_PLACEHOLDER, s)
       local ph = snapshot.placeholders[id]
-      if ph and (not index or ph.index == index) and (not type or ph[type]) then return s, ph end
+      if ph and (not index or ph.index == index) and (not type or ph[type]) then
+        return s, i, ph
+      end
       s = buffer:indicator_end(M.INDIC_PLACEHOLDER, i)
     end
   end
@@ -526,13 +524,13 @@ function snippet:update_transforms()
   buffer.indicator_current = M.INDIC_PLACEHOLDER
   local processed = {}
   ::redo::
-  for s, ph in self:each_placeholder(nil, 'transform') do
+  for s, e, ph in self:each_placeholder(nil, 'transform') do
     if ph.index == self.index and not processed[ph] then
       -- Execute the code and replace any existing transform text.
       local result = self:execute_code(ph)
       if result == '' then result = ' ' end -- fill for display
       local id = buffer:indicator_value_at(M.INDIC_PLACEHOLDER, s)
-      buffer:set_target_range(s, buffer:indicator_end(M.INDIC_PLACEHOLDER, s))
+      buffer:set_target_range(s, e)
       buffer:replace_target(result)
       buffer.indicator_value = id
       buffer:indicator_fill_range(s, #result) -- re-mark
@@ -540,7 +538,6 @@ function snippet:update_transforms()
       goto redo -- indicator positions have changed
     elseif ph.index < self.index or self.index == 0 then
       -- Clear obsolete transforms, deleting filler text if necessary.
-      local e = buffer:indicator_end(M.INDIC_PLACEHOLDER, s)
       buffer:indicator_clear_range(s, e - s)
       if buffer:text_range(s, e) == ' ' then
         buffer:delete_range(s, e - s) -- delete filler ' '
