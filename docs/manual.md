@@ -619,6 +619,11 @@ on macOS, and `^\` in the terminal version. An example would be running the shel
 emits them to standard output (stdout), which Textadept replaces the original input text with.
 [`textadept.editing.filter_through()`][] describes how this feature determines stdin.
 
+**Note:** be careful when using commands that emit stdout while reading stdin (as opposed
+to emitting stdout only after stdin is closed).  Input that generates more output than stdout
+can buffer may hang Textadept. On Linux for example, stdout may only be able to hold 64K while
+there is still incoming input.
+
 [`textadept.editing.filter_through()`]: api.html#textadept.editing.filter_through
 
 #### Statusbar
