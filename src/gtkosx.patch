@@ -4,7 +4,7 @@
        border-color: transparent;
        background-color: transparent;
        color: #8C8C8C; }
-+button.default { background-color: #2E7CF7, color: #FFFFFF; }
++button.default { background-color: #2E7CF7; color: #FFFFFF; }
  
  checkbutton.text-button, radiobutton.text-button {
    padding: 4px;
