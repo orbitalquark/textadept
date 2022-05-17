@@ -372,20 +372,17 @@ function snippet:next()
   -- Take a snapshot of the current state in order to restore it later if necessary.
   if self.index > 0 and self.start_pos < self.end_pos then
     local text = buffer:text_range(self.start_pos, self.end_pos)
-    local placeholders = {}
+    local phs = {}
     for pos, ph in self:each_placeholder() do
-      -- Only the position of placeholders changes between snapshots; save it and keep all
-      -- other existing properties.
+      -- Only the position and length of placeholders changes between snapshots; save it and
+      -- keep all other existing properties.
       -- Note that nested placeholders will return the same placeholder id twice: once before
       -- a nested placeholder, and again after. (e.g. [foo[bar]baz] will will return the '[foo'
-      -- and 'baz]' portions of the same placeholder.) Only process the first occurrence.
-      if placeholders[ph.id] then goto continue end
-      placeholders[ph.id] = setmetatable({position = pos}, {
-        __index = self.snapshots[self.index - 1].placeholders[ph.id]
-      })
-      ::continue::
+      -- and 'baz]' portions of the same placeholder.) Update the length on the second occurrence.
+      if not phs[ph.id] then phs[ph.id] = setmetatable({position = pos}, {__index = ph}) end
+      phs[ph.id].length = buffer:indicator_end(M.INDIC_PLACEHOLDER, pos) - phs[ph.id].position
     end
-    self.snapshots[self.index] = {text = text, placeholders = placeholders}
+    self.snapshots[self.index] = {text = text, placeholders = phs}
   end
   self.index = self.index < self.max_index and self.index + 1 or 0
 
