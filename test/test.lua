@@ -3863,6 +3863,13 @@ function test_snippets_nested_placeholders()
   textadept.snippets.insert()
   assert_equal(buffer:get_sel_text(), 'baz')
   textadept.snippets.cancel_current()
+  snippets.foo = '%1(bar)(baz%2(, %3(quux)))'
+  textadept.snippets.insert()
+  textadept.snippets.insert()
+  assert_equal(buffer:get_sel_text(), ', quux')
+  textadept.snippets.insert()
+  assert_equal(buffer:get_sel_text(), 'quux')
+  textadept.snippets.cancel_current()
   buffer:close(true)
   snippets.foo = nil
 end
