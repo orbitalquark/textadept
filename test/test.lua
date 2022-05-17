@@ -3853,6 +3853,20 @@ function test_snippets_mirror_in_placeholder()
   snippets.foo = nil
 end
 
+function test_snippets_nested_placeholders()
+  snippets.foo = '%1(bar)%2((%3(baz)))'
+  buffer.new()
+  buffer:add_text('foo')
+  textadept.snippets.insert()
+  textadept.snippets.insert()
+  assert_equal(buffer:get_sel_text(), '(baz)')
+  textadept.snippets.insert()
+  assert_equal(buffer:get_sel_text(), 'baz')
+  textadept.snippets.cancel_current()
+  buffer:close(true)
+  snippets.foo = nil
+end
+
 function test_lua_autocomplete()
   buffer.new()
   buffer:set_lexer('lua')
