@@ -380,7 +380,8 @@ function snippet:next()
       -- a nested placeholder, and again after. (e.g. [foo[bar]baz] will will return the '[foo'
       -- and 'baz]' portions of the same placeholder.) Update the length on the second occurrence.
       if not phs[ph.id] then phs[ph.id] = setmetatable({position = pos}, {__index = ph}) end
-      phs[ph.id].length = buffer:indicator_end(M.INDIC_PLACEHOLDER, pos) - phs[ph.id].position
+      local length = buffer:indicator_end(M.INDIC_PLACEHOLDER, pos) - phs[ph.id].position
+      if length > phs[ph.id].length then phs[ph.id].length = length end
     end
     self.snapshots[self.index] = {text = text, placeholders = phs}
   end
