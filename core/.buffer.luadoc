@@ -1789,6 +1789,7 @@ function set_lexer(buffer, name) end
 --   * style_check_monospaced
 --   * style_from_sub_style
 --   * style_hotspot
+--   * style_index_at
 --   * style_size_fractional
 --   * style_weight
 --   * sub_style_bases
@@ -1867,8 +1868,10 @@ function set_lexer(buffer, name) end
 --   * find_indicator_hide
 --   * find_indicator_show
 --   * find_text
+--   * find_text_full
 --   * form_feed
 --   * format_range
+--   * format_range_full
 --   * free_sub_styles
 --   * get_font_locale
 --   * get_hotspot_active_back
@@ -1912,4 +1915,5 @@ function set_lexer(buffer, name) end
 --   * stop_record
 --   * tags_of_style
 --   * target_as_utf8
+--   * text_range_full
 --   * use_pop_up
