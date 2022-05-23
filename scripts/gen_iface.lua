@@ -5,10 +5,11 @@ local constants, functions, properties, events = {}, {}, {}, {}
 local const_patt = '^val ([%w_]+)=([-%dx%x]+)'
 local event_patt = '^evt %a+ ([%w_]+)=(%d+)(%b())'
 local msg_patt = '^(%a+) (%a+) (%w+)=(%d+)%((%a*)%s*([^,]*),%s*(%a*)%s*([^)]*)'
-local types = {
+local types = { -- note: anything after stringresult does not matter
   [''] = 0, void = 0, int = 1, length = 2, index = 3, position = 3, line = 3, colour = 4,
   colouralpha = 4, bool = 5, keymod = 6, string = 7, stringresult = 8, cells = 9, pointer = 1,
-  textrange = 10, findtext = 11, formatrange = 12
+  textrange = 10, textrangefull = 11, findtext = 12, findtextfull = 13, formatrange = 14,
+  formatrangefull = 15
 }
 local ignores = { -- constants to ignore
   '^INDIC[012S]_', '^INVALID_POSITION', '^KEYWORDSET_MAX', '^SC_AC_', '^SC_DOCUMENTOPTION_',
