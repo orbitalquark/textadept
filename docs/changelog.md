@@ -7,6 +7,35 @@
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.4 beta (01 Jun 2022)
+
+Download:
+
+* [Textadept 11.4 beta  -- Windows][]
+* [Textadept 11.4 beta  -- Mac OSX 10.10+][]
+* [Textadept 11.4 beta  -- Linux][]
+* [Textadept 11.4 beta  -- Modules][]
+
+Bugfixes:
+
+* Correctly handle snippet mirrors in placeholders.
+* Fixed default button theme on macOS.
+* Fixed inability to run executables using some run commands on macOS.
+* Scintilla: Fixed crash with unexpected right-to-left text.
+* Scintilla: Fixed position of end-of-line annotation when fold display text is visible.
+* Scintilla: Fixed partial updates and non-responsive scrollbars.
+
+Changes:
+
+* Scintilla: Improved performance of `view:fold_all(view.FOLDACTION_EXPAND)`.
+* Updated to [Scintilla][] 5.2.3.
+
+[Textadept 11.4 beta  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_beta/textadept_11.4_beta.win.zip
+[Textadept 11.4 beta  -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_beta/textadept_11.4_beta.macOS.zip
+[Textadept 11.4 beta  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_beta/textadept_11.4_beta.linux.tgz
+[Textadept 11.4 beta  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_beta/textadept_11.4_beta.modules.zip
+[Scintilla]: https://scintilla.org
+
 ### 11.4 alpha (01 Apr 2022)
 
 Download:
@@ -47,7 +76,7 @@ Changes:
 Files searches.
 * Added [`move_buffer()`][] function for rearranging buffers.
 * Added support for flow control sequences in the non-Windows terminal version with `-p` and
-`--preserve` command line options.
+  `--preserve` command line options.
 * Updated Fennel lexer.
 * Updated Python lexer to highlight class definitions.
 * Scintilla: Improve performance for very long lines.
