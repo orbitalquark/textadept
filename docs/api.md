@@ -2510,7 +2510,7 @@ If *width* is `0`, splits the lines in the target range into lines as wide as th
 Parameters:
 
 * *`buffer`*: A buffer.
-* *`pixel_width`*: 
+* *`pixel_width`*:
 * *`width`*: The pixel width to split lines at. When `0`, uses the width of the view.
 
 <a id="buffer.lower_case"></a>
@@ -3123,7 +3123,8 @@ Parameters:
 <a id="buffer.selection_duplicate"></a>
 #### `buffer.selection_duplicate`(*buffer*)
 
-Duplicates the selected text to its right.
+Duplicates the selected text of a rectangular selection to its right.
+If the selection consists of full lines, it is duplicated below.
 If no text is selected, duplicates the current line on a new line below.
 
 Parameters:
@@ -3322,7 +3323,7 @@ Returns the style number associated with string *style_name*, or `view.STYLE_DEF
 Parameters:
 
 * *`buffer`*: A buffer.
-* *`style_name`*: 
+* *`style_name`*:
 * *`string`*: The style name to get the number of.
 
 Return:
@@ -6665,7 +6666,7 @@ Ctrl+X<br/>Shift+Del | ⌘X<br/>⇧⌦ | ^X | Cut
 Ctrl+C<br/>Ctrl+Ins | ⌘C | ^C | Copy
 Ctrl+V<br/>Shift+Ins | ⌘V | ^V | Paste
 Ctrl+Shift+V | ⌘⇧V | M-V | Paste Reindent
-Ctrl+D | ⌘D | None | Duplicate line
+Ctrl+D | ⌘D | None | Duplicate selection
 Del | ⌦<br/>^D | Del<br/>^D | Delete
 Alt+Del | ^⌦ | M-Del<br/>M-D | Delete word
 Ctrl+A | ⌘A | M-A | Select all
@@ -11112,7 +11113,7 @@ Resets the color of UI element *element* to its default color.
 
 Parameters:
 
-* *`view`*: 
+* *`view`*:
 * *`element`*: One of the UI elements specified in [`view.element_color`]().
 
 See also:
@@ -11263,7 +11264,7 @@ if *use_setting* is `true`.
 
 Parameters:
 
-* *`view`*: 
+* *`view`*:
 * *`use_setting`*: Whether or not to use *color*.
 * *`color`*: The color in "0xBBGGRR" format.
 
