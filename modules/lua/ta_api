@@ -865,7 +865,7 @@ select_lexer textadept.file_types.select_lexer()\nPrompts the user to select a l
 select_line textadept.editing.select_line()\nSelects the current line.
 select_paragraph textadept.editing.select_paragraph()\nSelects the current paragraph.\nParagraphs are surrounded by one or more blank lines.
 select_word textadept.editing.select_word(all)\nSelects the current word or, if *all* is `true`, all occurrences of the current word.\nIf a word is already selected, selects the next occurrence as a multiple selection.\n@param all Whether or not to select all occurrences of the current word. The default value is\n  `false`.\n@see buffer.word_chars
-selection_duplicate buffer.selection_duplicate(buffer)\nDuplicates the selected text to its right.\nIf no text is selected, duplicates the current line on a new line below.\n@param buffer A buffer.
+selection_duplicate buffer.selection_duplicate(buffer)\nDuplicates the selected text to its right.\nIf multiple lines are selected, duplication starts at the end of the selection. If no text\nis selected, duplicates the current line on a new line below.\n@param buffer A buffer.
 selection_empty buffer.selection_empty (bool, Read-only)\nWhether or not no text is selected.
 selection_end buffer.selection_end (number)\nThe position of the end of the selected text.\nWhen set, becomes the current position, but is not scrolled into view.
 selection_is_rectangle buffer.selection_is_rectangle (bool, Read-only)\nWhether or not the selection is a rectangular selection.
