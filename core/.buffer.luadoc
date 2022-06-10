@@ -1355,7 +1355,8 @@ function select_all(buffer) end
 
 ---
 -- Duplicates the selected text to its right.
--- If no text is selected, duplicates the current line on a new line below.
+-- If multiple lines are selected, duplication starts at the end of the selection. If no text
+-- is selected, duplicates the current line on a new line below.
 -- @param buffer A buffer.
 function selection_duplicate(buffer) end
 

@@ -3124,7 +3124,8 @@ Parameters:
 #### `buffer.selection_duplicate`(*buffer*)
 
 Duplicates the selected text to its right.
-If no text is selected, duplicates the current line on a new line below.
+If multiple lines are selected, duplication starts at the end of the selection. If no text
+is selected, duplicates the current line on a new line below.
 
 Parameters:
 
