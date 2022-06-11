@@ -119,7 +119,7 @@ Here is a simple *~/.textadept/init.lua* for illustration:
 
     -- Always strip trailing spaces on save, automatically highlight the current
     -- word, and use C99-style line comments in C code.
-    textadept.editing.strip_trailing_space = true
+    textadept.editing.strip_trailing_spaces = true
     textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_CURRENT
     textadept.editing.comment_string.ansi_c = '//'
 
