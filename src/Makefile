@@ -16,13 +16,13 @@ glib_flags_linux := $(shell pkg-config --cflags glib-2.0)
 curses_flags_linux := $(shell pkg-config --silence-errors --cflags ncursesw || \
   pkg-config --silence-errors --cflags ncurses || pkg-config --silence-errors --cflags curses)
 gtk_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
-  pkg-config --define-variable=prefix=gtkwin --cflags gtk+-3.0)
+  pkg-config --silence-errors --define-variable=prefix=gtkwin --cflags gtk+-3.0)
 glib_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
-  pkg-config --define-variable=prefix=gtkwin --cflags glib-2.0)
+  pkg-config --silence-errors --define-variable=prefix=gtkwin --cflags glib-2.0)
 gtk_flags_osx := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
-  pkg-config --define-variable=prefix=gtkosx --cflags gtk+-3.0)
+  pkg-config --silence-errors --define-variable=prefix=gtkosx --cflags gtk+-3.0)
 glib_flags_osx := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
-  pkg-config --define-variable=prefix=gtkosx --cflags glib-2.0)
+  pkg-config --silence-errors --define-variable=prefix=gtkosx --cflags glib-2.0)
 
 # Utility functions.
 
