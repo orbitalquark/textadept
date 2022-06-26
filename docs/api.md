@@ -6666,7 +6666,7 @@ Ctrl+X<br/>Shift+Del | ⌘X<br/>⇧⌦ | ^X | Cut
 Ctrl+C<br/>Ctrl+Ins | ⌘C | ^C | Copy
 Ctrl+V<br/>Shift+Ins | ⌘V | ^V | Paste
 Ctrl+Shift+V | ⌘⇧V | M-V | Paste Reindent
-Ctrl+D | ⌘D | None | Duplicate line
+Ctrl+D | ⌘D | None | Duplicate line/selection
 Del | ⌦<br/>^D | Del<br/>^D | Delete
 Alt+Del | ^⌦ | M-Del<br/>M-D | Delete word
 Ctrl+A | ⌘A | M-A | Select all
