@@ -32,7 +32,7 @@ local M = {}
 -- Ctrl+C<br/>Ctrl+Ins | ⌘C | ^C | Copy
 -- Ctrl+V<br/>Shift+Ins | ⌘V | ^V | Paste
 -- Ctrl+Shift+V | ⌘⇧V | M-V | Paste Reindent
--- Ctrl+D | ⌘D | None | Duplicate line
+-- Ctrl+D | ⌘D | None | Duplicate line/selection
 -- Del | ⌦<br/>^D | Del<br/>^D | Delete
 -- Alt+Del | ^⌦ | M-Del<br/>M-D | Delete word
 -- Ctrl+A | ⌘A | M-A | Select all
@@ -308,7 +308,7 @@ local bindings = {
   [buffer.copy] = {'ctrl+c', 'cmd+c', 'ctrl+c'},
   [buffer.paste] = {'ctrl+v', 'cmd+v', 'ctrl+v'},
   [textadept.editing.paste_reindent] = {'ctrl+V', 'cmd+V', 'meta+v'},
-  [buffer.line_duplicate] = {'ctrl+d', 'cmd+d', nil},
+  [buffer.selection_duplicate] = {'ctrl+d', 'cmd+d', nil},
   [buffer.clear] = {'del', {'del', 'ctrl+d'}, {'del', 'ctrl+d'}},
   [m('Edit/Delete Word')] = {'alt+del', 'ctrl+del', {'meta+del', 'meta+d'}},
   [buffer.select_all] = {'ctrl+a', 'cmd+a', 'meta+a'},

@@ -16,7 +16,7 @@ local _L, SEPARATOR = _L, {''}
 -- LuaFormatter off
 -- The following buffer and view functions need to be made constant in order for menu items to
 -- identify the key associated with the functions.
-local menu_buffer_functions = {'undo','redo','cut','copy','paste','line_duplicate','clear','select_all','upper_case','lower_case','move_selected_lines_up','move_selected_lines_down'}
+local menu_buffer_functions = {'undo','redo','cut','copy','paste','selection_duplicate','clear','select_all','upper_case','lower_case','move_selected_lines_up','move_selected_lines_down'}
 for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 view.zoom_in, view.zoom_out = view.zoom_in, view.zoom_out
 -- LuaFormatter on
@@ -79,7 +79,7 @@ local default_menubar = {
     {_L['Copy'], buffer.copy},
     {_L['Paste'], buffer.paste},
     {_L['Paste Reindent'], textadept.editing.paste_reindent},
-    {_L['Duplicate Line'], buffer.line_duplicate},
+    {_L['Duplicate Line/Selection'], buffer.selection_duplicate},
     {_L['Delete'], buffer.clear},
     {_L['Delete Word'], function()
       textadept.editing.select_word()
