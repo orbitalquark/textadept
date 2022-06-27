@@ -1221,7 +1221,7 @@ static int call_scintilla_lua(lua_State *L) {
  * @param event The GTK mouse button event.
  */
 static void show_context_menu(lua_State *L, char *k, GdkEventButton *event) {
-  if (lua_getglobal(L, "ui") != LUA_TTABLE) return (lua_pop(L, 1), (void)NULL);
+  if (lua_getglobal(L, "ui") != LUA_TTABLE) return (void)lua_pop(L, 1);
   if (lua_getfield(L, -1, k) == LUA_TLIGHTUSERDATA) popup_menu(L, -1, event);
   lua_pop(L, 2); // ui[k], ui
 }
