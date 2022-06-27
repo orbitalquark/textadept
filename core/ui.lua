@@ -581,6 +581,16 @@ local goto_view
 local menu
 
 ---
+-- Displays a popup menu, typically the right-click context menu.
+-- @param menu Menu to display.
+-- @usage ui.popup_menu(ui.context_menu)
+-- @see ui.menu
+-- @see ui.context_menu
+-- @class function
+-- @name popup_menu
+local popup_menu
+
+---
 -- Processes pending GTK events, including reading from spawned processes.
 -- This function is primarily used in unit tests.
 -- @class function
