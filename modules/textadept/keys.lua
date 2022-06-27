@@ -508,6 +508,10 @@ if CURSES then
   }
 end
 
+local function show_context_menu() ui.popup_menu(ui.context_menu) end
+keys.menu = show_context_menu
+if WIN32 or LINUX then keys['shift+f10'] = show_context_menu end
+
 -- GTK-OSX reports Fn-key as a single keycode which confuses Scintilla. Do not propagate it.
 if OSX then keys.fn = function() return true end end
 

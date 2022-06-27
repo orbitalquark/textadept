@@ -4506,7 +4506,7 @@ Key codes can be identified by temporarily uncommenting the `print()` statements
 *core/keys.lua*.
 Recognized codes are: esc, \b, \t, \n, down, up, left, right, home, end, pgup, pgdn, del,
 ins, and f1-f12.
-The GUI version also recognizes: kpenter, kphome, kpend, kpleft, kpup, kpright, kpdown,
+The GUI version also recognizes: menu, kpenter, kphome, kpend, kpleft, kpup, kpright, kpdown,
 kppgup, kppgdn, kpmul, kpadd, kpsub, kpdiv, kpdec, and kp0-kp9.
 
 <a id="_G.keys"></a>
@@ -7652,6 +7652,24 @@ See also:
 * [`textadept.menu.menubar`](#textadept.menu.menubar)
 * [`textadept.menu.context_menu`](#textadept.menu.context_menu)
 * [`textadept.menu.tab_context_menu`](#textadept.menu.tab_context_menu)
+
+<a id="ui.popup_menu"></a>
+#### `ui.popup_menu`(*menu*)
+
+Displays a popup menu, typically the right-click context menu.
+
+Parameters:
+
+* *`menu`*: Menu to display.
+
+Usage:
+
+* `ui.popup_menu(ui.context_menu)`
+
+See also:
+
+* [`ui.menu`](#ui.menu)
+* [`ui.context_menu`](#ui.context_menu)
 
 <a id="ui.print"></a>
 #### `ui.print`(*...*)

@@ -794,6 +794,19 @@ static void lua_pushmenu(lua_State *L, int index, GCallback f, bool submenu) {
 static void menu_clicked(GtkWidget *_, void *id) {
   emit(lua, "menu_clicked", LUA_TNUMBER, (int)(long)id, -1);
 }
+
+/**
+ * Displays a popup menu.
+ * @param L The Lua state.
+ * @param index The stack index of the menu to display.
+ * @param event Optional GDK mouse button event that initiated showing the menu (e.g. right-click).
+ */
+static void popup_menu(lua_State *L, int index, GdkEventButton *event) {
+  GtkWidget *menu = lua_touserdata(L, index);
+  gtk_widget_show_all(menu);
+  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event ? event->button : 0,
+    gdk_event_get_time((GdkEvent *)event));
+}
 #endif
 
 /** `ui.menu()` Lua function. */
@@ -804,6 +817,15 @@ static int menu(lua_State *L) {
 #elif CURSES
   return (lua_pushnil(L), 1);
 #endif
+}
+
+/** `ui.popup_menu()` Lua function. */
+static int popup_menu_lua(lua_State *L) {
+#if GTK
+  luaL_argcheck(L, lua_type(L, 1) == LUA_TLIGHTUSERDATA, 1, "menu expected");
+  popup_menu(L, 1, NULL);
+#endif
+  return 0;
 }
 
 /** `ui.update()` Lua function. */
@@ -1195,20 +1217,13 @@ static int call_scintilla_lua(lua_State *L) {
 /**
  * Shows the context menu for a widget based on a mouse event.
  * @param L The Lua state.
- * @param event An optional GTK mouse button event.
  * @param k The ui table field that contains the context menu.
+ * @param event The GTK mouse button event.
  */
-static void show_context_menu(lua_State *L, GdkEventButton *event, char *k) {
-  if (lua_getglobal(L, "ui") == LUA_TTABLE) {
-    if (lua_getfield(L, -1, k) == LUA_TLIGHTUSERDATA) {
-      GtkWidget *menu = lua_touserdata(L, -1);
-      gtk_widget_show_all(menu);
-      gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event ? event->button : 0,
-        gdk_event_get_time((GdkEvent *)event));
-    }
-    lua_pop(L, 2); // ui context menu field, ui
-  } else
-    lua_pop(L, 1); // non-table
+static void show_context_menu(lua_State *L, char *k, GdkEventButton *event) {
+  if (lua_getglobal(L, "ui") != LUA_TTABLE) return (lua_pop(L, 1), (void)NULL);
+  if (lua_getfield(L, -1, k) == LUA_TLIGHTUSERDATA) popup_menu(L, -1, event);
+  lua_pop(L, 2); // ui[k], ui
 }
 
 /** Signal for a tab label mouse click. */
@@ -1220,7 +1235,7 @@ static bool tab_clicked(GtkWidget *label, GdkEventButton *event, void *L) {
     emit(L, "tab_clicked", LUA_TNUMBER, i + 1, LUA_TNUMBER, event->button, LUA_TBOOLEAN,
       event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
       event->state & GDK_MOD1_MASK, LUA_TBOOLEAN, event->state & GDK_META_MASK, -1);
-    if (event->button == 3) show_context_menu(L, event, "tab_context_menu");
+    if (event->button == 3) show_context_menu(L, "tab_context_menu", event);
     break;
   }
   return true;
@@ -1606,6 +1621,7 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
   lua_pushcfunction(L, get_split_table), lua_setfield(L, -2, "get_split_table");
   lua_pushcfunction(L, goto_view), lua_setfield(L, -2, "goto_view");
   lua_pushcfunction(L, menu), lua_setfield(L, -2, "menu");
+  lua_pushcfunction(L, popup_menu_lua), lua_setfield(L, -2, "popup_menu");
   lua_pushcfunction(L, update_ui), lua_setfield(L, -2, "update");
   set_metatable(L, -1, "ta_ui", ui_index, ui_newindex);
   lua_setglobal(L, "ui");
@@ -1958,7 +1974,7 @@ static int keypress(GtkWidget *_, GdkEventKey *event, void *L) {
 /** Signal for a Scintilla mouse click. */
 static bool mouse_clicked(GtkWidget *_, GdkEventButton *event, void *L) {
   if (event->type != GDK_BUTTON_PRESS || event->button != 3) return false;
-  return (show_context_menu(L, event, "context_menu"), true);
+  return (show_context_menu(L, "context_menu", event), true);
 }
 #endif
 
