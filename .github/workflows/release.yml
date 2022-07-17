@@ -13,9 +13,11 @@ on:
       nightly:
         description: Nightly build
         type: boolean
+        default: false
       debug:
         description: Debug symbols
         type: boolean
+        default: false
       tag:
         description: Optional release tag (normally auto-detected)
 
@@ -50,7 +52,7 @@ jobs:
             nightly="NIGHTLY=1"
             debug="DEBUG=1"
           fi
-          make -C src deps win-deps osx-deps $nightly
+          make -C src deps win-deps osx-deps docs $nightly
           make -C src $target $debug $nightly
 
           # For nightly builds, strip the date from filenames.
