@@ -357,31 +357,53 @@ function M.toggle_comment()
   local comment = M.comment_string[buffer:get_lexer(true)] or ''
   local prefix, suffix = comment:match('^([^|]+)|?([^|]*)$')
   if not prefix then return end
+
+  local prefix_esc = ''
+  for c in prefix:gmatch('.') do
+    prefix_esc = prefix_esc .. '%' .. c
+  end
+  prefix = prefix .. ' '
+
+  local line_length = buffer:line_length(buffer.line_from_position(buffer.current_pos))
+  if buffer.selection_empty and line_length <= 1 then
+    buffer:insert_text(buffer.current_pos, prefix)
+    buffer:goto_pos(buffer.current_pos + #prefix)
+    return
+  end
+
   local anchor, pos = buffer.selection_start, buffer.selection_end
   local s, e = buffer:line_from_position(anchor), buffer:line_from_position(pos)
   local ignore_last_line = s ~= e and pos == buffer:position_from_line(e)
   anchor, pos = buffer.line_end_position[s] - anchor, buffer.length + 1 - pos
   local column = math.huge
+
   buffer:begin_undo_action()
   for line = s, not ignore_last_line and e or e - 1 do
+    if buffer:line_length(line) <= 1 then goto continue end
+
     local p = buffer.line_indent_position[line]
-    local uncomment = buffer:text_range(p, p + #prefix) == prefix
+
+    local full_line = buffer:get_line(line)
+    local uncomment = full_line:match('^%s*(' .. prefix_esc .. '%s?)')
+    if uncomment then uncomment = uncomment:gsub('\n*$', '') end
+
     if not uncomment then
-      column = math.min(buffer.column[p], column)
-      p = buffer:find_column(line, column)
       buffer:insert_text(p, prefix)
       if suffix ~= '' then buffer:insert_text(buffer.line_end_position[line], suffix) end
     else
-      buffer:delete_range(p, #prefix)
+      buffer:delete_range(p, #uncomment)
       if suffix ~= '' then
         p = buffer.line_end_position[line]
         buffer:delete_range(p - #suffix, #suffix)
       end
     end
+
     if line == s then anchor = anchor + #suffix * (uncomment and -1 or 1) end
     if line == e then pos = pos + #suffix * (uncomment and -1 or 1) end
+    ::continue::
   end
   buffer:end_undo_action()
+
   anchor, pos = buffer.line_end_position[s] - anchor, buffer.length + 1 - pos
   -- Keep the anchor and caret on the first line as necessary.
   local start_pos = buffer:position_from_line(s)
