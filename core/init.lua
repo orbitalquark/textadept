@@ -93,6 +93,8 @@ events.connect(events.BUFFER_NEW,
 --   Curses feature incompatibilities are listed in the [Appendix][].
 --
 --   [Appendix]: manual.html#terminal-version-compatibility
+-- @field _COPYRIGHT (string)
+--   Textadept's copyright information.
 module('_G')]]
 
 --[[ The tables below were defined in C.

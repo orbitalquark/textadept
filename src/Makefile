@@ -534,7 +534,7 @@ plots: ; ../scripts/gen_plots.sh
 
 # Profiling, code coverage, and linting.
 
-.PHONY: gprof gcov luacov luacheck
+.PHONY: gprof gcov luacov lint
 
 define profile =
 	rm -f $(addsuffix .o, $(notdir $(linux_exes)))
@@ -559,6 +559,7 @@ luacov: $(linux_exes)
 	sed -i 's/^for/-- for/;' ../core/init.lua
 	rm luacov.stats.out
 	$(EDITOR) luacov.report.out
-luacheck: ../core $(modules) ../lexers/lexer.lua  | ../modules/lua/ta_api
-	$@ --std lua54 --no-max-line-length $^ \
-		--globals $(shell grep -o '_G\.[[:alnum:]_]\+' $| | cut -d. -f2 | uniq | tr '\n' ' ')
+lint: ../core $(modules) ../lexers/lexer.lua ../test/test.lua | ../modules/lua/ta_api
+	luacheck --std lua54 --no-max-line-length --no-color $^ \
+		--globals $(shell grep -o '_G\.[[:alnum:]_]\+' $| | cut -d. -f2 | uniq | tr '\n' ' ') lpeg \
+		$(shell grep -o 'function test_[[:alnum:]_]\+' ../test/test.lua | cut -d ' ' -f2 | uniq | tr '\n' ' ')

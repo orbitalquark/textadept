@@ -1,6 +1,5 @@
 -- Copyright 2020-2022 Mitchell. See LICENSE.
 
-local _tostring = tostring
 -- Overloads tostring() to print more user-friendly output for `assert_equal()`.
 local function tostring(value)
   if type(value) == 'table' then
@@ -8,7 +7,7 @@ local function tostring(value)
   elseif type(value) == 'string' then
     return string.format('%q', value)
   else
-    return _tostring(value)
+    return _G.tostring(value) -- this is not recursive since unit tests are executed in a load() env
   end
 end
 
@@ -95,10 +94,10 @@ function test_assert_types()
   assert_raises(function() foo('bar', true, 1) end,
     "bad argument #3 to 'foo' (string/table/nil expected, got number")
 
-  local function foo(bar) assert_type(bar, string) end
+  foo = function(bar) assert_type(bar, string) end
   assert_raises(function() foo(1) end,
     "bad argument #2 to 'assert_type' (string expected, got table")
-  local function foo(bar) assert_type(bar, 'string') end
+  foo = function(bar) assert_type(bar, 'string') end
   assert_raises(function() foo(1) end, "bad argument #3 to 'assert_type' (value expected, got nil")
 end
 
@@ -1168,7 +1167,7 @@ end
 
 function test_spawn_callbacks()
   local exit_status = -1
-  local p = os.spawn('echo foo', ui.print, nil, function(status) exit_status = status end)
+  os.spawn('echo foo', ui.print, nil, function(status) exit_status = status end)
   sleep(0.1)
   ui.update()
   assert_equal(buffer._type, _L['[Message Buffer]'])
@@ -1177,7 +1176,7 @@ function test_spawn_callbacks()
   buffer:close(true)
   view:unsplit()
   -- Verify stdout is not read as stderr.
-  p = os.spawn('echo foo', nil, ui.print)
+  os.spawn('echo foo', nil, ui.print)
   sleep(0.1)
   ui.update()
   assert_equal(#_BUFFERS, 1)
@@ -1830,7 +1829,6 @@ function test_editing_toggle_comment_lines()
     '  --foo'
   }, newline()))
   -- LuaFormatter on
-  offset = 2
   buffer:select_all()
   textadept.editing.toggle_comment()
   -- LuaFormatter off
@@ -2667,7 +2665,7 @@ function test_ui_find_find_in_files()
   assert_equal(buffer._type, _L['[Files Found Buffer]'])
   if #_VIEWS > 1 then view:unsplit() end
   local count = 0
-  for filename, line, text in buffer:get_text():gmatch('\n([^:]+):(%d+):([^\n]+)') do
+  for filename, text in buffer:get_text():gmatch('\n([^:]+):%d+:([^\n]+)') do
     assert(filename:find('^' .. _HOME:gsub('/', '[/\\]') .. '[/\\]test'), 'invalid filename "%s"',
       filename)
     assert(text:find('foo'), '"foo" not found in "%s"', text)
@@ -3344,7 +3342,6 @@ function test_run_compile_run()
   ui.goto_view(1) -- message buffer
   events.emit(events.DOUBLE_CLICK, nil, buffer:line_from_position(buffer.current_pos))
   assert_equal(buffer.filename, compile_file)
-  local compile_command = textadept.run.compile_commands.lua
   textadept.run.compile() -- clears annotation
   ui.update() -- process output
   view:goto_buffer(1)
@@ -4177,7 +4174,6 @@ function test_buffer_read_write_only_properties()
 end
 
 function test_set_theme()
-  local current_theme = view.style_fore[view.STYLE_DEFAULT]
   view:split()
   io.open_file(_HOME .. '/init.lua')
   view:split(true)
@@ -5139,7 +5135,7 @@ for i = 1, #tests do
   assert_equal(#_VIEWS, 1)
 
   _ENV = setmetatable({}, {__index = _ENV})
-  local name, f, attempts = tests[i], _ENV[tests[i]], 1
+  local name, f = tests[i], _ENV[tests[i]]
   print(string.format('Running %s', name))
   ui.update()
   local ok, errmsg = xpcall(f, function(errmsg)

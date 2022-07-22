@@ -312,6 +312,7 @@ XPM_IMAGES textadept.editing.XPM_IMAGES (table)\nMap of image names to registere
 ZOOM events.ZOOM (string)\nEmitted after changing `view.zoom`.\nEmitted by `view.zoom_in()` and `view.zoom_out()`.
 _BUFFERS _G._BUFFERS (table)\nTable of all open buffers in Textadept.\nNumeric keys have buffer values and buffer keys have their associated numeric keys.\n@see _G.buffer
 _CHARSET _G._CHARSET (string)\nThe filesystem's character encoding.\nThis is used when working with files.
+_COPYRIGHT _G._COPYRIGHT (string)\nTextadept's copyright information.
 _G _G._G (module)\nExtends Lua's _G table to provide extra functions and fields for Textadept.
 _HOME _G._HOME (string)\nThe path to Textadept's home, or installation, directory.
 _L _G._L (module)\nMap of all messages used by Textadept to their localized form.\nIf the table does not contain the localized version of a given message, it returns a string\nthat starts with "No Localization:" via a metamethod.\nNote: the terminal version ignores any "_" mnemonics the GUI version would use.

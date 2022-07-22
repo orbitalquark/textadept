@@ -185,7 +185,7 @@ events.connect(events.KEYPRESS, function(code, shift, control, alt, cmd, caps)
   end
   keychain[#keychain + 1] = key_seq
 
-  local status = PROPAGATE
+  local status
   if not M.mode then
     status = key_command(buffer:get_lexer(true))
     if status <= PROPAGATE and not M.mode then status = key_command() end

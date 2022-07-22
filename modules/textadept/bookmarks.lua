@@ -57,7 +57,7 @@ function M.goto_mark(next)
   local scan_this_buffer, utf8_list, buffers = true, {}, {}
   ::rescan::
   for _, buffer in ipairs(_BUFFERS) do
-    if not (scan_this_buffer == (buffer == _G.buffer)) then goto continue end
+    if scan_this_buffer ~= (buffer == _G.buffer) then goto continue end
     local filename = buffer.filename or buffer._type or _L['Untitled']
     if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename

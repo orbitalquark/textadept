@@ -75,6 +75,11 @@ Whether or not Textadept is running on Windows.
 The filesystem's character encoding.
   This is used when [working with files](#io).
 
+<a id="_COPYRIGHT"></a>
+#### `_COPYRIGHT` (string)
+
+Textadept's copyright information.
+
 <a id="_HOME"></a>
 #### `_HOME` (string)
 
