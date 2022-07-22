@@ -543,21 +543,21 @@ define profile =
 	rm $(addsuffix .o, $(notdir $(linux_exes))) *.gcno *.gcda
 	$(MAKE) DEBUG=1 GTK2=1
 endef
+run_tests = -t $(1) -e 'events.connect(events.INITIALIZED, os.exit)'
 
-run_tests := -t -interactive,history -e 'events.connect(events.INITIALIZED, os.exit)'
 EDITOR := $(word 1, $(linux_exes)) -n -f
 gprof:
 	$(call profile, -e 'os.exit', gprof $$exe gmon.out | $(EDITOR) -e 'set_text(io.read("a"))')
 	rm gmon.out
 gcov:
-	$(call profile, $(run_tests), gcov `basename $$exe`.c)
+	$(call profile, $(call run_tests, -interactive), gcov `basename $$exe`.c)
 	$(EDITOR) textadept.c.gcov
 luacov: $(linux_exes)
 	rm -f luacov.*.out
 	sed -i 's/^-- for/for/;' ../core/init.lua
-	for exe in $(linux_exes); do xterm -e $$exe -n -f $(run_tests); done
+	xterm -e $(word 1, $(linux_exes)) -n -f $(call run_tests, -locale)
+	xterm -e $(word 2, $(linux_exes)) -n -f $(call run_tests, -interactive)
 	sed -i 's/^for/-- for/;' ../core/init.lua
-	rm luacov.stats.out
 	$(EDITOR) luacov.report.out
 lint: ../core $(modules) ../lexers/lexer.lua ../test/test.lua | ../modules/lua/ta_api
 	luacheck --std lua54 --no-max-line-length --no-color $^ \

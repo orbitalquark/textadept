@@ -461,6 +461,14 @@ function test_file_io_non_global_buffer_functions()
   os.remove(filename)
 end
 
+function test_file_io_close_modified_interactive()
+  buffer.new()
+  buffer:add_text('foo')
+  buffer:close()
+  assert_equal(#_BUFFERS, 2, 'modified buffer closed')
+  buffer:close(true)
+end
+
 function test_file_io_file_detect_modified()
   local modified = false
   local handler = function(filename)
@@ -1133,7 +1141,22 @@ function test_ui_buffer_switch_save_restore_properties()
 end
 
 if CURSES then
-  -- TODO: clipboard, mouse events, etc.
+  function test_ui_mouse()
+    view:split(true)
+    view:split()
+    assert(view == _VIEWS[3], 'not in bottom right view')
+    events.emit(events.MOUSE, view.MOUSE_PRESS, 1, 2, 2)
+    assert(view == _VIEWS[1], 'not in left view')
+    events.emit(events.MOUSE, view.MOUSE_PRESS, 1, ui.size[2] - 2, ui.size[1] - 2)
+    assert(view == _VIEWS[3], 'not in bottom right view')
+    _VIEWS[1].size = 1
+    events.emit(events.MOUSE, view.MOUSE_PRESS, 1, 2, 1)
+    events.emit(events.MOUSE, view.MOUSE_DRAG, 1, 2, 2)
+    assert_equal(_VIEWS[1].size, 2)
+    view:unsplit()
+    view:unsplit()
+  end
+  -- TODO: clipboard, etc.
 end
 
 function test_spawn_cwd()
@@ -1215,6 +1238,12 @@ function test_buffer_text_range()
 
   assert_raises(function() buffer:text_range() end, 'number expected, got nil')
   assert_raises(function() buffer:text_range(5) end, 'number expected, got nil')
+end
+
+function test_buffer_style_of_name()
+  assert_equal(buffer:style_of_name('default'), buffer.STYLE_DEFAULT)
+  assert_equal(buffer:style_of_name('unknown'), buffer.STYLE_DEFAULT, 'style unexpectedly in use')
+  assert(buffer:style_of_name('string') ~= buffer.STYLE_DEFAULT, 'style not in use')
 end
 
 function test_bookmarks()
@@ -1353,6 +1382,10 @@ function test_command_entry_run_lua_abbreviated_env()
   run_lua_command('editing.select_paragraph')
   assert(buffer.selection_start ~= buffer.selection_end,
     'textadept.editing.select_paragraph() did not select paragraph')
+  run_lua_command('clipboard_text="foo_copied"')
+  buffer:paste()
+  assert(buffer:get_text():find('foo_copied'), 'ui.clipboard_text not set')
+  buffer:undo()
   buffer:close()
 end
 
@@ -3300,9 +3333,19 @@ function test_menu_menu_functions()
 end
 
 function test_menu_functions_interactive()
-  buffer.new()
+  textadept.menu.menubar[_L['Help']][_L['Show Manual']][2]()
   textadept.menu.menubar[_L['Help']][_L['About']][2]()
+
+  buffer.new()
+  table.insert(textadept.menu.context_menu, {'Test', function() end})
+  textadept.menu.context_menu = textadept.menu.context_menu -- should not error
+  ui.popup_menu(ui.context_menu)
   buffer:close(true)
+
+  textadept.menu.tab_context_menu = textadept.menu.tab_context_menu -- should not error
+
+  textadept.menu.foo = 'foo'
+  assert_equal(textadept.menu.foo, 'foo')
 end
 
 function test_menu_select_command_interactive()
@@ -3436,6 +3479,19 @@ function test_run_build()
   -- TODO: project whose makefile is autodetected.
 end
 
+function test_run_build_interactive()
+  local dir = os.tmpname()
+  os.remove(dir)
+  lfs.mkdir(dir)
+  lfs.mkdir(dir .. '/.hg')
+  io.open_file(dir .. '/BuildFile')
+  buffer:save()
+  textadept.run.build_commands.BuildFile = ''
+  textadept.run.build()
+  buffer:close()
+  os.execute('rm -r ' .. dir)
+end
+
 function test_run_test()
   if WIN32 or OSX then return end -- TODO:
   textadept.run.test_commands[_HOME] = function()
@@ -3447,6 +3503,13 @@ function test_run_test()
   assert(buffer:get_text():find('test%.lua'), 'did not run test command')
   assert(buffer:get_text():find('assertion failed!'), 'assertion failure not detected')
   buffer:close()
+
+  local file = os.tmpname()
+  io.open_file(file)
+  buffer:save()
+  textadept.run.test() -- nothing should happen
+  buffer:close()
+  os.remove(file)
 end
 
 function test_run_goto_internal_lua_error()
@@ -4273,6 +4336,45 @@ end
 
 -- TODO: test init.lua's buffer settings
 
+function test_css_autocomplete()
+  buffer.new()
+  buffer:set_lexer('css')
+
+  buffer:add_text('h')
+  textadept.editing.autocomplete('css')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'h1')
+  buffer:auto_c_complete()
+  buffer:add_text(':')
+  textadept.editing.autocomplete('css')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'active')
+  buffer:auto_c_complete()
+  buffer:add_text(' {')
+  buffer:new_line()
+  buffer:add_text('font')
+  textadept.editing.autocomplete('css')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  buffer:line_down() -- highlight next completion
+  buffer:line_down() -- highlight next completion
+  assert_equal(buffer.auto_c_current_text, 'font-size')
+  buffer:auto_c_complete()
+  buffer:add_text(': s')
+  textadept.editing.autocomplete('css')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'small')
+  buffer:auto_c_cancel()
+
+  buffer:clear_all()
+  buffer:add_text('@media t')
+  textadept.editing.autocomplete('css')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'tty')
+  buffer:auto_c_cancel()
+
+  buffer:close(true)
+end
+
 function test_ctags()
   if WIN32 or OSX then return end -- TODO:
   local ctags = require('ctags')
@@ -4389,6 +4491,15 @@ function test_ctags_lua()
 
   buffer:close(true)
   os.execute('rm -r ' .. dir)
+end
+
+function test_ctags_goto_tag_interactive()
+  io.open_file(_HOME .. '/core/init.lua')
+  require('ctags').goto_tag('quick')
+  assert_equal(buffer.filename, file(_HOME .. '/core/file_io.lua'))
+  assert(buffer:get_cur_line():find('function io.quick_open(', 1, true), 'not at tag')
+  buffer:close(true)
+  buffer:close(true)
 end
 
 function test_debugger_ansi_c()
@@ -4585,6 +4696,26 @@ function test_debugger_lua()
   debugger.use_status_buffers = use_status_buffers -- restore
   debugger.project_commands = project_commands -- restore
 end
+
+function test_debugger_interactive()
+  if WIN32 or OSX then return end -- TODO:
+  local debugger = require('debugger')
+
+  local filename = _HOME .. '/test/modules/debugger/lua/foo.lua'
+  io.open_file(filename)
+  debugger.toggle_breakpoint(nil, 5)
+  debugger.toggle_breakpoint(nil, 9)
+  debugger.remove_breakpoint()
+  assert_equal(buffer:marker_get(5), 0)
+
+  debugger.set_watch()
+  debugger.set_watch('i')
+  debugger.remove_watch()
+
+  buffer:close(true)
+end
+
+-- TODO: debug status buffers
 
 function test_export_interactive()
   local export = require('export')
@@ -4924,6 +5055,129 @@ function test_file_diff_interactive()
   if different_files then buffer:close(true) end
 end
 
+-- TODO: format module
+
+function test_html_autocomplete()
+  buffer.new()
+  buffer:set_lexer('html')
+
+  buffer:add_text('<h')
+  textadept.editing.autocomplete('html')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'h1')
+  buffer:auto_c_cancel()
+  buffer:add_text('tml ')
+  textadept.editing.autocomplete('html')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  buffer:auto_c_cancel()
+  buffer:new_line()
+  buffer:add_text('x')
+  textadept.editing.autocomplete('html')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'xml:lang')
+  buffer:line_down() -- highlight next completion
+  buffer:auto_c_complete()
+
+  buffer:close(true)
+end
+
+-- TODO: LSP module
+
+-- TODO: Lua REPL module
+
+-- TODO: open file mode module
+
+function test_python_autocomplete()
+  buffer.new()
+  buffer:set_lexer('python')
+
+  -- LuaFormatter off
+  buffer:add_text(table.concat({
+    'foo = "bar"',
+    'baz = open("quux")',
+    ''
+  }, newline()))
+  -- LuaFormatter on
+  buffer:add_text('foo.f')
+  textadept.editing.autocomplete('python')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'find')
+  buffer:auto_c_cancel()
+  buffer:del_line_left()
+  buffer:add_text('baz.c')
+  textadept.editing.autocomplete('python')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'close')
+  buffer:auto_c_cancel()
+
+  buffer:close(true)
+end
+
+function test_python_autoindent()
+  buffer.new()
+  buffer:set_lexer('python')
+
+  buffer:add_text('if foo:')
+  buffer:new_line()
+  assert_equal(buffer.line_indentation[2], 4)
+  buffer:add_text('else:')
+  events.emit(events.CHAR_ADDED, string.byte(':'))
+  assert_equal(buffer.line_indentation[2], 0)
+
+  buffer:close(true)
+end
+
+-- TODO: REST module
+
+function test_ruby_autocomplete()
+  buffer.new()
+  buffer:set_lexer('ruby')
+
+  -- LuaFormatter off
+  buffer:add_text(table.concat({
+    'foo = "bar"',
+    'baz = Array.new',
+    ''
+  }, newline()))
+  -- LuaFormatter on
+  buffer:add_text('foo.l')
+  textadept.editing.autocomplete('ruby')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'length')
+  buffer:auto_c_cancel()
+  buffer:del_line_left()
+  buffer:add_text('baz.c')
+  textadept.editing.autocomplete('ruby')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'clear')
+  buffer:auto_c_cancel()
+
+  buffer:del_line_left()
+  buffer:add_text('Kernel::p')
+  textadept.editing.autocomplete('ruby')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  buffer:line_down() -- highlight next completion
+  assert_equal(buffer.auto_c_current_text, 'pp')
+  buffer:auto_c_cancel()
+
+  buffer:clear_all()
+  buffer:add_text('if foo')
+  _M.ruby.try_to_autocomplete_end()
+  assert_equal(buffer:line_from_position(buffer.current_pos), 2)
+  assert_equal(buffer.line_indentation[2], 2)
+  -- LuaFormatter off
+  assert_equal(buffer:get_text(), table.concat({
+    'if foo',
+    '  ',
+    'end'
+  }, newline()))
+  -- LuaFormatter on
+
+  buffer:close(true)
+end
+
+-- TODO: Ruby toggle block
+
 function test_spellcheck()
   local spellcheck = require('spellcheck')
   local SPELLING_ID = 1 -- not accessible
@@ -5019,6 +5273,8 @@ function test_spellcheck_load_interactive()
   require('spellcheck')
   textadept.menu.menubar[_L['Tools']][_L['Spelling']][_L['Load Dictionary...']][2]()
 end
+
+-- TODO: YAML module
 
 -- Load buffer and view API from their respective LuaDoc files.
 local function load_buffer_view_props()
@@ -5170,7 +5426,7 @@ print(string.format('%d tests run, %d unexpected failures, %d expected failures'
 -- and `(file.max_hits or 0)`, respectively.
 if package.loaded['luacov'] then
   require('luacov').save_stats()
-  os.execute('luacov')
+  os.execute('luacov -c ' .. _HOME .. '/.luacov')
   local f = assert(io.open('luacov.report.out'))
   buffer:append_text(f:read('a'):match('\nSummary.+$'))
   f:close()

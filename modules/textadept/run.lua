@@ -162,7 +162,7 @@ end
 local function run_command(command, dir, event, macros, ext_or_lexer)
   local working_dir, env
   if type(command) == 'function' then command, working_dir, env = command() end
-  if not command then return end
+  if not command or command == '' then return end
   if macros then command = command:gsub('%%%a', macros) end
   preferred_view = view
   local function emit(output) events.emit(event, output, ext_or_lexer) end
