@@ -71,6 +71,7 @@ local function set_lexer(buffer, name)
   if buffer ~= ui.command_entry then events.emit(events.LEXER_LOADED, name) end
   local last_line = view.first_visible_line + view.lines_on_screen
   buffer:colorize(1, buffer:position_from_line(last_line + 1)) -- refresh
+  events.emit(events.UPDATE_UI, 1) -- for updating statusbar
 end
 
 -- Gives new buffers lexer-specific functions.
