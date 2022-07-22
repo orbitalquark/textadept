@@ -163,18 +163,18 @@ $(call win-objs, $(cdk_objs)): win-cdk-%.o: cdk/%.c ; $(build-cc)
 $(call osx-objs, $(cdk_objs)): osx-cdk-%.o: cdk/%.c ; $(build-cc)
 
 # Add debugging symbols and disable optimizations when DEBUG=1.
-# Notes:
-# In order to profile with gprof (-pg), do not retain symbols in LDFLAGS.
-# In order to report code coverage with gcov (-fprofile-arcs -ftest-coverage):
-#   Run test suite with textadept, run gcov-9 textadept.c, then examine
-#     textadept.c.gcov
-#   Run test suite with textadept-curses, run gcov-9 textadept-curses.c, then
-#     examine textadept.c.gcov.
 ifdef DEBUG
   CFLAGS += -g -O0
   CXXFLAGS += -g -O0
   lua_flags += -DLUA_USE_APICHECK
   sci_flags += -UNDEBUG -DDEBUG
+endif
+# And add profiling and code coverage capabilities when PROFILE=1.
+ifdef PROFILE
+  # Profiling with gprof needs -pg. (LDFLAGS cannot retain symbols either.)
+  # Code coverage with gcov needs -fprofile-arcs -ftest-coverage.
+  CFLAGS += -pg -fprofile-arcs -ftest-coverage
+  CXXFLAGS += -pg
 endif
 
 # Compilers and platform-specific flags for all objects.
@@ -247,7 +247,10 @@ $(linux_exes): CXX := g++
 else
 $(linux_exes): CXX := c++
 endif
-$(linux_exes): LDFLAGS := -rdynamic -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
+$(linux_exes): LDFLAGS := -rdynamic
+ifndef PROFILE
+$(linux_exes): LDFLAGS += -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
+endif
 ifdef GTK2
 ../textadept: LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gmodule-2.0)
 else
@@ -260,6 +263,9 @@ ifeq (Linux, $(shell uname -s))
 $(linux_exes): LDLIBS := -ldl
 else
 $(linux_exes): LDLIBS := -liconv
+endif
+ifdef PROFILE
+$(linux_exes): LDLIBS += -lgcov
 endif
 
 $(linux_exes): ; $(build-exe)
@@ -525,3 +531,34 @@ sources := ../core ../modules/ansi_c ../modules/lua ../modules/textadept textade
   ../init.lua
 count: cloc ; perl $< $(sources) --not-match-f=tadoc.lua --exclude-lang=SVG
 plots: ; ../scripts/gen_plots.sh
+
+# Profiling, code coverage, and linting.
+
+.PHONY: gprof gcov luacov luacheck
+
+define profile =
+	rm -f $(addsuffix .o, $(notdir $(linux_exes)))
+	$(MAKE) DEBUG=1 PROFILE=1 GTK2=1
+	for exe in $(linux_exes); do xterm -e $$exe -n -f $(1); $(2); done
+	rm $(addsuffix .o, $(notdir $(linux_exes))) *.gcno *.gcda
+	$(MAKE) DEBUG=1 GTK2=1
+endef
+
+run_tests := -t -interactive,history -e 'events.connect(events.INITIALIZED, os.exit)'
+EDITOR := $(word 1, $(linux_exes)) -n -f
+gprof:
+	$(call profile, -e 'os.exit', gprof $$exe gmon.out | $(EDITOR) -e 'set_text(io.read("a"))')
+	rm gmon.out
+gcov:
+	$(call profile, $(run_tests), gcov `basename $$exe`.c)
+	$(EDITOR) textadept.c.gcov
+luacov: $(linux_exes)
+	rm -f luacov.*.out
+	sed -i 's/^-- for/for/;' ../core/init.lua
+	for exe in $(linux_exes); do xterm -e $$exe -n -f $(run_tests); done
+	sed -i 's/^for/-- for/;' ../core/init.lua
+	rm luacov.stats.out
+	$(EDITOR) luacov.report.out
+luacheck: ../core $(modules) ../lexers/lexer.lua  | ../modules/lua/ta_api
+	$@ --std lua54 --no-max-line-length $^ \
+		--globals $(shell grep -o '_G\.[[:alnum:]_]\+' $| | cut -d. -f2 | uniq | tr '\n' ' ')
