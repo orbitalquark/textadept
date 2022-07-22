@@ -360,7 +360,7 @@ ta_home := $(shell dirname `pwd`)
 docs: luadoc manual
 manual: ../docs/api.md $(wildcard ../docs/*.md) | ../docs/_layouts/default.html
 	for file in $(basename $^); do cat $| | ../scripts/fill_layout.lua $$file.md > $$file.html; done
-	sed -i "s/\(\# Textadept\).\+\?\(Manual\|API\)/\1 $(subst _, ,$(version)) \2/;" ../docs/*.md
+	sed -i "s/\(\# Textadept\).\*\?\(Manual\|API\)/\1 $(subst _, ,$(version)) \2/;" ../docs/*.md
 luadoc: ../core $(modules) ../lexers/lexer.lua | ../modules/lua/lua.luadoc
 	cd ../scripts && luadoc --doclet markdowndoc $^ > ../docs/api.md
 	cd ../modules && luadoc -d lua --doclet lua/tadoc $^ --ta-home=$(ta_home)
