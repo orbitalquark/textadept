@@ -1385,8 +1385,7 @@ function test_command_entry_run_lua_abbreviated_env()
   run_lua_command('clipboard_text="foo_copied"')
   buffer:paste()
   assert(buffer:get_text():find('foo_copied'), 'ui.clipboard_text not set')
-  buffer:undo()
-  buffer:close()
+  buffer:close(true)
 end
 
 local function assert_lua_autocompletion(text, first_item)
