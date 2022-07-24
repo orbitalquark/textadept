@@ -62,6 +62,9 @@ local function sleep(n)
   os.execute(not WIN32 and 'sleep ' .. n or 'timeout /T ' .. n)
 end
 
+-- Removes directory *dir* and its contents.
+local function removedir(dir) os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q') .. dir) end
+
 local newlines = ({[buffer.EOL_LF] = '\n', [buffer.EOL_CRLF] = '\r\n'})
 -- Returns a string containing a single newline depending on the current buffer EOL mode.
 local function newline() return newlines[buffer.eol_mode] end
@@ -563,7 +566,7 @@ function test_file_io_get_project_root()
   io.open_file(file(dir .. '/foo/bar.txt'))
   assert_equal(io.get_project_root(true), file(dir .. '/foo'))
   buffer:close()
-  os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q') .. dir)
+  removedir(dir)
 
   assert_raises(function() io.get_project_root(1) end, 'string/nil expected, got number')
 end
@@ -792,7 +795,7 @@ function test_lfs_ext_walk_symlinks()
   }
   table.sort(expected_files)
   assert_equal(files, expected_files)
-  os.execute('rm -r ' .. dir)
+  removedir(dir)
 
   lfs.mkdir(dir)
   io.open(dir .. '/foo', 'w'):close()
@@ -807,7 +810,7 @@ function test_lfs_ext_walk_symlinks()
   local count = 0
   for filename in lfs.walk(dir) do count = count + 1 end
   assert_equal(count, 1)
-  os.execute('rm -r ' .. dir)
+  removedir(dir)
 end
 
 function test_lfs_ext_walk_root()
@@ -1241,9 +1244,9 @@ function test_buffer_text_range()
 end
 
 function test_buffer_style_of_name()
-  assert_equal(buffer:style_of_name('default'), buffer.STYLE_DEFAULT)
-  assert_equal(buffer:style_of_name('unknown'), buffer.STYLE_DEFAULT, 'style unexpectedly in use')
-  assert(buffer:style_of_name('string') ~= buffer.STYLE_DEFAULT, 'style not in use')
+  assert_equal(buffer:style_of_name('default'), view.STYLE_DEFAULT)
+  assert_equal(buffer:style_of_name('unknown'), view.STYLE_DEFAULT, 'style unexpectedly in use')
+  assert(buffer:style_of_name('string') ~= view.STYLE_DEFAULT, 'style not in use')
 end
 
 function test_bookmarks()
@@ -1347,7 +1350,11 @@ function test_command_entry_run_lua()
   assert_equal(buffer:get_text(), _HOME .. '\n')
   run_lua_command('{key="value"}')
   assert(buffer:get_text():find('{key = value}'), 'table not pretty-printed')
-  -- TODO: multi-line table pretty print.
+  local column = view.edge_column
+  view.edge_column = 80
+  run_lua_command('buffer')
+  assert_equal(buffer:get_line(buffer.line_count - 1), '}' .. newline()) -- result over multiple lines
+  view.edge_column = column -- reset
   if #_VIEWS > 1 then view:unsplit() end
   buffer:close()
 end
@@ -1416,8 +1423,25 @@ function test_command_entry_complete_lua()
   assert_lua_autocompletion('goto', 'goto_buffer')
   assert_lua_autocompletion('_', '_BUFFERS')
   assert_lua_autocompletion('fi', 'file_types')
-  -- TODO: textadept.editing.show_documentation key binding.
   ui.command_entry:focus() -- hide
+end
+
+function test_command_entry_lua_documentation()
+  -- Iterate over keys looking for the one that shows documentation, then use that for this test.
+  -- I use a different key binding than the default, and the command entry does some processing
+  -- on init that cannot be emulated here.
+  for key, f in pairs(keys) do
+    if f ~= textadept.editing.show_documentation then goto continue end
+    ui.command_entry.run()
+    ui.command_entry:set_text('print(')
+    events.emit(events.KEYPRESS, string.byte(key:match('.$')), key:find('shift'), key:find('ctrl'),
+      key:find('alt') or key:find('meta'), key:find('cmd'))
+    assert(ui.command_entry:call_tip_active(), 'documentation not found')
+    ui.command_entry:call_tip_cancel()
+    ui.command_entry:focus() -- hide
+    break
+    ::continue::
+  end
 end
 
 function test_command_entry_history()
@@ -2348,7 +2372,8 @@ function test_editing_show_documentation()
   textadept.editing.show_documentation(nil, true)
   assert(view:call_tip_active(), 'documentation not found')
   events.emit(events.CALL_TIP_CLICK, 1)
-  -- TODO: test calltip cycling.
+  textadept.editing.show_documentation(nil, true) -- cycle call tip
+  view:call_tip_cancel()
   buffer:close(true)
   textadept.editing.api_files['text'] = nil
 
@@ -3332,6 +3357,12 @@ function test_menu_menu_functions()
 end
 
 function test_menu_functions_interactive()
+  io.open_file(_HOME .. '/core/init.lua')
+  textadept.menu.menubar[_L['Tools']][_L['Quick Open']][_L['Quickly Open Current Directory']][2]()
+  assert(buffer.filename:find(file(_HOME .. '/core/')), 'did not quickly open in current directory')
+  buffer:close()
+  buffer:close()
+
   textadept.menu.menubar[_L['Help']][_L['Show Manual']][2]()
   textadept.menu.menubar[_L['Help']][_L['About']][2]()
 
@@ -3482,13 +3513,13 @@ function test_run_build_interactive()
   local dir = os.tmpname()
   os.remove(dir)
   lfs.mkdir(dir)
-  lfs.mkdir(dir .. '/.hg')
+  lfs.mkdir(dir .. '/.hg') -- simulate version control
   io.open_file(dir .. '/BuildFile')
   buffer:save()
   textadept.run.build_commands.BuildFile = ''
   textadept.run.build()
   buffer:close()
-  os.execute('rm -r ' .. dir)
+  removedir(dir)
 end
 
 function test_run_test()
@@ -3534,6 +3565,7 @@ function test_run_commands_function()
   textadept.run.run()
   assert_equal(#_BUFFERS, 3) -- including [Test Output]
   assert_equal(buffer._type, _L['[Message Buffer]'])
+  sleep(0.1)
   ui.update() -- process output
   assert(buffer:get_text():find('> cd /tmp'), 'cwd not set properly')
   assert(buffer:get_text():find('bar'), 'env not set properly')
@@ -4098,7 +4130,7 @@ function test_ui_maximized()
   -- `ui.update()` does not seem to help.
   assert_equal(not_maximized, not maximized)
 end
-if LINUX then expected_failure(test_ui_maximized) end
+if LINUX and not CURSES then expected_failure(test_ui_maximized) end
 
 function test_ui_restore_view_state()
   buffer.new() -- 1
@@ -4445,7 +4477,7 @@ function test_ctags()
   view:goto_buffer(1)
   buffer:close(true)
   buffer:close(true)
-  os.execute('rm -r ' .. dir)
+  removedir(dir)
 end
 
 function test_ctags_lua()
@@ -4489,7 +4521,7 @@ function test_ctags_lua()
   assert(contents:find('new foo%.new%(%)\\nFoo'), 'did not properly generate api')
 
   buffer:close(true)
-  os.execute('rm -r ' .. dir)
+  removedir(dir)
 end
 
 function test_ctags_goto_tag_interactive()
@@ -4600,7 +4632,7 @@ function test_debugger_ansi_c()
   buffer:close(true)
   view:unsplit()
   buffer:close(true)
-  os.execute('rm -r ' .. dir)
+  removedir(dir)
   ui.tabs = tabs
   debugger.use_status_buffers = use_status_buffers -- restore
   debugger.project_commands = project_commands -- restore
@@ -5054,7 +5086,122 @@ function test_file_diff_interactive()
   if different_files then buffer:close(true) end
 end
 
--- TODO: format module
+function test_format_code_clang_format()
+  io.open_file(_HOME .. '/test/modules/format/foo.c')
+  require('format').code()
+  assert_equal(buffer:get_text(), 'int main() { return 0; }' .. newline())
+  buffer:close(true)
+end
+
+function test_format_paragraph()
+  if WIN32 or OSX then return end -- depends on UNIX `fmt` tool.
+  local format = require('format')
+  local line_length = format.line_length
+  format.line_length = 20
+
+  buffer.new()
+  -- LuaFormatter off
+  local code = table.concat({
+    'local foo',
+    '-- This is a really long line comment that should be wrapped.',
+    '-- This is another really long line comment that should be wrapped.',
+    'local bar'
+  }, newline())
+  -- LuaFormatter on
+  buffer:set_text(code)
+  buffer:set_lexer('lua')
+  format.paragraph() -- should do nothing on first line
+  assert_equal(buffer:get_text(), code)
+  buffer:goto_line(3)
+  format.paragraph()
+  -- LuaFormatter off
+  assert_equal(buffer:get_text(), table.concat({
+    'local foo',
+    '-- This is a',
+    '-- really long',
+    '-- line comment',
+    '-- that should',
+    '-- be wrapped.',
+    '-- This is another',
+    '-- really long',
+    '-- line comment',
+    '-- that should',
+    '-- be wrapped.',
+    'local bar'
+  }, newline()))
+  -- LuaFormatter on
+  buffer:undo()
+  buffer:goto_line(2)
+  buffer:line_down_extend()
+  format.paragraph()
+  -- LuaFormatter off
+  assert_equal(buffer:get_text(), table.concat({
+    'local foo',
+    '-- This is a',
+    '-- really long',
+    '-- line comment',
+    '-- that should',
+    '-- be wrapped.',
+    '-- This is another really long line comment that should be wrapped.',
+    'local bar'
+  }, newline()))
+  -- LuaFormatter on
+
+  format.line_length = line_length -- restore
+  buffer:close(true)
+end
+
+local function assert_go_autocompletion(pos, first_item)
+  buffer:goto_pos(pos)
+  textadept.editing.autocomplete('go')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, first_item)
+  buffer:auto_c_cancel()
+end
+
+function test_go_autocomplete()
+  local current_dir = lfs.currentdir()
+  local dir = os.tmpname()
+  os.remove(dir)
+  lfs.mkdir(dir)
+  lfs.chdir(dir) -- avoid loading tags from _HOME
+
+  buffer.new()
+  buffer:set_lexer('go')
+
+  -- LuaFormatter off
+  buffer:add_text(table.concat({
+    'package main',
+    '',
+    'import (',
+    '  "str"',
+    '  "time"',
+    ')',
+    '',
+    'func foo(bar time.Time) {',
+    '  strconv.P',
+    '',
+    '  bar.P',
+    '',
+    '  baz := time.Now()',
+    '  baz.',
+    '',
+    '  var quux time.Time',
+    '  //var quux time.Location',
+    '  quux.S',
+    '}'
+  }, newline()))
+  -- LuaFormatter on
+  assert_go_autocompletion(buffer.line_end_position[4] - 1, 'strconv')
+  assert_go_autocompletion(buffer.line_end_position[9], 'ParseBool')
+  assert_go_autocompletion(buffer.line_end_position[11], 'Parse')
+  assert_go_autocompletion(buffer.line_end_position[14], 'Add')
+  assert_go_autocompletion(buffer.line_end_position[18], 'Second')
+
+  buffer:close(true)
+  lfs.chdir(current_dir) -- restore
+  removedir(dir)
+end
 
 function test_html_autocomplete()
   buffer.new()
@@ -5080,11 +5227,282 @@ function test_html_autocomplete()
   buffer:close(true)
 end
 
--- TODO: LSP module
+function test_lsp_clangd()
+  local dir = os.tmpname()
+  os.remove(dir)
+  lfs.mkdir(dir)
+  lfs.mkdir(dir .. '/.hg') -- simulate version control
+  os.execute(string.format('%s %s %s', not WIN32 and 'cp' or 'copy',
+    file(_HOME .. '/test/modules/lsp/clangd/*'), dir))
+  local lsp = require('lsp')
+  lsp.server_commands.cpp = 'clangd'
+  lsp.log_rpc = true
 
--- TODO: Lua REPL module
+  io.open_file(dir .. '/main.cpp')
+  sleep(0.5)
+  ui.update()
+  if #_BUFFERS < 3 then
+    -- LSP has not autostarted. This happens when the lsp module is loaded after init and was not
+    -- able to hook into events.LEXER_LOADED, events.FILE_OPENED, etc.
+    lsp.start()
+    sleep(0.5)
+    ui.update()
+  end
+  local lsp_buf = _BUFFERS[#_BUFFERS] -- LSP buffer opened
+  assert_equal(lsp_buf._type, '[LSP]')
+  assert(lsp_buf:get_line(1):find('^Starting language server: clangd'), 'clangd did not start')
+  if #_VIEWS > 1 then view:unsplit() end
 
--- TODO: open file mode module
+  -- Test completions.
+  buffer:goto_pos(buffer:find_column(1, 13)) -- #include "F
+  sleep(0.1)
+  textadept.editing.autocomplete('lsp')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'Foo.h"')
+  buffer:auto_c_cancel()
+  buffer:goto_pos(buffer:find_column(6, 28)) -- foo.bar().
+  textadept.editing.autocomplete('lsp')
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'append')
+  buffer:auto_c_cancel()
+
+  -- Test hover/dwell.
+  events.emit(events.DWELL_START, buffer.line_indent_position[6]) -- printf
+  assert(view:call_tip_active(), 'call tip not active')
+  events.emit(events.DWELL_END)
+  assert(not view:call_tip_active(), 'call tip still active')
+
+  -- Test signature help.
+  buffer:goto_pos(buffer:find_column(5, 11)) -- Foo foo(
+  lsp.signature_help()
+  assert(view:call_tip_active(), 'call tip not active')
+  lsp.signature_help() -- cycle through signatures
+  assert(view:call_tip_active(), 'call tip still not active')
+  view:call_tip_cancel()
+
+  -- Test goto definition.
+  buffer:goto_pos(buffer.line_indent_position[5]) -- Foo
+  lsp.goto_definition()
+  assert_equal(buffer.filename, file(dir .. '/Foo.h'))
+  assert_equal(buffer:line_from_position(buffer.current_pos), 3)
+  assert_equal(buffer:get_sel_text(), 'Foo')
+  buffer:close()
+
+  -- Test goto declaration.
+  buffer:goto_pos(buffer:find_column(6, 18)) -- foo
+  lsp.goto_declaration()
+  assert_equal(buffer.filename, file(dir .. '/main.cpp'))
+  assert_equal(buffer:line_from_position(buffer.current_pos), 5)
+  assert_equal(buffer:get_sel_text(), 'foo')
+
+  -- Test find references.
+  buffer:goto_pos(buffer:find_column(6, 25)) -- foo.bar
+  lsp.find_references()
+  local ff_buf = _BUFFERS[#_BUFFERS] -- Files Found buffer opened
+  assert_equal(ff_buf._type, '[Files Found Buffer]')
+  assert(ff_buf:get_text():find('main.cpp:6'), 'main.cpp reference not found')
+  -- assert(ff_buf:get_text():find('Foo.h:6'), 'Foo.h reference not found')
+  if #_VIEWS > 1 then
+    ui.goto_view(-1)
+    view:unsplit()
+  else
+    view:goto_buffer(-2) -- skip over [LSP] too
+  end
+
+  -- Simulate save.
+  events.emit(events.FILE_AFTER_SAVE, buffer.filename)
+  sleep(1)
+  ui.update()
+
+  lsp.stop()
+  sleep(0.5)
+  ui.update()
+  assert(lsp_buf:get_text():find('Server exited with status 0'), 'clangd did not stop')
+  buffer:close(true)
+  lsp_buf:close()
+  ff_buf:close()
+
+  lsp.server_commands.cpp = nil -- reset
+  removedir(dir)
+end
+
+function test_lsp_clangd_interactive()
+  local dir = os.tmpname()
+  os.remove(dir)
+  lfs.mkdir(dir)
+  lfs.mkdir(dir .. '/.hg') -- simulate version control
+  os.execute(string.format('%s %s %s', not WIN32 and 'cp' or 'copy',
+    file(_HOME .. '/test/modules/lsp/clangd/*'), dir))
+  local lsp = require('lsp')
+  local lsp_menu = textadept.menu.menubar[_L['Tools']][_L['Language Server']]
+
+  io.open_file(dir .. '/main.cpp')
+  lsp.server_commands.cpp = 'clangd'
+  lsp_menu[_L['Start Server...']][2]()
+  sleep(0.5)
+  ui.update()
+  if #_BUFFERS < 3 then
+    -- LSP has not autostarted. This happens when the lsp module is loaded after init and was not
+    -- able to hook into events.LEXER_LOADED, events.FILE_OPENED, etc.
+    lsp.start()
+    sleep(0.5)
+    ui.update()
+  end
+  local lsp_buf = _BUFFERS[#_BUFFERS] -- LSP view opened
+  if #_VIEWS > 1 then view:unsplit() end
+
+  -- Test goto symbol.
+  lsp.goto_symbol('Foo')
+  assert_equal(buffer.filename, file(dir .. '/Foo.h'))
+  assert_equal(buffer:line_from_position(buffer.current_pos), 3)
+  assert_equal(buffer:get_sel_text(), 'Foo')
+  buffer:close()
+
+  lsp.goto_symbol()
+  assert_equal(buffer.filename, file(dir .. '/main.cpp'))
+  assert_equal(buffer:line_from_position(buffer.selection_start), 4) -- entire main() is selected
+
+  lsp_menu[_L['Stop Server']][2]()
+  sleep(0.5)
+  ui.update()
+  assert(lsp_buf:get_text():find('Server exited with status 0'), 'clangd did not stop')
+  buffer:close(true)
+  buffer:close() -- [LSP]
+
+  lsp.server_commands.cpp = nil -- reset
+  removedir(dir)
+end
+
+function test_lua_repl()
+  local repl = require('lua_repl')
+  repl.open()
+  assert_equal(#_BUFFERS, 2)
+  assert_equal(buffer._type, '[Lua REPL]')
+  view:goto_buffer(-1)
+  repl.open() -- should re-open existing REPL
+  assert_equal(#_BUFFERS, 2)
+  assert_equal(buffer._type, '[Lua REPL]')
+  view:split()
+  view:goto_buffer(-1)
+  repl.open() -- should switch to other view
+  assert_equal(buffer._type, '[Lua REPL]')
+  view:unsplit()
+
+  -- Test simple evaluation.
+  buffer:add_text('1+2')
+  repl.evaluate_repl()
+  assert_equal(buffer:get_line(buffer.line_count - 1), '--> 3' .. newline())
+
+  -- Test multi-line evaluation.
+  buffer:add_text('2+')
+  assert(not repl.evaluate_repl())
+  buffer:new_line()
+  buffer:add_text('3')
+  buffer:line_up_extend()
+  repl.evaluate_repl()
+  assert_equal(buffer:get_line(buffer.line_count - 1), '--> 5' .. newline())
+
+  -- Test pretty-printing.
+  buffer:add_text('{1,2,3}')
+  repl.evaluate_repl()
+  assert_equal(buffer:get_line(buffer.line_count - 1), '--> {1 = 1, 2 = 2, 3 = 3}' .. newline())
+
+  -- Test completions.
+  buffer:add_text('string.')
+  repl.complete_lua()
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'byte')
+  buffer:auto_c_cancel()
+  buffer:del_line_left()
+  buffer:add_text('buffer:get')
+  if not OSX then
+    events.emit(events.KEYPRESS, string.byte(' '), false, true) -- ctrl+space
+  else
+    events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7, false, false, true) -- alt+esc
+  end
+  repl.complete_lua()
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'get_cur_line')
+  buffer:auto_c_cancel()
+  buffer:del_line_left()
+  buffer:add_text('_SCINTILLA.constants.AL')
+  repl.complete_lua()
+  assert(buffer:auto_c_active(), 'no autocompletions')
+  assert_equal(buffer.auto_c_current_text, 'ALPHA_NOALPHA')
+  buffer:auto_c_cancel()
+  buffer:del_line_left()
+
+  -- Test history.
+  repl.cycle_history_prev()
+  assert_equal(buffer:get_line(buffer.line_count), '{1,2,3}')
+  if not CURSES then
+    events.emit(events.KEYPRESS, 0xFF52, false, true) -- ctrl+up
+  else
+    events.emit(events.KEYPRESS, string.byte('p'), false, true) -- ctrl+p
+  end
+  assert_equal(buffer:get_line(buffer.line_count - 1), '2+' .. newline())
+  assert_equal(buffer:get_line(buffer.line_count), '3')
+  repl.cycle_history_prev()
+  assert_equal(buffer:get_line(buffer.line_count), '1+2')
+  repl.cycle_history_prev() -- nothing more
+  assert_equal(buffer:get_line(buffer.line_count), '1+2')
+  repl.cycle_history_prev()
+  assert_equal(buffer:get_line(buffer.line_count), '1+2')
+  repl.cycle_history_next()
+  assert_equal(buffer:get_line(buffer.line_count - 1), '2+' .. newline())
+  assert_equal(buffer:get_line(buffer.line_count), '3')
+  if not CURSES then
+    events.emit(events.KEYPRESS, 0xFF54, false, true) -- ctrl+down
+  else
+    events.emit(events.KEYPRESS, string.byte('n'), false, true) -- ctrl+n
+  end
+  assert_equal(buffer:get_line(buffer.line_count), '{1,2,3}')
+  repl.cycle_history_next() -- nothing more
+  assert_equal(buffer:get_line(buffer.line_count), '{1,2,3}')
+  buffer:del_line_left()
+
+  -- Test it still works after reset.
+  -- TODO: this fails if require('lua_repl') is not called from user init.lua
+  reset()
+  buffer:add_text('print("foo")')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  assert_equal(buffer:get_line(buffer.line_count - 1), '--> foo' .. newline())
+
+  -- Test long line result.
+  view.edge_column = 80
+  buffer:add_text('buffer')
+  repl.evaluate_repl()
+  assert_equal(buffer:get_line(buffer.line_count - 1), '--> }' .. newline()) -- result over multiple lines
+
+  -- Test autocompletion list cycling instead of history cycling.
+  buffer:add_text('table.')
+  repl.complete_lua()
+  assert(buffer:auto_c_active(), 'no completions')
+  assert(buffer.auto_c_current_text, 'concat')
+  repl.cycle_history_next()
+  assert(buffer.auto_c_current_text, 'insert')
+  repl.cycle_history_prev()
+  assert(buffer.auto_c_current_text, 'concat')
+  buffer:auto_c_cancel()
+
+  buffer:close(true)
+end
+
+function test_open_file_mode()
+  local open_file_mode = require('open_file_mode')
+  open_file_mode()
+  ui.command_entry:add_text(_HOME .. '/t')
+  events.emit(events.KEYPRESS, string.byte('\t'))
+  assert(ui.command_entry:auto_c_active(), 'no completions')
+  ui.command_entry:line_end() -- highlight last completion
+  assert_equal(ui.command_entry.auto_c_current_text, 'themes/')
+  ui.command_entry:auto_c_complete()
+  events.emit(events.KEYPRESS, string.byte('\t'))
+  ui.command_entry:auto_c_complete()
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  assert_equal(buffer.filename, file(_HOME .. '/themes/dark.lua'))
+  buffer:close()
+end
 
 function test_python_autocomplete()
   buffer.new()
@@ -5175,7 +5593,35 @@ function test_ruby_autocomplete()
   buffer:close(true)
 end
 
--- TODO: Ruby toggle block
+function test_ruby_toggle_block()
+  buffer.new()
+  buffer:set_lexer('ruby')
+
+  local block = '[1, 2, 3].collect { |i| p }'
+  buffer:set_text(block)
+  _M.ruby.toggle_block()
+  -- LuaFormatter off
+  assert_equal(buffer:get_text(), table.concat({
+    '[1, 2, 3].collect do |i|',
+    '  p ',
+    'end'
+  }, newline()))
+  -- LuaFormatter on
+  assert_equal(buffer.current_pos, 1)
+  _M.ruby.toggle_block()
+  assert_equal(buffer:get_text(), block)
+  assert_equal(buffer.current_pos, 1)
+  _M.ruby.toggle_block()
+  buffer:line_down()
+  _M.ruby.toggle_block() -- should work inside block too
+  assert_equal(buffer:get_text(), block)
+
+  buffer:set_text('[1, 2, 3].collect do |i| p end')
+  events.emit(events.KEYPRESS, string.byte('{'), false, true) -- ctrl+{
+  assert_equal(buffer:get_text(), block)
+
+  buffer:close(true)
+end
 
 function test_spellcheck()
   local spellcheck = require('spellcheck')
@@ -5295,7 +5741,7 @@ local function check_property_usage(filename, buffer_props, view_props)
   local line_num, count = 1, 0
   for line in io.lines(filename) do
     for pos, id, prop in line:gmatch('()([%w_]+)[.:]([%w_]+)') do
-      if id == 'M' or id == 'f' or id == 'p' or id == 'lexer' or id == 'spawn_proc' then
+      if id == 'M' or id == 'f' or id:find('^p%d?$') or id == 'lexer' or id == 'spawn_proc' then
         goto continue
       end
       if id == 'textadept' and prop == 'MARK_BOOKMARK' then goto continue end
@@ -5311,8 +5757,10 @@ local function check_property_usage(filename, buffer_props, view_props)
         goto continue
       end
       if id == 'snip' then goto continue end
+      if id == 'state' and prop == 'indent' then goto continue end
+      if id == 'format' and prop == 'line_length' then goto continue end
       if buffer_props[prop] then
-        assert(id == 'buffer' or id:find('buf$') or id == 'buffer1' or id == 'buffer2',
+        assert(id:find('^buffer%d?$') or id:find('buf$'),
           'line %d:%d: "%s" should be a buffer property', line_num, pos, prop)
         count = count + 1
       elseif view_props[prop] then
