@@ -1159,7 +1159,6 @@ if CURSES then
     view:unsplit()
     view:unsplit()
   end
-  -- TODO: clipboard, etc.
 end
 
 function test_spawn_cwd()
@@ -1353,7 +1352,7 @@ function test_command_entry_run_lua()
   local column = view.edge_column
   view.edge_column = 80
   run_lua_command('buffer')
-  assert_equal(buffer:get_line(buffer.line_count - 1), '}' .. newline()) -- result over multiple lines
+  assert_equal(buffer:get_line(buffer.line_count - 1), '}\n') -- result over multiple lines
   view.edge_column = column -- reset
   if #_VIEWS > 1 then view:unsplit() end
   buffer:close()
@@ -1951,8 +1950,6 @@ function test_editing_goto_line()
 
   assert_raises(function() textadept.editing.goto_line(true) end, 'number/nil expected, got boolean')
 end
-
--- TODO: test_editing_goto_line_interactive
 
 function test_editing_transpose_chars()
   buffer.new()
@@ -2761,7 +2758,6 @@ function test_ui_find_find_in_files()
   ui.find.find_entry_text = ''
   view:unsplit()
   buffer:close()
-  -- TODO: ui.find.find_in_files() -- no param
 
   assert_raises(function() ui.find.find_in_files('', 1) end, 'string/table/nil expected, got number')
 end
@@ -3505,8 +3501,6 @@ function test_run_build()
   assert(buffer:get_text():find('> exit status: 9'), 'build not stopped')
   textadept.run.stop() -- should not do anything
   buffer:close()
-  -- TODO: chdir(_HOME) and textadept.run.build() -- no param.
-  -- TODO: project whose makefile is autodetected.
 end
 
 function test_run_build_interactive()
@@ -5087,6 +5081,7 @@ function test_file_diff_interactive()
 end
 
 function test_format_code_clang_format()
+  if WIN32 or OSX then return end -- TODO:
   io.open_file(_HOME .. '/test/modules/format/foo.c')
   require('format').code()
   assert_equal(buffer:get_text(), 'int main() { return 0; }' .. newline())
@@ -5228,6 +5223,7 @@ function test_html_autocomplete()
 end
 
 function test_lsp_clangd()
+  if WIN32 or OSX then return end -- TODO:
   local dir = os.tmpname()
   os.remove(dir)
   lfs.mkdir(dir)
@@ -5327,6 +5323,7 @@ function test_lsp_clangd()
 end
 
 function test_lsp_clangd_interactive()
+  if WIN32 or OSX then return end -- TODO:
   local dir = os.tmpname()
   os.remove(dir)
   lfs.mkdir(dir)
@@ -5489,13 +5486,14 @@ function test_lua_repl()
 end
 
 function test_open_file_mode()
+  if WIN32 then return end -- TODO: cannot complete network paths
   local open_file_mode = require('open_file_mode')
   open_file_mode()
-  ui.command_entry:add_text(_HOME .. '/t')
+  ui.command_entry:add_text(file(_HOME .. '/t'))
   events.emit(events.KEYPRESS, string.byte('\t'))
   assert(ui.command_entry:auto_c_active(), 'no completions')
   ui.command_entry:line_end() -- highlight last completion
-  assert_equal(ui.command_entry.auto_c_current_text, 'themes/')
+  assert_equal(ui.command_entry.auto_c_current_text, file('themes/'))
   ui.command_entry:auto_c_complete()
   events.emit(events.KEYPRESS, string.byte('\t'))
   ui.command_entry:auto_c_complete()
