@@ -3,6 +3,7 @@ Scintilla changes:
 * Add Message::ChangeInsertion for programmatically setting input method.
   This is helpful on newer versions of macOS, where changing the input method is flaky.
 * Handle leading whitespace in XPM images in order to prevent crashes.
+* Do not use fractional positioning on Gtk 2.
 
 diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
 --- a/gtk/ScintillaGTK.cxx	Fri Apr 09 15:11:26 2021 +1000
@@ -32,3 +33,24 @@ diff -r 22b6bbb36280 src/XPM.cxx
  	if ((0 == memcmp(textForm, "/* X", 4)) && (0 == memcmp(textForm, "/* XPM */", 9))) {
  		// Build the lines form out of the text form
  		std::vector<const char *> linesForm = LinesFormFromTextForm(textForm);
+diff -r 7dd0480eccaa gtk/PlatGTK.cxx
+--- a/gtk/PlatGTK.cxx	Wed Jul 06 22:00:20 2022 +1000
++++ b/gtk/PlatGTK.cxx	Mon Jul 25 10:54:38 2022 -0400
+@@ -75,7 +75,7 @@
+ }
+ 
+ void SetFractionalPositions([[maybe_unused]] PangoContext *pcontext) noexcept {
+-#if PANGO_VERSION_CHECK(1,44,3)
++#if PANGO_VERSION_CHECK(1,44,3) && GTK_CHECK_VERSION(3,0,0)
+ 	pango_context_set_round_glyph_positions(pcontext, FALSE);
+ #endif
+ }
+@@ -370,7 +370,7 @@
+ 	pango_context_set_base_dir(contextMeasure.get(), direction);
+ 	pango_cairo_context_set_font_options(contextMeasure.get(), fontOptions);
+ 	pango_context_set_language(contextMeasure.get(), language);
+-	
++
+ 	return contextMeasure;
+ }
+ 
