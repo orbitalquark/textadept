@@ -43,6 +43,7 @@
 				<string>com.textadept.C#-source</string>
 				<string>com.textadept.C/C++-source</string>
 				<string>com.textadept.ChucK-source</string>
+				<string>com.textadept.Clojure-source</string>
 				<string>com.textadept.CMake-source</string>
 				<string>com.textadept.CoffeeScript-source</string>
 				<string>com.textadept.Crystal-source</string>
@@ -56,20 +57,26 @@
 				<string>com.textadept.dot-source</string>
 				<string>com.textadept.Eiffel-source</string>
 				<string>com.textadept.Elixir-source</string>
+				<string>com.textadept.Elm-source</string>
 				<string>com.textadept.Erlang-source</string>
 				<string>com.textadept.F#-source</string>
+				<string>com.textadept.Fantom-source</string>
 				<string>com.textadept.Faust-source</string>
+				<string>com.textadept.Fennel-source</string>
 				<string>com.textadept.Fish-source</string>
 				<string>com.textadept.Forth-source</string>
 				<string>com.textadept.Fortran-source</string>
+				<string>com.textadept.fstab-source</string>
 				<string>com.textadept.Gap-source</string>
 				<string>com.textadept.Gettext-source</string>
 				<string>com.textadept.Gherkin-source</string>
+				<string>com.textadept.Gleam-source</string>
 				<string>com.textadept.GLSL-source</string>
 				<string>com.textadept.GNUPlot-source</string>
 				<string>com.textadept.Go-source</string>
 				<string>com.textadept.Groovy-source</string>
 				<string>com.textadept.Gtkrc-source</string>
+				<string>com.textadept.Hare-source</string>
 				<string>com.textadept.Haskell-source</string>
 				<string>com.textadept.HTML-source</string>
 				<string>com.textadept.Icon-source</string>
@@ -79,8 +86,10 @@
 				<string>com.textadept.Io-source</string>
 				<string>com.textadept.Java-source</string>
 				<string>com.textadept.Javascript-source</string>
+				<string>com.textadept.jq-source</string>
 				<string>com.textadept.JSON-source</string>
 				<string>com.textadept.JSP-source</string>
+				<string>com.textadept.Julia-source</string>
 				<string>com.textadept.LaTeX-source</string>
 				<string>com.textadept.Ledger-source</string>
 				<string>com.textadept.LESS-source</string>
@@ -92,9 +101,11 @@
 				<string>com.textadept.Makefile-source</string>
 				<string>com.textadept.Man-source</string>
 				<string>com.textadept.Markdown-source</string>
+				<string>com.textadept.Meson-source</string>
 				<string>com.textadept.MoonScript-source</string>
 				<string>com.textadept.Myrddin-source</string>
 				<string>com.textadept.Nemerle-source</string>
+				<string>com.textadept.Networkd-source</string>
 				<string>com.textadept.Nim-source</string>
 				<string>com.textadept.NSIS-source</string>
 				<string>com.textadept.Objective-C-source</string>
@@ -105,6 +116,7 @@
 				<string>com.textadept.PICO-8-source</string>
 				<string>com.textadept.Pike-source</string>
 				<string>com.textadept.PKGBUILD-source</string>
+				<string>com.textadept.Pony-source</string>
 				<string>com.textadept.Postscript-source</string>
 				<string>com.textadept.PowerShell-source</string>
 				<string>com.textadept.Prolog-source</string>
@@ -113,10 +125,12 @@
 				<string>com.textadept.Pure-source</string>
 				<string>com.textadept.Python-source</string>
 				<string>com.textadept.R-source</string>
+				<string>com.textadept.Reason-source</string>
 				<string>com.textadept.REBOL-source</string>
 				<string>com.textadept.reST-source</string>
 				<string>com.textadept.Rexx-source</string>
 				<string>com.textadept.RHTML-source</string>
+				<string>com.textadept.RouterOS-source</string>
 				<string>com.textadept.Ruby-source</string>
 				<string>com.textadept.Rust-source</string>
 				<string>com.textadept.Sass-CSS-source</string>
@@ -126,12 +140,15 @@
 				<string>com.textadept.Smalltalk-source</string>
 				<string>com.textadept.SML-source</string>
 				<string>com.textadept.SNOBOL4-source</string>
+				<string>com.textadept.Spin-source</string>
 				<string>com.textadept.SQL-source</string>
+				<string>com.textadept.Systemd-source</string>
 				<string>com.textadept.TaskPaper-source</string>
 				<string>com.textadept.Tcl-source</string>
 				<string>com.textadept.Texinfo-source</string>
 				<string>com.textadept.TOML-source</string>
 				<string>com.textadept.Txt2tags-source</string>
+				<string>com.textadept.TypeScript-source</string>
 				<string>com.textadept.Vala-source</string>
 				<string>com.textadept.vCard-source</string>
 				<string>com.textadept.Verilog-source</string>
@@ -139,8 +156,10 @@
 				<string>com.textadept.Visual-Basic-source</string>
 				<string>com.textadept.WSF-source</string>
 				<string>com.textadept.XML-source</string>
+				<string>com.textadept.Xs-source</string>
 				<string>com.textadept.Xtend-source</string>
 				<string>com.textadept.YAML-source</string>
+				<string>com.textadept.Zig-source</string>
 				<string>net.daringfireball.markdown</string>
 				<string>public.c-header</string>
 				<string>public.c-plus-plus-header </string>
@@ -482,6 +501,26 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>clj</string>
+					<string>cljs</string>
+					<string>cljc</string>
+					<string>edn</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Clojure source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Clojure-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
 					<string>cmake</string>
 					<string>cmake.in</string>
 					<string>ctest</string>
@@ -711,6 +750,23 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>elm</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Elm source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Elm-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
 					<string>erl</string>
 					<string>hrl</string>
 				</array>
@@ -746,6 +802,23 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>fan</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Fantom source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Fantom-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
 					<string>dsp</string>
 				</array>
 			</dict>
@@ -753,6 +826,23 @@
 			<string>Faust source</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.textadept.Faust-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>fnl</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Fennel source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Fennel-source</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.source-code</string>
@@ -782,7 +872,6 @@
 				<array>
 					<string>forth</string>
 					<string>frt</string>
-					<string>fs</string>
 				</array>
 			</dict>
 			<key>UTTypeDescription</key>
@@ -824,7 +913,23 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
-					<string>g</string>
+					<string>fstab</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>fstab source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.fstab-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
 					<string>gd</string>
 					<string>gi</string>
 					<string>gap</string>
@@ -869,6 +974,23 @@
 			<string>Gherkin source</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.textadept.Gherkin-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>gleam</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Gleam source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Gleam-source</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.source-code</string>
@@ -967,6 +1089,23 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>ha</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Hare source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Hare-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
 					<string>hs</string>
 				</array>
 			</dict>
@@ -1041,7 +1180,6 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
-					<string>inf</string>
 					<string>ni</string>
 				</array>
 			</dict>
@@ -1133,6 +1271,23 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>jq</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>jq source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.jq-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
 					<string>json</string>
 				</array>
 			</dict>
@@ -1157,6 +1312,23 @@
 			<string>JSP source</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.textadept.JSP-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>jl</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Julia source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Julia-source</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.source-code</string>
@@ -1385,6 +1557,23 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>meson.build</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Meson source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Meson-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
 					<string>moon</string>
 				</array>
 			</dict>
@@ -1426,6 +1615,25 @@
 			<string>Nemerle source</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.textadept.Nemerle-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>link</string>
+					<string>network</string>
+					<string>netdev</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Networkd source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Networkd-source</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.source-code</string>
@@ -1626,6 +1834,23 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>pony</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Pony source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Pony-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
 					<string>eps</string>
 					<string>ps</string>
 				</array>
@@ -1755,13 +1980,29 @@
 					<string>Rt</string>
 					<string>Rout.save</string>
 					<string>Rout.fail</string>
-					<string>S</string>
 				</array>
 			</dict>
 			<key>UTTypeDescription</key>
 			<string>R source</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.textadept.R-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>re</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Reason source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Reason-source</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.source-code</string>
@@ -1833,6 +2074,23 @@
 			<string>RHTML source</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.textadept.RHTML-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>rsc</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>RouterOS source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.RouterOS-source</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.source-code</string>
@@ -2014,6 +2272,23 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>spin</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Spin source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Spin-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
 					<string>ddl</string>
 					<string>sql</string>
 				</array>
@@ -2022,6 +2297,33 @@
 			<string>SQL source</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.textadept.SQL-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>automount</string>
+					<string>device</string>
+					<string>mount</string>
+					<string>path</string>
+					<string>scope</string>
+					<string>service</string>
+					<string>slice</string>
+					<string>socket</string>
+					<string>swap</string>
+					<string>target</string>
+					<string>timer</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Systemd source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Systemd-source</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.source-code</string>
@@ -2118,6 +2420,23 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>ts</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>TypeScript source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.TypeScript-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
 					<string>vala</string>
 				</array>
 			</dict>
@@ -2190,7 +2509,6 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
-					<string>asa</string>
 					<string>bas</string>
 					<string>cls</string>
 					<string>ctl</string>
@@ -2258,6 +2576,25 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>xs</string>
+					<string>xsin</string>
+					<string>xsrc</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Xs source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Xs-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
 					<string>xtend</string>
 				</array>
 			</dict>
@@ -2283,6 +2620,23 @@
 			<string>YAML source</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.textadept.YAML-source</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.source-code</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>zig</string>
+				</array>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Zig source</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.textadept.Zig-source</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.source-code</string>
