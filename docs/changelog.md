@@ -11,7 +11,7 @@
 
 Download:
 
-* [Textadept 11.4  -- Win32][]
+* [Textadept 11.4  -- Windows][]
 * [Textadept 11.4  -- Mac OSX 10.7+][]
 * [Textadept 11.4  -- Linux][]
 * [Textadept 11.4  -- Modules][]
@@ -39,7 +39,7 @@ Changes:
 * Updated R, Fortran, and Go lexers.
 * Updated to [Scintilla][] 5.2.4.
 
-[Textadept 11.4  -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.win32.zip
+[Textadept 11.4  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.win.zip
 [Textadept 11.4  -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.macOS.zip
 [Textadept 11.4  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.linux.tgz
 [Textadept 11.4  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.modules.zip
