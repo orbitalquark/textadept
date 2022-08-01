@@ -7,6 +7,45 @@
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.4  (01 Aug 2022)
+
+Download:
+
+* [Textadept 11.4  -- Win32][]
+* [Textadept 11.4  -- Mac OSX 10.7+][]
+* [Textadept 11.4  -- Linux][]
+* [Textadept 11.4  -- Modules][]
+
+Bugfixes:
+
+* Fixed line comment toggling for Batch.
+* Fixed lack of HTML documentation in releases since 11.3.
+* Ensure the statusbar is updated after `buffer:set_lexer()`.
+* Ensure `events.LEXER_LOADED` is emitted on `buffer.new()`.
+* LSP: Fixed off-by-one errors for goto definition et. al. and find references.
+* LSP: Fixed bug attempting to start a language server manually.
+* Lua REPL: Fixed key bindings.
+* Ruby: Fixed bug when trying to toggle a block at the end of the buffer.
+* Scintilla: Fixed hiding selection when `view.selection_layer` is `view.LAYER_UNDER_TEXT`.
+* Scintilla: Fix potential issues with drawing non-UTF-8 text.
+
+Changes:
+
+* Changed line duplication to line/selection duplication.
+* Added [`ui.popup_menu()`][] for displaying menus like the right-click context menu.
+* The GUI version now recognizes the 'menu' key.
+* Added support for Hare.
+* Updated Spanish translation.
+* Updated R, Fortran, and Go lexers.
+* Updated to [Scintilla][] 5.2.4.
+
+[Textadept 11.4  -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.win32.zip
+[Textadept 11.4  -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.macOS.zip
+[Textadept 11.4  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.linux.tgz
+[Textadept 11.4  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.modules.zip
+[`ui.popup_menu()`]: api.html#ui.popup_menu
+[Scintilla]: https://scintilla.org
+
 ### 11.4 beta (01 Jun 2022)
 
 Download:
