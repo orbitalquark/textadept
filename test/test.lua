@@ -371,6 +371,16 @@ function test_file_io_open_file_errors()
   -- TODO: find a case where the file can be opened, but not read
 end
 
+function test_file_io_open_first_visible_line()
+  io.open_file(_HOME..'/src/textadept.c')
+  buffer:goto_line(100)
+  io.open_file(_HOME..'/core/init.lua')
+  ui.update()
+  assert_equal(view.first_visible_line,1)
+  buffer:close()
+  buffer:close()
+end
+
 function test_file_io_reload_file()
   io.open_file(_HOME .. '/test/file_io/utf8')
   local pos = 10
