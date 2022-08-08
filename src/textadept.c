@@ -38,7 +38,6 @@
 #include <signal.h>
 #include <sys/ioctl.h>
 //#include <sys/select.h>
-#include <sys/time.h>
 //#include <termios.h>
 #else
 #undef main
@@ -2354,14 +2353,14 @@ static void new_window() {
   gtk_box_pack_start(GTK_BOX(hbox), new_view(0), true, true, 0);
   gtk_widget_grab_focus(focused_view);
 
-  gtk_box_pack_start(GTK_BOX(vboxp), new_findbox(), false, false, 5);
-
   command_entry = scintilla_new();
   gtk_widget_set_size_request(command_entry, 1, 1);
   g_signal_connect(command_entry, SCINTILLA_NOTIFY, G_CALLBACK(notified), lua);
   g_signal_connect(command_entry, "key-press-event", G_CALLBACK(keypress), lua);
   gtk_paned_add2(GTK_PANED(paned), command_entry);
   gtk_container_child_set(GTK_CONTAINER(paned), command_entry, "shrink", false, NULL);
+
+  gtk_box_pack_start(GTK_BOX(vboxp), new_findbox(), false, false, 5);
 
   GtkWidget *hboxs = gtk_hbox_new(false, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hboxs, false, false, 1);
@@ -2606,17 +2605,6 @@ int main(int argc, char **argv) {
       emit(lua, "csi", LUA_TNUMBER, cmd, LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
     } else if (key.type == TERMKEY_TYPE_MOUSE) {
       termkey_interpret_mouse(ta_tk, &key, (TermKeyMouseEvent *)&event, &button, &y, &x), y--, x--;
-#if !_WIN32
-      struct timeval time = {0, 0};
-      gettimeofday(&time, NULL);
-      millis = time.tv_sec * 1000 + time.tv_usec / 1000;
-#else
-      FILETIME time;
-      GetSystemTimeAsFileTime(&time);
-      ULARGE_INTEGER ticks;
-      ticks.LowPart = time.dwLowDateTime, ticks.HighPart = time.dwHighDateTime;
-      millis = ticks.QuadPart / 10000; // each tick is a 100-nanosecond interval
-#endif
     } else
       continue; // skip unknown types
     bool shift = key.modifiers & TERMKEY_KEYMOD_SHIFT;
@@ -2626,11 +2614,11 @@ int main(int argc, char **argv) {
       !emit(lua, "keypress", LUA_TNUMBER, ch, LUA_TBOOLEAN, shift, LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN,
         alt, -1))
       scintilla_send_key(view, ch, shift, ctrl, alt);
-    else if (!ch && !scintilla_send_mouse(view, event, millis, button, y, x, shift, ctrl, alt) &&
+    else if (!ch && !scintilla_send_mouse(view, event, button, y, x, shift, ctrl, alt) &&
       !emit(lua, "mouse", LUA_TNUMBER, event, LUA_TNUMBER, button, LUA_TNUMBER, y, LUA_TNUMBER, x,
         LUA_TBOOLEAN, shift, LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
       // Try again with possibly another view.
-      scintilla_send_mouse(focused_view, event, millis, button, y, x, shift, ctrl, alt);
+      scintilla_send_mouse(focused_view, event, button, y, x, shift, ctrl, alt);
     if (quitting) {
       close_lua(lua);
       // Free some memory.
