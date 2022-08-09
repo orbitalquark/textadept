@@ -1220,7 +1220,10 @@ static int call_scintilla_lua(lua_State *L) {
  * @param event The GTK mouse button event.
  */
 static void show_context_menu(lua_State *L, char *k, GdkEventButton *event) {
-  if (lua_getglobal(L, "ui") != LUA_TTABLE) return (void)lua_pop(L, 1);
+  if (lua_getglobal(L, "ui") != LUA_TTABLE) {
+    lua_pop(L, 1);
+    return;
+  }
   if (lua_getfield(L, -1, k) == LUA_TLIGHTUSERDATA) popup_menu(L, -1, event);
   lua_pop(L, 2); // ui[k], ui
 }
@@ -2580,7 +2583,7 @@ int main(int argc, char **argv) {
 #endif
 
   Scintilla *view = focused_view;
-  int ch = 0, event = 0, button = 0, y = 0, x = 0, millis = 0;
+  int ch = 0, event = 0, button = 0, y = 0, x = 0;
   TermKeyResult res;
   TermKeyKey key;
   // clang-format off
