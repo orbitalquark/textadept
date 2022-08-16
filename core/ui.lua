@@ -494,16 +494,20 @@ if CURSES then
   end)
 end
 
-events.connect(events.INITIALIZED, function()
-  local lua_error = (not WIN32 and '^/' or '^%a?:?[/\\][/\\]?') .. '.-%.lua:%d+:'
+local initialized = false
+events.connect(events.ERROR, function(text)
+  if not initialized then
+    ui.dialogs.textbox{title = _L['Initialization Error'], text = text}
+    return
+  end
   -- Print internal Lua error messages as they are reported.
   -- Attempt to mimic the Lua interpreter's error message format so tools that look for it can
   -- recognize these errors too.
-  events.connect(events.ERROR, function(text)
-    if text and text:find(lua_error) then text = 'lua: ' .. text end
-    ui.print(text)
-  end)
+  local lua_error = (not WIN32 and '^/' or '^%a?:?[/\\][/\\]?') .. '.-%.lua:%d+:'
+  if text and text:find(lua_error) then text = 'lua: ' .. text end
+  ui.print(text)
 end)
+events.connect(events.INITIALIZED, function() initialized = true end)
 
 --[[ The tables below were defined in C.
 

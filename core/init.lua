@@ -113,7 +113,7 @@ local function set_theme(view, name, env)
   if not assert_type(env, 'table/nil', 3) then env = {} end
   local orig_view = _G.view
   if view ~= orig_view then ui.goto_view(view) end
-  loadfile(name, 't', setmetatable(env, {__index = _G}))()
+  assert(loadfile(name, 't', setmetatable(env, {__index = _G})))()
   if view ~= orig_view then ui.goto_view(orig_view) end
   view:set_styles()
 end
