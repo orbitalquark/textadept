@@ -54,14 +54,74 @@ local function text_range(buffer, start_pos, end_pos)
   return text
 end
 
-local GETNAMEDSTYLE = _SCINTILLA.properties.named_styles[1]
 -- Documentation is in core/.buffer.luadoc.
 local function style_of_name(buffer, style_name)
-  return buffer:private_lexer_call(GETNAMEDSTYLE, assert_type(style_name, 'string', 2))
+  assert_type(style_name, 'string', 2)
+  for i = 1, view.STYLE_MAX do if buffer:name_of_style(i) == style_name then return i end end
+  return view.STYLE_DEFAULT
 end
 
 events.connect(events.BUFFER_NEW,
   function() buffer.text_range, buffer.style_of_name = text_range, style_of_name end)
+
+-- A table of style properties that can be concatenated with other tables of properties.
+local style_object = {}
+style_object.__index = style_object
+
+-- Creates a new style object.
+local function style_obj(props)
+  local style = {}
+  for k, v in pairs(assert_type(props, 'table', 1)) do style[k] = v end
+  return setmetatable(style, style_object)
+end
+
+-- Returns a new style object with a set of merged properties.
+function style_object.__concat(self, props)
+  local style = style_obj(self)
+  for k, v in pairs(assert_type(props, 'table', 2)) do style[k] = v end
+  return style
+end
+
+local map = {italics = 'italic', underlined = 'underline', eolfilled = 'eol_filled'} -- legacy
+-- Looks up the style settings for a given style number, and applies them to the given view.
+local function set_style(view, style_num)
+  local styles = buffer ~= ui.command_entry and view.styles or _G.view.styles
+  local style = styles[buffer:name_of_style(assert_type(style_num, 'number', 2))]
+  if style then for k, v in pairs(style) do view['style_' .. (map[k] or k)][style_num] = v end end
+end
+
+-- Documentation is in core/.view.luadoc.
+local function set_styles(view)
+  if buffer == ui.command_entry then view = ui.command_entry end
+  view:style_reset_default()
+  set_style(view, view.STYLE_DEFAULT)
+  view:style_clear_all()
+  local num_styles = buffer.named_styles
+  local num_predefined = view.STYLE_FOLDDISPLAYTEXT - view.STYLE_DEFAULT + 1
+  for i = 1, math.min(num_styles - num_predefined, view.STYLE_DEFAULT - 1) do set_style(view, i) end
+  for i = view.STYLE_DEFAULT + 1, view.STYLE_FOLDDISPLAYTEXT do set_style(view, i) end
+  for i = view.STYLE_FOLDDISPLAYTEXT + 1, num_styles do set_style(view, i) end
+end
+
+-- Documentation is in core/.view.luadoc.
+local function set_theme(view, name, env)
+  if not assert_type(name, 'string', 2):find('[/\\]') then
+    name = package.searchpath(name,
+      string.format('%s/themes/?.lua;%s/themes/?.lua', _USERHOME, _HOME))
+  end
+  if not name or not lfs.attributes(name) then return end
+  if not assert_type(env, 'table/nil', 3) then env = {} end
+  local orig_view = _G.view
+  if view ~= orig_view then ui.goto_view(view) end
+  loadfile(name, 't', setmetatable(env, {__index = _G}))()
+  if view ~= orig_view then ui.goto_view(orig_view) end
+  view:set_styles()
+end
+
+events.connect(events.VIEW_NEW, function()
+  view.styles = setmetatable({}, {__newindex = function(t, k, v) rawset(t, k, style_obj(v)) end})
+  view.colors, view.set_styles, view.set_theme = {}, set_styles, set_theme
+end)
 
 --[[ This comment is for LuaDoc.
 ---

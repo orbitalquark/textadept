@@ -63,8 +63,8 @@ $(textadept_rc_objs): textadept.rc ; $(WINDRES) $< $@
 
 sci_objs := $(call objs, scintilla/src/*.cxx)
 sci_lexlib_objs := $(call objs, lexilla/lexlib/*.cxx)
-sci_lexer_gtk_objs := $(call objs, LexLPeg.cxx)
-sci_lexer_curses_objs := $(call curses-objs, LexLPeg.cxx)
+sci_lexer_gtk_objs := $(call objs, Scintillua.cxx)
+sci_lexer_curses_objs := $(call curses-objs, Scintillua.cxx)
 sci_lexer_objs := $(sci_lexer_gtk_objs) $(sci_lexer_curses_objs)
 sci_gtk_objs := $(call objs, scintilla/gtk/*.cxx)
 sci_gtk_c_objs := $(call objs, scintilla/gtk/*.c)
@@ -88,7 +88,7 @@ $(call osx-objs, $(sci_objs)): osx-%.o: scintilla/src/%.cxx ; $(build-cxx)
 $(sci_lexlib_objs): %.o: lexilla/lexlib/%.cxx ; $(build-cxx)
 $(call win-objs, $(sci_lexlib_objs)): win-%.o: lexilla/lexlib/%.cxx ; $(build-cxx)
 $(call osx-objs, $(sci_lexlib_objs)): osx-%.o: lexilla/lexlib/%.cxx ; $(build-cxx)
-$(call all-objs, $(sci_lexer_objs)): LexLPeg.cxx ; $(build-cxx)
+$(call all-objs, $(sci_lexer_objs)): Scintillua.cxx ; $(build-cxx)
 $(sci_gtk_objs): %.o: scintilla/gtk/%.cxx ; $(build-cxx)
 $(call win-objs, $(sci_gtk_objs)): win-%.o: scintilla/gtk/%.cxx ; $(build-cxx)
 $(call osx-objs, $(sci_gtk_objs)): osx-%.o: scintilla/gtk/%.cxx ; $(build-cxx)
@@ -421,7 +421,7 @@ $(osx_dir).zip: $(osx_dir) ; zip -r $<.zip $< && rm -r $<
 # External dependencies.
 
 .PHONY: deps win-deps osx-deps
-base_deps := scintilla lexilla ../lexers LexLPeg.h LexLPeg.cxx scintilla/curses lua \
+base_deps := scintilla lexilla ../lexers Scintillua.h Scintillua.cxx scintilla/curses lua \
   $(addprefix lua/src/lib/, lpeg lfs) gtdialog cdk
 deps: $(base_deps) termkey
 win-deps: $(base_deps) gtkwin pdcurses
@@ -471,7 +471,7 @@ scintilla/curses: | $(scinterm_zip)
 	$(MAKE) -C $@ patch
 $(scintillua_zip): ; $(WGET) $(scintillua_url) -O $@
 ../lexers: | $(scintillua_zip) ; unzip -d $@ -j $| "*/lexers/*" -x "*/themes/*"
-LexLPeg.h LexLPeg.cxx: | $(scintillua_zip) ; unzip -j $| "*/*.cxx" "*/*.h"
+Scintillua.h Scintillua.cxx: | $(scintillua_zip) ; unzip -j $| "*/*.cxx" "*/*.h"
 $(lua_tgz): ; $(WGET) https://www.lua.org/ftp/$@
 $(lpeg_tgz): ; $(WGET) http://www.inf.puc-rio.br/~roberto/lpeg/$@
 $(lfs_zip): ; $(WGET) https://github.com/keplerproject/luafilesystem/archive/$@

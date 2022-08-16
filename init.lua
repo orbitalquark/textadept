@@ -8,6 +8,7 @@ package.cpath = table.concat({
   string.format('%s/modules/?.%s', _USERHOME, not WIN32 and 'so' or 'dll'),
   string.format('%s/modules/?.%s', _HOME, not WIN32 and 'so' or 'dll'), package.cpath
 }, ';')
+_LEXERPATH = string.format('%s/lexers;%s/lexers', _USERHOME, _HOME)
 
 -- Populate initial `_G.buffer` with temporarily exported io functions now that it exists. This
 -- is needed for menus and key bindings.
@@ -15,35 +16,9 @@ for name, f in pairs(io) do if name:find('^_') then buffer[name:sub(2)], io[name
 
 textadept = require('textadept')
 
-local SETLEXER = _SCINTILLA.properties.i_lexer[2]
-
--- Documentation is in core/.view.luadoc.
-local function set_theme(view, name, env)
-  for k in pairs(lexer.colors) do lexer.colors[k] = nil end -- clear mimic
-  if not assert_type(name, 'string', 2):find('[/\\]') then
-    name = package.searchpath(name,
-      string.format('%s/themes/?.lua;%s/themes/?.lua', _USERHOME, _HOME))
-  end
-  if not name or not lfs.attributes(name) then return end
-  if not assert_type(env, 'table/nil', 3) then env = {} end
-  local orig_view = _G.view
-  if view ~= orig_view then ui.goto_view(view) end
-  -- In the event the command entry is calling this function, tell the LPeg lexer that this view
-  -- (LexerLPeg instance) is the one to set styles for (as opposed to the command entry's view).
-  -- See note in LexerLPeg::Init(). Otherwise, this call is harmless and does not end up doing
-  -- much extra work.
-  buffer:private_lexer_call(SETLEXER, buffer._lexer or 'text')
-  loadfile(name, 't', setmetatable(env, {__index = _G}))()
-  -- Force reload of all styles since the current lexer may have defined its own styles. (The
-  -- LPeg lexer has only refreshed default lexer styles.)
-  -- Note: cannot use `buffer.set_lexer()` because it may not exist yet.
-  buffer:private_lexer_call(SETLEXER, buffer._lexer or 'text')
-  if view ~= orig_view then ui.goto_view(orig_view) end
-end
-events.connect(events.VIEW_NEW, function() view.set_theme = set_theme end)
-view.set_theme = set_theme -- needed for the first view
--- On reset, _LOADED['lexer'] is removed. Force a reload in order for set_theme to work properly.
-if not arg then view:goto_buffer(buffer) end
+-- Legacy theme compatibility.
+events.connect(events.VIEW_NEW, function() lexer = {colors = view.colors, styles = view.styles} end)
+lexer = view -- temporary proxy for folding properties; will be overwritten in events.VIEW_NEW
 
 -- The remainder of this file defines default buffer and view properties and applies them to
 -- subsequent buffers and views. Normally, a setting like `buffer.use_tabs = false` only applies
@@ -85,38 +60,17 @@ for _, mt in ipairs{buffer_mt, view_mt} do
   end
 end
 
--- Mimic the `lexer` module because (1) it is not yet available and (2) even if it was, color,
--- style, and property settings would not be captured during init.
-local property = view.property
-local colors = setmetatable({}, {
-  __newindex = function(t, name, color)
-    if type(color) == 'string' then
-      local r, g, b = color:match('^#(%x%x)(%x%x)(%x%x)$')
-      color = tonumber(string.format('%s%s%s', b, g, r), 16) or 0
-    end
-    property['color.' .. name] = color
-    rawset(t, name, color) -- cache instead of __index for property[...]
-  end
-})
-local styles = setmetatable({}, {
-  __newindex = function(_, name, props)
-    local settings = {}
-    for k, v in pairs(props) do
-      settings[#settings + 1] = type(v) ~= 'boolean' and string.format('%s:%s', k, v) or
-        string.format('%s%s', v and '' or 'not', k)
-    end
-    property['style.' .. name] = table.concat(settings, ',')
-  end
-})
-lexer = setmetatable({colors = colors, styles = styles}, {
-  __newindex = function(_, k, v)
-    property[k ~= 'folding' and k:gsub('_', '.') or 'fold'] = v and '1' or '0'
-  end
-})
+-- Record the initial call(s) to `view:set_theme()` in order to apply it to subsequent views.
+local init_theme, init_env
+rawset(view, 'set_theme', function(_, name, env) init_theme, init_env = name, env end)
+events.connect(events.VIEW_NEW, function() view:set_theme(init_theme, init_env) end)
 
 -- Default buffer and view settings.
 
 local buffer, view = buffer, view
+
+buffer.i_lexer = 'text'
+
 view:set_theme(not CURSES and 'light' or 'term')
 
 -- Multiple Selection and Virtual Space
@@ -313,21 +267,10 @@ for _, mt in ipairs{buffer_mt, view_mt} do
   mt.__index, mt.__newindex = mt.__orig_index, mt.__orig_newindex
 end
 
-local SETDIRECTFUNCTION = _SCINTILLA.properties.direct_function[1]
-local SETDIRECTPOINTER = _SCINTILLA.properties.doc_pointer[2]
-local SETLUASTATE = _SCINTILLA.functions.change_lexer_state[1]
-local CREATELOADER = _SCINTILLA.functions.create_loader[1]
 -- Sets default properties for a Scintilla document.
 events.connect(events.BUFFER_NEW, function()
   local buffer = _G.buffer
-  buffer:private_lexer_call(SETDIRECTFUNCTION, buffer.direct_function)
-  buffer:private_lexer_call(SETDIRECTPOINTER, buffer.direct_pointer)
-  buffer:private_lexer_call(SETLUASTATE, _LUA)
-  buffer:private_lexer_call(CREATELOADER, _USERHOME .. '/lexers')
-  buffer:private_lexer_call(CREATELOADER, _HOME .. '/lexers')
   load_settings()
-  buffer:private_lexer_call(SETLEXER, 'text')
-  _G.lexer = require('lexer') -- replace mimic
   if buffer == ui.command_entry then ui.command_entry.caret_line_visible = false end
 end, 1)
 
@@ -342,11 +285,4 @@ events.connect(events.VIEW_NEW, function()
   -- Since BUFFER_NEW loads themes and settings on startup, only load them for subsequent views.
   if #_VIEWS == 1 then return end
   load_settings()
-  -- Refresh styles in case a lexer has extra style settings. When load_settings() calls
-  -- `view.property['style.default'] = ...`, the LPeg lexer resets all styles to that default.
-  -- However, some lexers have extra style settings that are not set by load_settings(), and
-  -- thus need refreshing. This is not an issue in BUFFER_NEW since a lexer is set immediately
-  -- afterwards, which refreshes styles.
-  -- Note: `buffer:set_lexer()` is insufficient for some reason.
-  buffer:private_lexer_call(SETLEXER, buffer._lexer or 'text')
 end, 1)

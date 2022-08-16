@@ -51,7 +51,7 @@
 #include "lualib.h"
 #include "lauxlib.h"
 #include "Scintilla.h"
-#include "LexLPeg.h"
+#include "Scintillua.h"
 #if GTK
 #include "ScintillaWidget.h"
 #elif CURSES
@@ -1158,18 +1158,13 @@ static int call_scintilla(
   bool string_return = false;
   char *text = NULL;
 
-  // Even though the SCI_PRIVATELEXERCALL interface has ltype int, the LPeg lexer API uses
-  // different types depending on wparam. Modify ltype appropriately. See the LPeg lexer API
-  // for more information.
-  if (msg == SCI_PRIVATELEXERCALL) switch (luaL_checkinteger(L, arg)) {
-    case SCI_GETDIRECTFUNCTION:
-    case SCI_SETDOCPOINTER:
-    case SCI_CHANGELEXERSTATE: ltype = SINT; break;
-    case SCI_SETILEXER:
-    case SCI_CREATELOADER: ltype = SSTRING; break;
-    case SCI_GETNAMEDSTYLES: ltype = SSTRING, rtype = SINDEX; break;
-    default: ltype = SSTRINGRET;
-    }
+  // Create Scintillua lexer from incoming lexer name string.
+  if (msg == SCI_SETILEXER) {
+    lua_getglobal(L, "_LEXERPATH"), SetLibraryProperty("scintillua.lexers", lua_tostring(L, -1)),
+      lua_pop(L, 1);
+    lparam = (sptr_t)CreateLexer(luaL_checkstring(L, arg)), params_needed = 0;
+    if (!lparam) luaL_error(L, "error creating lexer: %s", GetCreateLexerError());
+  }
 
   // Set wParam and lParam appropriately for Scintilla based on wtype and ltype.
   if (wtype == SLEN && ltype == SSTRING) {
@@ -1433,7 +1428,6 @@ static void new_buffer(sptr_t doc) {
 //#elif CURSES
 // TODO: tabs
 #endif
-  SS(focused_view, SCI_SETILEXER, 0, (sptr_t)CreateLexer(NULL));
   lua_pushdoc(lua, doc), lua_setglobal(lua, "buffer");
   if (!initing) emit(lua, "buffer_new", -1);
 }
@@ -1597,7 +1591,6 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
     lua_pop(L, 2); // package.loaded, _G
     lua_gc(L, LUA_GCCOLLECT, 0);
   }
-  lua_pushinteger(L, (intptr_t)L), lua_setglobal(L, "_LUA"); // for LPeg lexer
   luaL_openlibs(L);
   luaL_requiref(L, "lpeg", luaopen_lpeg, 1), lua_pop(L, 1);
   luaL_requiref(L, "lfs", luaopen_lfs, 1), lua_pop(L, 1);
@@ -2386,7 +2379,6 @@ static void new_window() {
   mvwin(scintilla_get_window(command_entry), LINES - 2, 0);
   dummy_view = scintilla_new(NULL, NULL);
 #endif
-  SS(command_entry, SCI_SETILEXER, 0, (sptr_t)CreateLexer(NULL));
   register_command_entry_doc();
 }
 

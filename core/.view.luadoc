@@ -1044,6 +1044,30 @@
 --
 -- @field VISIBLE_STRICT (number, Read-only)
 --
+-- @field folding (boolean)
+--   Whether or not folding is enabled for the lexers that support it.
+--   This option is disabled by default.
+--   This is an alias for `view.property['fold'] = '1|0'`.
+-- @field fold_on_zero_sum_lines (boolean)
+--   Whether or not to mark as a fold point lines that contain both an ending and starting fold
+--   point. For example, `} else {` would be marked as a fold point.
+--   This option is disabled by default. This is an alias for
+--   `view.property['fold.scintillua.on.zero.sum.lines'] = '1|0'`.
+-- @field fold_compact (boolean)
+--   Whether or not blank lines after an ending fold point are included in that
+--   fold.
+--   This option is disabled by default.
+--   This is an alias for `view.property['fold.scintillua.compact'] = '1|0'`.
+-- @field fold_by_indentation (boolean)
+--   Whether or not to fold based on indentation level if a lexer does not have
+--   a folder.
+--   Some lexers automatically enable this option. It is disabled by default.
+--   This is an alias for `view.property['fold.scintillua.by.indentation'] = '1|0'`.
+-- @field fold_line_groups (boolean)
+--   Whether or not to fold multiple, consecutive line groups (such as line comments and import
+--   statements) and only show the top line.
+--   This option is disabled by default.
+--   This is an alias for `view.property['fold.scintillua.line.groups'] = '1|0'`.
 module('view')
 
 ---
@@ -1527,6 +1551,70 @@ function unsplit(view) end
 function goto_buffer(view, buffer) end
 
 ---
+-- Map of color name strings to color values in `0xBBGGRR` format.
+-- The contents of this map is typically set by a theme.
+-- Note: for applications running within a terminal emulator, only 16 color values are recognized,
+-- regardless of how many colors a user's terminal actually supports. (A terminal emulator's
+-- settings determines how to actually display these recognized color values, which may end
+-- up being mapped to a completely different color set.) In order to use the light variant of
+-- a color, some terminals require a style's `bold` field must be set along with that normal
+-- color. Recognized color values are black (0x000000), red (0x000080), green (0x008000), yellow
+-- (0x008080), blue (0x800000), magenta (0x800080), cyan (0x808000), white (0xC0C0C0), light black
+-- (0x404040), light red (0x0000FF), light green (0x00FF00), light yellow (0x00FFFF), light blue
+-- (0xFF0000), light magenta (0xFF00FF), light cyan (0xFFFF00), and light white (0xFFFFFF).
+-- @class table
+-- @name colors
+local colors
+
+---
+-- Map of style names to style definition tables.
+-- The contents of this map is typically set by a theme.
+--
+-- Style names consist of the following default names as well as the tag names defined by lexers.
+--
+-- * `default`: The default style all others are based on.
+-- * `line_number`: The line number margin style.
+-- * `control_char`: The style of control character blocks.
+-- * `indent_guide`: The style of indentation guides.
+-- * `call_tip`: The style of call tip text. Only the `font`, `size`, `fore`, and `back` style
+--   definition fields are supported.
+-- * `fold_display_text`: The style of text displayed next to folded lines.
+-- * `class`, `comment`, `constant`, `embedded`, `error`, `function`, `identifier`, `keyword`,
+--   `label`, `number`, `operator`, `preprocessor`, `regex`, `string`, `type`, `variable`,
+--   `whitespace`: Some tag names used by lexers. Some lexers may define more tag names,
+--   so this list is not exhaustive.
+-- * `whitespace.`*`lang`: A special style for whitespace tags in lexer name *lang*. It
+--   inherits from `whitespace`, and is used in place of it for all lexers.
+--
+-- Style definition tables may contain the following fields:
+--
+-- * `font`: String font name.
+-- * `size`: Integer font size.
+-- * `bold`: Whether or not the font face is bold. The default value is `false`.
+-- * `weight`: Integer weight or boldness of a font, between 1 and 999.
+-- * `italic`: Whether or not the font face is italic. The default value is `false`.
+-- * `underline`: Whether or not the font face is underlined. The default value is `false`.
+-- * `fore`: Font face foreground color in "0xBBGGRR" format.
+-- * `back`: Font face background color in "0xBBGGRR" format.
+-- * `eol_filled`: Whether or not the background color extends to the end of the line. The
+--   default value is `false`.
+-- * `case`: Font case: `'u'` for upper, `'l'` for lower, and `'m'` for normal, mixed case. The
+--   default value is `'m'`.
+-- * `visible`: Whether or not the text is visible. The default value is `true`.
+-- * `changeable`: Whether the text is changeable instead of read-only. The default value is
+--   `true`.
+-- @name styles
+-- @class table
+local styles
+
+---
+-- Applies defined styles to the view.
+-- This should be called any time a style in `styles` changes.
+-- @param view A view.
+-- @see styles
+function set_styles(view)
+
+---
 -- Sets the view's color theme to be string *name*, with the contents of table *env* available
 -- as global variables.
 -- User themes override Textadept's default themes when they have the same name. If *name*
@@ -1536,7 +1624,6 @@ function goto_buffer(view, buffer) end
 -- @param env Optional table of global variables themes can utilize to override default settings
 --   such as font and size.
 -- @usage view:set_theme('light', {font = 'Monospace', size = 12})
--- @name set_theme
--- @see _G.lexer.colors
--- @see _G.lexer.styles
+-- @see styles
+-- @see colors
 function set_theme(view, name, env) end

@@ -372,11 +372,11 @@ function test_file_io_open_file_errors()
 end
 
 function test_file_io_open_first_visible_line()
-  io.open_file(_HOME..'/src/textadept.c')
+  io.open_file(_HOME .. '/src/textadept.c')
   buffer:goto_line(100)
-  io.open_file(_HOME..'/core/init.lua')
+  io.open_file(_HOME .. '/core/init.lua')
   ui.update()
-  assert_equal(view.first_visible_line,1)
+  assert_equal(view.first_visible_line, 1)
   buffer:close()
   buffer:close()
 end
@@ -1139,6 +1139,8 @@ function test_ui_uri_drop()
 end
 
 function test_ui_buffer_switch_save_restore_properties()
+  local folding = view.folding
+  view.folding = true
   local filename = _HOME .. '/test/ui/test.lua'
   io.open_file(filename)
   buffer:goto_pos(10)
@@ -1151,6 +1153,7 @@ function test_ui_buffer_switch_save_restore_properties()
   assert_equal(view.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
   assert_equal(view.margin_width_n[1], 0)
   buffer:close()
+  view.folding = false -- restore
 end
 
 if CURSES then
@@ -1327,7 +1330,7 @@ function test_command_entry_run()
     {['\t'] = function() tab_pressed = true end}, nil, 2)
   ui.update() -- redraw command entry
   if not OSX then assert_equal(ui.command_entry.active, true) end -- macOS has focus issues here
-  assert_equal(ui.command_entry:get_lexer(), 'text')
+  assert_equal(ui.command_entry.lexer_language, 'text')
   assert(ui.command_entry.height > ui.command_entry:text_height(0), 'height < 2 lines')
   ui.command_entry:set_text('foo')
   events.emit(events.KEYPRESS, string.byte('\t'))
@@ -1349,7 +1352,7 @@ end
 local function run_lua_command(command)
   ui.command_entry.run()
   ui.command_entry:set_text(command)
-  assert_equal(ui.command_entry:get_lexer(), 'lua')
+  assert_equal(ui.command_entry.lexer_language, 'lua')
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 end
 
@@ -2400,7 +2403,7 @@ function test_file_types_get_lexer()
   -- LuaFormatter on
   buffer:colorize(1, -1)
   buffer:goto_pos(buffer:position_from_line(2))
-  assert_equal(buffer:get_lexer(), 'html')
+  assert_equal(buffer.lexer_language, 'html')
   assert_equal(buffer:get_lexer(true), 'css')
   assert_equal(buffer:name_of_style(buffer.style_at[buffer.current_pos]), 'identifier')
   buffer:close(true)
@@ -2413,26 +2416,26 @@ function test_file_types_set_lexer()
   buffer.new()
   buffer.filename = 'foo.lua'
   buffer:set_lexer()
-  assert_equal(buffer:get_lexer(), 'lua')
+  assert_equal(buffer.lexer_language, 'lua')
   assert_equal(lexer_loaded, 'lua')
   buffer.filename = 'foo'
   buffer:set_text('#!/bin/sh')
   buffer:set_lexer()
-  assert_equal(buffer:get_lexer(), 'bash')
+  assert_equal(buffer.lexer_language, 'bash')
   buffer:undo()
   buffer.filename = 'Makefile'
   buffer:set_lexer()
-  assert_equal(buffer:get_lexer(), 'makefile')
+  assert_equal(buffer.lexer_language, 'makefile')
   -- Verify lexer after certain events.
   buffer.filename = 'foo.c'
   events.emit(events.FILE_AFTER_SAVE, nil, true)
-  assert_equal(buffer:get_lexer(), 'ansi_c')
+  assert_equal(buffer.lexer_language, 'ansi_c')
   buffer.filename = 'foo.cpp'
   events.emit(events.FILE_OPENED)
-  assert_equal(buffer:get_lexer(), 'cpp')
+  assert_equal(buffer.lexer_language, 'cpp')
   view:goto_buffer(1)
   view:goto_buffer(-1)
-  assert_equal(buffer:get_lexer(), 'cpp')
+  assert_equal(buffer.lexer_language, 'cpp')
   events.disconnect(events.LEXER_LOADED, handler)
   buffer:close(true)
 
@@ -2441,17 +2444,19 @@ end
 
 function test_file_types_select_lexer_interactive()
   buffer.new()
-  local name = buffer:get_lexer()
+  local name = buffer.lexer_language
   textadept.file_types.select_lexer()
-  assert(buffer:get_lexer() ~= name, 'lexer unchanged')
+  assert(buffer.lexer_language ~= name, 'lexer unchanged')
   buffer:close()
 end
 
 function test_file_types_load_lexers()
   local lexers = {}
-  for name in buffer:private_lexer_call(_SCINTILLA.properties.lexer_language[1]):gmatch('[^\n]+') do
-    lexers[#lexers + 1] = name
+  for file in lfs.dir(_LEXERPATH:match('[^;]+$')) do -- just _HOME/lexers
+    local name = file:match('^(.+)%.lua$')
+    if name and name ~= 'lexer' then lexers[#lexers + 1] = name end
   end
+  table.sort(lexers)
   print('Loading lexers...')
   if #_VIEWS > 1 then view:unsplit() end
   view:goto_buffer(-1)
@@ -3349,6 +3354,7 @@ function test_menu_menu_functions()
   textadept.menu.menubar[_L['View']][_L['Shrink View']][2]()
   assert_equal(view.size, size)
   view:unsplit()
+  view.property['fold'] = '1' -- TODO: view.folding = true
   buffer:set_text('if foo then\n  bar\nend')
   buffer:colorize(1, -1)
   textadept.menu.menubar[_L['View']][_L['Toggle Current Fold']][2]()
@@ -4066,57 +4072,6 @@ function test_ansi_c_autocomplete()
   buffer:close(true)
 end
 
-function test_lexer_api()
-  buffer.new()
-  buffer.use_tabs, buffer.tab_width = true, 4
-  -- LuaFormatter off
-  buffer:set_text(table.concat({
-    'if foo then',
-    '\tbar',
-    '',
-    'end',
-    'baz'
-  }, newline()))
-  -- LuaFormatter on
-  buffer:set_lexer('lua')
-  buffer:colorize(1, -1)
-  local lexer = require('lexer')
-  assert(lexer.fold_level[1] & lexer.FOLD_HEADER > 0, 'not a fold header')
-  assert_equal(lexer.fold_level[2], lexer.fold_level[3])
-  assert(lexer.fold_level[4] > lexer.fold_level[5], 'incorrect fold levels')
-  assert(lexer.indent_amount[1] < lexer.indent_amount[2], 'incorrect indent level')
-  assert(lexer.indent_amount[2] > lexer.indent_amount[3], 'incorrect indent level')
-  lexer.line_state[1] = 2
-  assert_equal(lexer.line_state[1], 2)
-  assert_equal(lexer.property['foo'], '')
-  lexer.property['foo'] = 'bar'
-  assert_equal(lexer.property['foo'], 'bar')
-  lexer.property['bar'] = '$(foo),$(foo)'
-  assert_equal(lexer.property_expanded['bar'], 'bar,bar')
-  lexer.property['baz'] = '1'
-  assert_equal(lexer.property_int['baz'], 1)
-  lexer.property['baz'] = ''
-  assert_equal(lexer.property_int['baz'], 0)
-  assert_equal(lexer.property_int['quux'], 0)
-  assert_equal(lexer.style_at[2], 'keyword')
-  assert_equal(lexer.line_from_position(15), 2)
-  buffer:close(true)
-
-  assert_raises(function() lexer.fold_level = nil end, 'read-only')
-  assert_raises(function() lexer.fold_level[1] = 0 end, 'read-only')
-  assert_raises(function() lexer.indent_amount = nil end, 'read-only')
-  assert_raises(function() lexer.indent_amount[1] = 0 end, 'read-only')
-  assert_raises(function() lexer.property = nil end, 'read-only')
-  assert_raises(function() lexer.property_int = nil end, 'read-only')
-  assert_raises(function() lexer.property_int['foo'] = 1 end, 'read-only')
-  -- TODO: assert_raises(function() lexer.property_expanded = nil end, 'read-only')
-  assert_raises(function() lexer.property_expanded['foo'] = 'bar' end, 'read-only')
-  assert_raises(function() lexer.style_at = nil end, 'read-only')
-  assert_raises(function() lexer.style_at[1] = 0 end, 'read-only')
-  assert_raises(function() lexer.line_state = nil end, 'read-only')
-  assert_raises(function() lexer.line_from_position = nil end, 'read-only')
-end
-
 function test_ui_size()
   local size = ui.size
   ui.size = {size[1] - 50, size[2] + 50}
@@ -4286,7 +4241,7 @@ function test_set_theme()
   view:unsplit()
 end
 
-function test_set_lexer_style()
+function test_set_view_style()
   buffer.new()
   buffer:set_lexer('java')
   buffer:add_text('foo()')
@@ -4298,47 +4253,51 @@ function test_set_lexer_style()
     'function name style_fore same as default style_fore')
   view.style_fore[style] = view.style_fore[view.STYLE_DEFAULT]
   assert_equal(view.style_fore[style], default_fore)
-  local color = lexer.colors[not CURSES and 'orange' or 'blue']
+  local color = view.colors[not CURSES and 'orange' or 'blue']
   assert(color > 0 and color ~= default_fore)
-  lexer.styles['function'] = {fore = color}
+  view.styles['function'] = {fore = color}
+  view:set_styles()
   assert_equal(view.style_fore[style], color)
   buffer:close(true)
   -- Defined in Lua lexer, which is not currently loaded.
   assert(buffer:style_of_name('library'), view.STYLE_DEFAULT)
-  -- Emulate a theme setting to trigger an LPeg lexer style refresh, but without a token defined.
-  view.property['style.library'] = view.property['style.library']
+
+  assert_raises(function() view.styles.foo = 1 end, 'table expected')
+  assert_raises(function() view.styles.foo = view.styles.default .. 1 end, 'table expected')
+  -- TODO: error when setting existing style like view.styles.default = 1?
 end
 
-function test_lexer_fold_properties()
-  lexer.property['fold.compact'] = '0'
-  assert(not lexer.fold_compact, 'lexer.fold_compact not updated')
-  lexer.fold_compact = true
-  assert(lexer.fold_compact, 'lexer.fold_compact not updated')
-  assert_equal(lexer.property['fold.compact'], '1')
-  lexer.fold_compact = nil
-  assert(not lexer.fold_compact)
-  assert_equal(lexer.property['fold.compact'], '0')
+function test_view_fold_properties()
+  view.property['fold.scintillua.compact'] = '0'
+  assert(not view.fold_compact, 'view.fold_compact not updated')
+  view.fold_compact = true
+  assert(view.fold_compact, 'view.fold_compact not updated')
+  assert_equal(view.property['fold.scintillua.compact'], '1')
+  view.fold_compact = nil
+  assert(not view.fold_compact)
+  assert_equal(view.property['fold.scintillua.compact'], '0')
   local truthy, falsy = {true, '1', 1}, {false, '0', 0}
   for i = 1, #truthy do
-    lexer.fold_compact = truthy[i]
-    assert(lexer.fold_compact, 'lexer.fold_compact not updated for "%s"', tostring(truthy[i]))
-    lexer.fold_compact = falsy[i]
-    assert(not lexer.fold_compact, 'lexer.fold_compact not updated for "%s"', tostring(falsy[i]))
+    view.fold_compact = truthy[i]
+    assert(view.fold_compact, 'view.fold_compact not updated for "%s"', tostring(truthy[i]))
+    view.fold_compact = falsy[i]
+    assert(not view.fold_compact, 'view.fold_compact not updated for "%s"', tostring(falsy[i]))
   end
   -- Verify fold and folding properties are synchronized.
-  lexer.property['fold'] = '0'
-  assert(not lexer.folding)
-  lexer.folding = true
-  assert(lexer.property['fold'] == '1')
-  -- Verify view and lexer properties are synchronized.
+  view.fold_compact = true
+  assert_equal(view.property['fold.scintillua.compact'], '1')
+  view.fold_compact = nil
+  assert_equal(view.property['fold.scintillua.compact'], '0')
   view.property['fold'] = '0'
-  assert(not lexer.folding)
-  lexer.folding = true
+  assert(not view.folding)
+  view.folding = true
   assert_equal(view.property['fold'], '1')
 end
+expected_failure(test_view_fold_properties)
 
-function test_lexer_fold_line_groups()
-  local fold_line_groups = lexer.fold_line_groups
+function test_view_fold_line_groups()
+  local fold, fold_line_groups = view.folding, view.fold_line_groups
+  view.folding, view.fold_line_groups = true, false
   buffer.new()
   buffer:add_text [[
     package foo;
@@ -4353,20 +4312,19 @@ function test_lexer_fold_line_groups()
     public class Foo {}
   ]]
   buffer:set_lexer('java')
-  lexer.fold_line_groups = false
   buffer:colorize(1, -1)
-  assert(buffer.fold_level[3] & lexer.FOLD_HEADER == 0, 'import is a fold point')
-  assert(buffer.fold_level[6] & lexer.FOLD_HEADER == 0, 'line comment is a fold point')
-  lexer.fold_line_groups = true
+  assert(buffer.fold_level[3] & buffer.FOLDLEVELHEADERFLAG == 0, 'import is a fold point')
+  assert(buffer.fold_level[6] & buffer.FOLDLEVELHEADERFLAG == 0, 'line comment is a fold point')
+  view.property['fold.scintillua.line.groups'] = '1' -- TODO: view.fold_line_groups = true
   buffer:colorize(1, -1)
-  assert(buffer.fold_level[3] & lexer.FOLD_HEADER > 0, 'import is not a fold point')
-  assert(buffer.fold_level[6] & lexer.FOLD_HEADER > 0, 'line comment is not a fold point')
+  assert(buffer.fold_level[3] & buffer.FOLDLEVELHEADERFLAG > 0, 'import is not a fold point')
+  assert(buffer.fold_level[6] & buffer.FOLDLEVELHEADERFLAG > 0, 'line comment is not a fold point')
   view:toggle_fold(3)
   for i = 4, 5 do assert(not view.line_visible[i], 'line %i is visible', i) end
   view:toggle_fold(6)
   for i = 7, 8 do assert(not view.line_visible[i], 'line %i is visible', i) end
   buffer:close(true)
-  lexer.fold_line_groups = fold_line_groups -- restore
+  view.folding, view.fold_line_groups = folding, fold_line_groups -- restore
 end
 
 -- TODO: test init.lua's buffer settings

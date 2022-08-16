@@ -188,7 +188,7 @@ local function compile_or_run(filename, commands)
     if buffer.modify then buffer:save() end
   end
   local ext = filename:match('[^/\\.]+$')
-  local lang = filename == buffer.filename and buffer:get_lexer() or
+  local lang = filename == buffer.filename and buffer.lexer_language or
     textadept.file_types.extensions[ext]
   local command = commands[filename] or commands[ext] or commands[lang]
   local dirname, basename = '', filename
@@ -296,7 +296,7 @@ function M.set_arguments(filename, run, compile)
   for i, commands in ipairs{M.run_commands, M.compile_commands} do
     -- Compare the base run/compile command with the one for the current file. The difference
     -- is any additional arguments set previously.
-    base_commands[i] = commands[filename:match('[^.]+$')] or commands[buffer:get_lexer()] or ''
+    base_commands[i] = commands[filename:match('[^.]+$')] or commands[buffer.lexer_language] or ''
     local current_command = commands[filename] or ''
     local args = (i == 1 and run or compile) or current_command:sub(#base_commands[i] + 2)
     utf8_args[i] = args:iconv('UTF-8', _CHARSET)

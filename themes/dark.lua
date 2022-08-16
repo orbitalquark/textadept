@@ -2,7 +2,7 @@
 -- Dark theme for Textadept.
 -- Contributions by Ana Balan.
 
-local view, colors, styles = view, lexer.colors, lexer.styles
+local view, colors, styles = view, view.colors, view.styles
 
 -- Greyscale colors.
 colors.dark_black = 0x000000

@@ -334,7 +334,7 @@ events.connect(events.UPDATE_UI, function(updated)
   local pos = buffer.current_pos
   local line, max = buffer:line_from_position(pos), buffer.line_count
   local col = buffer.column[pos]
-  local lang = buffer:get_lexer()
+  local lang = buffer.lexer_language
   local eol = buffer.eol_mode == buffer.EOL_CRLF and _L['CRLF'] or _L['LF']
   local tabs = string.format('%s %d', buffer.use_tabs and _L['Tabs:'] or _L['Spaces:'],
     buffer.tab_width)

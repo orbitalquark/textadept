@@ -160,6 +160,10 @@
 --   and [`buffer.indicator_clear_range()`]().
 -- @field length (number, Read-only)
 --   The number of bytes in the buffer.
+-- @field lexer_language (string, Read-only)
+--   The buffer's lexer name.
+--   If the lexer is a multi-language lexer, [`buffer.get_lexer()`]() can obtain the lexer
+--   under the caret.
 -- @field line_count (number, Read-only)
 --   The number of lines in the buffer.
 --   There is always at least one.
@@ -196,6 +200,8 @@
 -- @field multiple_selection (bool)
 --   Enable multiple selection.
 --   The default value is `false`.
+-- @field named_styles (number)
+--   The number of named lexer styles.
 -- @field overtype (bool)
 --   Enable overtype mode, where typed characters overwrite existing ones.
 --   The default value is `false`.
@@ -1724,6 +1730,7 @@ function set_encoding(buffer, encoding) end
 -- @param buffer A buffer.
 -- @param current Whether or not to get the lexer at the current caret position in multi-language
 --   lexers. The default is `false` and returns the parent lexer.
+-- @see lexer_language
 function get_lexer(buffer, current) end
 
 ---
@@ -1767,7 +1774,6 @@ function set_lexer(buffer, name) end
 --   * key_words
 --   * layout_cache
 --   * lexer
---   * lexer_language
 --   * line_character_index
 --   * line_end_types_active
 --   * line_end_types_allowed
@@ -1890,7 +1896,6 @@ function set_lexer(buffer, name) end
 --   * line_from_index_position
 --   * load_lexer_library
 --   * mouse_wheel_captures
---   * named_styles
 --   * null
 --   * point_x_from_position
 --   * point_y_from_position

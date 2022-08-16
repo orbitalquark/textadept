@@ -2,7 +2,7 @@
 -- Terminal theme for Textadept.
 -- Contributions by Ana Balan.
 
-local view, colors, styles = view, lexer.colors, lexer.styles
+local view, colors, styles = view, view.colors, view.styles
 
 -- Normal colors.
 colors.black = 0x000000

@@ -2,7 +2,7 @@
 -- Light theme for Textadept.
 -- Contributions by Ana Balan.
 
-local view, colors, styles = view, lexer.colors, lexer.styles
+local view, colors, styles = view, view.colors, view.styles
 
 -- Greyscale colors.
 colors.dark_black = 0x000000
@@ -82,6 +82,8 @@ styles.string = {fore = colors.green}
 styles.type = {fore = colors.lavender}
 styles.variable = {fore = colors.dark_lavender}
 styles.whitespace = {}
+
+styles.library = styles.type
 
 -- Element colors.
 -- view.element_color[view.ELEMENT_SELECTION_TEXT] = colors.light_black
