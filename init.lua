@@ -61,9 +61,10 @@ for _, mt in ipairs{buffer_mt, view_mt} do
 end
 
 -- Record the initial call(s) to `view:set_theme()` in order to apply it to subsequent views.
-local init_theme, init_env
-rawset(view, 'set_theme', function(_, name, env) init_theme, init_env = name, env end)
-events.connect(events.VIEW_NEW, function() view:set_theme(init_theme, init_env) end)
+-- Do not do this on reset, though.
+local theme, env
+if arg then rawset(view, 'set_theme', function(_, name, env_) theme, env = name, env_ end) end
+events.connect(events.VIEW_NEW, function() view:set_theme(theme, env) end)
 
 -- Default buffer and view settings.
 
