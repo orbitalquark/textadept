@@ -37,10 +37,13 @@ M.patterns = {['^#!.+[/ ][gm]?awk']='awk',['^#!.+[/ ]lua']='lua',['^#!.+[/ ]octa
 -- LuaDoc is in core/.buffer.luadoc.
 local function get_lexer(buffer, current)
   if not current then return buffer.lexer_language end
+  local pos = buffer.current_pos
   local name_of_style, style_at = buffer.name_of_style, buffer.style_at
-  for pos = buffer.current_pos, 1, -1 do
-    local style_name = name_of_style(style_at[pos])
-    if style_name:find('^whitespace%.') then return style_name:match('^whitespace%.(.+)$') end
+  while pos > 0 do
+    local style = style_at[pos]
+    local lang = name_of_style(style):match('^whitespace%.(.+)$')
+    if lang then return lang end
+    repeat pos = pos - 1 until pos < 1 or style_at[pos] ~= style
   end
   return buffer.lexer_language
 end
