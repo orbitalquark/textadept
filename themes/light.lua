@@ -83,8 +83,6 @@ styles.type = {fore = colors.lavender}
 styles.variable = {fore = colors.dark_lavender}
 styles.whitespace = {}
 
-styles.library = styles.type
-
 -- Element colors.
 -- view.element_color[view.ELEMENT_SELECTION_TEXT] = colors.light_black
 view.element_color[view.ELEMENT_SELECTION_BACK] = colors.grey_white

@@ -118,9 +118,14 @@ local function set_theme(view, name, env)
   view:set_styles()
 end
 
+local styles_mt = {
+  __index = function(t, k) return k and t[k:match('^(.+)%.')] or nil end,
+  __newindex = function(t, k, v) rawset(t, k, style_obj(v)) end
+}
+
 events.connect(events.VIEW_NEW, function()
-  view.styles = setmetatable({}, {__newindex = function(t, k, v) rawset(t, k, style_obj(v)) end})
-  view.colors, view.set_styles, view.set_theme = {}, set_styles, set_theme
+  view.colors, view.styles = {}, setmetatable({}, styles_mt)
+  view.set_styles, view.set_theme = set_styles, set_theme
 end)
 
 --[[ This comment is for LuaDoc.
