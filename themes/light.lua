@@ -64,24 +64,51 @@ styles.indent_guide = {fore = colors.dark_white}
 styles.call_tip = {fore = colors.light_black, back = colors.dark_white}
 styles.fold_display_text = {fore = colors.grey}
 
--- Token styles.
+-- Tag styles.
+styles.attribute = {fore = colors.dark_lavender}
+styles.bold = {bold = true}
 styles.class = {fore = colors.yellow}
+styles.code = {back = colors.dark_white, eolfilled = true}
 styles.comment = {fore = colors.grey}
-styles.constant = {fore = colors.red}
-styles.embedded = {fore = colors.dark_blue, back = colors.dark_white}
+-- styles.constant = {}
+styles['constant.builtin'] = {fore = colors.dark_teal}
+styles.embedded = {back = colors.dark_white}
 styles.error = {fore = colors.red, italics = true}
-styles['function'] = {fore = colors.dark_orange}
-styles.identifier = {}
+-- styles['function'] = {}
+styles['function.builtin'] = {fore = colors.dark_orange}
+-- styles['function.method'] = {}
+-- styles.identifier = {}
+styles.italic = {italic = true}
 styles.keyword = {fore = colors.dark_blue}
-styles.label = {fore = colors.dark_orange}
+styles.label = {fore = colors.dark_pink}
+styles.link = {underline = true}
 styles.number = {fore = colors.teal}
 styles.operator = {fore = colors.purple}
 styles.preprocessor = {fore = colors.dark_yellow}
+styles.reference = {underline = true}
 styles.regex = {fore = colors.dark_green}
 styles.string = {fore = colors.green}
-styles.type = {fore = colors.lavender}
-styles.variable = {fore = colors.dark_lavender}
-styles.whitespace = {}
+styles.tag = {fore = colors.dark_blue}
+styles.title = {fore = colors.purple}
+styles.type = {fore = colors.dark_lavender}
+styles.underline = {underline = true}
+-- styles.variable = {}
+styles['variable.builtin'] = {fore = colors.dark_yellow}
+-- styles.whitespace = {}
+
+-- CSS.
+styles.property = styles.attribute
+-- styles.pseudoclass = {}
+-- styles.pseudoelement = {}
+-- Diff.
+styles.addition = {fore = colors.green}
+styles.deletion = {fore = colors.red}
+styles.change = {fore = colors.yellow}
+-- HTML.
+styles['tag.unknown'] = styles.tag .. {italics = true}
+styles['attribute.unknown'] = styles.attribute .. {italics = true}
+-- YAML.
+styles['error.indent'] = {back = colors.red}
 
 -- Element colors.
 -- view.element_color[view.ELEMENT_SELECTION_TEXT] = colors.light_black
