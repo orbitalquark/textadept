@@ -62,7 +62,10 @@ end
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_lexer(buffer, name)
   if not assert_type(name, 'string/nil', 2) then name = detect_language(buffer) or 'text' end
-  if name == buffer.lexer_language then return end -- no change
+  if name == buffer.lexer_language then
+    if view.set_styles then view:set_styles() end
+    return -- no change
+  end
 
   -- Set the lexer and check for errors.
   buffer.i_lexer = name

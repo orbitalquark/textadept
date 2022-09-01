@@ -61,10 +61,21 @@ for _, mt in ipairs{buffer_mt, view_mt} do
 end
 
 -- Record the initial call(s) to `view:set_theme()` in order to apply it to subsequent views.
--- Do not do this on reset, though.
 local theme, env
-if arg then rawset(view, 'set_theme', function(_, name, env_) theme, env = name, env_ end) end
+rawset(view, 'set_theme', function(_, name, env_) theme, env = name, env_ end)
 events.connect(events.VIEW_NEW, function() view:set_theme(theme, env) end)
+-- Cycle through buffers, resetting the lexers, and cycle through views, simulating
+-- `events.VIEW_NEW` event to update themes, colors, and styles.
+events.connect(events.RESET_AFTER, function()
+  for _, buffer in ipairs(_BUFFERS) do
+    buffer.i_lexer = buffer._lexer or 'text'
+    buffer:colorize(1, 1) -- signal re-lexing is needed
+  end
+  for i = 1, #_VIEWS do
+    ui.goto_view(1)
+    events.emit(events.VIEW_NEW)
+  end
+end)
 
 -- Default buffer and view settings.
 

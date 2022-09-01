@@ -2447,6 +2447,26 @@ function test_file_types_set_lexer()
   assert_raises(function() buffer:set_lexer(true) end, 'string/nil expected, got boolean')
 end
 
+function test_file_types_set_lexer_after_buffer_switch()
+  buffer.new()
+  buffer:add_text('[[foo]]')
+  buffer:set_lexer('lua')
+  local longstring_style = buffer.style_at[1]
+  local longstring_name = buffer:name_of_style(longstring_style)
+  assert(longstring_name:find('string.longstring'), 'not a longstring style')
+  local longstring_fore = view.style_fore[longstring_style]
+  assert(longstring_fore ~= view.style_fore[view.STYLE_DEFAULT], 'longstring fore is default fore')
+  buffer.new()
+  buffer:set_lexer('html')
+  assert_equal(buffer:style_of_name(longstring_name), view.STYLE_DEFAULT)
+  assert(buffer:name_of_style(longstring_style) ~= longstring_name, 'lexer not properly changed')
+  assert(view.style_fore[longstring_style] ~= longstring_fore, 'styles not reset')
+  buffer:close(true)
+  assert_equal(buffer:name_of_style(buffer.style_at[1]), longstring_name)
+  assert_equal(view.style_fore[buffer.style_at[1]], longstring_fore)
+  buffer:close(true)
+end
+
 function test_file_types_select_lexer_interactive()
   buffer.new()
   local name = buffer.lexer_language
