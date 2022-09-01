@@ -374,9 +374,11 @@ end
 function test_file_io_open_first_visible_line()
   io.open_file(_HOME .. '/src/textadept.c')
   buffer:goto_line(100)
+  view.x_offset = 10
   io.open_file(_HOME .. '/core/init.lua')
   ui.update()
   assert_equal(view.first_visible_line, 1)
+  assert_equal(view.x_offset, 0)
   buffer:close()
   buffer:close()
 end
