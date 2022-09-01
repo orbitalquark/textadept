@@ -216,8 +216,9 @@ local default_menubar = {
       if char == '' then return end -- end of buffer
       local bytes = string.rep(' 0x%X', #char):format(char:byte(1, #char))
       local style = buffer.style_at[buffer.current_pos]
+      local style_name = buffer:name_of_style(style):gsub('%.', '_')
       local text = string.format("'%s' (U+%04X:%s)\n%s %s\n%s %s (%d)", char, utf8.codepoint(char),
-        bytes, _L['Lexer'], buffer:get_lexer(true), _L['Style'], buffer:name_of_style(style), style)
+        bytes, _L['Lexer'], buffer:get_lexer(true), _L['Style'], style_name, style)
       view:call_tip_show(buffer.current_pos, text)
     end}
   },

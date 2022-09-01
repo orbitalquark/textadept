@@ -56,7 +56,7 @@ end
 
 -- Documentation is in core/.buffer.luadoc.
 local function style_of_name(buffer, style_name)
-  assert_type(style_name, 'string', 2)
+  style_name = assert_type(style_name, 'string', 2):gsub('_', '.')
   for i = 1, view.STYLE_MAX do if buffer:name_of_style(i) == style_name then return i end end
   return view.STYLE_DEFAULT
 end
@@ -69,6 +69,7 @@ local style_object = {}
 style_object.__index = style_object
 
 -- Creates a new style object.
+-- @param props Table of style properties to use.
 local function style_obj(props)
   local style = {}
   for k, v in pairs(assert_type(props, 'table', 1)) do style[k] = v end
@@ -76,17 +77,20 @@ local function style_obj(props)
 end
 
 -- Returns a new style object with a set of merged properties.
+-- @param props Table of style properties to merge into this one.
 function style_object.__concat(self, props)
-  local style = style_obj(self)
+  local style = style_obj(self) -- copy
   for k, v in pairs(assert_type(props, 'table', 2)) do style[k] = v end
   return style
 end
 
 local map = {italics = 'italic', underlined = 'underline', eolfilled = 'eol_filled'} -- legacy
--- Looks up the style settings for a given style number, and applies them to the given view.
+-- Looks up the style settings for a style number *style_num*, and applies them to view *view*.
+-- @param view A view.
+-- @param style_num Style number to set the style for.
 local function set_style(view, style_num)
   local styles = buffer ~= ui.command_entry and view.styles or _G.view.styles
-  local style = styles[buffer:name_of_style(assert_type(style_num, 'number', 2))]
+  local style = styles[buffer:name_of_style(assert_type(style_num, 'number', 2)):gsub('%.', '_')]
   if style then for k, v in pairs(style) do view['style_' .. (map[k] or k)][style_num] = v end end
 end
 
@@ -113,14 +117,16 @@ local function set_theme(view, name, env)
   if not assert_type(env, 'table/nil', 3) then env = {} end
   local orig_view = _G.view
   if view ~= orig_view then ui.goto_view(view) end
+  for name in pairs(view.styles) do view.styles[name] = nil end -- reset
   assert(loadfile(name, 't', setmetatable(env, {__index = _G})))()
   if view ~= orig_view then ui.goto_view(orig_view) end
   view:set_styles()
 end
 
+-- Metatable for `view.styles`, whose documentation is in core/.view.luadoc.
 local styles_mt = {
-  __index = function(t, k) return k and t[k:match('^(.+)%.')] or nil end,
-  __newindex = function(t, k, v) rawset(t, k, style_obj(v)) end
+  __index = function(t, k) return k and t[k:match('^(.+)[_%.]')] or nil end,
+  __newindex = function(t, k, v) rawset(t, k:gsub('%.', '_'), style_obj(v)) end
 }
 
 events.connect(events.VIEW_NEW, function()

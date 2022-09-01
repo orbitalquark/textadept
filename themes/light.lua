@@ -71,12 +71,12 @@ styles.class = {fore = colors.yellow}
 styles.code = {back = colors.dark_white, eolfilled = true}
 styles.comment = {fore = colors.grey}
 -- styles.constant = {}
-styles['constant.builtin'] = {fore = colors.dark_teal}
+styles.constant_builtin = {fore = colors.dark_teal}
 styles.embedded = {back = colors.dark_white}
 styles.error = {fore = colors.red, italics = true}
 -- styles['function'] = {}
-styles['function.builtin'] = {fore = colors.dark_orange}
--- styles['function.method'] = {}
+styles.function_builtin = {fore = colors.dark_orange}
+-- styles.function_method = {}
 -- styles.identifier = {}
 styles.italic = {italic = true}
 styles.keyword = {fore = colors.dark_blue}
@@ -93,7 +93,7 @@ styles.title = {fore = colors.purple}
 styles.type = {fore = colors.dark_lavender}
 styles.underline = {underline = true}
 -- styles.variable = {}
-styles['variable.builtin'] = {fore = colors.dark_yellow}
+styles.variable_builtin = {fore = colors.dark_yellow}
 -- styles.whitespace = {}
 
 -- CSS.
@@ -105,10 +105,10 @@ styles.addition = {fore = colors.green}
 styles.deletion = {fore = colors.red}
 styles.change = {fore = colors.yellow}
 -- HTML.
-styles['tag.unknown'] = styles.tag .. {italics = true}
-styles['attribute.unknown'] = styles.attribute .. {italics = true}
+styles.tag_unknown = styles.tag .. {italics = true}
+styles.attribute_unknown = styles.attribute .. {italics = true}
 -- YAML.
-styles['error.indent'] = {back = colors.red}
+styles.error_indent = {back = colors.red}
 
 -- Element colors.
 -- view.element_color[view.ELEMENT_SELECTION_TEXT] = colors.light_black

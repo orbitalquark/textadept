@@ -1171,6 +1171,8 @@ function multiple_select_add_next(buffer) end
 
 ---
 -- Returns the name of style number *style*, which is between `1` and `256`.
+-- Note that due to an implementation detail, the returned style uses '.' instead of '_'.
+-- When setting styles, the '_' form is preferred.
 -- @param buffer A buffer.
 -- @param style The style number between `1` and `256` to get the name of.
 -- @return string

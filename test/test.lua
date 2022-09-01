@@ -2399,7 +2399,7 @@ function test_file_types_get_lexer()
   -- LuaFormatter off
   buffer:set_text(table.concat({
     '<html><head><style type="text/css">',
-    'h1 {}',
+    'h1 { color: red; }',
     '</style></head></html>'
   }, newline()))
   -- LuaFormatter on
@@ -2407,7 +2407,10 @@ function test_file_types_get_lexer()
   buffer:goto_pos(buffer:position_from_line(2))
   assert_equal(buffer.lexer_language, 'html')
   assert_equal(buffer:get_lexer(true), 'css')
-  assert_equal(buffer:name_of_style(buffer.style_at[buffer.current_pos]), 'identifier')
+  assert_equal(buffer:name_of_style(buffer.style_at[buffer.current_pos]), 'tag')
+  assert_equal(buffer:name_of_style(buffer.style_at[buffer.current_pos + 5]), 'property')
+  assert(buffer:name_of_style(buffer.style_at[buffer.current_pos + 12]):find('constant.builtin'),
+    'not a builtin constant style')
   buffer:close(true)
 end
 
@@ -4205,13 +4208,13 @@ end
 
 function test_view_split_refresh_styles()
   io.open_file(_HOME .. '/init.lua')
-  local style = buffer:style_of_name('library')
-  assert(style > 1, 'cannot retrieve number of library style')
+  local style = buffer:style_of_name('string_longstring')
+  assert(style ~= view.STYLE_DEFAULT, 'cannot retrieve number of longstring style')
   local color = view.style_fore[style]
-  assert(color ~= view.style_fore[view.STYLE_DEFAULT], 'library style not set')
+  assert(color ~= view.style_fore[view.STYLE_DEFAULT], 'longstring style not set')
   view:split()
   for _, view in ipairs(_VIEWS) do
-    local view_style = buffer:style_of_name('library')
+    local view_style = buffer:style_of_name('string_longstring')
     assert_equal(view_style, style)
     local view_color = view.style_fore[view_style]
     assert_equal(view_color, color)
@@ -4245,24 +4248,31 @@ end
 
 function test_set_view_style()
   buffer.new()
-  buffer:set_lexer('java')
-  buffer:add_text('foo()')
+  buffer:set_lexer('lua')
+  buffer:add_text('dofile()')
   buffer:colorize(1, -1)
-  local style = buffer:style_of_name('function')
+  local style = buffer:style_of_name('function_builtin')
   assert_equal(buffer.style_at[1], style)
+  local function_builtin_fore = view.style_fore[style]
   local default_fore = view.style_fore[view.STYLE_DEFAULT]
-  assert(view.style_fore[style] ~= default_fore,
-    'function name style_fore same as default style_fore')
+  assert(function_builtin_fore ~= default_fore,
+    'builtin function name style_fore same as default style_fore')
   view.style_fore[style] = view.style_fore[view.STYLE_DEFAULT]
   assert_equal(view.style_fore[style], default_fore)
   local color = view.colors[not CURSES and 'orange' or 'blue']
   assert(color > 0 and color ~= default_fore)
-  view.styles['function'] = {fore = color}
+  view.styles.function_builtin = {fore = color}
   view:set_styles()
   assert_equal(view.style_fore[style], color)
+  view.styles.function_builtin = {fore = function_builtin_fore} -- restore
   buffer:close(true)
-  -- Defined in Lua lexer, which is not currently loaded.
-  assert(buffer:style_of_name('library'), view.STYLE_DEFAULT)
+  -- Defined in HTML lexer, which is not currently loaded.
+  assert(buffer:style_of_name('tag_unknown'), view.STYLE_DEFAULT)
+
+  -- buffer:name_of_style() returns the dotted form of the name, so ensure that it can also be
+  -- used in view.styles, but that it's converted to the underscore form.
+  view.styles['custom.name'] = {bold = true}
+  assert(view.styles.custom_name and view.styles.custom_name.bold, 'dot style not converted')
 
   assert_raises(function() view.styles.foo = 1 end, 'table expected')
   assert_raises(function() view.styles.foo = view.styles.default .. 1 end, 'table expected')
@@ -5727,6 +5737,8 @@ local function check_property_usage(filename, buffer_props, view_props)
       if id == 'snip' then goto continue end
       if id == 'state' and prop == 'indent' then goto continue end
       if id == 'format' and prop == 'line_length' then goto continue end
+      if id == 'styles' and prop == 'tag' then goto continue end
+      if id == 'styles' and prop == 'property' then goto continue end
       if buffer_props[prop] then
         assert(id:find('^buffer%d?$') or id:find('buf$'),
           'line %d:%d: "%s" should be a buffer property', line_num, pos, prop)

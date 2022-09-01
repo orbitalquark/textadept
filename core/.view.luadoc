@@ -1579,11 +1579,12 @@ local colors
 -- * `call_tip`: The style of call tip text. Only the `font`, `size`, `fore`, and `back` style
 --   definition fields are supported.
 -- * `fold_display_text`: The style of text displayed next to folded lines.
--- * `class`, `comment`, `constant`, `embedded`, `error`, `function`, `identifier`, `keyword`,
---   `label`, `number`, `operator`, `preprocessor`, `regex`, `string`, `type`, `variable`,
---   `whitespace`: Some tag names used by lexers. Some lexers may define more tag names,
---   so this list is not exhaustive.
--- * `whitespace.`*`lang`: A special style for whitespace tags in lexer name *lang*. It
+-- * `attribute`, `bold`, `class`, `code`, `comment`, `constant`, `constant_builtin`, `embedded`,
+--   `error`, `function`, `function_builtin`, `function_method`, `identifier`, `italic`, `keyword`,
+--   `label`, `link`, `number`, `operator`, `preprocessor`, `reference`, `regex`, `string`,
+--   `tag`, `title`, `type`, `underline`, `variable`, `variable_builtin`, `whitespace`: Some tag
+--   names used by lexers. Some lexers may define more tag names, so this list is not exhaustive.
+-- * `whitespace_`*`lang`: A special style for whitespace tags in lexer name *lang*. It
 --   inherits from `whitespace`, and is used in place of it for all lexers.
 --
 -- Style definition tables may contain the following fields:
