@@ -380,6 +380,8 @@
 --   * `view.INDIC_GRADIENTCENTER`
 --     A box with a centered gradient from solid in the middle to transparent on the top
 --     and bottom.
+--   * `view.INDIC_POINT_TOP`
+--     A triangle above the start of the indicator range.
 --
 --   Use [`_SCINTILLA.next_indic_number()`]() for custom indicators.
 --   Changing an indicator's style resets that indicator's hover style.
@@ -774,6 +776,8 @@
 --
 -- @field FOLDACTION_CONTRACT (number, Read-only)
 --
+-- @field FOLDACTION_CONTRACT_EVERY_LEVEL (number, Read-only)
+--
 -- @field FOLDACTION_EXPAND (number, Read-only)
 --
 -- @field FOLDACTION_TOGGLE (number, Read-only)
@@ -919,6 +923,8 @@
 -- @field MARK_ARROWS (number, Read-only)
 --
 -- @field MARK_BACKGROUND (number, Read-only)
+--
+-- @field MARK_BAR (number, Read-only)
 --
 -- @field MARK_BOOKMARK (number, Read-only)
 --

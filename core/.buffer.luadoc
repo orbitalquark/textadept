@@ -1752,6 +1752,7 @@ function set_lexer(buffer, name) end
 --   * buffered_draw
 --   * call_tip_back
 --   * call_tip_fore
+--   * change_history
 --   * character_category_optimization
 --   * character_pointer
 --   * code_page
@@ -1793,6 +1794,7 @@ function set_lexer(buffer, name) end
 --   * print_color_mode
 --   * print_magnification
 --   * print_wrap_mode
+--   * selection_hidden
 --   * status
 --   * style_character_set
 --   * style_check_monospaced
