@@ -19,6 +19,8 @@ require('ui')
 keys = require('keys')
 _M = {} -- language modules table
 
+_LEXERPATH = string.format('%s/lexers;%s/lexers', _USERHOME, _HOME)
+
 -- pdcurses compatibility.
 if CURSES and WIN32 then
   function os.spawn(cmd, ...)
@@ -100,8 +102,7 @@ local function set_styles(view)
   view:style_reset_default()
   set_style(view, view.STYLE_DEFAULT)
   view:style_clear_all()
-  local num_styles = buffer.named_styles
-  local num_predefined = view.STYLE_FOLDDISPLAYTEXT - view.STYLE_DEFAULT + 1
+  local num_styles, num_predefined = buffer.named_styles, 8 -- default to folddisplaytext
   for i = 1, math.min(num_styles - num_predefined, view.STYLE_DEFAULT - 1) do set_style(view, i) end
   for i = view.STYLE_DEFAULT + 1, view.STYLE_FOLDDISPLAYTEXT do set_style(view, i) end
   for i = view.STYLE_FOLDDISPLAYTEXT + 1, num_styles do set_style(view, i) end
@@ -115,11 +116,9 @@ local function set_theme(view, name, env)
   end
   if not name or not lfs.attributes(name) then return end
   if not assert_type(env, 'table/nil', 3) then env = {} end
-  local orig_view = _G.view
-  if view ~= orig_view then ui.goto_view(view) end
+  env.view = view
   for name in pairs(view.styles) do view.styles[name] = nil end -- reset
   assert(loadfile(name, 't', setmetatable(env, {__index = _G})))()
-  if view ~= orig_view then ui.goto_view(orig_view) end
   view:set_styles()
 end
 
@@ -148,6 +147,8 @@ end)
 --   *C:\Users\username\\* or *C:\Documents and Settings\username\\*). On Linux, BSD, and macOS
 --   machines *~/* is the value of "$HOME" (typically */home/username/* and */Users/username/*
 --   respectively).
+-- @field _LEXERPATH (string)
+--   A ';'-separated list of directory paths that contain lexers for syntax highlighting.
 -- @field _CHARSET (string)
 --   The filesystem's character encoding.
 --   This is used when [working with files](#io).

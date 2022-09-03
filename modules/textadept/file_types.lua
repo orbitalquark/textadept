@@ -37,8 +37,8 @@ M.patterns = {['^#!.+[/ ][gm]?awk']='awk',['^#!.+[/ ]lua']='lua',['^#!.+[/ ]octa
 -- LuaDoc is in core/.buffer.luadoc.
 local function get_lexer(buffer, current)
   if not current then return buffer.lexer_language end
-  local pos = buffer.current_pos
   local name_of_style, style_at = buffer.name_of_style, buffer.style_at
+  local pos = buffer.current_pos
   while pos > 0 do
     local style = style_at[pos]
     local lang = name_of_style(style):match('^whitespace%.(.+)$')
@@ -111,7 +111,6 @@ events.connect(events.BUFFER_AFTER_SWITCH, restore_lexer, 1)
 events.connect(events.BUFFER_NEW, restore_lexer) -- emit for 'text'
 events.connect(events.VIEW_AFTER_SWITCH, restore_lexer)
 events.connect(events.VIEW_NEW, restore_lexer)
-events.connect(events.RESET_AFTER, restore_lexer)
 
 ---
 -- Prompts the user to select a lexer for the current buffer.

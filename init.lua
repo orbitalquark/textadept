@@ -8,7 +8,6 @@ package.cpath = table.concat({
   string.format('%s/modules/?.%s', _USERHOME, not WIN32 and 'so' or 'dll'),
   string.format('%s/modules/?.%s', _HOME, not WIN32 and 'so' or 'dll'), package.cpath
 }, ';')
-_LEXERPATH = string.format('%s/lexers;%s/lexers', _USERHOME, _HOME)
 
 -- Populate initial `_G.buffer` with temporarily exported io functions now that it exists. This
 -- is needed for menus and key bindings.
@@ -64,7 +63,7 @@ end
 local theme, env
 rawset(view, 'set_theme', function(_, name, env_) theme, env = name, env_ end)
 events.connect(events.VIEW_NEW, function() view:set_theme(theme, env) end)
--- Cycle through buffers, resetting the lexers, and cycle through views, simulating
+-- On reset, cycle through buffers, resetting the lexers, and cycle through views, simulating
 -- `events.VIEW_NEW` event to update themes, colors, and styles.
 events.connect(events.RESET_AFTER, function()
   for _, buffer in ipairs(_BUFFERS) do
@@ -275,26 +274,21 @@ end
 -- Generate default buffer settings for subsequent buffers and remove temporary buffer and view
 -- metatable listeners.
 local load_settings = load(table.concat(settings, '\n'))
-for _, mt in ipairs{buffer_mt, view_mt} do
-  mt.__index, mt.__newindex = mt.__orig_index, mt.__orig_newindex
-end
+buffer_mt.__index, buffer_mt.__newindex = buffer_mt.__orig_index, buffer_mt.__orig_newindex
+view_mt.__index, view_mt.__newindex = view_mt.__orig_index, view_mt.__orig_newindex
 
 -- Sets default properties for a Scintilla document.
 events.connect(events.BUFFER_NEW, function()
-  local buffer = _G.buffer
   load_settings()
-  if buffer == ui.command_entry then ui.command_entry.caret_line_visible = false end
+  if _G.buffer == ui.command_entry then ui.command_entry.caret_line_visible = false end
 end, 1)
 
 -- Sets default properties for a Scintilla window.
 events.connect(events.VIEW_NEW, function()
-  local buffer, view = _G.buffer, _G.view
+  local view, CTRL, SHIFT = _G.view, view.MOD_CTRL, view.MOD_SHIFT
   -- Allow redefinitions of these Scintilla key bindings.
-  for _, code in utf8.codes('[]/\\ZYXCVALTDU') do view:clear_cmd_key(code | view.MOD_CTRL << 16) end
-  for _, code in utf8.codes('LTUZ') do
-    view:clear_cmd_key(code | (view.MOD_CTRL | view.MOD_SHIFT) << 16)
-  end
+  for _, code in utf8.codes('[]/\\ZYXCVALTDU') do view:clear_cmd_key(code | CTRL << 16) end
+  for _, code in utf8.codes('LTUZ') do view:clear_cmd_key(code | (CTRL | SHIFT) << 16) end
   -- Since BUFFER_NEW loads themes and settings on startup, only load them for subsequent views.
-  if #_VIEWS == 1 then return end
-  load_settings()
+  if #_VIEWS > 1 then load_settings() end
 end, 1)
