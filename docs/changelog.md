@@ -1434,7 +1434,7 @@ Changes:
 * Removed syntax checking support, renamed `textadept.run.RUN_IN_BACKGROUND` to
   [`textadept.run.run_in_background`][], removed `textadept.run.cwd` and `textadept.run.proc`,
   added optional arguments to [`textadept.run.compile()`][], [`textadept.run.run()`][], and
-  [`textadept.run.build()`][], and changed the format of [`textadept.run.error_patterns`][].
+  [`textadept.run.build()`][], and changed the format of `textadept.run.error_patterns`.
 * Rewrote sections 7-9 in the [manual][] and added a new part to section 11.  Understanding how
   to configure and script Textadept should be easier now.
 * `textadept.editing.goto_line()` takes a 0-based line number like all Scintilla functions.
@@ -1461,7 +1461,6 @@ Changes:
 [`textadept.run.compile()`]: api.html#textadept.run.compile
 [`textadept.run.run()`]: api.html#textadept.run.run
 [`textadept.run.build()`]: api.html#textadept.run.build
-[`textadept.run.error_patterns`]: api.html#textadept.run.error_patterns
 [manual]: manual.html
 [file-based snippet]: manual.html#snippet-preferences
 [Scintilla]: https://scintilla.org
@@ -2207,7 +2206,7 @@ Changes:
 * Added [`textadept.run.MARK_WARNING`][] marker.
 * Renamed `textadept.run.compile_command` and `textadept.run.run_command` to [`compile_commands`][]
   and [`run_commands`][], respectively.
-* Renamed `textadept.run.error_detail` to [`error_patterns`][] and changed its internal structure.
+* Renamed `textadept.run.error_detail` to `error_patterns` and changed its internal structure.
 * Compile and run commands for languages that support them are now built-in along with their
   respective warning and error messages. The supplemental ones on the wiki are no longer needed.
 * New [`ui.dialogs`][] module for more user-friendly dialog support. Removed `ui.filteredlist()`
@@ -2227,7 +2226,6 @@ Changes:
 [`textadept.run.MARK_WARNING`]: api.html#textadept.run.MARK_WARNING
 [`compile_commands`]: api.html#textadept.run.compile_commands
 [`run_commands`]: api.html#textadept.run.run_commands
-[`error_patterns`]: api.html#textadept.run.error_patterns
 [`ui.dialogs`]: api.html#ui.dialogs
 [`io.open_file()`]: api.html#io.open_file
 [`io.snapopen()`]: api.html#io.quick_open

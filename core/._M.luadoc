@@ -42,13 +42,9 @@
 --     textadept.run.compile_commands.lua = 'luac "%f"'
 --     textadept.run.run_commands.lua = 'lua "%f"'
 --
--- Double-clicking on compile or runtime errors jumps to the error's location. If
--- Textadept does not recognize your language's errors properly, add an error pattern to
--- [`textadept.run.error_patterns`](). The Lua error pattern looks like:
---
---     local patterns = textadept.run.error_patterns
---     if not patterns.lua then patterns.lua = {} end
---     patterns.lua[#patterns.lua + 1] = '^luac?: (.-):(%d+): (.+)$'
+-- Double-clicking on compile or runtime errors jumps to the error's location. If Textadept
+-- does not recognize your language's errors properly, add a grammar [rule](#rules) to the
+-- *lexers/output.lua* lexer.
 --
 -- ### Buffer Properties
 --

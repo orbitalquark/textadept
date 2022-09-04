@@ -445,6 +445,14 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
   ui.statusbar_text = string.format('%d %s', count, _L['replacement(s) made'])
 end)
 
+-- Helper functions for getting the files found view and buffer.
+local function get_ff_view()
+  for _, view in ipairs(_VIEWS) do if is_ff_buf(view.buffer) then return view end end
+end
+local function get_ff_buffer()
+  for _, buf in ipairs(_BUFFERS) do if is_ff_buf(buf) then return buf end end
+end
+
 ---
 -- Jumps to the source of the find in files search result on line number *line_num* in the buffer
 -- titled "Files Found" or, if *line_num* is `nil`, jumps to the next or previous search result,
@@ -456,19 +464,7 @@ end)
 -- @name goto_file_found
 function M.goto_file_found(line_num, next)
   if type(line_num) == 'boolean' then line_num, next = nil, line_num end
-  local ff_view, ff_buf = nil, nil
-  for i = 1, #_VIEWS do
-    if is_ff_buf(_VIEWS[i].buffer) then
-      ff_view = _VIEWS[i]
-      break
-    end
-  end
-  for i = 1, #_BUFFERS do
-    if is_ff_buf(_BUFFERS[i]) then
-      ff_buf = _BUFFERS[i]
-      break
-    end
-  end
+  local ff_view, ff_buf = get_ff_view(), get_ff_buffer()
   if not ff_view and not ff_buf then return end
   if ff_view then
     ui.goto_view(ff_view)

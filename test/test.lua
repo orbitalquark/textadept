@@ -3432,7 +3432,7 @@ function test_run_compile_run()
   local compile_file = _HOME .. '/test/modules/textadept/run/compile.lua'
   textadept.run.compile(compile_file)
   assert_equal(#_BUFFERS, 2)
-  assert_equal(buffer._type, _L['[Message Buffer]'])
+  assert_equal(buffer._type, _L['[Output Buffer]'])
   ui.update() -- process output
   assert(buffer:get_text():find("'end' expected"), 'no compile error')
   assert(buffer:get_text():find('> exit status: 256'), 'no compile error')
@@ -3442,14 +3442,16 @@ function test_run_compile_run()
   assert_equal(buffer.filename, compile_file)
   assert_equal(buffer:line_from_position(buffer.current_pos), 3)
   assert(buffer.annotation_text[3]:find("'end' expected"), 'annotation not visible')
-  ui.goto_view(1) -- message buffer
-  assert_equal(buffer._type, _L['[Message Buffer]'])
+  ui.goto_view(1) -- output buffer
+  assert_equal(buffer._type, _L['[Output Buffer]'])
   assert(buffer:get_sel_text():find("'end' expected"), 'compile error not selected')
   local markers = buffer:marker_get(buffer:line_from_position(buffer.current_pos))
   assert(markers & 1 << textadept.run.MARK_ERROR - 1 > 0)
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   assert_equal(buffer.filename, compile_file)
-  ui.goto_view(1) -- message buffer
+  ui.goto_view(1) -- output buffer
+  events.emit(events.DOUBLE_CLICK, nil, buffer:line_from_position(buffer.current_pos) + 1)
+  assert_equal(buffer._type, _L['[Output Buffer]']) -- there was no error to jump to
   events.emit(events.DOUBLE_CLICK, nil, buffer:line_from_position(buffer.current_pos))
   assert_equal(buffer.filename, compile_file)
   textadept.run.compile() -- clears annotation
@@ -3464,7 +3466,7 @@ function test_run_compile_run()
   end
   io.open_file(run_file)
   textadept.run.run()
-  assert_equal(buffer._type, _L['[Message Buffer]'])
+  assert_equal(buffer._type, _L['[Output Buffer]'])
   ui.update() -- process output
   assert(buffer:get_text():find('attempt to call a nil value'), 'no run error')
   textadept.run.goto_error(false)
@@ -3482,7 +3484,7 @@ function test_run_compile_run()
   if #_VIEWS > 1 then view:unsplit() end
   buffer:close() -- compile_file
   buffer:close() -- run_file
-  buffer:close() -- message buffer
+  buffer:close() -- output buffer
 
   assert_raises(function() textadept.run.compile({}) end, 'string/nil expected, got table')
   assert_raises(function() textadept.run.run({}) end, 'string/nil expected, got table')
@@ -3529,7 +3531,7 @@ function test_run_build()
   textadept.run.stop() -- should not do anything
   textadept.run.build(_HOME)
   if #_VIEWS > 1 then view:unsplit() end
-  assert_equal(buffer._type, _L['[Message Buffer]'])
+  assert_equal(buffer._type, _L['[Output Buffer]'])
   sleep(0.1) -- ensure process is running
   buffer:add_text('foo')
   buffer:new_line() -- should send previous line as stdin
@@ -3599,7 +3601,7 @@ function test_run_commands_function()
   end
   textadept.run.run()
   assert_equal(#_BUFFERS, 3) -- including [Test Output]
-  assert_equal(buffer._type, _L['[Message Buffer]'])
+  assert_equal(buffer._type, _L['[Output Buffer]'])
   sleep(0.1)
   ui.update() -- process output
   assert(buffer:get_text():find('> cd /tmp'), 'cwd not set properly')

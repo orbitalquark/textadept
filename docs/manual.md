@@ -1201,12 +1201,10 @@ by setting [`textadept.run.run_in_background`][].  For example, in your *~/.text
 You can change or add compile, run, build, and test commands by modifying
 the [`textadept.run.compile_commands`][], [`textadept.run.run_commands`][],
 [`textadept.run.build_commands`][], and [`textadept.run.test_commands`][] tables,
-respectively. You can add Lua patterns that recognize warning and error output by modifying the
-[`textadept.run.error_patterns`][] table. For example, in your *~/.textadept/init.lua*:
+respectively. For example, in your *~/.textadept/init.lua*:
 
     textadept.run.compile_commands.foo = 'foo "%f"'
     textadept.run.run_commands.foo = './"%e"'
-    textadept.run.error_patterns.foo = {'^(.-):(%d+): (.+)$'} -- bar.foo:1: oops
 
     textadept.run.build_commands['/path/to/project'] = 'make -C src -j4'
     textadept.run.test_commands['/path/to/project'] = 'lua tests.lua'
@@ -1219,7 +1217,6 @@ contain arguments so that you do not have to invoke "Tools > Set Arguments..."
 [`textadept.run.run_commands`]: api.html#textadept.run.run_commands
 [`textadept.run.build_commands`]: api.html#textadept.run.build_commands
 [`textadept.run.test_commands`]: api.html#textadept.run.test_commands
-[`textadept.run.error_patterns`]: api.html#textadept.run.error_patterns
 
 ---
 ### Modules

@@ -83,6 +83,7 @@ local function _print(buffer_type, ...)
   buffer:append_text('\n')
   buffer:goto_pos(buffer.length + 1)
   buffer:set_save_point()
+  return buffer
 end
 ---
 -- Prints the given string messages to the buffer of string type *buffer_type*.
@@ -93,14 +94,30 @@ end
 -- @param ... Message strings.
 -- @usage ui._print(_L['[Message Buffer]'], message)
 -- @name _print
-function ui._print(buffer_type, ...) _print(assert_type(buffer_type, 'string', 1), ...) end
+-- @return buffer printed to
+function ui._print(buffer_type, ...) return _print(assert_type(buffer_type, 'string', 1), ...) end
 
 ---
 -- Prints the given string messages to the message buffer.
 -- Opens a new buffer if one has not already been opened for printing messages.
 -- @param ... Message strings.
 -- @name print
+-- @return message buffer
 function ui.print(...) ui._print(_L['[Message Buffer]'], ...) end
+
+---
+-- Prints the given string messages to the output buffer.
+-- Opens a new buffer if one has not already been opened for printing output. The output buffer
+-- attempts to understand the error messages and warnings produced by various tools.
+-- @param ... Message strings.
+-- @name print
+-- @return output buffer
+function ui.output(...)
+  local buffer = ui._print(_L['[Output Buffer]'], ...)
+  if buffer.lexer_language ~= 'output' then buffer:set_lexer('output') end
+  buffer:colorize(buffer.end_styled, -1)
+  return buffer
+end
 
 -- Returns 0xBBGGRR colors transformed into "#RRGGBB" for the colorselect dialog.
 -- @param value Number color to transform.
@@ -500,12 +517,7 @@ events.connect(events.ERROR, function(text)
     ui.dialogs.textbox{title = _L['Initialization Error'], text = text}
     return
   end
-  -- Print internal Lua error messages as they are reported.
-  -- Attempt to mimic the Lua interpreter's error message format so tools that look for it can
-  -- recognize these errors too.
-  local lua_error = (not WIN32 and '^/' or '^%a?:?[/\\][/\\]?') .. '.-%.lua:%d+:'
-  if text and text:find(lua_error) then text = 'lua: ' .. text end
-  ui.print(text)
+  ui.output(text) -- recognize Lua errors
 end)
 events.connect(events.INITIALIZED, function() initialized = true end)
 

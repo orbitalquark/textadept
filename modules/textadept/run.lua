@@ -5,12 +5,12 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Compile and run source code files with Textadept.
--- [Language modules](#compile-and-run) may tweak the `compile_commands`, `run_commands`, and
--- `error_patterns` tables for particular languages.
+-- [Language modules](#compile-and-run) may tweak the `compile_commands`, and `run_commands`
+-- tables for particular languages.
 -- The user may tweak `build_commands` and `test_commands` for particular projects.
 -- @field run_in_background (bool)
 --   Run shell commands silently in the background.
---   This only applies when the message buffer is open, though it does not have to be visible.
+--   This only applies when the output buffer is open, though it does not have to be visible.
 --   The default value is `false`.
 -- @field MARK_WARNING (number)
 --   The run or compile warning marker number.
@@ -18,7 +18,7 @@ local M = {}
 --   The run or compile error marker number.
 -- @field _G.events.COMPILE_OUTPUT (string)
 --   Emitted when executing a language's compile shell command.
---   By default, compiler output is printed to the message buffer. In order to override this
+--   By default, compiler output is printed to the output buffer. In order to override this
 --   behavior, connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
@@ -27,7 +27,7 @@ local M = {}
 --     command.
 -- @field _G.events.RUN_OUTPUT (string)
 --   Emitted when executing a language's run shell command.
---   By default, output is printed to the message buffer. In order to override this behavior,
+--   By default, output is printed to the output buffer. In order to override this behavior,
 --   connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
@@ -35,14 +35,14 @@ local M = {}
 --   * `ext_or_lexer`: The file extension or lexer name associated with the executed run command.
 -- @field _G.events.BUILD_OUTPUT (string)
 --   Emitted when executing a project's build shell command.
---   By default, output is printed to the message buffer. In order to override this behavior,
+--   By default, output is printed to the output buffer. In order to override this behavior,
 --   connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
 --   * `output`: A line of string output from the command.
 -- @field _G.events.TEST_OUTPUT (string)
 --   Emitted when executing a project's shell command for running tests.
---   By default, output is printed to the message buffer. In order to override this behavior,
+--   By default, output is printed to the output buffer. In order to override this behavior,
 --   connect to the event with an index of `1` and return `true`.
 --   Arguments:
 --
@@ -64,52 +64,7 @@ for _, v in ipairs(run_events) do events[v:upper()] = v end
 -- in a split view) in the original view.
 local proc, cwd, preferred_view
 
--- Scans the given message for a warning or error message and, if one is found, returns table
--- of the warning/error's details.
--- @param message The message to parse for warnings or errors. The message is assumed to be
---   encoded in _CHARSET.
--- @param ext_or_lexer Optional file extension or lexer name associated with the shell command
---   that produced the warning/error.
--- @return error details table with 'filename', 'line', 'column', and 'message' fields along
---   with a 'warning' flag.
--- @see error_patterns
-local function scan_for_error(message, ext_or_lexer)
-  for key, patterns in pairs(M.error_patterns) do
-    if ext_or_lexer and key ~= ext_or_lexer then goto continue end
-    for _, patt in ipairs(patterns) do
-      if not message:find(patt) then goto continue end
-      -- Extract details from the warning or error.
-      local detail, i = {message:match(patt)}, 1
-      for capture in patt:gmatch('[^%%](%b())') do
-        if capture == '(.-)' then
-          detail.filename = detail[i]
-        elseif capture == '(%d+)' then
-          local line_or_column = not detail.line and 'line' or 'column'
-          detail[line_or_column] = tonumber(detail[i])
-        else
-          detail.message = detail[i]
-        end
-        i = i + 1
-      end
-      local lower_message = message:lower()
-      detail.warning = (lower_message:find('warning') or lower_message:find('note')) and
-        not lower_message:find('error')
-      -- Compile and run commands specify the file extension or lexer name used to determine
-      -- the command, so the error patterns used are guaranteed to be correct. Build and
-      -- test commands have no such context and instead iterate through all possible error
-      -- patterns. Only consider the error/warning valid if the extracted filename's extension
-      -- or lexer name matches the error pattern's extension or lexer name.
-      if ext_or_lexer then return detail end
-      local ext = detail.filename:match('[^/\\.]+$')
-      local lexer_name = textadept.file_types.extensions[ext]
-      if key == ext or key == lexer_name then return detail end
-      ::continue::
-    end
-    ::continue::
-  end
-  return nil
-end
-
+local line_state_marks = {M.MARK_ERROR, M.MARK_WARNING}
 -- Prints an output line from a compile, run, build, or test shell command.
 -- Assume output is UTF-8 unless there's a recognized warning or error message. In that case
 -- assume it is encoded in _CHARSET and mark it.
@@ -118,18 +73,16 @@ end
 -- @param ext_or_lexer Optional file extension or lexer name associated with the executed command.
 --   This is used for better error detection in compile and run commands.
 local function print_line(line, ext_or_lexer)
-  local error = scan_for_error(line, ext_or_lexer)
   ui.silent_print = M.run_in_background or ext_or_lexer or not line:find('^> ') or
     line:find('^> exit')
-  ui.print(not error and line or line:iconv('UTF-8', _CHARSET))
+  local buffer = ui.output(not error and line or line:iconv('UTF-8', _CHARSET))
   ui.silent_print = false
-  if error then
-    -- Current position is one line below the error due to ui.print()'s '\n'.
-    buffer:marker_add(buffer.line_count - 1, error.warning and M.MARK_WARNING or M.MARK_ERROR)
-  end
+  local line_num = buffer.line_count - 1 -- ui.output() outputs trailing '\n'
+  local line_state = buffer.line_state[line_num]
+  if line_state > 0 then buffer:marker_add(line_num, line_state_marks[line_state]) end
 end
 
-local output_buffer
+local buffered_output
 -- Prints the output from a compile, run, build, or test shell command as a series of lines,
 -- performing buffering as needed.
 -- @param output The output to print, or `nil` to flush any buffered output.
@@ -137,16 +90,16 @@ local output_buffer
 --   This is used for better error detection in compile and run commands.
 local function print_output(output, ext_or_lexer)
   if output then
-    if output_buffer then output = output_buffer .. output end
+    if buffered_output then output = buffered_output .. output end
     local remainder = 1
     for line, e in output:gmatch('([^\r\n]*)\r?\n()') do
       print_line(line, ext_or_lexer)
       remainder = e
     end
-    output_buffer = remainder <= #output and output:sub(remainder)
-  elseif output_buffer then
-    print_line(output_buffer, ext_or_lexer)
-    output_buffer = nil
+    buffered_output = remainder <= #output and output:sub(remainder)
+  elseif buffered_output then
+    print_line(buffered_output, ext_or_lexer)
+    buffered_output = nil
   end
 end
 
@@ -399,67 +352,58 @@ events.connect(events.TEST_OUTPUT, print_output)
 -- @name stop
 function M.stop() if proc then proc:kill() end end
 
--- Returns whether or not the given buffer is the message buffer.
-local function is_msg_buf(buf) return buf._type == _L['[Message Buffer]'] end
+-- Returns whether or not the given buffer is the output buffer.
+local function is_out_buf(buf) return buf._type == _L['[Output Buffer]'] end
 
 -- Send line as input to process stdin on return.
 events.connect(events.CHAR_ADDED, function(code)
-  if code == string.byte('\n') and proc and proc:status() == 'running' and is_msg_buf(buffer) then
+  if code == string.byte('\n') and proc and proc:status() == 'running' and is_out_buf(buffer) then
     local line_num = buffer:line_from_position(buffer.current_pos) - 1
     proc:write(buffer:get_line(line_num))
   end
 end)
 
--- LuaFormatter off
----
--- Map of file extensions and lexer names to their associated lists of string patterns that
--- match warning and error messages emitted by compile and run commands for those file extensions
--- and lexers.
--- Patterns match single lines and contain captures for a filename, line number, column number
--- (optional), and warning or error message (optional). Double-clicking a warning or error
--- message takes the user to the source of that warning/error.
--- Note: `(.-)` captures in patterns are interpreted as filenames; `(%d+)` captures are
--- interpreted as line numbers first, and then column numbers; and any other capture is treated
--- as warning/error message text.
--- @class table
--- @name error_patterns
-M.error_patterns = {actionscript={'^(.-)%((%d+)%): col: (%d+) (.+)$'},ada={'^(.-):(%d+):(%d+):%s*(.*)$','^[^:]+: (.-):(%d+) (.+)$'},ansi_c={'^(.-):(%d+):(%d+): (.+)$'},antlr={'^error%(%d+%): (.-):(%d+):(%d+): (.+)$','^warning%(%d+%): (.-):(%d+):(%d+): (.+)$'},--[[ANTLR]]g={'^error%(%d+%): (.-):(%d+):(%d+): (.+)$','^warning%(%d+%): (.-):(%d+):(%d+): (.+)$'},asm={'^(.-):(%d+): (.+)$'},awk={'^awk: (.-):(%d+): (.+)$'},boo={'^(.-)%((%d+),(%d+)%): (.+)$'},caml={'^%s*File "(.-)", line (%d+), characters (%d+)'},chuck={'^(.-)line%((%d+)%)%.char%((%d+)%): (.+)$'},clojure={' error .- at .-%((.-):(%d+)'},cmake={'^CMake Error at (.-):(%d+)','^(.-):(%d+):$'},coffeescript={'^(.-):(%d+):(%d+): (.+)$'},context={'error on line (%d+) in file (.-): (.+)$'},cpp={'^(.-):(%d+):(%d+): (.+)$'},csharp={'^(.-)%((%d+),(%d+)%): (.+)$'},cuda={'^(.-)%((%d+)%): (error.+)$'},dart={"^'(.-)': error: line (%d+) pos (%d+): (.+)$",'%(file://(.-):(%d+):(%d+)%)'},dmd={'^(.-)%((%d+)%): (Error.+)$'},dot={'^Warning: (.-): (.+) in line (%d+)'},eiffel={'^Line (%d+) columns? .- in .- %((.-)%):$','^line (%d+) column (%d+) file (.-)$'},elixir={'^(.-):(%d+): (.+)$','Error%) (.-):(%d+): (.+)$'},erlang={'^(.-):(%d+): (.+)$'},fantom={'^(.-)%((%d+),(%d+)%): (.+)$'},faust={'^(.-):(%d+):(.+)$'},fennel={'^%S+ error in (.-):(%d+)'},forth={'^(.-):(%d+): (.+)$'},fortran={'^(.-):(%d+)%D+(%d+):%s*(.*)$'},fsharp={'^(.-)%((%d+),(%d+)%): (.+)$'},gap={'^(.+) in (.-) line (%d+)$'},gnuplot={'^"(.-)", line (%d+): (.+)$'},go={'^(.-):(%d+):(%d+): (.+)$'},groovy={'^%s+at .-%((.-):(%d+)%)$','^(.-):(%d+): (.+)$'},hare={'^[^:]+: (.-):(%d+),(%d+): (.+)$','^(.*) at (.-):(%d+):(%d+)','^Error:? (.-):(%d+):(%d+): (.+)$'},haskell={'^(.-):(%d+):(%d+):%s*(.*)$'},icon={'^File (.-); Line (%d+) # (.+)$','^.-from line (%d+) in (.-)$'},java={'^%s+at .-%((.-):(%d+)%)$','^(.-):(%d+): (.+)$'},javascript={'^%s+at .-%((.-):(%d+):(%d+)%)$','^%s+at (.-):(%d+):(%d+)$','^(.-):(%d+):?$'},jq={'^jq: error: (.+) at (.-), line (%d+)'},julia={'^%s+%[%d+%].- at (.-):(%d+)$'},ltx={'^(.-):(%d+): (.+)$'},less={'^(.+) in (.-) on line (%d+), column (%d+):$'},lilypond={'^(.-):(%d+):(%d+):%s*(.*)$'},litcoffee={'^(.-):(%d+):(%d+): (.+)$'},lua={'^luac?: (.-):(%d+): (.+)$'},makefile={'^(.-):(%d+): (.+)$'},nemerle={'^(.-)%((%d+),(%d+)%): (.+)$'},nim={'^(.-)%((%d+), (%d+)%) (%w+:.+)$'},objective_c={'^(.-):(%d+):(%d+): (.+)$'},pascal={'^(.-)%((%d+),(%d+)%) (%w+:.+)$'},perl={'^(.+) at (.-) line (%d+)'},php={'^(.+) in (.-) on line (%d+)$'},pike={'^(.-):(%d+):(.+)$'},pony={'^(.-):(%d+):(%d+): (.+)$'},prolog={'^(.-):(%d+):(%d+): (.+)$','^(.-):(%d+): (.+)$'},pure={'^(.-), line (%d+): (.+)$'},python={'^%s*File "(.-)", line (%d+)'},rexx={'^Error %d+ running "(.-)", line (%d+): (.+)$'},ruby={'^%s+from (.-):(%d+):','^(.-):(%d+):%s*(.+)$'},rust={'^(.-):(%d+):(%d+): (.+)$',"panicked at '([^']+)', (.-):(%d+)"},sass={'^WARNING on line (%d+) of (.-):$','^%s+on line (%d+) of (.-)$'},scala={'^%s+at .-%((.-):(%d+)%)$','^(.-):(%d+): (.+)$'},sh={'^(.-): (%d+): %1: (.+)$'},bash={'^(.-): line (%d+): (.+)$'},zsh={'^(.-):(%d+): (.+)$'},smalltalk={'^(.-):(%d+): (.+)$','%((.-):(%d+)%)$'},snobol4={'^(.-):(%d+): (.+)$'},tcl={'^%s*%(file "(.-)" line (%d+)%)$'},tex={'^(.-):(%d+): (.+)$'},typescript={'^(.-):(%d+):(%d+) %- (.+)$'},vala={'^(.-):(%d+)%.(%d+)[%-%.%d]+: (.+)$','^(.-):(%d+):(%d+): (.+)$'},vb={'^(.-)%((%d+),(%d+)%): (.+)$'},xs={'^(.-):(%d+)%S* (.+)$'},zig={'^(.-):(%d+):(%d+): (.+)$'}}
--- Note: APDL,IDL,REBOL,RouterOS,Spin,Verilog,VHDL are proprietary.
--- Note: ASP,CSS,Desktop,diff,django,elm,fstab,gettext,Gtkrc,HTML,ini,JSON,JSP,Markdown,Networkd,Postscript,Properties,R,Reason,RHTML,Systemd,XML don't have parse-able errors.
--- Note: Batch,BibTeX,ConTeXt,Dockerfile,GLSL,Inform,Io,Lisp,MoonScript,Scheme,SQL,TeX cannot be parsed for one reason or another.
--- LuaFormatter on
+-- Helper functions for getting the output view and buffer.
+local function get_output_view()
+  for _, view in ipairs(_VIEWS) do if is_out_buf(view.buffer) then return view end end
+end
+local function get_output_buffer()
+  for _, buf in ipairs(_BUFFERS) do if is_out_buf(buf) then return buf end end
+end
+
+-- Returns text tagged with the given output lexer tag on the given line number.
+-- @param line_num Line number to get text from.
+-- @param tag String tag name, either 'filename', 'line', 'column', or 'message'.
+-- @param tagged text or nil if none was found
+local function get_tagged_text(line_num, tag)
+  for pos = buffer:position_from_line(line_num), buffer.line_end_position[line_num] do
+    local style = buffer.style_at[pos]
+    if buffer:name_of_style(style) ~= tag then goto continue end
+    local s, e = pos, pos
+    repeat e = e + 1 until e > buffer.length or buffer.style_at[e] ~= style
+    do return buffer:text_range(s, e) end
+    ::continue::
+  end
+end
 
 ---
 -- Jumps to the source of the recognized compile/run warning or error on line number *line_num*
--- in the message buffer.
+-- in the output buffer.
 -- If *line_num* is `nil`, jumps to the next or previous warning or error, depending on boolean
 -- *next*. Displays an annotation with the warning or error message if possible.
--- @param line_num Optional line number in the message buffer that contains the compile/run
+-- @param line_num Optional line number in the output buffer that contains the compile/run
 --   warning or error to go to. This parameter may be omitted completely.
 -- @param next Optional flag indicating whether to go to the next recognized warning/error or
 --   the previous one. Only applicable when *line_num* is `nil`.
--- @see error_patterns
 -- @name goto_error
 function M.goto_error(line_num, next)
   if type(line_num) == 'boolean' then line_num, next = nil, line_num end
-  local msg_view, msg_buf = nil, nil
-  for i = 1, #_VIEWS do
-    if is_msg_buf(_VIEWS[i].buffer) then
-      msg_view = _VIEWS[i]
-      break
-    end
-  end
-  for i = 1, #_BUFFERS do
-    if is_msg_buf(_BUFFERS[i]) then
-      msg_buf = _BUFFERS[i]
-      break
-    end
-  end
-  if not msg_view and not msg_buf then return end
-  if msg_view then
-    ui.goto_view(msg_view)
+  local output_view, output_buffer = get_output_view(), get_output_buffer()
+  if not output_view and not output_buffer then return end
+  if output_view then
+    ui.goto_view(output_view)
   else
-    view:goto_buffer(msg_buf)
+    view:goto_buffer(output_buffer)
   end
 
   -- If no line number was given, find the next warning or error marker.
@@ -490,31 +434,34 @@ function M.goto_error(line_num, next)
   end
 
   -- Goto the warning or error and show an annotation.
-  local line = buffer:get_line(line_num):match('^[^\r\n]*')
-  local detail = scan_for_error(line:iconv(_CHARSET, 'UTF-8'))
-  if not detail then return end
+  if buffer.line_state[line_num] == 0 then return end
+  local filename = string.iconv(get_tagged_text(line_num, 'filename') or '', _CHARSET, 'UTF-8')
+  if filename == '' then return end -- incorrectly tagged message
+  local line = tonumber(get_tagged_text(line_num, 'line') or '')
+  local column = tonumber(get_tagged_text(line_num, 'column') or '')
+  local message = get_tagged_text(line_num, 'message')
   buffer:goto_line(line_num)
   textadept.editing.select_line()
-  if not detail.filename:find(not WIN32 and '^/' or '^%a?:?[/\\][/\\]?') and cwd then
-    detail.filename = cwd .. (not WIN32 and '/' or '\\') .. detail.filename
+  if not filename:find(not WIN32 and '^/' or '^%a?:?[/\\][/\\]?') and cwd then
+    filename = cwd .. (not WIN32 and '/' or '\\') .. filename
   end
-  local sloppy = not detail.filename:find(not WIN32 and '^/' or '^%a?:?[/\\][/\\]?')
-  ui.goto_file(detail.filename, true, preferred_view, sloppy)
-  textadept.editing.goto_line(detail.line)
-  if detail.column then buffer:goto_pos(buffer:find_column(detail.line, detail.column)) end
-  if not detail.message then return end
-  buffer.annotation_text[detail.line] = detail.message
-  if detail.warning then return end
-  buffer.annotation_style[detail.line] = buffer:style_of_name('error')
+  local sloppy = not filename:find(not WIN32 and '^/' or '^%a?:?[/\\][/\\]?')
+  ui.goto_file(filename, true, preferred_view, sloppy)
+  textadept.editing.goto_line(line)
+  if column then buffer:goto_pos(buffer:find_column(line, column)) end
+  if not message then return end
+  buffer.annotation_text[line] = message
+  if buffer.line_state[line_num] > 1 then return end -- non-error
+  buffer.annotation_style[line] = buffer:style_of_name('error')
 end
 events.connect(events.KEYPRESS, function(code)
-  if keys.KEYSYMS[code] == '\n' and is_msg_buf(buffer) and
-    scan_for_error(buffer:get_cur_line():match('^[^\r\n]*')) then
-    M.goto_error(buffer:line_from_position(buffer.current_pos))
+  local line_num = buffer:line_from_position(buffer.current_pos)
+  if keys.KEYSYMS[code] == '\n' and is_out_buf(buffer) and buffer.line_state[line_num] > 0 then
+    M.goto_error(line_num)
     return true
   end
 end)
 events.connect(events.DOUBLE_CLICK,
-  function(_, line) if is_msg_buf(buffer) then M.goto_error(line) end end)
+  function(_, line) if is_out_buf(buffer) then M.goto_error(line) end end)
 
 return M
