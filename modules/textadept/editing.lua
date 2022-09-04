@@ -68,17 +68,16 @@ events.connect(events.VIEW_NEW, function()
 end)
 for _ = 1, #M.XPM_IMAGES do _SCINTILLA.next_image_type() end -- sync
 
--- LuaFormatter off
 ---
 -- Map of lexer names to line comment strings for programming languages, used by the
 -- `toggle_comment()` function.
 -- Keys are lexer names and values are either the language's line comment prefixes or block
--- comment delimiters separated by a '|' character.
+-- comment delimiters separated by a '|' character. If no comment string exists for a given
+-- language, the lexer-supplied string is used, if available.
 -- @class table
 -- @name comment_string
 -- @see toggle_comment
-M.comment_string = {actionscript='//',ada='--',apdl='!',ansi_c='/*|*/',antlr='//',apl='#',applescript='--',asp='\'',autoit=';',awk='#',b_lang='//',bash='#',batch='REM ',bibtex='%',boo='#',chuck='//',clojure=';',cmake='#',coffeescript='#',context='%',cpp='//',crystal='#',csharp='//',css='/*|*/',cuda='//',desktop='#',django='{#|#}',dmd='//',dockerfile='#',dot='//',eiffel='--',elixir='#',elm='--',erlang='%',fantom='//',faust='//',fennel=';',fish='#',forth='|\\',fortran='!',fsharp='//',fstab='#',gap='#',gettext='#',gherkin='#',gleam='//',glsl='//',gnuplot='#',go='//',groovy='//',gtkrc='#',hare='//',haskell='--',html='<!--|-->',icon='#',idl='//',inform='!',ini='#',Io='#',java='//',javascript='//',jq='#',json='/*|*/',jsp='//',julia='#',latex='%',ledger='#',less='//',lilypond='%',lisp=';',logtalk='%',lua='--',makefile='#',matlab='#',meson='#',moonscript='--',myrddin='//',nemerle='//',networkd='#',nim='#',nsis='#',objective_c='//',pascal='//',perl='#',php='//',pico8='//',pike='//',pkgbuild='#',pony='//',prolog='%',props='#',protobuf='//',ps='%',pure='//',python='#',rails='#',rc='#',reason='//',rebol=';',rest='.. ',rexx='--',rhtml='<!--|-->',routeros='#',rstats='#',ruby='#',rust='//',sass='//',scala='//',scheme=';',smalltalk='"|"',sml='(*)',snobol4='#',spin="'",sql='--',systemd='#',tcl='#',tex='%',text='',toml='#',typescript='//',vala='//',vb='\'',vbscript='\'',verilog='//',vhdl='--',wsf='<!--|-->',xml='<!--|-->',xs='#',xtend='//',yaml='#',zig='//'}
--- LuaFormatter on
+M.comment_string = {}
 
 ---
 -- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
@@ -354,7 +353,7 @@ end
 -- @see comment_string
 -- @name toggle_comment
 function M.toggle_comment()
-  local comment = M.comment_string[buffer:get_lexer(true)] or ''
+  local comment = M.comment_string[buffer:get_lexer(true)] or view.property['scintillua.comment']
   local prefix, suffix = comment:match('^([^|]+)|?([^|]*)$')
   if not prefix then return end
   local anchor, pos = buffer.selection_start, buffer.selection_end

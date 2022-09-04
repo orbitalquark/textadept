@@ -29,7 +29,7 @@
 -- language. If you prefer the other syntax, or if Textadept does not support block comments
 -- for a particular language, modify the [`textadept.editing.comment_string`]() table. For example:
 --
---     textadept.editing.comment_string.ansi_c = '//' -- change from /* ... */
+--     textadept.editing.comment_string.ansi_c = '/*|*/' -- change from //
 --
 -- ### Compile and Run
 --

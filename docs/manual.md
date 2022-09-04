@@ -118,10 +118,10 @@ Here is a simple *~/.textadept/init.lua* for illustration:
     buffer.tab_width = 4
 
     -- Always strip trailing spaces on save, automatically highlight the current
-    -- word, and use C99-style line comments in C code.
+    -- word, and use C89-style block comments in C code.
     textadept.editing.strip_trailing_spaces = true
     textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_CURRENT
-    textadept.editing.comment_string.ansi_c = '//'
+    textadept.editing.comment_string.ansi_c = '/*|*/'
 
     -- Load an external module and bind a key to it.
     local ctags = require('ctags')
