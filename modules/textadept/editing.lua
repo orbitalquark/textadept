@@ -353,7 +353,7 @@ end
 -- @see comment_string
 -- @name toggle_comment
 function M.toggle_comment()
-  local comment = M.comment_string[buffer:get_lexer(true)] or view.property['scintillua.comment']
+  local comment = M.comment_string[buffer:get_lexer(true)] or buffer.property['scintillua.comment']
   local prefix, suffix = comment:match('^([^|]+)|?([^|]*)$')
   if not prefix then return end
   local anchor, pos = buffer.selection_start, buffer.selection_end

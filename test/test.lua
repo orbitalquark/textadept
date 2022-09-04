@@ -1920,6 +1920,7 @@ end
 function test_editing_toggle_comment()
   buffer.new()
   buffer:set_lexer('ansi_c')
+  textadept.editing.comment_string.ansi_c = '/*|*/'
   -- LuaFormatter off
   buffer:set_text(table.concat({
     '',
@@ -5760,7 +5761,7 @@ local function check_property_usage(filename, buffer_props, view_props)
       if id == 'state' and prop == 'indent' then goto continue end
       if id == 'format' and prop == 'line_length' then goto continue end
       if id == 'styles' and prop == 'tag' then goto continue end
-      if id == 'styles' and prop == 'property' then goto continue end
+      if (id == 'styles' or id == 'view') and prop == 'property' then goto continue end
       if buffer_props[prop] then
         assert(id:find('^buffer%d?$') or id:find('buf$'),
           'line %d:%d: "%s" should be a buffer property', line_num, pos, prop)
