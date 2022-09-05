@@ -75,7 +75,7 @@ sci_flags := -pedantic -DSCI_LEXER -DNDEBUG -Iscintilla/include -Iscintilla/src 
 
 $(call all-objs, $(sci_objs)): CXXFLAGS += $(sci_flags)
 $(call all-objs, $(sci_lexlib_objs)): CXXFLAGS += $(sci_flags)
-$(call all-objs, $(sci_lexer_objs)): CXXFLAGS += $(sci_flags) $(lua_flags) -DNO_SCITE -DNO_DLL
+$(call all-objs, $(sci_lexer_objs)): CXXFLAGS += $(sci_flags) $(lua_flags) -DNO_DLL
 $(call all-objs, $(sci_lexer_gtk_objs)): CXXFLAGS += -DGTK
 $(call all-objs, $(sci_lexer_curses_objs)): CXXFLAGS += -DCURSES $(curses_flags)
 $(call all-objs, $(sci_gtk_objs)): CXXFLAGS += $(sci_flags) -DGTK $(gtk_flags)
