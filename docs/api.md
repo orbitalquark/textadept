@@ -1205,6 +1205,11 @@ The number of named lexer styles.
 Enable overtype mode, where typed characters overwrite existing ones.
   The default value is `false`.
 
+<a id="buffer.property"></a>
+#### `buffer.property` (table)
+
+Map of key-value string pairs used by lexers.
+
 <a id="buffer.punctuation_chars"></a>
 #### `buffer.punctuation_chars` (string)
 
@@ -4661,28 +4666,28 @@ argument does not appear to be an LPeg pattern. Perhaps you expected something l
 
     lex:tag('identifier', (lpeg.R('AZ', 'az')  + '_') * (lpeg.R('AZ', 'az', '09') + '_')^0)
 
-The `lexer` module actually provides a convenient list of common tag names and
-common LPeg patterns for you to use. Tag names for programming languages include
-(but are not limited to) [`lexer.DEFAULT`](#lexer.DEFAULT), [`lexer.COMMENT`](#lexer.COMMENT), [`lexer.STRING`](#lexer.STRING),
-[`lexer.NUMBER`](#lexer.NUMBER), [`lexer.KEYWORD`](#lexer.KEYWORD), [`lexer.KEYWORD_BUILTIN`](#lexer.KEYWORD_BUILTIN), [`lexer.IDENTIFIER`](#lexer.IDENTIFIER),
-[`lexer.OPERATOR`](#lexer.OPERATOR), [`lexer.ERROR`](#lexer.ERROR), [`lexer.PREPROCESSOR`](#lexer.PREPROCESSOR), [`lexer.CONSTANT`](#lexer.CONSTANT),
-[`lexer.CONSTANT_BUILTIN`](#lexer.CONSTANT_BUILTIN), [`lexer.VARIABLE`](#lexer.VARIABLE), [`lexer.VARIABLE_BUILTIN`](#lexer.VARIABLE_BUILTIN),
-[`lexer.FUNCTION`](#lexer.FUNCTION), [`lexer.FUNCTION_BUILTIN`](#lexer.FUNCTION_BUILTIN), [`lexer.FUNCTION_METHOD`](#lexer.FUNCTION_METHOD),
-[`lexer.CLASS`](#lexer.CLASS), [`lexer.TYPE`](#lexer.TYPE), [`lexer.LABEL`](#lexer.LABEL), [`lexer.REGEX`](#lexer.REGEX), and
-[`lexer.EMBEDDED`](#lexer.EMBEDDED). Tag names for markup languages include (but are not limited to)
-[`lexer.TAG`](#lexer.TAG), [`lexer.ATTRIBUTE`](#lexer.ATTRIBUTE), [`lexer.TITLE`](#lexer.TITLE), [`lexer.BOLD`](#lexer.BOLD), [`lexer.ITALIC`](#lexer.ITALIC),
-[`lexer.UNDERLINE`](#lexer.UNDERLINE), [`lexer.CODE`](#lexer.CODE), [`lexer.LINK`](#lexer.LINK), and [`lexer.REFERENCE`](#lexer.REFERENCE). Patterns
-include [`lexer.any`](#lexer.any), [`lexer.alpha`](#lexer.alpha), [`lexer.digit`](#lexer.digit), [`lexer.alnum`](#lexer.alnum),
-[`lexer.lower`](#lexer.lower), [`lexer.upper`](#lexer.upper), [`lexer.xdigit`](#lexer.xdigit), [`lexer.graph`](#lexer.graph), [`lexer.print`](#lexer.print),
-[`lexer.punct`](#lexer.punct), [`lexer.space`](#lexer.space), [`lexer.newline`](#lexer.newline), [`lexer.nonnewline`](#lexer.nonnewline),
-[`lexer.dec_num`](#lexer.dec_num), [`lexer.hex_num`](#lexer.hex_num), [`lexer.oct_num`](#lexer.oct_num), [`lexer.bin_num`](#lexer.bin_num),
-[`lexer.integer`](#lexer.integer), [`lexer.float`](#lexer.float), [`lexer.number`](#lexer.number), and [`lexer.word`](#lexer.word). You may use
-your own tag names if none of the above fit your language, but an advantage to using predefined
-tag names is that the language elements your lexer recognizes will inherit any universal
-syntax highlighting color theme that your editor uses. You can also "subclass" existing tag
-names by appending a '.*subclass*' string to them. For example, the HTML lexer tags unknown
-tags as `lexer.TAG .. '.unknown'`. Editors have the ability to style those subclassed tags
-in a different way than normal tags, or fall back to styling them as normal tags.
+The `lexer` module actually provides a convenient list of common tag names and common LPeg
+patterns for you to use. Tag names for programming languages include (but are not limited
+to) [`lexer.DEFAULT`](#lexer.DEFAULT), [`lexer.COMMENT`](#lexer.COMMENT), [`lexer.STRING`](#lexer.STRING), [`lexer.NUMBER`](#lexer.NUMBER),
+[`lexer.KEYWORD`](#lexer.KEYWORD), [`lexer.IDENTIFIER`](#lexer.IDENTIFIER), [`lexer.OPERATOR`](#lexer.OPERATOR), [`lexer.ERROR`](#lexer.ERROR),
+[`lexer.PREPROCESSOR`](#lexer.PREPROCESSOR), [`lexer.CONSTANT`](#lexer.CONSTANT), [`lexer.CONSTANT_BUILTIN`](#lexer.CONSTANT_BUILTIN),
+[`lexer.VARIABLE`](#lexer.VARIABLE), [`lexer.VARIABLE_BUILTIN`](#lexer.VARIABLE_BUILTIN), [`lexer.FUNCTION`](#lexer.FUNCTION),
+[`lexer.FUNCTION_BUILTIN`](#lexer.FUNCTION_BUILTIN), [`lexer.FUNCTION_METHOD`](#lexer.FUNCTION_METHOD), [`lexer.CLASS`](#lexer.CLASS), [`lexer.TYPE`](#lexer.TYPE),
+[`lexer.LABEL`](#lexer.LABEL), [`lexer.REGEX`](#lexer.REGEX), and [`lexer.EMBEDDED`](#lexer.EMBEDDED). Tag names for markup languages
+include (but are not limited to) [`lexer.TAG`](#lexer.TAG), [`lexer.ATTRIBUTE`](#lexer.ATTRIBUTE), [`lexer.TITLE`](#lexer.TITLE),
+[`lexer.BOLD`](#lexer.BOLD), [`lexer.ITALIC`](#lexer.ITALIC), [`lexer.UNDERLINE`](#lexer.UNDERLINE), [`lexer.CODE`](#lexer.CODE), [`lexer.LINK`](#lexer.LINK),
+and [`lexer.REFERENCE`](#lexer.REFERENCE). Patterns include [`lexer.any`](#lexer.any), [`lexer.alpha`](#lexer.alpha),
+[`lexer.digit`](#lexer.digit), [`lexer.alnum`](#lexer.alnum), [`lexer.lower`](#lexer.lower), [`lexer.upper`](#lexer.upper), [`lexer.xdigit`](#lexer.xdigit),
+[`lexer.graph`](#lexer.graph), [`lexer.print`](#lexer.print), [`lexer.punct`](#lexer.punct), [`lexer.space`](#lexer.space), [`lexer.newline`](#lexer.newline),
+[`lexer.nonnewline`](#lexer.nonnewline), [`lexer.dec_num`](#lexer.dec_num), [`lexer.hex_num`](#lexer.hex_num), [`lexer.oct_num`](#lexer.oct_num),
+[`lexer.bin_num`](#lexer.bin_num), [`lexer.integer`](#lexer.integer), [`lexer.float`](#lexer.float), [`lexer.number`](#lexer.number), and
+[`lexer.word`](#lexer.word). You may use your own tag names if none of the above fit your language,
+but an advantage to using predefined tag names is that the language elements your lexer
+recognizes will inherit any universal syntax highlighting color theme that your editor
+uses. You can also "subclass" existing tag names by appending a '.*subclass*' string to
+them. For example, the HTML lexer tags unknown tags as `lexer.TAG .. '.unknown'`. Editors
+have the ability to style those subclassed tags in a different way than normal tags, or fall
+back to styling them as normal tags.
 
 ##### Example Tags
 
@@ -5085,19 +5090,22 @@ recommended that you migrate yours. The migration process is fairly straightforw
 
 1. `lexer` exists in the default lexer environment, so `require('lexer')` should be replaced
    by simply `lexer`. (Keep in mind `local lexer = lexer` is a Lua idiom.)
-2. Every lexer created using [`lexer.new()`](#lexer.new) now includes a rule to match whitespace. Unless
+2. Every lexer created using [`lexer.new()`](#lexer.new) should no longer specify a lexer name by
+   string, but should instead use `...` (three dots), which evaluates to the lexer's filename
+   or alternative name in embedded lexer applications.
+3. Every lexer created using `lexer.new()` now includes a rule to match whitespace. Unless
    your lexer has significant whitespace, you can remove your legacy lexer's whitespace
    token and rule. Otherwise, your defined whitespace rule will replace the default one.
-3. The concept of tokens has been replaced with tags. Instead of calling a `token()` function,
+4. The concept of tokens has been replaced with tags. Instead of calling a `token()` function,
    call [`lex:tag()`](#lexer.tag) instead.
-4. Lexers now support replaceable word lists. Instead of calling [`lexer.word_match()`](#lexer.word_match)
-   with large word lists, call it with an identifier string (typically something
-   like `lexer.KEYWORD`). Then at the end of the lexer (before `return lex`), call
+5. Lexers now support replaceable word lists. Instead of calling [`lexer.word_match()`](#lexer.word_match)
+   with large word lists, call it as an instance method with an identifier string (typically
+   something like `lexer.KEYWORD`). Then at the end of the lexer (before `return lex`), call
    [`lex:set_word_list()`](#lexer.set_word_list) with the same identifier and the usual
    list of words to match. This allows users of your lexer to call `lex:set_word_list()`
    with their own set of words should they wish to.
-5. Lexers no longer specify styling information. Remove any calls to `lex:add_style()`.
-6. `lexer.last_char_includes()` has been deprecated in favor of the new [`lexer.after_set()`](#lexer.after_set).
+6. Lexers no longer specify styling information. Remove any calls to `lex:add_style()`.
+7. `lexer.last_char_includes()` has been deprecated in favor of the new [`lexer.after_set()`](#lexer.after_set).
    Use the character set and pattern as arguments to that new function.
 
 As an example, consider the following sample legacy lexer:
@@ -5463,7 +5471,7 @@ A pattern that matches any single, non-newline character.
 
 The number of word lists to add as rules to every lexer created by `lexer.new()`. These
   word lists are intended to be set by users outside the lexer. Each word in a list is tagged
-  with the name `userlistN`, where N is the index of the list. The default value is `4`.
+  with the name `userlistN`, where N is the index of the list. The default value is `2`.
 
 <a id="lexer.number"></a>
 #### `lexer.number` (pattern)
