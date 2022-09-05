@@ -28,6 +28,7 @@ lexer = view -- temporary proxy for folding properties; will be overwritten in e
 local settings = {}
 
 local buffer_mt, view_mt = getmetatable(buffer), getmetatable(view)
+local name = {[buffer_mt] = 'buffer', [view_mt] = 'view'}
 local function repr(v) return string.format(type(v) == 'string' and '%q' or '%s', v) end
 for _, mt in ipairs{buffer_mt, view_mt} do
   mt.__orig_index, mt.__orig_newindex = mt.__index, mt.__newindex
@@ -38,14 +39,14 @@ for _, mt in ipairs{buffer_mt, view_mt} do
         local args = {...}
         if type(args[1]) == 'table' then table.remove(args, 1) end -- self
         for i = 1, #args do args[i] = repr(args[i]) end
-        settings[#settings + 1] = string.format('buffer:%s(%s)', k, table.concat(args, ','))
+        settings[#settings + 1] = string.format('%s:%s(%s)', name[mt], k, table.concat(args, ','))
         return v(...)
       end
     elseif type(v) == 'table' then
       local property_mt = getmetatable(v)
       setmetatable(v, {
         __index = property_mt.__index, __newindex = function(property, k2, v2)
-          settings[#settings + 1] = string.format('buffer.%s[%s]=%s', k, repr(k2), repr(v2))
+          settings[#settings + 1] = string.format('%s.%s[%s]=%s', name[mt], k, repr(k2), repr(v2))
           local ok, errmsg = pcall(property_mt.__newindex, property, k2, v2)
           if not ok then error(errmsg, 2) end
         end
@@ -54,7 +55,7 @@ for _, mt in ipairs{buffer_mt, view_mt} do
     return v
   end
   mt.__newindex = function(t, k, v)
-    settings[#settings + 1] = string.format('buffer[%s]=%s', repr(k), repr(v))
+    settings[#settings + 1] = string.format('%s[%s]=%s', name[mt], repr(k), repr(v))
     mt.__orig_newindex(t, k, v)
   end
 end
@@ -238,11 +239,11 @@ view.call_tip_use_style = buffer.tab_width * view:text_width(view.STYLE_CALLTIP,
 -- view.call_tip_position = true
 
 -- Folding.
-lexer.folding = true
--- lexer.fold_by_indentation = true
--- lexer.fold_line_groups = true
--- lexer.fold_on_zero_sum_lines = true
--- lexer.fold_compact = true
+view.folding = true
+-- view.fold_by_indentation = true
+-- view.fold_line_groups = true
+-- view.fold_on_zero_sum_lines = true
+-- view.fold_compact = true
 view.automatic_fold = view.AUTOMATICFOLD_SHOW | view.AUTOMATICFOLD_CLICK | view.AUTOMATICFOLD_CHANGE
 view.fold_flags = not CURSES and view.FOLDFLAG_LINEAFTER_CONTRACTED or 0
 view.fold_display_text_style = view.FOLDDISPLAYTEXT_BOXED
