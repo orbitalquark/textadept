@@ -106,13 +106,6 @@ local function set_styles(view)
   for i = 1, math.min(num_styles - num_predefined, view.STYLE_DEFAULT - 1) do set_style(view, i) end
   for i = view.STYLE_DEFAULT + 1, view.STYLE_FOLDDISPLAYTEXT do set_style(view, i) end
   for i = view.STYLE_FOLDDISPLAYTEXT + 1, num_styles do set_style(view, i) end
-  -- Also forward folding properties to the lexer.
-  for k, v in pairs(view) do
-    if not k:find('^fold') then goto continue end
-    view.property[(k ~= 'folding' and k:gsub('_', '.') or 'fold'):gsub('^fold%.', 'fold.scintillua.')] =
-      v and '1' or '0'
-    ::continue::
-  end
 end
 
 -- Documentation is in core/.view.luadoc.

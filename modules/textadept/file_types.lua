@@ -76,8 +76,14 @@ local function set_lexer(buffer, name)
   end
   buffer._lexer = name
 
-  -- Update styles and refresh syntax highlighting.
+  -- Update styles, forward folding properties to the lexer, and refresh syntax highlighting.
   view.set_styles(buffer ~= ui.command_entry and view or ui.command_entry)
+  for k, v in pairs(view) do
+    if not k:find('^fold') then goto continue end
+    view.property[(k ~= 'folding' and k:gsub('_', '.') or 'fold'):gsub('^fold%.', 'fold.scintillua.')] =
+      v and '1' or '0'
+    ::continue::
+  end
   local last_line = view.first_visible_line + view.lines_on_screen
   buffer:colorize(1, buffer:position_from_line(last_line + 1))
 
