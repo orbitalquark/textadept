@@ -173,3 +173,12 @@ select "Properties". Click on the "Compatibility" tab and then the "Change high 
 button. Check the "Override high DPI scaling" checkbox towards the bottom of the pop-up
 dialog. The next time you run Textadept, the fonts should look much better. You may have to
 tweak other settings in the dialog, but the above worked for me.
+
+- - -
+
+**Q:**
+Where can I find a complete list of key bindings for Textadept?
+
+**A:**
+[Here](api.html#textadept.keys).
+
