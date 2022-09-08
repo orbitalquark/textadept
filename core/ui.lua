@@ -35,85 +35,80 @@ module('ui')]]
 
 ui.SHOW_ALL_TABS = 2 -- ui.tabs options must be greater than 1
 
--- Helper function for jumping to another view to print to, or creating a new view to print to
--- (the latter depending on settings).
-local function prepare_view()
-  if #_VIEWS > 1 then
-    ui.goto_view(1)
-  elseif not ui.tabs then
-    view:split()
-  end
+-- Helper functions for getting print views and buffers.
+local function get_print_view(type)
+  for _, view in ipairs(_VIEWS) do if view.buffer._type == type then return view end end
+end
+local function get_print_buffer(type)
+  for _, buf in ipairs(_BUFFERS) do if buf._type == type then return buf end end
 end
 
--- Helper function for printing messages to buffers.
+-- Helper function for printing to buffers.
 -- @see ui._print
 -- @see ui._print_silent
 -- @see _output
-local function _print(buffer_type, silent, pretty, ...)
-  local buffer
-  for _, buf in ipairs(_BUFFERS) do
-    if buf._type == buffer_type then
-      buffer = buf
-      break
+local function _print(buffer_type, silent, format, ...)
+  local print_view, buffer = get_print_view(buffer_type), get_print_buffer(buffer_type)
+  if not buffer or not silent and not print_view then -- no buffer or buffer not visible
+    if #_VIEWS > 1 then
+      ui.goto_view(1) -- jump to another view to print to
+    elseif not ui.tabs then
+      view:split() -- create a new view to print to
     end
-  end
-  if not buffer then
-    prepare_view()
-    buffer = _G.buffer.new()
-    buffer._type = buffer_type
-  elseif not silent then
-    for _, view in ipairs(_VIEWS) do
-      if view.buffer._type == buffer_type then
-        ui.goto_view(view)
-        goto view_found
-      end
+    if not buffer then
+      buffer = _G.buffer.new()
+      buffer._type = buffer_type
+    else
+      view:goto_buffer(buffer)
     end
-    prepare_view()
-    view:goto_buffer(buffer)
-    ::view_found::
+  elseif print_view and not silent then
+    ui.goto_view(print_view)
   end
-  local args, n = {...}, select('#', ...)
-  for i = 1, n do args[i] = tostring(args[i]) end
-  buffer:append_text(table.concat(args, pretty and '\t' or ''))
-  if pretty then buffer:append_text('\n') end
+  local args = table.pack(...)
+  for i = 1, args.n do args[i] = tostring(args[i]) end
+  buffer:append_text(table.concat(args, format and '\t' or ''))
+  if format then buffer:append_text('\n') end
   buffer:goto_pos(buffer.length + 1)
   buffer:set_save_point()
   return buffer
 end
 
 ---
--- Prints the given string messages to the buffer of string type *type*.
--- Opens a new buffer for printing messages to if necessary. If the message buffer is already
--- open in a view, the message is printed to that view. Otherwise the view is split (unless
--- `ui.tabs` is `true`) and the message buffer is displayed before being printed to.
--- @param type String type of message buffer.
--- @param ... Message strings.
+-- Prints the given value(s) to the buffer of string type *type*, along with a trailing newline.
+-- Opens a new buffer for printing to if necessary. If the print buffer is already open in a
+-- view, the value(s) is printed to that view. Otherwise the view is split (unless `ui.tabs`
+-- is `true`) and the print buffer is displayed before being printed to.
+-- @param type String type of print buffer.
+-- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
+--   They will be printed as tab-separated values.
 -- @usage ui._print(_L['[Message Buffer]'], message)
 -- @see _print_silent
 -- @name _print
 function ui._print(type, ...) _print(assert_type(type, 'string', 1), false, true, ...) end
 
 ---
--- Silently prints the given string messages to the buffer of string type *type* if that buffer
--- is already open.
+-- Silently prints the given value(s) to the buffer of string type *type* if that buffer is
+-- already open.
 -- Otherwise, behaves like `ui._print()`.
--- @param type String type of message buffer.
--- @param ... Message strings.
+-- @param type String type of print buffer.
+-- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
+--   They will be printed as tab-separated values.
 -- @see _print
 -- @name _print_silent
 function ui._print_silent(type, ...) _print(assert_type(type, 'string', 1), true, true, ...) end
 
 ---
--- Prints the given string messages to the message buffer along with a trailing newline.
+-- Prints the given value(s) to the message buffer, along with a trailing newline.
 -- Opens a new buffer if one has not already been opened for printing messages.
--- @param ... Message strings. They will be printed as tab-separated values.
+-- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
+--   They will be printed as tab-separated values.
 -- @name print
 function ui.print(...) ui._print(_L['[Message Buffer]'], ...) end
 
 ---
--- Silently prints the given string messages to the message buffer if it is already open.
+-- Silently prints the given value(s) to the message buffer if it is already open.
 -- Otherwise, behaves like `ui.print()`.
--- @param ... Message strings.
+-- @param ... Message or values to print.
 -- @see print
 -- @name print_silent
 function ui.print_silent(...) ui._print_silent(_L['[Message Buffer]'], ...) end
@@ -128,18 +123,18 @@ local function _output(silent, ...)
 end
 
 ---
--- Prints the given string messages to the output buffer.
+-- Prints the given value(s) to the output buffer.
 -- Opens a new buffer if one has not already been opened for printing output. The output buffer
 -- attempts to understand the error messages and warnings produced by various tools.
--- @param ... Message strings.
+-- @param ... Output to print.
 -- @see output_silent
 -- @name output
 function ui.output(...) _output(false, ...) end
 
 ---
--- Silently prints the given string messages to the output buffer if it is already open.
+-- Silently prints the given value(s) to the output buffer if it is already open.
 -- Otherwise, behaves like `ui.output()`.
--- @param ... Message strings.
+-- @param ... Output to print.
 -- @see output
 -- @name output_silent
 function ui.output_silent(...) _output(true, ...) end
@@ -536,15 +531,10 @@ if CURSES then
   end)
 end
 
-local initialized = false
-events.connect(events.ERROR, function(text)
-  if not initialized then
-    ui.dialogs.textbox{title = _L['Initialization Error'], text = text}
-    return
-  end
-  ui.output(text) -- recognize Lua errors
-end)
-events.connect(events.INITIALIZED, function() initialized = true end)
+-- Show pre-initialization errors in a textbox. After that, leave error handling to the run module.
+local function textbox(text) ui.dialogs.textbox{title = _L['Initialization Error'], text = text} end
+events.connect(events.ERROR, textbox)
+events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, textbox) end)
 
 --[[ The tables below were defined in C.
 

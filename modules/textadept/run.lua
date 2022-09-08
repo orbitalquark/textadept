@@ -76,19 +76,20 @@ local line_state_marks = {M.MARK_ERROR, M.MARK_WARNING}
 -- Prints output from a compile, run, build, or test shell command.
 -- Any filenames encoded in _CHARSET are left alone and may not display properly.
 -- All stdout and stderr from the command is printed silently.
--- @param output The output to print.
-local function print_output(output)
+-- @param ... Output to print.
+local function print_output(...)
   local buffer = get_output_buffer()
   local last_line = buffer and buffer.line_count or 1
-  local silent = M.run_in_background or not output:find('^> ') or output:find('^> exit')
-  ui[silent and 'output_silent' or 'output'](output)
+  local silent = M.run_in_background or not (...):find('^> ') or (...):find('^> exit')
+  ui[silent and 'output_silent' or 'output'](...)
   if not buffer then buffer = get_output_buffer() end
-  for i = last_line, buffer.line_count - 1 do -- ui.output() outputs trailing '\n'
+  for i = last_line, buffer.line_count do
     local line_state = buffer.line_state[i]
     if line_state > 0 then buffer:marker_add(i, line_state_marks[line_state]) end
   end
 end
 for _, event in ipairs(run_events) do events.connect(event, print_output) end
+events.connect(events.ERROR, function(errmsg) print_output(errmsg, '\n') end) -- mark Lua errors
 
 -- Runs command *command* in working directory *dir*, emitting events of type *event* with any
 -- output received.
