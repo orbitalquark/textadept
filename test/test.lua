@@ -854,10 +854,8 @@ end
 
 function test_ui_print()
   local tabs = ui.tabs
-  local silent_print = ui.silent_print
 
   ui.tabs = true
-  ui.silent_print = false
   ui.print('foo')
   assert_equal(buffer._type, _L['[Message Buffer]'])
   assert_equal(#_VIEWS, 1)
@@ -879,11 +877,9 @@ function test_ui_print()
   assert_equal(buffer:get_text(), '1\t2\t3\n4\t5\t6\n')
   ui.goto_view(-1) -- first view
   assert(buffer._type ~= _L['[Message Buffer]'], 'still in message buffer')
-  ui.silent_print = true
-  ui.print(7, 8, 9) -- should stay in first view
+  ui.print_silent(7, 8, 9) -- should stay in first view
   assert(buffer._type ~= _L['[Message Buffer]'], 'switched to message buffer')
   assert_equal(_BUFFERS[#_BUFFERS]:get_text(), '1\t2\t3\n4\t5\t6\n7\t8\t9\n')
-  ui.silent_print = false
   ui.goto_view(1) -- second view
   assert_equal(buffer._type, _L['[Message Buffer]'])
   view:goto_buffer(-1)
@@ -895,13 +891,9 @@ function test_ui_print()
 
   buffer:close()
   ui.tabs = tabs
-  ui.silent_print = silent_print
 end
 
 function test_ui_print_to_other_view()
-  local silent_print = ui.silent_print
-
-  ui.silent_print = false
   view:split()
   ui.goto_view(-1)
   assert_equal(_VIEWS[view], 1)
@@ -911,8 +903,22 @@ function test_ui_print_to_other_view()
   buffer:close()
   ui.goto_view(-1)
   view:unsplit()
+end
 
-  ui.silent_print = silent_print
+function test_ui_output()
+  ui.output('file.lua:1: message', '\n')
+  assert_equal(buffer._type, _L['[Output Buffer]'])
+  assert_equal(buffer.lexer_language, 'output')
+  assert_equal(buffer:name_of_style(buffer.style_at[1]), 'filename')
+  assert_equal(buffer:name_of_style(buffer.style_at[10]), 'line')
+  assert_equal(buffer:name_of_style(buffer.style_at[13]), 'message')
+  view:goto_buffer(-1)
+  ui.output_silent('stdout')
+  assert(buffer._type ~= _L['[Output Buffer]'], 'did not silently output')
+  view:goto_buffer(1)
+  assert_equal(buffer.style_at[buffer:position_from_line(2)], view.STYLE_DEFAULT)
+  if #_VIEWS > 1 then view:unsplit() end
+  buffer:close()
 end
 
 function test_ui_dialogs_colorselect_interactive()
@@ -2486,14 +2492,12 @@ function test_file_types_load_lexers()
   print('Loading lexers...')
   if #_VIEWS > 1 then view:unsplit() end
   view:goto_buffer(-1)
-  ui.silent_print = true
   buffer.new()
   for _, name in ipairs(lexers) do
-    print('Loading lexer ' .. name)
+    print_silent('Loading lexer ' .. name)
     buffer:set_lexer(name)
   end
   buffer:close()
-  ui.silent_print = false
 end
 
 function test_ui_find_find_text()
@@ -5793,6 +5797,7 @@ end
 
 local TEST_OUTPUT_BUFFER = '[Test Output]'
 function print(...) ui._print(TEST_OUTPUT_BUFFER, ...) end
+function print_silent(...) ui._print_silent(TEST_OUTPUT_BUFFER, ...) end
 -- Clean up after a previously failed test.
 local function cleanup()
   while #_BUFFERS > 1 do

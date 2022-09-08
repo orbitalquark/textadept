@@ -1423,7 +1423,7 @@ Changes:
 * Key and menu commands [must be Lua functions][]; the table syntax is no longer recognized.
 * Renamed `lfs.FILTER` to [`lfs.default_filter`][] and tweaked arguments to `lfs.dir_foreach()`.
 * Locale files can optionally use `#` for comments instead of `%`.
-* Renamed `ui.SILENT_PRINT` to [`ui.silent_print`][].
+* Renamed `ui.SILENT_PRINT` to `ui.silent_print`.
 * Renamed all [`textadept.editing`][]`.[A-Z]+` options to their lower-case equivalents and
   renamed `textadept.editing.braces` to [`textadept.editing.brace_matches`][].
 * *post_init.lua* files for language modules are [no longer auto-loaded][]; use
@@ -1449,7 +1449,6 @@ Changes:
 [`io.quick_open_filters`]: api.html#io.quick_open_filters
 [must be Lua functions]: manual.html#key-and-menu-command-changes
 [`lfs.default_filter`]: api.html#lfs.default_filter
-[`ui.silent_print`]: api.html#ui.silent_print
 [`textadept.editing`]: api.html#textadept.editing
 [`textadept.editing.brace_matches`]: api.html#textadept.editing.brace_matches
 [no longer auto-loaded]: manual.html#language-module-handling-changes
@@ -2020,7 +2019,7 @@ Bugfixes:
 Changes:
 
 * New [optionselect][] dialog.
-* Added [`ui.SILENT_PRINT`][] option for printing messages.
+* Added `ui.SILENT_PRINT` option for printing messages.
 * The GUI version can [spawn processes][] in separate threads.
 * Removed experimental Windows `io.popen()` and `os.execute()` replacements due to spawning
   support.
@@ -2032,7 +2031,6 @@ Changes:
 * Updated to [Scintilla][] 3.4.1.
 
 [optionselect]: api.html#ui.dialogs.optionselect
-[`ui.SILENT_PRINT`]: api.html#ui.silent_print
 [spawn processes]: api.html#os.spawn
 [Snapopen]: manual.html#quick-open
 [building projects]: api.html#_M.Build.a.Project

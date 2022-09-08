@@ -28,19 +28,12 @@ local ui = ui
 --   The default value is `true`.
 --   A third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar, even if only
 --   one buffer is open.
--- @field silent_print (bool)
---   Whether or not to print messages to buffers silently.
---   This is not guaranteed to be a constant value, as Textadept may change it for the editor's
---   own purposes. This flag should be used only in conjunction with a group of [`ui.print()`]()
---   and [`ui._print()`]() function calls.
 --   The default value is `false`, and focuses buffers when messages are printed to them.
 -- @field SHOW_ALL_TABS (number)
 --
 module('ui')]]
 
 ui.SHOW_ALL_TABS = 2 -- ui.tabs options must be greater than 1
-
-ui.silent_print = false
 
 -- Helper function for jumping to another view to print to, or creating a new view to print to
 -- (the latter depending on settings).
@@ -54,7 +47,9 @@ end
 
 -- Helper function for printing messages to buffers.
 -- @see ui._print
-local function _print(buffer_type, ...)
+-- @see ui._print_silent
+-- @see _output
+local function _print(buffer_type, silent, pretty, ...)
   local buffer
   for _, buf in ipairs(_BUFFERS) do
     if buf._type == buffer_type then
@@ -66,7 +61,7 @@ local function _print(buffer_type, ...)
     prepare_view()
     buffer = _G.buffer.new()
     buffer._type = buffer_type
-  elseif not ui.silent_print then
+  elseif not silent then
     for _, view in ipairs(_VIEWS) do
       if view.buffer._type == buffer_type then
         ui.goto_view(view)
@@ -79,45 +74,75 @@ local function _print(buffer_type, ...)
   end
   local args, n = {...}, select('#', ...)
   for i = 1, n do args[i] = tostring(args[i]) end
-  buffer:append_text(table.concat(args, '\t'))
-  buffer:append_text('\n')
+  buffer:append_text(table.concat(args, pretty and '\t' or ''))
+  if pretty then buffer:append_text('\n') end
   buffer:goto_pos(buffer.length + 1)
   buffer:set_save_point()
   return buffer
 end
+
 ---
--- Prints the given string messages to the buffer of string type *buffer_type*.
+-- Prints the given string messages to the buffer of string type *type*.
 -- Opens a new buffer for printing messages to if necessary. If the message buffer is already
 -- open in a view, the message is printed to that view. Otherwise the view is split (unless
 -- `ui.tabs` is `true`) and the message buffer is displayed before being printed to.
--- @param buffer_type String type of message buffer.
+-- @param type String type of message buffer.
 -- @param ... Message strings.
 -- @usage ui._print(_L['[Message Buffer]'], message)
+-- @see _print_silent
 -- @name _print
--- @return buffer printed to
-function ui._print(buffer_type, ...) return _print(assert_type(buffer_type, 'string', 1), ...) end
+function ui._print(type, ...) _print(assert_type(type, 'string', 1), false, true, ...) end
 
 ---
--- Prints the given string messages to the message buffer.
--- Opens a new buffer if one has not already been opened for printing messages.
+-- Silently prints the given string messages to the buffer of string type *type* if that buffer
+-- is already open.
+-- Otherwise, behaves like `ui._print()`.
+-- @param type String type of message buffer.
 -- @param ... Message strings.
+-- @see _print
+-- @name _print_silent
+function ui._print_silent(type, ...) _print(assert_type(type, 'string', 1), true, true, ...) end
+
+---
+-- Prints the given string messages to the message buffer along with a trailing newline.
+-- Opens a new buffer if one has not already been opened for printing messages.
+-- @param ... Message strings. They will be printed as tab-separated values.
 -- @name print
--- @return message buffer
 function ui.print(...) ui._print(_L['[Message Buffer]'], ...) end
+
+---
+-- Silently prints the given string messages to the message buffer if it is already open.
+-- Otherwise, behaves like `ui.print()`.
+-- @param ... Message strings.
+-- @see print
+-- @name print_silent
+function ui.print_silent(...) ui._print_silent(_L['[Message Buffer]'], ...) end
+
+-- Helper function for printing to the output buffer.
+-- @see ui.output
+-- @see ui.output_silent
+local function _output(silent, ...)
+  local buffer = _print(_L['[Output Buffer]'], silent, false, ...)
+  if buffer.lexer_language ~= 'output' then buffer:set_lexer('output') end
+  buffer:colorize(buffer:position_from_line(buffer:line_from_position(buffer.end_styled)), -1)
+end
 
 ---
 -- Prints the given string messages to the output buffer.
 -- Opens a new buffer if one has not already been opened for printing output. The output buffer
 -- attempts to understand the error messages and warnings produced by various tools.
 -- @param ... Message strings.
--- @name print
--- @return output buffer
-function ui.output(...)
-  local buffer = ui._print(_L['[Output Buffer]'], ...)
-  if buffer.lexer_language ~= 'output' then buffer:set_lexer('output') end
-  buffer:colorize(buffer.end_styled, -1)
-  return buffer
-end
+-- @see output_silent
+-- @name output
+function ui.output(...) _output(false, ...) end
+
+---
+-- Silently prints the given string messages to the output buffer if it is already open.
+-- Otherwise, behaves like `ui.output()`.
+-- @param ... Message strings.
+-- @see output
+-- @name output_silent
+function ui.output_silent(...) _output(true, ...) end
 
 -- Returns 0xBBGGRR colors transformed into "#RRGGBB" for the colorselect dialog.
 -- @param value Number color to transform.

@@ -312,7 +312,6 @@ function M.find_in_files(dir, filter)
   end
 
   if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
-  ui.silent_print = false
   ui._print(_L['[Files Found Buffer]'],
     string.format('%s %s\n%s %s\n%s %s', _L['Find:']:gsub('_', ''), M.find_entry_text,
       _L['Directory:'], dir, _L['Filter:']:gsub('_', ''),

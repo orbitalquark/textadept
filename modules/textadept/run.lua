@@ -23,8 +23,6 @@ local M = {}
 --   Arguments:
 --
 --   * `output`: A line of string output from the command.
---   * `ext_or_lexer`: The file extension or lexer name associated with the executed compile
---     command.
 -- @field _G.events.RUN_OUTPUT (string)
 --   Emitted when executing a language's run shell command.
 --   By default, output is printed to the output buffer. In order to override this behavior,
@@ -32,7 +30,6 @@ local M = {}
 --   Arguments:
 --
 --   * `output`: A line of string output from the command.
---   * `ext_or_lexer`: The file extension or lexer name associated with the executed run command.
 -- @field _G.events.BUILD_OUTPUT (string)
 --   Emitted when executing a project's build shell command.
 --   By default, output is printed to the output buffer. In order to override this behavior,
@@ -56,7 +53,7 @@ M.MARK_ERROR = _SCINTILLA.next_marker_number()
 
 -- Events.
 local run_events = {'compile_output', 'run_output', 'build_output', 'test_output'}
-for _, v in ipairs(run_events) do events[v:upper()] = v end
+for _, event in ipairs(run_events) do events[event:upper()] = event end
 
 -- Keep track of: the last process spawned in order to kill it if requested; the cwd of that
 -- process in order to jump to relative file paths in recognized warning or error messages;
@@ -64,44 +61,34 @@ for _, v in ipairs(run_events) do events[v:upper()] = v end
 -- in a split view) in the original view.
 local proc, cwd, preferred_view
 
-local line_state_marks = {M.MARK_ERROR, M.MARK_WARNING}
--- Prints an output line from a compile, run, build, or test shell command.
--- Assume output is UTF-8 unless there's a recognized warning or error message. In that case
--- assume it is encoded in _CHARSET and mark it.
--- All stdout and stderr from the command is printed silently.
--- @param line The output line to print.
--- @param ext_or_lexer Optional file extension or lexer name associated with the executed command.
---   This is used for better error detection in compile and run commands.
-local function print_line(line, ext_or_lexer)
-  ui.silent_print = M.run_in_background or ext_or_lexer or not line:find('^> ') or
-    line:find('^> exit')
-  local buffer = ui.output(not error and line or line:iconv('UTF-8', _CHARSET))
-  ui.silent_print = false
-  local line_num = buffer.line_count - 1 -- ui.output() outputs trailing '\n'
-  local line_state = buffer.line_state[line_num]
-  if line_state > 0 then buffer:marker_add(line_num, line_state_marks[line_state]) end
+-- Returns whether or not the given buffer is the output buffer.
+local function is_out_buf(buf) return buf._type == _L['[Output Buffer]'] end
+
+-- Helper functions for getting the output view and buffer.
+local function get_output_view()
+  for _, view in ipairs(_VIEWS) do if is_out_buf(view.buffer) then return view end end
+end
+local function get_output_buffer()
+  for _, buf in ipairs(_BUFFERS) do if is_out_buf(buf) then return buf end end
 end
 
-local buffered_output
--- Prints the output from a compile, run, build, or test shell command as a series of lines,
--- performing buffering as needed.
--- @param output The output to print, or `nil` to flush any buffered output.
--- @param ext_or_lexer Optional file extension or lexer name associated with the executed command.
---   This is used for better error detection in compile and run commands.
-local function print_output(output, ext_or_lexer)
-  if output then
-    if buffered_output then output = buffered_output .. output end
-    local remainder = 1
-    for line, e in output:gmatch('([^\r\n]*)\r?\n()') do
-      print_line(line, ext_or_lexer)
-      remainder = e
-    end
-    buffered_output = remainder <= #output and output:sub(remainder)
-  elseif buffered_output then
-    print_line(buffered_output, ext_or_lexer)
-    buffered_output = nil
+local line_state_marks = {M.MARK_ERROR, M.MARK_WARNING}
+-- Prints output from a compile, run, build, or test shell command.
+-- Any filenames encoded in _CHARSET are left alone and may not display properly.
+-- All stdout and stderr from the command is printed silently.
+-- @param output The output to print.
+local function print_output(output)
+  local buffer = get_output_buffer()
+  local last_line = buffer and buffer.line_count or 1
+  local silent = M.run_in_background or not output:find('^> ') or output:find('^> exit')
+  ui[silent and 'output_silent' or 'output'](output)
+  if not buffer then buffer = get_output_buffer() end
+  for i = last_line, buffer.line_count - 1 do -- ui.output() outputs trailing '\n'
+    local line_state = buffer.line_state[i]
+    if line_state > 0 then buffer:marker_add(i, line_state_marks[line_state]) end
   end
 end
+for _, event in ipairs(run_events) do events.connect(event, print_output) end
 
 -- Runs command *command* in working directory *dir*, emitting events of type *event* with any
 -- output received.
@@ -110,23 +97,19 @@ end
 -- @param dir String working directory to run *command* in.
 -- @param event String event name to emit command output with.
 -- @param macros Optional table of '%[char]' macros to expand within *command*.
--- @param ext_or_lexer Optional file extension or lexer name associated with the executed command.
---   This is used for better error detection in compile and run commands.
-local function run_command(command, dir, event, macros, ext_or_lexer)
+local function run_command(command, dir, event, macros)
   local working_dir, env
   if type(command) == 'function' then command, working_dir, env = command() end
   if not command or command == '' then return end
   if macros then command = command:gsub('%%%a', macros) end
   preferred_view = view
-  local function emit(output) events.emit(event, output, ext_or_lexer) end
+  local function emit(output) events.emit(event, output) end
   cwd = (working_dir or dir):gsub('[/\\]$', '')
   events.emit(event, string.format('> cd %s\n', cwd))
   events.emit(event, string.format('> %s\n', command:iconv('UTF-8', _CHARSET)))
   local args = {
-    command, cwd, emit, emit, function(status)
-      emit() -- flush
-      events.emit(event, string.format('> exit status: %d\n', status))
-    end
+    command, cwd, emit, emit,
+    function(status) events.emit(event, string.format('> exit status: %d\n', status)) end
   }
   if env then table.insert(args, 3, env) end
   proc = assert(os.spawn(table.unpack(args)))
@@ -150,7 +133,7 @@ local function compile_or_run(filename, commands)
   local macros = {
     ['%p'] = filename, ['%d'] = dirname, ['%f'] = basename, ['%e'] = basename:match('^(.+)%.') -- no extension
   }
-  run_command(command, dirname, event, macros, commands[ext] and ext or lang)
+  run_command(command, dirname, event, macros)
 end
 
 -- LuaFormatter off
@@ -187,7 +170,6 @@ function M.compile(filename)
     compile_or_run(filename or buffer.filename, M.compile_commands)
   end
 end
-events.connect(events.COMPILE_OUTPUT, print_output)
 
 -- LuaFormatter off
 ---
@@ -223,7 +205,6 @@ function M.run(filename)
     compile_or_run(filename or buffer.filename, M.run_commands)
   end
 end
-events.connect(events.RUN_OUTPUT, print_output)
 
 ---
 -- Appends the command line argument strings *run* and *compile* to their respective run and
@@ -314,7 +295,6 @@ function M.build(root_directory)
   end
   run_command(command, root_directory, events.BUILD_OUTPUT)
 end
-events.connect(events.BUILD_OUTPUT, print_output)
 
 ---
 -- Map of project root paths to their associated "test" shell command line strings or functions
@@ -345,15 +325,11 @@ function M.test(root_directory)
   for i = 1, #_BUFFERS do _BUFFERS[i]:annotation_clear_all() end
   run_command(M.test_commands[root_directory], root_directory, events.TEST_OUTPUT)
 end
-events.connect(events.TEST_OUTPUT, print_output)
 
 ---
 -- Stops the currently running process, if any.
 -- @name stop
 function M.stop() if proc then proc:kill() end end
-
--- Returns whether or not the given buffer is the output buffer.
-local function is_out_buf(buf) return buf._type == _L['[Output Buffer]'] end
 
 -- Send line as input to process stdin on return.
 events.connect(events.CHAR_ADDED, function(code)
@@ -362,14 +338,6 @@ events.connect(events.CHAR_ADDED, function(code)
     proc:write(buffer:get_line(line_num))
   end
 end)
-
--- Helper functions for getting the output view and buffer.
-local function get_output_view()
-  for _, view in ipairs(_VIEWS) do if is_out_buf(view.buffer) then return view end end
-end
-local function get_output_buffer()
-  for _, buf in ipairs(_BUFFERS) do if is_out_buf(buf) then return buf end end
-end
 
 -- Returns text tagged with the given output lexer tag on the given line number.
 -- @param line_num Line number to get text from.
@@ -435,7 +403,7 @@ function M.goto_error(line_num, next)
 
   -- Goto the warning or error and show an annotation.
   if buffer.line_state[line_num] == 0 then return end
-  local filename = string.iconv(get_tagged_text(line_num, 'filename') or '', _CHARSET, 'UTF-8')
+  local filename = get_tagged_text(line_num, 'filename')
   if filename == '' then return end -- incorrectly tagged message
   local line = tonumber(get_tagged_text(line_num, 'line') or '')
   local column = tonumber(get_tagged_text(line_num, 'column') or '')
