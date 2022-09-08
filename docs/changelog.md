@@ -2171,7 +2171,7 @@ Changes:
 
 * Changed `ui.set_theme()` API to accept a table of property assignments.
 * Added Nimrod lexer and compile and run commands.
-* Use [`textadept.editing.INDIC_BRACEMATCH`][] indicator for brace highlighting instead of styles.
+* Use `textadept.editing.INDIC_BRACEMATCH` indicator for brace highlighting instead of styles.
 * The `buffer` API applies to all buffers now, not just the global one.
 * Added "Save All" to the menu.
 * Updated D lexer.
@@ -2181,7 +2181,6 @@ Changes:
 * [Child lexers][] do not need an explicit `M._lexer = parent` declaration anymore; it is done
   automatically.
 
-[`textadept.editing.INDIC_BRACEMATCH`]: api.html#textadept.editing.INDIC_BRACEMATCH
 [`lexer.load()`]: api.html#lexer.load
 [rule]: api.html#rules
 [Child lexers]: api.html#child-lexer

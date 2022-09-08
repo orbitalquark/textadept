@@ -1,6 +1,5 @@
 -- Copyright 2007-2022 Mitchell. See LICENSE.
 -- Terminal theme for Textadept.
--- Contributions by Ana Balan.
 
 local view, colors, styles = view, view.colors, view.styles
 
@@ -29,42 +28,43 @@ colors.light_white = 0xFFFFFF
 -- Predefined styles.
 styles.default = {fore = colors.white, back = colors.black}
 styles.line_number = {fore = colors.black, bold = true}
-styles.brace_light = {fore = colors.yellow, bold = true}
+styles.brace_light = {bold = true}
+styles.brace_bad = {fore = colors.red, bold = true}
 -- styles.control_char =
 -- styles.indent_guide =
 styles.call_tip = {fore = colors.white, back = colors.black}
 styles.fold_display_text = {fore = colors.black, bold = true}
 
 -- Tag styles.
-styles.attribute = {fore = colors.magenta, bold = true}
+styles.attribute = {fore = colors.blue}
 -- styles.bold = {}
-styles.class = {fore = colors.yellow}
+styles.class = {fore = colors.yellow, bold = true}
 -- styles.code = {}
 styles.comment = {fore = colors.black, bold = true}
 -- styles.constant = {}
-styles.constant_builtin = {fore = colors.cyan, bold = true}
-styles.embedded = {fore = colors.white, bold = true, back = colors.black}
+styles.constant_builtin = {fore = colors.magenta, bold = true}
+-- styles.embedded = {}
 styles.error = {fore = colors.red, bold = true}
 -- styles['function'] = {}
-styles.function_builtin = {fore = colors.blue}
+styles.function_builtin = {fore = colors.yellow}
 -- styles.function_method = {}
+styles.heading = {fore = colors.magenta}
 styles.identifier = {}
 -- styles.italic = {}
-styles.keyword = {fore = colors.white, bold = true}
-styles.label = {fore = colors.red}
+styles.keyword = {fore = colors.blue, bold = true}
+styles.label = {fore = colors.magenta}
 -- styles.link = {}
 styles.number = {fore = colors.cyan}
-styles.operator = {fore = colors.yellow}
+-- styles.operator = {}
 styles.preprocessor = {fore = colors.magenta}
 -- styles.reference = {}
 styles.regex = {fore = colors.green, bold = true}
 styles.string = {fore = colors.green}
-styles.tag = {fore = colors.white, bold = true}
-styles.title = {fore = colors.yellow}
-styles.type = {fore = colors.magenta, bold = true}
+styles.tag = {fore = colors.blue, bold = true}
+styles.type = {fore = colors.blue}
 -- styles.underline = {}
 -- styles.variable = {}
-styles.variable_builtin = {fore = colors.blue, bold = true}
+styles.variable_builtin = {fore = colors.yellow, bold = true}
 -- styles.whitespace = {}
 
 -- CSS.

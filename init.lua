@@ -85,7 +85,7 @@ buffer.i_lexer = 'text'
 
 view:set_theme(not CURSES and 'light' or 'term')
 
--- Multiple Selection and Virtual Space
+-- Multiple Selection and Virtual Space.
 buffer.multiple_selection, buffer.additional_selection_typing = true, true
 buffer.multi_paste = buffer.MULTIPASTE_EACH
 -- buffer.virtual_space_options = buffer.VS_RECTANGULARSELECTION | buffer.VS_USERACCESSIBLE
@@ -105,22 +105,24 @@ if CURSES and not (WIN32 or LINUX or BSD) then view.v_scroll_bar = false end
 -- view.scroll_width_tracking = true
 -- view.end_at_last_line = false
 
--- Whitespace
+-- Whitespace.
 view.view_ws = view.WS_INVISIBLE
 -- view.whitespace_size =
 -- view.extra_ascent =
 -- view.extra_descent =
 
--- Line Endings
+-- Line Endings.
 buffer.eol_mode = WIN32 and buffer.EOL_CRLF or buffer.EOL_LF
-view.view_eol = false
+-- view.view_eol = true
 
--- Styling
+-- Styling.
 if not CURSES then view.idle_styling = view.IDLESTYLING_ALL end
 
 -- Caret and Selection Styles.
 -- view.sel_eol_filled = true
+-- if not CURSES then view.caret_line_frame = 1 end
 -- view.caret_line_visible_always = true
+-- view.caret_line_highlight_subline = true
 -- view.caret_period = 0
 -- view.caret_style = view.CARETSTYLE_BLOCK
 -- view.caret_width =
@@ -213,8 +215,6 @@ view:marker_define(buffer.MARKNUM_FOLDERMIDTAIL, view.MARK_TCORNER)
 -- Indicators.
 view.indic_style[ui.find.INDIC_FIND] = view.INDIC_ROUNDBOX
 view.indic_under[ui.find.INDIC_FIND] = not CURSES
-view.indic_style[textadept.editing.INDIC_BRACEMATCH] = view.INDIC_BOX
-view:brace_highlight_indicator(not CURSES, textadept.editing.INDIC_BRACEMATCH)
 view.indic_style[textadept.editing.INDIC_HIGHLIGHT] = view.INDIC_ROUNDBOX
 view.indic_under[textadept.editing.INDIC_HIGHLIGHT] = not CURSES
 view.indic_style[textadept.snippets.INDIC_PLACEHOLDER] = not CURSES and view.INDIC_DOTBOX or
@@ -279,10 +279,7 @@ buffer_mt.__index, buffer_mt.__newindex = buffer_mt.__orig_index, buffer_mt.__or
 view_mt.__index, view_mt.__newindex = view_mt.__orig_index, view_mt.__orig_newindex
 
 -- Sets default properties for a Scintilla document.
-events.connect(events.BUFFER_NEW, function()
-  load_settings()
-  if _G.buffer == ui.command_entry then ui.command_entry.caret_line_visible = false end
-end, 1)
+events.connect(events.BUFFER_NEW, load_settings, 1)
 
 -- Sets default properties for a Scintilla window.
 events.connect(events.VIEW_NEW, function()

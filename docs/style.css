@@ -1,26 +1,26 @@
 /* Copyright 2012-2022 Mitchell. See LICENSE. */
 
 * {
-  border: 0 solid #a6a6a6;
+  border: 0 solid #999999;
   margin: 0;
   padding: 0;
 }
 
 a {
-  color: #1a66b3;
+  color: #0066cc;
   text-decoration: none;
 }
 a:hover { text-decoration: underline; }
-a:visited { color: #661a66; }
+a:visited { color: #990099; }
 
 body {
-  background-color: #f2f2f2;
-  color: #333333;
+  background-color: #ffffff;
+  color: #1a1a1a;
 }
 
 code { font-size: 1.2em; }
 
-del { color: #994d4d; }
+del { color: #990000; }
 
 h1 { margin: 0 0 1em 0; }
 h2, h3, h4, h5, h6 { margin: 1em 0 1em 0; }
@@ -31,7 +31,7 @@ h4 { font-size: 1.0em; }
 h5 { font-size: 0.9em; }
 
 hr {
-  border: 1px solid #d9d9d9;
+  border: 1px solid #cccccc;
   border-width: 1px 0 0 0;
   margin: 1em 0 1em 0;
 }
@@ -41,12 +41,12 @@ input, textarea {
   font-size: 1em;
 }
 
-ins { color: #4d994d; }
+ins { color: #009900; }
 
-li > code, p > code, em > code, td > code { color: #808080; }
+li > code, p > code, em > code, td > code { color: #666666; }
 
 pre {
-  color: #808080;
+  color: #666666;
   margin: 0 2.5em 0 2.5em;
   white-space: pre-wrap;
 }
@@ -68,7 +68,7 @@ table, th, td {
 #content img { max-width: 100%; }
 
 #header h1 {
-  background-color: #d9d9d9;
+  background-color: #cccccc;
   border-width: 0 0 1px 0;
   margin: 0;
   padding: 0.25em;
@@ -81,7 +81,7 @@ table, th, td {
 }
 #header ul { list-style: none; }
 #header li {
-  color: #808080;
+  color: #666666;
   display: inline;
 }
 #header li form { display: inline; }
@@ -92,7 +92,7 @@ table, th, td {
 #main ol p, #main ul p { margin-left: 0; }
 
 #footer {
-  background-color: #d9d9d9;
+  background-color: #cccccc;
   border-width: 1px 0 1px 0;
   clear: both;
   padding: 0.25em;

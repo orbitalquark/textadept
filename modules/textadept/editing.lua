@@ -30,8 +30,6 @@ local M = {}
 --   Whether or not to auto-enclose selected text when typing a punctuation character, taking
 --   [`textadept.editing.auto_pairs`]() into account.
 --   The default value is `false`.
--- @field INDIC_BRACEMATCH (number)
---   The matching brace highlight indicator number.
 -- @field INDIC_HIGHLIGHT (number)
 --   The word highlight indicator number.
 module('textadept.editing')]]
@@ -42,7 +40,7 @@ M.autocomplete_all_words = false
 M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
 M.highlight_words = M.HIGHLIGHT_NONE
 M.auto_enclose = false
-M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
+M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number() -- legacy
 M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 -- LuaFormatter off

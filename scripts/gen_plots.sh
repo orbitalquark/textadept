@@ -85,11 +85,11 @@ plotcmd=gnuplot.plt
 echo "
   set term png transparent font 'DejaVu Sans,10' size 450,275;
   set border linewidth 1.5;
-  set style line 1 linecolor rgb '#99994d' linewidth 2;
-  set style line 2 linecolor rgb '#4d99e6' linewidth 2;
-  set style line 3 linecolor rgb '#994d4d' linewidth 2;
-  set style line 4 linecolor rgb '#4d994d' linewidth 2;
-  set style line 5 linecolor rgb '#994d99' linewidth 2;
+  set style line 1 linecolor rgb '#999900' linewidth 2;
+  set style line 2 linecolor rgb '#0066cc' linewidth 2;
+  set style line 3 linecolor rgb '#990000' linewidth 2;
+  set style line 4 linecolor rgb '#009900' linewidth 2;
+  set style line 5 linecolor rgb '#990099' linewidth 2;
   set grid linecolor rgb '#cccccc' linetype 1;
   set tics scale 0;
   set key left top horizontal Left reverse samplen 1;

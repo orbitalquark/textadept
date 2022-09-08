@@ -1,99 +1,72 @@
 -- Copyright 2007-2022 Mitchell. See LICENSE.
 -- Dark theme for Textadept.
--- Contributions by Ana Balan.
 
 local view, colors, styles = view, view.colors, view.styles
 
 -- Greyscale colors.
-colors.dark_black = 0x000000
-colors.black = 0x1A1A1A
+colors.black = 0x000000
 colors.light_black = 0x333333
-colors.grey_black = 0x4D4D4D
 colors.dark_grey = 0x666666
-colors.grey = 0x808080
-colors.light_grey = 0x999999
-colors.grey_white = 0xB3B3B3
-colors.dark_white = 0xCCCCCC
-colors.white = 0xE6E6E6
-colors.light_white = 0xFFFFFF
-
--- Dark colors.
-colors.dark_red = 0x1A1A66
-colors.dark_yellow = 0x1A6666
-colors.dark_green = 0x1A661A
-colors.dark_teal = 0x66661A
-colors.dark_purple = 0x661A66
-colors.dark_orange = 0x1A66B3
-colors.dark_pink = 0x6666B3
-colors.dark_lavender = 0xB36666
-colors.dark_blue = 0xB3661A
+colors.grey = 0x999999 -- unused
+colors.light_grey = 0xCCCCCC
+colors.white = 0xFFFFFF -- unused
 
 -- Normal colors.
-colors.red = 0x4D4D99
-colors.yellow = 0x4D9999
-colors.green = 0x4D994D
-colors.teal = 0x99994D
-colors.purple = 0x994D99
-colors.orange = 0x4D99E6
-colors.pink = 0x9999E6
-colors.lavender = 0xE69999
-colors.blue = 0xE6994D
-
--- Light colors.
-colors.light_red = 0x8080CC
-colors.light_yellow = 0x80CCCC
-colors.light_green = 0x80CC80
-colors.light_teal = 0xCCCC80
-colors.light_purple = 0xCC80CC
-colors.light_orange = 0x80CCFF
-colors.light_pink = 0xCCCCFF
-colors.light_lavender = 0xFFCCCC
-colors.light_blue = 0xFFCC80
+colors.red = 0x000099
+colors.orange = 0x0066CC
+colors.yellow = 0x009999
+colors.lime = 0x00CC99
+colors.green = 0x009900
+colors.teal = 0x999900
+colors.blue = 0xCC6600
+colors.violet = 0xCC0066
+colors.purple = 0x990099
+colors.magenta = 0x6600CC
 
 -- Default font.
-if not font then
-  font = WIN32 and 'Courier New' or OSX and 'Monaco' or 'Bitstream Vera Sans Mono'
-end
+if not font then font = WIN32 and 'Consolas' or OSX and 'Monaco' or 'Monospace' end
 if not size then size = not OSX and 10 or 12 end
 
 -- Predefined styles.
 styles.default = {font = font, size = size, fore = colors.light_grey, back = colors.black}
 styles.line_number = {fore = colors.dark_grey, back = colors.black}
--- styles.control_char =
+styles.brace_light = {fore = colors.blue, bold = true}
+styles.brace_bad = {fore = colors.red}
+-- styles.control_char = {}
 styles.indent_guide = {fore = colors.light_black}
 styles.call_tip = {fore = colors.light_grey, back = colors.light_black}
-styles.fold_display_text = {fore = colors.dark_grey}
+styles.fold_display_text = {fore = colors.dark_grey, back = colors.light_black}
 
 -- Tag styles.
-styles.attribute = {fore = colors.lavender}
+styles.attribute = {fore = colors.violet}
 styles.bold = {bold = true}
-styles.class = {fore = colors.light_yellow}
-styles.code = {back = light_black, eolfilled = true}
+styles.class = {fore = colors.yellow}
+styles.code = {fore = colors.dark_grey, eolfilled = true}
 styles.comment = {fore = colors.dark_grey}
 -- styles.constant = {}
-styles.constant_builtin = {fore = colors.light_teal}
-styles.embedded = {back = colors.light_black}
-styles.error = {fore = colors.red, italics = true}
+styles.constant_builtin = {fore = colors.magenta}
+styles.embedded = {fore = colors.purple}
+styles.error = {fore = colors.red}
 -- styles['function'] = {}
-styles.function_builtin = {fore = colors.blue}
+styles.function_builtin = {fore = colors.orange}
 -- styles.function_method = {}
+styles.heading = {fore = colors.purple}
 -- styles.identifier = {}
 styles.italic = {italic = true}
-styles.keyword = {fore = colors.dark_white}
-styles.label = {fore = colors.dark_pink}
+styles.keyword = {fore = colors.blue}
+styles.label = {fore = colors.purple}
 styles.link = {underline = true}
 styles.number = {fore = colors.teal}
-styles.operator = {fore = colors.yellow}
+-- styles.operator = {}
 styles.preprocessor = {fore = colors.purple}
 styles.reference = {underline = true}
-styles.regex = {fore = colors.light_green}
+styles.regex = {fore = colors.lime}
 styles.string = {fore = colors.green}
-styles.tag = {fore = colors.dark_white}
-styles.title = {fore = colors.yellow}
-styles.type = {fore = colors.lavender}
+styles.tag = {fore = colors.blue}
+styles.type = {fore = colors.violet}
 styles.underline = {underline = true}
 -- styles.variable = {}
-styles.variable_builtin = {fore = colors.purple}
+styles.variable_builtin = {fore = colors.yellow}
 -- styles.whitespace = {}
 
 -- CSS.
@@ -112,16 +85,17 @@ styles.error_indent = {back = colors.red}
 
 -- Element colors.
 -- view.element_color[view.ELEMENT_SELECTION_TEXT] = colors.light_grey
-view.element_color[view.ELEMENT_SELECTION_BACK] = colors.grey_black
+view.element_color[view.ELEMENT_SELECTION_BACK] = colors.light_black
 -- view.element_color[view.ELEMENT_SELECTION_ADDITIONAL_TEXT] = colors.light_grey
-view.element_color[view.ELEMENT_SELECTION_ADDITIONAL_BACK] = colors.grey_black
+view.element_color[view.ELEMENT_SELECTION_ADDITIONAL_BACK] = colors.light_black
 -- view.element_color[view.ELEMENT_SELECTION_SECONDARY_TEXT] = colors.light_grey
-view.element_color[view.ELEMENT_SELECTION_SECONDARY_BACK] = colors.grey_black
+view.element_color[view.ELEMENT_SELECTION_SECONDARY_BACK] = colors.light_black
 -- view.element_color[view.ELEMENT_SELECTION_INACTIVE_TEXT] = colors.light_grey
 view.element_color[view.ELEMENT_SELECTION_INACTIVE_BACK] = colors.light_black
-view.element_color[view.ELEMENT_CARET] = colors.grey
+view.element_color[view.ELEMENT_CARET] = colors.light_grey
 -- view.element_color[view.ELEMENT_CARET_ADDITIONAL] =
-view.element_color[view.ELEMENT_CARET_LINE_BACK] = colors.light_black
+view.element_color[view.ELEMENT_CARET_LINE_BACK] = colors.light_black | 0x80000000
+view.caret_line_layer = view.LAYER_UNDER_TEXT
 
 -- Fold Margin.
 view:set_fold_margin_color(true, colors.black)
@@ -129,7 +103,7 @@ view:set_fold_margin_hi_color(true, colors.black)
 
 -- Markers.
 -- view.marker_fore[textadept.bookmarks.MARK_BOOKMARK] = colors.black
-view.marker_back[textadept.bookmarks.MARK_BOOKMARK] = colors.dark_blue
+view.marker_back[textadept.bookmarks.MARK_BOOKMARK] = colors.blue
 -- view.marker_fore[textadept.run.MARK_WARNING] = colors.black
 view.marker_back[textadept.run.MARK_WARNING] = colors.yellow
 -- view.marker_fore[textadept.run.MARK_ERROR] = colors.black
@@ -142,18 +116,16 @@ end
 
 -- Indicators.
 view.indic_fore[ui.find.INDIC_FIND] = colors.yellow
-view.indic_alpha[ui.find.INDIC_FIND] = 128
-view.indic_fore[textadept.editing.INDIC_BRACEMATCH] = colors.light_grey
-view.indic_outline_alpha[textadept.editing.INDIC_BRACEMATCH] = 128
+view.indic_alpha[ui.find.INDIC_FIND] = 0x80
 view.indic_fore[textadept.editing.INDIC_HIGHLIGHT] = colors.orange
-view.indic_alpha[textadept.editing.INDIC_HIGHLIGHT] = 128
-view.indic_fore[textadept.snippets.INDIC_PLACEHOLDER] = colors.grey
+view.indic_alpha[textadept.editing.INDIC_HIGHLIGHT] = 0x80
+view.indic_fore[textadept.snippets.INDIC_PLACEHOLDER] = colors.light_grey
 
 -- Call tips.
-view.call_tip_fore_hlt = colors.light_blue
+view.call_tip_fore_hlt = colors.blue
 
 -- Long Lines.
-view.edge_color = colors.dark_grey
+view.edge_color = colors.light_black
 
 -- Find & replace pane entries.
 ui.find.entry_font = font .. ' ' .. size
