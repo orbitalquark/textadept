@@ -82,6 +82,7 @@ local M = {}
 -- Ctrl+Shift+R | ⌘⇧R | M-^R | Compile
 -- Ctrl+Shift+B | ⌘⇧B | M-^B | Build
 -- Ctrl+Shift+T | ⌘⇧T | M-^T | Run tests
+-- Ctrl+Shift+C | ⌘⇧C | M-^C | Run project
 -- Ctrl+Shift+X | ⌘⇧X | M-^X | Stop
 -- Ctrl+Alt+E | ^⌘E | M-X | Next Error
 -- Ctrl+Alt+Shift+E | ^⌘⇧E | M-S-X | Previous Error
@@ -224,7 +225,7 @@ module('textadept.keys')]]
 -- Windows, Linux, and BSD key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:       C         H I               Q       ~ V     Y  _   ) ] }   +
+-- c:   A             H I               Q       ~ V     Y  _   ) ] }   +
 -- a:  aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ_   ) ] }  *+-/=\n\s
 -- ca: aAbBcCdD   F   H  jJkKlLmM N    qQ    t       xXy zZ_"'()[]{}<>*  / \n\s
 --
@@ -237,7 +238,7 @@ module('textadept.keys')]]
 -- macOS key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- m:       C        ~H I JkK  ~M    p  ~    t    V    yY  _   ) ] }   +   ~~\n
+-- m:   A            ~H I JkK  ~M    p  ~    t    V    yY  _   ) ] }   +   ~~\n
 -- c:      cC D    gG H   J K L    oO  qQ            xXyYzZ_   ) ] }  *  /   \n
 -- cm: aAbBcC~D   F  ~HiIjJkKlL~MnN  p q~rRsStTuUvVwWxXyYzZ_"'()[]{}<>*+-/=\t\n
 --
@@ -263,7 +264,7 @@ module('textadept.keys')]]
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:        g~~  l~            ~
--- cm:   cd  g~~ k ~   q       yz
+-- cm:    d  g~~jk ~   q       yz
 -- m:          e          J             Q   S    vVw   yY  _          +
 -- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 --

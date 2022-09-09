@@ -169,6 +169,7 @@ local default_menubar = {
     {_L['Compile'], textadept.run.compile},
     {_L['Build'], textadept.run.build},
     {_L['Run tests'], textadept.run.test},
+    {_L['Run project'], textadept.run.run_project},
     {_L['Stop'], textadept.run.stop},
     {_L['Next Error'], function() textadept.run.goto_error(true) end},
     {_L['Previous Error'], function() textadept.run.goto_error(false) end},

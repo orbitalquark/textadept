@@ -289,6 +289,36 @@ function M.test(root_directory)
 end
 
 ---
+-- Map of project root paths to their associated "run" shell command line strings or functions
+-- that return such strings.
+-- Functions may also return a working directory and process environment table to operate
+-- in. By default, the working directory is the project's root directory and the environment
+-- is Textadept's environment.
+-- @class table
+-- @name run_project_commands
+M.run_project_commands = {}
+
+---
+-- Prompts the user with the command entry to run the shell command from the `run_project_commands`
+-- table for the project whose root path is *root_directory* or the current project.
+-- The current project is determined by either the buffer's filename or the current working
+-- directory.
+-- Emits `RUN_OUTPUT` events.
+-- @param root_directory The path to the project to run a command for. The default value is
+--   the current project.
+-- @see test_commands
+-- @see _G.events
+-- @name run_project
+function M.run_project(root_directory)
+  if not assert_type(root_directory, 'string/nil', 1) then
+    root_directory = io.get_project_root()
+    if not root_directory then return end
+  end
+  local command = M.run_project_commands[root_directory]
+  run_command(command, root_directory, events.RUN_OUTPUT, M.run_project_commands, root_directory)
+end
+
+---
 -- Stops the currently running process, if any.
 -- @name stop
 function M.stop() if proc then proc:kill() end end

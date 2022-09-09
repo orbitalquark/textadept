@@ -3673,6 +3673,23 @@ function test_run_test()
   os.remove(file)
 end
 
+function test_run_run_project()
+  textadept.run.run_project(_HOME)
+  assert_equal(ui.command_entry.active, true)
+  assert_equal(ui.command_entry:get_text(), '')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+
+  local run_command = not WIN32 and 'ls' or 'dir'
+  textadept.run.run_project_commands[_HOME] = run_command
+  textadept.run.run_project(_HOME)
+  assert_equal(ui.command_entry:get_text(), run_command)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  ui.update() -- process output
+  assert(buffer:get_text():find('README.md'), 'did not run project command')
+  if #_VIEWS > 1 then view:unsplit() end
+  buffer:close()
+end
+
 function test_run_goto_internal_lua_error()
   xpcall(error, function(message) events.emit(events.ERROR, debug.traceback(message)) end,
     'internal error', 2)
