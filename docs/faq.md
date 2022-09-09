@@ -71,8 +71,8 @@ Textadept was not able to detect the file's encoding correctly. You'll need to [
 - - -
 
 **Q:**
-When I click the "Compile" or "Run" menu item (or execute the key command), either nothing
-happens or the wrong command is executed. How can I tell Textadept which command to run?
+When I click the "Compile" or "Run" menu item (or execute the key command), either nothing shows up
+in the command entry, or the wrong command shows up. How can I tell Textadept which command to run?
 
 **A:**
 The LuaDoc describes [compile and run commands][] and you can configure them in your

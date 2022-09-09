@@ -1174,10 +1174,6 @@ projects and running tests:
   and `M-^R` in the terminal version.
 * Run the current file via `Ctrl+R` on Windows, Linux, and BSD, `⌘R` on macOS, and `^R`
   in the terminal version.
-* Set, using an interactive dialog, the command line arguments for the current file's compile
-  and run commands via `Ctrl+Shift+A` on Windows, Linux, and BSD, and `⌘⇧A` on macOS. (The
-  terminal version does not have a default key binding for setting command line arguments.) Enter
-  the command line arguments for each command and press `Enter` or click `OK`.
 * Build the current project via `Ctrl+Shift+B` on Windows, Linux, and BSD, `⌘⇧B` on macOS,
   and `M-^B` in the terminal version.
 * Run tests for the current project via `Ctrl+Shift+T` on Windows, Linux, and BSD, `⌘⇧T`
@@ -1209,8 +1205,9 @@ respectively. For example, in your *~/.textadept/init.lua*:
     textadept.run.build_commands['/path/to/project'] = 'make -C src -j4'
     textadept.run.test_commands['/path/to/project'] = 'lua tests.lua'
 
-**Tip:** you can set compile and run commands on a per-filename basis, and these commands can
-contain arguments so that you do not have to invoke "Tools > Set Arguments..."
+**Tip:** you can set compile and run commands on a per-filename basis. Also, Textadept remembers
+for the current session compile and run commands on a per-filename basis as you use them,
+and build and test commands on a per-directory basis as you use them.
 
 [`textadept.run.run_in_background`]: api.html#textadept.run.run_in_background
 [`textadept.run.compile_commands`]: api.html#textadept.run.compile_commands
@@ -1764,7 +1761,7 @@ find\_incremental\_keys | Removed |
 N/A | Added | [highlight_all_matches][]
 **textadept.history** | Added | [textadept.history][]
 **textadept.run**||
-N/A | Added | [set_arguments][]
+N/A | Added | set_arguments
 **textadept.snippets** ||
 \_insert() | Renamed | [insert()][]
 \_previous() | Renamed | [previous()][]
@@ -1816,7 +1813,6 @@ N/A | Added | _buffer functions and fields_<sup>d</sup>
 [incremental]: api.html#ui.find.incremental
 [highlight_all_matches]: api.html#ui.find.highlight_all_matches
 [textadept.history]: api.html#textadept.history
-[set_arguments]: api.html#textadept.run.set_arguments
 [insert()]: api.html#textadept.snippets.insert
 [previous()]: api.html#textadept.snippets.previous
 [cancel_current()]: api.html#textadept.snippets.cancel_current

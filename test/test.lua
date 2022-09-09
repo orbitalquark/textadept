@@ -3468,12 +3468,17 @@ end
 function test_run_compile_run()
   if WIN32 or OSX then return end -- TODO:
   textadept.run.compile() -- should not do anything
+  assert_equal(ui.command_entry.active, false)
   textadept.run.run() -- should not do anything
+  assert_equal(ui.command_entry.active, false)
   assert_equal(#_BUFFERS, 1)
   assert(not buffer.modify, 'a command was run')
 
   local compile_file = _HOME .. '/test/modules/textadept/run/compile.lua'
   textadept.run.compile(compile_file)
+  assert_equal(ui.command_entry.active, true)
+  assert(ui.command_entry:get_text():find('^luac'), 'incorrect compile command')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   assert_equal(#_BUFFERS, 2)
   assert_equal(buffer._type, _L['[Output Buffer]'])
   ui.update() -- process output
@@ -3498,6 +3503,7 @@ function test_run_compile_run()
   events.emit(events.DOUBLE_CLICK, nil, buffer:line_from_position(buffer.current_pos))
   assert_equal(buffer.filename, compile_file)
   textadept.run.compile() -- clears annotation
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   ui.update() -- process output
   view:goto_buffer(1)
   assert(not buffer.annotation_text[3]:find("'end' expected"), 'annotation visible')
@@ -3509,6 +3515,9 @@ function test_run_compile_run()
   end
   io.open_file(run_file)
   textadept.run.run()
+  assert_equal(ui.command_entry.active, true)
+  assert(ui.command_entry:get_text():find('^lua'), 'incorrect run command')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   assert_equal(buffer._type, _L['[Output Buffer]'])
   ui.update() -- process output
   assert(buffer:get_text():find('attempt to call a nil value'), 'no run error')
@@ -3533,46 +3542,73 @@ function test_run_compile_run()
   assert_raises(function() textadept.run.run({}) end, 'string/nil expected, got table')
 end
 
-function test_run_set_arguments()
-  local lua_run_command = textadept.run.run_commands.lua
-  local lua_compile_command = textadept.run.compile_commands.lua
+function test_run_distinct_command_histories()
+  local run_file = _HOME .. '/test/modules/textadept/run/foo.lua'
+  io.open_file(run_file)
+  textadept.run.run()
+  local orig_run_command = ui.command_entry:get_text()
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  ui.update() -- process output
+  assert(buffer:get_text():find('nil'), 'unexpected argument was passed to run command')
+  if #_VIEWS > 1 then view:unsplit() end
+  buffer:close()
+  textadept.run.run()
+  ui.command_entry:append_text(' bar')
+  local run_command = ui.command_entry:get_text()
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  ui.update() -- process output
+  assert(buffer:get_text():find('bar'), 'argument not passed to run command')
+  if #_VIEWS > 1 then view:unsplit() end
+  buffer:close() -- output buffer
+  textadept.run.run()
+  assert_equal(ui.command_entry:get_text(), run_command)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), orig_run_command)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  assert_equal(ui.command_entry:get_text(), run_command)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  buffer:close()
 
   buffer.new()
-  buffer.filename = '/tmp/test.lua'
-  textadept.run.set_arguments(nil, '-i', '-p')
-  assert_equal(textadept.run.run_commands[buffer.filename], lua_run_command .. ' -i')
-  assert_equal(textadept.run.compile_commands[buffer.filename], lua_compile_command .. ' -p')
-  textadept.run.set_arguments(buffer.filename, '', '')
-  assert_equal(textadept.run.run_commands[buffer.filename], lua_run_command .. ' ')
-  assert_equal(textadept.run.compile_commands[buffer.filename], lua_compile_command .. ' ')
-  buffer:close(true)
-
-  assert_raises(function() textadept.run.set_arguments(1) end, 'string/nil expected, got number')
-  assert_raises(function() textadept.run.set_arguments('', true) end,
-    'string/nil expected, got boolean')
-  assert_raises(function() textadept.run.set_arguments('', '', {}) end,
-    'string/nil expected, got table')
+  buffer.filename = 'foo.lua'
+  textadept.run.run()
+  run_command = ui.command_entry:get_text()
+  assert(not run_command:find('bar'), 'argument persisted to another run command')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), run_command) -- no prior history
+  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  buffer:close()
 end
 
-function test_run_set_arguments_interactive()
-  local lua_run_command = textadept.run.run_commands.lua
-  local lua_compile_command = textadept.run.compile_commands.lua
-  buffer.new()
-  buffer.filename = '/tmp/test.lua'
-  textadept.run.set_arguments(nil, '-i', '-p')
-  textadept.run.set_arguments()
-  assert_equal(textadept.run.run_commands[buffer.filename], lua_run_command .. ' -i')
-  assert_equal(textadept.run.compile_commands[buffer.filename], lua_compile_command .. ' -p')
-  buffer:close(true)
+function test_run_no_command()
+  io.open_file(_HOME .. '/test/modules/textadept/run/foo.txt')
+  textadept.run.run()
+  assert_equal(ui.command_entry.active, true)
+  assert_equal(ui.command_entry:get_text(), '')
+  ui.command_entry:set_text(not WIN32 and 'cat %f' or 'type %f')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  ui.update() -- process output
+  assert(buffer:get_text():find('bar'), 'did not run command')
+  if #_VIEWS > 1 then view:unsplit() end
+  buffer:close()
+  textadept.run.run()
+  assert(ui.command_entry:get_text():find(not WIN32 and '^cat' or '^type'),
+    'previous command not saved')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  buffer:close()
 end
 
 function test_run_build()
   if WIN32 or OSX then return end -- TODO:
+  local build_command = 'lua modules/textadept/run/build.lua'
   textadept.run.build_commands[_HOME] = function()
-    return 'lua modules/textadept/run/build.lua', _HOME .. '/test/' -- intentional trailing '/'
+    return build_command, _HOME .. '/test/' -- intentional trailing '/'
   end
   textadept.run.stop() -- should not do anything
   textadept.run.build(_HOME)
+  assert_equal(ui.command_entry.active, true)
+  assert_equal(ui.command_entry:get_text(), build_command)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   if #_VIEWS > 1 then view:unsplit() end
   assert_equal(buffer._type, _L['[Output Buffer]'])
   sleep(0.1) -- ensure process is running
@@ -3589,25 +3625,39 @@ function test_run_build()
   buffer:close()
 end
 
-function test_run_build_interactive()
+function test_run_build_no_command()
   local dir = os.tmpname()
   os.remove(dir)
   lfs.mkdir(dir)
   lfs.mkdir(dir .. '/.hg') -- simulate version control
   io.open_file(dir .. '/BuildFile')
   buffer:save()
-  textadept.run.build_commands.BuildFile = ''
   textadept.run.build()
+  assert_equal(ui.command_entry:get_text(), '')
+  ui.command_entry:set_text(not WIN32 and 'ls' or 'dir')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  ui.update() -- process output
+  assert(buffer:get_text():find('BuildFile'), 'did not run command')
+  if #_VIEWS > 1 then view:unsplit() end
+  buffer:close()
+  textadept.run.build()
+  assert(ui.command_entry:get_text():find(not WIN32 and '^ls' or '^dir'),
+    'previous command not saved')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
   buffer:close()
   removedir(dir)
 end
 
 function test_run_test()
   if WIN32 or OSX then return end -- TODO:
+  local test_command = 'lua modules/textadept/run/test.lua'
   textadept.run.test_commands[_HOME] = function()
-    return 'lua modules/textadept/run/test.lua', _HOME .. '/test/' -- intentional trailing '/'
+    return test_command, _HOME .. '/test/' -- intentional trailing '/'
   end
   textadept.run.test(_HOME)
+  assert_equal(ui.command_entry.active, true)
+  assert_equal(ui.command_entry:get_text(), test_command)
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   if #_VIEWS > 1 then view:unsplit() end
   ui.update() -- process output
   assert(buffer:get_text():find('test%.lua'), 'did not run test command')
@@ -3618,6 +3668,7 @@ function test_run_test()
   io.open_file(file)
   buffer:save()
   textadept.run.test() -- nothing should happen
+  assert_equal(ui.command_entry.active, false)
   buffer:close()
   os.remove(file)
 end
@@ -3643,6 +3694,7 @@ function test_run_commands_function()
     return [[lua -e "print(os.getenv('FOO'))"]], '/tmp', {FOO = 'bar'}
   end
   textadept.run.run()
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   assert_equal(#_BUFFERS, 3) -- including [Test Output]
   assert_equal(buffer._type, _L['[Output Buffer]'])
   sleep(0.1)

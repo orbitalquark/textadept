@@ -167,7 +167,6 @@ local default_menubar = {
     SEPARATOR,
     {_L['Run'], textadept.run.run},
     {_L['Compile'], textadept.run.compile},
-    {_L['Set Arguments...'], textadept.run.set_arguments},
     {_L['Build'], textadept.run.build},
     {_L['Run tests'], textadept.run.test},
     {_L['Stop'], textadept.run.stop},

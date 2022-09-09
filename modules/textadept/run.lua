@@ -24,7 +24,7 @@ local M = {}
 --
 --   * `output`: A line of string output from the command.
 -- @field _G.events.RUN_OUTPUT (string)
---   Emitted when executing a language's run shell command.
+--   Emitted when executing a language's or project's run shell command.
 --   By default, output is printed to the output buffer. In order to override this behavior,
 --   connect to the event with an index of `1` and return `true`.
 --   Arguments:
@@ -55,11 +55,10 @@ M.MARK_ERROR = _SCINTILLA.next_marker_number()
 local run_events = {'compile_output', 'run_output', 'build_output', 'test_output'}
 for _, event in ipairs(run_events) do events[event:upper()] = event end
 
--- Keep track of: the last process spawned in order to kill it if requested; the cwd of that
--- process in order to jump to relative file paths in recognized warning or error messages;
--- and the view the process was spawned from in order to jump to messages (which are displayed
--- in a split view) in the original view.
-local proc, cwd, preferred_view
+-- Keep track of the last process spawned in order to kill it if requested, and keep track of
+-- the view the process was spawned from in order to jump to messages (which are displayed in
+-- a split view) in the original view.
+local proc, preferred_view
 
 -- Returns whether or not the given buffer is the output buffer.
 local function is_out_buf(buf) return buf._type == _L['[Output Buffer]'] end
@@ -91,29 +90,40 @@ end
 for _, event in ipairs(run_events) do events.connect(event, print_output) end
 events.connect(events.ERROR, function(errmsg) print_output(errmsg, '\n') end) -- mark Lua errors
 
--- Runs command *command* in working directory *dir*, emitting events of type *event* with any
--- output received.
+local command_entry_f = {} -- separate command entry run functions for distinct command histories
+-- Prompts the user with the command entry to run command *command* in working directory *dir*,
+-- emitting events of type *event* with any output received.
 -- @param command String command to run, or a function returning such a string and optional
 --   working directory and environment table. A returned working directory overrides *dir*.
 -- @param dir String working directory to run *command* in.
 -- @param event String event name to emit command output with.
+-- @param commands Table of commands that *command* came from. This is for saving/restoring
+--   custom commands per file/directory.
+-- @param key String key in *commands* that produced *command*. This is for saving/restoring
+--   custom commands per file/directory.
 -- @param macros Optional table of '%[char]' macros to expand within *command*.
-local function run_command(command, dir, event, macros)
+local function run_command(command, dir, event, commands, key, macros)
   local working_dir, env
   if type(command) == 'function' then command, working_dir, env = command() end
-  if not command or command == '' then return end
-  if macros then command = command:gsub('%%%a', macros) end
-  preferred_view = view
-  local function emit(output) events.emit(event, output) end
-  cwd = (working_dir or dir):gsub('[/\\]$', '')
-  events.emit(event, string.format('> cd %s\n', cwd))
-  events.emit(event, string.format('> %s\n', command:iconv('UTF-8', _CHARSET)))
-  local args = {
-    command, cwd, emit, emit,
-    function(status) events.emit(event, string.format('> exit status: %d\n', status)) end
-  }
-  if env then table.insert(args, 3, env) end
-  proc = assert(os.spawn(table.unpack(args)))
+  if not command then command = '' end
+  if not command_entry_f[key] then
+    command_entry_f[key] = function(command, dir, env, event, commands, key, macros)
+      if command == '' then return end
+      commands[key] = command -- update
+      preferred_view = view
+      local function emit(output) events.emit(event, output) end
+      events.emit(event, string.format('> cd %s\n', dir:gsub('[/\\]$', '')))
+      events.emit(event, string.format('> %s\n', command:iconv('UTF-8', _CHARSET)))
+      local args = {
+        macros and command:gsub('%%%a', macros) or command, dir, emit, emit,
+        function(status) events.emit(event, string.format('> exit status: %d\n', status)) end
+      }
+      if env then table.insert(args, 3, env) end
+      proc = assert(os.spawn(table.unpack(args)))
+    end
+  end
+  ui.command_entry.run(command_entry_f[key], 'bash', command, working_dir or dir, env, event,
+    commands, key, macros)
 end
 
 -- Compiles or runs file *filename* based on a shell command in *commands*.
@@ -134,7 +144,7 @@ local function compile_or_run(filename, commands)
   local macros = {
     ['%p'] = filename, ['%d'] = dirname, ['%f'] = basename, ['%e'] = basename:match('^(.+)%.') -- no extension
   }
-  run_command(command, dirname, event, macros)
+  run_command(command, dirname, event, commands, filename, macros)
 end
 
 -- LuaFormatter off
@@ -157,9 +167,9 @@ M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc 
 -- LuaFormatter on
 
 ---
--- Compiles file *filename* or the current file using an appropriate shell command from the
--- `compile_commands` table.
--- The shell command is determined from the file's filename, extension, or language in that order.
+-- Prompts the user with the command entry to compile file *filename* or the current file using
+-- an appropriate shell command from the `compile_commands` table.
+-- The shell command is determined from the file's filename, extension, or language, in that order.
 -- Emits `COMPILE_OUTPUT` events.
 -- @param filename Optional path to the file to compile. The default value is the current
 --   file's filename.
@@ -192,9 +202,9 @@ M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "f
 -- LuaFormatter on
 
 ---
--- Runs file *filename* or the current file using an appropriate shell command from the
--- `run_commands` table.
--- The shell command is determined from the file's filename, extension, or language in that order.
+-- Prompts the user with the command entry to run file *filename* or the current file using an
+-- appropriate shell command from the `run_commands` table.
+-- The shell command is determined from the file's filename, extension, or language, in that order.
 -- Emits `RUN_OUTPUT` events.
 -- @param filename Optional path to the file to run. The default value is the current file's
 --   filename.
@@ -204,52 +214,6 @@ M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "f
 function M.run(filename)
   if assert_type(filename, 'string/nil', 1) or buffer.filename then
     compile_or_run(filename or buffer.filename, M.run_commands)
-  end
-end
-
----
--- Appends the command line argument strings *run* and *compile* to their respective run and
--- compile commands for file *filename* or the current file.
--- If either is `nil`, prompts the user for missing the arguments. Each filename has its own
--- set of compile and run arguments.
--- @param filename Optional path to the file to set run/compile arguments for.
--- @param run Optional string run arguments to set. If `nil`, the user is prompted for them. Pass
---   the empty string for no run arguments.
--- @param compile Optional string compile arguments to set. If `nil`, the user is prompted
---   for them. Pass the empty string for no compile arguments.
--- @see run_commands
--- @see compile_commands
--- @name set_arguments
-function M.set_arguments(filename, run, compile)
-  if not assert_type(filename, 'string/nil', 1) then
-    filename = buffer.filename
-    if not filename then return end
-  end
-  assert_type(run, 'string/nil', 2)
-  assert_type(compile, 'string/nil', 3)
-  local base_commands, utf8_args = {}, {}
-  for i, commands in ipairs{M.run_commands, M.compile_commands} do
-    -- Compare the base run/compile command with the one for the current file. The difference
-    -- is any additional arguments set previously.
-    base_commands[i] = commands[filename:match('[^.]+$')] or commands[buffer.lexer_language] or ''
-    local current_command = commands[filename] or ''
-    local args = (i == 1 and run or compile) or current_command:sub(#base_commands[i] + 2)
-    utf8_args[i] = args:iconv('UTF-8', _CHARSET)
-  end
-  if not run or not compile then
-    local button
-    button, utf8_args = ui.dialogs.inputbox{
-      title = _L['Set Arguments...']:gsub('_', ''),
-      informative_text = {_L['Command line arguments'], _L['For Run:'], _L['For Compile:']},
-      text = utf8_args, width = not CURSES and 400 or nil
-    }
-    if button ~= 1 then return end
-  end
-  for i, commands in ipairs{M.run_commands, M.compile_commands} do
-    -- Add the additional arguments to the base run/compile command and set the new command to
-    -- be the one used for the current file.
-    commands[filename] = string.format('%s %s', base_commands[i],
-      utf8_args[i]:iconv(_CHARSET, 'UTF-8'))
   end
 end
 
@@ -266,10 +230,10 @@ M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='doc
 -- LuaFormatter on
 
 ---
--- Builds the project whose root path is *root_directory* or the current project using the
--- shell command from the `build_commands` table.
--- If a "makefile" type of build file is found, prompts the user for the full build command. The
--- current project is determined by either the buffer's filename or the current working directory.
+-- Prompts the user with the command entry to build the project whose root path is *root_directory*
+-- or the current project using the shell command from the `build_commands` table.
+-- The current project is determined by either the buffer's filename or the current working
+-- directory.
 -- Emits `BUILD_OUTPUT` events.
 -- @param root_directory The path to the project to build. The default value is the current project.
 -- @see build_commands
@@ -285,16 +249,12 @@ function M.build(root_directory)
   if not command then
     for build_file, build_command in pairs(M.build_commands) do
       if lfs.attributes(string.format('%s/%s', root_directory, build_file)) then
-        local button, utf8_command = ui.dialogs.inputbox{
-          title = _L['Command'], informative_text = root_directory, text = build_command,
-          button1 = _L['OK'], button2 = _L['Cancel']
-        }
-        if button == 1 then command = utf8_command:iconv(_CHARSET, 'UTF-8') end
+        command = build_command
         break
       end
     end
   end
-  run_command(command, root_directory, events.BUILD_OUTPUT)
+  run_command(command, root_directory, events.BUILD_OUTPUT, M.build_commands, root_directory)
 end
 
 ---
@@ -308,8 +268,8 @@ end
 M.test_commands = {}
 
 ---
--- Runs tests for the project whose root path is *root_directory* or the current project using
--- the shell command from the `test_commands` table.
+-- Prompts the user with the command entry to run tests for the project whose root path is
+-- *root_directory* or the current project using the shell command from the `test_commands` table.
 -- The current project is determined by either the buffer's filename or the current working
 -- directory.
 -- Emits `TEST_OUTPUT` events.
@@ -324,7 +284,8 @@ function M.test(root_directory)
     if not root_directory then return end
   end
   for i = 1, #_BUFFERS do _BUFFERS[i]:annotation_clear_all() end
-  run_command(M.test_commands[root_directory], root_directory, events.TEST_OUTPUT)
+  local command = M.test_commands[root_directory]
+  run_command(command, root_directory, events.TEST_OUTPUT, M.test_commands, root_directory)
 end
 
 ---
@@ -347,11 +308,11 @@ end)
 local function get_tagged_text(line_num, tag)
   for pos = buffer:position_from_line(line_num), buffer.line_end_position[line_num] do
     local style = buffer.style_at[pos]
-    if buffer:name_of_style(style) ~= tag then goto continue end
-    local s, e = pos, pos
-    repeat e = e + 1 until e > buffer.length or buffer.style_at[e] ~= style
-    do return buffer:text_range(s, e) end
-    ::continue::
+    if buffer:name_of_style(style) == tag then
+      local s, e = pos, pos
+      repeat e = e + 1 until e > buffer.length or buffer.style_at[e] ~= style
+      return buffer:text_range(s, e)
+    end
   end
 end
 
@@ -411,8 +372,14 @@ function M.goto_error(line_num, next)
   local message = get_tagged_text(line_num, 'message')
   buffer:goto_line(line_num)
   textadept.editing.select_line()
-  if not filename:find(not WIN32 and '^/' or '^%a?:?[/\\][/\\]?') and cwd then
-    filename = cwd .. (not WIN32 and '/' or '\\') .. filename
+  if not filename:find(not WIN32 and '^/' or '^%a?:?[/\\][/\\]?') then
+    for i = line_num, 1, -1 do
+      local cwd = buffer:get_line(i):match('^> cd ([^\n]+)')
+      if cwd then
+        filename = cwd .. (not WIN32 and '/' or '\\') .. filename
+        break
+      end
+    end
   end
   local sloppy = not filename:find(not WIN32 and '^/' or '^%a?:?[/\\][/\\]?')
   ui.goto_file(filename, true, preferred_view, sloppy)

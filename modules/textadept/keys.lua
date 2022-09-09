@@ -80,7 +80,6 @@ local M = {}
 -- Ctrl+Shift+E | ⌘⇧E | M-S-C | Select command
 -- Ctrl+R | ⌘R | ^R | Run
 -- Ctrl+Shift+R | ⌘⇧R | M-^R | Compile
--- Ctrl+Shift+A | ⌘⇧A | None | Set Arguments...
 -- Ctrl+Shift+B | ⌘⇧B | M-^B | Build
 -- Ctrl+Shift+T | ⌘⇧T | M-^T | Run tests
 -- Ctrl+Shift+X | ⌘⇧X | M-^X | Stop
@@ -367,7 +366,6 @@ local bindings = {
   [m('Tools/Select Command')] = {'ctrl+E', 'cmd+E', 'meta+C'},
   [textadept.run.run] = {'ctrl+r', 'cmd+r', 'ctrl+r'},
   [textadept.run.compile] = {'ctrl+R', 'cmd+R', 'ctrl+meta+r'},
-  [textadept.run.set_arguments] = {'ctrl+A', 'cmd+A', nil},
   [textadept.run.build] = {'ctrl+B', 'cmd+B', 'ctrl+meta+b'},
   [textadept.run.test] = {'ctrl+T', 'cmd+T', 'ctrl+meta+t'},
   [textadept.run.stop] = {'ctrl+X', 'cmd+X', 'ctrl+meta+x'},
