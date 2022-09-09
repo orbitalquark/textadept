@@ -103,13 +103,13 @@ local command_entry_f = {} -- separate command entry run functions for distinct 
 --   custom commands per file/directory.
 -- @param macros Optional table of '%[char]' macros to expand within *command*.
 local function run_command(command, dir, event, commands, key, macros)
-  local working_dir, env
-  if type(command) == 'function' then command, working_dir, env = command() end
-  if not command then command = '' end
-  if not command_entry_f[key] then
-    command_entry_f[key] = function(command, dir, env, event, commands, key, macros)
+  local is_func, working_dir, env = type(command) == 'function'
+  if is_func then command, working_dir, env = command() end
+  local id = event .. key
+  if not command_entry_f[id] then
+    command_entry_f[id] = function(command, dir, env, event, commands, key, macros)
       if command == '' then return end
-      commands[key] = command -- update
+      if not is_func then commands[key] = command end -- update if not originally a function
       preferred_view = view
       local function emit(output) events.emit(event, output) end
       events.emit(event, string.format('> cd %s\n', dir:gsub('[/\\]$', '')))
@@ -122,7 +122,7 @@ local function run_command(command, dir, event, commands, key, macros)
       proc = assert(os.spawn(table.unpack(args)))
     end
   end
-  ui.command_entry.run(command_entry_f[key], 'bash', command, working_dir or dir, env, event,
+  ui.command_entry.run(command_entry_f[id], 'bash', command, working_dir or dir, env, event,
     commands, key, macros)
 end
 
