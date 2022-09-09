@@ -1335,11 +1335,14 @@ end
 function test_command_entry_run()
   local command_run, tab_pressed = false, false
   ui.command_entry.run(function(command) command_run = command end,
-    {['\t'] = function() tab_pressed = true end}, nil, 2)
+    {['\t'] = function() tab_pressed = true end})
   ui.update() -- redraw command entry
   if not OSX then assert_equal(ui.command_entry.active, true) end -- macOS has focus issues here
   assert_equal(ui.command_entry.lexer_language, 'text')
-  assert(ui.command_entry.height > ui.command_entry:text_height(0), 'height < 2 lines')
+  assert(ui.command_entry.height == ui.command_entry:text_height(1), 'height ~= 1 line')
+  ui.command_entry.height = ui.command_entry:text_height(1) * 2
+  ui.update() -- redraw command entry
+  assert(ui.command_entry.height > ui.command_entry:text_height(1), 'height < 2 lines')
   ui.command_entry:set_text('foo')
   events.emit(events.KEYPRESS, string.byte('\t'))
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
@@ -1347,14 +1350,17 @@ function test_command_entry_run()
   assert(tab_pressed, '\\t not registered')
   assert_equal(ui.command_entry.active, false)
 
+  ui.command_entry.run(function(text, arg) assert_equal(arg, 'arg') end, 'text', nil, 'arg')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+
   assert_raises(function() ui.command_entry.run(function() end, 1) end,
     'table/string/nil expected, got number')
   assert_raises(function() ui.command_entry.run(function() end, {}, 1) end,
     'string/nil expected, got number')
-  assert_raises(function() ui.command_entry.run(function() end, {}, 'lua', true) end,
-    'number/nil expected, got boolean')
-  assert_raises(function() ui.command_entry.run(function() end, 'lua', true) end,
-    'number/nil expected, got boolean')
+  assert_raises(function() ui.command_entry.run(function() end, {}, true) end,
+    'string/nil expected, got boolean')
+  assert_raises(function() ui.command_entry.run(function() end, {}, 'text', true) end,
+    'string/nil expected, got boolean')
 end
 
 local function run_lua_command(command)
@@ -1551,6 +1557,38 @@ function test_command_entry_history_append()
     'function expected, got table')
   assert_raises(function() ui.command_entry.append_history(function() end, true) end,
     'string/nil expected, got boolean')
+end
+
+function test_command_entry_history_initial_text()
+  local f = function() end
+
+  ui.command_entry.run(f, 'text', 'initial')
+  assert_equal(ui.command_entry:get_text(), 'initial')
+  assert_equal(ui.command_entry.selection_start, ui.command_entry.selection_end)
+  assert_equal(ui.command_entry.current_pos, ui.command_entry.length + 1)
+  ui.command_entry:set_text('foo')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+
+  ui.command_entry.run(f, 'text', 'initial')
+  assert_equal(ui.command_entry:get_text(), 'initial')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), 'foo')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), 'initial')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), 'initial') -- no prior history
+  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  assert_equal(ui.command_entry:get_text(), 'foo')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  assert_equal(ui.command_entry:get_text(), 'initial')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  assert_equal(ui.command_entry:get_text(), 'initial') -- no further history
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+
+  ui.command_entry.run(f, 'text', 'initial')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  assert_equal(ui.command_entry:get_text(), 'foo') -- no duplicate 'initial'
+  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 end
 
 function test_command_entry_mode_restore()

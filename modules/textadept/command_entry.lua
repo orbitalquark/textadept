@@ -57,6 +57,7 @@ function M.append_history(f, text)
     if not f then return end
   end
   local mode_history = history[assert_type(f, 'function', 1)]
+  if mode_history[#mode_history] == text then return end -- already exists
   mode_history[#mode_history + 1], mode_history.pos = text, #mode_history + 1
 end
 
@@ -192,10 +193,10 @@ local lua_keys = {['\t'] = complete_lua}
 local prev_key_mode
 
 ---
--- Opens the command entry, subjecting it to any key bindings defined in table *keys*,
--- highlighting text with lexer name *lang*, and displaying *height* number of lines at a time,
--- and then when the `Enter` key is pressed, closes the command entry and calls function *f*
--- (if non-`nil`) with the command entry's text as an argument.
+-- Opens the command entry (optionally with string *initial_text*), subjecting it to any key
+-- bindings defined in table *keys*, highlighting text with lexer name *lang*, and then when the
+-- `Enter` key is pressed, closes the command entry and calls function *f* (if non-`nil`) with
+-- the command entry's text as an argument, along with any extra arguments passed to this function.
 -- By default with no arguments given, opens a Lua command entry.
 -- The command entry does not respond to Textadept's default key bindings, but instead to the
 -- key bindings defined in *keys* and in `ui.command_entry.editing_keys`.
@@ -206,40 +207,51 @@ local prev_key_mode
 --   `Enter` are automatically defined to cancel and finish the command entry, respectively.
 --   This parameter may be omitted completely.
 -- @param lang Optional string lexer name to use for command entry text. The default value is
---   `'text'`.
--- @param height Optional number of lines to display in the command entry. The default value is `1`.
+--   `'text'`. This parameter may only be omitted if there are no more parameters.
+-- @param initial_text Optional string of text to initially show in the command entry. The
+--   default value comes from the command history for *f*.
+-- @param ... Optional additional arguments to pass to *f*.
 -- @see editing_keys
 -- @usage ui.command_entry.run(ui.print)
 -- @name run
-function M.run(f, keys, lang, height)
+function M.run(f, keys, lang, initial_text, ...)
   if _G.keys.mode == '_command_entry' then return end -- already in command entry
+  local args = table.pack(...)
   if not assert_type(f, 'function/nil', 1) and not keys then
     f, keys, lang = run_lua, lua_keys, 'lua'
   elseif type(assert_type(keys, 'table/string/nil', 2)) == 'string' then
-    lang, height, keys = keys, assert_type(lang, 'number/nil', 3), {}
+    table.insert(args, 1, initial_text)
+    initial_text, lang, keys = assert_type(lang, 'string/nil', 3), keys, {}
   else
     if not keys then keys = {} end
     assert_type(lang, 'string/nil', 3)
-    assert_type(height, 'number/nil', 4)
+    assert_type(initial_text, 'string/nil', 4)
   end
+
+  -- Auto-define Esc and Enter keys to cancel and finish the command entry, respectively,
+  -- and connect to keybindings in `ui.command_entry.editing_keys`.
   if not keys['esc'] then keys['esc'] = M.focus end -- hide
   if not keys['\n'] then
     keys['\n'] = function()
       if M:auto_c_active() then return false end -- allow Enter to autocomplete
       M.focus() -- hide
       M.append_history(M:get_text())
-      if f then f(M:get_text()) end
+      if f then f(M:get_text(), table.unpack(args)) end
     end
   end
   if not getmetatable(keys) then setmetatable(keys, M.editing_keys) end
+
+  -- Setup and open the command entry.
   history.mode = f
+  if initial_text then M.append_history(initial_text) end -- cycling will be incorrect otherwise
   local mode_history = history[history.mode]
   M:set_text(mode_history and mode_history[mode_history.pos] or '')
   M:select_all()
+  if initial_text then M:line_end() end
   prev_key_mode = _G.keys.mode -- save before M.focus()
   M.focus()
   M:set_lexer(lang or 'text')
-  M.height = M:text_height(1) * (height or 1)
+  M.height = M:text_height(1)
   _G.keys._command_entry, _G.keys.mode = keys, '_command_entry'
 end
 
