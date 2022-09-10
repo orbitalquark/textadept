@@ -193,15 +193,17 @@ local lua_keys = {['\t'] = complete_lua}
 local prev_key_mode
 
 ---
--- Opens the command entry (optionally with string *initial_text*), subjecting it to any key
--- bindings defined in table *keys*, highlighting text with lexer name *lang*, and then when the
--- `Enter` key is pressed, closes the command entry and calls function *f* (if non-`nil`) with
--- the command entry's text as an argument, along with any extra arguments passed to this function.
+-- Opens the command entry with label *label* (and optionally with string *initial_text*),
+-- subjecting it to any key bindings defined in table *keys*, highlighting text with lexer
+-- name *lang*, and then when the `Enter` key is pressed, closes the command entry and calls
+-- function *f* (if non-`nil`) with the command entry's text as an argument, along with any
+-- extra arguments passed to this function.
 -- By default with no arguments given, opens a Lua command entry.
 -- The command entry does not respond to Textadept's default key bindings, but instead to the
 -- key bindings defined in *keys* and in `ui.command_entry.editing_keys`.
+-- @param label Optional string label to display in front of input.
 -- @param f Optional function to call upon pressing `Enter` in the command entry, ending the mode.
---   It should accept the command entry text as an argument.
+--   It should accept at a minimum the command entry text as an argument.
 -- @param keys Optional table of key bindings to respond to. This is in addition to the
 --   basic editing and movement keys defined in `ui.command_entry.editing_keys`. `Esc` and
 --   `Enter` are automatically defined to cancel and finish the command entry, respectively.
@@ -212,20 +214,25 @@ local prev_key_mode
 --   default value comes from the command history for *f*.
 -- @param ... Optional additional arguments to pass to *f*.
 -- @see editing_keys
--- @usage ui.command_entry.run(ui.print)
+-- @usage ui.command_entry.run('echo:', ui.print)
 -- @name run
-function M.run(f, keys, lang, initial_text, ...)
+function M.run(label, f, keys, lang, initial_text, ...)
   if _G.keys.mode == '_command_entry' then return end -- already in command entry
   local args = table.pack(...)
-  if not assert_type(f, 'function/nil', 1) and not keys then
-    f, keys, lang = run_lua, lua_keys, 'lua'
-  elseif type(assert_type(keys, 'table/string/nil', 2)) == 'string' then
+  if type(label) == 'function' then -- legacy
     table.insert(args, 1, initial_text)
-    initial_text, lang, keys = assert_type(lang, 'string/nil', 3), keys, {}
+    label, f, keys, lang, initial_text = '', label, f, keys, lang
+  end
+  if not assert_type(label, 'string/nil', 1) then label = _L['Lua command:'] end
+  if not assert_type(f, 'function/nil', 2) and not keys then
+    f, keys, lang = run_lua, lua_keys, 'lua'
+  elseif type(assert_type(keys, 'table/string/nil', 3)) == 'string' then
+    table.insert(args, 1, initial_text)
+    initial_text, lang, keys = assert_type(lang, 'string/nil', 4), keys, {}
   else
     if not keys then keys = {} end
-    assert_type(lang, 'string/nil', 3)
-    assert_type(initial_text, 'string/nil', 4)
+    assert_type(lang, 'string/nil', 4)
+    assert_type(initial_text, 'string/nil', 5)
   end
 
   -- Auto-define Esc and Enter keys to cancel and finish the command entry, respectively,
@@ -249,6 +256,7 @@ function M.run(f, keys, lang, initial_text, ...)
   M:select_all()
   if initial_text then M:line_end() end
   prev_key_mode = _G.keys.mode -- save before M.focus()
+  M.margin_width_n[1], M.margin_text[1] = view:text_width(view.STYLE_LINENUMBER, label), label
   M.focus()
   M:set_lexer(lang or 'text')
   M.height = M:text_height(1)
@@ -267,7 +275,8 @@ end
 -- documentation in the Lua command entry.
 events.connect(events.INITIALIZED, function()
   M.h_scroll_bar, M.v_scroll_bar = false, false
-  for i = 1, M.margins do M.margin_width_n[i] = 0 end
+  for i = 1, M.margins do M.margin_width_n[i] = i ~= 2 and 0 or (not CURSES and 4 or 1) end
+  M.margin_type_n[1], M.margin_style[1] = view.MARGIN_TEXT, view.STYLE_LINENUMBER
   M.call_tip_position = true
   for key, f in pairs(keys) do
     if f ~= textadept.editing.show_documentation then goto continue end

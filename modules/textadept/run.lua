@@ -93,6 +93,7 @@ events.connect(events.ERROR, function(errmsg) print_output(errmsg, '\n') end) --
 local command_entry_f = {} -- separate command entry run functions for distinct command histories
 -- Prompts the user with the command entry to run command *command* in working directory *dir*,
 -- emitting events of type *event* with any output received.
+-- @param label String label to display in the command entry.
 -- @param command String command to run, or a function returning such a string and optional
 --   working directory and environment table. A returned working directory overrides *dir*.
 -- @param dir String working directory to run *command* in.
@@ -102,7 +103,7 @@ local command_entry_f = {} -- separate command entry run functions for distinct 
 -- @param key String key in *commands* that produced *command*. This is for saving/restoring
 --   custom commands per file/directory.
 -- @param macros Optional table of '%[char]' macros to expand within *command*.
-local function run_command(command, dir, event, commands, key, macros)
+local function run_command(label, command, dir, event, commands, key, macros)
   local is_func, working_dir, env = type(command) == 'function'
   if is_func then command, working_dir, env = command() end
   local id = event .. key
@@ -122,7 +123,7 @@ local function run_command(command, dir, event, commands, key, macros)
       proc = assert(os.spawn(table.unpack(args)))
     end
   end
-  ui.command_entry.run(command_entry_f[id], 'bash', command, working_dir or dir, env, event,
+  ui.command_entry.run(label, command_entry_f[id], 'bash', command, working_dir or dir, env, event,
     commands, key, macros)
 end
 
@@ -134,6 +135,7 @@ local function compile_or_run(filename, commands)
     buffer:annotation_clear_all()
     if buffer.modify then buffer:save() end
   end
+  local label = commands == M.compile_commands and _L['Compile command:'] or _L['Run command:']
   local ext = filename:match('[^/\\.]+$')
   local lang = filename == buffer.filename and buffer.lexer_language or
     textadept.file_types.extensions[ext]
@@ -144,7 +146,7 @@ local function compile_or_run(filename, commands)
   local macros = {
     ['%p'] = filename, ['%d'] = dirname, ['%f'] = basename, ['%e'] = basename:match('^(.+)%.') -- no extension
   }
-  run_command(command, dirname, event, commands, filename, macros)
+  run_command(label, command, dirname, event, commands, filename, macros)
 end
 
 -- LuaFormatter off
@@ -254,7 +256,8 @@ function M.build(root_directory)
       end
     end
   end
-  run_command(command, root_directory, events.BUILD_OUTPUT, M.build_commands, root_directory)
+  run_command(_L['Build command:'], command, root_directory, events.BUILD_OUTPUT, M.build_commands,
+    root_directory)
 end
 
 ---
@@ -284,8 +287,8 @@ function M.test(root_directory)
     if not root_directory then return end
   end
   for i = 1, #_BUFFERS do _BUFFERS[i]:annotation_clear_all() end
-  local command = M.test_commands[root_directory]
-  run_command(command, root_directory, events.TEST_OUTPUT, M.test_commands, root_directory)
+  run_command(_L['Test command:'], M.test_commands[root_directory], root_directory,
+    events.TEST_OUTPUT, M.test_commands, root_directory)
 end
 
 ---
@@ -314,8 +317,8 @@ function M.run_project(root_directory)
     root_directory = io.get_project_root()
     if not root_directory then return end
   end
-  local command = M.run_project_commands[root_directory]
-  run_command(command, root_directory, events.RUN_OUTPUT, M.run_project_commands, root_directory)
+  run_command(_L['Project run command:'], M.run_project_commands[root_directory], root_directory,
+    events.RUN_OUTPUT, M.run_project_commands, root_directory)
 end
 
 ---

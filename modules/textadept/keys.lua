@@ -483,7 +483,8 @@ local bindings = {
   -- Other.
   -- UTF-8 input.
   [function()
-    ui.command_entry.run(function(code) buffer:add_text(utf8.char(tonumber(code, 16))) end)
+    ui.command_entry.run(_L['UTF-8 codepoint:'],
+      function(code) buffer:add_text(utf8.char(tonumber(code, 16))) end)
   end] = {nil, 'cmd+U', 'meta+u'}
 }
 -- LuaFormatter on

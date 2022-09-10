@@ -1334,10 +1334,13 @@ end
 
 function test_command_entry_run()
   local command_run, tab_pressed = false, false
-  ui.command_entry.run(function(command) command_run = command end,
+  ui.command_entry.run('label:', function(command) command_run = command end,
     {['\t'] = function() tab_pressed = true end})
   ui.update() -- redraw command entry
   if not OSX then assert_equal(ui.command_entry.active, true) end -- macOS has focus issues here
+  assert_equal(ui.command_entry.margin_text[1], 'label:')
+  assert(ui.command_entry.margin_width_n[1] > 0, 'margin label is not visible')
+  assert(ui.command_entry.margin_width_n[2] > 0, 'no space between margin label and command entry')
   assert_equal(ui.command_entry.lexer_language, 'text')
   assert(ui.command_entry.height == ui.command_entry:text_height(1), 'height ~= 1 line')
   ui.command_entry.height = ui.command_entry:text_height(1) * 2
@@ -1350,16 +1353,18 @@ function test_command_entry_run()
   assert(tab_pressed, '\\t not registered')
   assert_equal(ui.command_entry.active, false)
 
-  ui.command_entry.run(function(text, arg) assert_equal(arg, 'arg') end, 'text', nil, 'arg')
+  ui.command_entry.run('', function(text, arg) assert_equal(arg, 'arg') end, 'text', nil, 'arg')
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 
-  assert_raises(function() ui.command_entry.run(function() end, 1) end,
+  assert_raises(function() ui.command_entry.run(1) end, 'string/nil expected, got number')
+  assert_raises(function() ui.command_entry.run('', '') end, 'function/nil expected, got string')
+  assert_raises(function() ui.command_entry.run('', function() end, 1) end,
     'table/string/nil expected, got number')
-  assert_raises(function() ui.command_entry.run(function() end, {}, 1) end,
+  assert_raises(function() ui.command_entry.run('', function() end, {}, 1) end,
     'string/nil expected, got number')
-  assert_raises(function() ui.command_entry.run(function() end, {}, true) end,
+  assert_raises(function() ui.command_entry.run('', function() end, {}, true) end,
     'string/nil expected, got boolean')
-  assert_raises(function() ui.command_entry.run(function() end, {}, 'text', true) end,
+  assert_raises(function() ui.command_entry.run('', function() end, {}, 'text', true) end,
     'string/nil expected, got boolean')
 end
 
@@ -1473,7 +1478,7 @@ end
 function test_command_entry_history()
   local one, two = function() end, function() end
 
-  ui.command_entry.run(one)
+  ui.command_entry.run('', one)
   events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
   assert_equal(ui.command_entry:get_text(), '') -- no prior history
   events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
@@ -1481,7 +1486,7 @@ function test_command_entry_history()
   ui.command_entry:add_text('foo')
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 
-  ui.command_entry.run(two)
+  ui.command_entry.run('', two)
   events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
   assert_equal(ui.command_entry:get_text(), '') -- no prior history
   events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
@@ -1489,7 +1494,7 @@ function test_command_entry_history()
   ui.command_entry:add_text('bar')
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 
-  ui.command_entry.run(one)
+  ui.command_entry.run('', one)
   assert_equal(ui.command_entry:get_text(), 'foo')
   assert_equal(ui.command_entry.selection_start, 1)
   assert_equal(ui.command_entry.selection_end, 4)
@@ -1500,7 +1505,7 @@ function test_command_entry_history()
   ui.command_entry:set_text('baz')
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 
-  ui.command_entry.run(one)
+  ui.command_entry.run('', one)
   events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
   assert_equal(ui.command_entry:get_text(), 'foo')
   events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
@@ -1508,14 +1513,14 @@ function test_command_entry_history()
   events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up, 'foo'
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 
-  ui.command_entry.run(one)
+  ui.command_entry.run('', one)
   events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
   assert_equal(ui.command_entry:get_text(), 'baz')
   events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
   assert_equal(ui.command_entry:get_text(), 'foo')
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
 
-  ui.command_entry.run(two)
+  ui.command_entry.run('', two)
   assert_equal(ui.command_entry:get_text(), 'bar')
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
 end
@@ -1523,11 +1528,11 @@ end
 function test_command_entry_history_append()
   local f, keys = function() end, {['\n'] = ui.command_entry.focus}
 
-  ui.command_entry.run(f, keys)
+  ui.command_entry.run('', f, keys)
   ui.command_entry:set_text('foo')
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 
-  ui.command_entry.run(f, keys)
+  ui.command_entry.run('', f, keys)
   events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
   assert_equal(ui.command_entry:get_text(), '') -- no prior history
   events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
@@ -1535,7 +1540,7 @@ function test_command_entry_history_append()
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   ui.command_entry.append_history('bar')
 
-  ui.command_entry.run(f, keys)
+  ui.command_entry.run('', f, keys)
   assert_equal(ui.command_entry:get_text(), 'bar')
   assert_equal(ui.command_entry.selection_start, 1)
   assert_equal(ui.command_entry.selection_end, 4)
@@ -1548,7 +1553,7 @@ function test_command_entry_history_append()
   -- Verify no previous mode or history is needed for adding history.
   local f2 = function() end
   ui.command_entry.append_history(f2, 'baz')
-  ui.command_entry.run(f2, keys)
+  ui.command_entry.run('', f2, keys)
   assert_equal(ui.command_entry:get_text(), 'baz')
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 
@@ -1562,14 +1567,14 @@ end
 function test_command_entry_history_initial_text()
   local f = function() end
 
-  ui.command_entry.run(f, 'text', 'initial')
+  ui.command_entry.run('', f, 'text', 'initial')
   assert_equal(ui.command_entry:get_text(), 'initial')
   assert_equal(ui.command_entry.selection_start, ui.command_entry.selection_end)
   assert_equal(ui.command_entry.current_pos, ui.command_entry.length + 1)
   ui.command_entry:set_text('foo')
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 
-  ui.command_entry.run(f, 'text', 'initial')
+  ui.command_entry.run('', f, 'text', 'initial')
   assert_equal(ui.command_entry:get_text(), 'initial')
   events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
   assert_equal(ui.command_entry:get_text(), 'foo')
@@ -1585,7 +1590,7 @@ function test_command_entry_history_initial_text()
   assert_equal(ui.command_entry:get_text(), 'initial') -- no further history
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
 
-  ui.command_entry.run(f, 'text', 'initial')
+  ui.command_entry.run('', f, 'text', 'initial')
   events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
   assert_equal(ui.command_entry:get_text(), 'foo') -- no duplicate 'initial'
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
@@ -1594,7 +1599,7 @@ end
 function test_command_entry_mode_restore()
   local mode = 'test_mode'
   keys.mode = mode
-  ui.command_entry.run(nil)
+  ui.command_entry.run()
   assert(keys.mode ~= mode)
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   assert_equal(keys.mode, mode)

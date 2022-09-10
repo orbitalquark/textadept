@@ -96,7 +96,7 @@ local default_menubar = {
     {_L['Transpose Characters'], textadept.editing.transpose_chars},
     {_L['Join Lines'], textadept.editing.join_lines},
     {_L['Filter Through'], function()
-      ui.command_entry.run(textadept.editing.filter_through, 'bash')
+      ui.command_entry.run(_L['Shell command:'], textadept.editing.filter_through, 'bash')
     end},
     {
       title = _L['Select'],
