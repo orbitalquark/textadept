@@ -83,6 +83,7 @@ local bindings = {
   [function() M:select_all() end] = {'ctrl+a', 'cmd+a', 'meta+a'},
   [function() cycle_history(true) end] = {'up', 'up', 'up'},
   [cycle_history] = {'down', 'down', 'down'}, -- LuaFormatter
+  [require('textadept.editing').show_documentation] = {'ctrl+h', 'ctrl+h', {'meta+h', 'meta+H'}},
   -- Movement keys.
   [function() M:char_right() end] = {nil, 'ctrl+f', 'ctrl+f'},
   [function() M:char_left() end] = {nil, 'ctrl+b', 'ctrl+b'},
@@ -226,6 +227,7 @@ function M.run(label, f, keys, lang, initial_text, ...)
   if not assert_type(label, 'string/nil', 1) then label = _L['Lua command:'] end
   if not assert_type(f, 'function/nil', 2) and not keys then
     f, keys, lang = run_lua, lua_keys, 'lua'
+    require('lua') -- ensure Textadept api file is available for showing documentation
   elseif type(assert_type(keys, 'table/string/nil', 3)) == 'string' then
     table.insert(args, 1, initial_text)
     initial_text, lang, keys = assert_type(lang, 'string/nil', 4), keys, {}
@@ -256,7 +258,7 @@ function M.run(label, f, keys, lang, initial_text, ...)
   M:select_all()
   if initial_text then M:line_end() end
   prev_key_mode = _G.keys.mode -- save before M.focus()
-  M.margin_width_n[1], M.margin_text[1] = view:text_width(view.STYLE_LINENUMBER, label), label
+  M.margin_width_n[1], M.margin_text[1] = M:text_width(view.STYLE_LINENUMBER, label), label
   M.focus()
   M:set_lexer(lang or 'text')
   M.height = M:text_height(1)
@@ -271,25 +273,12 @@ M.focus = function()
 end
 
 -- Configure the command entry's default properties.
--- Also find the key binding for `textadept.editing.show_documentation` and use it to show Lua
--- documentation in the Lua command entry.
 events.connect(events.INITIALIZED, function()
   M.h_scroll_bar, M.v_scroll_bar = false, false
   for i = 1, M.margins do M.margin_width_n[i] = i ~= 2 and 0 or (not CURSES and 4 or 1) end
   M.margin_type_n[1], M.margin_style[1] = view.MARGIN_TEXT, view.STYLE_LINENUMBER
+  M.call_tip_use_style = M.tab_width * M:text_width(view.STYLE_CALLTIP, ' ')
   M.call_tip_position = true
-  for key, f in pairs(keys) do
-    if f ~= textadept.editing.show_documentation then goto continue end
-    lua_keys[key] = function()
-      -- Temporarily change _G.buffer and _G.view since ui.command_entry is the "active" buffer
-      -- and view.
-      local orig_buffer, orig_view = _G.buffer, _G.view
-      _G.buffer, _G.view = ui.command_entry, ui.command_entry
-      textadept.editing.show_documentation()
-      _G.buffer, _G.view = orig_buffer, orig_view
-    end
-    ::continue::
-  end
 end)
 
 --[[ The function below is a Lua C function.

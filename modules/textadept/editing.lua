@@ -292,7 +292,6 @@ end)
 -- and the indentation of the current and preceding lines.
 -- @name paste_reindent
 function M.paste_reindent()
-  local line = buffer:line_from_position(buffer.selection_start)
   -- Strip leading indentation from clipboard text.
   local text = ui.clipboard_text
   if not buffer.encoding then text = text:iconv('CP1252', 'UTF-8') end
@@ -317,6 +316,7 @@ function M.paste_reindent()
   end)
   -- Re-indent according to whichever of the current and preceding lines has the higher indentation
   -- amount. However, if the preceding line is a fold header, indent by an extra level.
+  local line = buffer:line_from_position(buffer.selection_start)
   local i = line - 1
   while i >= 1 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
   if i < 1 or buffer.line_indentation[i] < buffer.line_indentation[line] then i = line end
@@ -729,8 +729,11 @@ local api_docs
 -- @see api_files
 -- @see buffer.word_chars
 function M.show_documentation(pos, ignore_case)
+  local buffer, view = buffer, view
+  if ui.command_entry.active then buffer, view = ui.command_entry, ui.command_entry end
+
   if view:call_tip_active() then
-    events.emit(events.CALL_TIP_CLICK)
+    events.emit(events.CALL_TIP_CLICK, 0, view)
     return
   end
   local api_files = M.api_files[buffer:get_lexer(true)]
@@ -785,7 +788,7 @@ function M.show_documentation(pos, ignore_case)
   view:call_tip_show(pos, api_docs[api_docs.i])
 end
 -- Cycle through apidoc calltips.
-events.connect(events.CALL_TIP_CLICK, function(position)
+events.connect(events.CALL_TIP_CLICK, function(position, view)
   if not api_docs then return end
   api_docs.i = api_docs.i + (position == 1 and -1 or 1)
   if api_docs.i > #api_docs then
@@ -793,7 +796,7 @@ events.connect(events.CALL_TIP_CLICK, function(position)
   elseif api_docs.i < 1 then
     api_docs.i = #api_docs
   end
-  view:call_tip_show(api_docs.pos, api_docs[api_docs.i])
+  (view or _G.view):call_tip_show(api_docs.pos, api_docs[api_docs.i])
 end)
 
 return M

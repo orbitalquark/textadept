@@ -1458,21 +1458,15 @@ function test_command_entry_complete_lua()
 end
 
 function test_command_entry_lua_documentation()
-  -- Iterate over keys looking for the one that shows documentation, then use that for this test.
-  -- I use a different key binding than the default, and the command entry does some processing
-  -- on init that cannot be emulated here.
-  for key, f in pairs(keys) do
-    if f ~= textadept.editing.show_documentation then goto continue end
-    ui.command_entry.run()
-    ui.command_entry:set_text('print(')
-    events.emit(events.KEYPRESS, string.byte(key:match('.$')), key:find('shift'), key:find('ctrl'),
-      key:find('alt') or key:find('meta'), key:find('cmd'))
-    assert(ui.command_entry:call_tip_active(), 'documentation not found')
-    ui.command_entry:call_tip_cancel()
-    ui.command_entry:focus() -- hide
-    break
-    ::continue::
-  end
+  ui.command_entry.run()
+  ui.command_entry:set_text('print(') -- Lua api
+  textadept.editing.show_documentation()
+  assert(ui.command_entry:call_tip_active(), 'documentation not found')
+  ui.command_entry:call_tip_cancel()
+  ui.command_entry:set_text('current_pos') -- Textadept api
+  textadept.editing.show_documentation()
+  assert(ui.command_entry:call_tip_active(), 'documentation not found')
+  ui.command_entry:focus() -- hide
 end
 
 function test_command_entry_history()

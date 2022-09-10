@@ -22,7 +22,7 @@ local function ta_api(filename)
   local userhome = '^' .. _USERHOME:gsub('%p', '%%%0'):gsub('%%[/\\]', '[/\\]')
   return function()
     local ta_file = (buffer.filename or ''):find(home) or (buffer.filename or ''):find(userhome)
-    return (ta_file or buffer == ui.command_entry or buffer._type) and filename
+    return (ta_file or ui.command_entry.active or buffer._type) and filename
   end
 end
 
