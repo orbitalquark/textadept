@@ -137,8 +137,7 @@ local function compile_or_run(filename, commands)
   end
   local label = commands == M.compile_commands and _L['Compile command:'] or _L['Run command:']
   local ext = filename:match('[^/\\.]+$')
-  local lang = filename == buffer.filename and buffer.lexer_language or
-    textadept.file_types.extensions[ext]
+  local lang = filename == buffer.filename and buffer.lexer_language or lexer.detect(ext)
   local command = commands[filename] or commands[ext] or commands[lang]
   local dirname, basename = '', filename
   if filename:find('[/\\]') then dirname, basename = filename:match('^(.+)[/\\]([^/\\]+)$') end

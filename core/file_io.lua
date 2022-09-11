@@ -134,6 +134,7 @@ function io.open_file(filenames, encodings)
     buffer.mod_time = lfs.attributes(filename, 'modification') or os.time()
     buffer.filename = filename
     buffer:set_save_point()
+    buffer:set_lexer() -- auto-detect
     events.emit(events.FILE_OPENED, filename)
 
     -- Add file to recent files list, eliminating duplicates.
@@ -208,6 +209,7 @@ local function save_as(buffer, filename)
   end
   buffer.filename = filename
   buffer:save()
+  buffer:set_lexer() -- auto-detect
   events.emit(events.FILE_AFTER_SAVE, filename, true)
 end
 

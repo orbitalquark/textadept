@@ -264,7 +264,22 @@ local default_menubar = {
       view.view_ws = view.view_ws == 0 and view.WS_VISIBLEALWAYS or 0
     end},
     SEPARATOR,
-    {_L['Select Lexer...'], textadept.file_types.select_lexer}
+    {_L['Select Lexer...'], function()
+      local lexers = {}
+      for dir in _LEXERPATH:gmatch('[^;]+') do
+        if lfs.attributes(dir, 'mode') ~= 'directory' then goto continue end
+        for file in lfs.dir(dir) do
+          local name = file:match('^(.+)%.lua$')
+          if name and name ~= 'lexer' then lexers[#lexers + 1] = name end
+        end
+        ::continue::
+      end
+      table.sort(lexers)
+      local button, i = ui.dialogs.filteredlist{
+        title = _L['Select Lexer'], columns = _L['Name'], items = lexers
+      }
+      if button == 1 and i then buffer:set_lexer(lexers[i]) end
+    end}
   },
   {
     title = _L['View'],

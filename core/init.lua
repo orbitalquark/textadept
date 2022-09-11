@@ -14,12 +14,11 @@ events = require('events')
 args = require('args')
 _L = require('locale')
 require('file_io')
+lexer = require('lexer')
 require('lfs_ext')
 require('ui')
 keys = require('keys')
 _M = {} -- language modules table
-
-_LEXERPATH = string.format('%s/lexers;%s/lexers', _USERHOME, _HOME)
 
 -- pdcurses compatibility.
 if CURSES and WIN32 then
@@ -131,7 +130,7 @@ local styles_mt = {
 events.connect(events.VIEW_NEW, function()
   view.colors, view.styles = {}, setmetatable({}, styles_mt)
   view.set_styles, view.set_theme = set_styles, set_theme
-end)
+end, 1)
 
 --[[ This comment is for LuaDoc.
 ---

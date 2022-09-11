@@ -177,6 +177,13 @@ local M = {}
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
 --   * _`cmd`_: The "Command" modifier key on macOS is held down.
 --   * _`caps_lock`_: The "Caps Lock" modifier is on.
+-- @field LEXER_LOADED (string)
+--   Emitted after loading a language lexer.
+--   This is useful for overriding a language module's key bindings or other properties since
+--   the module is not loaded when Textadept starts.
+--   Arguments:
+--
+--   * _`name`_: The language lexer's name.
 -- @field MARGIN_CLICK (string)
 --   Emitted when clicking the mouse inside a sensitive margin.
 --   Arguments:

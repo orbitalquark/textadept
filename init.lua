@@ -15,9 +15,10 @@ for name, f in pairs(io) do if name:find('^_') then buffer[name:sub(2)], io[name
 
 textadept = require('textadept')
 
--- Legacy theme compatibility.
-events.connect(events.VIEW_NEW, function() lexer = {colors = view.colors, styles = view.styles} end)
-lexer = view -- temporary proxy for folding properties; will be overwritten in events.VIEW_NEW
+-- Legacy.
+textadept.file_types = {extensions = lexer.detect_extensions, patterns = lexer.detect_patterns}
+events.connect(events.VIEW_NEW, function() lexer.colors, lexer.styles = view.colors, view.styles end)
+setmetatable(lexer, {__newindex = function(_, k, v) if k:find('^fold') then view[k] = v end end})
 
 -- The remainder of this file defines default buffer and view properties and applies them to
 -- subsequent buffers and views. Normally, a setting like `buffer.use_tabs = false` only applies

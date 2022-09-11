@@ -128,7 +128,7 @@ Here is a simple *~/.textadept/init.lua* for illustration:
     keys.f12 = ctags.goto_tag
 
     -- Recognize .luadoc files as Lua code.
-    textadept.file_types.extensions.luadoc = 'lua'
+    lexer.detect_extensions.luadoc = 'lua'
 
     -- Change the run commands for Lua and Python
     textadept.run.run_commands.lua = 'lua5.1 "%f"'
@@ -719,19 +719,19 @@ associated with that file and assigns a lexer to perform syntax highlighting of 
 contents. The identification process is as follows:
 
 1. The first line of the file is checked against any Lua patterns in
-   [`textadept.file_types.patterns`][]. If there is a match, the lexer associated with that
-   matching pattern is used.
+   [`lexer.detect_patterns`][]. If there is a match, the lexer associated with that matching
+   pattern is used.
 2. The file's extension is checked against any of the extensions in
-   [`textadept.file_types.extensions`][]. If there is a match, the lexer associated with that
-   matching extension is used. If the file does not have an extension, the entire file name is
-   used in the check.
+   [`lexer.detect_extensions`][]. If there is a match, the lexer associated with that matching
+   extension is used. If the file does not have an extension, the entire file name is used in
+   the check.
 
-You can associate first line patterns, file extensions, and file names with lexers by modifying
-[`textadept.file_types.patterns`][] and [`textadept.file_types.extensions`][]. For example,
-in your *~/.textadept/init.lua*:
+You can associate first line patterns, file extensions, and file names with lexers by
+modifying [`lexer.detect_patterns`][] and [`lexer.detect_extensions`][]. For example, in your
+*~/.textadept/init.lua*:
 
-    textadept.file_types.patterns['^#!.+/zsh'] = 'bash'
-    textadept.file_types.extensions.luadoc = 'lua'
+    lexer.detect_patterns['^#!.+/zsh'] = 'bash'
+    lexer.detect_extensions.luadoc = 'lua'
 
 Textadept has lexers for more than 100 different programming languages and recognizes hundreds
 of file types. In the event that your programming language is not understood, you can write a
@@ -754,8 +754,8 @@ the list, with spaces being wildcards. The arrow keys move the selection up and 
 `Enter`, selecting `OK`, or double-clicking on a lexer assigns it to the current buffer. (The
 terminal requires pressing `Enter`.)
 
-[`textadept.file_types.patterns`]: api.html#textadept.file_types.patterns
-[`textadept.file_types.extensions`]: api.html#textadept.file_types.extensions
+[`lexer.detect_patterns`]: api.html#lexer.detect_patterns
+[`lexer.detect_extensions`]: api.html#lexer.detect_extensions
 [lexer]: api.html#lexer
 
 ##### Encoding
@@ -1366,12 +1366,9 @@ its *core/keys.lua* is listening for. When a sequence like `Ctrl+O` on Windows, 
 is recognized, *core/keys.lua* looks up which Lua function is assigned to the `keys['ctrl+o']`
 key. By default, it is `io.open_file()`, so that function is executed and the user is prompted
 for a file to open. You could bind a different function to that key and Textadept will duly
-execute it. Similarly, when the editor opens a file via `io.open_file()`, that function emits a
-`events.FILE_OPENED` event, which *modules/textadept/file_types.lua* is listening for. When a
-Lua file is opened, *modules/textadept/file_types.lua* designates the "lua" lexer to perform
-syntax highlighting on that file and also loads the Lua language module if it has not already
-been loaded. You could also listen for `events.FILE_OPENED` in your *~/.textadept/init.lua*
-and perform your own action, such as loading some project-specific tools for editing that file.
+execute it. Similarly, when the editor opens a file via `io.open_file()`, that function emits
+a `events.FILE_OPENED` event, which you could listen for in your *~/.textadept/init.lua* and
+perform your own action, such as loading some project-specific tools for editing that file.
 
 Your *~/.textadept/init.lua* is the entry point to scripting Textadept. In this file you can set
 up custom key bindings, menu items, and event handlers that will perform custom actions. Here

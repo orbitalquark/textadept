@@ -1756,7 +1756,7 @@ Changes:
 * Officially supported language modules moved to a [new repository][].
 * Added Fish lexer and updated PHP and Python lexers.
 * Merged `events.FILE_SAVED_AS` into [`events.FILE_AFTER_SAVE`][] as a new parameter.
-* Merged `textadept.file_types.shebangs` into [`textadept.file_types.patterns`][].
+* Merged `textadept.file_types.shebangs` into `textadept.file_types.patterns`.
 * Removed `io.boms`.
 * Scintilla: added [`buffer.indic_hover_fore`][] and [`buffer.indic_hover_style`][] for styling
   indicators differently when the mouse is over them.
@@ -1765,7 +1765,6 @@ Changes:
 * Updated to [Scintilla][] 3.5.4.
 
 [new repository]: https://github.com/orbitalquark/textadept-modules
-[`textadept.file_types.patterns`]: api.html#textadept.file_types.patterns
 [`events.FILE_AFTER_SAVE`]: api.html#events.FILE_AFTER_SAVE
 [`buffer.indic_hover_fore`]: api.html#buffer.indic_hover_fore
 [`buffer.indic_hover_style`]: api.html#buffer.indic_hover_style
@@ -2294,11 +2293,10 @@ Bugfixes:
 
 Changes:
 
-* Renamed `_M.textadept.mime_types` to [`_M.textadept.file_types`][].
+* Renamed `_M.textadept.mime_types` to `_M.textadept.file_types`.
 * Eliminated *mime_types.conf* files. Add or modify file type tables [directly][].
 * Changed scrollbar look and feel on Mac OSX.
 
-[`_M.textadept.file_types`]: api.html#textadept.file_types
 [directly]: manual.html#file-types
 
 ### 7.0 alpha 2 (01 Jul 2013)

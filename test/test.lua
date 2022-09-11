@@ -185,6 +185,91 @@ function test_events_value_passing()
   assert_equal(events.emit(event), {1, 2, 3})
 end
 
+function test_lexer_get_lexer()
+  buffer.new()
+  buffer:set_lexer('html')
+  -- LuaFormatter off
+  buffer:set_text(table.concat({
+    '<html><head><style type="text/css">',
+    'h1 { color: red; }',
+    '</style></head></html>'
+  }, newline()))
+  -- LuaFormatter on
+  buffer:colorize(1, -1)
+  buffer:goto_pos(buffer:position_from_line(2))
+  assert_equal(buffer.lexer_language, 'html')
+  assert_equal(buffer:get_lexer(true), 'css')
+  assert_equal(buffer:name_of_style(buffer.style_at[buffer.current_pos]), 'tag')
+  assert_equal(buffer:name_of_style(buffer.style_at[buffer.current_pos + 5]), 'property')
+  assert(buffer:name_of_style(buffer.style_at[buffer.current_pos + 12]):find('constant.builtin'),
+    'not a builtin constant style')
+  buffer:close(true)
+end
+
+function test_lexer_set_lexer()
+  local lexer_loaded
+  local handler = function(name) lexer_loaded = name end
+  events.connect(events.LEXER_LOADED, handler)
+  buffer.new()
+  buffer.filename = 'foo.lua'
+  buffer:set_lexer()
+  assert_equal(buffer.lexer_language, 'lua')
+  assert_equal(lexer_loaded, 'lua')
+  buffer.filename = 'foo'
+  buffer:set_text('#!/bin/sh')
+  buffer:set_lexer()
+  assert_equal(buffer.lexer_language, 'bash')
+  buffer:undo()
+  buffer.filename = 'Makefile'
+  buffer:set_lexer()
+  assert_equal(buffer.lexer_language, 'makefile')
+  view:goto_buffer(1)
+  view:goto_buffer(-1)
+  assert_equal(buffer.lexer_language, 'makefile')
+  events.disconnect(events.LEXER_LOADED, handler)
+  buffer:close(true)
+
+  assert_raises(function() buffer:set_lexer(true) end, 'string/nil expected, got boolean')
+end
+
+function test_lexer_set_lexer_after_buffer_switch()
+  buffer.new()
+  buffer:add_text('[[foo]]')
+  buffer:set_lexer('lua')
+  local longstring_style = buffer.style_at[1]
+  local longstring_name = buffer:name_of_style(longstring_style)
+  assert(longstring_name:find('string.longstring'), 'not a longstring style')
+  local longstring_fore = view.style_fore[longstring_style]
+  assert(longstring_fore ~= view.style_fore[view.STYLE_DEFAULT], 'longstring fore is default fore')
+  buffer.new()
+  buffer:set_lexer('html')
+  assert_equal(buffer:style_of_name(longstring_name), view.STYLE_DEFAULT)
+  assert(buffer:name_of_style(longstring_style) ~= longstring_name, 'lexer not properly changed')
+  assert(view.style_fore[longstring_style] ~= longstring_fore, 'styles not reset')
+  buffer:close(true)
+  assert_equal(buffer:name_of_style(buffer.style_at[1]), longstring_name)
+  assert_equal(view.style_fore[buffer.style_at[1]], longstring_fore)
+  buffer:close(true)
+end
+
+function test_lexer_load_lexers()
+  local lexers = {}
+  for file in lfs.dir(_LEXERPATH:match('[^;]+$')) do -- just _HOME/lexers
+    local name = file:match('^(.+)%.lua$')
+    if name and name ~= 'lexer' then lexers[#lexers + 1] = name end
+  end
+  table.sort(lexers)
+  print('Loading lexers...')
+  if #_VIEWS > 1 then view:unsplit() end
+  view:goto_buffer(-1)
+  buffer.new()
+  for _, name in ipairs(lexers) do
+    print_silent('Loading lexer ' .. name)
+    buffer:set_lexer(name)
+  end
+  buffer:close()
+end
+
 local locales = {}
 -- Load localizations from *locale_conf* and return them in a table.
 -- @param locale_conf String path to a local file to load.
@@ -383,6 +468,12 @@ function test_file_io_open_first_visible_line()
   buffer:close()
 end
 
+function test_file_io_open_set_lexer()
+  io.open_file(_HOME .. '/src/textadept.c')
+  assert_equal(buffer.lexer_language, 'ansi_c')
+  buffer:close()
+end
+
 function test_file_io_reload_file()
   io.open_file(_HOME .. '/test/file_io/utf8')
   local pos = 10
@@ -435,6 +526,16 @@ function test_file_io_save_file()
   os.remove(filename)
 
   assert_raises(function() buffer:save_as(1) end, 'string/nil expected, got number')
+end
+
+function test_file_io_save_as_set_lexer()
+  buffer.new()
+  assert_equal(buffer.lexer_language, 'text')
+  local name = os.tmpname() .. '.lua'
+  buffer:save_as(name)
+  os.remove(name)
+  assert_equal(buffer.lexer_language, 'lua')
+  buffer:close()
 end
 
 function test_file_io_non_global_buffer_functions()
@@ -1453,7 +1554,7 @@ function test_command_entry_complete_lua()
   assert_lua_autocompletion('view:call', 'call_tip_active')
   assert_lua_autocompletion('goto', 'goto_buffer')
   assert_lua_autocompletion('_', '_BUFFERS')
-  assert_lua_autocompletion('fi', 'file_types')
+  assert_lua_autocompletion('fi', 'file_types') -- legacy; will eventually be filename
   ui.command_entry:focus() -- hide
 end
 
@@ -2437,106 +2538,6 @@ function test_editing_show_documentation()
     'number/nil expected, got boolean')
 end
 
-function test_file_types_get_lexer()
-  buffer.new()
-  buffer:set_lexer('html')
-  -- LuaFormatter off
-  buffer:set_text(table.concat({
-    '<html><head><style type="text/css">',
-    'h1 { color: red; }',
-    '</style></head></html>'
-  }, newline()))
-  -- LuaFormatter on
-  buffer:colorize(1, -1)
-  buffer:goto_pos(buffer:position_from_line(2))
-  assert_equal(buffer.lexer_language, 'html')
-  assert_equal(buffer:get_lexer(true), 'css')
-  assert_equal(buffer:name_of_style(buffer.style_at[buffer.current_pos]), 'tag')
-  assert_equal(buffer:name_of_style(buffer.style_at[buffer.current_pos + 5]), 'property')
-  assert(buffer:name_of_style(buffer.style_at[buffer.current_pos + 12]):find('constant.builtin'),
-    'not a builtin constant style')
-  buffer:close(true)
-end
-
-function test_file_types_set_lexer()
-  local lexer_loaded
-  local handler = function(name) lexer_loaded = name end
-  events.connect(events.LEXER_LOADED, handler)
-  buffer.new()
-  buffer.filename = 'foo.lua'
-  buffer:set_lexer()
-  assert_equal(buffer.lexer_language, 'lua')
-  assert_equal(lexer_loaded, 'lua')
-  buffer.filename = 'foo'
-  buffer:set_text('#!/bin/sh')
-  buffer:set_lexer()
-  assert_equal(buffer.lexer_language, 'bash')
-  buffer:undo()
-  buffer.filename = 'Makefile'
-  buffer:set_lexer()
-  assert_equal(buffer.lexer_language, 'makefile')
-  -- Verify lexer after certain events.
-  buffer.filename = 'foo.c'
-  events.emit(events.FILE_AFTER_SAVE, nil, true)
-  assert_equal(buffer.lexer_language, 'ansi_c')
-  buffer.filename = 'foo.cpp'
-  events.emit(events.FILE_OPENED)
-  assert_equal(buffer.lexer_language, 'cpp')
-  view:goto_buffer(1)
-  view:goto_buffer(-1)
-  assert_equal(buffer.lexer_language, 'cpp')
-  events.disconnect(events.LEXER_LOADED, handler)
-  buffer:close(true)
-
-  assert_raises(function() buffer:set_lexer(true) end, 'string/nil expected, got boolean')
-end
-
-function test_file_types_set_lexer_after_buffer_switch()
-  buffer.new()
-  buffer:add_text('[[foo]]')
-  buffer:set_lexer('lua')
-  local longstring_style = buffer.style_at[1]
-  local longstring_name = buffer:name_of_style(longstring_style)
-  assert(longstring_name:find('string.longstring'), 'not a longstring style')
-  local longstring_fore = view.style_fore[longstring_style]
-  assert(longstring_fore ~= view.style_fore[view.STYLE_DEFAULT], 'longstring fore is default fore')
-  buffer.new()
-  buffer:set_lexer('html')
-  assert_equal(buffer:style_of_name(longstring_name), view.STYLE_DEFAULT)
-  assert(buffer:name_of_style(longstring_style) ~= longstring_name, 'lexer not properly changed')
-  assert(view.style_fore[longstring_style] ~= longstring_fore, 'styles not reset')
-  buffer:close(true)
-  assert_equal(buffer:name_of_style(buffer.style_at[1]), longstring_name)
-  assert_equal(view.style_fore[buffer.style_at[1]], longstring_fore)
-  buffer:close(true)
-end
-
-function test_file_types_select_lexer_interactive()
-  buffer.new()
-  local name = buffer.lexer_language
-  textadept.file_types.select_lexer()
-  assert(buffer.lexer_language ~= name, 'lexer unchanged')
-  buffer:close()
-end
-
-function test_file_types_load_lexers()
-  local lexers = {}
-  for file in lfs.dir(_LEXERPATH:match('[^;]+$')) do -- just _HOME/lexers
-    local name = file:match('^(.+)%.lua$')
-    if name and name ~= 'lexer' then lexers[#lexers + 1] = name end
-  end
-  table.sort(lexers)
-  print('Loading lexers...')
-  if #_VIEWS > 1 then view:unsplit() end
-  view:goto_buffer(-1)
-  buffer.new()
-  for _, name in ipairs(lexers) do
-    print_silent('Loading lexer ' .. name)
-    buffer:set_lexer(name)
-  end
-  buffer:close()
-end
-
 function test_ui_find_find_text()
   local wrapped = false
   local handler = function() wrapped = true end
@@ -3436,6 +3437,12 @@ function test_menu_menu_functions()
 end
 
 function test_menu_functions_interactive()
+  buffer.new()
+  local name = buffer.lexer_language
+  textadept.menu.menubar[_L['Buffer']][_L['Select Lexer...']][2]()
+  assert(buffer.lexer_language ~= name, 'lexer unchanged')
+  buffer:close()
+
   io.open_file(_HOME .. '/core/init.lua')
   textadept.menu.menubar[_L['Tools']][_L['Quick Open']][_L['Quickly Open Current Directory']][2]()
   assert(buffer.filename:find(file(_HOME .. '/core/')), 'did not quickly open in current directory')

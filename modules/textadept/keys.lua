@@ -418,7 +418,7 @@ local bindings = {
   -- TODO: m('Buffer/Encoding/UTF-16 Encoding')
   [m('Buffer/Toggle Wrap Mode')] = {'ctrl+alt+\\', 'ctrl+\\', nil},
   [m('Buffer/Toggle View Whitespace')] = {'ctrl+alt+S', 'ctrl+S', nil},
-  [textadept.file_types.select_lexer] = {'ctrl+L', 'cmd+L', 'meta+L'},
+  [m('Buffer/Select Lexer...')] = {'ctrl+L', 'cmd+L', 'meta+L'},
 
   -- View.
   [m('View/Next View')] = {'ctrl+alt+n', 'ctrl+alt+\t', nil},
