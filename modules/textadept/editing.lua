@@ -40,7 +40,6 @@ M.autocomplete_all_words = false
 M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
 M.highlight_words = M.HIGHLIGHT_NONE
 M.auto_enclose = false
-M.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number() -- legacy
 M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 -- LuaFormatter off

@@ -7104,17 +7104,16 @@ Run shell commands silently in the background.
 ### Functions defined by `textadept.run`
 
 <a id="textadept.run.build"></a>
-#### `textadept.run.build`(*root\_directory*)
+#### `textadept.run.build`(*dir*)
 
-Prompts the user with the command entry to build the project whose root path is *root_directory*
-or the current project using the shell command from the `build_commands` table.
-The current project is determined by either the buffer's filename or the current working
-directory.
+Prompts the user with the command entry to build the project whose root path is *dir* or
+the current project using the shell command from the `build_commands` table.  The current
+project is determined by either the buffer's filename or the current working directory.
 Emits `BUILD_OUTPUT` events.
 
 Parameters:
 
-* *`root_directory`*: The path to the project to build. The default value is the current project.
+* *`dir`*: The path to the project to build. The default value is the current project.
 
 See also:
 
@@ -7173,18 +7172,18 @@ See also:
 * [`events`](#events)
 
 <a id="textadept.run.run_project"></a>
-#### `textadept.run.run_project`(*root\_directory*)
+#### `textadept.run.run_project`(*dir*)
 
 Prompts the user with the command entry to run the shell command from the `run_project_commands`
-table for the project whose root path is *root_directory* or the current project.
+table for the project whose root path is *dir* or the current project.
 The current project is determined by either the buffer's filename or the current working
 directory.
 Emits `RUN_OUTPUT` events.
 
 Parameters:
 
-* *`root_directory`*: The path to the project to run a command for. The default value is
-  the current project.
+* *`dir`*: The path to the project to run a command for. The default value is the current
+  project.
 
 See also:
 
@@ -7197,18 +7196,16 @@ See also:
 Stops the currently running process, if any.
 
 <a id="textadept.run.test"></a>
-#### `textadept.run.test`(*root\_directory*)
+#### `textadept.run.test`(*dir*)
 
-Prompts the user with the command entry to run tests for the project whose root path is
-*root_directory* or the current project using the shell command from the `test_commands` table.
-The current project is determined by either the buffer's filename or the current working
-directory.
+Prompts the user with the command entry to run tests for the project whose root path is *dir*
+or the current project using the shell command from the `test_commands` table.  The current
+project is determined by either the buffer's filename or the current working directory.
 Emits `TEST_OUTPUT` events.
 
 Parameters:
 
-* *`root_directory`*: The path to the project to run tests for. The default value is the
-  current project.
+* *`dir`*: The path to the project to run tests for. The default value is the current project.
 
 See also:
 

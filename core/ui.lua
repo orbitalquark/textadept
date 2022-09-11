@@ -311,8 +311,7 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
   else
     local other_view = _VIEWS[preferred_view] and preferred_view
     for _, view in ipairs(_VIEWS) do
-      local view_filename = view.buffer.filename or ''
-      if view_filename:find(patt) then
+      if (view.buffer.filename or ''):find(patt) then
         ui.goto_view(view)
         return
       end

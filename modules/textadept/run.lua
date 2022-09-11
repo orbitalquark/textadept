@@ -109,7 +109,7 @@ local function run_command(label, command, dir, event, commands, key, macros)
   local id = event .. key
   if not command_entry_f[id] then
     command_entry_f[id] = function(command, dir, env, event, commands, key, macros)
-      if command == '' then return end
+      if command:find('^%s*$') then return end
       if not is_func then commands[key] = command end -- update if not originally a function
       preferred_view = view
       local function emit(output) events.emit(event, output) end
@@ -231,32 +231,30 @@ M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='doc
 -- LuaFormatter on
 
 ---
--- Prompts the user with the command entry to build the project whose root path is *root_directory*
--- or the current project using the shell command from the `build_commands` table.
--- The current project is determined by either the buffer's filename or the current working
--- directory.
+-- Prompts the user with the command entry to build the project whose root path is *dir* or
+-- the current project using the shell command from the `build_commands` table.  The current
+-- project is determined by either the buffer's filename or the current working directory.
 -- Emits `BUILD_OUTPUT` events.
--- @param root_directory The path to the project to build. The default value is the current project.
+-- @param dir The path to the project to build. The default value is the current project.
 -- @see build_commands
 -- @see _G.events
 -- @name build
-function M.build(root_directory)
-  if not assert_type(root_directory, 'string/nil', 1) then
-    root_directory = io.get_project_root()
-    if not root_directory then return end
+function M.build(dir)
+  if not assert_type(dir, 'string/nil', 1) then
+    dir = io.get_project_root()
+    if not dir then return end
   end
-  for i = 1, #_BUFFERS do _BUFFERS[i]:annotation_clear_all() end
-  local command = M.build_commands[root_directory]
-  if not command then
+  for _, buffer in ipairs(_BUFFERS) do buffer:annotation_clear_all() end
+  local cmd = M.build_commands[dir]
+  if not cmd then
     for build_file, build_command in pairs(M.build_commands) do
-      if lfs.attributes(string.format('%s/%s', root_directory, build_file)) then
-        command = build_command
+      if lfs.attributes(string.format('%s/%s', dir, build_file)) then
+        cmd = build_command
         break
       end
     end
   end
-  run_command(_L['Build command:'], command, root_directory, events.BUILD_OUTPUT, M.build_commands,
-    root_directory)
+  run_command(_L['Build command:'], cmd, dir, events.BUILD_OUTPUT, M.build_commands, dir)
 end
 
 ---
@@ -270,24 +268,22 @@ end
 M.test_commands = {}
 
 ---
--- Prompts the user with the command entry to run tests for the project whose root path is
--- *root_directory* or the current project using the shell command from the `test_commands` table.
--- The current project is determined by either the buffer's filename or the current working
--- directory.
+-- Prompts the user with the command entry to run tests for the project whose root path is *dir*
+-- or the current project using the shell command from the `test_commands` table.  The current
+-- project is determined by either the buffer's filename or the current working directory.
 -- Emits `TEST_OUTPUT` events.
--- @param root_directory The path to the project to run tests for. The default value is the
---   current project.
+-- @param dir The path to the project to run tests for. The default value is the current project.
 -- @see test_commands
 -- @see _G.events
 -- @name test
-function M.test(root_directory)
-  if not assert_type(root_directory, 'string/nil', 1) then
-    root_directory = io.get_project_root()
-    if not root_directory then return end
+function M.test(dir)
+  if not assert_type(dir, 'string/nil', 1) then
+    dir = io.get_project_root()
+    if not dir then return end
   end
-  for i = 1, #_BUFFERS do _BUFFERS[i]:annotation_clear_all() end
-  run_command(_L['Test command:'], M.test_commands[root_directory], root_directory,
-    events.TEST_OUTPUT, M.test_commands, root_directory)
+  for _, buffer in ipairs(_BUFFERS) do buffer:annotation_clear_all() end
+  local cmd = M.test_commands[dir]
+  run_command(_L['Test command:'], cmd, dir, events.TEST_OUTPUT, M.test_commands, dir)
 end
 
 ---
@@ -302,22 +298,22 @@ M.run_project_commands = {}
 
 ---
 -- Prompts the user with the command entry to run the shell command from the `run_project_commands`
--- table for the project whose root path is *root_directory* or the current project.
+-- table for the project whose root path is *dir* or the current project.
 -- The current project is determined by either the buffer's filename or the current working
 -- directory.
 -- Emits `RUN_OUTPUT` events.
--- @param root_directory The path to the project to run a command for. The default value is
---   the current project.
+-- @param dir The path to the project to run a command for. The default value is the current
+--   project.
 -- @see test_commands
 -- @see _G.events
 -- @name run_project
-function M.run_project(root_directory)
-  if not assert_type(root_directory, 'string/nil', 1) then
-    root_directory = io.get_project_root()
-    if not root_directory then return end
+function M.run_project(dir)
+  if not assert_type(dir, 'string/nil', 1) then
+    dir = io.get_project_root()
+    if not dir then return end
   end
-  run_command(_L['Project run command:'], M.run_project_commands[root_directory], root_directory,
-    events.RUN_OUTPUT, M.run_project_commands, root_directory)
+  local cmd = M.run_project_commands[dir]
+  run_command(_L['Project run command:'], cmd, dir, events.RUN_OUTPUT, M.run_project_commands, dir)
 end
 
 ---

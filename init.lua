@@ -21,6 +21,7 @@ events.connect(events.VIEW_NEW, function()
   for _, k in ipairs{'colors', 'styles'} do rawset(lexer, k, view[k]) end
 end)
 setmetatable(lexer, {__newindex = function(_, k, v) if k:find('^fold') then view[k] = v end end})
+textadept.editing.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
 
 -- The remainder of this file defines default buffer and view properties and applies them to
 -- subsequent buffers and views. Normally, a setting like `buffer.use_tabs = false` only applies
@@ -83,8 +84,6 @@ end)
 -- Default buffer and view settings.
 
 local buffer, view = buffer, view
-
-buffer.i_lexer = 'text'
 
 view:set_theme(not CURSES and 'light' or 'term')
 

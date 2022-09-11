@@ -463,12 +463,12 @@ end
 -- @name goto_file_found
 function M.goto_file_found(line_num, next)
   if type(line_num) == 'boolean' then line_num, next = nil, line_num end
-  local ff_view, ff_buf = get_ff_view(), get_ff_buffer()
-  if not ff_view and not ff_buf then return end
+  local ff_view, ff_buffer = get_ff_view(), get_ff_buffer()
+  if not ff_view and not ff_buffer then return end
   if ff_view then
     ui.goto_view(ff_view)
   else
-    view:goto_buffer(ff_buf)
+    view:goto_buffer(ff_buffer)
   end
 
   -- If no line number was given, find the next search result, wrapping as necessary.

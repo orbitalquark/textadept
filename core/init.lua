@@ -73,7 +73,7 @@ style_object.__index = style_object
 -- @param props Table of style properties to use.
 local function style_obj(props)
   local style = {}
-  for k, v in pairs(assert_type(props, 'table', 1)) do style[k] = v end
+  for k, v in pairs(props) do style[k] = v end
   return setmetatable(style, style_object)
 end
 
@@ -90,7 +90,6 @@ local map = {italics = 'italic', underlined = 'underline', eolfilled = 'eol_fill
 -- @param view A view.
 -- @param style_num Style number to set the style for.
 local function set_style(view, style_num)
-  assert_type(style_num, 'number', 2)
   local styles = buffer ~= ui.command_entry and view.styles or _G.view.styles
   local style = rawget(styles, style_num) or styles[buffer:name_of_style(style_num):gsub('%.', '_')]
   if style then for k, v in pairs(style) do view['style_' .. (map[k] or k)][style_num] = v end end
@@ -102,7 +101,7 @@ local function set_styles(view)
   view:style_reset_default()
   set_style(view, view.STYLE_DEFAULT)
   view:style_clear_all()
-  local num_styles, num_predefined = buffer.named_styles, 8 -- default to folddisplaytext
+  local num_styles, num_predefined = buffer.named_styles, 8 -- DEFAULT to FOLDDISPLAYTEXT
   for i = 1, math.min(num_styles - num_predefined, view.STYLE_DEFAULT - 1) do set_style(view, i) end
   for i = view.STYLE_DEFAULT + 1, view.STYLE_FOLDDISPLAYTEXT do set_style(view, i) end
   for i = view.STYLE_FOLDDISPLAYTEXT + 1, num_styles do set_style(view, i) end
@@ -126,7 +125,7 @@ end
 local styles_mt = {
   __index = function(t, k) return k and t[k:match('^(.+)[_%.]')] or nil end,
   __newindex = function(t, k, v)
-    rawset(t, type(k) == 'string' and k:gsub('%.', '_') or k, style_obj(v))
+    rawset(t, type(k) == 'string' and k:gsub('%.', '_') or k, style_obj(assert_type(v, 'table', 3)))
   end
 }
 
