@@ -17,7 +17,9 @@ textadept = require('textadept')
 
 -- Legacy.
 textadept.file_types = {extensions = lexer.detect_extensions, patterns = lexer.detect_patterns}
-events.connect(events.VIEW_NEW, function() lexer.colors, lexer.styles = view.colors, view.styles end)
+events.connect(events.VIEW_NEW, function()
+  for _, k in ipairs{'colors', 'styles'} do rawset(lexer, k, view[k]) end
+end)
 setmetatable(lexer, {__newindex = function(_, k, v) if k:find('^fold') then view[k] = v end end})
 
 -- The remainder of this file defines default buffer and view properties and applies them to

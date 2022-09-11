@@ -4386,6 +4386,16 @@ function test_set_theme()
   view:unsplit()
 end
 
+function test_set_legacy_theme()
+  view:split()
+  view:set_theme(_HOME .. '/test/themes/tomorrow.lua')
+  local style_num = buffer:style_of_name(lexer.FUNCTION)
+  assert(view.style_fore[style_num] > 0, 'theme not set')
+  assert(view.style_fore[style_num] ~= _VIEWS[1].style_fore[style_num], 'theme not set properly')
+  ui.goto_view(-1)
+  view:unsplit()
+end
+
 function test_set_view_style()
   buffer.new()
   buffer:set_lexer('lua')
