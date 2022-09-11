@@ -4425,7 +4425,8 @@ function test_set_view_style()
   assert(view.styles.custom_name and view.styles.custom_name.bold, 'dot style not converted')
 
   assert_raises(function() view.styles.foo = 1 end, 'table expected')
-  assert_raises(function() view.styles.foo = view.styles.default .. 1 end, 'table expected')
+  assert_raises(function() view.styles.foo = view.styles[view.STYLE_DEFAULT] .. 1 end,
+    'table expected')
   -- TODO: error when setting existing style like view.styles.default = 1?
 end
 

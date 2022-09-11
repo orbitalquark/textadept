@@ -19,7 +19,6 @@
 1. [textadept](#textadept)
 1. [textadept.bookmarks](#textadept.bookmarks)
 1. [textadept.editing](#textadept.editing)
-1. [textadept.file_types](#textadept.file_types)
 1. [textadept.history](#textadept.history)
 1. [textadept.keys](#textadept.keys)
 1. [textadept.macros](#textadept.macros)
@@ -3951,6 +3950,16 @@ Emitted when pressing a key.
   * _`cmd`_: The "Command" modifier key on macOS is held down.
   * _`caps_lock`_: The "Caps Lock" modifier is on.
 
+<a id="events.LEXER_LOADED"></a>
+#### `events.LEXER_LOADED` (string)
+
+Emitted after loading a language lexer.
+  This is useful for overriding a language module's key bindings or other properties since
+  the module is not loaded when Textadept starts.
+  Arguments:
+
+  * _`name`_: The language lexer's name.
+
 <a id="events.MARGIN_CLICK"></a>
 #### `events.MARGIN_CLICK` (string)
 
@@ -4673,19 +4682,19 @@ to) [`lexer.DEFAULT`](#lexer.DEFAULT), [`lexer.COMMENT`](#lexer.COMMENT), [`lexe
 [`lexer.PREPROCESSOR`](#lexer.PREPROCESSOR), [`lexer.CONSTANT`](#lexer.CONSTANT), [`lexer.CONSTANT_BUILTIN`](#lexer.CONSTANT_BUILTIN),
 [`lexer.VARIABLE`](#lexer.VARIABLE), [`lexer.VARIABLE_BUILTIN`](#lexer.VARIABLE_BUILTIN), [`lexer.FUNCTION`](#lexer.FUNCTION),
 [`lexer.FUNCTION_BUILTIN`](#lexer.FUNCTION_BUILTIN), [`lexer.FUNCTION_METHOD`](#lexer.FUNCTION_METHOD), [`lexer.CLASS`](#lexer.CLASS), [`lexer.TYPE`](#lexer.TYPE),
-[`lexer.LABEL`](#lexer.LABEL), [`lexer.REGEX`](#lexer.REGEX), and [`lexer.EMBEDDED`](#lexer.EMBEDDED). Tag names for markup languages
-include (but are not limited to) [`lexer.TAG`](#lexer.TAG), [`lexer.ATTRIBUTE`](#lexer.ATTRIBUTE), [`lexer.TITLE`](#lexer.TITLE),
-[`lexer.BOLD`](#lexer.BOLD), [`lexer.ITALIC`](#lexer.ITALIC), [`lexer.UNDERLINE`](#lexer.UNDERLINE), [`lexer.CODE`](#lexer.CODE), [`lexer.LINK`](#lexer.LINK),
-and [`lexer.REFERENCE`](#lexer.REFERENCE). Patterns include [`lexer.any`](#lexer.any), [`lexer.alpha`](#lexer.alpha),
-[`lexer.digit`](#lexer.digit), [`lexer.alnum`](#lexer.alnum), [`lexer.lower`](#lexer.lower), [`lexer.upper`](#lexer.upper), [`lexer.xdigit`](#lexer.xdigit),
-[`lexer.graph`](#lexer.graph), [`lexer.print`](#lexer.print), [`lexer.punct`](#lexer.punct), [`lexer.space`](#lexer.space), [`lexer.newline`](#lexer.newline),
-[`lexer.nonnewline`](#lexer.nonnewline), [`lexer.dec_num`](#lexer.dec_num), [`lexer.hex_num`](#lexer.hex_num), [`lexer.oct_num`](#lexer.oct_num),
-[`lexer.bin_num`](#lexer.bin_num), [`lexer.integer`](#lexer.integer), [`lexer.float`](#lexer.float), [`lexer.number`](#lexer.number), and
-[`lexer.word`](#lexer.word). You may use your own tag names if none of the above fit your language,
-but an advantage to using predefined tag names is that the language elements your lexer
-recognizes will inherit any universal syntax highlighting color theme that your editor
-uses. You can also "subclass" existing tag names by appending a '.*subclass*' string to
-them. For example, the HTML lexer tags unknown tags as `lexer.TAG .. '.unknown'`. Editors
+[`lexer.LABEL`](#lexer.LABEL), [`lexer.REGEX`](#lexer.REGEX), and [`lexer.EMBEDDED`](#lexer.EMBEDDED). Tag names for markup
+languages include (but are not limited to) [`lexer.TAG`](#lexer.TAG), [`lexer.ATTRIBUTE`](#lexer.ATTRIBUTE),
+[`lexer.HEADING`](#lexer.HEADING), [`lexer.BOLD`](#lexer.BOLD), [`lexer.ITALIC`](#lexer.ITALIC), [`lexer.UNDERLINE`](#lexer.UNDERLINE),
+[`lexer.CODE`](#lexer.CODE), [`lexer.LINK`](#lexer.LINK), and [`lexer.REFERENCE`](#lexer.REFERENCE). Patterns include [`lexer.any`](#lexer.any),
+[`lexer.alpha`](#lexer.alpha), [`lexer.digit`](#lexer.digit), [`lexer.alnum`](#lexer.alnum), [`lexer.lower`](#lexer.lower), [`lexer.upper`](#lexer.upper),
+[`lexer.xdigit`](#lexer.xdigit), [`lexer.graph`](#lexer.graph), [`lexer.print`](#lexer.print), [`lexer.punct`](#lexer.punct), [`lexer.space`](#lexer.space),
+[`lexer.newline`](#lexer.newline), [`lexer.nonnewline`](#lexer.nonnewline), [`lexer.dec_num`](#lexer.dec_num), [`lexer.hex_num`](#lexer.hex_num),
+[`lexer.oct_num`](#lexer.oct_num), [`lexer.bin_num`](#lexer.bin_num), [`lexer.integer`](#lexer.integer), [`lexer.float`](#lexer.float),
+[`lexer.number`](#lexer.number), and [`lexer.word`](#lexer.word). You may use your own tag names if none of the above
+fit your language, but an advantage to using predefined tag names is that the language elements
+your lexer recognizes will inherit any universal syntax highlighting color theme that your
+editor uses. You can also "subclass" existing tag names by appending a '.*subclass*' string
+to them. For example, the HTML lexer tags unknown tags as `lexer.TAG .. '.unknown'`. Editors
 have the ability to style those subclassed tags in a different way than normal tags, or fall
 back to styling them as normal tags.
 
@@ -5221,6 +5230,21 @@ The tag name for function attribute elements, typically in markup.
 
 The tag name for bold elements, typically in markup.
 
+<a id="lexer.BRACE_BAD"></a>
+#### `lexer.BRACE_BAD` (string)
+
+The name of the predefined Scintilla style for highlighting a mismatched brace character.
+
+<a id="lexer.BRACE_LIGHT"></a>
+#### `lexer.BRACE_LIGHT` (string)
+
+The name of the predefined Scintilla style for highlighting a matching brace character.
+
+<a id="lexer.CALL_TIP"></a>
+#### `lexer.CALL_TIP` (string)
+
+The name of the predefined Scintilla style for call tips.
+
 <a id="lexer.CLASS"></a>
 #### `lexer.CLASS` (string)
 
@@ -5246,10 +5270,16 @@ The tag name for constant elements.
 
 The tag name for builtin constant elements.
 
+<a id="lexer.CONTROL_CHAR"></a>
+#### `lexer.CONTROL_CHAR` (string)
+
+The name of the predefined Scintilla style for control characters.
+
 <a id="lexer.DEFAULT"></a>
 #### `lexer.DEFAULT` (string)
 
 The tag name for default elements.
+  It is also the name of the predefined Scintilla style for unstyled text.
 
 <a id="lexer.EMBEDDED"></a>
 #### `lexer.EMBEDDED` (string)
@@ -5271,6 +5301,11 @@ The initial (root) fold level.
 
 Flag indicating that the line is blank.
 
+<a id="lexer.FOLD_DISPLAY_TEXT"></a>
+#### `lexer.FOLD_DISPLAY_TEXT` (string)
+
+The name of the predefined Scintilla style for the text displayed next to folded lines.
+
 <a id="lexer.FOLD_HEADER"></a>
 #### `lexer.FOLD_HEADER` (number)
 
@@ -5291,10 +5326,20 @@ The tag name for builtin function elements.
 
 The tag name for function method elements.
 
+<a id="lexer.HEADING"></a>
+#### `lexer.HEADING` (string)
+
+The tag name for heading elements, typically in markup.
+
 <a id="lexer.IDENTIFIER"></a>
 #### `lexer.IDENTIFIER` (string)
 
 The tag name for identifier elements.
+
+<a id="lexer.INDENT_GUIDE"></a>
+#### `lexer.INDENT_GUIDE` (string)
+
+The name of the predefined Scintilla style for indentation guides.
 
 <a id="lexer.ITALIC"></a>
 #### `lexer.ITALIC` (string)
@@ -5310,6 +5355,11 @@ The tag name for keyword elements.
 #### `lexer.LABEL` (string)
 
 The tag name for label elements.
+
+<a id="lexer.LINE_NUMBER"></a>
+#### `lexer.LINE_NUMBER` (string)
+
+The name of the predefined Scintilla style for line numbers.
 
 <a id="lexer.LINK"></a>
 #### `lexer.LINK` (string)
@@ -5350,11 +5400,6 @@ The tag name for string elements.
 #### `lexer.TAG` (string)
 
 The tag name for function tag elements, typically in markup.
-
-<a id="lexer.TITLE"></a>
-#### `lexer.TITLE` (string)
-
-The tag name for title elements, typically in markup.
 
 <a id="lexer.TYPE"></a>
 #### `lexer.TYPE` (string)
@@ -5611,6 +5656,29 @@ Returns a pattern that matches a decimal number, whose digits may be separated b
 Parameters:
 
 * *`c`*: 
+
+<a id="lexer.detect"></a>
+#### `lexer.detect`(*filename, line*)
+
+Returns the name of the lexer often associated with filename *filename* and/or content
+line *line*.
+
+Parameters:
+
+* *`filename`*: Optional string filename. The default value is read from the
+  'lexer.scintillua.filename' property.
+* *`line`*: Optional string first content line, such as a shebang line. The default value
+  is read from the 'lexer.scintillua.line' property.
+
+Return:
+
+* string lexer name to pass to `load()`, or `nil` if none was detected
+
+See also:
+
+* [`lexer.detect_extensions`](#lexer.detect_extensions)
+* [`lexer.detect_patterns`](#lexer.detect_patterns)
+* [`lexer.load`](#lexer.load)
 
 <a id="lexer.embed"></a>
 #### `lexer.embed`(*lexer, child, start\_rule, end\_rule*)
@@ -5969,6 +6037,29 @@ See also:
 * [`lexer.set_word_list`](#lexer.set_word_list)
 
 
+### Tables defined by `lexer`
+
+<a id="lexer.detect_extensions"></a>
+#### `lexer.detect_extensions`
+
+Map of file extensions, without the '.' prefix, to their associated lexer names.
+This map has precedence over Scintillua's built-in map.
+
+See also:
+
+* [`lexer.detect`](#lexer.detect)
+
+<a id="lexer.detect_patterns"></a>
+#### `lexer.detect_patterns`
+
+Map of line patterns to their associated lexer names.
+These are Lua string patterns, not LPeg patterns.
+This map has precedence over Scintillua's built-in map.
+
+See also:
+
+* [`lexer.detect`](#lexer.detect)
+
 ---
 <a id="lfs"></a>
 ## The `lfs` Module
@@ -6252,11 +6343,6 @@ Toggles a bookmark on the current line.
 Editing features for Textadept.
 
 ### Fields defined by `textadept.editing`
-
-<a id="textadept.editing.INDIC_BRACEMATCH"></a>
-#### `textadept.editing.INDIC_BRACEMATCH` (number)
-
-The matching brace highlight indicator number.
 
 <a id="textadept.editing.INDIC_HIGHLIGHT"></a>
 #### `textadept.editing.INDIC_HIGHLIGHT` (number)
@@ -6569,53 +6655,6 @@ Usage:
 * `textadept.editing.typeover_chars[string.byte('>')] = true`
 
 ---
-<a id="textadept.file_types"></a>
-## The `textadept.file_types` Module
----
-
-Handles file type detection for Textadept.
-
-### Fields defined by `textadept.file_types`
-
-<a id="events.LEXER_LOADED"></a>
-#### `events.LEXER_LOADED` (string)
-
-Emitted after loading a language lexer.
-  This is useful for overriding a language module's key bindings or other properties since
-  the module is not loaded when Textadept starts.
-  Arguments:
-
-  * _`name`_: The language lexer's name.
-
-
-### Functions defined by `textadept.file_types`
-
-<a id="textadept.file_types.select_lexer"></a>
-#### `textadept.file_types.select_lexer`()
-
-Prompts the user to select a lexer for the current buffer.
-
-See also:
-
-* [`buffer.set_lexer`](#buffer.set_lexer)
-
-
-### Tables defined by `textadept.file_types`
-
-<a id="textadept.file_types.extensions"></a>
-#### `textadept.file_types.extensions`
-
-Map of file extensions to their associated lexer names.
-If the file type is not recognized by its first-line, each file extension is matched against
-the file's extension.
-
-<a id="textadept.file_types.patterns"></a>
-#### `textadept.file_types.patterns`
-
-Map of first-line patterns to their associated lexer names.
-Each pattern is matched against the first line in the file.
-
----
 <a id="textadept.history"></a>
 ## The `textadept.history` Module
 ---
@@ -6758,9 +6797,9 @@ Ctrl+E | ⌘E | M-C | Command entry
 Ctrl+Shift+E | ⌘⇧E | M-S-C | Select command
 Ctrl+R | ⌘R | ^R | Run
 Ctrl+Shift+R | ⌘⇧R | M-^R | Compile
-Ctrl+Shift+A | ⌘⇧A | None | Set Arguments...
 Ctrl+Shift+B | ⌘⇧B | M-^B | Build
 Ctrl+Shift+T | ⌘⇧T | M-^T | Run tests
+Ctrl+Shift+C | ⌘⇧C | M-^C | Run project
 Ctrl+Shift+X | ⌘⇧X | M-^X | Stop
 Ctrl+Alt+E | ^⌘E | M-X | Next Error
 Ctrl+Alt+Shift+E | ^⌘⇧E | M-S-X | Previous Error
@@ -7033,19 +7072,16 @@ Emitted when executing a language's compile shell command.
   Arguments:
 
   * `output`: A line of string output from the command.
-  * `ext_or_lexer`: The file extension or lexer name associated with the executed compile
-    command.
 
 <a id="events.RUN_OUTPUT"></a>
 #### `events.RUN_OUTPUT` (string)
 
-Emitted when executing a language's run shell command.
+Emitted when executing a language's or project's run shell command.
   By default, output is printed to the output buffer. In order to override this behavior,
   connect to the event with an index of `1` and return `true`.
   Arguments:
 
   * `output`: A line of string output from the command.
-  * `ext_or_lexer`: The file extension or lexer name associated with the executed run command.
 
 <a id="events.TEST_OUTPUT"></a>
 #### `events.TEST_OUTPUT` (string)
@@ -7070,10 +7106,10 @@ Run shell commands silently in the background.
 <a id="textadept.run.build"></a>
 #### `textadept.run.build`(*root\_directory*)
 
-Builds the project whose root path is *root_directory* or the current project using the
-shell command from the `build_commands` table.
-If a "makefile" type of build file is found, prompts the user for the full build command. The
-current project is determined by either the buffer's filename or the current working directory.
+Prompts the user with the command entry to build the project whose root path is *root_directory*
+or the current project using the shell command from the `build_commands` table.
+The current project is determined by either the buffer's filename or the current working
+directory.
 Emits `BUILD_OUTPUT` events.
 
 Parameters:
@@ -7088,9 +7124,9 @@ See also:
 <a id="textadept.run.compile"></a>
 #### `textadept.run.compile`(*filename*)
 
-Compiles file *filename* or the current file using an appropriate shell command from the
-`compile_commands` table.
-The shell command is determined from the file's filename, extension, or language in that order.
+Prompts the user with the command entry to compile file *filename* or the current file using
+an appropriate shell command from the `compile_commands` table.
+The shell command is determined from the file's filename, extension, or language, in that order.
 Emits `COMPILE_OUTPUT` events.
 
 Parameters:
@@ -7121,9 +7157,9 @@ Parameters:
 <a id="textadept.run.run"></a>
 #### `textadept.run.run`(*filename*)
 
-Runs file *filename* or the current file using an appropriate shell command from the
-`run_commands` table.
-The shell command is determined from the file's filename, extension, or language in that order.
+Prompts the user with the command entry to run file *filename* or the current file using an
+appropriate shell command from the `run_commands` table.
+The shell command is determined from the file's filename, extension, or language, in that order.
 Emits `RUN_OUTPUT` events.
 
 Parameters:
@@ -7136,26 +7172,24 @@ See also:
 * [`textadept.run.run_commands`](#textadept.run.run_commands)
 * [`events`](#events)
 
-<a id="textadept.run.set_arguments"></a>
-#### `textadept.run.set_arguments`(*filename, run, compile*)
+<a id="textadept.run.run_project"></a>
+#### `textadept.run.run_project`(*root\_directory*)
 
-Appends the command line argument strings *run* and *compile* to their respective run and
-compile commands for file *filename* or the current file.
-If either is `nil`, prompts the user for missing the arguments. Each filename has its own
-set of compile and run arguments.
+Prompts the user with the command entry to run the shell command from the `run_project_commands`
+table for the project whose root path is *root_directory* or the current project.
+The current project is determined by either the buffer's filename or the current working
+directory.
+Emits `RUN_OUTPUT` events.
 
 Parameters:
 
-* *`filename`*: Optional path to the file to set run/compile arguments for.
-* *`run`*: Optional string run arguments to set. If `nil`, the user is prompted for them. Pass
-  the empty string for no run arguments.
-* *`compile`*: Optional string compile arguments to set. If `nil`, the user is prompted
-  for them. Pass the empty string for no compile arguments.
+* *`root_directory`*: The path to the project to run a command for. The default value is
+  the current project.
 
 See also:
 
-* [`textadept.run.run_commands`](#textadept.run.run_commands)
-* [`textadept.run.compile_commands`](#textadept.run.compile_commands)
+* [`textadept.run.test_commands`](#textadept.run.test_commands)
+* [`events`](#events)
 
 <a id="textadept.run.stop"></a>
 #### `textadept.run.stop`()
@@ -7165,8 +7199,8 @@ Stops the currently running process, if any.
 <a id="textadept.run.test"></a>
 #### `textadept.run.test`(*root\_directory*)
 
-Runs tests for the project whose root path is *root_directory* or the current project using
-the shell command from the `test_commands` table.
+Prompts the user with the command entry to run tests for the project whose root path is
+*root_directory* or the current project using the shell command from the `test_commands` table.
 The current project is determined by either the buffer's filename or the current working
 directory.
 Emits `TEST_OUTPUT` events.
@@ -7223,6 +7257,15 @@ Command line strings may have the following macros:
 
 Functions may also return a working directory and process environment table to operate in. By
 default, the working directory is the current file's parent directory and the environment
+is Textadept's environment.
+
+<a id="textadept.run.run_project_commands"></a>
+#### `textadept.run.run_project_commands`
+
+Map of project root paths to their associated "run" shell command line strings or functions
+that return such strings.
+Functions may also return a working directory and process environment table to operate
+in. By default, the working directory is the project's root directory and the environment
 is Textadept's environment.
 
 <a id="textadept.run.test_commands"></a>
@@ -7526,15 +7569,6 @@ The buffer's context menu, a [`ui.menu()`](#ui.menu).
 
 Whether or not Textadept's window is maximized.
 
-<a id="ui.silent_print"></a>
-#### `ui.silent_print` (bool)
-
-Whether or not to print messages to buffers silently.
-  This is not guaranteed to be a constant value, as Textadept may change it for the editor's
-  own purposes. This flag should be used only in conjunction with a group of [`ui.print()`](#ui.print)
-  and [`ui._print()`](#ui._print) function calls.
-  The default value is `false`, and focuses buffers when messages are printed to them.
-
 <a id="ui.statusbar_text"></a>
 #### `ui.statusbar_text` (string, Write-only)
 
@@ -7554,6 +7588,7 @@ Whether or not to display the tab bar when multiple buffers are open.
   The default value is `true`.
   A third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar, even if only
   one buffer is open.
+  The default value is `false`, and focuses buffers when messages are printed to them.
 
 <a id="ui.title"></a>
 #### `ui.title` (string, Write-only)
@@ -7564,25 +7599,43 @@ The title text of Textadept's window.
 ### Functions defined by `ui`
 
 <a id="ui._print"></a>
-#### `ui._print`(*buffer\_type, ...*)
+#### `ui._print`(*type, ...*)
 
-Prints the given string messages to the buffer of string type *buffer_type*.
-Opens a new buffer for printing messages to if necessary. If the message buffer is already
-open in a view, the message is printed to that view. Otherwise the view is split (unless
-`ui.tabs` is `true`) and the message buffer is displayed before being printed to.
+Prints the given value(s) to the buffer of string type *type*, along with a trailing newline.
+Opens a new buffer for printing to if necessary. If the print buffer is already open in a
+view, the value(s) is printed to that view. Otherwise the view is split (unless `ui.tabs`
+is `true`) and the print buffer is displayed before being printed to.
 
 Parameters:
 
-* *`buffer_type`*: String type of message buffer.
-* *`...`*: Message strings.
+* *`type`*: String type of print buffer.
+* *`...`*: Message or values to print. Lua's `tostring()` function is called for each value.
+  They will be printed as tab-separated values.
 
 Usage:
 
 * `ui._print(_L['[Message Buffer]'], message)`
 
-Return:
+See also:
 
-* buffer printed to
+* [`ui._print_silent`](#ui._print_silent)
+
+<a id="ui._print_silent"></a>
+#### `ui._print_silent`(*type, ...*)
+
+Silently prints the given value(s) to the buffer of string type *type* if that buffer is
+already open.
+Otherwise, behaves like `ui._print()`.
+
+Parameters:
+
+* *`type`*: String type of print buffer.
+* *`...`*: Message or values to print. Lua's `tostring()` function is called for each value.
+  They will be printed as tab-separated values.
+
+See also:
+
+* [`ui._print`](#ui._print)
 
 <a id="ui.dialog"></a>
 #### `ui.dialog`(*kind, ...*)
@@ -7684,6 +7737,35 @@ See also:
 * [`textadept.menu.context_menu`](#textadept.menu.context_menu)
 * [`textadept.menu.tab_context_menu`](#textadept.menu.tab_context_menu)
 
+<a id="ui.output"></a>
+#### `ui.output`(*...*)
+
+Prints the given value(s) to the output buffer.
+Opens a new buffer if one has not already been opened for printing output. The output buffer
+attempts to understand the error messages and warnings produced by various tools.
+
+Parameters:
+
+* *`...`*: Output to print.
+
+See also:
+
+* [`ui.output_silent`](#ui.output_silent)
+
+<a id="ui.output_silent"></a>
+#### `ui.output_silent`(*...*)
+
+Silently prints the given value(s) to the output buffer if it is already open.
+Otherwise, behaves like `ui.output()`.
+
+Parameters:
+
+* *`...`*: Output to print.
+
+See also:
+
+* [`ui.output`](#ui.output)
+
 <a id="ui.popup_menu"></a>
 #### `ui.popup_menu`(*menu*)
 
@@ -7705,32 +7787,27 @@ See also:
 <a id="ui.print"></a>
 #### `ui.print`(*...*)
 
-Prints the given string messages to the output buffer.
-Opens a new buffer if one has not already been opened for printing output. The output buffer
-attempts to understand the error messages and warnings produced by various tools.
+Prints the given value(s) to the message buffer, along with a trailing newline.
+Opens a new buffer if one has not already been opened for printing messages.
 
 Parameters:
 
-* *`...`*: Message strings.
+* *`...`*: Message or values to print. Lua's `tostring()` function is called for each value.
+  They will be printed as tab-separated values.
 
-Return:
+<a id="ui.print_silent"></a>
+#### `ui.print_silent`(*...*)
 
-* output buffer
-
-<a id="ui.print"></a>
-#### `ui.print`(*...*)
-
-Prints the given string messages to the output buffer.
-Opens a new buffer if one has not already been opened for printing output. The output buffer
-attempts to understand the error messages and warnings produced by various tools.
+Silently prints the given value(s) to the message buffer if it is already open.
+Otherwise, behaves like `ui.print()`.
 
 Parameters:
 
-* *`...`*: Message strings.
+* *`...`*: Message or values to print.
 
-Return:
+See also:
 
-* output buffer
+* [`ui.print`](#ui.print)
 
 <a id="ui.switch_buffer"></a>
 #### `ui.switch_buffer`(*zorder*)
@@ -7812,31 +7889,35 @@ Parameters:
 Opens the command entry.
 
 <a id="ui.command_entry.run"></a>
-#### `ui.command_entry.run`(*f, keys, lang, height*)
+#### `ui.command_entry.run`(*label, f, keys, lang, initial\_text, ...*)
 
-Opens the command entry, subjecting it to any key bindings defined in table *keys*,
-highlighting text with lexer name *lang*, and displaying *height* number of lines at a time,
-and then when the `Enter` key is pressed, closes the command entry and calls function *f*
-(if non-`nil`) with the command entry's text as an argument.
+Opens the command entry with label *label* (and optionally with string *initial_text*),
+subjecting it to any key bindings defined in table *keys*, highlighting text with lexer
+name *lang*, and then when the `Enter` key is pressed, closes the command entry and calls
+function *f* (if non-`nil`) with the command entry's text as an argument, along with any
+extra arguments passed to this function.
 By default with no arguments given, opens a Lua command entry.
 The command entry does not respond to Textadept's default key bindings, but instead to the
 key bindings defined in *keys* and in `ui.command_entry.editing_keys`.
 
 Parameters:
 
+* *`label`*: Optional string label to display in front of input.
 * *`f`*: Optional function to call upon pressing `Enter` in the command entry, ending the mode.
-  It should accept the command entry text as an argument.
+  It should accept at a minimum the command entry text as an argument.
 * *`keys`*: Optional table of key bindings to respond to. This is in addition to the
   basic editing and movement keys defined in `ui.command_entry.editing_keys`. `Esc` and
   `Enter` are automatically defined to cancel and finish the command entry, respectively.
   This parameter may be omitted completely.
 * *`lang`*: Optional string lexer name to use for command entry text. The default value is
-  `'text'`.
-* *`height`*: Optional number of lines to display in the command entry. The default value is `1`.
+  `'text'`. This parameter may only be omitted if there are no more parameters.
+* *`initial_text`*: Optional string of text to initially show in the command entry. The
+  default value comes from the command history for *f*.
+* *`...`*: Optional additional arguments to pass to *f*.
 
 Usage:
 
-* `ui.command_entry.run(ui.print)`
+* `ui.command_entry.run('echo:', ui.print)`
 
 See also:
 
