@@ -26,46 +26,46 @@ colors.light_cyan = 0xFFFF00
 colors.light_white = 0xFFFFFF
 
 -- Predefined styles.
-styles.default = {fore = colors.white, back = colors.black}
-styles.line_number = {fore = colors.black, bold = true}
-styles.brace_light = {bold = true}
-styles.brace_bad = {fore = colors.red, bold = true}
--- styles.control_char =
--- styles.indent_guide =
-styles.call_tip = {fore = colors.white, back = colors.black}
-styles.fold_display_text = {fore = colors.black, bold = true}
+styles[view.STYLE_DEFAULT] = {fore = colors.white, back = colors.black}
+styles[view.STYLE_LINENUMBER] = {fore = colors.black, bold = true}
+styles[view.STYLE_BRACELIGHT] = {bold = true}
+styles[view.STYLE_BRACEBAD] = {fore = colors.red, bold = true}
+-- styles[view.STYLE_CONTROLCHAR] ={}
+-- styles[view.STYLE_INDENTGUIDE] ={}
+styles[view.STYLE_CALLTIP] = {fore = colors.white, back = colors.black}
+styles[view.STYLE_FOLDDISPLAYTEXT] = {fore = colors.black, bold = true}
 
 -- Tag styles.
-styles.attribute = {fore = colors.blue}
--- styles.bold = {}
-styles.class = {fore = colors.yellow, bold = true}
--- styles.code = {}
-styles.comment = {fore = colors.black, bold = true}
--- styles.constant = {}
-styles.constant_builtin = {fore = colors.magenta, bold = true}
--- styles.embedded = {}
-styles.error = {fore = colors.red, bold = true}
--- styles['function'] = {}
-styles.function_builtin = {fore = colors.yellow}
--- styles.function_method = {}
-styles.heading = {fore = colors.magenta}
-styles.identifier = {}
--- styles.italic = {}
-styles.keyword = {fore = colors.blue, bold = true}
-styles.label = {fore = colors.magenta}
--- styles.link = {}
-styles.number = {fore = colors.cyan}
--- styles.operator = {}
-styles.preprocessor = {fore = colors.magenta}
--- styles.reference = {}
-styles.regex = {fore = colors.green, bold = true}
-styles.string = {fore = colors.green}
-styles.tag = {fore = colors.blue, bold = true}
-styles.type = {fore = colors.blue}
--- styles.underline = {}
--- styles.variable = {}
-styles.variable_builtin = {fore = colors.yellow, bold = true}
--- styles.whitespace = {}
+styles[lexer.ATTRIBUTE] = {fore = colors.blue}
+-- styles[lexer.BOLD] = {}
+styles[lexer.CLASS] = {fore = colors.yellow, bold = true}
+-- styles[lexer.CODE] = {}
+styles[lexer.COMMENT] = {fore = colors.black, bold = true}
+-- styles[lexer.CONSTANT] = {}
+styles[lexer.CONSTANT_BUILTIN] = {fore = colors.magenta, bold = true}
+-- styles[lexer.EMBEDDED] = {}
+styles[lexer.ERROR] = {fore = colors.red, bold = true}
+-- styles[lexer.FUNCTION] = {}
+styles[lexer.FUNCTION_BUILTIN] = {fore = colors.yellow}
+-- styles[lexer.FUNCTION_METHOD] = {}
+styles[lexer.HEADING] = {fore = colors.magenta}
+styles[lexer.IDENTIFIER] = {}
+-- styles[lexer.ITALIC] = {}
+styles[lexer.KEYWORD] = {fore = colors.blue, bold = true}
+styles[lexer.LABEL] = {fore = colors.magenta}
+-- styles[lexer.LINK] = {}
+styles[lexer.NUMBER] = {fore = colors.cyan}
+-- styles[lexer.OPERATOR] = {}
+styles[lexer.PREPROCESSOR] = {fore = colors.magenta}
+-- styles[lexer.REFERENCE] = {}
+styles[lexer.REGEX] = {fore = colors.green, bold = true}
+styles[lexer.STRING] = {fore = colors.green}
+styles[lexer.TAG] = {fore = colors.blue, bold = true}
+styles[lexer.TYPE] = {fore = colors.blue}
+-- styles[lexer.UNDERLINE] = {}
+-- styles[lexer.VARIABLE] = {}
+styles[lexer.VARIABLE_BUILTIN] = {fore = colors.yellow, bold = true}
+-- styles[lexer.WHITESPACE] = {}
 
 -- CSS.
 styles.property = styles.attribute

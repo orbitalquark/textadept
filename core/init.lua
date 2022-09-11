@@ -90,8 +90,9 @@ local map = {italics = 'italic', underlined = 'underline', eolfilled = 'eol_fill
 -- @param view A view.
 -- @param style_num Style number to set the style for.
 local function set_style(view, style_num)
+  assert_type(style_num, 'number', 2)
   local styles = buffer ~= ui.command_entry and view.styles or _G.view.styles
-  local style = styles[buffer:name_of_style(assert_type(style_num, 'number', 2)):gsub('%.', '_')]
+  local style = rawget(styles, style_num) or styles[buffer:name_of_style(style_num):gsub('%.', '_')]
   if style then for k, v in pairs(style) do view['style_' .. (map[k] or k)][style_num] = v end end
 end
 
@@ -124,7 +125,9 @@ end
 -- Metatable for `view.styles`, whose documentation is in core/.view.luadoc.
 local styles_mt = {
   __index = function(t, k) return k and t[k:match('^(.+)[_%.]')] or nil end,
-  __newindex = function(t, k, v) rawset(t, k:gsub('%.', '_'), style_obj(v)) end
+  __newindex = function(t, k, v)
+    rawset(t, type(k) == 'string' and k:gsub('%.', '_') or k, style_obj(v))
+  end
 }
 
 events.connect(events.VIEW_NEW, function()

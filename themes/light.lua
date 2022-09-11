@@ -28,46 +28,46 @@ if not font then font = WIN32 and 'Consolas' or OSX and 'Monaco' or 'Monospace' 
 if not size then size = not OSX and 10 or 12 end
 
 -- Predefined styles.
-styles.default = {font = font, size = size, fore = colors.black, back = colors.white}
-styles.line_number = {fore = colors.dark_grey, back = colors.white}
-styles.brace_light = {fore = colors.blue, bold = true}
-styles.brace_bad = {fore = colors.red}
--- styles.control_char = {}
-styles.indent_guide = {fore = colors.light_grey}
-styles.call_tip = {fore = colors.black, back = colors.light_grey}
-styles.fold_display_text = {fore = colors.dark_grey, back = colors.light_grey}
+styles[view.STYLE_DEFAULT] = {font = font, size = size, fore = colors.black, back = colors.white}
+styles[view.STYLE_LINENUMBER] = {fore = colors.dark_grey, back = colors.white}
+styles[view.STYLE_BRACELIGHT] = {fore = colors.blue, bold = true}
+styles[view.STYLE_BRACEBAD] = {fore = colors.red}
+-- styles[view.STYLE_CONTROLCHAR] = {}
+styles[view.STYLE_INDENTGUIDE] = {fore = colors.light_grey}
+styles[view.STYLE_CALLTIP] = {fore = colors.black, back = colors.light_grey}
+styles[view.STYLE_FOLDDISPLAYTEXT] = {fore = colors.dark_grey, back = colors.light_grey}
 
 -- Tag styles.
-styles.attribute = {fore = colors.violet}
-styles.bold = {bold = true}
-styles.class = {fore = colors.yellow}
-styles.code = {fore = colors.dark_grey, eolfilled = true}
-styles.comment = {fore = colors.dark_grey}
--- styles.constant = {}
-styles.constant_builtin = {fore = colors.magenta}
-styles.embedded = {fore = colors.purple}
-styles.error = {fore = colors.red}
--- styles['function'] = {}
-styles.function_builtin = {fore = colors.orange}
--- styles.function_method = {}
-styles.heading = {fore = colors.purple}
--- styles.identifier = {}
-styles.italic = {italic = true}
-styles.keyword = {fore = colors.blue}
-styles.label = {fore = colors.purple}
-styles.link = {underline = true}
-styles.number = {fore = colors.teal}
--- styles.operator = {}
-styles.preprocessor = {fore = colors.purple}
-styles.reference = {underline = true}
-styles.regex = {fore = colors.lime}
-styles.string = {fore = colors.green}
-styles.tag = {fore = colors.blue}
-styles.type = {fore = colors.violet}
-styles.underline = {underline = true}
--- styles.variable = {}
-styles.variable_builtin = {fore = colors.yellow}
--- styles.whitespace = {}
+styles[lexer.ATTRIBUTE] = {fore = colors.violet}
+styles[lexer.BOLD] = {bold = true}
+styles[lexer.CLASS] = {fore = colors.yellow}
+styles[lexer.CODE] = {fore = colors.dark_grey, eolfilled = true}
+styles[lexer.COMMENT] = {fore = colors.dark_grey}
+-- styles[lexer.CONSTANT] = {}
+styles[lexer.CONSTANT_BUILTIN] = {fore = colors.magenta}
+styles[lexer.EMBEDDED] = {fore = colors.purple}
+styles[lexer.ERROR] = {fore = colors.red}
+-- styles[lexer.FUNCTION] = {}
+styles[lexer.FUNCTION_BUILTIN] = {fore = colors.orange}
+-- styles[lexer.FUNCTION_METHOD] = {}
+styles[lexer.HEADING] = {fore = colors.purple}
+-- styles[lexer.IDENTIFIER] = {}
+styles[lexer.ITALIC] = {italic = true}
+styles[lexer.KEYWORD] = {fore = colors.blue}
+styles[lexer.LABEL] = {fore = colors.purple}
+styles[lexer.LINK] = {underline = true}
+styles[lexer.NUMBER] = {fore = colors.teal}
+-- styles[lexer.OPERATOR] = {}
+styles[lexer.PREPROCESSOR] = {fore = colors.purple}
+styles[lexer.REFERENCE] = {underline = true}
+styles[lexer.REGEX] = {fore = colors.lime}
+styles[lexer.STRING] = {fore = colors.green}
+styles[lexer.TAG] = {fore = colors.blue}
+styles[lexer.TYPE] = {fore = colors.violet}
+styles[lexer.UNDERLINE] = {underline = true}
+-- styles[lexer.VARIABLE] = {}
+styles[lexer.VARIABLE_BUILTIN] = {fore = colors.yellow}
+-- styles[lexer.WHITESPACE] = {}
 
 -- CSS.
 styles.property = styles.attribute
