@@ -4,8 +4,7 @@ Scintilla changes:
   This is helpful on newer versions of macOS, where changing the input method is flaky.
 * Handle leading whitespace in XPM images in order to prevent crashes.
 * Do not use fractional positioning on Gtk 2.
-* Do not clear per-line-values when clearing the first line of a 1-line document. Patch submitted
-   upstream.
+* Do not clear per-line-values when clearing the first line of a 1-line document.
 
 diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
 --- a/gtk/ScintillaGTK.cxx	Fri Apr 09 15:11:26 2021 +1000

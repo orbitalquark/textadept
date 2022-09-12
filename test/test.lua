@@ -1469,6 +1469,16 @@ function test_command_entry_run()
     'string/nil expected, got boolean')
 end
 
+function test_command_entry_run_persistent_label()
+  ui.command_entry.run('label:', function() end)
+  ui.command_entry:add_text('a')
+  assert_equal(ui.command_entry.length, 1)
+  ui.command_entry:delete_back() -- without a patch, Scintilla clears margin text
+  assert_equal(ui.command_entry.length, 0)
+  assert_equal(ui.command_entry.margin_text[1], 'label:')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+end
+
 local function run_lua_command(command)
   ui.command_entry.run()
   ui.command_entry:set_text(command)
