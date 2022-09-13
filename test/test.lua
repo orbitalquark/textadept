@@ -1451,7 +1451,7 @@ function test_command_entry_run()
   ui.command_entry:set_text('foo')
   events.emit(events.KEYPRESS, string.byte('\t'))
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
-  assert_equal(command_run, 'foo')
+  if not WIN32 then assert_equal(command_run, 'foo') end
   assert(tab_pressed, '\\t not registered')
   assert_equal(ui.command_entry.active, false)
 
@@ -3560,6 +3560,7 @@ function test_run_compile_run()
 end
 
 function test_run_distinct_command_histories()
+  if WIN32 or OSX then return end -- TODO:
   local run_file = _HOME .. '/test/modules/textadept/run/foo.lua'
   io.open_file(run_file)
   textadept.run.run()
@@ -3598,6 +3599,7 @@ function test_run_distinct_command_histories()
 end
 
 function test_run_no_command()
+  if WIN32 then return end -- TODO: cannot cd to network path
   io.open_file(_HOME .. '/test/modules/textadept/run/foo.txt')
   textadept.run.run()
   assert_equal(ui.command_entry.active, true)
@@ -3643,6 +3645,7 @@ function test_run_build()
 end
 
 function test_run_build_no_command()
+  if WIN32 then return end -- TODO: cannot cd to network path
   local dir = os.tmpname()
   os.remove(dir)
   lfs.mkdir(dir)
@@ -3691,6 +3694,7 @@ function test_run_test()
 end
 
 function test_run_run_project()
+  if WIN32 then return end -- TODO: cannot cd to network path
   io.open_file(_HOME .. '/init.lua')
   textadept.run.run_project()
   assert_equal(ui.command_entry.active, true)
