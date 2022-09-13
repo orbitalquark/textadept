@@ -129,7 +129,7 @@ function io.open_file(filenames, encodings)
     if s then buffer.eol_mode = buffer[s ~= e and 'EOL_CRLF' or 'EOL_LF'] end
     -- Insert buffer text and set properties.
     buffer:append_text(text)
-    if not CURSES then view.first_visible_line, view.x_offset = 1, 0 end -- reset view scroll on GTK
+    view.first_visible_line, view.x_offset = 1, 0 -- reset view scroll
     buffer:empty_undo_buffer()
     buffer.mod_time = lfs.attributes(filename, 'modification') or os.time()
     buffer.filename = filename
