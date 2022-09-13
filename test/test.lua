@@ -697,6 +697,7 @@ function test_file_io_quick_open_interactive()
   end
   io.quick_open_filters[dir] = true
   assert_raises(function() io.quick_open(dir) end, 'string/table/nil expected, got boolean')
+  io.quick_open_filters[dir] = nil
   io.quick_open_filters[_HOME] = '.lua'
   io.quick_open()
   if #_BUFFERS > num_buffers then
@@ -3690,10 +3691,12 @@ function test_run_test()
 end
 
 function test_run_run_project()
-  textadept.run.run_project(_HOME)
+  io.open_file(_HOME .. '/init.lua')
+  textadept.run.run_project()
   assert_equal(ui.command_entry.active, true)
   assert_equal(ui.command_entry:get_text(), '')
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  buffer:close()
 
   local run_command = not WIN32 and 'ls' or 'dir'
   textadept.run.run_project_commands[_HOME] = run_command
@@ -4681,6 +4684,9 @@ function test_debugger_ansi_c()
   -- strange errors will occur.
   local function run_and_wait(f, ...)
     f(...)
+    if ui.command_entry.active then
+      events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+    end
     os.spawn('sleep 0.2'):wait()
     ui.update()
   end
