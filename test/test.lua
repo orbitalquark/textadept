@@ -1444,10 +1444,12 @@ function test_command_entry_run()
   assert(ui.command_entry.margin_width_n[1] > 0, 'margin label is not visible')
   assert(ui.command_entry.margin_width_n[2] > 0, 'no space between margin label and command entry')
   assert_equal(ui.command_entry.lexer_language, 'text')
-  assert(ui.command_entry.height == ui.command_entry:text_height(1), 'height ~= 1 line')
-  ui.command_entry.height = ui.command_entry:text_height(1) * 2
-  ui.update() -- redraw command entry
-  assert(ui.command_entry.height > ui.command_entry:text_height(1), 'height < 2 lines')
+  if not WIN32 and not OSX then -- there are odd synchronization issues here on Windows and macOS
+    assert(ui.command_entry.height == ui.command_entry:text_height(1), 'height ~= 1 line')
+    ui.command_entry.height = ui.command_entry:text_height(1) * 2
+    ui.update() -- redraw command entry
+    assert(ui.command_entry.height > ui.command_entry:text_height(1), 'height < 2 lines')
+  end
   ui.command_entry:set_text('foo')
   events.emit(events.KEYPRESS, string.byte('\t'))
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
@@ -3602,7 +3604,7 @@ function test_run_no_command()
   if WIN32 then return end -- TODO: cannot cd to network path
   io.open_file(_HOME .. '/test/modules/textadept/run/foo.txt')
   textadept.run.run()
-  assert_equal(ui.command_entry.active, true)
+  if not OSX then assert_equal(ui.command_entry.active, true) end -- macOS has focus issues here
   assert_equal(ui.command_entry:get_text(), '')
   ui.command_entry:set_text(not WIN32 and 'cat %f' or 'type %f')
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
@@ -3697,7 +3699,7 @@ function test_run_run_project()
   if WIN32 then return end -- TODO: cannot cd to network path
   io.open_file(_HOME .. '/init.lua')
   textadept.run.run_project()
-  assert_equal(ui.command_entry.active, true)
+  if not OSX then assert_equal(ui.command_entry.active, true) end -- macOS has focus issues here
   assert_equal(ui.command_entry:get_text(), '')
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
   buffer:close()
