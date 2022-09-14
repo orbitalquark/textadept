@@ -265,24 +265,16 @@ if CURSES and not WIN32 then
   end)
 end
 
--- Prepares the buffer for saving to a file by stripping trailing whitespace, ensuring a final
--- newline, and normalizing line endings.
+-- Strips trailing whitespace ('\t' or ' ') in text files, prior to saving them.
 events.connect(events.FILE_BEFORE_SAVE, function()
   if not M.strip_trailing_spaces or not buffer.encoding then return end
   buffer:begin_undo_action()
-  -- Strip trailing whitespace.
   for line = 1, buffer.line_count do
     local s, e = buffer:position_from_line(line), buffer.line_end_position[line]
     local i, byte = e - 1, buffer.char_at[e - 1]
-    while i >= s and (byte == 9 or byte == 32) do -- '\t' or ' '
-      i, byte = i - 1, buffer.char_at[i - 1]
-    end
+    while i >= s and (byte == 9 or byte == 32) do i, byte = i - 1, buffer.char_at[i - 1] end
     if i < e - 1 then buffer:delete_range(i + 1, e - i - 1) end
   end
-  -- Ensure final newline.
-  if buffer.char_at[buffer.length] ~= 10 then buffer:append_text('\n') end
-  -- Convert non-consistent EOLs
-  buffer:convert_eols(buffer.eol_mode)
   buffer:end_undo_action()
 end)
 

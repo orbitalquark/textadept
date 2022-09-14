@@ -506,6 +506,8 @@ function test_file_io_set_encoding()
 end
 
 function test_file_io_save_file()
+  local final_newline = io.ensure_final_newline
+  io.ensure_final_newline = false
   buffer.new()
   buffer._type = '[Foo Buffer]'
   buffer:append_text('foo')
@@ -522,8 +524,16 @@ function test_file_io_save_file()
   contents = f:read('a')
   f:close()
   assert_equal(buffer:get_text(), contents)
+  io.ensure_final_newline = true
+  buffer:save()
+  assert_equal(buffer:get_text(), 'foobar' .. (not WIN32 and '\n' or '\r\n'))
+  f = assert(io.open(filename))
+  contents = f:read('a')
+  f:close()
+  assert_equal(buffer:get_text(), contents)
   buffer:close()
   os.remove(filename)
+  io.ensure_final_newline = final_newline -- restore
 
   assert_raises(function() buffer:save_as(1) end, 'string/nil expected, got number')
 end
@@ -1796,7 +1806,8 @@ function test_editing_strip_trailing_spaces()
   local text = table.concat({
     'foo ',
     '  bar\t\r',
-    'baz\t '
+    'baz\t ',
+    ' \t '
   }, '\n')
   -- LuaFormatter on
   buffer:set_text(text)
@@ -1805,7 +1816,7 @@ function test_editing_strip_trailing_spaces()
   -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     'foo',
-    '  bar',
+    '  bar\r',
     'baz',
     ''
   }, '\n'))

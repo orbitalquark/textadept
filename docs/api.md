@@ -4262,6 +4262,13 @@ Emitted after opening a file in a new buffer.
 
   * _`filename`_: The opened file's filename.
 
+<a id="io.ensure_final_newline"></a>
+#### `io.ensure_final_newline` (bool)
+
+Whether or not to ensure there is a final newline when saving text files.
+  This has no effect on binary files.
+  The default value is `false` on Windows, and `true` on Linux, macOS, and BSD.
+
 <a id="io.quick_open_max"></a>
 #### `io.quick_open_max` (number)
 

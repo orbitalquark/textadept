@@ -533,6 +533,7 @@ encodings io.encodings (table)\nList of encodings to attempt to decode files as.
 end_at_last_line view.end_at_last_line (bool)\nDisable scrolling past the last line.\nThe default value is `true`.
 end_styled buffer.end_styled (number, Read-only)\nThe current styling position or the last correctly styled character's position.
 end_undo_action buffer.end_undo_action(buffer)\nEnds a sequence of actions to be undone or redone as a single action.\n@param buffer A buffer.
+ensure_final_newline io.ensure_final_newline (bool)\nWhether or not to ensure there is a final newline when saving text files.\nThis has no effect on binary files.\nThe default value is `false` on Windows, and `true` on Linux, macOS, and BSD.
 ensure_visible view.ensure_visible(view, line)\nEnsures line number *line* is visible by expanding any fold points hiding it.\n@param view A view.\n@param line The line number in *view* to ensure visible.
 ensure_visible_enforce_policy view.ensure_visible_enforce_policy(view, line)\nEnsures line number *line* is visible by expanding any fold points hiding it based on the\nvertical caret policy previously defined in `view.set_visible_policy()`.\n@param view A view.\n@param line The line number in *view* to ensure visible.
 entry_font ui.find.entry_font (string, Write-only)\nThe font to use in the "Find" and "Replace" entries in "name size" format.\nThe default value is system-dependent.

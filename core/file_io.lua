@@ -3,6 +3,13 @@
 --[[ This comment is for LuaDoc.
 ---
 -- Extends Lua's `io` library with Textadept functions for working with files.
+-- @field ensure_final_newline (bool)
+--   Whether or not to ensure there is a final newline when saving text files.
+--   This has no effect on binary files.
+--   The default value is `false` on Windows, and `true` on Linux, macOS, and BSD.
+-- @field quick_open_max (number)
+--   The maximum number of files listed in the quick open dialog.
+--   The default value is `1000`.
 -- @field _G.events.FILE_OPENED (string)
 --   Emitted after opening a file in a new buffer.
 --   Emitted by [`io.open_file()`]().
@@ -29,9 +36,6 @@
 --   Arguments:
 --
 --   * _`filename`_: The filename externally modified.
--- @field quick_open_max (number)
---   The maximum number of files listed in the quick open dialog.
---   The default value is `1000`.
 module('io')]]
 
 -- Events.
@@ -40,6 +44,7 @@ local file_io_events = {'file_opened','file_before_save','file_after_save','file
 -- LuaFormatter on
 for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 
+io.ensure_final_newline = not WIN32
 io.quick_open_max = 1000
 
 ---
@@ -187,6 +192,9 @@ local function save(buffer)
     return
   end
   events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
+  if io.ensure_final_newline and buffer.encoding and buffer.char_at[buffer.length] ~= 10 then
+    buffer:append_text(buffer.eol_mode == buffer.EOL_LF and '\n' or '\r\n')
+  end
   local text = buffer:get_text()
   if buffer.encoding then text = text:iconv(buffer.encoding, 'UTF-8') end
   assert(io.open(buffer.filename, 'wb')):write(text):close()

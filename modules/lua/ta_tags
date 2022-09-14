@@ -535,6 +535,7 @@ encodings	_HOME/core/file_io.lua	/^io.encodings = {'UTF-8', 'ASCII', 'CP1252', '
 end_at_last_line	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 end_styled	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 end_undo_action	_HOME/core/.buffer.luadoc	/^function end_undo_action(buffer) end$/;"	f	class:buffer
+ensure_final_newline	_HOME/core/file_io.lua	/^module('io')]]$/;"	F	class:io
 ensure_visible	_HOME/core/.view.luadoc	/^function ensure_visible(view, line) end$/;"	f	class:view
 ensure_visible_enforce_policy	_HOME/core/.view.luadoc	/^function ensure_visible_enforce_policy(view, line) end$/;"	f	class:view
 entry_font	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
