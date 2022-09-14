@@ -369,6 +369,7 @@ local bindings = {
   [textadept.run.compile] = {'ctrl+R', 'cmd+R', 'ctrl+meta+r'},
   [textadept.run.build] = {'ctrl+B', 'cmd+B', 'ctrl+meta+b'},
   [textadept.run.test] = {'ctrl+T', 'cmd+T', 'ctrl+meta+t'},
+  [textadept.run.run_project] = {'ctrl+C', 'cmd+C', 'ctrl+meta+c'},
   [textadept.run.stop] = {'ctrl+X', 'cmd+X', 'ctrl+meta+x'},
   [m('Tools/Next Error')] = {'ctrl+alt+e', 'ctrl+cmd+e', 'meta+x'},
   [m('Tools/Previous Error')] = {'ctrl+alt+E', 'ctrl+cmd+E', 'meta+X'},
