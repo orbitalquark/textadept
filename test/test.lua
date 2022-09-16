@@ -3730,9 +3730,9 @@ end
 function test_run_run_project()
   if WIN32 then return end -- TODO: cannot cd to network path
   io.open_file(_HOME .. '/init.lua')
-  textadept.run.run_project()
+  textadept.run.run_project(nil, 'foo')
   if not OSX then assert_equal(ui.command_entry.active, true) end -- macOS has focus issues here
-  assert_equal(ui.command_entry:get_text(), '')
+  assert_equal(ui.command_entry:get_text(), 'foo')
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
   buffer:close()
 

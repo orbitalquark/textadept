@@ -7179,22 +7179,24 @@ See also:
 * [`events`](#events)
 
 <a id="textadept.run.run_project"></a>
-#### `textadept.run.run_project`(*dir*)
+#### `textadept.run.run_project`(*dir, cmd*)
 
-Prompts the user with the command entry to run the shell command from the `run_project_commands`
-table for the project whose root path is *dir* or the current project.
+Prompts the user with the command entry to run shell command *cmd* or the shell command from the
+`run_project_commands` table for the project whose root path is *dir* or the current project.
 The current project is determined by either the buffer's filename or the current working
 directory.
 Emits `RUN_OUTPUT` events.
 
 Parameters:
 
-* *`dir`*: The path to the project to run a command for. The default value is the current
-  project.
+* *`dir`*: Optional path to the project to run a command for. The default value is the
+  current project.
+* *`cmd`*: Optional string command to run. If given, the command entry initially shows
+  this command. The default value comes from `run_project_commands` and *dir*.
 
 See also:
 
-* [`textadept.run.test_commands`](#textadept.run.test_commands)
+* [`textadept.run.run_project_commands`](#textadept.run.run_project_commands)
 * [`events`](#events)
 
 <a id="textadept.run.stop"></a>

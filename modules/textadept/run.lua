@@ -297,22 +297,24 @@ end
 M.run_project_commands = {}
 
 ---
--- Prompts the user with the command entry to run the shell command from the `run_project_commands`
--- table for the project whose root path is *dir* or the current project.
+-- Prompts the user with the command entry to run shell command *cmd* or the shell command from the
+-- `run_project_commands` table for the project whose root path is *dir* or the current project.
 -- The current project is determined by either the buffer's filename or the current working
 -- directory.
 -- Emits `RUN_OUTPUT` events.
--- @param dir The path to the project to run a command for. The default value is the current
---   project.
--- @see test_commands
+-- @param dir Optional path to the project to run a command for. The default value is the
+--   current project.
+-- @param cmd Optional string command to run. If given, the command entry initially shows
+--   this command. The default value comes from `run_project_commands` and *dir*.
+-- @see run_project_commands
 -- @see _G.events
 -- @name run_project
-function M.run_project(dir)
+function M.run_project(dir, cmd)
   if not assert_type(dir, 'string/nil', 1) then
     dir = io.get_project_root()
     if not dir then return end
   end
-  local cmd = M.run_project_commands[dir]
+  if not assert_type(cmd, 'string/nil', 2) then cmd = M.run_project_commands[dir] end
   run_command(_L['Project run command:'], cmd, dir, events.RUN_OUTPUT, M.run_project_commands, dir)
 end
 
