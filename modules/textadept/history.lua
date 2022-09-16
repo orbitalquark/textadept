@@ -42,7 +42,9 @@ events.connect(events.MODIFIED, function(position, mod, text, length)
   end
   if mod & INSERT > 0 then position = position + length end
   if mod & (UNDO | REDO) > 0 then return end -- ignore undo/redo
-  M.record(nil, buffer:line_from_position(position), buffer.column[position])
+  local line, column = buffer:line_from_position(position), buffer.column[position]
+  if buffer.selections > 1 and line ~= buffer:line_from_position(buffer.current_pos) then return end
+  M.record(nil, line, column)
 end)
 
 -- Do not record positions during buffer switches when jumping backwards or forwards.

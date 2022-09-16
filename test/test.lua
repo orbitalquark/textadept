@@ -3300,6 +3300,27 @@ function test_history_undo_full_buffer_change()
   buffer:close(true)
 end
 
+function test_history_multiple_selection_edit()
+  for i = 1, 5 do ui.print(i) end
+  for i = 5, 1, -1 do ui.print(i) end
+  if #_VIEWS > 1 then view:unsplit() end
+  buffer:goto_pos(buffer:position_from_line(buffer.line_count // 2))
+  buffer:insert_text(-1, ' ')
+  buffer:goto_line(1)
+  textadept.editing.select_word() -- select '1' on first line
+  textadept.editing.select_word() -- select '1' on last line
+  assert_equal(buffer.selections, 2)
+  for i = 1, buffer.selections do
+    buffer:set_target_range(buffer.selection_n_start[i], buffer.selection_n_end[i])
+    buffer:replace_target('foo') -- simulate typing into multiple selections
+  end
+  textadept.history.back() -- should not jump between multi-line edits
+  assert_equal(buffer:line_from_position(buffer.current_pos), buffer.line_count // 2)
+  textadept.history.forward()
+  assert_equal(buffer:line_from_position(buffer.current_pos), buffer.line_count - 1)
+  buffer:close(true)
+end
+
 function test_macro_record_play_save_load()
   textadept.macros.save() -- should not do anything
   textadept.macros.play() -- should not do anything
