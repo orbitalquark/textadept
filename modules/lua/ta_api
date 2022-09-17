@@ -14,8 +14,6 @@ AUTO_C_COMPLETED events.AUTO_C_COMPLETED (string)\nEmitted after inserting an it
 AUTO_C_SELECTION events.AUTO_C_SELECTION (string)\nEmitted after selecting an item from an autocompletion list, but before inserting that\nitem into the buffer.\nAutomatic insertion can be canceled by calling `buffer:auto_c_cancel()` before returning\nfrom the event handler.\nArguments:\n\n* _`text`_: The selection's text.\n* _`position`_: The autocompleted word's beginning position.
 AUTO_C_SELECTION_CHANGE events.AUTO_C_SELECTION_CHANGE (string)\nEmitted as items are highlighted in an autocompletion or user list.\nArguments:\n\n* _`id`_: Either the *id* from `buffer.user_list_show()` or `0` for an autocompletion list.\n* _`text`_: The current selection's text.\n* _`position`_: The position the list was displayed at.
 BOLD lexer.BOLD (string)\nThe tag name for bold elements, typically in markup.
-BRACE_BAD lexer.BRACE_BAD (string)\nThe name of the predefined Scintilla style for highlighting a mismatched brace character.
-BRACE_LIGHT lexer.BRACE_LIGHT (string)\nThe name of the predefined Scintilla style for highlighting a matching brace character.
 BSD _G.BSD (bool)\nWhether or not Textadept is running on BSD.
 BUFFER_AFTER_REPLACE_TEXT events.BUFFER_AFTER_REPLACE_TEXT (string)\nEmitted after replacing the contents of the current buffer.\nNote that it is not guaranteed that `events.BUFFER_BEFORE_REPLACE_TEXT` was emitted\npreviously.\nThe buffer **must not** be modified during this event.
 BUFFER_AFTER_SWITCH events.BUFFER_AFTER_SWITCH (string)\nEmitted right after switching to another buffer.\nThe buffer being switched to is `buffer`.\nEmitted by `view.goto_buffer()`.
@@ -24,7 +22,6 @@ BUFFER_BEFORE_SWITCH events.BUFFER_BEFORE_SWITCH (string)\nEmitted right before 
 BUFFER_DELETED events.BUFFER_DELETED (string)\nEmitted after deleting a buffer.\nEmitted by `buffer.delete()`.
 BUFFER_NEW events.BUFFER_NEW (string)\nEmitted after creating a new buffer.\nThe new buffer is `buffer`.\nEmitted on startup and by `buffer.new()`.
 BUILD_OUTPUT events.BUILD_OUTPUT (string)\nEmitted when executing a project's build shell command.\nBy default, output is printed to the output buffer. In order to override this behavior,\nconnect to the event with an index of `1` and return `true`.\nArguments:\n\n* `output`: A line of string output from the command.
-CALL_TIP lexer.CALL_TIP (string)\nThe name of the predefined Scintilla style for call tips.
 CALL_TIP_CLICK events.CALL_TIP_CLICK (string)\nEmitted when clicking on a calltip.\nArguments:\n\n* _`position`_: `1` if the up arrow was clicked, 2 if the down arrow was clicked, and\n  0 otherwise.
 CARETSTICKY_OFF buffer.CARETSTICKY_OFF (number, Read-only)\n
 CARETSTICKY_ON buffer.CARETSTICKY_ON (number, Read-only)\n
@@ -52,14 +49,13 @@ COMMENT lexer.COMMENT (string)\nThe tag name for comment elements.
 COMPILE_OUTPUT events.COMPILE_OUTPUT (string)\nEmitted when executing a language's compile shell command.\nBy default, compiler output is printed to the output buffer. In order to override this\nbehavior, connect to the event with an index of `1` and return `true`.\nArguments:\n\n* `output`: A line of string output from the command.
 CONSTANT lexer.CONSTANT (string)\nThe tag name for constant elements.
 CONSTANT_BUILTIN lexer.CONSTANT_BUILTIN (string)\nThe tag name for builtin constant elements.
-CONTROL_CHAR lexer.CONTROL_CHAR (string)\nThe name of the predefined Scintilla style for control characters.
 CSI events.CSI (string)\nEmitted when the terminal version receives an unrecognized CSI sequence.\nArguments:\n\n* _`cmd`_: The 24-bit CSI command value. The lowest byte contains the command byte. The\n  second lowest byte contains the leading byte, if any (e.g. '?'). The third lowest byte\n  contains the intermediate byte, if any (e.g. '$').\n* _`args`_: Table of numeric arguments of the CSI sequence.
 CURSES _G.CURSES (bool)\nWhether or not Textadept is running in a terminal.\nCurses feature incompatibilities are listed in the Appendix.
 CURSORARROW view.CURSORARROW (number, Read-only)\n
 CURSORNORMAL view.CURSORNORMAL (number, Read-only)\n
 CURSORREVERSEARROW view.CURSORREVERSEARROW (number, Read-only)\n
 CURSORWAIT view.CURSORWAIT (number, Read-only)\n
-DEFAULT lexer.DEFAULT (string)\nThe tag name for default elements.\nIt is also the name of the predefined Scintilla style for unstyled text.
+DEFAULT lexer.DEFAULT (string)\nThe tag name for default elements.
 DOUBLE_CLICK events.DOUBLE_CLICK (string)\nEmitted after double-clicking the mouse button.\nArguments:\n\n* _`position`_: The position double-clicked.\n* _`line`_: The line number of the position double-clicked.\n* _`modifiers`_: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,\n  `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier\n  key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set\n  `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is\n  reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 DWELL_END events.DWELL_END (string)\nEmitted after `DWELL_START` when the user moves the mouse, presses a key, or scrolls the view.\nArguments:\n\n* _`position`_: The position closest to *x* and *y*.\n* _`x`_: The x-coordinate of the mouse in the view.\n* _`y`_: The y-coordinate of the mouse in the view.
 DWELL_START events.DWELL_START (string)\nEmitted when the mouse is stationary for `view.mouse_dwell_time` milliseconds.\nArguments:\n\n* _`position`_: The position closest to *x* and *y*.\n* _`x`_: The x-coordinate of the mouse in the view.\n* _`y`_: The y-coordinate of the mouse in the view.
@@ -118,14 +114,12 @@ FOLDLEVELNUMBERMASK buffer.FOLDLEVELNUMBERMASK (number, Read-only)\n
 FOLDLEVELWHITEFLAG buffer.FOLDLEVELWHITEFLAG (number, Read-only)\n
 FOLD_BASE lexer.FOLD_BASE (number)\nThe initial (root) fold level.
 FOLD_BLANK lexer.FOLD_BLANK (number)\nFlag indicating that the line is blank.
-FOLD_DISPLAY_TEXT lexer.FOLD_DISPLAY_TEXT (string)\nThe name of the predefined Scintilla style for the text displayed next to folded lines.
 FOLD_HEADER lexer.FOLD_HEADER (number)\nFlag indicating the line is fold point.
 FUNCTION lexer.FUNCTION (string)\nThe tag name for function elements.
 FUNCTION_BUILTIN lexer.FUNCTION_BUILTIN (string)\nThe tag name for builtin function elements.
 FUNCTION_METHOD lexer.FUNCTION_METHOD (string)\nThe tag name for function method elements.
 HEADING lexer.HEADING (string)\nThe tag name for heading elements, typically in markup.
 IDENTIFIER lexer.IDENTIFIER (string)\nThe tag name for identifier elements.
-INDENT_GUIDE lexer.INDENT_GUIDE (string)\nThe name of the predefined Scintilla style for indentation guides.
 INDICATOR_CLICK events.INDICATOR_CLICK (string)\nEmitted when clicking the mouse on text that has an indicator present.\nArguments:\n\n* _`position`_: The clicked text's position.\n* _`modifiers`_: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,\n  `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier\n  key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set\n  `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is\n  reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 INDICATOR_MAX buffer.INDICATOR_MAX (number, Read-only)\n
 INDICATOR_RELEASE events.INDICATOR_RELEASE (string)\nEmitted when releasing the mouse after clicking on text that has an indicator present.\nArguments:\n\n* _`position`_: The clicked text's position.\n* _`modifiers`_: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,\n  `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier\n  key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set\n  `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is\n  reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
@@ -165,7 +159,6 @@ KEYSYMS keys.KEYSYMS (table)\nLookup table for string representations of key cod
 KEYWORD lexer.KEYWORD (string)\nThe tag name for keyword elements.
 LABEL lexer.LABEL (string)\nThe tag name for label elements.
 LEXER_LOADED events.LEXER_LOADED (string)\nEmitted after loading a language lexer.\nThis is useful for overriding a language module's key bindings or other properties since\nthe module is not loaded when Textadept starts.\nArguments:\n\n* _`name`_: The language lexer's name.
-LINE_NUMBER lexer.LINE_NUMBER (string)\nThe name of the predefined Scintilla style for line numbers.
 LINK lexer.LINK (string)\nThe tag name for link elements, typically in markup.
 LINUX _G.LINUX (bool)\nWhether or not Textadept is running on Linux.
 MARGINOPTION_NONE view.MARGINOPTION_NONE (number, Read-only)\n
@@ -568,7 +561,7 @@ float_ lexer.float_(c)\nReturns a pattern that matches a floating point number, 
 focus ui.command_entry.focus()\nOpens the command entry.
 focus ui.find.focus(options)\nDisplays and focuses the Find & Replace Pane.\n@param options Optional table of `ui.find` field options to initially set.
 fold lexer.fold(lexer, text, start_line, start_level)\nDetermines fold points in a chunk of text *text* using lexer *lexer*, returning a table of\nfold levels associated with line numbers.\n*text* starts on line number *start_line* with a beginning fold level of *start_level*\nin the buffer.\n@param lexer The lexer to fold text with.\n@param text The text in the buffer to fold.\n@param start_line The line number *text* starts on, counting from 1.\n@param start_level The fold level *text* starts on.\n@return table of fold levels associated with line numbers.
-fold_all view.fold_all(view, action)\nContracts, expands, or toggles all fold points, depending on *action*.\nWhen toggling, the state of the first fold point determines whether to expand or contract.\n@param view A view.\n@param action The fold action to perform. Valid values are:\n  * `view.FOLDACTION_CONTRACT`\n  * `view.FOLDACTION_EXPAND`\n  * `view.FOLDACTION_TOGGLE`
+fold_all view.fold_all(view, action)\nContracts, expands, or toggles all fold points, depending on *action*.\nWhen toggling, the state of the first fold point determines whether to expand or contract.\n@param view A view.\n@param action The fold action to perform. Valid values are:\n  * `view.FOLDACTION_CONTRACT`\n  * `view.FOLDACTION_EXPAND`\n  * `view.FOLDACTION_TOGGLE`\n  * `view.FOLDACTION_CONTRACT_EVERY_LEVEL`
 fold_by_indentation view.fold_by_indentation (boolean)\nWhether or not to fold based on indentation level if a lexer does not have\na folder.\nSome lexers automatically enable this option. It is disabled by default.\nThis is an alias for `view.property['fold.scintillua.by.indentation'] = '1|0'`.
 fold_children view.fold_children(view, line, action)\nContracts, expands, or toggles the fold point on line number *line*, as well as all of its\nchildren, depending on *action*.\n@param view A view.\n@param line The line number in *view* to set the fold states for.\n@param action The fold action to perform. Valid values are:\n  * `view.FOLDACTION_CONTRACT`\n  * `view.FOLDACTION_EXPAND`\n  * `view.FOLDACTION_TOGGLE`
 fold_compact view.fold_compact (boolean)\nWhether or not blank lines after an ending fold point are included in that\nfold.\nThis option is disabled by default.\nThis is an alias for `view.property['fold.scintillua.compact'] = '1|0'`.

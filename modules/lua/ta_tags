@@ -14,8 +14,6 @@ AUTO_C_COMPLETED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 AUTO_C_SELECTION	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 AUTO_C_SELECTION_CHANGE	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 BOLD	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-BRACE_BAD	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-BRACE_LIGHT	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 BSD	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
 BUFFER_AFTER_REPLACE_TEXT	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 BUFFER_AFTER_SWITCH	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
@@ -24,7 +22,6 @@ BUFFER_BEFORE_SWITCH	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:even
 BUFFER_DELETED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 BUFFER_NEW	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 BUILD_OUTPUT	_HOME/modules/textadept/run.lua	/^module('textadept.run')]]$/;"	F	class:events
-CALL_TIP	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 CALL_TIP_CLICK	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 CARETSTICKY_OFF	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 CARETSTICKY_ON	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
@@ -52,7 +49,6 @@ COMMENT	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 COMPILE_OUTPUT	_HOME/modules/textadept/run.lua	/^module('textadept.run')]]$/;"	F	class:events
 CONSTANT	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 CONSTANT_BUILTIN	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-CONTROL_CHAR	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 CSI	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 CURSES	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
 CURSORARROW	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
@@ -118,14 +114,12 @@ FOLDLEVELNUMBERMASK	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buf
 FOLDLEVELWHITEFLAG	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 FOLD_BASE	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 FOLD_BLANK	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-FOLD_DISPLAY_TEXT	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 FOLD_HEADER	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 FUNCTION	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 FUNCTION_BUILTIN	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 FUNCTION_METHOD	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 HEADING	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 IDENTIFIER	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-INDENT_GUIDE	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 INDICATOR_CLICK	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 INDICATOR_MAX	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 INDICATOR_RELEASE	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
@@ -165,7 +159,6 @@ KEYSYMS	_HOME/core/keys.lua	/^M.KEYSYMS = {--[[From Scintilla.h for CURSES]][7]=
 KEYWORD	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 LABEL	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 LEXER_LOADED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
-LINE_NUMBER	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 LINK	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 LINUX	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
 MARGINOPTION_NONE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view

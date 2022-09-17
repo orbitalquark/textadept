@@ -83,7 +83,7 @@ nlangs=$((`grep ^Time $plotfile | wc -l` - 3)) # ignore blanks, comments, code
 # Define gnuplot plot settings and plot commands.
 plotcmd=gnuplot.plt
 echo "
-  set term png transparent font 'DejaVu Sans,10' size 450,275;
+  set term png transparent font 'Ubuntu,10' size 450,275;
   set border linewidth 1.5;
   set style line 1 linecolor rgb '#999900' linewidth 2;
   set style line 2 linecolor rgb '#0066cc' linewidth 2;

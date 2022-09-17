@@ -1208,6 +1208,7 @@ function ensure_visible_enforce_policy(view, line) end
 --   * `view.FOLDACTION_CONTRACT`
 --   * `view.FOLDACTION_EXPAND`
 --   * `view.FOLDACTION_TOGGLE`
+--   * `view.FOLDACTION_CONTRACT_EVERY_LEVEL`
 function fold_all(view, action) end
 
 ---

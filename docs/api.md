@@ -1,4 +1,4 @@
-## Textadept 11.4 nightly API Documentation
+## Textadept 11.5 alpha API Documentation
 
 1. [_G](#_G)
 1. [_L](#_L)
@@ -5237,21 +5237,6 @@ The tag name for function attribute elements, typically in markup.
 
 The tag name for bold elements, typically in markup.
 
-<a id="lexer.BRACE_BAD"></a>
-#### `lexer.BRACE_BAD` (string)
-
-The name of the predefined Scintilla style for highlighting a mismatched brace character.
-
-<a id="lexer.BRACE_LIGHT"></a>
-#### `lexer.BRACE_LIGHT` (string)
-
-The name of the predefined Scintilla style for highlighting a matching brace character.
-
-<a id="lexer.CALL_TIP"></a>
-#### `lexer.CALL_TIP` (string)
-
-The name of the predefined Scintilla style for call tips.
-
 <a id="lexer.CLASS"></a>
 #### `lexer.CLASS` (string)
 
@@ -5277,16 +5262,10 @@ The tag name for constant elements.
 
 The tag name for builtin constant elements.
 
-<a id="lexer.CONTROL_CHAR"></a>
-#### `lexer.CONTROL_CHAR` (string)
-
-The name of the predefined Scintilla style for control characters.
-
 <a id="lexer.DEFAULT"></a>
 #### `lexer.DEFAULT` (string)
 
 The tag name for default elements.
-  It is also the name of the predefined Scintilla style for unstyled text.
 
 <a id="lexer.EMBEDDED"></a>
 #### `lexer.EMBEDDED` (string)
@@ -5307,11 +5286,6 @@ The initial (root) fold level.
 #### `lexer.FOLD_BLANK` (number)
 
 Flag indicating that the line is blank.
-
-<a id="lexer.FOLD_DISPLAY_TEXT"></a>
-#### `lexer.FOLD_DISPLAY_TEXT` (string)
-
-The name of the predefined Scintilla style for the text displayed next to folded lines.
 
 <a id="lexer.FOLD_HEADER"></a>
 #### `lexer.FOLD_HEADER` (number)
@@ -5343,11 +5317,6 @@ The tag name for heading elements, typically in markup.
 
 The tag name for identifier elements.
 
-<a id="lexer.INDENT_GUIDE"></a>
-#### `lexer.INDENT_GUIDE` (string)
-
-The name of the predefined Scintilla style for indentation guides.
-
 <a id="lexer.ITALIC"></a>
 #### `lexer.ITALIC` (string)
 
@@ -5362,11 +5331,6 @@ The tag name for keyword elements.
 #### `lexer.LABEL` (string)
 
 The tag name for label elements.
-
-<a id="lexer.LINE_NUMBER"></a>
-#### `lexer.LINE_NUMBER` (string)
-
-The name of the predefined Scintilla style for line numbers.
 
 <a id="lexer.LINK"></a>
 #### `lexer.LINK` (string)
@@ -11095,6 +11059,7 @@ Parameters:
   * `view.FOLDACTION_CONTRACT`
   * `view.FOLDACTION_EXPAND`
   * `view.FOLDACTION_TOGGLE`
+  * `view.FOLDACTION_CONTRACT_EVERY_LEVEL`
 
 <a id="view.fold_children"></a>
 #### `view.fold_children`(*view, line, action*)

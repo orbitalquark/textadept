@@ -7,6 +7,86 @@
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.5 alpha (01 Oct 2022)
+
+Download:
+
+* [Textadept 11.5 alpha  -- Windows][]
+* [Textadept 11.5 alpha  -- Mac OSX 10.10+][]
+* [Textadept 11.5 alpha  -- Linux][]
+* [Textadept 11.5 alpha  -- Modules][]
+
+Bugfixes:
+
+* Better display of startup errors.
+* Reset horizontal scroll position after loading files.
+* Improved showing API documentation from Lua command entry.
+* Do not record history for multiple selection edits.
+* Updated Bash lexer to improve heredoc handling
+
+Changes:
+
+* Deprecated `lexer.colors` and `lexer.styles` in favor of [`view.colors`][] and [`view.styles`][],
+  and deprecated `lexer.fold*` in favor of `view.fold*`.
+* Implemented `buffer.lexer_language`.
+* Added [`view:set_styles()`][] for manually applying styles to views.
+* Added [`ui.output()`][] for compile/run/build/test output and removed
+  `textadept.run.error_patterns`.
+* Refreshed themes.
+* Deprecated `textadept.editing.INDIC_BRACEMATCH` in favor of styles.
+* Removed `ui.silent_print` in favor of [`ui.print_silent()`][] and [`ui.output_silent()`][].
+* Changed [`ui.command_entry.run()`][] to add label, remove height, add initial text, and add
+  args to pass to function.
+* Compile/run/build/test commands now utilize command entry and have their own command histories.
+* Removed `textadept.run.set_arguments()`.
+* Added [`textadept.run.run_project()`][] and [`textadept.run.run_project_commands`][] for running
+  project commands.
+* Deprecated `textadept.file_types.extensions` and `textadept.file_types.patterns` in favor of
+  [`lexer.detect_extensions`][] and [`lexer.detect_patterns`][], and moved
+  `textadept.file_types.select_lexer` into the menu.
+* Added [`io.ensure_final_newline`][] and decoupled this from
+  `textadept.editing.strip_trailing_spaces`.
+* Replaced "token" concept with "[tags][]" when writing lexers, and deprecated `lexer.token()`
+  in favor of [`lex:tag()`][].
+* Removed `lexer.property_expanded`.
+* All lexers created with `lexer.new()` have a default whitespace style.
+* Child lexers can extend their parent's keyword lists.
+* Added `allow_indent` option to `lexer.starts_line()`.
+* Deprecated `lexer.last_char_includes()` in favor of [`lexer.after_set()`][].
+* `lexer.word_match()` can be used as an instance method for enabling users to set, replace,
+  or extend word lists.
+* Added [`lexer.number_()`][] and friends for creating patterns that match numbers separated
+   by arbitrary characters.
+* Allow prefix to be optional in `lexer.to_eol()`.
+* Added "output" lexer for recognizing tool errors and warnings.
+* Scintilla: added `view.MARK_BAR` marker and `view.INDIC_POINT_TOP` indicator.
+* Scintilla: optimized line state to avoid excessive allocations.
+* Scintilla: added `view.FOLDACTION_CONTRACT_EVERY_LEVEL` for `view:fold_all()`.
+* Scintilla: allow large fonts to be used in `view.STYLE_CALLTIP` without affecting text display.
+* Updated to [Scintilla][] 5.3.0.
+
+[Textadept 11.5 alpha  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha.win.zip
+[Textadept 11.5 alpha  -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha.macOS.zip
+[Textadept 11.5 alpha  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha.linux.tgz
+[Textadept 11.5 alpha  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha.modules.zip
+[`view.colors`]: api.html#view.colors
+[`view.styles`]: api.html#view.styles
+[`view:set_styles()`]: api.html#view.set_styles
+[`ui.output()`]: api.html#ui.output
+[`ui.print_silent()`]: api.html#ui.print_silent
+[`ui.output_silent()`]: api.html#ui.output_silent
+[`ui.command_entry.run()`]: api.html#ui.command_entry.run
+[`textadept.run.run_project()`]: api.html#textadept.run.run_project
+[`textadept.run.run_project_commands`]: api.html#textadept.run.run_project_commands
+[`lexer.detect_extensions`]: api.html#lexer.detect_extensions
+[`lexer.detect_patterns`]: api.html#lexer.detect_patterns
+[`io.ensure_final_newline`]: api.html#io.ensure_final_newline
+[tags]: api.html#tags
+[`lex:tag()`]: api.html#lexer.tag
+[`lexer.after_set()`]: api.html#lexer.after_set
+[`lexer.number_()`]: api.html#lexer.number_
+[Scintilla]: https://scintilla.org
+
 ### 11.4  (01 Aug 2022)
 
 Download:
@@ -2625,7 +2705,7 @@ Changes:
 * Updated manual images.
 * `_M.textadept.snapopen.DEFAULT_DEPTH` is now `99` since `MAX` is the limiting factor.
 * Use constant names in theme options instead of nondescript integers.
-* Added new [`lexer.last_char_includes()`][] function for better regex detection.
+* Added new lexer.last_char_includes() function for better regex detection.
 * Updated AWK lexer.
 * Scintilla: added [`buffer.selection_empty`][].
 * Scintilla: added [`buffer:vc_home_display()`][] and [`buffer:vc_home_display_extend()`][]
@@ -2633,7 +2713,6 @@ Changes:
 * Updated to [Scintilla][] 3.2.2.
 
 [`_M.textadept.bookmarks.toggle()`]: api.html#textadept.bookmarks.toggle
-[`lexer.last_char_includes()`]: api.html#lexer.last_char_includes
 [`buffer.selection_empty`]: api.html#buffer.selection_empty
 [`buffer:vc_home_display()`]: api.html#buffer.vc_home_display
 [`buffer:vc_home_display_extend()`]: api.html#buffer.vc_home_display_extend
