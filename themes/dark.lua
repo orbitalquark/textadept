@@ -46,21 +46,21 @@ styles[lexer.CLASS] = {fore = colors.yellow}
 styles[lexer.CODE] = {fore = colors.dark_grey, eolfilled = true}
 styles[lexer.COMMENT] = {fore = colors.dark_grey}
 -- styles[lexer.CONSTANT] = {}
-styles[lexer.CONSTANT_BUILTIN] = {fore = colors.magenta}
+styles[lexer.CONSTANT_BUILTIN] = {fore = colors.purple}
 styles[lexer.EMBEDDED] = {fore = colors.purple}
 styles[lexer.ERROR] = {fore = colors.red}
 -- styles[lexer.FUNCTION] = {}
 styles[lexer.FUNCTION_BUILTIN] = {fore = colors.orange}
 -- styles[lexer.FUNCTION_METHOD] = {}
-styles[lexer.HEADING] = {fore = colors.purple}
+styles[lexer.HEADING] = {fore = colors.magenta}
 -- styles[lexer.IDENTIFIER] = {}
 styles[lexer.ITALIC] = {italic = true}
 styles[lexer.KEYWORD] = {fore = colors.blue}
-styles[lexer.LABEL] = {fore = colors.purple}
+styles[lexer.LABEL] = {fore = colors.magenta}
 styles[lexer.LINK] = {underline = true}
 styles[lexer.NUMBER] = {fore = colors.teal}
 -- styles[lexer.OPERATOR] = {}
-styles[lexer.PREPROCESSOR] = {fore = colors.purple}
+styles[lexer.PREPROCESSOR] = {fore = colors.magenta}
 styles[lexer.REFERENCE] = {underline = true}
 styles[lexer.REGEX] = {fore = colors.lime}
 styles[lexer.STRING] = {fore = colors.green}

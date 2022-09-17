@@ -202,8 +202,8 @@ local prev_key_mode
 -- By default with no arguments given, opens a Lua command entry.
 -- The command entry does not respond to Textadept's default key bindings, but instead to the
 -- key bindings defined in *keys* and in `ui.command_entry.editing_keys`.
--- @param label Optional string label to display in front of input.
--- @param f Optional function to call upon pressing `Enter` in the command entry, ending the mode.
+-- @param label String label to display in front of input.
+-- @param f Function to call upon pressing `Enter` in the command entry, ending the mode.
 --   It should accept at a minimum the command entry text as an argument.
 -- @param keys Optional table of key bindings to respond to. This is in addition to the
 --   basic editing and movement keys defined in `ui.command_entry.editing_keys`. `Esc` and

@@ -7908,8 +7908,8 @@ key bindings defined in *keys* and in `ui.command_entry.editing_keys`.
 
 Parameters:
 
-* *`label`*: Optional string label to display in front of input.
-* *`f`*: Optional function to call upon pressing `Enter` in the command entry, ending the mode.
+* *`label`*: String label to display in front of input.
+* *`f`*: Function to call upon pressing `Enter` in the command entry, ending the mode.
   It should accept at a minimum the command entry text as an argument.
 * *`keys`*: Optional table of key bindings to respond to. This is in addition to the
   basic editing and movement keys defined in `ui.command_entry.editing_keys`. `Esc` and
@@ -11729,20 +11729,22 @@ The contents of this map is typically set by a theme.
 
 Style names consist of the following default names as well as the tag names defined by lexers.
 
-* `default`: The default style all others are based on.
-* `line_number`: The line number margin style.
-* `control_char`: The style of control character blocks.
-* `indent_guide`: The style of indentation guides.
-* `call_tip`: The style of call tip text. Only the `font`, `size`, `fore`, and `back` style
-  definition fields are supported.
-* `fold_display_text`: The style of text displayed next to folded lines.
-* `attribute`, `bold`, `class`, `code`, `comment`, `constant`, `constant_builtin`, `embedded`,
-  `error`, `function`, `function_builtin`, `function_method`, `identifier`, `italic`, `keyword`,
-  `label`, `link`, `number`, `operator`, `preprocessor`, `reference`, `regex`, `string`,
-  `tag`, `title`, `type`, `underline`, `variable`, `variable_builtin`, `whitespace`: Some tag
-  names used by lexers. Some lexers may define more tag names, so this list is not exhaustive.
-* `whitespace_`*`lang`: A special style for whitespace tags in lexer name *lang*. It
-  inherits from `whitespace`, and is used in place of it for all lexers.
+* [`view.STYLE_DEFAULT`](#view.STYLE_DEFAULT): The default style all others are based on.
+* [`view.STYLE_LINENUMBER`](#view.STYLE_LINENUMBER): The line number margin style.
+* [`view.STYLE_CONTROLCHAR`](#view.STYLE_CONTROLCHAR): The style of control character blocks.
+* [`view.STYLE_INDENTGUIDE`](#view.STYLE_INDENTGUIDE): The style of indentation guides.
+* [`view.STYLE_CALLTIP`](#view.STYLE_CALLTIP): The style of call tip text. Only the `font`, `size`, `fore`,
+  and `back` style definition fields are supported.
+* [`view.STYLE_FOLDDISPLAYTEXT`](#view.STYLE_FOLDDISPLAYTEXT): The style of text displayed next to folded lines.
+* [`lexer.ATTRIBUTE`](#lexer.ATTRIBUTE), [`lexer.BOLD`](#lexer.BOLD), [`lexer.CLASS`](#lexer.CLASS), [`lexer.CODE`](#lexer.CODE),
+  [`lexer.COMMENT`](#lexer.COMMENT), [`lexer.CONSTANT`](#lexer.CONSTANT), [`lexer.CONSTANT_BUILTIN`](#lexer.CONSTANT_BUILTIN),
+  [`lexer.EMBEDDED`](#lexer.EMBEDDED), [`lexer.ERROR`](#lexer.ERROR), [`lexer.FUNCTION`](#lexer.FUNCTION), [`lexer.FUNCTION_BUILTIN`](#lexer.FUNCTION_BUILTIN),
+  [`lexer.FUNCTION_METHOD`](#lexer.FUNCTION_METHOD), [`lexer.IDENTIFIER`](#lexer.IDENTIFIER), [`lexer.ITALIC`](#lexer.ITALIC), [`lexer.KEYWORD`](#lexer.KEYWORD),
+  [`lexer.LABEL`](#lexer.LABEL), [`lexer.LINK`](#lexer.LINK), [`lexer.NUMBER`](#lexer.NUMBER), [`lexer.OPERATOR`](#lexer.OPERATOR),
+  [`lexer.PREPROCESSOR`](#lexer.PREPROCESSOR), [`lexer.REFERENCE`](#lexer.REFERENCE), [`lexer.REGEX`](#lexer.REGEX), [`lexer.STRING`](#lexer.STRING),
+  [`lexer.TAG`](#lexer.TAG), [`lexer.TITLE`](#lexer.TITLE), [`lexer.TYPE`](#lexer.TYPE), [`lexer.UNDERLINE`](#lexer.UNDERLINE),
+  [`lexer.VARIABLE`](#lexer.VARIABLE), [`lexer.VARIABLE_BUILTIN`](#lexer.VARIABLE_BUILTIN): Some tag names used by lexers. Some
+  lexers may define more tag names, so this list is not exhaustive.
 
 Style definition tables may contain the following fields:
 

@@ -42,21 +42,21 @@ styles[lexer.CLASS] = {fore = colors.yellow, bold = true}
 -- styles[lexer.CODE] = {}
 styles[lexer.COMMENT] = {fore = colors.black, bold = true}
 -- styles[lexer.CONSTANT] = {}
-styles[lexer.CONSTANT_BUILTIN] = {fore = colors.magenta, bold = true}
+styles[lexer.CONSTANT_BUILTIN] = {fore = colors.magenta}
 -- styles[lexer.EMBEDDED] = {}
 styles[lexer.ERROR] = {fore = colors.red, bold = true}
 -- styles[lexer.FUNCTION] = {}
 styles[lexer.FUNCTION_BUILTIN] = {fore = colors.yellow}
 -- styles[lexer.FUNCTION_METHOD] = {}
-styles[lexer.HEADING] = {fore = colors.magenta}
+styles[lexer.HEADING] = {fore = colors.magenta, bold = true}
 styles[lexer.IDENTIFIER] = {}
 -- styles[lexer.ITALIC] = {}
 styles[lexer.KEYWORD] = {fore = colors.blue, bold = true}
-styles[lexer.LABEL] = {fore = colors.magenta}
+styles[lexer.LABEL] = {fore = colors.magenta, bold = true}
 -- styles[lexer.LINK] = {}
 styles[lexer.NUMBER] = {fore = colors.cyan}
 -- styles[lexer.OPERATOR] = {}
-styles[lexer.PREPROCESSOR] = {fore = colors.magenta}
+styles[lexer.PREPROCESSOR] = {fore = colors.magenta, bold = true}
 -- styles[lexer.REFERENCE] = {}
 styles[lexer.REGEX] = {fore = colors.green, bold = true}
 styles[lexer.STRING] = {fore = colors.green}

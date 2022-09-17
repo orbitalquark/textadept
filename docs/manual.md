@@ -24,7 +24,7 @@
 
 Textadept is a fast, minimalist, and remarkably extensible cross-platform text editor for
 programmers. Written in a combination of C and [Lua][] and relentlessly optimized for speed and
-minimalism over the last 12+ years, Textadept is an ideal editor for programmers who want endless
+minimalism over the last 15+ years, Textadept is an ideal editor for programmers who want endless
 extensibility without sacrificing speed and disk space, and without succumbing to code bloat and
 a superabundance of features. The application has both a graphical user interface (GUI) version
 that runs in a desktop environment, and a terminal version that runs within a terminal emulator.
@@ -37,7 +37,7 @@ languages available.
 
 Textadept is minimalist. Not only is this evident in the editor's appearance, but its C core
 is limited to around 2000 lines of code and its Lua extension code tries to avoid going beyond
-4000 lines. After more than 12 years of development, Textadept contains [roughly the same amount
+4000 lines. After more than 15 years of development, Textadept contains [roughly the same amount
 of code][] since its inception while significantly improving year after year.
 
 [roughly the same amount of code]: index.html#plots
@@ -47,7 +47,7 @@ features came later. Most of Textadept's internals are written in Lua: syntax hi
 opening and saving files, and search and replace, to name a few. Textadept gives you nearly
 complete control over the entire application using Lua. Capabilities like navigating within the
 editor, changing menus and key bindings on the fly, handling core events, and highlighting the
-syntax of new programming languages are possible. The editor's potential is seemingly limitless.
+syntax of new programming languages are possible. The editor's potential appears limitless.
 
 ![Split Views](images/splitviews.png)
 
@@ -110,7 +110,7 @@ Here is a simple *~/.textadept/init.lua* for illustration:
 
     -- Adjust the default theme's font and size.
     if not CURSES then
-      view:set_theme('light', {font = 'DejaVu Sans Mono', size = 12})
+      view:set_theme('light', {font = 'Monospace', size = 12})
     end
 
     -- Always use tabs for indentation.
@@ -399,8 +399,6 @@ by clicking on their tops and dragging and dropping them. You can turn off the t
 Cycle to the next buffer via `Ctrl+Tab` on Windows, Linux, and BSD, `^⇥` on macOS, and `M-N`
 in the terminal version. Cycle to the previous buffer via `Ctrl+Shift+Tab`, `^⇧⇥`, and `M-P`.
 
-**Note:** Textadept does not currently support rearranging tabs (e.g. via drag and drop).
-
 The tab bar is also accessible in the form of a searchable dialog via `Ctrl+B` on Windows,
 Linux, and BSD, `⌘B` on macOS, and `M-B` or `M-S-B` in the terminal version. (Despite the
 fact that the terminal version does not have a tab bar, it does have this dialog.) The dialog
@@ -487,9 +485,8 @@ While the pane is open in the GUI, the following key bindings apply:
   + `\u` and `\l` converts the next character to uppercase and lowercase, respectively. These
     may appear within `\U` and `\L` constructs.
 
-* For at least the English locale, toggle the find options using their button mnemonics: `Alt+M`,
-  `Alt+W`, `Alt+X`, `Alt+I` on Windows, Linux, and BSD, and `⌘M`, `⌘W`, `⌘X`, and `⌘I`,
-  respectively, on macOS.
+* For at least the English locale on Windows, Linux, and BSD, toggle the find options using
+  their button mnemonics: `Alt+M`, `Alt+W`, `Alt+X`, `Alt+I`. macOS does not support mnemonics.
 * Cycle through find/replace history via `Up` and `Down` on Windows, Linux, BSD, and the terminal
   version, and `⇡` and `⇣` on macOS.
 * Hide the pane via `Esc`.
@@ -978,7 +975,7 @@ You can create multiple selections as follows:
 * Select as an additional selection the next occurrence of the current word via `Ctrl+Shift+D`
   on Windows, Linux, and BSD, `⌘⇧D` on macOS, and `M-S-W` in the terminal version.
 
-Textadept mirrors any typed text at each selection.
+Textadept mirrors any typed or pasted text at each selection.
 
 You can create a rectangular selection as follows:
 
@@ -992,7 +989,7 @@ You can create a rectangular selection as follows:
   because some window managers in Linux consume `Alt+Shift` + arrow keys and `Alt` + mouse drag.
 
 You are permitted to create a zero-width rectangular selection that spans multiple lines,
-and for this kind of selection, Textadept mirrors any typed text on all of those lines.
+and for this kind of selection, Textadept mirrors any typed or pasted text on all of those lines.
 
 ![Rectangular Selection](images/rectangularselection.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -1001,7 +998,7 @@ and for this kind of selection, Textadept mirrors any typed text on all of those
 You can also copy rectangular blocks of text and paste them into rectangular blocks of the
 same size.
 
-**Note:** macOS does not support the direct pasting rectangular selections. Instead, use the
+**Note:** macOS does not support directly pasting into rectangular selections. Instead, use the
 [Lua Command Entry](#lua-command-entry) and enter `replace_rectangular(ui.clipboard_text)`
 after copying a block of text.
 
@@ -1161,14 +1158,15 @@ editing). The [keys documentation][] describes all of this in more detail.
 ### Compile, Run, Build, and Test
 ---
 
-Textadept knows most of the commands that compile and/or run code in source files. It also
-knows some of the commands that build projects, and you can tell the editor how to run your
-project's test suite. Textadept recognizes many of the warning and error messages emitted by
-those commands and marks them as they occur in compile/run/build/test output. Double-clicking
-on a line with a warning or error jumps to its source.
+Textadept knows most of the commands that compile and/or run code in source files. It also knows
+some of the commands that build projects, and you can tell the editor how to run your project's
+test suite. Finally, you can run arbitary commands in the context of your project. Textadept
+recognizes many of the warning and error messages emitted by those commands and marks them as
+they occur in compile/run/build/test output. Double-clicking on a line with a warning or error
+jumps to its source.
 
 The following key bindings apply for compiling and running source files, and for building
-projects and running tests:
+projects and running tests and project commands:
 
 * Compile the current file via `Ctrl+Shift+R` on Windows, Linux, and BSD, `⌘⇧R` on macOS,
   and `M-^R` in the terminal version.
@@ -1178,6 +1176,8 @@ projects and running tests:
   and `M-^B` in the terminal version.
 * Run tests for the current project via `Ctrl+Shift+T` on Windows, Linux, and BSD, `⌘⇧T`
   on macOS, and `M-^T` in the terminal version.
+* Run a command for the current project via `Ctrl+Shift+C` on Windows, Linux, and BSD, `⌘⇧C`
+  on macOS, and `M-C` in the terminal version.
 * Stop the currently running compile, run, build, or test process via `Ctrl+Shift+X` on Windows,
   Linux, and BSD, `⌘⇧X` on macOS, and `M-^X` in the terminal version.
 * Jump to the source of the next recognized warning or error via `Ctrl+Alt+E` on Windows, Linux,
@@ -1186,34 +1186,50 @@ projects and running tests:
   on Windows, Linux, and BSD, `^⌘⇧E` on macOS, and `M-S-X` in the terminal version.
 * Jump to the source of the recognized warning or error on the current line via `Enter`.
 
+Prior to running a compile, run, build, or test command, Textadept will prompt you with either:
+
+1. A command it thinks is appropriate for the current file or project.
+2. A command you have specified for this current context.
+3. A command you have previously run in this context.
+4. A blank command for you to fill in.
+
+Make any necessary changes to the command and then run it by pressing `Enter`. You can cycle
+through command history via `Up` and `Down` on Windows, Linux, BSD, and the terminal version,
+and `⇡` and `⇣` on macOS. You can opt out of running the command via `Esc`. In most cases,
+Textadept will remember compile and run commands on a per-filename basis as you use them,
+as well as build, test, and project commands on a per-directory basis.
+
 ![Runtime Error](images/runerror.png)
 
-When you execute a compile, run, build, or test command, that command's output is printed to
-a temporary buffer in real-time. You can configure Textadept to print output in the background
-by setting [`textadept.run.run_in_background`][].  For example, in your *~/.textadept/init.lua*:
-
-    textadept.run.run_in_background = true
-
-You can change or add compile, run, build, and test commands by modifying
+You can change or add compile, run, build, test, and project commands by modifying
 the [`textadept.run.compile_commands`][], [`textadept.run.run_commands`][],
-[`textadept.run.build_commands`][], and [`textadept.run.test_commands`][] tables,
-respectively. For example, in your *~/.textadept/init.lua*:
+[`textadept.run.build_commands`][], [`textadept.run.test_commands`][], and
+[`textadept.run.run_project_commands`][] tables, respectively. For example, in your
+*~/.textadept/init.lua*:
 
     textadept.run.compile_commands.foo = 'foo "%f"'
     textadept.run.run_commands.foo = './"%e"'
 
     textadept.run.build_commands['/path/to/project'] = 'make -C src -j4'
     textadept.run.test_commands['/path/to/project'] = 'lua tests.lua'
+    textadept.run.run_project_commands['/path/to/project'] = function()
 
-**Tip:** you can set compile and run commands on a per-filename basis. Also, Textadept remembers
-for the current session compile and run commands on a per-filename basis as you use them,
-and build and test commands on a per-directory basis as you use them.
+    end
+
+**Tip:** you can set compile and run commands on a per-filename basis.
 
 [`textadept.run.run_in_background`]: api.html#textadept.run.run_in_background
 [`textadept.run.compile_commands`]: api.html#textadept.run.compile_commands
 [`textadept.run.run_commands`]: api.html#textadept.run.run_commands
 [`textadept.run.build_commands`]: api.html#textadept.run.build_commands
 [`textadept.run.test_commands`]: api.html#textadept.run.test_commands
+[`textadept.run.run_project_commands`]: api.html#textadept.run.run_project_commands
+
+When you execute a compile, run, build, test, or project command, that command's output is printed
+to a temporary buffer in real-time. You can configure Textadept to print output in the background
+by setting [`textadept.run.run_in_background`][].  For example, in your *~/.textadept/init.lua*:
+
+    textadept.run.run_in_background = true
 
 ---
 ### Modules
@@ -1307,8 +1323,8 @@ A theme consists of a single Lua file, and is typically responsible for:
   the brace match indicator and snippet placeholders.
 * Specifying the find & replace pane entry font name and size.
 
-[colors]: api.html#lexer.colors
-[text display settings]: api.html#lexer.styles
+[colors]: api.html#view.colors
+[text display settings]: api.html#view.styles
 
 Textadept attempts to load, in order, a given theme from the following locations:
 
@@ -1323,14 +1339,14 @@ You can set Textadept's theme using [`view.set_theme()`][]. You can also tweak a
 on a per-language basis. For example, in your *~/.textadept/init.lua*:
 
     if not CURSES then
-      view:set_theme('light', {font = 'DejaVu Sans Mono', size = 12})
+      view:set_theme('light', {font = 'Monospace', size = 12})
     end
 
-    -- Color Java functions black instead of the default orange.
+    -- Color Java class names black instead of the default yellow.
     events.connect(events.LEXER_LOADED, function(name)
       if name ~= 'java' then return end
       local default_fore = view.style_fore[view.STYLE_DEFAULT]
-      view.style_fore[buffer:style_of_name('function')] = default_fore
+      view.style_fore[buffer:style_of_name(lexer.CLASS)] = default_fore
     end)
 
 **Tip:** you can experiment with themes without having to restart Textadept by using the
@@ -1355,7 +1371,7 @@ to set the `gtk-theme-name` to the directory name of your theme.
 ---
 
 Nearly every aspect of Textadept can be scripted, or controlled, using Lua.  Textadept contains
-its own internal copy of [Lua 5.3][], which is largely unmodified compared to the official Lua
+its own internal copy of [Lua 5.4][], which is largely unmodified compared to the official Lua
 release. The main difference is that Textadept's Lua does not have any compatibility options
 turned on for previous versions of Lua.
 
@@ -1377,8 +1393,8 @@ are some ideas:
 * Define custom key bindings and menu items that manipulate buffer contents via the extensive
   [`buffer`][] API.
 * Extend Textadept's File menu with a menu item that prompts for a commit message using an
-  [interactive dialog][], and then invokes a shell command that commits the current file to
-  version control using the provided message.
+  [interactive dialog][], and then invokes a [project command][] that commits the current file
+  to version control using the provided message.
 * Listen for the `events.FILE_SAVED` [event][] and [spawn][] an asynchronous process that runs
   a syntax checker, linter, or formatter on a source file when it is saved.
 * Start searches with the word under the caret by substituting the "Search > Find" menu item
@@ -1399,9 +1415,10 @@ If you are looking for a more structured scripting resource, [Textadept Quick Re
 contains a wealth of knowledge on how to script and configure Textadept. It groups the editor's
 rich API into a series of tasks in a convenient and easy-to-use manner.
 
-[Lua 5.3]: https://www.lua.org/manual/5.3
+[Lua 5.4]: https://www.lua.org/manual/5.4
 [`buffer`]: api.html#buffer
 [interactive dialog]: api.html#ui.dialogs
+[project command]: api.html#textadept.run.run_project
 [event]: api.html#events
 [spawn]: api.html#os.spawn
 [Lua API]: api.html
@@ -1525,6 +1542,7 @@ Command | Description
 `make win` | Cross-compiles Textadept for Windows
 `make osx-deps` | Downloads and builds Textadept's macOS dependencies
 `make osx` | Cross-compiles Textadept for macOS
+`make Textadept.app` | Optionally creates *Textadept.app* for macOS
 
 If you want to install Textadept into a non-standard location, you can specify that location
 using the `DESTDIR` variable. For example:
@@ -1622,8 +1640,8 @@ number of references for this syntax on the internet, including:
 * [Modified ECMAScript regular expression grammar](https://en.cppreference.com/w/cpp/regex/ecmascript)
 * [Regular Expressions (C++)](https://docs.microsoft.com/en-us/cpp/standard-library/regular-expressions-cpp)
 
-More information on Lua patterns can be found in the [Lua 5.3 Reference
-Manual](https://www.lua.org/manual/5.3/manual.html#6.4.1).
+More information on Lua patterns can be found in the [Lua 5.4 Reference
+Manual](https://www.lua.org/manual/5.4/manual.html#6.4.1).
 
 #### Terminal Version Compatibility
 
@@ -1659,9 +1677,9 @@ Liberation Mono), and lacks some GUI features due to the terminal's constraints:
 
 Textadept's directory structure is organized as follows:
 
-* *core/*: Contains Textadept's core Lua modules. These modules are essential for the application
-  to run. They provide Textadept's Lua to C interface, event framework, file interactions,
-  and localization.
+* *core/*: Contains Textadept's core Lua modules. These modules are essential for the
+  application to run. They provide Textadept's Lua to C interface, event framework, file and
+  lexer interactions, and localization.
 * *lexers/*: Houses the lexer modules that analyze source code for syntax highlighting.
 * *modules/*: Contains modules for editing text and source code, as well as language modules.
 * *themes/*: Contains built-in themes that customize the look and feel of Textadept.
@@ -1740,8 +1758,8 @@ delimited\_range() | Replaced | [range()][]
 nested\_pair() | Replaced | [range()][]
 fold\_line\_comments() | Replaced | [fold_consecutive_lines()][]<sup>a</sup>
 N/A | Added | [number][]
-N/A | Added | [colors][]
-N/A | Added | [styles][]
+N/A | Added | colors
+N/A | Added | styles
 N/A | Added | [folding][] and other fold\* properties
 **lfs**||
 dir\_foreach() | Replaced | for filename in [lfs.walk()][] do ... end
@@ -1800,8 +1818,6 @@ N/A | Added | _buffer functions and fields_<sup>d</sup>
 [range()]: api.html#lexer.range
 [fold_consecutive_lines()]: api.html#lexer.fold_consecutive_lines
 [number]: api.html#lexer.number
-[colors]: api.html#lexer.colors
-[styles]: api.html#lexer.styles
 [folding]: api.html#lexer.folding
 [lfs.walk()]: api.html#lfs.walk
 [toggle()]: api.html#textadept.bookmarks.toggle
