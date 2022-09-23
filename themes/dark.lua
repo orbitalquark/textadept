@@ -40,6 +40,7 @@ styles[view.STYLE_CALLTIP] = {fore = colors.light_grey, back = colors.light_blac
 styles[view.STYLE_FOLDDISPLAYTEXT] = {fore = colors.dark_grey, back = colors.light_black}
 
 -- Tag styles.
+styles[lexer.ANNOTATION] = {fore = colors.magenta}
 styles[lexer.ATTRIBUTE] = {fore = colors.violet}
 styles[lexer.BOLD] = {bold = true}
 styles[lexer.CLASS] = {fore = colors.yellow}
@@ -72,7 +73,7 @@ styles[lexer.VARIABLE_BUILTIN] = {fore = colors.yellow}
 -- styles[lexer.WHITESPACE] = {}
 
 -- CSS.
-styles.property = styles.attribute
+styles.property = styles[lexer.ATTRIBUTE]
 -- styles.pseudoclass = {}
 -- styles.pseudoelement = {}
 -- Diff.
@@ -82,6 +83,11 @@ styles.change = {fore = colors.yellow}
 -- HTML.
 styles.tag_unknown = styles.tag .. {italics = true}
 styles.attribute_unknown = styles.attribute .. {italics = true}
+-- Latex, TeX, and Texinfo.
+styles.command = styles[lexer.KEYWORD]
+styles.command_section = styles[lexer.HEADING]
+styles.environment = styles[lexer.TYPE]
+styles.environment_math = styles[lexer.NUMBER]
 -- YAML.
 styles.error_indent = {back = colors.red}
 
