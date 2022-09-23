@@ -1,6 +1,7 @@
 ALPHA_NOALPHA view.ALPHA_NOALPHA (number, Read-only)\n
 ALPHA_OPAQUE view.ALPHA_OPAQUE (number, Read-only)\n
 ALPHA_TRANSPARENT view.ALPHA_TRANSPARENT (number, Read-only)\n
+ANNOTATION lexer.ANNOTATION (string)\nThe tag name for annotation elements.
 ANNOTATION_BOXED view.ANNOTATION_BOXED (number, Read-only)\n
 ANNOTATION_HIDDEN view.ANNOTATION_HIDDEN (number, Read-only)\n
 ANNOTATION_INDENTED view.ANNOTATION_INDENTED (number, Read-only)\n
@@ -161,6 +162,7 @@ LABEL lexer.LABEL (string)\nThe tag name for label elements.
 LEXER_LOADED events.LEXER_LOADED (string)\nEmitted after loading a language lexer.\nThis is useful for overriding a language module's key bindings or other properties since\nthe module is not loaded when Textadept starts.\nArguments:\n\n* _`name`_: The language lexer's name.
 LINK lexer.LINK (string)\nThe tag name for link elements, typically in markup.
 LINUX _G.LINUX (bool)\nWhether or not Textadept is running on Linux.
+LIST lexer.LIST (string)\nThe tag name for list item elements, typically in markup.
 MARGINOPTION_NONE view.MARGINOPTION_NONE (number, Read-only)\n
 MARGINOPTION_SUBLINESELECT view.MARGINOPTION_SUBLINESELECT (number, Read-only)\n
 MARGIN_BACK view.MARGIN_BACK (number, Read-only)\n
@@ -983,7 +985,7 @@ tab_label buffer.tab_label (string)\nThe buffer's tab label in the tab bar.
 tab_width buffer.tab_width (number)\nThe number of space characters represented by a tab character.\nThe default value is `8`.
 tabs ui.tabs (bool)\nWhether or not to display the tab bar when multiple buffers are open.\nThe default value is `true`.\nA third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar, even if only\none buffer is open.\nThe default value is `false`, and focuses buffers when messages are printed to them.
 tag buffer.tag (table, Read-only)\nList of capture text for capture numbers from a regular expression search.
-tag lexer.tag(lexer, name, patt)\nCreates and returns a pattern that tags pattern *patt* with name *name* in lexer *lexer*.\nIf *name* is not a predefined tag name, its Scintilla style will likely need to be defined\nby the editor or theme using this lexer.\n@param lexer The lexer to tag the given pattern in.\n@param name The name to use.\n@param patt The LPeg pattern to tag.\n@usage local number = lex:tag(lexer.NUMBER, lexer.number)\n@usage local annotation = lex:tag('annotation', '@' * lexer.word)\n@return pattern
+tag lexer.tag(lexer, name, patt)\nCreates and returns a pattern that tags pattern *patt* with name *name* in lexer *lexer*.\nIf *name* is not a predefined tag name, its Scintilla style will likely need to be defined\nby the editor or theme using this lexer.\n@param lexer The lexer to tag the given pattern in.\n@param name The name to use.\n@param patt The LPeg pattern to tag.\n@usage local number = lex:tag(lexer.NUMBER, lexer.number)\n@usage local addition = lex:tag('addition', '+' * lexer.word)\n@return pattern
 tags _M.ansi_c.tags (table)\nList of ctags files to use for autocompletion in addition to the current project's top-level\n*tags* file or the current directory's *tags* file.
 tags _M.lua.tags (table)\nList of "fake" ctags files (or functions that return such files) to use for autocompletion.\nThe kind 'm' is recognized as a module, 'f' as a function, 't' as a table and 'F' as a module\nor table field.\nThe *modules/lua/tadoc.lua* script can generate *tags* and *api*\nfiles for Lua modules via LuaDoc.
 target_end buffer.target_end (number)\nThe position of the end of the target range.\nThis is also set by a successful `buffer.search_in_target()`.

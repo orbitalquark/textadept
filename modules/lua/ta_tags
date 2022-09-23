@@ -1,6 +1,7 @@
 ALPHA_NOALPHA	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 ALPHA_OPAQUE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 ALPHA_TRANSPARENT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+ANNOTATION	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 ANNOTATION_BOXED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 ANNOTATION_HIDDEN	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 ANNOTATION_INDENTED	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
@@ -161,6 +162,7 @@ LABEL	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 LEXER_LOADED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 LINK	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 LINUX	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
+LIST	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 MARGINOPTION_NONE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MARGINOPTION_SUBLINESELECT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 MARGIN_BACK	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view

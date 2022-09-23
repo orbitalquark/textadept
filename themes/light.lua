@@ -57,6 +57,7 @@ styles[lexer.ITALIC] = {italic = true}
 styles[lexer.KEYWORD] = {fore = colors.blue}
 styles[lexer.LABEL] = {fore = colors.magenta}
 styles[lexer.LINK] = {underline = true}
+styles[lexer.LIST] = {fore = colors.teal}
 styles[lexer.NUMBER] = {fore = colors.teal}
 -- styles[lexer.OPERATOR] = {}
 styles[lexer.PREPROCESSOR] = {fore = colors.magenta}
@@ -86,6 +87,12 @@ styles.command = styles[lexer.KEYWORD]
 styles.command_section = styles[lexer.HEADING]
 styles.environment = styles[lexer.TYPE]
 styles.environment_math = styles[lexer.NUMBER]
+-- Makefile.
+-- styles.target = {}
+-- Markdown.
+-- styles.hr = {}
+-- XML.
+-- styles.cdata = {}
 -- YAML.
 styles.error_indent = {back = colors.red}
 
