@@ -283,40 +283,33 @@ end)
 -- and the indentation of the current and preceding lines.
 -- @name paste_reindent
 function M.paste_reindent()
-  -- Strip leading indentation from clipboard text.
+  -- Normalize EOLs and strip leading indentation from clipboard text.
   local text = ui.clipboard_text
   if not buffer.encoding then text = text:iconv('CP1252', 'UTF-8') end
   if buffer.eol_mode == buffer.EOL_CRLF then
     text = text:gsub('^\n', '\r\n'):gsub('([^\r])\n', '%1\r\n')
   end
-  local lead = text:match('^[ \t]*')
-  if lead ~= '' then text = text:sub(#lead + 1):gsub('\n' .. lead, '\n') end
+  local lead_indent = text:match('^[ \t]*')
+  if lead_indent ~= '' then text = text:sub(#lead_indent + 1):gsub('\n' .. lead_indent, '\n') end
   -- Change indentation to match buffer indentation settings.
-  local tab_width = math.huge
+  local indent, tab_width = buffer.use_tabs and '\t' or string.rep(' ', buffer.tab_width), math.huge
   text = text:gsub('\n([ \t]+)', function(indentation)
-    if indentation:find('^\t') then
-      return buffer.use_tabs and '\n' .. indentation or
-        ('\n' .. indentation:gsub('\t', string.rep(' ', buffer.tab_width)))
-    else
-      tab_width = math.min(tab_width, #indentation)
-      local indent = math.floor(#indentation / tab_width)
-      local spaces = string.rep(' ', math.fmod(#indentation, tab_width))
-      return string.format('\n%s%s', buffer.use_tabs and string.rep('\t', indent) or
-        string.rep(' ', buffer.tab_width):rep(indent), spaces)
-    end
+    if indentation:find('^\t') then return '\n' .. indentation:gsub('\t', indent) end
+    tab_width = math.min(tab_width, #indentation)
+    local level = #indentation // tab_width
+    local spaces = string.rep(' ', math.fmod(#indentation, tab_width))
+    return string.format('\n%s%s', string.rep(indent, level), spaces)
   end)
   -- Re-indent according to whichever of the current and preceding lines has the higher indentation
   -- amount. However, if the preceding line is a fold header, indent by an extra level.
   local line = buffer:line_from_position(buffer.selection_start)
   local i = line - 1
-  while i >= 1 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
+  while i >= 1 and buffer:position_from_line(i) == buffer.line_end_position[i] do i = i - 1 end
   if i < 1 or buffer.line_indentation[i] < buffer.line_indentation[line] then i = line end
   local indentation =
     buffer:text_range(buffer:position_from_line(i), buffer.line_indent_position[i])
   local fold_header = i ~= line and buffer.fold_level[i] & buffer.FOLDLEVELHEADERFLAG > 0
-  if fold_header then
-    indentation = indentation .. (buffer.use_tabs and '\t' or string.rep(' ', buffer.tab_width))
-  end
+  if fold_header then indentation = indentation .. indent end
   text = text:gsub('\n', '\n' .. indentation)
   -- Paste the text and adjust first and last line indentation accordingly.
   local start_indent = buffer.line_indentation[i]
@@ -781,12 +774,8 @@ end
 -- Cycle through apidoc calltips.
 events.connect(events.CALL_TIP_CLICK, function(position, view)
   if not api_docs then return end
-  api_docs.i = api_docs.i + (position == 1 and -1 or 1)
-  if api_docs.i > #api_docs then
-    api_docs.i = 1
-  elseif api_docs.i < 1 then
-    api_docs.i = #api_docs
-  end
+  api_docs.i = (api_docs.i + (position == 1 and -1 or 1)) % #api_docs -- wrap around
+  if api_docs.i == 0 then api_docs.i = #api_docs end
   (view or _G.view):call_tip_show(api_docs.pos, api_docs[api_docs.i])
 end)
 

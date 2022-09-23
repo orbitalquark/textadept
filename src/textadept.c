@@ -719,12 +719,9 @@ static void view_focused(Scintilla *view, lua_State *L) {
 static int goto_view(lua_State *L) {
   if (lua_isnumber(L, 1)) {
     lua_getfield(L, LUA_REGISTRYINDEX, VIEWS);
-    int n = (lua_pushview(L, focused_view), lua_gettable(L, -2), lua_tointeger(L, -1)) +
-      lua_tointeger(L, 1);
-    if (n > (int)lua_rawlen(L, -2))
-      n = 1;
-    else if (n < 1)
-      n = lua_rawlen(L, -2);
+    lua_pushview(L, focused_view);
+    int n = ((lua_gettable(L, -2), lua_tointeger(L, -1)) + lua_tointeger(L, 1)) %lua_rawlen(L, -2);
+    if (n == 0) n = lua_rawlen(L, -2);
     lua_rawgeti(L, -2, n), lua_replace(L, 1); // index
   }
   Scintilla *view = luaL_checkview(L, 1);
@@ -757,12 +754,11 @@ static int get_int_field(lua_State *L, int index, int n) {
  * @param L The Lua state.
  * @param index The stack index of the table to create the menu from.
  * @param f An optional GTK callback function associated with each menu item.
- * @param submenu Flag indicating whether or not this menu is a submenu.
  */
-static void lua_pushmenu(lua_State *L, int index, GCallback f, bool submenu) {
+static void lua_pushmenu(lua_State *L, int index, GCallback f) {
   GtkWidget *menu = gtk_menu_new(), *submenu_root = NULL;
-  if (lua_getfield(L, index, "title") != LUA_TNIL || submenu) { // submenu title
-    submenu_root = gtk_menu_item_new_with_mnemonic(luaL_optstring(L, -1, "no title"));
+  if (lua_getfield(L, index, "title") != LUA_TNIL) { // submenu title
+    submenu_root = gtk_menu_item_new_with_mnemonic(lua_tostring(L, -1));
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(submenu_root), menu);
   }
   lua_pop(L, 1); // title
@@ -770,7 +766,7 @@ static void lua_pushmenu(lua_State *L, int index, GCallback f, bool submenu) {
     if (lua_rawgeti(L, -1, i) != LUA_TTABLE) continue; // popped on loop
     bool is_submenu = lua_getfield(L, -1, "title") != LUA_TNIL;
     if (lua_pop(L, 1), is_submenu) {
-      lua_pushmenu(L, -1, f, true);
+      lua_pushmenu(L, -1, f);
       gtk_menu_shell_append(GTK_MENU_SHELL(menu), lua_touserdata(L, -1));
       lua_pop(L, 1); // menu
       continue;
@@ -812,7 +808,7 @@ static void popup_menu(lua_State *L, int index, GdkEventButton *event) {
 static int menu(lua_State *L) {
   luaL_checktype(L, 1, LUA_TTABLE);
 #if GTK
-  return (lua_pushmenu(L, -1, G_CALLBACK(menu_clicked), false), 1);
+  return (lua_pushmenu(L, -1, G_CALLBACK(menu_clicked)), 1);
 #elif CURSES
   return (lua_pushnil(L), 1);
 #endif
@@ -1017,11 +1013,8 @@ static void goto_doc(lua_State *L, Scintilla *view, int n, bool relative) {
   lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS);
   if (relative) {
     lua_pushdoc(L, SS(view, SCI_GETDOCPOINTER, 0, 0));
-    n = (lua_gettable(L, -2), lua_tointeger(L, -1)) + n;
-    if (n > (int)lua_rawlen(L, -2))
-      n = 1;
-    else if (n < 1)
-      n = lua_rawlen(L, -2);
+    n = ((lua_gettable(L, -2), lua_tointeger(L, -1)) + n) % lua_rawlen(L, -2);
+    if (n == 0) n = lua_rawlen(L, -2);
     lua_rawgeti(L, -2, n), lua_replace(L, -2); // index
   } else
     lua_rawgeti(L, -1, n > 0 ? n : (int)lua_rawlen(L, -1));
