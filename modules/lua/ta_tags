@@ -569,14 +569,12 @@ fold_all	_HOME/core/.view.luadoc	/^function fold_all(view, action) end$/;"	f	cla
 fold_by_indentation	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 fold_children	_HOME/core/.view.luadoc	/^function fold_children(view, line, action) end$/;"	f	class:view
 fold_compact	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
-fold_consecutive_lines	_HOME/lexers/lexer.lua	/^function M.fold_consecutive_lines(prefix)$/;"	f	class:lexer
 fold_display_text_style	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 fold_expanded	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 fold_flags	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 fold_level	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 fold_level	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 fold_line	_HOME/core/.view.luadoc	/^function fold_line(view, line, action) end$/;"	f	class:view
-fold_line_groups	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 fold_on_zero_sum_lines	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 fold_parent	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 folding	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view

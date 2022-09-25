@@ -5585,7 +5585,6 @@ Usage:
 
 * `lex:add_fold_point(lexer.OPERATOR, '{', '}')`
 * `lex:add_fold_point(lexer.KEYWORD, 'if', 'end')`
-* `lex:add_fold_point(lexer.COMMENT, lexer.fold_consecutive_lines('#'))`
 * `lex:add_fold_point('custom', function(text, pos, line, s, symbol) ... end)`
 
 <a id="lexer.add_rule"></a>
@@ -5709,22 +5708,6 @@ Return:
 
 * table of fold levels associated with line numbers.
 
-<a id="lexer.fold_consecutive_lines"></a>
-#### `lexer.fold_consecutive_lines`(*prefix*)
-
-Returns for `lexer.add_fold_point()` the parameters needed to fold consecutive lines that
-start with string *prefix*.
-
-Parameters:
-
-* *`prefix`*: The prefix string (e.g. a line comment).
-
-Usage:
-
-* `lex:add_fold_point(lexer.COMMENT, lexer.fold_consecutive_lines('--'))`
-* `lex:add_fold_point(lexer.COMMENT, lexer.fold_consecutive_lines('//'))`
-* `lex:add_fold_point(lexer.KEYWORD, lexer.fold_consecutive_lines('import'))`
-
 <a id="lexer.get_rule"></a>
 #### `lexer.get_rule`(*lexer, id*)
 
@@ -5836,6 +5819,8 @@ Parameters:
     is `false`.
   * `case_insensitive_fold_points`: Whether or not fold points added via
     `lexer.add_fold_point()` ignore case. The default value is `false`.
+  * `no_user_word_lists`: Does not automatically allocate word lists that can be set by
+    users. This should really only be set by non-programming languages like markup languages.
   * `inherit`: Lexer to inherit from. The default value is `nil`.
 
 Usage:
@@ -10153,14 +10138,6 @@ Bit-mask of folding lines to draw in the buffer.
     This option cannot be combined with `FOLDFLAG_LEVELNUMBERS`.
 
   The default value is `view.FOLDFLAG_NONE`.
-
-<a id="view.fold_line_groups"></a>
-#### `view.fold_line_groups` (boolean)
-
-Whether or not to fold multiple, consecutive line groups (such as line comments and import
-  statements) and only show the top line.
-  This option is disabled by default.
-  This is an alias for `view.property['fold.scintillua.line.groups'] = '1|0'`.
 
 <a id="view.fold_on_zero_sum_lines"></a>
 #### `view.fold_on_zero_sum_lines` (boolean)

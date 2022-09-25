@@ -4509,38 +4509,6 @@ function test_view_fold_properties()
 end
 expected_failure(test_view_fold_properties)
 
-function test_view_fold_line_groups()
-  local fold, fold_line_groups = view.folding, view.fold_line_groups
-  view.folding, view.fold_line_groups = true, false
-  buffer.new()
-  buffer:add_text [[
-    package foo;
-
-    import bar;
-    import baz;
-    import quux;
-    // comment
-    // comment
-    // comment
-
-    public class Foo {}
-  ]]
-  buffer:set_lexer('java')
-  buffer:colorize(1, -1)
-  assert(buffer.fold_level[3] & buffer.FOLDLEVELHEADERFLAG == 0, 'import is a fold point')
-  assert(buffer.fold_level[6] & buffer.FOLDLEVELHEADERFLAG == 0, 'line comment is a fold point')
-  view.property['fold.scintillua.line.groups'] = '1' -- TODO: view.fold_line_groups = true
-  buffer:colorize(1, -1)
-  assert(buffer.fold_level[3] & buffer.FOLDLEVELHEADERFLAG > 0, 'import is not a fold point')
-  assert(buffer.fold_level[6] & buffer.FOLDLEVELHEADERFLAG > 0, 'line comment is not a fold point')
-  view:toggle_fold(3)
-  for i = 4, 5 do assert(not view.line_visible[i], 'line %i is visible', i) end
-  view:toggle_fold(6)
-  for i = 7, 8 do assert(not view.line_visible[i], 'line %i is visible', i) end
-  buffer:close(true)
-  view.folding, view.fold_line_groups = folding, fold_line_groups -- restore
-end
-
 -- TODO: test init.lua's buffer settings
 
 function test_css_autocomplete()

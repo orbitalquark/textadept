@@ -26,6 +26,7 @@ Bugfixes:
 
 Changes:
 
+* Lexers no longer share the same Lua state with Textadept or each other.
 * Deprecated `lexer.colors` and `lexer.styles` in favor of [`view.colors`][] and [`view.styles`][],
   and deprecated `lexer.fold*` in favor of `view.fold*`.
 * Implemented `buffer.lexer_language`.
@@ -59,6 +60,7 @@ Changes:
    by arbitrary characters.
 * Allow prefix to be optional in `lexer.to_eol()`.
 * Added "output" lexer for recognizing tool errors and warnings.
+* Removed `lexer.fold_line_groups`.
 * Scintilla: added `view.MARK_BAR` marker and `view.INDIC_POINT_TOP` indicator.
 * Scintilla: optimized line state to avoid excessive allocations.
 * Scintilla: added `view.FOLDACTION_CONTRACT_EVERY_LEVEL` for `view:fold_all()`.

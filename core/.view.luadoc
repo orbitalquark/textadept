@@ -1069,11 +1069,6 @@
 --   a folder.
 --   Some lexers automatically enable this option. It is disabled by default.
 --   This is an alias for `view.property['fold.scintillua.by.indentation'] = '1|0'`.
--- @field fold_line_groups (boolean)
---   Whether or not to fold multiple, consecutive line groups (such as line comments and import
---   statements) and only show the top line.
---   This option is disabled by default.
---   This is an alias for `view.property['fold.scintillua.line.groups'] = '1|0'`.
 module('view')
 
 ---
