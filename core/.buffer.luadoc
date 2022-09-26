@@ -1666,7 +1666,6 @@ function delete(buffer) end
 -- Creates a new buffer, displays it in the current view, and returns it.
 -- Emits a `BUFFER_NEW` event.
 -- @return the new buffer.
--- @class function
 -- @see events.BUFFER_NEW
 function new() end
 
