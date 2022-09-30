@@ -55,6 +55,8 @@ $(call all-objs, $(textadept_objs)): CFLAGS += $(lua_flags) $(ta_flags)
 $(call all-objs, $(textadept_gtk_objs)): CFLAGS += -DGTK $(gtk_flags)
 $(call all-objs, $(textadept_curses_objs)): CFLAGS += -DCURSES -Iscintilla/curses -Itermkey -Icdk \
   $(curses_flags)
+# For readlink from unistd.h on Linux only.
+$(textadept_gtk_objs): CFLAGS += -D_XOPEN_SOURCE=500
 
 $(call all-objs, $(textadept_objs)): textadept.c ; $(build-cc)
 $(textadept_rc_objs): textadept.rc ; $(WINDRES) $< $@
@@ -63,9 +65,7 @@ $(textadept_rc_objs): textadept.rc ; $(WINDRES) $< $@
 
 sci_objs := $(call objs, scintilla/src/*.cxx)
 sci_lexlib_objs := $(call objs, lexilla/lexlib/*.cxx)
-sci_lexer_gtk_objs := $(call objs, Scintillua.cxx)
-sci_lexer_curses_objs := $(call curses-objs, Scintillua.cxx)
-sci_lexer_objs := $(sci_lexer_gtk_objs) $(sci_lexer_curses_objs)
+sci_lexer_objs := $(call objs, Scintillua.cxx)
 sci_gtk_objs := $(call objs, scintilla/gtk/*.cxx)
 sci_gtk_c_objs := $(call objs, scintilla/gtk/*.c)
 sci_curses_objs := $(call objs, scintilla/curses/*.cxx)
@@ -76,8 +76,6 @@ sci_flags := -pedantic -DSCI_LEXER -DNDEBUG -Iscintilla/include -Iscintilla/src 
 $(call all-objs, $(sci_objs)): CXXFLAGS += $(sci_flags)
 $(call all-objs, $(sci_lexlib_objs)): CXXFLAGS += $(sci_flags)
 $(call all-objs, $(sci_lexer_objs)): CXXFLAGS += $(sci_flags) $(lua_flags) -DNO_DLL
-$(call all-objs, $(sci_lexer_gtk_objs)): CXXFLAGS += -DGTK
-$(call all-objs, $(sci_lexer_curses_objs)): CXXFLAGS += -DCURSES $(curses_flags)
 $(call all-objs, $(sci_gtk_objs)): CXXFLAGS += $(sci_flags) -DGTK $(gtk_flags)
 $(call all-objs, $(sci_gtk_c_objs)): CFLAGS += $(gtk_flags)
 $(call all-objs, $(sci_curses_objs)): CXXFLAGS += $(sci_flags) -DCURSES $(curses_flags)
@@ -179,11 +177,11 @@ endif
 
 # Compilers and platform-specific flags for all objects.
 
-common_objs := $(sci_objs) $(sci_lexlib_objs) $(lua_objs) $(lua_lib_objs)
-gui_objs := $(sci_lexer_gtk_objs) $(sci_gtk_objs) $(sci_gtk_c_objs) $(textadept_gtk_objs) \
-  $(lua_oslib_gtk_objs) $(gtdialog_gtk_objs)
-curses_objs := $(sci_lexer_curses_objs) $(sci_curses_objs) $(textadept_curses_objs) \
-  $(lua_oslib_curses_objs) $(gtdialog_curses_objs) $(termkey_objs) $(cdk_objs)
+common_objs := $(sci_objs) $(sci_lexlib_objs) $(sci_lexer_objs) $(lua_objs) $(lua_lib_objs)
+gui_objs := $(sci_gtk_objs) $(sci_gtk_c_objs) $(textadept_gtk_objs) $(lua_oslib_gtk_objs) \
+  $(gtdialog_gtk_objs)
+curses_objs := $(sci_curses_objs) $(textadept_curses_objs) $(lua_oslib_curses_objs) \
+  $(gtdialog_curses_objs) $(termkey_objs) $(cdk_objs)
 
 linux_objs := $(common_objs) $(gui_objs) $(curses_objs) $(termkey_unix_objs)
 win_objs := $(call win-objs, $(common_objs) $(gui_objs) $(curses_objs)) $(termkey_win_objs) \

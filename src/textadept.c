@@ -1,9 +1,5 @@
 // Copyright 2007-2022 Mitchell. See LICENSE.
 
-#if __linux__
-#define _XOPEN_SOURCE 500 // for readlink from unistd.h
-#endif
-
 // Library includes.
 #include <errno.h>
 #include <limits.h> // for MB_LEN_MAX
@@ -720,7 +716,7 @@ static int goto_view(lua_State *L) {
   if (lua_isnumber(L, 1)) {
     lua_getfield(L, LUA_REGISTRYINDEX, VIEWS);
     lua_pushview(L, focused_view);
-    int n = ((lua_gettable(L, -2), lua_tointeger(L, -1)) + lua_tointeger(L, 1)) %lua_rawlen(L, -2);
+    int n = ((lua_gettable(L, -2), lua_tointeger(L, -1)) + lua_tointeger(L, 1)) % lua_rawlen(L, -2);
     if (n == 0) n = lua_rawlen(L, -2);
     lua_rawgeti(L, -2, n), lua_replace(L, 1); // index
   }
