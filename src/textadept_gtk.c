@@ -53,12 +53,7 @@ static GtkosxApplication *osxapp;
 sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
   return scintilla_send_message(SCINTILLA(view), message, wparam, lparam);
 }
-void focus_view(Scintilla *view) {
-  gtk_widget_grab_focus(view);
-  // ui.dialog() interferes with focus so gtk_widget_grab_focus() does not
-  // always work. If this is the case, ensure view_focused() is called.
-  if (!gtk_widget_has_focus(view)) view_focused(view);
-}
+void focus_view(Scintilla *view) { gtk_widget_grab_focus(view); }
 void delete_scintilla(Scintilla *view) { gtk_widget_destroy(view); }
 // Find & replace pane.
 static GtkWidget *findbox, *find_entry, *repl_entry, *find_label, *repl_label;

@@ -305,18 +305,6 @@ static Scintilla *luaL_checkview(lua_State *L, int arg) {
   return (luaL_argcheck(L, is_type(L, arg, "ta_view"), arg, "View expected"), lua_toview(L, arg));
 }
 
-/**
- * Change focus to the given Scintilla view.
- * Generates 'view_before_switch' and 'view_after_switch' events.
- * @param view The Scintilla view to focus.
- */
-void view_focused(Scintilla *view) {
-  if (!initing && !closing) emit("view_before_switch", -1);
-  lua_pushview(lua, focused_view = view), lua_setglobal(lua, "view"), sync_tabbar();
-  lua_pushdoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
-  if (!initing && !closing) emit("view_after_switch", -1);
-}
-
 /** `ui.goto_view()` Lua function. */
 static int goto_view(lua_State *L) {
   if (lua_isnumber(L, 1)) {
@@ -1037,7 +1025,20 @@ static void emit_notification(lua_State *L, SCNotification *n) {
   emit("SCN", LUA_TTABLE, luaL_ref(L, LUA_REGISTRYINDEX), -1);
 }
 
-void notified(Scintilla *view, int _, SCNotification *n, void *__) {
+/**
+ * Signal that focus has changed to the given Scintilla view.
+ * Generates 'view_before_switch' and 'view_after_switch' events.
+ * @param view The Scintilla view that was focused.
+ */
+static void view_focused(Scintilla *view) {
+  if (!initing && !closing) emit("view_before_switch", -1);
+  lua_pushview(lua, focused_view = view), lua_setglobal(lua, "view"), sync_tabbar();
+  lua_pushdoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
+  if (!initing && !closing) emit("view_after_switch", -1);
+}
+
+/** Signal for a Scintilla notification. */
+static void notified(Scintilla *view, int _, SCNotification *n, void *__) {
   if (view == command_entry) {
     if (n->nmhdr.code == SCN_MODIFIED &&
       (n->modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)))

@@ -26,13 +26,6 @@ bool emit(const char *name, ...);
 
 void find_clicked(FindButton *button, void *unused);
 
-/**
- * Change focus to the given Scintilla view.
- * Generates 'view_before_switch' and 'view_after_switch' events.
- * @param view The Scintilla view to focus.
- */
-void view_focused(Scintilla *view);
-
 int get_int_field(lua_State *L, int index, int n);
 
 /**
@@ -47,9 +40,6 @@ void move_buffer(int from, int to, bool reorder_tabs);
 bool call_timeout_function(void *f);
 
 void delete_view(Scintilla *view);
-
-/** Signal for a Scintilla notification. */
-void notified(Scintilla *view, int _, SCNotification *n, void *userdata);
 
 bool init_textadept(int argc, char **argv);
 void close_textadept();
