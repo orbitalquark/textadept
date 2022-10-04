@@ -1379,6 +1379,7 @@ function test_buffer_style_of_name()
   assert_equal(buffer:style_of_name('default'), view.STYLE_DEFAULT)
   assert_equal(buffer:style_of_name('unknown'), view.STYLE_DEFAULT, 'style unexpectedly in use')
   assert(buffer:style_of_name('string') ~= view.STYLE_DEFAULT, 'style not in use')
+  assert(buffer:style_of_name(lexer.STRING) ~= view.STYLE_DEFAULT, 'style not in use')
 end
 
 function test_bookmarks()
