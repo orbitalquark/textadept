@@ -62,7 +62,9 @@ const char *get_repl_text() { return gtk_entry_get_text(GTK_ENTRY(repl_entry)); 
 void set_find_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(find_entry), text); }
 void set_repl_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(repl_entry), text); }
 static GtkListStore *find_history, *repl_history;
-bool checked(FindOption *option) { return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(option)); }
+bool is_checked(FindOption *option) {
+  return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(option));
+}
 void toggle(FindOption *option, bool on) {
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(option), on);
 }
@@ -78,7 +80,7 @@ void set_button_label(FindButton *button, const char *text) {
 void set_option_label(FindOption *option, const char *text) {
   gtk_button_set_label(GTK_BUTTON(option), text);
 }
-bool find_active() { return gtk_widget_get_visible(findbox); }
+bool is_find_active() { return gtk_widget_get_visible(findbox); }
 // Command entry.
 bool is_command_entry_active() { return gtk_widget_has_focus(command_entry); }
 

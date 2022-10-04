@@ -57,7 +57,7 @@ void set_find_text(const char *text) { copyfree(&find_text, text); }
 void set_repl_text(const char *text) { copyfree(&repl_text, text); }
 static bool find_options[4];
 static char *button_labels[4], *option_labels[4], *find_history[10], *repl_history[10];
-bool checked(FindOption *option) { return *(bool *)option; }
+bool is_checked(FindOption *option) { return *(bool *)option; }
 // Use pointer arithmetic to highlight/unhighlight options as necessary.
 void toggle(FindOption *option, bool on) {
   bool *opt = (bool *)option;
@@ -75,7 +75,7 @@ void set_option_label(FindOption *option, const char *text) {
   copyfree(&option_labels[opt - find_options], lua_tostring(lua, -1));
   if (!*opt) option_labels[opt - find_options] += 4;
 }
-bool find_active() { return findbox != NULL; }
+bool is_find_active() { return findbox != NULL; }
 // Command entry.
 static bool command_entry_active;
 bool is_command_entry_active() { return command_entry_active; }

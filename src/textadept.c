@@ -117,15 +117,15 @@ static int find_index(lua_State *L) {
   else if (strcmp(key, "replace_entry_text") == 0)
     get_repl_text() ? lua_pushstring(L, get_repl_text()) : lua_pushliteral(L, "");
   else if (strcmp(key, "match_case") == 0)
-    lua_pushboolean(L, checked(match_case));
+    lua_pushboolean(L, is_checked(match_case));
   else if (strcmp(key, "whole_word") == 0)
-    lua_pushboolean(L, checked(whole_word));
+    lua_pushboolean(L, is_checked(whole_word));
   else if (strcmp(key, "regex") == 0)
-    lua_pushboolean(L, checked(regex));
+    lua_pushboolean(L, is_checked(regex));
   else if (strcmp(key, "in_files") == 0)
-    lua_pushboolean(L, checked(in_files));
+    lua_pushboolean(L, is_checked(in_files));
   else if (strcmp(key, "active") == 0)
-    lua_pushboolean(L, find_active());
+    lua_pushboolean(L, is_find_active());
   else
     lua_rawget(L, 1);
   return 1;

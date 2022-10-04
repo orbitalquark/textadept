@@ -27,13 +27,13 @@ const char *get_find_text();
 const char *get_repl_text();
 void set_find_text(const char *text);
 void set_repl_text(const char *text);
-bool checked(FindOption *option);
+bool is_checked(FindOption *option);
 void toggle(FindOption *option, bool on);
 void set_find_label(const char *text);
 void set_repl_label(const char *text);
 void set_button_label(FindButton *button, const char *text);
 void set_option_label(FindOption *option, const char *text);
-bool find_active();
+bool is_find_active();
 // Command entry.
 bool is_command_entry_active();
 
