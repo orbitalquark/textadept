@@ -96,9 +96,6 @@ void show_tabs(bool show);
 // 0-based index.
 void remove_tab(int index);
 
-// 0-based index.
-const char *get_tab_label(int index);
-
 int get_command_entry_height();
 
 // 0-based index.

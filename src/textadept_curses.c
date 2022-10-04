@@ -279,8 +279,6 @@ void show_tabs(bool show) {}
 
 void remove_tab(int index) {}
 
-const char *get_tab_label(int index) { return NULL; }
-
 int get_command_entry_height() { return getmaxy(scintilla_get_window(command_entry)); }
 
 void set_tab_label(int index, const char *text) {}

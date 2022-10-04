@@ -289,7 +289,7 @@
 -- @field tab_indents (bool)
 --   Indent text when tabbing within indentation.
 --   The default value is `false`.
--- @field tab_label (string)
+-- @field tab_label (string, Write-only)
 --   The buffer's tab label in the tab bar.
 -- @field tab_width (number)
 --   The number of space characters represented by a tab character.

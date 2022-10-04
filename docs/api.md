@@ -1366,7 +1366,7 @@ Indent text when tabbing within indentation.
   The default value is `false`.
 
 <a id="buffer.tab_label"></a>
-#### `buffer.tab_label` (string)
+#### `buffer.tab_label` (string, Write-only)
 
 The buffer's tab label in the tab bar.
 

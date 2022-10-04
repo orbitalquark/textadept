@@ -979,7 +979,7 @@ tab_context_menu textadept.menu.tab_context_menu (table)\nThe default tabbar con
 tab_context_menu ui.tab_context_menu (userdata)\nThe context menu for the buffer's tab, a `ui.menu()`.\nThis is a low-level field. You probably want to use the higher-level\n`textadept.menu.tab_context_menu`.
 tab_draw_mode view.tab_draw_mode (number)\nThe draw mode of visible tabs.\n\n* `view.TD_LONGARROW`\n  An arrow that stretches until the tabstop.\n* `view.TD_STRIKEOUT`\n  A horizontal line that stretches until the tabstop.\n\nThe default value is `view.TD_LONGARROW`.
 tab_indents buffer.tab_indents (bool)\nIndent text when tabbing within indentation.\nThe default value is `false`.
-tab_label buffer.tab_label (string)\nThe buffer's tab label in the tab bar.
+tab_label buffer.tab_label (string, Write-only)\nThe buffer's tab label in the tab bar.
 tab_width buffer.tab_width (number)\nThe number of space characters represented by a tab character.\nThe default value is `8`.
 tabs ui.tabs (bool)\nWhether or not to display the tab bar when multiple buffers are open.\nThe default value is `true`.\nA third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar, even if only\none buffer is open.\nThe default value is `false`, and focuses buffers when messages are printed to them.
 tag buffer.tag (table, Read-only)\nList of capture text for capture numbers from a regular expression search.

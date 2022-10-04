@@ -262,12 +262,6 @@ void show_tabs(bool show) { gtk_widget_set_visible(tabbar, show); }
 
 void remove_tab(int index) { gtk_notebook_remove_page(GTK_NOTEBOOK(tabbar), index); }
 
-// TODO: this doesn't work with event boxes.
-const char *get_tab_label(int index) {
-  GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
-  return gtk_notebook_get_tab_label_text(notebook, gtk_notebook_get_nth_page(notebook, index));
-}
-
 int get_command_entry_height() {
   GtkAllocation allocation;
   gtk_widget_get_allocation(command_entry, &allocation);

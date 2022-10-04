@@ -679,10 +679,9 @@ static int buffer_index(lua_State *L) {
     lua_rawget(L, -2) == LUA_TNUMBER) { // pushed
     // If the key is a Scintilla constant, return its value.
   } else if (strcmp(lua_tostring(L, 2), "tab_label") == 0 &&
-    lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
-    lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_pushvalue(L, 1), lua_gettable(L, -2);
-    lua_pushstring(L, get_tab_label(lua_tointeger(L, -1) - 1));
-  } else if (strcmp(lua_tostring(L, 2), "active") == 0 &&
+    lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
+    luaL_argerror(L, 3, "write-only property");
+  else if (strcmp(lua_tostring(L, 2), "active") == 0 &&
     lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
     lua_pushboolean(L, is_command_entry_active());
   else if (strcmp(lua_tostring(L, 2), "height") == 0 &&
