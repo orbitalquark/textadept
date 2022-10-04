@@ -313,10 +313,29 @@ const char *get_charset() {
 #endif
 }
 
-void remove_views(Pane *pane_) {
+/**
+ * Searches for the given view and returns its parent pane, if there is one.
+ * @param pane The pane that contains the desired view.
+ * @param view The view to get the parent pane of.
+ */
+static struct Pane *get_parent_pane(struct Pane *pane, Scintilla *view) {
+  if (pane->type == SINGLE) return NULL;
+  if (pane->child1->view == view || pane->child2->view == view) return pane;
+  struct Pane *parent = get_parent_pane(pane->child1, view);
+  return parent ? parent : get_parent_pane(pane->child2, view);
+}
+
+/**
+ * Removes all Scintilla views from the given pane and deletes them along with the child panes
+ * themselves.
+ * @param pane The pane to remove Scintilla views from.
+ * @param delete_view Function for deleting views.
+ * @see delete_view
+ */
+static void remove_views(Pane *pane_, void (*delete_view)(Scintilla *view)) {
   struct Pane *pane = PANED(pane_);
   if (pane->type == VSPLIT || pane->type == HSPLIT) {
-    remove_views(pane->child1), remove_views(pane->child2);
+    remove_views(pane->child1, delete_view), remove_views(pane->child2, delete_view);
     delwin(pane->win), pane->win = NULL; // delete split bar
   } else
     delete_view(pane->view);
@@ -351,31 +370,19 @@ static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
   pane->rows = rows, pane->cols = cols, pane->y = y, pane->x = x;
 }
 
-/**
- * Helper for unsplitting a view.
- * @param pane The pane that contains the view to unsplit.
- * @param view The view to unsplit.
- * @param parent The parent of pane. Used recursively.
- * @return true if the view can be split and was; false otherwise
- * @see unsplit_view
- */
-static bool unsplit_pane(struct Pane *pane, Scintilla *view, struct Pane *parent) {
-  if (pane->type != SINGLE)
-    return unsplit_pane(pane->child1, view, pane) || unsplit_pane(pane->child2, view, pane);
-  if (pane->view != view) return false;
-  remove_views(pane == parent->child1 ? parent->child2 : parent->child1);
+bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *)) {
+  struct Pane *parent = get_parent_pane(pane, view);
+  if (!parent) return false;
+  struct Pane *child = parent->child1->view == view ? parent->child1 : parent->child2;
+  remove_views(child == parent->child1 ? parent->child2 : parent->child1, delete_view);
   delwin(parent->win); // delete split bar
   // Inherit child's properties.
-  parent->type = pane->type, parent->split_size = pane->split_size;
-  parent->win = pane->win, parent->view = pane->view;
-  parent->child1 = pane->child1, parent->child2 = pane->child2;
-  free(pane);
-  return (resize_pane(parent, parent->rows, parent->cols, parent->y, parent->x), true); // update
-}
-
-bool unsplit_view(Scintilla *view) {
-  if (PANED(pane)->type == SINGLE) return false;
-  return (unsplit_pane(pane, view, NULL), scintilla_noutrefresh(view), true);
+  parent->type = child->type, parent->split_size = child->split_size;
+  parent->win = child->win, parent->view = child->view;
+  parent->child1 = child->child1, parent->child2 = child->child2;
+  free(child);
+  resize_pane(parent, parent->rows, parent->cols, parent->y, parent->x); // update
+  return (scintilla_noutrefresh(view), true);
 }
 
 /**
@@ -386,18 +393,6 @@ static Pane *new_pane(Scintilla *view) {
   struct Pane *p = calloc(1, sizeof(struct Pane));
   p->type = SINGLE, p->win = scintilla_get_window(view), p->view = view;
   return p;
-}
-
-/**
- * Searches for the given view and returns its parent pane.
- * @param pane The pane that contains the desired view.
- * @param view The view to get the parent pane of.
- */
-static struct Pane *get_parent_pane(struct Pane *pane, Scintilla *view) {
-  if (pane->type == SINGLE) return NULL;
-  if (pane->child1->view == view || pane->child2->view == view) return pane;
-  struct Pane *parent = get_parent_pane(pane->child1, view);
-  return parent ? parent : get_parent_pane(pane->child2, view);
 }
 
 void split_view(Scintilla *view, Scintilla *view2, bool vertical) {

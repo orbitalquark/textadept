@@ -39,7 +39,5 @@ void move_buffer(int from, int to, bool reorder_tabs);
 
 bool call_timeout_function(void *f);
 
-void delete_view(Scintilla *view);
-
 bool init_textadept(int argc, char **argv);
 void close_textadept();

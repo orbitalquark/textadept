@@ -983,13 +983,6 @@ static void remove_view(lua_State *L, Scintilla *view) {
 }
 
 /**
- * Removes a Scintilla view.
- * @param view The Scintilla view to remove.
- * @see remove_view
- */
-void delete_view(Scintilla *view) { remove_view(lua, view), delete_scintilla(view); }
-
-/**
  * Emits a Scintilla notification event.
  * @param L The Lua state.
  * @param n The Scintilla notification struct.
@@ -1085,9 +1078,16 @@ static int split_view_lua(lua_State *L) {
   return (lua_pushvalue(L, 1), lua_getglobal(L, "view"), 2); // old, new view
 }
 
+/**
+ * Removes a Scintilla view, typically after unsplitting a pane.
+ * @param view The Scintilla view to remove.
+ * @see remove_view
+ */
+static void delete_view(Scintilla *view) { remove_view(lua, view), delete_scintilla(view); }
+
 /** `view.unsplit()` Lua function. */
 static int unsplit_view_lua(lua_State *L) {
-  return (lua_pushboolean(L, unsplit_view(luaL_checkview(L, 1))), 1);
+  return (lua_pushboolean(L, unsplit_view(luaL_checkview(L, 1), delete_view)), 1);
 }
 
 /** `view.__index` metamethod. */
@@ -1215,7 +1215,7 @@ bool init_textadept(int argc, char **argv) {
 void close_textadept() {
   if (lua) {
     closing = true;
-    while (unsplit_view(focused_view)) {}
+    while (unsplit_view(focused_view, delete_view)) {}
     lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS);
     for (int i = lua_rawlen(lua, -1); i > 0; lua_pop(lua, 1), i--)
       lua_rawgeti(lua, -1, i), delete_buffer(lua_todoc(lua, -1)); // popped on loop

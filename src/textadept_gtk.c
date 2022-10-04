@@ -339,14 +339,21 @@ const char *get_charset() {
   return charset;
 }
 
-void remove_views(Pane *pane) {
+/**
+ * Removes all Scintilla views from the given pane and deletes them along with the child panes
+ * themselves.
+ * @param pane The pane to remove Scintilla views from.
+ * @param delete_view Function for deleting views.
+ * @see delete_view
+ */
+static void remove_views(Pane *pane, void (*delete_view)(Scintilla *view)) {
   GtkWidget *child1 = gtk_paned_get_child1(GTK_PANED(pane)),
             *child2 = gtk_paned_get_child2(GTK_PANED(pane));
-  GTK_IS_PANED(child1) ? remove_views(child1) : delete_view(child1);
-  GTK_IS_PANED(child2) ? remove_views(child2) : delete_view(child2);
+  GTK_IS_PANED(child1) ? remove_views(child1, delete_view) : delete_view(child1);
+  GTK_IS_PANED(child2) ? remove_views(child2, delete_view) : delete_view(child2);
 }
 
-bool unsplit_view(Scintilla *view) {
+bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *view)) {
   GtkWidget *pane = gtk_widget_get_parent(view);
   if (!GTK_IS_PANED(pane)) return false;
   GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane)) != view ?
@@ -355,7 +362,7 @@ bool unsplit_view(Scintilla *view) {
   g_object_ref(view), g_object_ref(other);
   gtk_container_remove(GTK_CONTAINER(pane), view);
   gtk_container_remove(GTK_CONTAINER(pane), other);
-  GTK_IS_PANED(other) ? remove_views(other) : delete_view(other);
+  GTK_IS_PANED(other) ? remove_views(other, delete_view) : delete_view(other);
   GtkWidget *parent = gtk_widget_get_parent(pane);
   gtk_container_remove(GTK_CONTAINER(parent), pane);
   if (GTK_IS_PANED(parent))

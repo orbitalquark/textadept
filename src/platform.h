@@ -119,22 +119,14 @@ bool add_timeout(double interval, void *f);
 const char *get_charset();
 
 /**
- * Removes all Scintilla views from the given pane and deletes them along with the child panes
- * themselves.
- * @param pane The pane to remove Scintilla views from.
- * @see delete_view
- */
-void remove_views(Pane *pane);
-
-/**
  * Unsplits the pane the given Scintilla view is in and keeps the view.
- * All views in the other pane are deleted.
+ * All views in the other pane should be deleted using the given deleter function.
  * @param view The Scintilla view to keep when unsplitting.
- * @return true if the view was split; false otherwise
- * @see remove_views
+ * @param delete_view Deleter function to call for each view removed from split panes.
+ * @return true if the view was in a split pane; false otherwise
  * @see delete_view
  */
-bool unsplit_view(Scintilla *view);
+bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *));
 
 /**
  * Splits the pane holding the given Scintilla view into two views.
