@@ -702,7 +702,7 @@ int main(int argc, char **argv) {
 #if __APPLE__
     osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
 #endif
-    if (!init_textadept(argc, argv)) return (close_textadept(), 1);
+    if (!init_textadept(argc, argv)) return 1;
 #if __APPLE__
     gtkosx_application_ready(osxapp);
 #endif

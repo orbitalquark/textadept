@@ -510,7 +510,7 @@ int main(int argc, char **argv) {
   replace_all = &button_labels[3], match_case = &find_options[0], whole_word = &find_options[1],
   regex = &find_options[2], in_files = &find_options[3]; // typedefed, so cannot static initialize
 
-  if (!init_textadept(argc, argv)) return (close_textadept(), endwin(), termkey_destroy(ta_tk), 1);
+  if (!init_textadept(argc, argv)) return (endwin(), termkey_destroy(ta_tk), 1);
   refresh_all();
 
 #if !_WIN32

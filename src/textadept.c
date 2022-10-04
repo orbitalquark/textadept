@@ -1202,7 +1202,7 @@ bool init_textadept(int argc, char **argv) {
 #endif
 
   setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
-  if (lua = luaL_newstate(), !init_lua(lua, argc, argv, false)) return false;
+  if (lua = luaL_newstate(), !init_lua(lua, argc, argv, false)) return (close_textadept(), false);
   command_entry = new_scintilla(notified), add_doc(lua, 0), dummy_view = new_scintilla(NULL);
   initing = true, new_window(create_first_view), run_file(lua, "init.lua"), initing = false;
   emit("buffer_new", -1), emit("view_new", -1); // first ones
