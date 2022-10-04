@@ -160,6 +160,8 @@ properties['annotation_style'][3] = types.index
 properties['annotation_style_offset'][3] = types.index
 properties['main_selection'][3] = types.index
 functions['position_relative'][4] = types.int
+properties['eol_annotation_style'][3] = types.index
+properties['eol_annotation_style_offset'][3] = types.index
 
 -- Add mouse events from Scintilla curses manually.
 constants[#constants + 1] = 'MOUSE_PRESS=1'
