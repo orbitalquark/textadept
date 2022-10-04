@@ -171,7 +171,7 @@ events.connect(events.KEYPRESS, function(code, shift, control, alt, cmd, caps)
   -- Since printable characters are uppercased, disable shift.
   if shift and code >= 32 and code < 256 then shift = false end
   -- For composed keys on macOS, ignore alt.
-  if OSX and alt and code < 256 then alt = false end
+  if (OSX and not CURSES) and alt and code < 256 then alt = false end
   local key_seq = (control and CTRL or '') .. (alt and ALT or '') .. (cmd and OSX and CMD or '') ..
     (shift and SHIFT or '') .. key
   -- print(key_seq)

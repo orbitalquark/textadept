@@ -44,22 +44,26 @@ endef
 
 # Textadept.
 
-textadept_gtk_objs := $(call objs, textadept.c)
-textadept_curses_objs := $(call curses-objs, textadept.c)
-textadept_objs := $(textadept_gtk_objs) $(textadept_curses_objs)
-textadept_rc_objs := win-textadept_rc.o
+ta_objs := $(call objs, textadept.c)
+ta_gtk_objs := $(call objs, textadept_gtk.c)
+ta_curses_objs := $(call objs, textadept_curses.c)
+ta_rc_objs := win-textadept_rc.o
 
-ta_flags := -std=c99 -pedantic -Iscintilla/include -Igtdialog -Wall
+ta_flags := -std=c99 -pedantic -I. -Iscintilla/include -Igtdialog -Wall
 
-$(call all-objs, $(textadept_objs)): CFLAGS += $(lua_flags) $(ta_flags)
-$(call all-objs, $(textadept_gtk_objs)): CFLAGS += -DGTK $(gtk_flags)
-$(call all-objs, $(textadept_curses_objs)): CFLAGS += -DCURSES -Iscintilla/curses -Itermkey -Icdk \
-  $(curses_flags)
+$(call all-objs, $(ta_objs)): CFLAGS += $(ta_flags) $(lua_flags)
+$(call all-objs, $(ta_gtk_objs)): CFLAGS += $(ta_flags) $(lua_flags) -DGTK $(gtk_flags)
+$(call all-objs, $(ta_curses_objs)): CFLAGS += $(ta_flags) $(lua_flags) -DCURSES \
+  -Iscintilla/curses -Itermkey -Icdk $(curses_flags)
 # For readlink from unistd.h on Linux only.
-$(textadept_gtk_objs): CFLAGS += -D_XOPEN_SOURCE=500
+$(ta_objs): CFLAGS += -D_XOPEN_SOURCE=500
+# For iconv.h on Windows only.
+$(call win-objs, $(ta_objs)): CFLAGS += -Igtkwin/include
 
-$(call all-objs, $(textadept_objs)): textadept.c ; $(build-cc)
-$(textadept_rc_objs): textadept.rc ; $(WINDRES) $< $@
+$(call all-objs, $(ta_objs)): textadept.c ; $(build-cc)
+$(call all-objs, $(ta_gtk_objs)): textadept_gtk.c ; $(build-cc)
+$(call all-objs, $(ta_curses_objs)): textadept_curses.c ; $(build-cc)
+$(ta_rc_objs): textadept.rc ; $(WINDRES) $< $@
 
 # Scintilla.
 
@@ -177,15 +181,16 @@ endif
 
 # Compilers and platform-specific flags for all objects.
 
-common_objs := $(sci_objs) $(sci_lexlib_objs) $(sci_lexer_objs) $(lua_objs) $(lua_lib_objs)
-gui_objs := $(sci_gtk_objs) $(sci_gtk_c_objs) $(textadept_gtk_objs) $(lua_oslib_gtk_objs) \
+common_objs := $(ta_objs) $(sci_objs) $(sci_lexlib_objs) $(sci_lexer_objs) $(lua_objs) \
+  $(lua_lib_objs)
+gui_objs := $(ta_gtk_objs) $(sci_gtk_objs) $(sci_gtk_c_objs) $(lua_oslib_gtk_objs) \
   $(gtdialog_gtk_objs)
-curses_objs := $(sci_curses_objs) $(textadept_curses_objs) $(lua_oslib_curses_objs) \
+curses_objs := $(ta_curses_objs) $(sci_curses_objs) $(lua_oslib_curses_objs) \
   $(gtdialog_curses_objs) $(termkey_objs) $(cdk_objs)
 
 linux_objs := $(common_objs) $(gui_objs) $(curses_objs) $(termkey_unix_objs)
 win_objs := $(call win-objs, $(common_objs) $(gui_objs) $(curses_objs)) $(termkey_win_objs) \
-  $(textadept_rc_objs)
+  $(ta_rc_objs)
 osx_objs := $(call osx-objs, $(common_objs) $(gui_objs) $(curses_objs) $(termkey_unix_objs))
 
 # Compile natively for Linux or BSD.
@@ -270,7 +275,7 @@ $(linux_exes): ; $(build-exe)
 
 # Cross-compile for Windows.
 
-$(win_exes): $(call win-objs, $(common_objs)) $(textadept_rc_objs)
+$(win_exes): $(call win-objs, $(common_objs)) $(ta_rc_objs)
 ../textadept.exe: $(call win-objs, $(gui_objs))
 ../textadept-curses.exe: $(call win-objs, $(curses_objs)) $(termkey_win_objs)
 
@@ -306,8 +311,7 @@ $(osx_exes): ; $(build-exe)
 PREFIX ?= /usr/local
 bin_dir := $(PREFIX)/bin
 data_dir := $(PREFIX)/share/textadept
-XDG_DATA_DIR ?= $(PREFIX)/share/applications
-PIXMAPS_DIR ?= /usr/share/pixmaps
+XDG_DATA_DIR ?= $(PREFIX)/share
 desktop_files := $(wildcard *.desktop)
 ifeq (, $(findstring curses, $(MAKECMDGOALS)))
   install_targets := ../textadept
@@ -322,18 +326,18 @@ install: $(install_targets) | ../core ../docs ../init.lua ../lexers ../LICENSE .
 	cp -rL $| $(DESTDIR)$(data_dir)
 	ln -s $(subst .., $(data_dir), $^) $(DESTDIR)$(bin_dir)
 	if [ -d "$(XDG_DATA_DIR)" ]; then \
-		install -d $(DESTDIR)$(XDG_DATA_DIR); \
-		install $(desktop_files) $(DESTDIR)$(XDG_DATA_DIR); \
-	fi
-	if [ -d "$(PIXMAPS_DIR)" ]; then \
-		install -d $(DESTDIR)$(PIXMAPS_DIR); \
-		ln -s $(data_dir)/core/images/textadept.svg $(DESTDIR)$(PIXMAPS_DIR); \
-		ln -s $(data_dir)/core/images/ta_48x48.png $(DESTDIR)$(PIXMAPS_DIR)/textadept.png; \
+		install -d $(DESTDIR)$(XDG_DATA_DIR)/applications; \
+		install $(desktop_files) $(DESTDIR)$(XDG_DATA_DIR)/applications; \
+		install -d $(DESTDIR)$(XDG_DATA_DIR)/icons/hicolor/scalable/apps; \
+		install ../core/images/textadept.svg \
+			$(DESTDIR)$(XDG_DATA_DIR)/icons/hicolor/scalable/apps; \
 	fi
 uninstall:
 	rm -r $(DESTDIR)$(bin_dir)/textadept* $(DESTDIR)$(data_dir)
-	if [ -d "$(XDG_DATA_DIR)" ]; then rm $(DESTDIR)$(XDG_DATA_DIR)/textadept*.desktop; fi
-	if [ -d "$(PIXMAPS_DIR)" ]; then rm $(DESTDIR)$(PIXMAPS_DIR)/textadept*; fi
+	if [ -d "$(XDG_DATA_DIR)" ]; then \
+		rm -f $(DESTDIR)$(XDG_DATA_DIR)/applications/textadept*.desktop; \
+		rm -f $(DESTDIR)$(XDG_DATA_DIR)/icons/hicolor/scalable/apps/textadept.svg; \
+	fi
 
 # Clean.
 
@@ -525,9 +529,9 @@ clean-deps:
 # Count lines of code.
 
 .PHONY: count plots
-sources := ../core ../modules/ansi_c ../modules/lua ../modules/textadept textadept.c Makefile \
-  ../init.lua
-count: cloc ; perl $< $(sources) --not-match-f=tadoc.lua --exclude-lang=SVG
+sources := ../core ../modules/ansi_c ../modules/lua ../modules/textadept textadept*.c textadept.h \
+  platform.h Makefile ../init.lua
+count: cloc ; perl $< $(sources) --not-match-f=tadoc.lua --exclude-lang=SVG --force-lang=C,h
 plots: ; ../scripts/gen_plots.sh
 
 # Profiling, code coverage, and linting.

@@ -53,6 +53,11 @@ Whether or not Textadept is running in a terminal.
 
   [Appendix]: manual.html#terminal-version-compatibility
 
+<a id="GTK"></a>
+#### `GTK` (bool)
+
+Whether or not Textadept is running as a GTK GUI application.
+
 <a id="LINUX"></a>
 #### `LINUX` (bool)
 
@@ -61,7 +66,7 @@ Whether or not Textadept is running on Linux.
 <a id="OSX"></a>
 #### `OSX` (bool)
 
-Whether or not Textadept is running on macOS as a GUI application.
+Whether or not Textadept is running on macOS.
 
 <a id="WIN32"></a>
 #### `WIN32` (bool)

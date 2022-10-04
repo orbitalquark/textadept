@@ -119,6 +119,7 @@ FOLD_HEADER lexer.FOLD_HEADER (number)\nFlag indicating the line is fold point.
 FUNCTION lexer.FUNCTION (string)\nThe tag name for function elements.
 FUNCTION_BUILTIN lexer.FUNCTION_BUILTIN (string)\nThe tag name for builtin function elements.
 FUNCTION_METHOD lexer.FUNCTION_METHOD (string)\nThe tag name for function method elements.
+GTK _G.GTK (bool)\nWhether or not Textadept is running as a GTK GUI application.
 HEADING lexer.HEADING (string)\nThe tag name for heading elements, typically in markup.
 IDENTIFIER lexer.IDENTIFIER (string)\nThe tag name for identifier elements.
 INDICATOR_CLICK events.INDICATOR_CLICK (string)\nEmitted when clicking the mouse on text that has an indicator present.\nArguments:\n\n* _`position`_: The clicked text's position.\n* _`modifiers`_: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,\n  `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier\n  key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set\n  `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is\n  reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
@@ -241,7 +242,7 @@ OPERATOR lexer.OPERATOR (string)\nThe tag name for operator elements.
 ORDER_CUSTOM buffer.ORDER_CUSTOM (number, Read-only)\n
 ORDER_PERFORMSORT buffer.ORDER_PERFORMSORT (number, Read-only)\n
 ORDER_PRESORTED buffer.ORDER_PRESORTED (number, Read-only)\n
-OSX _G.OSX (bool)\nWhether or not Textadept is running on macOS as a GUI application.
+OSX _G.OSX (bool)\nWhether or not Textadept is running on macOS.
 PREPROCESSOR lexer.PREPROCESSOR (string)\nThe tag name for preprocessor elements.
 QUIT events.QUIT (string)\nEmitted when quitting Textadept.\nWhen connecting to this event, connect with an index of 1 if the handler needs to run\nbefore Textadept closes all open buffers. If a handler returns `true`, Textadept does not\nquit. It is not recommended to return `false` from a quit handler, as that may interfere\nwith Textadept's normal shutdown procedure.\nEmitted by `quit()`.
 REFERENCE lexer.REFERENCE (string)\nThe tag name for reference elements, typically in markup.

@@ -34,6 +34,7 @@ local ui = ui
 module('ui')]]
 
 ui.SHOW_ALL_TABS = 2 -- ui.tabs options must be greater than 1
+if CURSES then ui.tabs = false end -- not supported right now
 
 -- Helper functions for getting print views and buffers.
 local function get_print_view(type)

@@ -119,6 +119,7 @@ FOLD_HEADER	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 FUNCTION	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 FUNCTION_BUILTIN	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 FUNCTION_METHOD	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
+GTK	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
 HEADING	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 IDENTIFIER	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 INDICATOR_CLICK	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events

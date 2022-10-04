@@ -156,11 +156,13 @@ end, 1)
 -- @field WIN32 (bool)
 --   Whether or not Textadept is running on Windows.
 -- @field OSX (bool)
---   Whether or not Textadept is running on macOS as a GUI application.
+--   Whether or not Textadept is running on macOS.
 -- @field LINUX (bool)
 --   Whether or not Textadept is running on Linux.
 -- @field BSD (bool)
 --   Whether or not Textadept is running on BSD.
+-- @field GTK (bool)
+--   Whether or not Textadept is running as a GTK GUI application.
 -- @field CURSES (bool)
 --   Whether or not Textadept is running in a terminal.
 --   Curses feature incompatibilities are listed in the [Appendix][].

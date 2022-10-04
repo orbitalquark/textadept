@@ -1137,7 +1137,7 @@ function test_ui_dialogs_msgbox_interactive()
     local button = ui.dialogs[msgbox]{icon = icons[i]}
     assert_equal(type(button), 'number')
     button = ui.dialogs[msgbox]{
-      icon_file = _HOME .. '/core/images/ta_32x32.png', string_output = true, no_cancel = true
+      icon_file = _HOME .. '/core/images/ta_64x64.png', string_output = true, no_cancel = true
     }
     assert_equal(type(button), 'string')
   end
@@ -4356,7 +4356,7 @@ end
 
 function test_timeout()
   if CURSES then
-    assert_raises(function() timeout(1, function() end) end, 'not implemented')
+    assert_raises(function() timeout(1, function() end) end, 'could not add timeout')
     return
   end
 
