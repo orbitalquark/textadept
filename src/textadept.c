@@ -49,44 +49,34 @@ static Scintilla *new_view(sptr_t);
 static bool init_lua(lua_State *, int, char **, bool);
 LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
 
-/**
- * Emits an event.
- * @param L The Lua state.
- * @param name The event name.
- * @param ... Arguments to pass with the event. Each pair of arguments should be a Lua type
- *   followed by the data value itself. For LUA_TLIGHTUSERDATA and LUA_TTABLE types, push the
- *   data values to the stack and give the value returned by luaL_ref(); luaL_unref() will be
- *   called appropriately. The list must be terminated with a -1.
- * @return true or false depending on the boolean value returned by the event handler, if any.
- */
-bool emit(lua_State *L, const char *name, ...) {
+bool emit(const char *name, ...) {
   bool ret = false;
-  if (lua_getglobal(L, "events") != LUA_TTABLE) return (lua_pop(L, 1), ret);
-  if (lua_getfield(L, -1, "emit") != LUA_TFUNCTION) return (lua_pop(L, 2), ret);
-  lua_pushstring(L, name);
+  if (lua_getglobal(lua, "events") != LUA_TTABLE) return (lua_pop(lua, 1), ret);
+  if (lua_getfield(lua, -1, "emit") != LUA_TFUNCTION) return (lua_pop(lua, 2), ret);
+  lua_pushstring(lua, name);
   int n = 1;
   va_list ap;
   va_start(ap, name);
   sptr_t arg;
   for (int type = va_arg(ap, int); type != -1; type = va_arg(ap, int), n++) switch (type) {
-    case LUA_TBOOLEAN: lua_pushboolean(L, va_arg(ap, int)); break;
-    case LUA_TNUMBER: lua_pushinteger(L, va_arg(ap, int)); break;
-    case LUA_TSTRING: lua_pushstring(L, va_arg(ap, char *)); break;
+    case LUA_TBOOLEAN: lua_pushboolean(lua, va_arg(ap, int)); break;
+    case LUA_TNUMBER: lua_pushinteger(lua, va_arg(ap, int)); break;
+    case LUA_TSTRING: lua_pushstring(lua, va_arg(ap, char *)); break;
     case LUA_TLIGHTUSERDATA:
     case LUA_TTABLE:
       arg = va_arg(ap, sptr_t);
-      lua_rawgeti(L, LUA_REGISTRYINDEX, arg), luaL_unref(L, LUA_REGISTRYINDEX, arg);
+      lua_rawgeti(lua, LUA_REGISTRYINDEX, arg), luaL_unref(lua, LUA_REGISTRYINDEX, arg);
       break;
-    default: lua_pushnil(L);
+    default: lua_pushnil(lua);
     }
   va_end(ap);
-  if (lua_pcall(L, n, 1, 0) != LUA_OK) {
+  if (lua_pcall(lua, n, 1, 0) != LUA_OK) {
     // An error occurred within `events.emit()` itself, not an event handler.
-    const char *argv[] = {"--title", "Error", "--text", lua_tostring(L, -1)};
-    return (free(gtdialog(GTDIALOG_TEXTBOX, 4, argv)), lua_pop(L, 2), ret); // result, events
+    const char *argv[] = {"--title", "Error", "--text", lua_tostring(lua, -1)};
+    return (free(gtdialog(GTDIALOG_TEXTBOX, 4, argv)), lua_pop(lua, 2), ret); // result, events
   } else
-    ret = lua_toboolean(L, -1);
-  return (lua_pop(L, 2), ret); // result, events
+    ret = lua_toboolean(lua, -1);
+  return (lua_pop(lua, 2), ret); // result, events
 }
 
 /** Signal for a find box button click. */
@@ -96,12 +86,12 @@ void find_clicked(FindButton *button, void *unused) {
   (button == find_next || button == find_prev) ? add_to_find_history(find_text) :
                                                  add_to_repl_history(repl_text);
   if (button == find_next || button == find_prev)
-    emit(lua, "find", LUA_TSTRING, find_text, LUA_TBOOLEAN, button == find_next, -1);
+    emit("find", LUA_TSTRING, find_text, LUA_TBOOLEAN, button == find_next, -1);
   else if (button == replace) {
-    emit(lua, "replace", LUA_TSTRING, repl_text, -1);
-    emit(lua, "find", LUA_TSTRING, find_text, LUA_TBOOLEAN, true, -1);
+    emit("replace", LUA_TSTRING, repl_text, -1);
+    emit("find", LUA_TSTRING, find_text, LUA_TBOOLEAN, true, -1);
   } else if (button == replace_all)
-    emit(lua, "replace_all", LUA_TSTRING, find_text, LUA_TSTRING, repl_text, -1);
+    emit("replace_all", LUA_TSTRING, find_text, LUA_TSTRING, repl_text, -1);
 }
 
 /** `find.find_next()` Lua function. */
@@ -199,7 +189,7 @@ static char *work(void *L) {
     } else
       lua_pop(L, 2), lua_pushliteral(L, "invalid return values");
   }
-  return (emit(L, "error", LUA_TSTRING, lua_tostring(L, -1), -1), lua_pop(L, 1), NULL);
+  return (emit("error", LUA_TSTRING, lua_tostring(L, -1), -1), lua_pop(L, 1), NULL);
 }
 
 /** `ui.dialog()` Lua function. */
@@ -321,10 +311,10 @@ static Scintilla *luaL_checkview(lua_State *L, int arg) {
  * @param view The Scintilla view to focus.
  */
 void view_focused(Scintilla *view) {
-  if (!initing && !closing) emit(lua, "view_before_switch", -1);
+  if (!initing && !closing) emit("view_before_switch", -1);
   lua_pushview(lua, focused_view = view), lua_setglobal(lua, "view"), sync_tabbar();
   lua_pushdoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
-  if (!initing && !closing) emit(lua, "view_after_switch", -1);
+  if (!initing && !closing) emit("view_after_switch", -1);
 }
 
 /** `ui.goto_view()` Lua function. */
@@ -530,8 +520,8 @@ static int delete_buffer_lua(lua_State *L) {
   sptr_t doc = SS(view, SCI_GETDOCPOINTER, 0, 0);
   if (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawlen(L, -1) == 1) new_buffer(0);
   if (view == focused_view) goto_doc(L, focused_view, -1, true);
-  delete_buffer(doc), emit(L, "buffer_deleted", -1);
-  if (view == focused_view) emit(L, "buffer_after_switch", -1);
+  delete_buffer(doc), emit("buffer_deleted", -1);
+  if (view == focused_view) emit("buffer_after_switch", -1);
   return 0;
 }
 
@@ -771,7 +761,7 @@ static void add_doc(lua_State *L, sptr_t doc) {
  */
 static void new_buffer(sptr_t doc) {
   if (!doc) {
-    emit(lua, "buffer_before_switch", -1);
+    emit("buffer_before_switch", -1);
     add_doc(lua, doc = SS(focused_view, SCI_CREATEDOCUMENT, 0, 0));
     goto_doc(lua, focused_view, -1, false);
   } else
@@ -780,7 +770,7 @@ static void new_buffer(sptr_t doc) {
   add_tab(), show_tabs(tabs && (tabs > 1 || lua_rawlen(lua, -1) > 0));
   lua_pop(lua, 1); // buffers
   lua_pushdoc(lua, doc), lua_setglobal(lua, "buffer");
-  if (!initing) emit(lua, "buffer_new", -1);
+  if (!initing) emit("buffer_new", -1);
 }
 
 /**
@@ -838,14 +828,14 @@ static bool run_file(lua_State *L, const char *filename) {
 static int reset(lua_State *L) {
   int persist_ref = (lua_newtable(L), luaL_ref(L, LUA_REGISTRYINDEX));
   lua_rawgeti(L, LUA_REGISTRYINDEX, persist_ref); // emit will unref
-  emit(L, "reset_before", LUA_TTABLE, luaL_ref(L, LUA_REGISTRYINDEX), -1);
+  emit("reset_before", LUA_TTABLE, luaL_ref(L, LUA_REGISTRYINDEX), -1);
   init_lua(L, 0, NULL, true);
   lua_pushview(L, focused_view), lua_setglobal(L, "view");
   lua_pushdoc(L, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(L, "buffer");
   lua_pushnil(L), lua_setglobal(L, "arg");
-  run_file(L, "init.lua"), emit(L, "initialized", -1);
+  run_file(L, "init.lua"), emit("initialized", -1);
   lua_getfield(L, LUA_REGISTRYINDEX, ARG), lua_setglobal(L, "arg");
-  return (emit(L, "reset_after", LUA_TTABLE, persist_ref, -1), 0);
+  return (emit("reset_after", LUA_TTABLE, persist_ref, -1), 0);
 }
 
 /** Runs the timeout function passed to `_G.timeout()`. */
@@ -857,7 +847,7 @@ bool call_timeout_function(void *f) {
   if (!(repeat = ok && lua_toboolean(lua, -1))) {
     while (--nargs >= 0) luaL_unref(lua, LUA_REGISTRYINDEX, refs[nargs]);
     free(refs);
-    if (!ok) emit(lua, "error", LUA_TSTRING, lua_tostring(lua, -1), -1);
+    if (!ok) emit("error", LUA_TSTRING, lua_tostring(lua, -1), -1);
   }
   return (lua_pop(lua, 1), repeat); // result
 }
@@ -1044,16 +1034,16 @@ static void emit_notification(lua_State *L, SCNotification *n) {
   lua_pushinteger(L, n->updated), lua_setfield(L, -2, "updated");
   // lua_pushinteger(L, n->listCompletionMethod), lua_setfield(L, -2, "list_completion_method");
   // lua_pushinteger(L, n->characterSource), lua_setfield(L, -2, "character_source");
-  emit(L, "SCN", LUA_TTABLE, luaL_ref(L, LUA_REGISTRYINDEX), -1);
+  emit("SCN", LUA_TTABLE, luaL_ref(L, LUA_REGISTRYINDEX), -1);
 }
 
 void notified(Scintilla *view, int _, SCNotification *n, void *__) {
   if (view == command_entry) {
     if (n->nmhdr.code == SCN_MODIFIED &&
       (n->modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)))
-      emit(lua, "command_text_changed", -1);
+      emit("command_text_changed", -1);
     else if (n->nmhdr.code == SCN_FOCUSOUT) // TODO: do not emit if Esc triggered this
-      emit(lua, "keypress", LUA_TNUMBER, SCK_ESCAPE, -1);
+      emit("keypress", LUA_TNUMBER, SCK_ESCAPE, -1);
   } else if (view == focused_view || n->nmhdr.code == SCN_URIDROPPED) {
     if (view != focused_view) view_focused(view);
     emit_notification(lua, n);
@@ -1073,9 +1063,9 @@ static int goto_doc_lua(lua_State *L) {
   // If the indexed view is not currently focused, temporarily focus it so `_G.buffer` in
   // handlers is accurate.
   if (view != focused_view) focus_view(view);
-  if (!initing) emit(L, "buffer_before_switch", -1);
+  if (!initing) emit("buffer_before_switch", -1);
   goto_doc(L, view, lua_tointeger(L, 2), relative);
-  if (!initing) emit(L, "buffer_after_switch", -1);
+  if (!initing) emit("buffer_after_switch", -1);
   if (focused_view != prev_view) focus_view(prev_view);
   return 0;
 }
@@ -1175,7 +1165,7 @@ static Scintilla *new_view(sptr_t doc) {
   if (doc) SS(view, SCI_SETDOCPOINTER, 0, doc);
   focus_view(view), focused_view = view;
   if (!doc) new_buffer(SS(view, SCI_GETDOCPOINTER, 0, 0));
-  if (!initing) emit(lua, "view_new", -1);
+  if (!initing) emit("view_new", -1);
   return view;
 }
 
@@ -1214,11 +1204,11 @@ bool init_textadept(int argc, char **argv) {
   if (lua = luaL_newstate(), !init_lua(lua, argc, argv, false)) return false;
   command_entry = new_scintilla(notified), add_doc(lua, 0), dummy_view = new_scintilla(NULL);
   initing = true, new_window(create_first_view), run_file(lua, "init.lua"), initing = false;
-  emit(lua, "buffer_new", -1), emit(lua, "view_new", -1); // first ones
+  emit("buffer_new", -1), emit("view_new", -1); // first ones
   lua_pushdoc(lua, SS(command_entry, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
-  emit(lua, "buffer_new", -1), emit(lua, "view_new", -1); // command entry
+  emit("buffer_new", -1), emit("view_new", -1); // command entry
   lua_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
-  return (emit(lua, "initialized", -1), true); // ready
+  return (emit("initialized", -1), true); // ready
 }
 
 void close_textadept() {

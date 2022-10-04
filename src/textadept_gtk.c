@@ -157,7 +157,7 @@ void set_tab(int index) {
 
 /** Signal for a menu item click. */
 static void menu_clicked(GtkWidget *_, void *id) {
-  emit(lua, "menu_clicked", LUA_TNUMBER, (int)(long)id, -1);
+  emit("menu_clicked", LUA_TNUMBER, (int)(long)id, -1);
 }
 
 void *read_menu(lua_State *L, int index) {
@@ -285,7 +285,7 @@ static bool tab_clicked(GtkWidget *label, GdkEventButton *event, void *_) {
   for (int i = 0; i < gtk_notebook_get_n_pages(notebook); i++) {
     GtkWidget *page = gtk_notebook_get_nth_page(notebook, i);
     if (label != gtk_notebook_get_tab_label(notebook, page)) continue;
-    emit(lua, "tab_clicked", LUA_TNUMBER, i + 1, LUA_TNUMBER, event->button, LUA_TBOOLEAN,
+    emit("tab_clicked", LUA_TNUMBER, i + 1, LUA_TNUMBER, event->button, LUA_TBOOLEAN,
       event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
       event->state & GDK_MOD1_MASK, LUA_TBOOLEAN, event->state & GDK_META_MASK, -1);
     if (event->button == 3) show_context_menu("tab_context_menu", event);
@@ -394,10 +394,9 @@ void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
  * Note: cannot use bool return value due to modern i686-w64-mingw32-gcc issue.
  */
 static int keypress(GtkWidget *_, GdkEventKey *event, void *__) {
-  return emit(lua, "keypress", LUA_TNUMBER, event->keyval, LUA_TBOOLEAN,
-    event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
-    event->state & GDK_MOD1_MASK, LUA_TBOOLEAN, event->state & GDK_META_MASK, LUA_TBOOLEAN,
-    event->state & GDK_LOCK_MASK, -1);
+  return emit("keypress", LUA_TNUMBER, event->keyval, LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
+    LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
+    LUA_TBOOLEAN, event->state & GDK_META_MASK, LUA_TBOOLEAN, event->state & GDK_LOCK_MASK, -1);
 }
 
 /** Signal for a Scintilla mouse click. */
@@ -426,19 +425,19 @@ void set_pane_size(Pane *pane, int size) { gtk_paned_set_position(GTK_PANED(pane
  * Generates a 'quit' event.
  */
 static bool exiting(GtkWidget *_, GdkEventAny *__, void *___) {
-  if (emit(lua, "quit", -1)) return true; // halt
+  if (emit("quit", -1)) return true; // halt
   return (close_textadept(), scintilla_release_resources(), gtk_main_quit(), false);
 }
 
 /** Signal for a Textadept window focus change. */
 static bool window_focused(GtkWidget *_, GdkEventFocus *__, void *___) {
-  if (!is_command_entry_active()) emit(lua, "focus", -1);
+  if (!is_command_entry_active()) emit("focus", -1);
   return false;
 }
 
 /** Signal for window focus loss. */
 static bool focus_lost(GtkWidget *_, GdkEvent *__, void *___) {
-  if (!dialog_active) emit(lua, "unfocus", -1);
+  if (!dialog_active) emit("unfocus", -1);
   return is_command_entry_active(); // keep focus if the window is losing focus
 }
 
@@ -456,14 +455,14 @@ static bool window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
  * Generates an 'appleevent_odoc' event for each document sent.
  */
 static bool open_file(GtkosxApplication *_, char *path, void *__) {
-  return (emit(lua, "appleevent_odoc", LUA_TSTRING, path, -1), true);
+  return (emit("appleevent_odoc", LUA_TSTRING, path, -1), true);
 }
 
 /**
  * Signal for block terminating Textadept from macOS.
  * Generates a 'quit' event.
  */
-static bool terminating(GtkosxApplication *_, void *__) { return emit(lua, "quit", -1); }
+static bool terminating(GtkosxApplication *_, void *__) { return emit("quit", -1); }
 
 /**
  * Signal for terminating Textadept from macOS.
@@ -483,7 +482,7 @@ static void terminate(GtkosxApplication *_, void *__) {
  */
 static void tab_changed(GtkNotebook *_, GtkWidget *__, int tab_num, void *___) {
   current_tab = tab_num;
-  if (!tab_sync) emit(lua, "tab_clicked", LUA_TNUMBER, tab_num + 1, LUA_TNUMBER, 1, -1);
+  if (!tab_sync) emit("tab_clicked", LUA_TNUMBER, tab_num + 1, LUA_TNUMBER, 1, -1);
 }
 
 /** Signal for reordering tabs. */
@@ -520,7 +519,7 @@ static GtkWidget *new_combo(GtkWidget **label, GtkWidget **entry, GtkListStore *
 }
 
 /** Signal for a Find entry keypress. */
-static void find_changed(GtkEditable *_, void *__) { emit(lua, "find_text_changed", -1); }
+static void find_changed(GtkEditable *_, void *__) { emit("find_text_changed", -1); }
 
 /** Creates and returns a new button for the findbox. */
 static GtkWidget *new_button() {
@@ -639,7 +638,7 @@ static int process(GApplication *_, GApplicationCommandLine *line, void *buf) {
     lua_newtable(lua);
     lua_pushstring(lua, g_application_command_line_get_cwd(line)), lua_rawseti(lua, -2, -1);
     while (--argc) lua_pushstring(lua, argv[argc]), lua_rawseti(lua, -2, argc);
-    emit(lua, "command_line", LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
+    emit("command_line", LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
   }
   g_strfreev(argv);
   return (gtk_window_present(GTK_WINDOW(window)), 0);

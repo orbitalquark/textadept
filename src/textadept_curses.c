@@ -161,7 +161,7 @@ static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
     injectCDKEntry(entry, KEY_ENTER); // exit this entry
   } else if ((!find_text || strcmp(find_text, text) != 0)) {
     copyfree(&find_text, text);
-    if (emit(lua, "find_text_changed", -1)) refresh_all();
+    if (emit("find_text_changed", -1)) refresh_all();
   }
   return true;
 }
@@ -294,7 +294,7 @@ void add_tab() {}
 
 void move_tab(int from, int to) {}
 
-void quit() { quitting = !emit(lua, "quit", -1); }
+void quit() { quitting = !emit("quit", -1); }
 
 bool add_timeout(double interval, void *f) { return false; }
 
@@ -455,9 +455,9 @@ static void signalled(int signal) {
     resizeterm(w.ws_row, w.ws_col), resize_pane(pane, LINES - 2, COLS, 1, 0);
     WINDOW *win = scintilla_get_window(command_entry);
     wresize(win, 1, COLS), mvwin(win, LINES - 1 - getmaxy(win), 0);
-    if (signal == SIGCONT) emit(lua, "resume", -1);
-    emit(lua, "update_ui", LUA_TNUMBER, 0, -1);
-  } else if (!emit(lua, "suspend", -1))
+    if (signal == SIGCONT) emit("resume", -1);
+    emit("update_ui", LUA_TNUMBER, 0, -1);
+  } else if (!emit("suspend", -1))
     endwin(), termkey_stop(ta_tk), kill(0, SIGSTOP);
   refresh_all();
 }
@@ -553,7 +553,7 @@ int main(int argc, char **argv) {
       termkey_interpret_csi(ta_tk, &key, args, &nargs, &cmd);
       lua_newtable(lua);
       for (size_t i = 0; i < nargs; i++) lua_pushinteger(lua, args[i]), lua_rawseti(lua, -2, i + 1);
-      emit(lua, "csi", LUA_TNUMBER, cmd, LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
+      emit("csi", LUA_TNUMBER, cmd, LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
     } else if (key.type == TERMKEY_TYPE_MOUSE)
       termkey_interpret_mouse(ta_tk, &key, (TermKeyMouseEvent *)&event, &button, &y, &x), y--, x--;
     else
@@ -561,11 +561,11 @@ int main(int argc, char **argv) {
     bool shift = key.modifiers & TERMKEY_KEYMOD_SHIFT, ctrl = key.modifiers & TERMKEY_KEYMOD_CTRL,
          alt = key.modifiers & TERMKEY_KEYMOD_ALT;
     if (ch &&
-      !emit(lua, "keypress", LUA_TNUMBER, ch, LUA_TBOOLEAN, shift, LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN,
-        alt, -1))
+      !emit("keypress", LUA_TNUMBER, ch, LUA_TBOOLEAN, shift, LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt,
+        -1))
       scintilla_send_key(view, ch, shift, ctrl, alt);
     else if (!ch && !scintilla_send_mouse(view, event, button, y, x, shift, ctrl, alt) &&
-      !emit(lua, "mouse", LUA_TNUMBER, event, LUA_TNUMBER, button, LUA_TNUMBER, y, LUA_TNUMBER, x,
+      !emit("mouse", LUA_TNUMBER, event, LUA_TNUMBER, button, LUA_TNUMBER, y, LUA_TNUMBER, x,
         LUA_TBOOLEAN, shift, LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt, -1))
       // Try again with possibly another view.
       scintilla_send_mouse(focused_view, event, button, y, x, shift, ctrl, alt);

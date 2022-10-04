@@ -13,7 +13,16 @@ FindOption *match_case, *whole_word, *regex, *in_files;
 lua_State *lua;
 bool dialog_active; // for platforms with window focus issues when showing dialogs
 
-bool emit(lua_State *L, const char *name, ...);
+/**
+ * Emits an event.
+ * @param name The event name.
+ * @param ... Arguments to pass with the event. Each pair of arguments should be a Lua type
+ *   followed by the data value itself. For LUA_TLIGHTUSERDATA and LUA_TTABLE types, push the
+ *   data values to the stack and give the value returned by luaL_ref(); luaL_unref() will be
+ *   called appropriately. The list must be terminated with a -1.
+ * @return true or false depending on the boolean value returned by the event handler, if any.
+ */
+bool emit(const char *name, ...);
 
 void find_clicked(FindButton *button, void *unused);
 
