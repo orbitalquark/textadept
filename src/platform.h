@@ -137,13 +137,12 @@ void remove_views(Pane *pane);
 bool unsplit_view(Scintilla *view);
 
 /**
- * Splits the given Scintilla view into two views.
- * The new view shows the same document as the original one.
- * @param view The Scintilla view to split.
+ * Splits the pane holding the given Scintilla view into two views.
+ * @param view The Scintilla view whose pane is to be split.
+ * @param view2 The Scintilla view to add to the the newly split pane.
  * @param vertical Flag indicating whether to split the view vertically or horizontally.
- * @param return the new split view
  */
-Scintilla *split_view(Scintilla *view, bool vertical);
+void split_view(Scintilla *view, Scintilla *view2, bool vertical);
 
 Scintilla *new_scintilla(
   void (*notified)(Scintilla *sci, int iMessage, SCNotification *n, void *userdata));
@@ -153,9 +152,10 @@ PaneInfo get_pane_info_from_view(Scintilla *view);
 void set_pane_size(Pane *pane, int size);
 
 /**
- * Creates the Textadept window.
+ * Creates the Textadept window on the current platform.
  * The window contains a menubar, frame for Scintilla views, hidden find box, hidden command
  * entry, and two status bars: one for notifications and the other for buffer status.
- * It must assign command_entry and dummy_view.
+ * @param get_view Function to call when the platform is ready to accept the first Scintilla view.
+ *   The platform should be ready to create tab for that view at the very least.
  */
-void new_window();
+void new_window(Scintilla *(*get_view)(void));

@@ -389,49 +389,6 @@ static Pane *new_pane(Scintilla *view) {
 }
 
 /**
- * Helper for splitting a view.
- * Recursively propagates a split to child panes.
- * @param pane The pane to split.
- * @param vertical Whether to split the pane vertically or horizontally.
- * @param view The first Scintilla view to place in the split view.
- * @param view2 The second Scintilla view to place in the split view.
- * @see split_view
- */
-static bool split_pane(struct Pane *pane, bool vertical, Scintilla *view, Scintilla *view2) {
-  if (pane->type != SINGLE)
-    return split_pane(pane->child1, vertical, view, view2) ||
-      split_pane(pane->child2, vertical, view, view2);
-  if (view != pane->view) return false;
-  Pane *child1 = new_pane(view), *child2 = new_pane(view2);
-  pane->type = vertical ? VSPLIT : HSPLIT;
-  pane->child1 = child1, pane->child2 = child2, pane->view = NULL;
-  // Resize children and create a split bar.
-  if (vertical) {
-    pane->split_size = pane->cols / 2;
-    resize_pane(child1, pane->rows, pane->split_size, pane->y, pane->x);
-    resize_pane(child2, pane->rows, pane->cols - pane->split_size - 1, pane->y,
-      pane->x + pane->split_size + 1);
-    pane->win = newwin(pane->rows, 1, pane->y, pane->x + pane->split_size);
-  } else {
-    pane->split_size = pane->rows / 2;
-    resize_pane(child1, pane->split_size, pane->cols, pane->y, pane->x);
-    resize_pane(child2, pane->rows - pane->split_size - 1, pane->cols,
-      pane->y + pane->split_size + 1, pane->x);
-    pane->win = newwin(1, pane->cols, pane->y + pane->split_size, pane->x);
-  }
-  return (refresh_pane(pane), true);
-}
-
-Scintilla *split_view(Scintilla *view, bool vertical) {
-  Scintilla *view2 = new_view(SS(view, SCI_GETDOCPOINTER, 0, 0));
-  return (split_pane(pane, vertical, view, view2), view2);
-}
-
-Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, void *)) {
-  return scintilla_new(notified, NULL);
-}
-
-/**
  * Searches for the given view and returns its parent pane.
  * @param pane The pane that contains the desired view.
  * @param view The view to get the parent pane of.
@@ -443,6 +400,33 @@ static struct Pane *get_parent_pane(struct Pane *pane, Scintilla *view) {
   return parent ? parent : get_parent_pane(pane->child2, view);
 }
 
+void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
+  struct Pane *parent = get_parent_pane(pane, view);
+  parent = parent ? (parent->child1->view == view ? parent->child1 : parent->child2) : pane;
+  Pane *child1 = new_pane(view), *child2 = new_pane(view2);
+  parent->type = vertical ? VSPLIT : HSPLIT;
+  parent->child1 = child1, parent->child2 = child2, parent->view = NULL;
+  // Resize children and create a split bar.
+  if (vertical) {
+    parent->split_size = parent->cols / 2;
+    resize_pane(child1, parent->rows, parent->split_size, parent->y, parent->x);
+    resize_pane(child2, parent->rows, parent->cols - parent->split_size - 1, parent->y,
+      parent->x + parent->split_size + 1);
+    parent->win = newwin(parent->rows, 1, parent->y, parent->x + parent->split_size);
+  } else {
+    parent->split_size = parent->rows / 2;
+    resize_pane(child1, parent->split_size, parent->cols, parent->y, parent->x);
+    resize_pane(child2, parent->rows - parent->split_size - 1, parent->cols,
+      parent->y + parent->split_size + 1, parent->x);
+    parent->win = newwin(1, parent->cols, parent->y + parent->split_size, parent->x);
+  }
+  refresh_pane(parent);
+}
+
+Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, void *)) {
+  return scintilla_new(notified, NULL);
+}
+
 PaneInfo get_pane_info_from_view(Scintilla *view) {
   return get_pane_info(get_parent_pane(pane, view));
 }
@@ -452,12 +436,10 @@ void set_pane_size(Pane *pane_, int size) {
   pane->split_size = size, resize_pane(pane, pane->rows, pane->cols, pane->y, pane->x);
 }
 
-void new_window() {
-  pane = new_pane(new_view(0)), resize_pane(pane, LINES - 2, COLS, 1, 0);
-  command_entry = scintilla_new(notified, lua);
+void new_window(Scintilla *(*get_view)(void)) {
+  pane = new_pane(get_view()), resize_pane(pane, LINES - 2, COLS, 1, 0);
   wresize(scintilla_get_window(command_entry), 1, COLS);
   mvwin(scintilla_get_window(command_entry), LINES - 2, 0);
-  dummy_view = scintilla_new(NULL, NULL);
 }
 
 #if !_WIN32

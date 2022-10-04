@@ -1,16 +1,17 @@
 // Copyright 2007-2022 Mitchell. See LICENSE.
+// Interface between Textadept and platforms.
 
 #include "platform.h"
 
-Scintilla *focused_view, *dummy_view, *command_entry;
+// The currently focused view and command entry.
+// Platforms are responsible for updating the focused view.
+Scintilla *focused_view, *command_entry;
 
 FindButton *find_next, *find_prev, *replace, *replace_all;
 FindOption *match_case, *whole_word, *regex, *in_files;
 
 lua_State *lua;
 bool dialog_active; // for platforms with window focus issues when showing dialogs
-
-Scintilla *new_view(sptr_t);
 
 bool emit(lua_State *L, const char *name, ...);
 

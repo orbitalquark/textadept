@@ -374,24 +374,19 @@ bool unsplit_view(Scintilla *view) {
   return true;
 }
 
-Scintilla *split_view(Scintilla *view, bool vertical) {
+void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
   GtkAllocation allocation;
   gtk_widget_get_allocation(view, &allocation);
   int middle = (vertical ? allocation.width : allocation.height) / 2;
-
   GtkWidget *parent = gtk_widget_get_parent(view);
-  if (!parent) return NULL; // error on startup (e.g. loading theme or settings)
-  GtkWidget *view2 = new_view(SS(view, SCI_GETDOCPOINTER, 0, 0));
   g_object_ref(view);
   gtk_container_remove(GTK_CONTAINER(parent), view);
   GtkWidget *pane = vertical ? gtk_hpaned_new() : gtk_vpaned_new();
   gtk_paned_add1(GTK_PANED(pane), view), gtk_paned_add2(GTK_PANED(pane), view2);
   gtk_container_add(GTK_CONTAINER(parent), pane);
   gtk_paned_set_position(GTK_PANED(pane), middle);
-  gtk_widget_show_all(pane);
+  gtk_widget_show_all(pane), update_ui(); // ensure view2 is painted
   g_object_unref(view);
-
-  return (update_ui(), view2); // ensure view2 is painted
 }
 
 /**
@@ -414,7 +409,7 @@ static bool mouse_clicked(GtkWidget *w, GdkEventButton *event, void *_) {
 Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, void *)) {
   Scintilla *view = scintilla_new();
   gtk_widget_set_size_request(view, 1, 1); // minimum size
-  g_signal_connect(view, SCINTILLA_NOTIFY, G_CALLBACK(notified), NULL);
+  if (notified) g_signal_connect(view, SCINTILLA_NOTIFY, G_CALLBACK(notified), NULL);
   g_signal_connect(view, "key-press-event", G_CALLBACK(keypress), NULL);
   g_signal_connect(view, "button-press-event", G_CALLBACK(mouse_clicked), NULL);
   return view;
@@ -571,7 +566,7 @@ static GtkWidget *new_findbox() {
   return findbox;
 }
 
-void new_window() {
+void new_window(Scintilla *(*get_view)(void)) {
   gtk_window_set_default_icon_name("textadept");
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -613,10 +608,10 @@ void new_window() {
   GtkWidget *hbox = gtk_hbox_new(false, 0);
   gtk_box_pack_start(GTK_BOX(vboxp), hbox, true, true, 0);
 
-  gtk_box_pack_start(GTK_BOX(hbox), new_view(0), true, true, 0);
+  gtk_box_pack_start(GTK_BOX(hbox), get_view(), true, true, 0);
   gtk_widget_grab_focus(focused_view);
 
-  gtk_paned_add2(GTK_PANED(paned), (command_entry = new_scintilla(notified)));
+  gtk_paned_add2(GTK_PANED(paned), command_entry);
   gtk_container_child_set(GTK_CONTAINER(paned), command_entry, "shrink", false, NULL);
 
   gtk_box_pack_start(GTK_BOX(vboxp), new_findbox(), false, false, 5);
@@ -633,8 +628,6 @@ void new_window() {
   gtk_widget_show_all(window);
   gtk_widget_hide(menubar), gtk_widget_hide(tabbar), gtk_widget_hide(findbox),
     gtk_widget_hide(command_entry); // hide initially
-
-  dummy_view = scintilla_new();
 }
 
 /** Processes a remote Textadept's command line arguments. */

@@ -35,6 +35,7 @@
   lua_setmetatable(l, n > 0 ? n : n - 1);
 
 static char *textadept_home, *os;
+Scintilla *dummy_view; // for working with documents not shown in an existing view
 
 // Lua objects.
 static const char *BUFFERS = "ta_buffers", *VIEWS = "ta_views", *ARG = "ta_arg"; // registry tables
@@ -44,6 +45,7 @@ enum { SVOID, SINT, SLEN, SINDEX, SCOLOR, SBOOL, SKEYMOD, SSTRING, SSTRINGRET };
 
 // Forward declarations.
 static void new_buffer(sptr_t);
+static Scintilla *new_view(sptr_t);
 static bool init_lua(lua_State *, int, char **, bool);
 LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
 
@@ -971,7 +973,7 @@ static bool init_lua(lua_State *L, int argc, char **argv, bool reinit) {
   lua_pushboolean(L, true), lua_setglobal(L, get_platform());
   lua_pushstring(L, get_charset()), lua_setglobal(L, "_CHARSET");
 
-  if (!run_file(L, "core/init.lua")) return (lua_close(L), L = NULL, false);
+  if (!run_file(L, "core/init.lua")) return (lua_close(L), lua = NULL, false);
   lua_getglobal(L, "_SCINTILLA");
   lua_getfield(L, -1, "constants"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_constants");
   lua_getfield(L, -1, "functions"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_functions");
@@ -1084,13 +1086,11 @@ static int split_view_lua(lua_State *L) {
   int first_line = SS(view, SCI_GETFIRSTVISIBLELINE, 0, 0),
       x_offset = SS(view, SCI_GETXOFFSET, 0, 0), current_pos = SS(view, SCI_GETCURRENTPOS, 0, 0),
       anchor = SS(view, SCI_GETANCHOR, 0, 0);
-  Scintilla *view2 = split_view(view, lua_toboolean(L, 2));
-  if (view2) {
-    focus_view(view2);
-    SS(view2, SCI_SETSEL, anchor, current_pos);
-    SS(view2, SCI_LINESCROLL, first_line - SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0), 0);
-    SS(view2, SCI_SETXOFFSET, x_offset, 0);
-  }
+  Scintilla *view2 = new_view(SS(view, SCI_GETDOCPOINTER, 0, 0));
+  split_view(view, view2, lua_toboolean(L, 2)), focus_view(view2);
+  SS(view2, SCI_SETSEL, anchor, current_pos);
+  SS(view2, SCI_LINESCROLL, first_line - SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0), 0);
+  SS(view2, SCI_SETXOFFSET, x_offset, 0);
   return (lua_pushvalue(L, 1), lua_getglobal(L, "view"), 2); // old, new view
 }
 
@@ -1167,7 +1167,7 @@ static void add_view(lua_State *L, Scintilla *view) {
  * @return Scintilla view
  * @see add_view
  */
-Scintilla *new_view(sptr_t doc) {
+static Scintilla *new_view(sptr_t doc) {
   Scintilla *view = new_scintilla(notified);
   SS(view, SCI_USEPOPUP, SC_POPUP_NEVER, 0);
   add_view(lua, view);
@@ -1178,6 +1178,9 @@ Scintilla *new_view(sptr_t doc) {
   if (!initing) emit(lua, "view_new", -1);
   return view;
 }
+
+/** Creates and returns the first Scintilla view when the platform is ready for it. */
+static Scintilla *create_first_view() { return new_view(0); }
 
 bool init_textadept(int argc, char **argv) {
   char *last_slash = NULL;
@@ -1209,7 +1212,8 @@ bool init_textadept(int argc, char **argv) {
 
   setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
   if (lua = luaL_newstate(), !init_lua(lua, argc, argv, false)) return false;
-  initing = true, new_window(), add_doc(lua, 0), run_file(lua, "init.lua"), initing = false;
+  command_entry = new_scintilla(notified), add_doc(lua, 0), dummy_view = new_scintilla(NULL);
+  initing = true, new_window(create_first_view), run_file(lua, "init.lua"), initing = false;
   emit(lua, "buffer_new", -1), emit(lua, "view_new", -1); // first ones
   lua_pushdoc(lua, SS(command_entry, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
   emit(lua, "buffer_new", -1), emit(lua, "view_new", -1); // command entry
@@ -1225,7 +1229,7 @@ void close_textadept() {
     for (int i = lua_rawlen(lua, -1); i > 0; lua_pop(lua, 1), i--)
       lua_rawgeti(lua, -1, i), delete_buffer(lua_todoc(lua, -1)); // popped on loop
     lua_pop(lua, 1); // buffers
-    delete_scintilla(focused_view), delete_scintilla(dummy_view), delete_scintilla(command_entry);
+    delete_scintilla(focused_view), delete_scintilla(command_entry), delete_scintilla(dummy_view);
     lua_close(lua), lua = NULL;
   }
   if (textadept_home) free(textadept_home), textadept_home = NULL;
