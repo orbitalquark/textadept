@@ -23,53 +23,46 @@
 #define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
 #endif
 
-const char *get_platform() { return "GTK"; }
-
-// Window.
+// GTK objects.
 static GtkWidget *window, *menubar, *tabbar, *statusbar[2];
 static GtkAccelGroup *accel;
-#if _WIN32
-static const char *pipe_id = "\\\\.\\pipe\\textadept.editor";
-#elif __APPLE__
+#if __APPLE__
 static GtkosxApplication *osxapp;
 #endif
-sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
-  return scintilla_send_message(SCINTILLA(view), message, wparam, lparam);
-}
-void focus_view(Scintilla *view) { gtk_widget_grab_focus(view); }
-void delete_scintilla(Scintilla *view) { gtk_widget_destroy(view); }
-// Find & replace pane.
 static GtkWidget *findbox, *find_entry, *repl_entry, *find_label, *repl_label;
-const char *get_find_text() { return gtk_entry_get_text(GTK_ENTRY(find_entry)); }
-const char *get_repl_text() { return gtk_entry_get_text(GTK_ENTRY(repl_entry)); }
-void set_find_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(find_entry), text); }
-void set_repl_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(repl_entry), text); }
 static GtkListStore *find_history, *repl_history;
-bool is_checked(FindOption *option) {
-  return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(option));
-}
-void toggle(FindOption *option, bool on) {
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(option), on);
-}
-void set_find_label(const char *text) {
-  gtk_label_set_text_with_mnemonic(GTK_LABEL(find_label), text);
-}
-void set_repl_label(const char *text) {
-  gtk_label_set_text_with_mnemonic(GTK_LABEL(repl_label), text);
-}
-void set_button_label(FindButton *button, const char *text) {
-  gtk_button_set_label(GTK_BUTTON(button), text);
-}
-void set_option_label(FindOption *option, const char *text) {
-  gtk_button_set_label(GTK_BUTTON(option), text);
-}
-bool is_find_active() { return gtk_widget_get_visible(findbox); }
-// Command entry.
-bool is_command_entry_active() { return gtk_widget_has_focus(command_entry); }
 
 // Lua objects.
 static bool tab_sync;
 static int current_tab;
+
+#if _WIN32
+static const char *pipe_id = "\\\\.\\pipe\\textadept.editor"; // for single-instance functionality
+#endif
+
+const char *get_platform() { return "GTK"; }
+
+sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
+  return scintilla_send_message(SCINTILLA(view), message, wparam, lparam);
+}
+
+void focus_view(Scintilla *view) { gtk_widget_grab_focus(view); }
+
+void delete_scintilla(Scintilla *view) { gtk_widget_destroy(view); }
+
+const char *get_find_text() { return gtk_entry_get_text(GTK_ENTRY(find_entry)); }
+const char *get_repl_text() { return gtk_entry_get_text(GTK_ENTRY(repl_entry)); }
+void set_find_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(find_entry), text); }
+void set_repl_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(repl_entry), text); }
+bool is_checked(FindOption *opt) { return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(opt)); }
+void toggle(FindOption *opt, bool on) { gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(opt), on); }
+void set_find_label(const char *s) { gtk_label_set_text_with_mnemonic(GTK_LABEL(find_label), s); }
+void set_repl_label(const char *s) { gtk_label_set_text_with_mnemonic(GTK_LABEL(repl_label), s); }
+void set_button_label(FindButton *btn, const char *s) { gtk_button_set_label(GTK_BUTTON(btn), s); }
+void set_option_label(FindOption *opt, const char *s) { gtk_button_set_label(GTK_BUTTON(opt), s); }
+bool is_find_active() { return gtk_widget_get_visible(findbox); }
+
+bool is_command_entry_active() { return gtk_widget_has_focus(command_entry); }
 
 // Adds the given text to the given list store.
 // Note: GtkComboBoxEntry key navigation behaves contrary to command line history
@@ -206,9 +199,7 @@ bool is_maximized() {
 
 void get_size(int *width, int *height) { gtk_window_get_size(GTK_WINDOW(window), width, height); }
 
-void set_statusbar_text(int bar, const char *text) {
-  gtk_label_set_text(GTK_LABEL(statusbar[bar]), text);
-}
+void set_statusbar_text(int i, const char *s) { gtk_label_set_text(GTK_LABEL(statusbar[i]), s); }
 
 void set_title(const char *title) { gtk_window_set_title(GTK_WINDOW(window), title); }
 
@@ -310,9 +301,7 @@ void quit() {
 // Signal for a timeout.
 static int timed_out(void *f) { return call_timeout_function(f); }
 
-bool add_timeout(double interval, void *f) {
-  return (g_timeout_add(interval * 1000, timed_out, f), true);
-}
+bool add_timeout(double sec, void *f) { return (g_timeout_add(sec * 1000, timed_out, f), true); }
 
 const char *get_charset() {
   const char *charset;
@@ -390,9 +379,7 @@ Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, vo
   return view;
 }
 
-PaneInfo get_pane_info_from_view(Scintilla *view) {
-  return get_pane_info(gtk_widget_get_parent(view));
-}
+PaneInfo get_pane_info_from_view(Scintilla *v) { return get_pane_info(gtk_widget_get_parent(v)); }
 
 void set_pane_size(Pane *pane, int size) { gtk_paned_set_position(GTK_PANED(pane), size); }
 
@@ -694,7 +681,6 @@ int main(int argc, char **argv) {
 
 #if _WIN32
 // Runs Textadept in Windows.
-int WINAPI WinMain(HINSTANCE _, HINSTANCE __, LPSTR ___, int ____) {
-  return main(__argc, __argv); // MSVC extensions
-}
+// Note: __argc and __argv are MSVC extensions.
+int WINAPI WinMain(HINSTANCE _, HINSTANCE __, LPSTR ___, int ____) { return main(__argc, __argv); }
 #endif

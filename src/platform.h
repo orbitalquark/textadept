@@ -61,6 +61,7 @@ void set_button_label(FindButton *button, const char *text);
 void set_option_label(FindOption *option, const char *text);
 /** Returns whether or not the find & replace pane is active. */
 bool is_find_active();
+
 /** Returns whether or not the command entry is active. */
 bool is_command_entry_active();
 

@@ -42,12 +42,12 @@ static const char *BUFFERS = "ta_buffers", *VIEWS = "ta_views", *ARG = "ta_arg";
 static bool initing, closing;
 static int tabs = 1; // int for more options than true/false
 enum { SVOID, SINT, SLEN, SINDEX, SCOLOR, SBOOL, SKEYMOD, SSTRING, SSTRINGRET };
+LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
 
 // Forward declarations.
 static void new_buffer(sptr_t);
 static Scintilla *new_view(sptr_t);
 static bool init_lua(int, char **);
-LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
 
 bool emit(const char *name, ...) {
   bool ret = false;

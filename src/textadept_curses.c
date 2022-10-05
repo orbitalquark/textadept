@@ -16,7 +16,41 @@
 #endif
 #include "cdk_int.h" // must come after <windows.h>
 
+// Curses objects.
+static Pane *pane;
+static CDKSCREEN *findbox;
+static CDKENTRY *find_entry, *repl_entry, *focused_entry;
+static bool find_options[4];
+static char *button_labels[4], *option_labels[4], *find_history[10], *repl_history[10];
+static bool command_entry_active;
+static int statusbar_length[2];
+TermKey *ta_tk; // global for CDK use
+
+// Lua objects.
+static bool quitting;
+LUALIB_API int os_spawn_pushfds(lua_State *), os_spawn_readfds(lua_State *);
+
+// Implementation of a Pane.
+struct Pane {
+  int y, x, rows, cols, split_size; // dimensions
+  enum { SINGLE, VSPLIT, HSPLIT } type; // pane type
+  WINDOW *win; // either the Scintilla curses window or the split bar's window
+  Scintilla *view; // Scintilla view for a non-split view
+  struct Pane *child1, *child2; // each pane in a split view
+}; // Pane implementation based on code by Chris Emerson.
+static inline struct Pane *PANED(Pane *pane) { return (struct Pane *)pane; }
+
 const char *get_platform() { return "CURSES"; }
+
+sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
+  return scintilla_send_message(view, message, wparam, lparam);
+}
+
+void focus_view(Scintilla *view) {
+  (focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, SS(view, SCI_SETFOCUS, 1, 0));
+}
+
+void delete_scintilla(Scintilla *view) { scintilla_delete(view); }
 
 // Copies to the given string address the given value after freeing that string's existing value
 // (if any).
@@ -26,34 +60,11 @@ static void copyfree(char **s, const char *value) {
   *s = strcpy(malloc(strlen(value) + 1), value);
 }
 
-// Curses window.
-struct Pane {
-  int y, x, rows, cols, split_size; // dimensions
-  enum { SINGLE, VSPLIT, HSPLIT } type; // pane type
-  WINDOW *win; // either the Scintilla curses window or the split bar's window
-  Scintilla *view; // Scintilla view for a non-split view
-  struct Pane *child1, *child2; // each pane in a split view
-}; // Pane implementation based on code by Chris Emerson.
-static inline struct Pane *PANED(Pane *pane) { return (struct Pane *)pane; }
-static Pane *pane;
-TermKey *ta_tk; // global for CDK use
-sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
-  return scintilla_send_message(view, message, wparam, lparam);
-}
-void focus_view(Scintilla *view) {
-  (focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, SS(view, SCI_SETFOCUS, 1, 0));
-}
-void delete_scintilla(Scintilla *view) { scintilla_delete(view); }
-// Find & replace pane.
-static CDKSCREEN *findbox;
-static CDKENTRY *find_entry, *repl_entry, *focused_entry;
 static char *find_text, *repl_text, *find_label, *repl_label;
 const char *get_find_text() { return find_text; }
 const char *get_repl_text() { return repl_text; }
 void set_find_text(const char *text) { copyfree(&find_text, text); }
 void set_repl_text(const char *text) { copyfree(&repl_text, text); }
-static bool find_options[4];
-static char *button_labels[4], *option_labels[4], *find_history[10], *repl_history[10];
 bool is_checked(FindOption *option) { return *(bool *)option; }
 // Use pointer arithmetic to highlight/unhighlight options as necessary.
 void toggle(FindOption *option, bool on) {
@@ -73,16 +84,8 @@ void set_option_label(FindOption *option, const char *text) {
   if (!*opt) option_labels[opt - find_options] += 4;
 }
 bool is_find_active() { return findbox != NULL; }
-// Command entry.
-static bool command_entry_active;
+
 bool is_command_entry_active() { return command_entry_active; }
-static int statusbar_length[2];
-
-// Lua objects.
-static bool quitting;
-
-// Forward declarations.
-LUALIB_API int os_spawn_pushfds(lua_State *), os_spawn_readfds(lua_State *);
 
 // Adds the given text to the given store.
 static void add_to_history(char **store, const char *text) {
@@ -394,9 +397,7 @@ Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, vo
   return scintilla_new(notified, NULL);
 }
 
-PaneInfo get_pane_info_from_view(Scintilla *view) {
-  return get_pane_info(get_parent_pane(pane, view));
-}
+PaneInfo get_pane_info_from_view(Scintilla *v) { return get_pane_info(get_parent_pane(pane, v)); }
 
 void set_pane_size(Pane *pane_, int size) {
   struct Pane *pane = PANED(pane_);
@@ -430,6 +431,7 @@ static void signalled(int signal) {
 
 // Replacement for `termkey_waitkey()` that handles asynchronous I/O.
 static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
+  refresh_all();
 #if !_WIN32
   bool force = false;
   struct timeval timeout = {0, termkey_get_waittime(tk)};
@@ -475,7 +477,6 @@ int main(int argc, char **argv) {
   regex = &find_options[2], in_files = &find_options[3]; // typedefed, so cannot static initialize
 
   if (!init_textadept(argc, argv)) return (endwin(), termkey_destroy(ta_tk), 1);
-  refresh_all();
 
 #if !_WIN32
   freopen("/dev/null", "w", stderr); // redirect stderr
@@ -529,7 +530,6 @@ int main(int argc, char **argv) {
       // Try again with possibly another view.
       scintilla_send_mouse(focused_view, event, button, y, x, shift, ctrl, alt);
     if (quitting) break;
-    refresh_all();
     view = !command_entry_active ? focused_view : command_entry;
   }
   close_textadept(), endwin(), termkey_destroy(ta_tk);
