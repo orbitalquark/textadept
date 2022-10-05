@@ -843,13 +843,13 @@ static bool init_lua(int argc, char **argv) {
   lua_pushboolean(L, true), lua_setglobal(L, get_platform());
   lua_pushstring(L, get_charset()), lua_setglobal(L, "_CHARSET");
 
-  if (!run_file("core/init.lua")) return (lua_close(L), lua = NULL, false);
+  if (lua = L, !run_file("core/init.lua")) return (lua_close(L), lua = NULL, false);
   lua_getglobal(L, "_SCINTILLA");
   lua_getfield(L, -1, "constants"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_constants");
   lua_getfield(L, -1, "functions"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_functions");
   lua_getfield(L, -1, "properties"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_properties");
   lua_pop(L, 1); // _SCINTILLA
-  return (lua = L, true);
+  return true;
 }
 
 // Removes the given Scintilla view from the 'views' Lua registry table.
