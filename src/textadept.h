@@ -18,67 +18,6 @@ lua_State *lua;
 bool dialog_active; // for platforms with window focus issues when showing dialogs
 
 /**
- * Emits a Lua event.
- * @param name The event name.
- * @param ... Arguments to pass with the event. Each pair of arguments should be a Lua type
- *   followed by the data value itself. For LUA_TLIGHTUSERDATA and LUA_TTABLE types, push the
- *   data values to the stack and give the value returned by luaL_ref(); luaL_unref() will be
- *   called appropriately. The list must be terminated with a -1.
- * @return true or false depending on the boolean value returned by the event handler, if any.
- */
-bool emit(const char *name, ...);
-
-/**
- * Signal for a find & replace pane button click.
- * Emits 'find', 'replace', and/or 'replace_all' events depending on the button clicked.
- * @param button The button clicked.
- * @param unused Unused. Callbacks for platforms typically involve a void* userdata parameter,
- *   so this function includes one so that it (the function) can be used directly in platform
- *   API calls.
- */
-void find_clicked(FindButton *button, void *unused);
-
-/**
- * Returns the value t[n] as an integer where t is the value at the given valid index.
- * The access is raw; that is, it does not invoke metamethods.
- * This is a helper function for easily reading integers from lists.
- * @param L The Lua state.
- * @param index The stack index of the table.
- * @param n The index in the table to get.
- * @return integer
- */
-int get_int_field(lua_State *L, int index, int n);
-
-/**
- * Requests to show a context menu.
- * Textadept will lookup that menu and call `popup_menu()` in turn.
- * @param name The name of the context menu, either "context_menu" or "tab_context_menu".
- * @param userdata Userdata to pass to `popup_menu()`.
- * @see popup_menu
- * @see read_menu
- */
-void show_context_menu(const char *name, void *userdata);
-
-/**
- * Moves the buffer from the given index to another index in the 'buffers' registry table,
- * shifting other buffers as necessary.
- * @param from 1-based index of the buffer to move.
- * @param to 1-based index to move the buffer to.
- * @reorder_tabs Flag indicating whether or not to reorder platform tabs. This is `false`
- *   when responding to a platform reordering event and `true` when calling from Lua.
- */
-void move_buffer(int from, int to, bool reorder_tabs);
-
-/**
- * Calls the given timeout function (that was passed to `add_timeout()`).
- * Platforms should call this function when the timeout interval has passed.
- * @param f Timeout function originally passed to `add_timeout()`.
- * @return whether or not to call this function again after the timeout interval
- * @see add_timeout
- */
-bool call_timeout_function(void *f);
-
-/**
  * Initializes Textadept.
  * Initializes Lua, asks the Platform to create the main application window, and runs Lua
  * startup scripts. Platforms should typically call this after their own initialization and
@@ -91,6 +30,56 @@ bool call_timeout_function(void *f);
 bool init_textadept(int argc, char **argv);
 
 /**
+ * Emits a Lua event.
+ * @param name The event name.
+ * @param ... Arguments to pass with the event. Each pair of arguments should be a Lua type
+ *   followed by the data value itself. For LUA_TLIGHTUSERDATA and LUA_TTABLE types, push the
+ *   data values to the stack and give the value returned by luaL_ref(); luaL_unref() will be
+ *   called appropriately. The list must be terminated with a -1.
+ * @return true or false depending on the boolean value returned by the event handler, if any.
+ */
+bool emit(const char *name, ...);
+
+/**
+ * Moves the buffer from the given index to another index in the 'buffers' registry table,
+ * shifting other buffers as necessary.
+ * @param from 1-based index of the buffer to move.
+ * @param to 1-based index to move the buffer to.
+ * @reorder_tabs Flag indicating whether or not to reorder platform tabs. This is `false`
+ *   when responding to a platform reordering event and `true` when calling from Lua.
+ */
+void move_buffer(int from, int to, bool reorder_tabs);
+
+/**
+ * Signal for a find & replace pane button click.
+ * Emits 'find', 'replace', and/or 'replace_all' events depending on the button clicked.
+ * @param button The button clicked.
+ * @param unused Unused. Callbacks for platforms typically involve a void* userdata parameter,
+ *   so this function includes one so that it (the function) can be used directly in platform
+ *   API calls.
+ */
+void find_clicked(FindButton *button, void *unused);
+
+/**
+ * Requests to show a context menu.
+ * Textadept will lookup that menu and call `popup_menu()` in turn.
+ * @param name The name of the context menu, either "context_menu" or "tab_context_menu".
+ * @param userdata Userdata to pass to `popup_menu()`.
+ * @see popup_menu
+ * @see read_menu
+ */
+void show_context_menu(const char *name, void *userdata);
+
+/**
+ * Calls the given timeout function (that was passed to `add_timeout()`).
+ * Platforms should call this function when the timeout interval has passed.
+ * @param f Timeout function originally passed to `add_timeout()`.
+ * @return whether or not to call this function again after the timeout interval
+ * @see add_timeout
+ */
+bool call_timeout_function(void *f);
+
+/**
  * Closes Textadept.
  * Unsplits panes, closes buffers, deletes Scintilla views, and closes Lua. During this process,
  * Textadept may still call `SS()`, so platforms should take care to call this while Scintilla
@@ -98,3 +87,14 @@ bool init_textadept(int argc, char **argv);
  * This does not need to be called if `init_textadept()` failed.
  */
 void close_textadept();
+
+/**
+ * Returns the value t[n] as an integer where t is the value at the given valid index.
+ * The access is raw; that is, it does not invoke metamethods.
+ * This is a helper function for easily reading integers from lists.
+ * @param L The Lua state.
+ * @param index The stack index of the table.
+ * @param n The index in the table to get.
+ * @return integer
+ */
+int get_int_field(lua_State *L, int index, int n);

@@ -1,4 +1,5 @@
 // Copyright 2007-2022 Mitchell. See LICENSE.
+// Curses platform for Textadept.
 
 #include "textadept.h"
 
@@ -20,6 +21,7 @@
 static Pane *pane;
 static CDKSCREEN *findbox;
 static CDKENTRY *find_entry, *repl_entry, *focused_entry;
+static char *find_text, *repl_text, *find_label, *repl_label;
 static bool find_options[4];
 static char *button_labels[4], *option_labels[4], *find_history[10], *repl_history[10];
 static bool command_entry_active;
@@ -42,15 +44,179 @@ static inline struct Pane *PANED(Pane *pane) { return (struct Pane *)pane; }
 
 const char *get_platform() { return "CURSES"; }
 
-sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
-  return scintilla_send_message(view, message, wparam, lparam);
+const char *get_charset() {
+#if !_WIN32
+  const char *charset = getenv("CHARSET");
+  if (!charset || !*charset) {
+    char *locale = getenv("LC_ALL");
+    if (!locale || !*locale) locale = getenv("LANG");
+    if (locale && (charset = strchr(locale, '.'))) charset++;
+  }
+  return charset;
+#elif _WIN32
+  static char codepage[8];
+  return (sprintf(codepage, "CP%d", GetACP()), codepage);
+#endif
+}
+
+// Creates and returns a new pane that contains the given Scintilla view.
+static Pane *new_pane(Scintilla *view) {
+  struct Pane *p = calloc(1, sizeof(struct Pane));
+  p->type = SINGLE, p->win = scintilla_get_window(view), p->view = view;
+  return p;
+}
+
+// Resizes and repositions the given pane.
+static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
+  if (pane->type == VSPLIT) {
+    int ssize = pane->split_size * cols / fmax(pane->cols, 1);
+    if (ssize < 1 || ssize >= cols - 1) ssize = ssize < 1 ? 1 : cols - 2;
+    pane->split_size = ssize;
+    resize_pane(pane->child1, rows, ssize, y, x);
+    resize_pane(pane->child2, rows, cols - ssize - 1, y, x + ssize + 1);
+    wresize(pane->win, rows, 1), mvwin(pane->win, y, x + ssize); // split bar
+  } else if (pane->type == HSPLIT) {
+    int ssize = pane->split_size * rows / fmax(pane->rows, 1);
+    if (ssize < 1 || ssize >= rows - 1) ssize = ssize < 1 ? 1 : rows - 2;
+    pane->split_size = ssize;
+    resize_pane(pane->child1, ssize, cols, y, x);
+    resize_pane(pane->child2, rows - ssize - 1, cols, y + ssize + 1, x);
+    wresize(pane->win, 1, cols), mvwin(pane->win, y + ssize, x); // split bar
+  } else
+    wresize(pane->win, rows, cols), mvwin(pane->win, y, x);
+  pane->rows = rows, pane->cols = cols, pane->y = y, pane->x = x;
+}
+
+void new_window(Scintilla *(*get_view)(void)) {
+  pane = new_pane(get_view()), resize_pane(pane, LINES - 2, COLS, 1, 0);
+  wresize(scintilla_get_window(command_entry), 1, COLS);
+  mvwin(scintilla_get_window(command_entry), LINES - 2, 0);
+}
+
+void set_title(const char *title) {
+  for (int i = 0; i < COLS; i++) mvaddch(0, i, ' '); // clear titlebar
+  mvaddstr(0, 0, title), refresh();
+}
+
+bool is_maximized() { return false; }
+
+void set_maximized(bool maximize) {}
+
+void get_size(int *width, int *height) { *width = COLS, *height = LINES; }
+
+void set_size(int width, int height) {}
+
+Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, void *)) {
+  return scintilla_new(notified, NULL);
 }
 
 void focus_view(Scintilla *view) {
   (focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, SS(view, SCI_SETFOCUS, 1, 0));
 }
 
+sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
+  return scintilla_send_message(view, message, wparam, lparam);
+}
+
+// Searches the given pane for the given view and returns that view's parent pane, if there is one.
+static struct Pane *get_parent_pane(struct Pane *pane, Scintilla *view) {
+  if (pane->type == SINGLE) return NULL;
+  if (pane->child1->view == view || pane->child2->view == view) return pane;
+  struct Pane *parent = get_parent_pane(pane->child1, view);
+  return parent ? parent : get_parent_pane(pane->child2, view);
+}
+
+// Redraws the given pane and its children.
+static void refresh_pane(struct Pane *pane) {
+  if (pane->type == VSPLIT) {
+    mvwvline(pane->win, 0, 0, 0, pane->rows), wrefresh(pane->win);
+    refresh_pane(pane->child1), refresh_pane(pane->child2);
+  } else if (pane->type == HSPLIT) {
+    mvwhline(pane->win, 0, 0, 0, pane->cols), wrefresh(pane->win);
+    refresh_pane(pane->child1), refresh_pane(pane->child2);
+  } else
+    scintilla_noutrefresh(pane->view);
+}
+
+void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
+  struct Pane *parent = get_parent_pane(pane, view);
+  parent = parent ? (parent->child1->view == view ? parent->child1 : parent->child2) : pane;
+  Pane *child1 = new_pane(view), *child2 = new_pane(view2);
+  parent->type = vertical ? VSPLIT : HSPLIT;
+  parent->child1 = child1, parent->child2 = child2, parent->view = NULL;
+  // Resize children and create a split bar.
+  if (vertical) {
+    parent->split_size = parent->cols / 2;
+    resize_pane(child1, parent->rows, parent->split_size, parent->y, parent->x);
+    resize_pane(child2, parent->rows, parent->cols - parent->split_size - 1, parent->y,
+      parent->x + parent->split_size + 1);
+    parent->win = newwin(parent->rows, 1, parent->y, parent->x + parent->split_size);
+  } else {
+    parent->split_size = parent->rows / 2;
+    resize_pane(child1, parent->split_size, parent->cols, parent->y, parent->x);
+    resize_pane(child2, parent->rows - parent->split_size - 1, parent->cols,
+      parent->y + parent->split_size + 1, parent->x);
+    parent->win = newwin(1, parent->cols, parent->y + parent->split_size, parent->x);
+  }
+  refresh_pane(parent);
+}
+
+// Removes all Scintilla views from the given pane and deletes them along with the child panes
+// themselves.
+static void remove_views(Pane *pane_, void (*delete_view)(Scintilla *view)) {
+  struct Pane *pane = PANED(pane_);
+  if (pane->type == VSPLIT || pane->type == HSPLIT) {
+    remove_views(pane->child1, delete_view), remove_views(pane->child2, delete_view);
+    delwin(pane->win), pane->win = NULL; // delete split bar
+  } else
+    delete_view(pane->view);
+  free(pane);
+}
+
+bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *)) {
+  struct Pane *parent = get_parent_pane(pane, view);
+  if (!parent) return false;
+  struct Pane *child = parent->child1->view == view ? parent->child1 : parent->child2;
+  remove_views(child == parent->child1 ? parent->child2 : parent->child1, delete_view);
+  delwin(parent->win); // delete split bar
+  // Inherit child's properties.
+  parent->type = child->type, parent->split_size = child->split_size;
+  parent->win = child->win, parent->view = child->view;
+  parent->child1 = child->child1, parent->child2 = child->child2;
+  free(child);
+  resize_pane(parent, parent->rows, parent->cols, parent->y, parent->x); // update
+  return (scintilla_noutrefresh(view), true);
+}
+
 void delete_scintilla(Scintilla *view) { scintilla_delete(view); }
+
+Pane *get_top_pane() { return pane; }
+
+PaneInfo get_pane_info(Pane *pane_) {
+  struct Pane *pane = PANED(pane_);
+  PaneInfo info = {pane->type != SINGLE, pane->type == VSPLIT, pane->view, pane, pane->child1,
+    pane->child2, pane->split_size};
+  return info;
+}
+
+PaneInfo get_pane_info_from_view(Scintilla *v) { return get_pane_info(get_parent_pane(pane, v)); }
+
+void set_pane_size(Pane *pane_, int size) {
+  struct Pane *pane = PANED(pane_);
+  pane->split_size = size, resize_pane(pane, pane->rows, pane->cols, pane->y, pane->x);
+}
+
+void show_tabs(bool show) {}
+
+void add_tab() {}
+
+void set_tab(int index) {}
+
+void set_tab_label(int index, const char *text) {}
+
+void move_tab(int from, int to) {}
+
+void remove_tab(int index) {}
 
 // Copies to the given string address the given value after freeing that string's existing value
 // (if any).
@@ -60,11 +226,23 @@ static void copyfree(char **s, const char *value) {
   *s = strcpy(malloc(strlen(value) + 1), value);
 }
 
-static char *find_text, *repl_text, *find_label, *repl_label;
 const char *get_find_text() { return find_text; }
 const char *get_repl_text() { return repl_text; }
 void set_find_text(const char *text) { copyfree(&find_text, text); }
 void set_repl_text(const char *text) { copyfree(&repl_text, text); }
+
+// Adds the given text to the given store.
+static void add_to_history(char **store, const char *text) {
+  if (!text || (store[0] && strcmp(text, store[0]) == 0)) return;
+  if (store[9]) free(store[9]);
+  for (int i = 9; i > 0; i--) store[i] = store[i - 1];
+  store[0] = NULL, copyfree(&store[0], text);
+}
+
+void add_to_find_history(const char *text) { add_to_history(find_history, text); }
+void add_to_repl_history(const char *text) { add_to_history(repl_history, text); }
+
+void set_entry_font(const char *name) {}
 bool is_checked(FindOption *option) { return *(bool *)option; }
 // Use pointer arithmetic to highlight/unhighlight options as necessary.
 void toggle(FindOption *option, bool on) {
@@ -78,36 +256,11 @@ void set_button_label(FindButton *button, const char *text) {
 }
 void set_option_label(FindOption *option, const char *text) {
   bool *opt = (bool *)option;
+  // TODO: stop using Lua for this.
   lua_pushstring(lua, "</R>"), lua_pushstring(lua, text), lua_concat(lua, 2);
   if (option_labels[opt - find_options] && !*opt) option_labels[opt - find_options] -= 4;
   copyfree(&option_labels[opt - find_options], lua_tostring(lua, -1));
   if (!*opt) option_labels[opt - find_options] += 4;
-}
-bool is_find_active() { return findbox != NULL; }
-
-bool is_command_entry_active() { return command_entry_active; }
-
-// Adds the given text to the given store.
-static void add_to_history(char **store, const char *text) {
-  if (!text || (store[0] && strcmp(text, store[0]) == 0)) return;
-  if (store[9]) free(store[9]);
-  for (int i = 9; i > 0; i--) store[i] = store[i - 1];
-  store[0] = NULL, copyfree(&store[0], text);
-}
-
-void add_to_find_history(const char *text) { add_to_history(find_history, text); }
-void add_to_repl_history(const char *text) { add_to_history(repl_history, text); }
-
-// Redraws the given pane and its children.
-static void refresh_pane(struct Pane *pane) {
-  if (pane->type == VSPLIT) {
-    mvwvline(pane->win, 0, 0, 0, pane->rows), wrefresh(pane->win);
-    refresh_pane(pane->child1), refresh_pane(pane->child2);
-  } else if (pane->type == HSPLIT) {
-    mvwhline(pane->win, 0, 0, 0, pane->cols), wrefresh(pane->win);
-    refresh_pane(pane->child1), refresh_pane(pane->child2);
-  } else
-    scintilla_noutrefresh(pane->view);
 }
 
 // Refreshes the entire screen.
@@ -213,27 +366,36 @@ void focus_find() {
   wresize(scintilla_get_window(focused_view), LINES - 2, COLS);
 }
 
-void set_entry_font(const char *name) {}
+bool is_find_active() { return findbox != NULL; }
 
 void focus_command_entry() {
   if (!(command_entry_active = !command_entry_active)) SS(command_entry, SCI_SETFOCUS, 0, 0);
   focus_view(command_entry_active ? command_entry : focused_view);
 }
 
-PaneInfo get_pane_info(Pane *pane_) {
-  struct Pane *pane = PANED(pane_);
-  PaneInfo info = {pane->type != SINGLE, pane->type == VSPLIT, pane->view, pane, pane->child1,
-    pane->child2, pane->split_size};
-  return info;
+bool is_command_entry_active() { return command_entry_active; }
+
+int get_command_entry_height() { return getmaxy(scintilla_get_window(command_entry)); }
+
+void set_command_entry_height(int height) {
+  WINDOW *win = scintilla_get_window(command_entry);
+  wresize(win, height, COLS), mvwin(win, LINES - 1 - height, 0);
 }
 
-Pane *get_top_pane() { return pane; }
-
-void set_tab(int index) {}
+void set_statusbar_text(int bar, const char *text) {
+  int start = bar == 0 ? 0 : statusbar_length[0];
+  int end = bar == 0 ? COLS - statusbar_length[1] : COLS;
+  for (int i = start; i < end; i++) mvaddch(LINES - 1, i, ' '); // clear
+  int len = utf8strlen(text);
+  mvaddstr(LINES - 1, bar == 0 ? 0 : COLS - len, text), refresh();
+  statusbar_length[bar] = len;
+}
 
 void *read_menu(lua_State *L, int index) { return NULL; }
 
 void popup_menu(void *menu, void *userdata) {}
+
+void set_menubar(lua_State *L, int index) {}
 
 void update_ui() {
 #if !_WIN32
@@ -247,168 +409,9 @@ void update_ui() {
 
 char *get_clipboard_text(int *len) { return scintilla_get_clipboard(focused_view, len); }
 
-bool is_maximized() { return false; }
-
-void get_size(int *width, int *height) { *width = COLS, *height = LINES; }
-
-void set_statusbar_text(int bar, const char *text) {
-  int start = bar == 0 ? 0 : statusbar_length[0];
-  int end = bar == 0 ? COLS - statusbar_length[1] : COLS;
-  for (int i = start; i < end; i++) mvaddch(LINES - 1, i, ' '); // clear
-  int len = utf8strlen(text);
-  mvaddstr(LINES - 1, bar == 0 ? 0 : COLS - len, text), refresh();
-  statusbar_length[bar] = len;
-}
-
-void set_title(const char *title) {
-  for (int i = 0; i < COLS; i++) mvaddch(0, i, ' '); // clear titlebar
-  mvaddstr(0, 0, title), refresh();
-}
-
-void set_menubar(lua_State *L, int index) {}
-
-void set_maximized(bool maximize) {}
-
-void set_size(int width, int height) {}
-
-void show_tabs(bool show) {}
-
-void remove_tab(int index) {}
-
-int get_command_entry_height() { return getmaxy(scintilla_get_window(command_entry)); }
-
-void set_tab_label(int index, const char *text) {}
-
-void set_command_entry_height(int height) {
-  WINDOW *win = scintilla_get_window(command_entry);
-  wresize(win, height, COLS), mvwin(win, LINES - 1 - height, 0);
-}
-
-void add_tab() {}
-
-void move_tab(int from, int to) {}
-
-void quit() { quitting = !emit("quit", -1); }
-
 bool add_timeout(double interval, void *f) { return false; }
 
-const char *get_charset() {
-#if !_WIN32
-  const char *charset = getenv("CHARSET");
-  if (!charset || !*charset) {
-    char *locale = getenv("LC_ALL");
-    if (!locale || !*locale) locale = getenv("LANG");
-    if (locale && (charset = strchr(locale, '.'))) charset++;
-  }
-  return charset;
-#elif _WIN32
-  static char codepage[8];
-  return (sprintf(codepage, "CP%d", GetACP()), codepage);
-#endif
-}
-
-// Searches the given pane for the given view and returns that view's parent pane, if there is one.
-static struct Pane *get_parent_pane(struct Pane *pane, Scintilla *view) {
-  if (pane->type == SINGLE) return NULL;
-  if (pane->child1->view == view || pane->child2->view == view) return pane;
-  struct Pane *parent = get_parent_pane(pane->child1, view);
-  return parent ? parent : get_parent_pane(pane->child2, view);
-}
-
-// Removes all Scintilla views from the given pane and deletes them along with the child panes
-// themselves.
-static void remove_views(Pane *pane_, void (*delete_view)(Scintilla *view)) {
-  struct Pane *pane = PANED(pane_);
-  if (pane->type == VSPLIT || pane->type == HSPLIT) {
-    remove_views(pane->child1, delete_view), remove_views(pane->child2, delete_view);
-    delwin(pane->win), pane->win = NULL; // delete split bar
-  } else
-    delete_view(pane->view);
-  free(pane);
-}
-
-// Resizes and repositions the given pane.
-static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
-  if (pane->type == VSPLIT) {
-    int ssize = pane->split_size * cols / fmax(pane->cols, 1);
-    if (ssize < 1 || ssize >= cols - 1) ssize = ssize < 1 ? 1 : cols - 2;
-    pane->split_size = ssize;
-    resize_pane(pane->child1, rows, ssize, y, x);
-    resize_pane(pane->child2, rows, cols - ssize - 1, y, x + ssize + 1);
-    wresize(pane->win, rows, 1), mvwin(pane->win, y, x + ssize); // split bar
-  } else if (pane->type == HSPLIT) {
-    int ssize = pane->split_size * rows / fmax(pane->rows, 1);
-    if (ssize < 1 || ssize >= rows - 1) ssize = ssize < 1 ? 1 : rows - 2;
-    pane->split_size = ssize;
-    resize_pane(pane->child1, ssize, cols, y, x);
-    resize_pane(pane->child2, rows - ssize - 1, cols, y + ssize + 1, x);
-    wresize(pane->win, 1, cols), mvwin(pane->win, y + ssize, x); // split bar
-  } else
-    wresize(pane->win, rows, cols), mvwin(pane->win, y, x);
-  pane->rows = rows, pane->cols = cols, pane->y = y, pane->x = x;
-}
-
-bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *)) {
-  struct Pane *parent = get_parent_pane(pane, view);
-  if (!parent) return false;
-  struct Pane *child = parent->child1->view == view ? parent->child1 : parent->child2;
-  remove_views(child == parent->child1 ? parent->child2 : parent->child1, delete_view);
-  delwin(parent->win); // delete split bar
-  // Inherit child's properties.
-  parent->type = child->type, parent->split_size = child->split_size;
-  parent->win = child->win, parent->view = child->view;
-  parent->child1 = child->child1, parent->child2 = child->child2;
-  free(child);
-  resize_pane(parent, parent->rows, parent->cols, parent->y, parent->x); // update
-  return (scintilla_noutrefresh(view), true);
-}
-
-// Creates and returns a new pane that contains the given Scintilla view.
-static Pane *new_pane(Scintilla *view) {
-  struct Pane *p = calloc(1, sizeof(struct Pane));
-  p->type = SINGLE, p->win = scintilla_get_window(view), p->view = view;
-  return p;
-}
-
-void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
-  struct Pane *parent = get_parent_pane(pane, view);
-  parent = parent ? (parent->child1->view == view ? parent->child1 : parent->child2) : pane;
-  Pane *child1 = new_pane(view), *child2 = new_pane(view2);
-  parent->type = vertical ? VSPLIT : HSPLIT;
-  parent->child1 = child1, parent->child2 = child2, parent->view = NULL;
-  // Resize children and create a split bar.
-  if (vertical) {
-    parent->split_size = parent->cols / 2;
-    resize_pane(child1, parent->rows, parent->split_size, parent->y, parent->x);
-    resize_pane(child2, parent->rows, parent->cols - parent->split_size - 1, parent->y,
-      parent->x + parent->split_size + 1);
-    parent->win = newwin(parent->rows, 1, parent->y, parent->x + parent->split_size);
-  } else {
-    parent->split_size = parent->rows / 2;
-    resize_pane(child1, parent->split_size, parent->cols, parent->y, parent->x);
-    resize_pane(child2, parent->rows - parent->split_size - 1, parent->cols,
-      parent->y + parent->split_size + 1, parent->x);
-    parent->win = newwin(1, parent->cols, parent->y + parent->split_size, parent->x);
-  }
-  refresh_pane(parent);
-}
-
-Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, void *)) {
-  return scintilla_new(notified, NULL);
-}
-
-PaneInfo get_pane_info_from_view(Scintilla *v) { return get_pane_info(get_parent_pane(pane, v)); }
-
-void set_pane_size(Pane *pane_, int size) {
-  struct Pane *pane = PANED(pane_);
-  pane->split_size = size, resize_pane(pane, pane->rows, pane->cols, pane->y, pane->x);
-}
-
-void new_window(Scintilla *(*get_view)(void)) {
-  pane = new_pane(get_view()), resize_pane(pane, LINES - 2, COLS, 1, 0);
-  wresize(scintilla_get_window(command_entry), 1, COLS);
-  mvwin(scintilla_get_window(command_entry), LINES - 2, 0);
-}
+void quit() { quitting = !emit("quit", -1); }
 
 #if !_WIN32
 // Signal for a terminal suspend, continue, and resize.

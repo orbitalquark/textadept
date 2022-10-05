@@ -1,4 +1,5 @@
 // Copyright 2007-2022 Mitchell. See LICENSE.
+// GTK platform for Textadept.
 
 #include "textadept.h"
 
@@ -42,346 +43,11 @@ static const char *pipe_id = "\\\\.\\pipe\\textadept.editor"; // for single-inst
 
 const char *get_platform() { return "GTK"; }
 
-sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
-  return scintilla_send_message(SCINTILLA(view), message, wparam, lparam);
-}
-
-void focus_view(Scintilla *view) { gtk_widget_grab_focus(view); }
-
-void delete_scintilla(Scintilla *view) { gtk_widget_destroy(view); }
-
-const char *get_find_text() { return gtk_entry_get_text(GTK_ENTRY(find_entry)); }
-const char *get_repl_text() { return gtk_entry_get_text(GTK_ENTRY(repl_entry)); }
-void set_find_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(find_entry), text); }
-void set_repl_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(repl_entry), text); }
-bool is_checked(FindOption *opt) { return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(opt)); }
-void toggle(FindOption *opt, bool on) { gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(opt), on); }
-void set_find_label(const char *s) { gtk_label_set_text_with_mnemonic(GTK_LABEL(find_label), s); }
-void set_repl_label(const char *s) { gtk_label_set_text_with_mnemonic(GTK_LABEL(repl_label), s); }
-void set_button_label(FindButton *btn, const char *s) { gtk_button_set_label(GTK_BUTTON(btn), s); }
-void set_option_label(FindOption *opt, const char *s) { gtk_button_set_label(GTK_BUTTON(opt), s); }
-bool is_find_active() { return gtk_widget_get_visible(findbox); }
-
-bool is_command_entry_active() { return gtk_widget_has_focus(command_entry); }
-
-// Adds the given text to the given list store.
-// Note: GtkComboBoxEntry key navigation behaves contrary to command line history
-// navigation. Down cycles from newer to older, and up cycles from older to newer. In order to
-// mimic traditional command line history navigation, append to the list instead of prepending
-// to it.
-static void add_to_history(GtkListStore *store, const char *text) {
-  int n = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store), NULL);
-  GtkTreeIter iter;
-  if (n > 9)
-    gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter),
-      gtk_list_store_remove(store, &iter), n--; // keep 10 items
-  char *last_text = NULL;
-  if (n > 0)
-    gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(store), &iter, NULL, n - 1),
-      gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &last_text, -1);
-  if (!last_text || strcmp(text, last_text) != 0)
-    gtk_list_store_append(store, &iter), gtk_list_store_set(store, &iter, 0, text, -1);
-  g_free(last_text);
-}
-
-void add_to_find_history(const char *text) { add_to_history(find_history, text); }
-void add_to_repl_history(const char *text) { add_to_history(repl_history, text); }
-
-void focus_find() {
-  if (!gtk_widget_has_focus(find_entry) && !gtk_widget_has_focus(repl_entry))
-    gtk_widget_show(findbox), gtk_widget_grab_focus(find_entry);
-  else
-    gtk_widget_hide(findbox), gtk_widget_grab_focus(focused_view);
-}
-
-void set_entry_font(const char *name) {
-  PangoFontDescription *font = pango_font_description_from_string(name);
-  gtk_widget_modify_font(find_entry, font), gtk_widget_modify_font(repl_entry, font);
-  pango_font_description_free(font);
-}
-
-void focus_command_entry() {
-  if (!gtk_widget_get_visible(command_entry))
-    gtk_widget_show(command_entry), gtk_widget_grab_focus(command_entry);
-  else
-    gtk_widget_hide(command_entry), gtk_widget_grab_focus(focused_view);
-}
-
-PaneInfo get_pane_info(Pane *pane) {
-  PaneInfo info = {GTK_IS_PANED(pane), false, pane, pane, NULL, NULL, 0};
-  if (info.is_split) {
-    info.vertical =
-      gtk_orientable_get_orientation(GTK_ORIENTABLE(pane)) == GTK_ORIENTATION_HORIZONTAL;
-    GtkPaned *p = GTK_PANED(pane);
-    info.child1 = gtk_paned_get_child1(p), info.child2 = gtk_paned_get_child2(p);
-    info.size = gtk_paned_get_position(p);
-  }
-  return info;
-}
-
-Pane *get_top_pane() {
-  GtkWidget *pane = focused_view;
-  while (GTK_IS_PANED(gtk_widget_get_parent(pane))) pane = gtk_widget_get_parent(pane);
-  return pane;
-}
-
-void set_tab(int index) {
-  tab_sync = true, gtk_notebook_set_current_page(GTK_NOTEBOOK(tabbar), index), tab_sync = false;
-}
-
-// Signal for a menu item click.
-static void menu_clicked(GtkWidget *_, void *id) {
-  emit("menu_clicked", LUA_TNUMBER, (int)(long)id, -1);
-}
-
-void *read_menu(lua_State *L, int index) {
-  GtkWidget *menu = gtk_menu_new(), *submenu_root = NULL;
-  if (lua_getfield(L, index, "title") != LUA_TNIL) { // submenu title
-    submenu_root = gtk_menu_item_new_with_mnemonic(lua_tostring(L, -1));
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(submenu_root), menu);
-  }
-  lua_pop(L, 1); // title
-  for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++) {
-    if (lua_rawgeti(L, -1, i) != LUA_TTABLE) continue; // popped on loop
-    bool is_submenu = lua_getfield(L, -1, "title") != LUA_TNIL;
-    if (lua_pop(L, 1), is_submenu) {
-      gtk_menu_shell_append(GTK_MENU_SHELL(menu), read_menu(L, -1));
-      continue;
-    }
-    const char *label = (lua_rawgeti(L, -1, 1), lua_tostring(L, -1));
-    if (lua_pop(L, 1), !label) continue;
-    // Menu item table is of the form {label, id, key, modifiers}.
-    GtkWidget *menu_item =
-      *label ? gtk_menu_item_new_with_mnemonic(label) : gtk_separator_menu_item_new();
-    if (*label && get_int_field(L, -1, 3) > 0)
-      gtk_widget_add_accelerator(menu_item, "activate", accel, get_int_field(L, -1, 3),
-        get_int_field(L, -1, 4), GTK_ACCEL_VISIBLE);
-    g_signal_connect(
-      menu_item, "activate", G_CALLBACK(menu_clicked), (void *)(long)get_int_field(L, -1, 2));
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
-  }
-  return !submenu_root ? menu : submenu_root;
-}
-
-void popup_menu(void *menu, void *userdata) {
-  GdkEventButton *event = (GdkEventButton *)userdata;
-  gtk_widget_show_all(menu);
-  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event ? event->button : 0,
-    gdk_event_get_time((GdkEvent *)event));
-}
-
-void update_ui() {
-#if !__APPLE__
-  while (gtk_events_pending()) gtk_main_iteration();
-#else
-  // The idle event monitor created by os.spawn() on macOS is considered to be a pending event,
-  // so use its provided registry key to help determine when there are no longer any non-idle
-  // events pending.
-  lua_pushboolean(lua, false), lua_setfield(lua, LUA_REGISTRYINDEX, "spawn_procs_polled");
-  while (gtk_events_pending()) {
-    bool polled =
-      (lua_getfield(lua, LUA_REGISTRYINDEX, "spawn_procs_polled"), lua_toboolean(lua, -1));
-    if (lua_pop(lua, 1), polled) break;
-    gtk_main_iteration();
-  }
-#endif
-}
-
-char *get_clipboard_text(int *len) {
-  char *text = gtk_clipboard_wait_for_text(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
-  *len = text ? strlen(text) : 0;
-  return text;
-}
-
-bool is_maximized() {
-  return (gdk_window_get_state(gtk_widget_get_window(window)) & GDK_WINDOW_STATE_MAXIMIZED) > 0;
-}
-
-void get_size(int *width, int *height) { gtk_window_get_size(GTK_WINDOW(window), width, height); }
-
-void set_statusbar_text(int i, const char *s) { gtk_label_set_text(GTK_LABEL(statusbar[i]), s); }
-
-void set_title(const char *title) { gtk_window_set_title(GTK_WINDOW(window), title); }
-
-void set_menubar(lua_State *L, int index) {
-#if __APPLE__
-  // TODO: gtkosx_application_set_menu_bar does not like being called more than once in an app.
-  // Random segfaults will happen after a second reset, even if menubar is g_object_ref/unrefed
-  // properly.
-  if (lua_getglobal(L, "arg") == LUA_TNIL) return;
-#endif
-  luaL_argcheck(L, lua_istable(L, index), index, "table of menus expected");
-  for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++)
-    luaL_argcheck(L, lua_rawgeti(L, index, i) == LUA_TLIGHTUSERDATA, index,
-      "table of menus expected"); // popped on loop
-  GtkWidget *new_menubar = gtk_menu_bar_new();
-  for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++)
-    gtk_menu_shell_append(GTK_MENU_SHELL(new_menubar),
-      (lua_rawgeti(L, index, i), lua_touserdata(L, -1))); // popped on loop
-  GtkWidget *vbox = gtk_widget_get_parent(menubar);
-  gtk_container_remove(GTK_CONTAINER(vbox), menubar);
-  gtk_box_pack_start(GTK_BOX(vbox), menubar = new_menubar, false, false, 0);
-  gtk_box_reorder_child(GTK_BOX(vbox), new_menubar, 0);
-  if (lua_rawlen(L, index) > 0) gtk_widget_show_all(new_menubar);
-#if __APPLE__
-  gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(new_menubar));
-  gtk_widget_hide(new_menubar); // hide in window
-#endif
-}
-
-void set_maximized(bool maximize) {
-  maximize ? gtk_window_maximize(GTK_WINDOW(window)) : gtk_window_unmaximize(GTK_WINDOW(window));
-}
-
-void set_size(int width, int height) { gtk_window_resize(GTK_WINDOW(window), width, height); }
-
-void show_tabs(bool show) { gtk_widget_set_visible(tabbar, show); }
-
-void remove_tab(int index) { gtk_notebook_remove_page(GTK_NOTEBOOK(tabbar), index); }
-
-int get_command_entry_height() {
-  GtkAllocation allocation;
-  gtk_widget_get_allocation(command_entry, &allocation);
-  return allocation.height;
-}
-
-// Signal for a tab label mouse click.
-static bool tab_clicked(GtkWidget *label, GdkEventButton *event, void *_) {
-  GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
-  for (int i = 0; i < gtk_notebook_get_n_pages(notebook); i++) {
-    GtkWidget *page = gtk_notebook_get_nth_page(notebook, i);
-    if (label != gtk_notebook_get_tab_label(notebook, page)) continue;
-    emit("tab_clicked", LUA_TNUMBER, i + 1, LUA_TNUMBER, event->button, LUA_TBOOLEAN,
-      event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
-      event->state & GDK_MOD1_MASK, LUA_TBOOLEAN, event->state & GDK_META_MASK, -1);
-    if (event->button == 3) show_context_menu("tab_context_menu", event);
-    break;
-  }
-  return true;
-}
-
-void set_tab_label(int index, const char *text) {
-  GtkWidget *box = gtk_event_box_new();
-  gtk_event_box_set_visible_window(GTK_EVENT_BOX(box), false);
-  GtkWidget *label = gtk_label_new(text);
-  gtk_container_add(GTK_CONTAINER(box), label), gtk_widget_show(label);
-  GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
-  gtk_notebook_set_tab_label(notebook, gtk_notebook_get_nth_page(notebook, index), box);
-  g_signal_connect(box, "button-press-event", G_CALLBACK(tab_clicked), NULL);
-}
-
-void set_command_entry_height(int height) {
-  GtkWidget *paned = gtk_widget_get_parent(command_entry);
-  GtkAllocation allocation;
-  gtk_widget_get_allocation(paned, &allocation);
-  gtk_widget_set_size_request(command_entry, -1, height);
-  gtk_paned_set_position(GTK_PANED(paned), allocation.height - height);
-}
-
-void add_tab() {
-  GtkWidget *tab = gtk_vbox_new(false, 0); // placeholder in GtkNotebook
-  tab_sync = true;
-  int i = gtk_notebook_append_page(GTK_NOTEBOOK(tabbar), tab, NULL);
-  gtk_widget_show(tab);
-  gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(tabbar), tab, true);
-  gtk_notebook_set_current_page(GTK_NOTEBOOK(tabbar), i);
-  tab_sync = false;
-}
-
-void move_tab(int from, int to) {
-  GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
-  gtk_notebook_reorder_child(notebook, gtk_notebook_get_nth_page(notebook, from), current_tab = to);
-}
-
-void quit() {
-  GdkEventAny event = {GDK_DELETE, gtk_widget_get_window(window), true};
-  gdk_event_put((GdkEvent *)&event);
-}
-
-// Signal for a timeout.
-static int timed_out(void *f) { return call_timeout_function(f); }
-
-bool add_timeout(double sec, void *f) { return (g_timeout_add(sec * 1000, timed_out, f), true); }
-
 const char *get_charset() {
   const char *charset;
   g_get_charset(&charset);
   return charset;
 }
-
-// Removes all Scintilla views from the given pane and deletes them along with the child panes
-// themselves.
-static void remove_views(Pane *pane, void (*delete_view)(Scintilla *view)) {
-  GtkWidget *child1 = gtk_paned_get_child1(GTK_PANED(pane)),
-            *child2 = gtk_paned_get_child2(GTK_PANED(pane));
-  GTK_IS_PANED(child1) ? remove_views(child1, delete_view) : delete_view(child1);
-  GTK_IS_PANED(child2) ? remove_views(child2, delete_view) : delete_view(child2);
-}
-
-bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *view)) {
-  GtkWidget *pane = gtk_widget_get_parent(view);
-  if (!GTK_IS_PANED(pane)) return false;
-  GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane)) != view ?
-    gtk_paned_get_child1(GTK_PANED(pane)) :
-    gtk_paned_get_child2(GTK_PANED(pane));
-  g_object_ref(view), g_object_ref(other);
-  gtk_container_remove(GTK_CONTAINER(pane), view);
-  gtk_container_remove(GTK_CONTAINER(pane), other);
-  GTK_IS_PANED(other) ? remove_views(other, delete_view) : delete_view(other);
-  GtkWidget *parent = gtk_widget_get_parent(pane);
-  gtk_container_remove(GTK_CONTAINER(parent), pane);
-  if (GTK_IS_PANED(parent))
-    !gtk_paned_get_child1(GTK_PANED(parent)) ? gtk_paned_add1(GTK_PANED(parent), view) :
-                                               gtk_paned_add2(GTK_PANED(parent), view);
-  else
-    gtk_container_add(GTK_CONTAINER(parent), view);
-  // gtk_widget_show_all(parent);
-  gtk_widget_grab_focus(GTK_WIDGET(view));
-  g_object_unref(view), g_object_unref(other);
-  return true;
-}
-
-void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
-  GtkAllocation allocation;
-  gtk_widget_get_allocation(view, &allocation);
-  int middle = (vertical ? allocation.width : allocation.height) / 2;
-  GtkWidget *parent = gtk_widget_get_parent(view);
-  g_object_ref(view);
-  gtk_container_remove(GTK_CONTAINER(parent), view);
-  GtkWidget *pane = vertical ? gtk_hpaned_new() : gtk_vpaned_new();
-  gtk_paned_add1(GTK_PANED(pane), view), gtk_paned_add2(GTK_PANED(pane), view2);
-  gtk_container_add(GTK_CONTAINER(parent), pane);
-  gtk_paned_set_position(GTK_PANED(pane), middle);
-  gtk_widget_show_all(pane), update_ui(); // ensure view2 is painted
-  g_object_unref(view);
-}
-
-// Signal for a Scintilla keypress.
-// Note: cannot use bool return value due to modern i686-w64-mingw32-gcc issue.
-static int keypress(GtkWidget *_, GdkEventKey *event, void *__) {
-  return emit("keypress", LUA_TNUMBER, event->keyval, LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
-    LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
-    LUA_TBOOLEAN, event->state & GDK_META_MASK, LUA_TBOOLEAN, event->state & GDK_LOCK_MASK, -1);
-}
-
-// Signal for a Scintilla mouse click.
-static bool mouse_clicked(GtkWidget *w, GdkEventButton *event, void *_) {
-  if (w == command_entry || event->type != GDK_BUTTON_PRESS || event->button != 3) return false;
-  return (show_context_menu("context_menu", event), true);
-}
-
-Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, void *)) {
-  Scintilla *view = scintilla_new();
-  gtk_widget_set_size_request(view, 1, 1); // minimum size
-  if (notified) g_signal_connect(view, SCINTILLA_NOTIFY, G_CALLBACK(notified), NULL);
-  g_signal_connect(view, "key-press-event", G_CALLBACK(keypress), NULL);
-  g_signal_connect(view, "button-press-event", G_CALLBACK(mouse_clicked), NULL);
-  return view;
-}
-
-PaneInfo get_pane_info_from_view(Scintilla *v) { return get_pane_info(gtk_widget_get_parent(v)); }
-
-void set_pane_size(Pane *pane, int size) { gtk_paned_set_position(GTK_PANED(pane), size); }
 
 // Signal for exiting Textadept.
 // Generates a 'quit' event. If that event does not return `true`, quits the application.
@@ -582,6 +248,337 @@ void new_window(Scintilla *(*get_view)(void)) {
     gtk_widget_hide(command_entry); // hide initially
 }
 
+void set_title(const char *title) { gtk_window_set_title(GTK_WINDOW(window), title); }
+
+bool is_maximized() {
+  return (gdk_window_get_state(gtk_widget_get_window(window)) & GDK_WINDOW_STATE_MAXIMIZED) > 0;
+}
+
+void set_maximized(bool maximize) {
+  maximize ? gtk_window_maximize(GTK_WINDOW(window)) : gtk_window_unmaximize(GTK_WINDOW(window));
+}
+
+void get_size(int *width, int *height) { gtk_window_get_size(GTK_WINDOW(window), width, height); }
+
+void set_size(int width, int height) { gtk_window_resize(GTK_WINDOW(window), width, height); }
+
+// Signal for a Scintilla keypress.
+// Note: cannot use bool return value due to modern i686-w64-mingw32-gcc issue.
+static int keypress(GtkWidget *_, GdkEventKey *event, void *__) {
+  return emit("keypress", LUA_TNUMBER, event->keyval, LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
+    LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
+    LUA_TBOOLEAN, event->state & GDK_META_MASK, LUA_TBOOLEAN, event->state & GDK_LOCK_MASK, -1);
+}
+
+// Signal for a Scintilla mouse click.
+static bool mouse_clicked(GtkWidget *w, GdkEventButton *event, void *_) {
+  if (w == command_entry || event->type != GDK_BUTTON_PRESS || event->button != 3) return false;
+  return (show_context_menu("context_menu", event), true);
+}
+
+Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, void *)) {
+  Scintilla *view = scintilla_new();
+  gtk_widget_set_size_request(view, 1, 1); // minimum size
+  if (notified) g_signal_connect(view, SCINTILLA_NOTIFY, G_CALLBACK(notified), NULL);
+  g_signal_connect(view, "key-press-event", G_CALLBACK(keypress), NULL);
+  g_signal_connect(view, "button-press-event", G_CALLBACK(mouse_clicked), NULL);
+  return view;
+}
+
+void focus_view(Scintilla *view) { gtk_widget_grab_focus(view); }
+
+sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
+  return scintilla_send_message(SCINTILLA(view), message, wparam, lparam);
+}
+
+void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
+  GtkAllocation allocation;
+  gtk_widget_get_allocation(view, &allocation);
+  int middle = (vertical ? allocation.width : allocation.height) / 2;
+  GtkWidget *parent = gtk_widget_get_parent(view);
+  g_object_ref(view);
+  gtk_container_remove(GTK_CONTAINER(parent), view);
+  GtkWidget *pane = vertical ? gtk_hpaned_new() : gtk_vpaned_new();
+  gtk_paned_add1(GTK_PANED(pane), view), gtk_paned_add2(GTK_PANED(pane), view2);
+  gtk_container_add(GTK_CONTAINER(parent), pane);
+  gtk_paned_set_position(GTK_PANED(pane), middle);
+  gtk_widget_show_all(pane), update_ui(); // ensure view2 is painted
+  g_object_unref(view);
+}
+
+// Removes all Scintilla views from the given pane and deletes them along with the child panes
+// themselves.
+static void remove_views(Pane *pane, void (*delete_view)(Scintilla *view)) {
+  GtkWidget *child1 = gtk_paned_get_child1(GTK_PANED(pane)),
+            *child2 = gtk_paned_get_child2(GTK_PANED(pane));
+  GTK_IS_PANED(child1) ? remove_views(child1, delete_view) : delete_view(child1);
+  GTK_IS_PANED(child2) ? remove_views(child2, delete_view) : delete_view(child2);
+}
+
+bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *view)) {
+  GtkWidget *pane = gtk_widget_get_parent(view);
+  if (!GTK_IS_PANED(pane)) return false;
+  GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane)) != view ?
+    gtk_paned_get_child1(GTK_PANED(pane)) :
+    gtk_paned_get_child2(GTK_PANED(pane));
+  g_object_ref(view), g_object_ref(other);
+  gtk_container_remove(GTK_CONTAINER(pane), view);
+  gtk_container_remove(GTK_CONTAINER(pane), other);
+  GTK_IS_PANED(other) ? remove_views(other, delete_view) : delete_view(other);
+  GtkWidget *parent = gtk_widget_get_parent(pane);
+  gtk_container_remove(GTK_CONTAINER(parent), pane);
+  if (GTK_IS_PANED(parent))
+    !gtk_paned_get_child1(GTK_PANED(parent)) ? gtk_paned_add1(GTK_PANED(parent), view) :
+                                               gtk_paned_add2(GTK_PANED(parent), view);
+  else
+    gtk_container_add(GTK_CONTAINER(parent), view);
+  // gtk_widget_show_all(parent);
+  gtk_widget_grab_focus(GTK_WIDGET(view));
+  g_object_unref(view), g_object_unref(other);
+  return true;
+}
+
+void delete_scintilla(Scintilla *view) { gtk_widget_destroy(view); }
+
+Pane *get_top_pane() {
+  GtkWidget *pane = focused_view;
+  while (GTK_IS_PANED(gtk_widget_get_parent(pane))) pane = gtk_widget_get_parent(pane);
+  return pane;
+}
+
+PaneInfo get_pane_info(Pane *pane) {
+  PaneInfo info = {GTK_IS_PANED(pane), false, pane, pane, NULL, NULL, 0};
+  if (info.is_split) {
+    info.vertical =
+      gtk_orientable_get_orientation(GTK_ORIENTABLE(pane)) == GTK_ORIENTATION_HORIZONTAL;
+    GtkPaned *p = GTK_PANED(pane);
+    info.child1 = gtk_paned_get_child1(p), info.child2 = gtk_paned_get_child2(p);
+    info.size = gtk_paned_get_position(p);
+  }
+  return info;
+}
+
+PaneInfo get_pane_info_from_view(Scintilla *v) { return get_pane_info(gtk_widget_get_parent(v)); }
+
+void set_pane_size(Pane *pane, int size) { gtk_paned_set_position(GTK_PANED(pane), size); }
+
+void show_tabs(bool show) { gtk_widget_set_visible(tabbar, show); }
+
+void add_tab() {
+  GtkWidget *tab = gtk_vbox_new(false, 0); // placeholder in GtkNotebook
+  tab_sync = true;
+  int i = gtk_notebook_append_page(GTK_NOTEBOOK(tabbar), tab, NULL);
+  gtk_widget_show(tab);
+  gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(tabbar), tab, true);
+  gtk_notebook_set_current_page(GTK_NOTEBOOK(tabbar), i);
+  tab_sync = false;
+}
+
+void set_tab(int index) {
+  tab_sync = true, gtk_notebook_set_current_page(GTK_NOTEBOOK(tabbar), index), tab_sync = false;
+}
+
+// Signal for a tab label mouse click.
+static bool tab_clicked(GtkWidget *label, GdkEventButton *event, void *_) {
+  GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
+  for (int i = 0; i < gtk_notebook_get_n_pages(notebook); i++) {
+    GtkWidget *page = gtk_notebook_get_nth_page(notebook, i);
+    if (label != gtk_notebook_get_tab_label(notebook, page)) continue;
+    emit("tab_clicked", LUA_TNUMBER, i + 1, LUA_TNUMBER, event->button, LUA_TBOOLEAN,
+      event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
+      event->state & GDK_MOD1_MASK, LUA_TBOOLEAN, event->state & GDK_META_MASK, -1);
+    if (event->button == 3) show_context_menu("tab_context_menu", event);
+    break;
+  }
+  return true;
+}
+
+void set_tab_label(int index, const char *text) {
+  GtkWidget *box = gtk_event_box_new();
+  gtk_event_box_set_visible_window(GTK_EVENT_BOX(box), false);
+  GtkWidget *label = gtk_label_new(text);
+  gtk_container_add(GTK_CONTAINER(box), label), gtk_widget_show(label);
+  GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
+  gtk_notebook_set_tab_label(notebook, gtk_notebook_get_nth_page(notebook, index), box);
+  g_signal_connect(box, "button-press-event", G_CALLBACK(tab_clicked), NULL);
+}
+
+void move_tab(int from, int to) {
+  GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
+  gtk_notebook_reorder_child(notebook, gtk_notebook_get_nth_page(notebook, from), current_tab = to);
+}
+
+void remove_tab(int index) { gtk_notebook_remove_page(GTK_NOTEBOOK(tabbar), index); }
+
+const char *get_find_text() { return gtk_entry_get_text(GTK_ENTRY(find_entry)); }
+const char *get_repl_text() { return gtk_entry_get_text(GTK_ENTRY(repl_entry)); }
+void set_find_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(find_entry), text); }
+void set_repl_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(repl_entry), text); }
+
+// Adds the given text to the given list store.
+// Note: GtkComboBoxEntry key navigation behaves contrary to command line history
+// navigation. Down cycles from newer to older, and up cycles from older to newer. In order to
+// mimic traditional command line history navigation, append to the list instead of prepending
+// to it.
+static void add_to_history(GtkListStore *store, const char *text) {
+  int n = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store), NULL);
+  GtkTreeIter iter;
+  if (n > 9)
+    gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter),
+      gtk_list_store_remove(store, &iter), n--; // keep 10 items
+  char *last_text = NULL;
+  if (n > 0)
+    gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(store), &iter, NULL, n - 1),
+      gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &last_text, -1);
+  if (!last_text || strcmp(text, last_text) != 0)
+    gtk_list_store_append(store, &iter), gtk_list_store_set(store, &iter, 0, text, -1);
+  g_free(last_text);
+}
+
+void add_to_find_history(const char *text) { add_to_history(find_history, text); }
+void add_to_repl_history(const char *text) { add_to_history(repl_history, text); }
+
+void set_entry_font(const char *name) {
+  PangoFontDescription *font = pango_font_description_from_string(name);
+  gtk_widget_modify_font(find_entry, font), gtk_widget_modify_font(repl_entry, font);
+  pango_font_description_free(font);
+}
+bool is_checked(FindOption *opt) { return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(opt)); }
+void toggle(FindOption *opt, bool on) { gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(opt), on); }
+void set_find_label(const char *s) { gtk_label_set_text_with_mnemonic(GTK_LABEL(find_label), s); }
+void set_repl_label(const char *s) { gtk_label_set_text_with_mnemonic(GTK_LABEL(repl_label), s); }
+void set_button_label(FindButton *btn, const char *s) { gtk_button_set_label(GTK_BUTTON(btn), s); }
+void set_option_label(FindOption *opt, const char *s) { gtk_button_set_label(GTK_BUTTON(opt), s); }
+void focus_find() {
+  if (!gtk_widget_has_focus(find_entry) && !gtk_widget_has_focus(repl_entry))
+    gtk_widget_show(findbox), gtk_widget_grab_focus(find_entry);
+  else
+    gtk_widget_hide(findbox), gtk_widget_grab_focus(focused_view);
+}
+bool is_find_active() { return gtk_widget_get_visible(findbox); }
+
+void focus_command_entry() {
+  if (!gtk_widget_get_visible(command_entry))
+    gtk_widget_show(command_entry), gtk_widget_grab_focus(command_entry);
+  else
+    gtk_widget_hide(command_entry), gtk_widget_grab_focus(focused_view);
+}
+bool is_command_entry_active() { return gtk_widget_has_focus(command_entry); }
+int get_command_entry_height() {
+  GtkAllocation allocation;
+  gtk_widget_get_allocation(command_entry, &allocation);
+  return allocation.height;
+}
+void set_command_entry_height(int height) {
+  GtkWidget *paned = gtk_widget_get_parent(command_entry);
+  GtkAllocation allocation;
+  gtk_widget_get_allocation(paned, &allocation);
+  gtk_widget_set_size_request(command_entry, -1, height);
+  gtk_paned_set_position(GTK_PANED(paned), allocation.height - height);
+}
+
+void set_statusbar_text(int i, const char *s) { gtk_label_set_text(GTK_LABEL(statusbar[i]), s); }
+
+// Signal for a menu item click.
+static void menu_clicked(GtkWidget *_, void *id) {
+  emit("menu_clicked", LUA_TNUMBER, (int)(long)id, -1);
+}
+
+void *read_menu(lua_State *L, int index) {
+  GtkWidget *menu = gtk_menu_new(), *submenu_root = NULL;
+  if (lua_getfield(L, index, "title") != LUA_TNIL) { // submenu title
+    submenu_root = gtk_menu_item_new_with_mnemonic(lua_tostring(L, -1));
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(submenu_root), menu);
+  }
+  lua_pop(L, 1); // title
+  for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++) {
+    if (lua_rawgeti(L, -1, i) != LUA_TTABLE) continue; // popped on loop
+    bool is_submenu = lua_getfield(L, -1, "title") != LUA_TNIL;
+    if (lua_pop(L, 1), is_submenu) {
+      gtk_menu_shell_append(GTK_MENU_SHELL(menu), read_menu(L, -1));
+      continue;
+    }
+    const char *label = (lua_rawgeti(L, -1, 1), lua_tostring(L, -1));
+    if (lua_pop(L, 1), !label) continue;
+    // Menu item table is of the form {label, id, key, modifiers}.
+    GtkWidget *menu_item =
+      *label ? gtk_menu_item_new_with_mnemonic(label) : gtk_separator_menu_item_new();
+    if (*label && get_int_field(L, -1, 3) > 0)
+      gtk_widget_add_accelerator(menu_item, "activate", accel, get_int_field(L, -1, 3),
+        get_int_field(L, -1, 4), GTK_ACCEL_VISIBLE);
+    g_signal_connect(
+      menu_item, "activate", G_CALLBACK(menu_clicked), (void *)(long)get_int_field(L, -1, 2));
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);
+  }
+  return !submenu_root ? menu : submenu_root;
+}
+
+void popup_menu(void *menu, void *userdata) {
+  GdkEventButton *event = (GdkEventButton *)userdata;
+  gtk_widget_show_all(menu);
+  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event ? event->button : 0,
+    gdk_event_get_time((GdkEvent *)event));
+}
+
+void set_menubar(lua_State *L, int index) {
+#if __APPLE__
+  // TODO: gtkosx_application_set_menu_bar does not like being called more than once in an app.
+  // Random segfaults will happen after a second reset, even if menubar is g_object_ref/unrefed
+  // properly.
+  if (lua_getglobal(L, "arg") == LUA_TNIL) return;
+#endif
+  luaL_argcheck(L, lua_istable(L, index), index, "table of menus expected");
+  for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++)
+    luaL_argcheck(L, lua_rawgeti(L, index, i) == LUA_TLIGHTUSERDATA, index,
+      "table of menus expected"); // popped on loop
+  GtkWidget *new_menubar = gtk_menu_bar_new();
+  for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++)
+    gtk_menu_shell_append(GTK_MENU_SHELL(new_menubar),
+      (lua_rawgeti(L, index, i), lua_touserdata(L, -1))); // popped on loop
+  GtkWidget *vbox = gtk_widget_get_parent(menubar);
+  gtk_container_remove(GTK_CONTAINER(vbox), menubar);
+  gtk_box_pack_start(GTK_BOX(vbox), menubar = new_menubar, false, false, 0);
+  gtk_box_reorder_child(GTK_BOX(vbox), new_menubar, 0);
+  if (lua_rawlen(L, index) > 0) gtk_widget_show_all(new_menubar);
+#if __APPLE__
+  gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(new_menubar));
+  gtk_widget_hide(new_menubar); // hide in window
+#endif
+}
+
+char *get_clipboard_text(int *len) {
+  char *text = gtk_clipboard_wait_for_text(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD));
+  *len = text ? strlen(text) : 0;
+  return text;
+}
+
+// Signal for a timeout.
+static int timed_out(void *f) { return call_timeout_function(f); }
+
+bool add_timeout(double sec, void *f) { return (g_timeout_add(sec * 1000, timed_out, f), true); }
+
+void update_ui() {
+#if !__APPLE__
+  while (gtk_events_pending()) gtk_main_iteration();
+#else
+  // The idle event monitor created by os.spawn() on macOS is considered to be a pending event,
+  // so use its provided registry key to help determine when there are no longer any non-idle
+  // events pending.
+  lua_pushboolean(lua, false), lua_setfield(lua, LUA_REGISTRYINDEX, "spawn_procs_polled");
+  while (gtk_events_pending()) {
+    bool polled =
+      (lua_getfield(lua, LUA_REGISTRYINDEX, "spawn_procs_polled"), lua_toboolean(lua, -1));
+    if (lua_pop(lua, 1), polled) break;
+    gtk_main_iteration();
+  }
+#endif
+}
+
+void quit() {
+  GdkEventAny event = {GDK_DELETE, gtk_widget_get_window(window), true};
+  gdk_event_put((GdkEvent *)&event);
+}
+
 // Signal for processing a remote Textadept's command line arguments.
 static int process(GApplication *_, GApplicationCommandLine *line, void *buf) {
   if (!lua) return 0; // only process argv for secondary/remote instances
@@ -604,24 +601,6 @@ static int process(GApplication *_, GApplicationCommandLine *line, void *buf) {
 }
 
 #if _WIN32
-// Processes a remote Textadept's command line arguments.
-static int pipe_read(void *buf) { return (process(NULL, NULL, buf), free(buf), false); }
-
-// Listens for remote Textadept communications and reads command line arguments.
-// Processing can only happen in the GTK main thread because GTK is single-threaded.
-static DWORD WINAPI pipe_listener(HANDLE pipe) {
-  while (true)
-    if (pipe != INVALID_HANDLE_VALUE && ConnectNamedPipe(pipe, NULL)) {
-      char *buf = malloc(65536 * sizeof(char)), *p = buf; // arbitrary size
-      DWORD len;
-      while (ReadFile(pipe, p, buf + 65536 - 1 - p, &len, NULL) && len > 0) p += len;
-      for (*p = '\0', len = p - buf - 1, p = buf; p < buf + len; p++)
-        if (!*p) *p = '\n'; // but preserve trailing '\0'
-      g_idle_add(pipe_read, buf), DisconnectNamedPipe(pipe);
-    }
-  return 0;
-}
-
 // Replacement for `g_application_register()` that always "works".
 int g_application_register(GApplication *_, GCancellable *__, GError **___) { return true; }
 
@@ -640,6 +619,24 @@ int g_application_run(GApplication *_, int __, char **___) {
   for (int i = 1; i < __argc; i++)
     WriteFile(pipe, __argv[i], strlen(__argv[i]) + 1, &len_written, NULL);
   return (CloseHandle(pipe), 0);
+}
+
+// Processes a remote Textadept's command line arguments.
+static int pipe_read(void *buf) { return (process(NULL, NULL, buf), free(buf), false); }
+
+// Listens for remote Textadept communications and reads command line arguments.
+// Processing can only happen in the GTK main thread because GTK is single-threaded.
+static DWORD WINAPI pipe_listener(HANDLE pipe) {
+  while (true)
+    if (pipe != INVALID_HANDLE_VALUE && ConnectNamedPipe(pipe, NULL)) {
+      char *buf = malloc(65536 * sizeof(char)), *p = buf; // arbitrary size
+      DWORD len;
+      while (ReadFile(pipe, p, buf + 65536 - 1 - p, &len, NULL) && len > 0) p += len;
+      for (*p = '\0', len = p - buf - 1, p = buf; p < buf + len; p++)
+        if (!*p) *p = '\n'; // but preserve trailing '\0'
+      g_idle_add(pipe_read, buf), DisconnectNamedPipe(pipe);
+    }
+  return 0;
 }
 #endif
 
