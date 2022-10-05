@@ -22,32 +22,15 @@
 #define gtk_combo_box_entry_set_text_column gtk_combo_box_set_entry_text_column
 #define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
 #endif
-#if !_WIN32
-#define ID "textadept.editor"
-#else
-#define ID "\\\\.\\pipe\\textadept.editor"
-// Win32 single-instance functionality.
-#define g_application_command_line_get_arguments(_, __) \
-  g_strsplit(buf, "\n", 0); \
-  argc = g_strv_length(argv)
-#define g_application_command_line_get_cwd(_) argv[0]
-#define g_application_register(_, __, ___) true
-#define g_application_get_is_remote(_) (WaitNamedPipe(ID, NMPWAIT_WAIT_FOREVER) != 0)
-#define gtk_main() \
-  HANDLE pipe = NULL, thread = NULL; \
-  if (!g_application_get_is_remote(app)) \
-    pipe = CreateNamedPipe(ID, PIPE_ACCESS_INBOUND, PIPE_WAIT, 1, 0, 0, INFINITE, NULL), \
-    thread = CreateThread(NULL, 0, &pipe_listener, pipe, 0, NULL); \
-  gtk_main(); \
-  if (pipe && thread) TerminateThread(thread, 0), CloseHandle(thread), CloseHandle(pipe);
-#endif
 
 const char *get_platform() { return "GTK"; }
 
 // Window.
 static GtkWidget *window, *menubar, *tabbar, *statusbar[2];
 static GtkAccelGroup *accel;
-#if __APPLE__
+#if _WIN32
+static const char *pipe_id = "\\\\.\\pipe\\textadept.editor";
+#elif __APPLE__
 static GtkosxApplication *osxapp;
 #endif
 sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
@@ -615,11 +598,17 @@ void new_window(Scintilla *(*get_view)(void)) {
 // Signal for processing a remote Textadept's command line arguments.
 static int process(GApplication *_, GApplicationCommandLine *line, void *buf) {
   if (!lua) return 0; // only process argv for secondary/remote instances
+#if !_WIN32
   int argc = 0;
   char **argv = g_application_command_line_get_arguments(line, &argc);
+  const char *cwd = g_application_command_line_get_cwd(line);
+#else
+  char **argv = g_strsplit(buf, "\n", 0), *cwd = argv[0];
+  int argc = g_strv_length(argv);
+#endif
   if (argc > 1) {
     lua_newtable(lua);
-    lua_pushstring(lua, g_application_command_line_get_cwd(line)), lua_rawseti(lua, -2, -1);
+    lua_pushstring(lua, cwd), lua_rawseti(lua, -2, -1);
     while (--argc) lua_pushstring(lua, argv[argc]), lua_rawseti(lua, -2, argc);
     emit("command_line", LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
   }
@@ -646,9 +635,17 @@ static DWORD WINAPI pipe_listener(HANDLE pipe) {
   return 0;
 }
 
+// Replacement for `g_application_register()` that always "works".
+int g_application_register(GApplication *_, GCancellable *__, GError **___) { return true; }
+
+// Replacement for `g_application_get_is_remote()` that uses a named pipe.
+int g_application_get_is_remote(GApplication *_) {
+  return WaitNamedPipe(pipe_id, NMPWAIT_WAIT_FOREVER) != 0;
+}
+
 // Replacement for `g_application_run()` that handles multiple instances.
 int g_application_run(GApplication *_, int __, char **___) {
-  HANDLE pipe = CreateFile(ID, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+  HANDLE pipe = CreateFile(pipe_id, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
   char cwd[FILENAME_MAX + 1]; // TODO: is this big enough?
   GetCurrentDirectory(FILENAME_MAX + 1, cwd);
   DWORD len_written;
@@ -670,22 +667,29 @@ int main(int argc, char **argv) {
       force = true;
       break;
     }
-  GApplication *app = g_application_new(ID, G_APPLICATION_HANDLES_COMMAND_LINE);
+  GApplication *app = g_application_new("textadept.editor", G_APPLICATION_HANDLES_COMMAND_LINE);
   g_signal_connect(app, "command-line", G_CALLBACK(process), NULL);
-  if (!g_application_register(app, NULL, NULL) || !g_application_get_is_remote(app) || force) {
-#if __APPLE__
-    osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
-#endif
-    if (!init_textadept(argc, argv)) return 1;
-#if __APPLE__
-    gtkosx_application_ready(osxapp);
-#endif
-    gtk_main();
-  } else
-    g_application_run(app, argc, argv), close_textadept();
-  g_object_unref(app);
+  if (g_application_register(app, NULL, NULL) && g_application_get_is_remote(app) && !force)
+    return (g_application_run(app, argc, argv), g_object_unref(app), 0);
 
-  return 0;
+#if __APPLE__
+  osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
+#endif
+  if (!init_textadept(argc, argv)) return (g_object_unref(app), 1);
+#if _WIN32
+  HANDLE pipe = NULL, thread = NULL;
+  if (!g_application_get_is_remote(app))
+    pipe = CreateNamedPipe(pipe_id, PIPE_ACCESS_INBOUND, PIPE_WAIT, 1, 0, 0, INFINITE, NULL),
+    thread = CreateThread(NULL, 0, &pipe_listener, pipe, 0, NULL);
+  gtk_main();
+  if (pipe && thread) TerminateThread(thread, 0), CloseHandle(thread), CloseHandle(pipe);
+#elif __APPLE__
+  gtkosx_application_ready(osxapp), gtk_main();
+#else
+  gtk_main();
+#endif
+
+  return (g_object_unref(app), 0); // close_textadept() was called before gtk_main_quit()
 }
 
 #if _WIN32
