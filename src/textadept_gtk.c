@@ -88,6 +88,7 @@ bool is_command_entry_active() { return gtk_widget_has_focus(command_entry); }
 static bool tab_sync;
 static int current_tab;
 
+// Adds the given text to the given list store.
 // Note: GtkComboBoxEntry key navigation behaves contrary to command line history
 // navigation. Down cycles from newer to older, and up cycles from older to newer. In order to
 // mimic traditional command line history navigation, append to the list instead of prepending
@@ -152,7 +153,7 @@ void set_tab(int index) {
   tab_sync = true, gtk_notebook_set_current_page(GTK_NOTEBOOK(tabbar), index), tab_sync = false;
 }
 
-/** Signal for a menu item click. */
+// Signal for a menu item click.
 static void menu_clicked(GtkWidget *_, void *id) {
   emit("menu_clicked", LUA_TNUMBER, (int)(long)id, -1);
 }
@@ -270,7 +271,7 @@ int get_command_entry_height() {
   return allocation.height;
 }
 
-/** Signal for a tab label mouse click. */
+// Signal for a tab label mouse click.
 static bool tab_clicked(GtkWidget *label, GdkEventButton *event, void *_) {
   GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
   for (int i = 0; i < gtk_notebook_get_n_pages(notebook); i++) {
@@ -323,6 +324,7 @@ void quit() {
   gdk_event_put((GdkEvent *)&event);
 }
 
+// Signal for a timeout.
 static int timed_out(void *f) { return call_timeout_function(f); }
 
 bool add_timeout(double interval, void *f) {
@@ -335,13 +337,8 @@ const char *get_charset() {
   return charset;
 }
 
-/**
- * Removes all Scintilla views from the given pane and deletes them along with the child panes
- * themselves.
- * @param pane The pane to remove Scintilla views from.
- * @param delete_view Function for deleting views.
- * @see delete_view
- */
+// Removes all Scintilla views from the given pane and deletes them along with the child panes
+// themselves.
 static void remove_views(Pane *pane, void (*delete_view)(Scintilla *view)) {
   GtkWidget *child1 = gtk_paned_get_child1(GTK_PANED(pane)),
             *child2 = gtk_paned_get_child2(GTK_PANED(pane));
@@ -387,17 +384,15 @@ void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
   g_object_unref(view);
 }
 
-/**
- * Signal for a Scintilla keypress.
- * Note: cannot use bool return value due to modern i686-w64-mingw32-gcc issue.
- */
+// Signal for a Scintilla keypress.
+// Note: cannot use bool return value due to modern i686-w64-mingw32-gcc issue.
 static int keypress(GtkWidget *_, GdkEventKey *event, void *__) {
   return emit("keypress", LUA_TNUMBER, event->keyval, LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
     LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
     LUA_TBOOLEAN, event->state & GDK_META_MASK, LUA_TBOOLEAN, event->state & GDK_LOCK_MASK, -1);
 }
 
-/** Signal for a Scintilla mouse click. */
+// Signal for a Scintilla mouse click.
 static bool mouse_clicked(GtkWidget *w, GdkEventButton *event, void *_) {
   if (w == command_entry || event->type != GDK_BUTTON_PRESS || event->button != 3) return false;
   return (show_context_menu("context_menu", event), true);
@@ -418,28 +413,28 @@ PaneInfo get_pane_info_from_view(Scintilla *view) {
 
 void set_pane_size(Pane *pane, int size) { gtk_paned_set_position(GTK_PANED(pane), size); }
 
-/**
- * Signal for exiting Textadept.
- * Generates a 'quit' event.
- */
+// Signal for exiting Textadept.
+// Generates a 'quit' event. If that event does not return `true`, quits the application.
 static bool exiting(GtkWidget *_, GdkEventAny *__, void *___) {
   if (emit("quit", -1)) return true; // halt
   return (close_textadept(), scintilla_release_resources(), gtk_main_quit(), false);
 }
 
-/** Signal for a Textadept window focus change. */
+// Signal for a Textadept window focus change.
+// Generates a 'focus' event.
 static bool window_focused(GtkWidget *_, GdkEventFocus *__, void *___) {
   if (!is_command_entry_active()) emit("focus", -1);
   return false;
 }
 
-/** Signal for window focus loss. */
+// Signal for window focus loss.
+// Generates an 'unfocus' event.
 static bool focus_lost(GtkWidget *_, GdkEvent *__, void *___) {
   if (!dialog_active) emit("unfocus", -1);
   return is_command_entry_active(); // keep focus if the window is losing focus
 }
 
-/** Signal for a Textadept keypress. */
+// Signal for a Textadept window keypress (not a Scintilla keypress).
 static bool window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
   if (event->keyval != GDK_KEY_Escape || !gtk_widget_get_visible(findbox) ||
     gtk_widget_has_focus(command_entry))
@@ -448,47 +443,38 @@ static bool window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
 }
 
 #if __APPLE__
-/**
- * Signal for opening files from macOS.
- * Generates an 'appleevent_odoc' event for each document sent.
- */
+// Signal for opening files from macOS.
+// Generates an 'appleevent_odoc' event for each document sent.
 static bool open_file(GtkosxApplication *_, char *path, void *__) {
   return (emit("appleevent_odoc", LUA_TSTRING, path, -1), true);
 }
 
-/**
- * Signal for block terminating Textadept from macOS.
- * Generates a 'quit' event.
- */
+// Signal for block terminating Textadept from macOS.
+// Generates a 'quit' event. There is no way to avoid quitting the application.
 static bool terminating(GtkosxApplication *_, void *__) { return emit("quit", -1); }
 
-/**
- * Signal for terminating Textadept from macOS.
- * Closes the Lua state and releases resources.
- * @see close_textadept
- */
+// Signal for terminating Textadept from macOS.
+// Closes Textadept and releases resources.
 static void terminate(GtkosxApplication *_, void *__) {
   close_textadept(), scintilla_release_resources(), g_object_unref(osxapp), gtk_main_quit();
 }
 #endif
 
-/**
- * Signal for switching buffer tabs.
- * When triggered by the user (i.e. not synchronizing the tabbar), switches to the specified
- * buffer.
- * Generates 'buffer_before_switch' and 'buffer_after_switch' events.
- */
+// Signal for switching buffer tabs.
+// When triggered by the user (i.e. not synchronizing the tabbar), switches to the specified
+// buffer.
+// Generates a 'tab_clicked' event.
 static void tab_changed(GtkNotebook *_, GtkWidget *__, int tab_num, void *___) {
   current_tab = tab_num;
   if (!tab_sync) emit("tab_clicked", LUA_TNUMBER, tab_num + 1, LUA_TNUMBER, 1, -1);
 }
 
-/** Signal for reordering tabs. */
+// Signal for reordering tabs.
 static void tab_reordered(GtkNotebook *_, GtkWidget *__, int tab_num, void *___) {
   move_buffer(current_tab + 1, tab_num + 1, false);
 }
 
-/** Signal for a Find/Replace entry keypress. */
+// Signal for a Find/Replace entry keypress.
 static bool find_keypress(GtkWidget *widget, GdkEventKey *event, void *_) {
   if (event->keyval != GDK_KEY_Return) return false;
   FindButton *button = (event->state & GDK_SHIFT_MASK) == 0 ?
@@ -497,10 +483,8 @@ static bool find_keypress(GtkWidget *widget, GdkEventKey *event, void *_) {
   return (find_clicked(button, NULL), true);
 }
 
-/**
- * Creates and returns for the findbox a new GtkComboBoxEntry, storing its GtkLabel, GtkEntry,
- * and GtkListStore in the given pointers.
- */
+// Creates and returns for the findbox a new GtkComboBoxEntry, storing its GtkLabel, GtkEntry,
+// and GtkListStore in the given pointers.
 static GtkWidget *new_combo(GtkWidget **label, GtkWidget **entry, GtkListStore **history) {
   *label = gtk_label_new(""); // localized label text set later via Lua
   *history = gtk_list_store_new(1, G_TYPE_STRING);
@@ -516,10 +500,11 @@ static GtkWidget *new_combo(GtkWidget **label, GtkWidget **entry, GtkListStore *
   return combo;
 }
 
-/** Signal for a Find entry keypress. */
+// Signal for a Find entry keypress.
+// Generates a 'find_text_changed' event.
 static void find_changed(GtkEditable *_, void *__) { emit("find_text_changed", -1); }
 
-/** Creates and returns a new button for the findbox. */
+// Creates and returns a new button for the findbox.
 static GtkWidget *new_button() {
   GtkWidget *button = gtk_button_new_with_mnemonic(""); // localized via Lua
   g_signal_connect(button, "clicked", G_CALLBACK(find_clicked), NULL);
@@ -527,14 +512,14 @@ static GtkWidget *new_button() {
   return button;
 }
 
-/** Creates and returns a new checkbox option for the findbox. */
+// Creates and returns a new checkbox option for the findbox.
 static GtkWidget *new_option() {
   GtkWidget *option = gtk_check_button_new_with_mnemonic(""); // localized later
   gtk_widget_set_can_focus(option, false);
   return option;
 }
 
-/** Creates the Find box. */
+// Creates the findbox.
 static GtkWidget *new_findbox() {
   findbox = gtk_table_new(2, 6, false);
 
@@ -627,7 +612,7 @@ void new_window(Scintilla *(*get_view)(void)) {
     gtk_widget_hide(command_entry); // hide initially
 }
 
-/** Processes a remote Textadept's command line arguments. */
+// Signal for processing a remote Textadept's command line arguments.
 static int process(GApplication *_, GApplicationCommandLine *line, void *buf) {
   if (!lua) return 0; // only process argv for secondary/remote instances
   int argc = 0;
@@ -643,13 +628,11 @@ static int process(GApplication *_, GApplicationCommandLine *line, void *buf) {
 }
 
 #if _WIN32
-/** Processes a remote Textadept's command line arguments. */
+// Processes a remote Textadept's command line arguments.
 static int pipe_read(void *buf) { return (process(NULL, NULL, buf), free(buf), false); }
 
-/**
- * Listens for remote Textadept communications and reads command line arguments.
- * Processing can only happen in the GTK main thread because GTK is single-threaded.
- */
+// Listens for remote Textadept communications and reads command line arguments.
+// Processing can only happen in the GTK main thread because GTK is single-threaded.
 static DWORD WINAPI pipe_listener(HANDLE pipe) {
   while (true)
     if (pipe != INVALID_HANDLE_VALUE && ConnectNamedPipe(pipe, NULL)) {
@@ -663,7 +646,7 @@ static DWORD WINAPI pipe_listener(HANDLE pipe) {
   return 0;
 }
 
-/** Replacement for `g_application_run()` that handles multiple instances. */
+// Replacement for `g_application_run()` that handles multiple instances.
 int g_application_run(GApplication *_, int __, char **___) {
   HANDLE pipe = CreateFile(ID, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
   char cwd[FILENAME_MAX + 1]; // TODO: is this big enough?
@@ -676,13 +659,8 @@ int g_application_run(GApplication *_, int __, char **___) {
 }
 #endif
 
-/**
- * Runs Textadept.
- * Initializes the Lua state, creates the user interface, and then runs `core/init.lua` followed
- * by `init.lua`. On Windows, creates a pipe and thread for communication with remote instances.
- * @param argc The number of command line params.
- * @param argv The array of command line params.
- */
+// Runs Textadept.
+// On Windows, also creates a pipe and thread for communication with remote instances.
 int main(int argc, char **argv) {
   gtk_init(&argc, &argv);
 
@@ -711,10 +689,7 @@ int main(int argc, char **argv) {
 }
 
 #if _WIN32
-/**
- * Runs Textadept in Windows.
- * @see main
- */
+// Runs Textadept in Windows.
 int WINAPI WinMain(HINSTANCE _, HINSTANCE __, LPSTR ___, int ____) {
   return main(__argc, __argv); // MSVC extensions
 }

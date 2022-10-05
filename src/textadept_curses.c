@@ -18,12 +18,9 @@
 
 const char *get_platform() { return "CURSES"; }
 
-/**
- * Copies the given value to the given string after freeing that string's existing value (if any).
- * The given string must be freed when finished.
- * @param s The address of the string to copy value to.
- * @param value String value to copy. It may be freed immediately.
- */
+// Copies to the given string address the given value after freeing that string's existing value
+// (if any).
+// The given string must be freed when finished. The value may be freed immediately.
 static void copyfree(char **s, const char *value) {
   if (*s) free(*s);
   *s = strcpy(malloc(strlen(value) + 1), value);
@@ -87,6 +84,7 @@ static bool quitting;
 // Forward declarations.
 LUALIB_API int os_spawn_pushfds(lua_State *), os_spawn_readfds(lua_State *);
 
+// Adds the given text to the given store.
 static void add_to_history(char **store, const char *text) {
   if (!text || (store[0] && strcmp(text, store[0]) == 0)) return;
   if (store[9]) free(store[9]);
@@ -97,10 +95,7 @@ static void add_to_history(char **store, const char *text) {
 void add_to_find_history(const char *text) { add_to_history(find_history, text); }
 void add_to_repl_history(const char *text) { add_to_history(repl_history, text); }
 
-/**
- * Redraws an entire pane and its children.
- * @param pane The pane to redraw.
- */
+// Redraws the given pane and its children.
 static void refresh_pane(struct Pane *pane) {
   if (pane->type == VSPLIT) {
     mvwvline(pane->win, 0, 0, 0, pane->rows), wrefresh(pane->win);
@@ -112,7 +107,7 @@ static void refresh_pane(struct Pane *pane) {
     scintilla_noutrefresh(pane->view);
 }
 
-/** Refreshes the entire screen. */
+// Refreshes the entire screen.
 static void refresh_all() {
   refresh_pane(pane);
   if (command_entry_active) scintilla_noutrefresh(command_entry);
@@ -120,14 +115,12 @@ static void refresh_all() {
   if (!findbox) scintilla_update_cursor(!command_entry_active ? focused_view : command_entry);
 }
 
-/**
- * Signal for Find/Replace entry keypress.
- * For tab keys, toggle through find/replace buttons.
- * For ^N and ^P keys, cycle through find/replace history.
- * For F1-F4 keys, toggle the respective search option.
- * For up and down keys, toggle entry focus.
- * Otherwise, emit events for entry text changes.
- */
+// Signal for a Find/Replace entry keypress.
+// For tab keys, toggle through find/replace buttons.
+// For ^N and ^P keys, cycle through find/replace history.
+// For F1-F4 keys, toggle the respective search option.
+// For up and down keys, toggle entry focus.
+// Otherwise, emit 'find_text_changed' events for entry text changes.
 static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
   CDKENTRY *entry = (CDKENTRY *)object;
   char *text = getCDKEntryValue(entry);
@@ -311,11 +304,7 @@ const char *get_charset() {
 #endif
 }
 
-/**
- * Searches for the given view and returns its parent pane, if there is one.
- * @param pane The pane that contains the desired view.
- * @param view The view to get the parent pane of.
- */
+// Searches the given pane for the given view and returns that view's parent pane, if there is one.
 static struct Pane *get_parent_pane(struct Pane *pane, Scintilla *view) {
   if (pane->type == SINGLE) return NULL;
   if (pane->child1->view == view || pane->child2->view == view) return pane;
@@ -323,13 +312,8 @@ static struct Pane *get_parent_pane(struct Pane *pane, Scintilla *view) {
   return parent ? parent : get_parent_pane(pane->child2, view);
 }
 
-/**
- * Removes all Scintilla views from the given pane and deletes them along with the child panes
- * themselves.
- * @param pane The pane to remove Scintilla views from.
- * @param delete_view Function for deleting views.
- * @see delete_view
- */
+// Removes all Scintilla views from the given pane and deletes them along with the child panes
+// themselves.
 static void remove_views(Pane *pane_, void (*delete_view)(Scintilla *view)) {
   struct Pane *pane = PANED(pane_);
   if (pane->type == VSPLIT || pane->type == HSPLIT) {
@@ -340,14 +324,7 @@ static void remove_views(Pane *pane_, void (*delete_view)(Scintilla *view)) {
   free(pane);
 }
 
-/**
- * Resizes and repositions a pane.
- * @param pane the pane to resize and move.
- * @param rows The number of rows the pane should show.
- * @param cols The number of columns the pane should show.
- * @param y The y-coordinate to place the pane at.
- * @param x The x-coordinate to place the pane at.
- */
+// Resizes and repositions the given pane.
 static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
   if (pane->type == VSPLIT) {
     int ssize = pane->split_size * cols / fmax(pane->cols, 1);
@@ -383,10 +360,7 @@ bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *)) {
   return (scintilla_noutrefresh(view), true);
 }
 
-/**
- * Creates a new pane that contains a Scintilla view.
- * @param view The Scintilla view to place in the pane.
- */
+// Creates and returns a new pane that contains the given Scintilla view.
 static Pane *new_pane(Scintilla *view) {
   struct Pane *p = calloc(1, sizeof(struct Pane));
   p->type = SINGLE, p->win = scintilla_get_window(view), p->view = view;
@@ -436,10 +410,8 @@ void new_window(Scintilla *(*get_view)(void)) {
 }
 
 #if !_WIN32
-/**
- * Signal for a terminal suspend, continue, and resize.
- * libtermkey has been patched to enable suspend as well as enable/disable mouse mode (1002).
- */
+// Signal for a terminal suspend, continue, and resize.
+// libtermkey has been patched to enable suspend as well as enable/disable mouse mode (1002).
 static void signalled(int signal) {
   if (signal != SIGTSTP) {
     if (signal == SIGCONT) termkey_start(ta_tk);
@@ -456,7 +428,7 @@ static void signalled(int signal) {
 }
 #endif
 
-/** Replacement for `termkey_waitkey()` that handles asynchronous I/O. */
+// Replacement for `termkey_waitkey()` that handles asynchronous I/O.
 static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
 #if !_WIN32
   bool force = false;
@@ -484,13 +456,7 @@ static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
 #endif
 }
 
-/**
- * Runs Textadept.
- * Initializes the Lua state, creates the user interface, and then runs `core/init.lua` followed
- * by `init.lua`. On Windows, creates a pipe and thread for communication with remote instances.
- * @param argc The number of command line params.
- * @param argv The array of command line params.
- */
+// Runs Textadept.
 int main(int argc, char **argv) {
   int termkey_flags = 0; // TERMKEY_FLAG_CTRLC does not work; SIGINT is patched out
   for (int i = 0; i < argc; i++)
