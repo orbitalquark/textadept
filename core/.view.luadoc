@@ -1603,8 +1603,8 @@ local colors
 -- * `back`: Font face background color in "0xBBGGRR" format.
 -- * `eol_filled`: Whether or not the background color extends to the end of the line. The
 --   default value is `false`.
--- * `case`: Font case: `'u'` for upper, `'l'` for lower, and `'m'` for normal, mixed case. The
---   default value is `'m'`.
+-- * `case`: Font case: `view.CASE_UPPER` for upper, `view.CASE_LOWER` for lower, and
+--   `view.CASE_MIXED` for normal, mixed case. The default value is `view.CASE_MIXED`.
 -- * `visible`: Whether or not the text is visible. The default value is `true`.
 -- * `changeable`: Whether the text is changeable instead of read-only. The default value is
 --   `true`.
