@@ -233,10 +233,19 @@ double-click *Textadept.app* or invoke the *ta* script from the command line. On
 invoke *textadept* or *textadept-curses* from a file browser, run dialog, terminal, etc.
 
 For convenience, you can create shortcuts to the executables on the Windows Desktop, Start Menu,
-Quick Launch toolbar, etc. On macOS, you can pin the app to your dock. On Linux and BSD, you can
+Quick Launch toolbar, etc. On macOS, you can pin the app to your dock. On Linux and BSD, you
+can use Textadept's *src/textadept.desktop* and *src/textadept-curses.desktop* files: either (1)
 create a symbolic link to the executables from somewhere in your `$PATH` (e.g. */usr/local/bin/*)
-or make a GNOME, KDE, XFCE, etc. button or menu launcher. Textadept's *src/textadept.desktop*
-and *src/textadept-curses.desktop* files may be of help.
+and then copy those desktop files to a Freedesktop.org-specified applications directory on
+your system (e.g. */usr/local/share/applications* or *~/.local/share/applications/*); or (2)
+edit those desktop files with the absolute path to the Textadept executables and then copy those
+desktop files to an applications directory; or (3) edit those desktop files with the absolute path
+to the Textadept executables and then double-click the desktop file you want to run. By copying
+Textadept's desktop files to an applications directory on your system, Textadept will show up in
+your desktop environment's menu system (GNOME, KDE, XFCE, etc.). You can properly set Textadept's
+icon by either copying Textadept's *core/images/textadept.svg* to a Freedesktop.org-specified
+"hicolor" theme directory (e.g. */usr/share/icons/scalable/apps*), or by editing Textadept's
+desktop files to set "Icon" to the absolute path to *core/images/textadept.svg*.
 
 Textadept accepts a variety of command line arguments, which are listed in the table below.
 
