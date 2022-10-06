@@ -27,13 +27,6 @@
 #include <sys/sysctl.h>
 #endif
 
-// TODO: ideally would be a function.
-#define set_metatable(l, n, name, __index, __newindex) \
-  if (luaL_newmetatable(l, name)) \
-    lua_pushcfunction(l, __index), lua_setfield(l, -2, "__index"), \
-      lua_pushcfunction(l, __newindex), lua_setfield(l, -2, "__newindex"); \
-  lua_setmetatable(l, n > 0 ? n : n - 1);
-
 static char *textadept_home, *os;
 Scintilla *dummy_view; // for working with documents not shown in an existing view
 
@@ -300,6 +293,16 @@ static int call_scintilla_lua(lua_State *L) {
   return call_scintilla(L, view, get_int_field(L, lua_upvalueindex(1), 1),
     get_int_field(L, lua_upvalueindex(1), 3), get_int_field(L, lua_upvalueindex(1), 4),
     get_int_field(L, lua_upvalueindex(1), 2), lua_istable(L, 1) ? 2 : 1);
+}
+
+// Sets the metatable for the value at the given Lua stack index to be the given metatable.
+// Creates the metatable with the given __index and __newindex functions if necessary.
+static void set_metatable(
+  lua_State *L, int index, const char *name, lua_CFunction __index, lua_CFunction __newindex) {
+  if (luaL_newmetatable(L, name))
+    lua_pushcfunction(L, __index), lua_setfield(L, -2, "__index"), lua_pushcfunction(L, __newindex),
+      lua_setfield(L, -2, "__newindex");
+  lua_setmetatable(L, index > 0 ? index : index - 1);
 }
 
 // `buffer[k].__index` metamethod.
