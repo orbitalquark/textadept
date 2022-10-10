@@ -285,7 +285,7 @@ Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, vo
   return view;
 }
 
-void focus_view(Scintilla *view) { gtk_widget_grab_focus(view); }
+void focus_view(Scintilla *view) { gtk_widget_grab_focus(view), update_ui(); }
 
 sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
   return scintilla_send_message(SCINTILLA(view), message, wparam, lparam);
