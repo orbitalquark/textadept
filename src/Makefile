@@ -49,7 +49,7 @@ ta_gtk_objs := $(call objs, textadept_gtk.c)
 ta_curses_objs := $(call objs, textadept_curses.c)
 ta_rc_objs := win-textadept_rc.o
 
-ta_flags := -std=c99 -pedantic -I. -Iscintilla/include -Igtdialog -Wall
+ta_flags := -std=c99 -pedantic -I. -Iscintilla/include -Wall
 
 $(call all-objs, $(ta_objs)): CFLAGS += $(ta_flags) $(lua_flags)
 $(call all-objs, $(ta_gtk_objs)): CFLAGS += $(ta_flags) $(lua_flags) -DGTK $(gtk_flags)
@@ -470,8 +470,6 @@ lua/src/lib/lpeg: lua | $(lpeg_tgz)
 lua/src/lib/lfs: lua | $(lfs_zip)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir -p $@ && unzip -d $(dir $@) -j $| "*/src/*.c" "*/src/*.h"
-$(gtdialog_zip): ; $(WGET) $(gtdialog_url) -O $@
-gtdialog: | $(gtdialog_zip) ; unzip -d $@ -j $| "*/*.c" "*/*.h"
 $(cdk_tgz): ; $(WGET) https://invisible-mirror.net/archives/cdk/$@
 cdk: cdk.patch | $(cdk_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
