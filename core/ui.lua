@@ -164,7 +164,7 @@ local option_map={with_directory='dir',with_file='file',select_multiple='multipl
 setmetatable(ui.dialogs, {
   __index = function(_, k)
     return function(options, f)
-      local new_type, new_options, new_type = type_map[k], {}
+      local new_type, new_options = type_map[k], {}
       if not new_type then error('Unsupported dialog', 2) end
       for k, v in pairs(options) do new_options[option_map[k] or k] = v end
       if k == 'progressbar' then new_options.work = f end
