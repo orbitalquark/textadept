@@ -510,8 +510,8 @@ clean-deps:
 # Count lines of code.
 
 .PHONY: count plots
-sources := ../core ../modules/ansi_c ../modules/lua ../modules/textadept textadept*.c textadept.h \
-  platform.h Makefile ../init.lua
+sources := ../core ../modules/ansi_c ../modules/lua ../modules/textadept textadept.c textadept.h \
+  platform.h textadept_gtk.c Makefile ../init.lua
 count: cloc ; perl $< $(sources) --not-match-f=tadoc.lua --exclude-lang=SVG --force-lang=C,h
 plots: ; ../scripts/gen_plots.sh
 

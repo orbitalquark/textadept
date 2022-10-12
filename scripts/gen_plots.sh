@@ -15,7 +15,8 @@ for rev in `hg tags | awk '{print $2}' | cut -d: -f1 | tac`; do
   hg update -r $rev -q
   timestamp=`date -d "$date" "+%s"`
   counts=`cloc --force-lang=C,h --include-lang=C,Lua,make --quiet --csv \
-    --exclude-dir=doc,docs,scripts,themes,test,.github --not-match-f=adeptsensedoc\\|tadoc . | \
+    --exclude-dir=doc,docs,scripts,themes,test,.github \
+    --not-match-f=adeptsensedoc\\|tadoc\\|textadept_curses . | \
     tail -n +3 | head -n -1 | cut -d, -f2- | sort | tr '\n' ,`
   echo $timestamp,$counts
 done | lua -e "
