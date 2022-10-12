@@ -88,9 +88,7 @@ end
 function M.save(filename)
   if recording or not macro then return end
   if not assert_type(filename, 'string/nil', 1) then
-    filename = ui.dialogs.filesave{
-      title = _L['Save Macro'], with_directory = _USERHOME, with_extension = 'm'
-    }
+    filename = ui.dialogs.save{title = _L['Save Macro'], dir = _USERHOME}
     if not filename then return end
   end
   local f = assert(io.open(filename, 'w'))
@@ -112,9 +110,7 @@ end
 function M.load(filename)
   if recording then return end
   if not assert_type(filename, 'string/nil', 1) then
-    filename = ui.dialogs.fileselect{
-      title = _L['Load Macro'], with_directory = _USERHOME, with_extension = 'm'
-    }
+    filename = ui.dialogs.open{title = _L['Load Macro'], dir = _USERHOME}
     if not filename then return end
   end
   macro = assert(loadfile(filename, 't', {}))()

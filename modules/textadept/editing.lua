@@ -381,12 +381,8 @@ end
 -- @name goto_line
 function M.goto_line(line)
   if not assert_type(line, 'number/nil', 1) then
-    local button, value = ui.dialogs.inputbox{
-      title = _L['Go To'], informative_text = _L['Line Number:'], button1 = _L['OK'],
-      button2 = _L['Cancel']
-    }
-    line = tonumber(value)
-    if button ~= 1 or not line then return end
+    line = tonumber(select(2, ui.dialogs.input{title = _L['Go to line number:']}) or nil)
+    if not line then return end
   end
   view:ensure_visible_enforce_policy(line)
   buffer:goto_line(line)

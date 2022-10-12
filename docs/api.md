@@ -4344,7 +4344,7 @@ See also:
 * [`io.recent_files`](#io.recent_files)
 
 <a id="io.quick_open"></a>
-#### `io.quick_open`(*paths, filter, opts*)
+#### `io.quick_open`(*paths, filter*)
 
 Prompts the user to select files to be opened from *paths*, a string directory path or list
 of directory paths, using a filtered list dialog.
@@ -4361,7 +4361,6 @@ The number of files in the list is capped at `quick_open_max`.
 If *filter* is `nil` and *paths* is ultimately a string, the filter from the
 `io.quick_open_filters` table is used. If that filter does not exist, `lfs.default_filter`
 is used.
-*opts* is an optional table of additional options for `ui.dialogs.filteredlist()`.
 
 Parameters:
 
@@ -4370,7 +4369,6 @@ Parameters:
 * *`filter`*: Optional filter for files and directories to include and/or exclude. The
   default value is `lfs.default_filter` unless a filter for *paths* is defined in
   `io.quick_open_filters`.
-* *`opts`*: Optional table of additional options for `ui.dialogs.filteredlist()`.
 
 Usage:
 
@@ -4386,7 +4384,6 @@ See also:
 * [`io.quick_open_filters`](#io.quick_open_filters)
 * [`lfs.default_filter`](#lfs.default_filter)
 * [`io.quick_open_max`](#io.quick_open_max)
-* [`ui.dialogs.filteredlist`](#ui.dialogs.filteredlist)
 
 <a id="io.save_all_files"></a>
 #### `io.save_all_files`()
@@ -7614,26 +7611,6 @@ See also:
 
 * [`ui._print`](#ui._print)
 
-<a id="ui.dialog"></a>
-#### `ui.dialog`(*kind, ...*)
-
-Low-level function for prompting the user with a [gtdialog][] of kind *kind* with the given
-string and table arguments, returning a formatted string of the dialog's output.
-You probably want to use the higher-level functions in the [`ui.dialogs`](#ui.dialogs) module.
-Table arguments containing strings are allowed and expanded in place. This is useful for
-filtered list dialogs with many items.
-
-[gtdialog]: https://orbitalquark.github.io/gtdialog/manual.html
-
-Parameters:
-
-* *`kind`*: The kind of gtdialog.
-* *`...`*: Parameters to the gtdialog.
-
-Return:
-
-* string gtdialog result.
-
 <a id="ui.get_split_table"></a>
 #### `ui.get_split_table`()
 
@@ -7923,78 +7900,150 @@ Provides a set of interactive dialog prompts for user input.
 
 ### Functions defined by `ui.dialogs`
 
-<a id="ui.dialogs.colorselect"></a>
-#### `ui.dialogs.colorselect`(*options*)
+<a id="ui.dialogs.input"></a>
+#### `ui.dialogs.input`(*options*)
 
-Prompts the user with a color selection dialog defined by dialog options table *options*,
-returning the color selected.
+Prompts the user with an input dialog defined by dialog options table *options*, returning
+the selected button's index along with the user's input text.
 If the user canceled the dialog, returns `nil`.
 
 Parameters:
 
-* *`options`*: Table of key-value option pairs for the option select dialog.
+* *`options`*: Table of key-value option pairs for the inputbox.
 
   * `title`: The dialog's title text.
-  * `color`: The initially selected color as either a number in "0xBBGGRR" format, or as a
-    string in "#RRGGBB" format.
-  * `palette`: The list of colors to show in the dialog's color palette. Up to 20 colors can
-    be specified as either numbers in "0xBBGGRR" format or as strings in "#RRGGBB" format. If
-    `true` (no list was given), a default palette is shown.
-  * `string_output`: Return the selected color in string "#RRGGBB" format instead of as a
-    number. The default value is `false`.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-
-Usage:
-
-* `ui.dialogs.colorselect{title = 'Foreground color', color = 0x000000,
-  palette = {'#000000', 0x0000FF, '#00FF00', 0xFF0000}}`
-
-Return:
-
-* selected color
-
-<a id="ui.dialogs.dropdown"></a>
-#### `ui.dialogs.dropdown`(*options*)
-
-Prompts the user with a drop-down item selection dialog defined by dialog options table
-*options*, returning the selected button's index along with the index of the selected item.
-If *options*.`string_output` is `true`, returns the selected button's label along with the
-selected item's text. If the dialog closed due to *options*.`exit_onchange`, returns `4`
-along with either the selected item's index or its text. If the dialog timed out, returns
-`0` or `"timeout"`. If the user canceled the dialog, returns `-1` or `"delete"`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the drop-down dialog.
-
-  * `title`: The dialog's title text.
-  * `text`: The dialog's main message text.
-  * `items`: The list of string items to show in the drop-down.
+  * `text`: The dialog's initial input text.
   * `button1`: The right-most button's label. The default value is `_L['OK']`.
   * `button2`: The middle button's label.
   * `button3`: The left-most button's label. This option requires `button2` to be set.
-  * `exit_onchange`: Close the dialog after selecting a new item. The default value is `false`.
-  * `select`: The index of the initially selected list item. The default value is `1`.
-  * `string_output`: Return the selected button's label (instead of its index) and the selected
-    item's text (instead of its index). If no item was selected, returns the dialog's exit
-    status (instead of its exit code). The default value is `false`.
-  * `width`: The dialog's pixel width.
-  * `height`: The dialog's pixel height.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-  * `timeout`: The integer number of seconds the dialog waits for the user to select a button
-    before timing out. Dialogs do not time out by default.
 
 Usage:
 
-* `ui.dialogs.dropdown{title = 'Select Encoding', width = 200, items = io.encodings,
-  string_output = true}`
+* `ui.dialogs.input{title = 'Go to line number:', text = '1'}`
 
 Return:
 
-* selected button or exit code, selected item
+* selected button, input text
 
-<a id="ui.dialogs.filesave"></a>
-#### `ui.dialogs.filesave`(*options*)
+<a id="ui.dialogs.list"></a>
+#### `ui.dialogs.list`(*options*)
+
+Prompts the user with a list item selection dialog defined by dialog options table *options*,
+returning the selected button's index along with the index or indices of the selected item
+or items (depending on whether or not *options*.`multiple` is `true`).
+If the user canceled the dialog, returns `nil`.
+Text typed into the dialog filters the list items. Spaces are treated as wildcards.
+
+Parameters:
+
+* *`options`*: Table of key-value option pairs for the filtered list dialog.
+
+  * `title`: The dialog's title text.
+  * `text`: The dialog's initial input text.
+  * `columns`: The list of string column names for list rows. If this field is omitted,
+    a single column is used.
+  * `items`: The list of string items to show in the list. Each item is placed in the next
+    available column of the current row. If there is only one column, each item is on its
+    own row.
+  * `button1`: The right-most button's label. The default value is `_L['OK']`.
+  * `button2`: The middle button's label.
+  * `button3`: The left-most button's label. This option requires `button2` to be set.
+  * `multiple`: Allow the user to select multiple items. The default value is `false`.
+  * `search_column`: The column number to filter the input text against. The default value is
+    `1`.
+
+Usage:
+
+* `ui.dialogs.list{title = 'Title', columns = {'Foo', 'Bar'}, items = {'a', 'b', 'c', 'd'}}`
+
+Return:
+
+* selected button, selected item or list of selected items
+
+<a id="ui.dialogs.message"></a>
+#### `ui.dialogs.message`(*options*)
+
+Prompts the user with a generic message box dialog defined by dialog options table *options*,
+returning the selected button's index.
+If the user canceled the dialog, returns `nil`.
+
+Parameters:
+
+* *`options`*: Table of key-value option pairs for the message box.
+
+  * `title`: The dialog's title text.
+  * `text`: The dialog's main message text.
+  * `icon`: The dialog's icon name, according to the Free Desktop Icon Naming
+    Specification. Examples are "dialog-error", "dialog-information", "dialog-question",
+    and "dialog-warning". The dialog does not display an icon by default.
+  * `button1`: The right-most button's label. The default value is `_L['OK']`.
+  * `button2`: The middle button's label.
+  * `button3`: The left-most button's label. This option requires `button2` to be set.
+
+Usage:
+
+* `ui.dialogs.message{title = 'EOL Mode', text = 'Which EOL?',
+  icon = 'dialog-question', button1 = 'CRLF', button2 = 'CR',
+  button3 = 'LF'}`
+
+Return:
+
+* selected button
+
+<a id="ui.dialogs.open"></a>
+#### `ui.dialogs.open`(*options*)
+
+Prompts the user with a file open dialog defined by dialog options table *options*, returning
+the string file selected.
+If *options*.`multiple` is `true`, returns the list of files selected. If the user canceled
+the dialog, returns `nil`.
+
+Parameters:
+
+* *`options`*: Table of key-value option pairs for the dialog.
+
+  * `title`: The dialog's title text.
+  * `dir`: The initial filesystem directory to show.
+  * `file`: The initially selected filename. This option requires `dir` to be set.
+  * `multiple`: Allow the user to select multiple files. The default value is `false`.
+  * `only_dirs`: Only allow the user to select directories. The default value is `false`.
+
+Usage:
+
+* `ui.dialogs.open{title = 'Open File', dir = _HOME, multiple = true}`
+
+Return:
+
+* filename, list of filenames, or nil
+
+<a id="ui.dialogs.progress"></a>
+#### `ui.dialogs.progress`(*options*)
+
+Displays a progress dialog, defined by dialog options table *options*, returning true if
+the user clicked the "Stop" button, or `nil` if the dialog finishes.
+
+Parameters:
+
+* *`options`*: Table of key-value option pairs for the progressbar dialog.
+
+  * `title`: The dialog's title text.
+  * `text`: The initial progressbar display text (GTK only).
+  * `work`: The function repeatedly called to do work and provide progress updates. The
+    function is called without arguments and must return either `nil`, which indicates work
+    is complete, or a progress percentage number in the range 0-100 and an optional string
+    to display (GTK only).
+
+Usage:
+
+* `ui.dialogs.progress{
+  work = function() if work() then return percent, status else return nil end end}`
+
+Return:
+
+* nil if all work completed, or true if work was stopped
+
+<a id="ui.dialogs.save"></a>
+#### `ui.dialogs.save`(*options*)
 
 Prompts the user with a file save dialog defined by dialog options table *options*, returning
 the string file chosen.
@@ -8005,526 +8054,12 @@ Parameters:
 * *`options`*: Table of key-value option pairs for the dialog.
 
   * `title`: The dialog's title text.
-  * `with_directory`: The initial filesystem directory to show.
-  * `with_file`: The initially chosen filename. This option requires `with_directory` to be set.
-  * `with_extension`: The list of extensions selectable files must have.
-  * `no_create_directories`: Prevent the user from creating new directories. The default
-    value is `false`.
+  * `dir`: The initial filesystem directory to show.
+  * `file`: The initially chosen filename. This option requires `dir` to be set.
 
 Return:
 
 * filename or nil
-
-<a id="ui.dialogs.fileselect"></a>
-#### `ui.dialogs.fileselect`(*options*)
-
-Prompts the user with a file selection dialog defined by dialog options table *options*,
-returning the string file selected.
-If *options*.`select_multiple` is `true`, returns the list of files selected. If the user
-canceled the dialog, returns `nil`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the dialog.
-
-  * `title`: The dialog's title text.
-  * `with_directory`: The initial filesystem directory to show.
-  * `with_file`: The initially selected filename. This option requires `with_directory`
-    to be set.
-  * `with_extension`: The list of extensions selectable files must have.
-  * `select_multiple`: Allow the user to select multiple files. The default value is `false`.
-  * `select_only_directories`: Only allow the user to select directories. The default value is
-    `false`.
-
-Usage:
-
-* `ui.dialogs.fileselect{title = 'Open C File', with_directory = _HOME,
-  with_extension = {'c', 'h'}, select_multiple = true}`
-
-Return:
-
-* filename, list of filenames, or nil
-
-<a id="ui.dialogs.filteredlist"></a>
-#### `ui.dialogs.filteredlist`(*options*)
-
-Prompts the user with a filtered list item selection dialog defined by dialog options table
-*options*, returning the selected button's index along with the index or indices of the
-selected item or items (depending on whether or not *options*.`select_multiple` is `true`).
-If *options*.`string_output` is `true`, returns the selected button's label along with the
-text of the selected item or items. If the dialog timed out, returns `0` or `"timeout"`. If
-the user canceled the dialog, returns `-1` or `"delete"`.
-Spaces in the filter text are treated as wildcards.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the filtered list dialog.
-
-  * `title`: The dialog's title text.
-  * `informative_text`: The dialog's main message text.
-  * `text`: The dialog's initial input text.
-  * `columns`: The list of string column names for list rows.
-  * `items`: The list of string items to show in the filtered list.
-  * `button1`: The right-most button's label. The default value is `_L['OK']`.
-  * `button2`: The middle button's label.
-  * `button3`: The left-most button's label. This option requires `button2` to be set.
-  * `select_multiple`: Allow the user to select multiple items. The default value is `false`.
-  * `search_column`: The column number to filter the input text against. The default value is
-    `1`. This option requires `columns` to be set and contain at least *n* column names.
-  * `output_column`: The column number to use for `string_output`. The default value is
-    `1`. This option requires `columns` to be set and contain at least *n* column names.
-  * `string_output`: Return the selected button's label (instead of its index) and the selected
-    item's text (instead of its index). If no item was selected, returns the dialog's exit
-    status (instead of its exit code). The default value is `false`.
-  * `width`: The dialog's pixel width. The default width stretches nearly the width of
-    Textadept's window.
-  * `height`: The dialog's pixel height.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-  * `timeout`: The integer number of seconds the dialog waits for the user to select a button
-    before timing out. Dialogs do not time out by default.
-
-Usage:
-
-* `ui.dialogs.filteredlist{title = 'Title', columns = {'Foo', 'Bar'},
-  items = {'a', 'b', 'c', 'd'}}`
-
-Return:
-
-* selected button or exit code, selected item or list of selected items
-
-<a id="ui.dialogs.fontselect"></a>
-#### `ui.dialogs.fontselect`(*options*)
-
-Prompts the user with a font selection dialog defined by dialog options table *options*,
-returning the font selected (including style and size).
-If the user canceled the dialog, returns `nil`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the option select dialog.
-
-  * `title`: The dialog's title text.
-  * `text`: The font preview text.
-  * `font_name`: The initially selected font name.
-  * `font_size`: The initially selected font size. The default value is `12`.
-  * `font_style`: The initially selected font style. The available options are `"regular"`,
-    `"bold"`, `"italic"`, and `"bold italic"`. The default value is `"regular"`.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-
-Usage:
-
-* `ui.dialogs.fontselect{title = 'Font', font_name = 'Monospace', font_size = 10}`
-
-Return:
-
-* selected font, including style and size
-
-<a id="ui.dialogs.inputbox"></a>
-#### `ui.dialogs.inputbox`(*options*)
-
-Prompts the user with an inputbox dialog defined by dialog options table *options*, returning
-the selected button's index along with the user's input text (the latter as a string or table,
-depending on the type of *options*.`informative_text`).
-If *options*.`string_output` is `true`, returns the selected button's label along with the
-user's input text. If the dialog timed out, returns `0` or `"timeout"`. If the user canceled
-the dialog, returns `-1` or `"delete"`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the inputbox.
-
-  * `title`: The dialog's title text.
-  * `informative_text`: The dialog's main message text. If the value is a table, the first
-    table value is the main message text and any subsequent values are used as the labels
-    for multiple entry boxes. Providing a single label has no effect.
-  * `text`: The dialog's initial input text. If the value is a table, the table values are
-    used to populate the multiple entry boxes defined by `informative_text`.
-  * `button1`: The right-most button's label. The default value is `_L['OK']`.
-  * `button2`: The middle button's label.
-  * `button3`: The left-most button's label. This option requires `button2` to be set.
-  * `string_output`: Return the selected button's label (instead of its index) or the dialog's
-    exit status instead of the button's index (instead of its exit code). The default value is
-    `false`.
-  * `width`: The dialog's pixel width.
-  * `height`: The dialog's pixel height.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-  * `timeout`: The integer number of seconds the dialog waits for the user to select a button
-    before timing out. Dialogs do not time out by default.
-
-Usage:
-
-* `ui.dialogs.inputbox{title = 'Goto Line', informative_text = 'Line:',
-  text = '1'}`
-
-Return:
-
-* selected button or exit code, input text
-
-<a id="ui.dialogs.msgbox"></a>
-#### `ui.dialogs.msgbox`(*options*)
-
-Prompts the user with a generic message box dialog defined by dialog options table *options*,
-returning the selected button's index.
-If *options*.`string_output` is `true`, returns the selected button's label. If the dialog timed
-out, returns `0` or `"timeout"`. If the user canceled the dialog, returns `-1` or `"delete"`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the message box.
-
-  * `title`: The dialog's title text.
-  * `text`: The dialog's main message text.
-  * `informative_text`: The dialog's extra informative text.
-  * `icon`: The dialog's icon name, according to the Free Desktop Icon Naming
-    Specification. Examples are "dialog-error", "dialog-information", "dialog-question",
-    and "dialog-warning". The dialog does not display an icon by default.
-  * `icon_file`: The dialog's icon file path. This option has no effect when `icon` is set.
-  * `button1`: The right-most button's label. The default value is `_L['OK']`.
-  * `button2`: The middle button's label.
-  * `button3`: The left-most button's label. This option requires `button2` to be set.
-  * `string_output`: Return the selected button's label (instead of its index) or the dialog's
-    exit status instead of the button's index (instead of its exit code). The default value is
-    `false`.
-  * `width`: The dialog's pixel width.
-  * `height`: The dialog's pixel height.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-  * `timeout`: The integer number of seconds the dialog waits for the user to select a button
-    before timing out. Dialogs do not time out by default.
-
-Usage:
-
-* `ui.dialogs.msgbox{title = 'EOL Mode', text = 'Which EOL?',
-  icon = 'dialog-question', button1 = 'CRLF', button2 = 'CR',
-  button3 = 'LF'}`
-
-Return:
-
-* selected button or exit code
-
-<a id="ui.dialogs.ok_msgbox"></a>
-#### `ui.dialogs.ok_msgbox`(*options*)
-
-Prompts the user with a generic message box dialog defined by dialog options table *options*
-and with localized "Ok" and "Cancel" buttons, returning the selected button's index.
-If *options*.`string_output` is `true`, returns the selected button's label. If the dialog timed
-out, returns `0` or `"timeout"`. If the user canceled the dialog, returns `-1` or `"delete"`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the message box.
-
-  * `title`: The dialog's title text.
-  * `text`: The dialog's main message text.
-  * `informative_text`: The dialog's extra informative text.
-  * `icon`: The dialog's icon name, according to the Free Desktop Icon Naming
-    Specification. Examples are "dialog-error", "dialog-information", "dialog-question",
-    and "dialog-warning". The dialog does not display an icon by default.
-  * `icon_file`: The dialog's icon file path. This option has no effect when `icon` is set.
-  * `no_cancel`: Do not display the "Cancel" button. The default value is `false`.
-  * `string_output`: Return the selected button's label (instead of its index) or the dialog's
-    exit status instead of the button's index (instead of its exit code). The default value is
-    `false`.
-  * `width`: The dialog's pixel width.
-  * `height`: The dialog's pixel height.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-  * `timeout`: The integer number of seconds the dialog waits for the user to select a button
-    before timing out. Dialogs do not time out by default.
-
-Return:
-
-* selected button or exit code
-
-<a id="ui.dialogs.optionselect"></a>
-#### `ui.dialogs.optionselect`(*options*)
-
-Prompts the user with an option selection dialog defined by dialog options table *options*,
-returning the selected button's index along with the indices of the selected options.
-If *options*.`string_output` is `true`, returns the selected button's label along with the
-text of the selected options. If the dialog timed out, returns `0` or `"timeout"`. If the
-user canceled the dialog, returns `-1` or `"delete"`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the option select dialog.
-
-  * `title`: The dialog's title text.
-  * `text`: The dialog's main message text.
-  * `items`: The list of string options to show in the option group.
-  * `button1`: The right-most button's label. The default value is `_L['OK']`.
-  * `button2`: The middle button's label.
-  * `button3`: The left-most button's label. This option requires `button2` to be set.
-  * `select`: The indices of initially selected options.
-  * `string_output`: Return the selected button's label or the dialog's exit status along
-    with the selected options' text instead of the button's index or the dialog's exit code
-    along with the options' indices. The default value is `false`.
-  * `width`: The dialog's pixel width.
-  * `height`: The dialog's pixel height.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-  * `timeout`: The integer number of seconds the dialog waits for the user to select a button
-    before timing out. Dialogs do not time out by default.
-
-Usage:
-
-* `ui.dialogs.optionselect{title = 'Language',
-  informative_text = 'Check the languages you understand',
-  items = {'English', 'Romanian'}, select = 1, string_output = true}`
-
-Return:
-
-* selected button or exit code, list of selected options
-
-<a id="ui.dialogs.progressbar"></a>
-#### `ui.dialogs.progressbar`(*options, f*)
-
-Displays a progressbar dialog, defined by dialog options table *options*, that receives
-updates from function *f*.
-Returns "stopped" if *options*.`stoppable` is `true` and the user clicked the "Stop"
-button. Otherwise, returns `nil`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the progressbar dialog.
-
-  * `title`: The dialog's title text.
-  * `percent`: The initial progressbar percentage between 0 and 100.
-  * `text`: The initial progressbar display text (GTK only).
-  * `indeterminate`: Show the progress bar as "busy", with no percentage updates.
-  * `stoppable`: Show the "Stop" button.
-  * `width`: The dialog's pixel width.
-  * `height`: The dialog's pixel height.
-* *`f`*: Function repeatedly called to do work and provide progress updates. The function is
-  called without arguments and must return either `nil`, which indicates work is complete,
-  or a progress percentage number in the range 0-100 and an optional string to display (GTK
-  only). If the text is either "stop disable" or "stop enable" and *options*.`stoppable` is
-  `true`, the "Stop" button is disabled or enabled, respectively.
-
-Usage:
-
-* `ui.dialogs.progressbar({stoppable = true},
-  function() if work() then return percent, status else return nil end end)`
-
-Return:
-
-* nil or "stopped"
-
-<a id="ui.dialogs.secure_inputbox"></a>
-#### `ui.dialogs.secure_inputbox`(*options*)
-
-Prompts the user with a masked inputbox dialog defined by dialog options table *options*,
-returning the selected button's index along with the user's input text (the latter as a
-string or table, depending on the type of *options*.`informative_text`).
-If *options*.`string_output` is `true`, returns the selected button's label along with the
-user's input text. If the dialog timed out, returns `0` or `"timeout"`. If the user canceled
-the dialog, returns `-1` or `"delete"`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the inputbox.
-
-  * `title`: The dialog's title text.
-  * `informative_text`: The dialog's main message text. If the value is a table, the first
-    table value is the main message text and any subsequent values are used as the labels
-    for multiple entry boxes. Providing a single label has no effect.
-  * `text`: The dialog's initial input text. If the value is a table, the table values are
-    used to populate the multiple entry boxes defined by `informative_text`.
-  * `button1`: The right-most button's label. The default value is `_L['OK']`.
-  * `button2`: The middle button's label.
-  * `button3`: The left-most button's label. This option requires `button2` to be set.
-  * `string_output`: Return the selected button's label (instead of its index) or the dialog's
-    exit status instead of the button's index (instead of its exit code). The default value is
-    `false`.
-  * `width`: The dialog's pixel width.
-  * `height`: The dialog's pixel height.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-  * `timeout`: The integer number of seconds the dialog waits for the user to select a button
-    before timing out. Dialogs do not time out by default.
-
-Return:
-
-* selected button or exit code, input text
-
-<a id="ui.dialogs.secure_standard_inputbox"></a>
-#### `ui.dialogs.secure_standard_inputbox`(*options*)
-
-Prompts the user with a masked inputbox dialog defined by dialog options table *options*
-and with localized "Ok" and "Cancel" buttons, returning the selected button's index along
-with the user's input text (the latter as a string or table, depending on the type of
-*options*.`informative_text`).
-If *options*.`string_output` is `true`, returns the selected button's label along with the
-user's input text. If the dialog timed out, returns `0` or `"timeout"`. If the user canceled
-the dialog, returns `-1` or `"delete"`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the inputbox.
-
-  * `title`: The dialog's title text.
-  * `informative_text`: The dialog's main message text. If the value is a table, the first
-    table value is the main message text and any subsequent values are used as the labels
-    for multiple entry boxes. Providing a single label has no effect.
-  * `text`: The dialog's initial input text. If the value is a table, the table values are
-    used to populate the multiple entry boxes defined by `informative_text`.
-  * `no_cancel`: Do not display the "Cancel" button. The default value is `false`.
-  * `string_output`: Return the selected button's label (instead of its index) or the dialog's
-    exit status instead of the button's index (instead of its exit code). The default value is
-    `false`.
-  * `width`: The dialog's pixel width.
-  * `height`: The dialog's pixel height.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-  * `timeout`: The integer number of seconds the dialog waits for the user to select a button
-    before timing out. Dialogs do not time out by default.
-
-Return:
-
-* selected button or exit code, input text
-
-<a id="ui.dialogs.standard_dropdown"></a>
-#### `ui.dialogs.standard_dropdown`(*options*)
-
-Prompts the user with a drop-down item selection dialog defined by dialog options table
-*options* and with localized "Ok" and "Cancel" buttons, returning the selected button's
-index along with the selected item's index.
-If *options*.`string_output` is `true`, returns the selected button's label along with the
-selected item's text. If the dialog closed due to *options*.`exit_onchange`, returns `4`
-along with either the selected item's index or its text. If the dialog timed out, returns
-`0` or `"timeout"`. If the user canceled the dialog, returns `-1` or `"delete"`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the drop-down dialog.
-
-  * `title`: The dialog's title text.
-  * `text`: The dialog's main message text.
-  * `items`: The list of string items to show in the drop-down.
-  * `no_cancel`: Do not display the "Cancel" button. The default value is `false`.
-  * `exit_onchange`: Close the dialog after selecting a new item. The default value is `false`.
-  * `select`: The index of the initially selected list item. The default value is `1`.
-  * `string_output`: Return the selected button's label (instead of its index) and the selected
-    item's text (instead of its index). If no item was selected, returns the dialog's exit
-    status (instead of its exit code). The default value is `false`.
-  * `width`: The dialog's pixel width.
-  * `height`: The dialog's pixel height.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-  * `timeout`: The integer number of seconds the dialog waits for the user to select a button
-    before timing out. Dialogs do not time out by default.
-
-Return:
-
-* selected button or exit code, selected item
-
-<a id="ui.dialogs.standard_inputbox"></a>
-#### `ui.dialogs.standard_inputbox`(*options*)
-
-Prompts the user with an inputbox dialog defined by dialog options table *options* and
-with localized "Ok" and "Cancel" buttons, returning the selected button's index along
-with the user's input text (the latter as a string or table, depending on the type of
-*options*.`informative_text`).
-If *options*.`string_output` is `true`, returns the selected button's label along with the
-user's input text. If the dialog timed out, returns `0` or `"timeout"`. If the user canceled
-the dialog, returns `-1` or `"delete"`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the inputbox.
-
-  * `title`: The dialog's title text.
-  * `informative_text`: The dialog's main message text. If the value is a table, the first
-    table value is the main message text and any subsequent values are used as the labels
-    for multiple entry boxes. Providing a single label has no effect.
-  * `text`: The dialog's initial input text. If the value is a table, the table values are
-    used to populate the multiple entry boxes defined by `informative_text`.
-  * `no_cancel`: Do not display the "Cancel" button. The default value is `false`.
-  * `string_output`: Return the selected button's label (instead of its index) or the dialog's
-    exit status instead of the button's index (instead of its exit code). The default value is
-    `false`.
-  * `width`: The dialog's pixel width.
-  * `height`: The dialog's pixel height.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-  * `timeout`: The integer number of seconds the dialog waits for the user to select a button
-    before timing out. Dialogs do not time out by default.
-
-Return:
-
-* selected button or exit code, input text
-
-<a id="ui.dialogs.textbox"></a>
-#### `ui.dialogs.textbox`(*options*)
-
-Prompts the user with a multiple-line textbox dialog defined by dialog options table *options*,
-returning the selected button's index.
-If *options*.`string_output` is `true`, returns the selected button's label. If
-*options*.`editable` is `true`, also returns the textbox's text. If the dialog timed out,
-returns `0` or `"timeout"`. If the user canceled the dialog, returns `-1` or `"delete"`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the dialog.
-
-  * `title`: The dialog's title text.
-  * `informative_text`: The dialog's main message text.
-  * `text`: The dialog's initial textbox text.
-  * `text_from_file`: The filename whose contents are loaded into the textbox. This option
-    has no effect when `text` is given.
-  * `button1`: The right-most button's label. The default value is `_L['OK']`.
-  * `button2`: The middle button's label.
-  * `button3`: The left-most button's label. This option requires `button2` to be set.
-  * `editable`: Allows the user to edit the textbox's text. The default value is `false`.
-  * `focus_textbox`: Focus the textbox instead of the buttons. The default value is `false`.
-  * `scroll_to`: Where to scroll the textbox's text. The available values are `"top"` and
-    `"bottom"`. The default value is `"top"`.
-  * `selected`: Select all of the textbox's text. The default value is `false`.
-  * `monospaced_font`: Use a monospaced font in the textbox instead of a proportional one. The
-    default value is `false`.
-  * `string_output`: Return the selected button's label (instead of its index) or the dialog's
-    exit status instead of the button's index (instead of its exit code). The default value is
-    `false`.
-  * `width`: The dialog's pixel width.
-  * `height`: The dialog's pixel height.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-  * `timeout`: The integer number of seconds the dialog waits for the user to select a button
-    before timing out. Dialogs do not time out by default.
-
-Usage:
-
-* `ui.dialogs.textbox{title = 'License Agreement', informative_text = 'You agree to:',
-  text_from_file = _HOME..'/LICENSE'}`
-
-Return:
-
-* selected button or exit code, textbox text
-
-<a id="ui.dialogs.yesno_msgbox"></a>
-#### `ui.dialogs.yesno_msgbox`(*options*)
-
-Prompts the user with a generic message box dialog defined by dialog options table *options*
-and with localized "Yes", "No", and "Cancel" buttons, returning the selected button's index.
-If *options*.`string_output` is `true`, returns the selected button's label. If the dialog timed
-out, returns `0` or `"timeout"`. If the user canceled the dialog, returns `-1` or `"delete"`.
-
-Parameters:
-
-* *`options`*: Table of key-value option pairs for the message box.
-
-  * `title`: The dialog's title text.
-  * `text`: The dialog's main message text.
-  * `informative_text`: The dialog's extra informative text.
-  * `icon`: The dialog's icon name, according to the Free Desktop Icon Naming
-    Specification. Examples are "dialog-error", "dialog-information", "dialog-question",
-    and "dialog-warning". The dialog does not display an icon by default.
-  * `icon_file`: The dialog's icon file path. This option has no effect when `icon` is set.
-  * `no_cancel`: Do not display the "Cancel" button. The default value is `false`.
-  * `string_output`: Return the selected button's label (instead of its index) or the dialog's
-    exit status instead of the button's index (instead of its exit code). The default value is
-    `false`.
-  * `width`: The dialog's pixel width.
-  * `height`: The dialog's pixel height.
-  * `float`: Show the dialog on top of all desktop windows. The default value is `false`.
-  * `timeout`: The integer number of seconds the dialog waits for the user to select a button
-    before timing out. Dialogs do not time out by default.
-
-Return:
-
-* selected button or exit code
 
 
 ---
@@ -11722,8 +11257,8 @@ Style definition tables may contain the following fields:
 * `back`: Font face background color in "0xBBGGRR" format.
 * `eol_filled`: Whether or not the background color extends to the end of the line. The
   default value is `false`.
-* `case`: Font case: `'u'` for upper, `'l'` for lower, and `'m'` for normal, mixed case. The
-  default value is `'m'`.
+* `case`: Font case: `view.CASE_UPPER` for upper, `view.CASE_LOWER` for lower, and
+  `view.CASE_MIXED` for normal, mixed case. The default value is `view.CASE_MIXED`.
 * `visible`: Whether or not the text is visible. The default value is `true`.
 * `changeable`: Whether the text is changeable instead of read-only. The default value is
   `true`.

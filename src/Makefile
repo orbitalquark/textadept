@@ -124,18 +124,6 @@ $(lua_lib_objs): %.o: lua/src/lib/%.c ; $(build-cc)
 $(call win-objs, $(lua_lib_objs)): win-%.o: lua/src/lib/%.c ; $(build-cc)
 $(call osx-objs, $(lua_lib_objs)): osx-%.o: lua/src/lib/%.c ; $(build-cc)
 
-# gtDialog.
-
-gtdialog_gtk_objs := $(call objs, gtdialog/gtdialog.c)
-gtdialog_curses_objs := $(call curses-objs, gtdialog/gtdialog.c)
-gtdialog_objs := $(gtdialog_gtk_objs) $(gtdialog_curses_objs)
-
-$(call all-objs, $(gtdialog_objs)): CFLAGS += -std=c99 -pedantic -DNOHELP -DLIBRARY
-$(call all-objs, $(gtdialog_gtk_objs)): CFLAGS += -DGTK $(gtk_flags)
-$(call all-objs, $(gtdialog_curses_objs)): CFLAGS += -DCURSES -I. -Icdk $(curses_flags)
-
-$(call all-objs, $(gtdialog_objs)): gtdialog/gtdialog.c ; $(build-cc)
-
 # Termkey.
 
 termkey_objs := $(call objs, termkey/termkey.c)
@@ -154,8 +142,8 @@ $(call osx-objs, $(termkey_all_objs)): osx-%.o: termkey/%.c ; $(build-cc)
 # filesystems.
 
 cdk_src := $(addprefix cdk/, $(addsuffix .c, binding buttonbox cdk cdk_display cdk_objs \
-  cdkscreen draw entry fselect itemlist label mentry popup_label scroll scroller select_file \
-  selection slider traverse version))
+  cdkscreen dialog draw entry fselect itemlist label mentry popup_label scroll scroller \
+  select_file selection slider traverse version))
 cdk_objs := $(addprefix cdk-, $(call objs, $(cdk_src)))
 
 $(call all-objs, $(cdk_objs)): CFLAGS += -D_GNU_SOURCE -Itermkey -Icdk $(curses_flags)
@@ -183,10 +171,9 @@ endif
 
 common_objs := $(ta_objs) $(sci_objs) $(sci_lexlib_objs) $(sci_lexer_objs) $(lua_objs) \
   $(lua_lib_objs)
-gui_objs := $(ta_gtk_objs) $(sci_gtk_objs) $(sci_gtk_c_objs) $(lua_oslib_gtk_objs) \
-  $(gtdialog_gtk_objs)
-curses_objs := $(ta_curses_objs) $(sci_curses_objs) $(lua_oslib_curses_objs) \
-  $(gtdialog_curses_objs) $(termkey_objs) $(cdk_objs)
+gui_objs := $(ta_gtk_objs) $(sci_gtk_objs) $(sci_gtk_c_objs) $(lua_oslib_gtk_objs)
+curses_objs := $(ta_curses_objs) $(sci_curses_objs) $(lua_oslib_curses_objs) $(termkey_objs) \
+  $(cdk_objs)
 
 linux_objs := $(common_objs) $(gui_objs) $(curses_objs) $(termkey_unix_objs)
 win_objs := $(call win-objs, $(common_objs) $(gui_objs) $(curses_objs)) $(termkey_win_objs) \
@@ -424,7 +411,7 @@ $(osx_dir).zip: $(osx_dir) ; zip -r $<.zip $< && rm -r $<
 
 .PHONY: deps win-deps osx-deps
 base_deps := scintilla lexilla ../lexers Scintillua.h Scintillua.cxx scintilla/curses lua \
-  $(addprefix lua/src/lib/, lpeg lfs) gtdialog cdk
+  $(addprefix lua/src/lib/, lpeg lfs) cdk
 deps: $(base_deps) termkey
 win-deps: $(base_deps) gtkwin pdcurses
 osx-deps: $(base_deps) gtkosx termkey
@@ -434,11 +421,9 @@ root_url := https://github.com/orbitalquark
 ifndef NIGHTLY
   scinterm_url = $(root_url)/scinterm/archive/$@
   scintillua_url = $(root_url)/scintillua/archive/$@
-  gtdialog_url = $(root_url)/gtdialog/archive/$@
 else
   scinterm_url := $(root_url)/scinterm/archive/default.zip
   scintillua_url := $(root_url)/scintillua/archive/default.zip
-  gtdialog_url := $(root_url)/gtdialog/archive/default.zip
 endif
 
 scintilla_tgz := scintilla530.tgz
@@ -448,7 +433,6 @@ scintillua_zip := scintillua_6.0.zip
 lua_tgz := lua-5.4.4.tar.gz
 lpeg_tgz := lpeg-1.0.2.tar.gz
 lfs_zip := v1_8_0.zip
-gtdialog_zip := gtdialog_1.6.zip
 cdk_tgz := cdk-5.0-20200923.tgz
 termkey_tgz := libtermkey-0.22.tar.gz
 gtkwin_zip := gtkwin-3.24.33.zip
@@ -523,8 +507,7 @@ cloc: | $(cloc_zip) ; unzip -j $| "*/$@" -x "*/Unix/$@"
 
 .PHONY: clean-deps
 clean-deps:
-	rm -rf $(base_deps) termkey gtkwin pdcurses gtkosx $(scinterm_zip) $(scintillua_zip) \
-		$(gtdialog_zip)
+	rm -rf $(base_deps) termkey gtkwin pdcurses gtkosx $(scinterm_zip) $(scintillua_zip)
 
 # Count lines of code.
 

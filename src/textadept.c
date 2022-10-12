@@ -3,7 +3,6 @@
 #include "textadept.h"
 
 // External dependency includes.
-#include "gtdialog.h"
 #include "lualib.h" // for luaL_openlibs
 #include "lauxlib.h"
 #include "Scintillua.h"
@@ -42,6 +41,12 @@ static void add_doc(sptr_t doc);
 static Scintilla *new_view(sptr_t);
 static bool init_lua(int, char **);
 
+// Shows the given error in an error message dialog.
+static void show_error(const char *title, const char *message) {
+  DialogOptions opts = {title, message, "dialog-error"};
+  lua_pop(lua, message_dialog(opts, lua));
+}
+
 bool emit(const char *name, ...) {
   bool ret = false;
   if (lua_getglobal(lua, "events") != LUA_TTABLE) return (lua_pop(lua, 1), ret);
@@ -63,11 +68,10 @@ bool emit(const char *name, ...) {
     default: lua_pushnil(lua);
     }
   va_end(ap);
-  if (lua_pcall(lua, n, 1, 0) != LUA_OK) {
+  if (lua_pcall(lua, n, 1, 0) != LUA_OK)
     // An error occurred within `events.emit()` itself, not an event handler.
-    const char *argv[] = {"--title", "Error", "--text", lua_tostring(lua, -1)};
-    return (free(gtdialog(GTDIALOG_TEXTBOX, 4, argv)), lua_pop(lua, 2), ret); // result, events
-  } else
+    return (show_error("Error", lua_tostring(lua, -1)), lua_pop(lua, 2), ret); // error, events
+  else
     ret = lua_toboolean(lua, -1);
   return (lua_pop(lua, 2), ret); // result, events
 }
@@ -200,9 +204,8 @@ static Scintilla *view_for_doc(lua_State *L, int index) {
   sptr_t doc = lua_todoc(L, index);
   if (doc == SS(focused_view, SCI_GETDOCPOINTER, 0, 0)) return focused_view;
   luaL_argcheck(L,
-    (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_pushdoc(L, doc),
-      lua_gettable(L, -2) != LUA_TNIL),
-    index, "this Buffer does not exist");
+    (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_pushdoc(L, doc), lua_gettable(L, -2)), index,
+    "this Buffer does not exist");
   lua_pop(L, 2); // buffer, ta_buffers
   if (doc == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) return command_entry;
   if (doc == SS(dummy_view, SCI_GETDOCPOINTER, 0, 0)) return dummy_view;
@@ -406,44 +409,65 @@ static int buffer_newindex(lua_State *L) {
   return 0;
 }
 
-// Runs the work function passed to `ui.dialogs.progressbar()`.
-static char *work(void *L) {
-  lua_getfield(L, LUA_REGISTRYINDEX, "ta_workf");
-  if (lua_pcall(L, 0, 2, 0) == LUA_OK) {
-    if (lua_isnil(L, -2)) return (lua_pop(L, 2), NULL); // done
-    if (lua_isnil(L, -1)) lua_pushliteral(L, ""), lua_replace(L, -2);
-    if (lua_isnumber(L, -2) && lua_isstring(L, -1)) {
-      lua_pushliteral(L, " "), lua_insert(L, -2), lua_pushliteral(L, "\n"), lua_concat(L, 4);
-      char *input = strcpy(malloc(lua_rawlen(L, -1) + 1), lua_tostring(L, -1)); // "num str\n"
-      return (lua_pop(L, 1), input); // will be freed by gtdialog
-    } else
-      lua_pop(L, 2), lua_pushliteral(L, "invalid return values");
-  }
-  return (emit("error", LUA_TSTRING, lua_tostring(L, -1), -1), lua_pop(L, 1), NULL);
+// Returns a DialogOptions constructed from the table at the top of the Lua stack.
+static DialogOptions read_dialog_options(lua_State *L) {
+#define strf(k) (lua_getfield(L, 1, k), lua_tostring(L, -1))
+#define boolf(k) (lua_getfield(L, 1, k), lua_toboolean(L, -1))
+#define tablef(k) (lua_getfield(L, 1, k) == LUA_TTABLE ? lua_absindex(L, -1) : 0)
+#define intf(k) (lua_getfield(L, 1, k), fmax(lua_tointeger(L, -1), 0))
+  lua_checkstack(L, LUA_MINSTACK + 15); // dialog options persist on the stack
+  DialogOptions opts = {strf("title"), strf("text"), strf("icon"),
+    {strf("button1"), strf("button2"), strf("button3")}, strf("dir"), strf("file"),
+    boolf("only_dirs"), boolf("multiple"), tablef("columns"), intf("search_column"),
+    tablef("items")};
+  return opts;
 }
 
-// `ui.dialog()` Lua function.
-static int dialog(lua_State *L) {
-  GTDialogType type = gtdialog_type(luaL_checkstring(L, 1));
-  int n = lua_gettop(L) - 1, argc = n;
-  for (int i = 2; i < n + 2; i++)
-    if (lua_istable(L, i)) argc += lua_rawlen(L, i) - 1;
-  if (type == GTDIALOG_PROGRESSBAR)
-    lua_pushnil(L), lua_setfield(L, LUA_REGISTRYINDEX, "ta_workf"), argc--;
-  const char *argv[argc + 1]; // not malloc since luaL_checkstring throws
-  for (int i = 0, j = 2; j < n + 2; j++)
-    if (lua_istable(L, j))
-      for (int k = 1, len = lua_rawlen(L, j); k <= len; lua_pop(L, 1), k++)
-        argv[i++] = (lua_rawgeti(L, j, k), luaL_checkstring(L, -1)); // ^popped
-    else if (lua_isfunction(L, j) && type == GTDIALOG_PROGRESSBAR) {
-      lua_pushvalue(L, j), lua_setfield(L, LUA_REGISTRYINDEX, "ta_workf");
-      gtdialog_set_progressbar_callback(work, L);
-    } else
-      argv[i++] = luaL_checkstring(L, j);
-  argv[argc] = NULL;
-  char *out;
-  dialog_active = true, out = gtdialog(type, argc, argv), dialog_active = false;
-  return (lua_pushstring(L, out), free(out), 1);
+// `ui.dialogs.message()` Lua function.
+static int message_dialog_lua(lua_State *L) { return message_dialog(read_dialog_options(L), L); }
+
+// `ui.dialogs.input()` Lua function.
+static int input_dialog_lua(lua_State *L) { return input_dialog(read_dialog_options(L), L); }
+
+// `ui.dialogs.open()` Lua function.
+static int open_dialog_lua(lua_State *L) { return open_dialog(read_dialog_options(L), L); }
+
+// `ui.dialogs.save()` Lua function.
+static int save_dialog_lua(lua_State *L) { return save_dialog(read_dialog_options(L), L); }
+
+// Calls the work function passed to `ui.dialogs.progress()`, passes intermediate progress to
+// the given callback function, and returns true if there is still work to be done.
+// This function is passed to the platform-defined `progress_dialog()` function. The platform
+// should repeatedly call this function for as long as it returns true.
+static bool do_work(void (*update)(double, const char *, void *), void *userdata) {
+  lua_getfield(lua, LUA_REGISTRYINDEX, "ta_update");
+  bool ok = lua_pcall(lua, 0, 2, 0) == LUA_OK, repeat = ok && lua_isnumber(lua, -2);
+  if (ok && repeat)
+    update(lua_tonumber(lua, -2), lua_tostring(lua, -1), userdata);
+  else if (!ok)
+    emit("error", LUA_TSTRING, lua_tostring(lua, -1), -1);
+  if (!repeat) lua_pushnil(lua), lua_setfield(lua, LUA_REGISTRYINDEX, "ta_update");
+  return (lua_pop(lua, ok ? 2 : 1), repeat);
+}
+
+// `ui.dialogs.progress()` Lua function.
+static int progress_dialog_lua(lua_State *L) {
+  DialogOptions opts = read_dialog_options(L);
+  luaL_argcheck(L, lua_getfield(L, 1, "work") == LUA_TFUNCTION, 1, "'work' function expected"),
+    lua_setfield(L, LUA_REGISTRYINDEX, "ta_update");
+  return progress_dialog(opts, L, do_work);
+}
+
+// `ui.dialogs.list()` Lua function.
+static int list_dialog_lua(lua_State *L) {
+  DialogOptions opts = read_dialog_options(L);
+  int num_columns = opts.columns ? lua_rawlen(L, opts.columns) : 1;
+  if (!opts.search_column) opts.search_column = 1;
+  luaL_argcheck(
+    L, opts.search_column > 0 && opts.search_column <= num_columns, 1, "invalid 'search_column'");
+  luaL_argcheck(
+    L, opts.items && lua_rawlen(L, opts.items) > 0, 1, "non-empty 'items' table expected");
+  return list_dialog(opts, L);
 }
 
 // Pushes the given Scintilla view onto the Lua stack.
@@ -580,11 +604,7 @@ static bool run_file(const char *filename) {
   char *file = malloc(strlen(textadept_home) + 1 + strlen(filename) + 1);
   sprintf(file, "%s/%s", textadept_home, filename);
   bool ok = luaL_dofile(lua, file) == LUA_OK;
-  if (!ok) {
-    const char *argv[] = {"--title", "Initialization Error", "--text", lua_tostring(lua, -1)};
-    free(gtdialog(GTDIALOG_TEXTBOX, 4, argv));
-    lua_settop(lua, 0);
-  }
+  if (!ok) show_error("Initialization Error", lua_tostring(lua, -1)), lua_settop(lua, 0);
   return (free(file), ok);
 }
 
@@ -605,8 +625,7 @@ static int reset(lua_State *L) {
 // `_G.timeout()` Lua function.
 static int add_timeout_lua(lua_State *L) {
   double interval = luaL_checknumber(L, 1);
-  luaL_argcheck(L, interval > 0, 1, "interval must be > 0");
-  luaL_argcheck(L, lua_isfunction(L, 2), 2, "function expected");
+  luaL_argcheck(L, interval > 0, 1, "interval must be > 0"), luaL_checktype(L, 2, LUA_TFUNCTION);
   int n = lua_gettop(L), *refs = calloc(n, sizeof(int));
   for (int i = 2; i <= n; i++) lua_pushvalue(L, i), refs[i - 2] = luaL_ref(L, LUA_REGISTRYINDEX);
   if (!add_timeout(interval, refs)) {
@@ -696,7 +715,14 @@ static bool init_lua(int argc, char **argv) {
     lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawgeti(L, -1, 0),
       lua_replace(L, -2); // _BUFFERS[0] == command_entry
   lua_setfield(L, -2, "command_entry");
-  lua_pushcfunction(L, dialog), lua_setfield(L, -2, "dialog");
+  lua_newtable(L);
+  lua_pushcfunction(L, message_dialog_lua), lua_setfield(L, -2, "message");
+  lua_pushcfunction(L, input_dialog_lua), lua_setfield(L, -2, "input");
+  lua_pushcfunction(L, open_dialog_lua), lua_setfield(L, -2, "open");
+  lua_pushcfunction(L, save_dialog_lua), lua_setfield(L, -2, "save");
+  lua_pushcfunction(L, progress_dialog_lua), lua_setfield(L, -2, "progress");
+  lua_pushcfunction(L, list_dialog_lua), lua_setfield(L, -2, "list");
+  lua_setfield(L, -2, "dialogs");
   lua_pushcfunction(L, get_split_table), lua_setfield(L, -2, "get_split_table");
   lua_pushcfunction(L, goto_view), lua_setfield(L, -2, "goto_view");
   lua_pushcfunction(L, menu), lua_setfield(L, -2, "menu");

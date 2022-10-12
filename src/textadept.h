@@ -15,7 +15,6 @@ FindOption *match_case, *whole_word, *regex, *in_files;
 // Textadept's Lua state. Platforms should generally refrain from modifying it, but access may
 // be occasionally needed.
 lua_State *lua;
-bool dialog_active; // for platforms with window focus issues when showing dialogs
 
 /**
  * Initializes Textadept.

@@ -604,10 +604,10 @@ function M.select()
   for _, trigger in ipairs(all_snippets) do
     items[#items + 1], items[#items + 2] = trigger, all_snippets[trigger]
   end
-  local button, i = ui.dialogs.filteredlist{
+  local _, i = ui.dialogs.list{
     title = _L['Select Snippet'], columns = {_L['Trigger'], _L['Snippet Text']}, items = items
   }
-  if button == 1 and i then M.insert(items[i * 2]) end
+  if i then M.insert(items[i * 2]) end
 end
 
 -- Update snippet transforms when text is added or deleted.

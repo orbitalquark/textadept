@@ -44,9 +44,7 @@ local session_file = _USERHOME .. (not CURSES and '/session' or '/session_term')
 function M.load(filename)
   local dir, name = session_file:match('^(.-[/\\]?)([^/\\]+)$')
   if not assert_type(filename, 'string/nil', 1) then
-    filename = ui.dialogs.fileselect{
-      title = _L['Load Session'], with_directory = dir, with_file = name
-    }
+    filename = ui.dialogs.open{title = _L['Load Session'], dir = dir, file = name}
     if not filename then return end
   end
   if session_file ~= filename then M.save(session_file) end
@@ -102,11 +100,10 @@ function M.load(filename)
   events.emit(events.SESSION_LOAD, session)
 
   if #not_found > 0 then
-    ui.dialogs.msgbox{
+    ui.dialogs.message{
       title = _L['Session Files Not Found'],
-      text = _L['The following session files were not found'],
-      informative_text = table.concat(not_found, '\n'):iconv('UTF-8', _CHARSET),
-      icon = 'dialog-warning', width = CURSES and ui.size[1] - 2 or nil
+      text = string.format('%s\n • %s', _L['The following session files were not found:'],
+        table.concat(not_found, '\n • '):iconv('UTF-8', _CHARSET)), icon = 'dialog-warning'
     }
   end
   session_file = filename
@@ -142,9 +139,7 @@ end
 function M.save(filename)
   local dir, name = session_file:match('^(.-[/\\]?)([^/\\]+)$')
   if not assert_type(filename, 'string/nil', 1) then
-    filename = ui.dialogs.filesave{
-      title = _L['Save Session'], with_directory = dir, with_file = name
-    }
+    filename = ui.dialogs.save{title = _L['Save Session'], dir = dir, file = name}
     if not filename then return end
   end
   local session = {}

@@ -1702,7 +1702,6 @@ Textadept is composed of the following technologies:
 * [GTK][]: cross-platform GUI toolkit
 * [ncurses][]: terminal UI library for Linux, macOS, and BSD
 * [pdcurses][]: terminal UI library for Windows
-* [gtDialog][]: interactive GUI and terminal UI dialog library
 * [cdk][]: terminal UI widget toolkit
 * [libtermkey][]: terminal keyboard entry handling library
 * [Scintilla][]: core text editing component
@@ -1721,7 +1720,6 @@ Textadept is composed of the following technologies:
 [Lua]: https://www.lua.org
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html
 [LuaFileSystem]: https://keplerproject.github.io/luafilesystem
-[gtDialog]: https://orbitalquark.github.io/gtdialog
 [ncurses]: https://invisible-island.net/ncurses
 [pdcurses]: http://pdcurses.sourceforge.net
 [cdk]: https://invisible-island.net/cdk
@@ -1843,7 +1841,7 @@ N/A | Added | _buffer functions and fields_<sup>d</sup>
 [buffer_statusbar_text]: api.html#ui.buffer_statusbar_text
 [active]: api.html#ui.command_entry.active
 [append_history]: api.html#ui.command_entry.append_history
-[progressbar()]: api.html#ui.dialogs.progressbar
+[progressbar()]: api.html#ui.dialogs.progress
 [active]: api.html#ui.find.active
 
 ##### Buffer Indexing Changes

@@ -19,12 +19,23 @@ typedef void FindButton;
 typedef void FindOption;
 
 /** Contains information about the pane holding one or more Scintilla views. */
-typedef struct PaneInfo {
+typedef struct {
   bool is_split, vertical;
   Scintilla *view;
   Pane *self, *child1, *child2;
   int size;
 } PaneInfo;
+
+/**
+ * Contains dialog options.
+ * Each type of dialog will only use a subset of options, not all of them.
+ * The `columns` and `items` fields are Lua stack indices of the tables that contain them.
+ */
+typedef struct {
+  const char *title, *text, *icon, *buttons[3], *dir, *file;
+  bool only_dirs, multiple;
+  int columns, search_column, items;
+} DialogOptions;
 
 /** Returns the name of the platform. */
 const char *get_platform();
@@ -253,6 +264,69 @@ bool add_timeout(double interval, void *f);
  * and invoking Lua callback functions to process it.
  */
 void update_ui();
+
+/**
+ * Asks the platform to show a message dialog using the given options.
+ * If the user presses a button, the platform should push onto the Lua stack the index (starting
+ * from 1) of the button pushed, and then return 1 (the number of results pushed). Otherwise
+ * the platform should push nothing and return 0.
+ */
+int message_dialog(DialogOptions opts, lua_State *L);
+
+/**
+ * Asks the platform to show an input dialog using the given options.
+ * If the user provides input, the platform should push onto the Lua stack the index (starting
+ * from 1) of the button pushed (or 1 to signal an affirmation) followed by the string input
+ * text, and then return 2 (the number of results pushed). Otherwise the platform should push
+ * nothing and return 0.
+ */
+int input_dialog(DialogOptions opts, lua_State *L);
+
+/**
+ * Asks the platform to show a file selection dialog using the given options.
+ * If the user selected a file(s), the platform should push onto the Lua stack the string filename
+ * or table of filenames selected, and then return 1 (the number of results pushed). Otherwise
+ * the platform should push nothing and return 0.
+ * If `opts.multiple` is `true`, the platform should push and populate table, even if only one
+ * file was selected.
+ * The returned filenames should be encoded in the filesystem's encoding (`get_charset()`)
+ * such that the results could be passed to `open()` or `fopen()`.
+ */
+int open_dialog(DialogOptions opts, lua_State *L);
+
+/**
+ * Asks the platform to show a file save dialog using the given options.
+ * If the user selected a file, the platform should push onto the Lua stack the string filename
+ * selected, and then return 1 (the number of results pushed). Otherwise the platform should
+ * push nothing and return 0.
+ * The returned filenames should be encoded in the filesystem's encoding (`get_charset()`)
+ * such that the results could be passed to `open()` or `fopen()`.
+ */
+int save_dialog(DialogOptions opts, lua_State *L);
+
+/**
+ * Asks the platform to show a progress dialog using the given options.
+ * The platform is expected to repeatedly call the given `work()` function for as long as it
+ * returns `true`. The `update()` function given to `work()` will be called back with progress
+ * made so the platform can update its progress bar.
+ */
+int progress_dialog(DialogOptions opts, lua_State *L,
+  bool (*work)(void (*update)(double percent, const char *text, void *userdata), void *userdata));
+
+/**
+ * Asks the platform to show a list dialog using the given options.
+ * The list data may consist of multiple columns of data. The dialog should contain a text entry
+ * that allows the user to filter the items shown based on the a given search column. Spaces
+ * in the text entry should be treated as wildcards.
+ * If the user selected an item(s), the platform should push onto the Lua stack the index (starting
+ * from 1) of the button pushed (or 1 to signal an affirmation) followed by the integer row index
+ * or table of row indices (also starting from 1) of the item(s) selected, and then return 2
+ * (the number of results pushed). Otherwise the platform should push nothing and return 0.
+ * If `opts.multiple` is `true`, the platform should push and populate table, even if only one
+ * item was selected.
+ * The pushed row index or indices should be relative to the full item list, not a filtered list.
+ */
+int list_dialog(DialogOptions opts, lua_State *L);
 
 /** Asks the platform to quit the application. The user has already been prompted to confirm. */
 void quit();

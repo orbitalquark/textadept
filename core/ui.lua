@@ -140,90 +140,35 @@ function ui.output(...) _output(false, ...) end
 -- @name output_silent
 function ui.output_silent(...) _output(true, ...) end
 
--- Returns 0xBBGGRR colors transformed into "#RRGGBB" for the colorselect dialog.
--- @param value Number color to transform.
--- @return string or nil if the transform failed
-local function torgb(value)
-  local bbggrr = string.format('%06X', value)
-  local b, g, r = bbggrr:match('^(%x%x)(%x%x)(%x%x)$')
-  return r and g and b and string.format('#%s%s%s', r, g, b) or nil
+if WIN32 and not CURSES then
+  -- Normally, GTK's file chooser dialogs return filenames encoded in _CHARSET, but this is
+  -- not the case on Windows, so the conversion must be done manually.
+  local _open, _save = ui.dialogs.open, ui.dialogs.save
+  function ui.dialogs.open(opts)
+    local result = _open(opts)
+    if type(result) ~= 'table' then return result and result:iconv(_CHARSET, 'UTF-8') or nil end
+    for i, filename in ipairs(result) do result[i] = filename:iconv(_CHARSET, 'UTF-8') end
+    return result
+  end
+  function ui.dialogs.save(opts)
+    local filename = _save(opts)
+    return filename and filename:iconv(_CHARSET, 'UTF-8') or nil
+  end
 end
 
--- Documentation is in core/.ui.dialogs.luadoc.
-ui.dialogs = setmetatable({}, {
+-- Legacy.
+-- LuaFormatter off
+local type_map={msgbox='message',ok_msgbox='message',yesno_msgbox='message',inputbox='input',standard_inputbox='input',secure_inputbox='input',secure_standard_inputbox='input',fileselect='open',filesave='save',progressbar='progress',filteredlist='list'}
+local option_map={with_directory='dir',with_file='file',select_multiple='multiple',select_only_directories='only_dirs'}
+-- LuaFormatter on
+setmetatable(ui.dialogs, {
   __index = function(_, k)
-    -- Wrapper for `ui.dialog(k)`, transforming the given table of arguments into a set of
-    -- command line arguments and transforming the resulting standard output into Lua objects.
-    -- @param options Table of key-value command line options for gtdialog.
-    -- @param f Work function for progressbar dialogs.
-    -- @return Lua objects depending on the dialog kind
     return function(options, f)
-      if not options.button1 then options.button1 = _L['OK'] end
-      if k == 'filteredlist' and not options.width then
-        options.width = ui.size[1] - 2 * (CURSES and 1 or 100)
-      end
-      -- Transform key-value pairs into command line arguments.
-      local args = {}
-      for option, value in pairs(options) do
-        if assert_type(value, 'string/number/table/boolean', option) then
-          args[#args + 1] = '--' .. option:gsub('_', '-')
-          if type(value) == 'table' then
-            for i, val in ipairs(value) do
-              local narg = string.format('%s[%d]', option, i)
-              assert_type(val, 'string/number', narg)
-              if option == 'palette' and type(val) == 'number' then
-                value[i] = torgb(val) -- nil return is okay
-              elseif option == 'select' and assert_type(val, 'number', narg) then
-                value[i] = val - 1 -- convert from 1-based index to 0-based index
-              end
-            end
-          elseif option == 'color' and type(value) == 'number' then
-            value = torgb(value)
-          elseif option == 'select' and assert_type(value, 'number', option) then
-            value = value - 1 -- convert from 1-based index to 0-based index
-          end
-          if type(value) ~= 'boolean' then args[#args + 1] = value end
-        end
-      end
-      if k == 'progressbar' then args[#args + 1] = assert_type(f, 'function', 2) end
-      -- Call gtdialog, stripping any trailing newline in the output.
-      local result = ui.dialog(k:gsub('_', '-'), table.unpack(args)):match('^(.-)\n?$')
-      -- Depending on the dialog type, transform the result into Lua objects.
-      if k == 'fileselect' or k == 'filesave' then
-        if result == '' then return nil end
-        if WIN32 and not CURSES then result = result:iconv(_CHARSET, 'UTF-8') end
-        if k == 'filesave' or not options.select_multiple then return result end
-        local filenames = {}
-        for filename in result:gmatch('[^\n]+') do filenames[#filenames + 1] = filename end
-        return filenames
-      elseif k == 'filteredlist' or k == 'optionselect' or
-        (k:find('input') and result:match('^[^\n]+\n?(.*)$'):find('\n')) then
-        local button, value = result:match('^([^\n]+)\n?(.*)$')
-        if not options.string_output then button = tonumber(button) end
-        if k == 'optionselect' then
-          options.select_multiple = true
-        elseif k:find('input') then
-          options.string_output, options.select_multiple = true, true
-        end
-        local items, patt = {}, not k:find('input') and '[^\n]+' or '([^\n]*)\n'
-        for item in (value .. '\n'):gmatch(patt) do
-          items[#items + 1] = options.string_output and item or tonumber(item) + 1
-        end
-        return button, options.select_multiple and items or items[1]
-      elseif k == 'colorselect' then
-        if options.string_output then return result ~= '' and result or nil end
-        local r, g, b = result:match('^#(%x%x)(%x%x)(%x%x)$')
-        local bgr = r and g and b and string.format('0x%s%s%s', b, g, r) or nil
-        return tonumber(bgr)
-      elseif k == 'fontselect' or k == 'progressbar' then
-        return result ~= '' and result or nil
-      elseif not options.string_output then
-        local i, value = result:match('^(%-?%d+)\n?(.*)$')
-        i = tonumber(i)
-        if k:find('dropdown') then value = i > 0 and tonumber(value) + 1 or nil end
-        return i, value
-      end
-      return result:match('([^\n]+)\n?(.*)$')
+      local new_type, new_options, new_type = type_map[k], {}
+      if not new_type then error('Unsupported dialog', 2) end
+      for k, v in pairs(options) do new_options[option_map[k] or k] = v end
+      if k == 'progressbar' then new_options.work = f end
+      return rawget(ui.dialogs, new_type)(new_options)
     end
   end
 })
@@ -273,11 +218,8 @@ function ui.switch_buffer(zorder)
     utf8_list[#utf8_list + 1] = (buffer.modify and '*' or '') .. basename
     utf8_list[#utf8_list + 1] = filename
   end
-  local button, i = ui.dialogs.filteredlist{
-    title = _L['Switch Buffers'], columns = columns, items = utf8_list
-  }
-  if button ~= 1 or not i then return end
-  view:goto_buffer(buffers[not zorder and i or i + 1])
+  local _, i = ui.dialogs.list{title = _L['Switch Buffers'], columns = columns, items = utf8_list}
+  if i then view:goto_buffer(buffers[not zorder and i or i + 1]) end
 end
 
 ---
@@ -460,11 +402,11 @@ events.connect(events.QUIT, function()
     ::continue::
   end
   if #utf8_list == 0 then return end
-  local button = ui.dialogs.msgbox{
-    title = _L['Quit without saving?'], text = _L['The following buffers are unsaved:'],
-    informative_text = table.concat(utf8_list, '\n'), icon = 'dialog-question',
-    button1 = _L['Cancel'], button2 = _L['Quit without saving'],
-    width = CURSES and ui.size[1] - 2 or nil
+  local button = ui.dialogs.message{
+    title = _L['Quit without saving?'],
+    text = string.format('%s\n • %s', _L['The following buffers are unsaved:'],
+      table.concat(utf8_list, '\n • ')), icon = 'dialog-question', button1 = _L['Cancel'],
+    button2 = _L['Quit without saving']
   }
   if button ~= 2 then return true end -- prevent quit
 end)
@@ -532,7 +474,7 @@ if CURSES then
 end
 
 -- Show pre-initialization errors in a textbox. After that, leave error handling to the run module.
-local function textbox(text) ui.dialogs.textbox{title = _L['Initialization Error'], text = text} end
+local function textbox(text) ui.dialogs.message{title = _L['Initialization Error'], text = text} end
 events.connect(events.ERROR, textbox)
 events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, textbox) end)
 
@@ -553,21 +495,6 @@ local menubar
 local size
 
 The functions below are Lua C functions.
-
----
--- Low-level function for prompting the user with a [gtdialog][] of kind *kind* with the given
--- string and table arguments, returning a formatted string of the dialog's output.
--- You probably want to use the higher-level functions in the [`ui.dialogs`]() module.
--- Table arguments containing strings are allowed and expanded in place. This is useful for
--- filtered list dialogs with many items.
---
--- [gtdialog]: https://orbitalquark.github.io/gtdialog/manual.html
--- @param kind The kind of gtdialog.
--- @param ... Parameters to the gtdialog.
--- @return string gtdialog result.
--- @class function
--- @name dialog
-local dialog
 
 ---
 -- Returns a split table that contains Textadept's current split view structure.

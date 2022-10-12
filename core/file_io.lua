@@ -83,10 +83,9 @@ io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}
 function io.open_file(filenames, encodings)
   assert_type(encodings, 'string/table/nil', 2)
   if not assert_type(filenames, 'string/table/nil', 1) then
-    filenames = ui.dialogs.fileselect{
-      title = _L['Open File'], select_multiple = true,
-      with_directory = (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir(),
-      width = CURSES and ui.size[1] - 2 or nil
+    filenames = ui.dialogs.open{
+      title = _L['Open File'], multiple = true,
+      dir = (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir()
     }
     if not filenames then return end
   end
@@ -209,10 +208,7 @@ local function save_as(buffer, filename)
   if not buffer then buffer = _G.buffer end
   local dir, name = (buffer.filename or ''):match('^(.-[/\\]?)([^/\\]*)$')
   if not assert_type(filename, 'string/nil', 1) then
-    filename = ui.dialogs.filesave{
-      title = _L['Save File'], with_directory = dir, with_file = name,
-      width = CURSES and ui.size[1] - 2 or nil
-    }
+    filename = ui.dialogs.save{title = _L['Save File'], dir = dir, file = name}
     if not filename then return end
   end
   buffer.filename = filename
@@ -235,11 +231,10 @@ local function close(buffer, force)
   if buffer.modify and not force then
     local filename = buffer.filename or buffer._type or _L['Untitled']
     if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
-    local button = ui.dialogs.msgbox{
-      title = _L['Close without saving?'], text = _L['There are unsaved changes in'],
-      informative_text = filename, icon = 'dialog-question', button1 = _L['Cancel'],
-      button2 = _L['Close without saving'],
-      width = CURSES and #filename > 40 and ui.size[1] - 2 or nil
+    local button = ui.dialogs.message{
+      title = _L['Close without saving?'],
+      text = string.format('%s\n%s', _L['There are unsaved changes in'], filename),
+      icon = 'dialog-question', button1 = _L['Cancel'], button2 = _L['Close without saving']
     }
     if button ~= 2 then return nil end -- do not propagate key command
   end
@@ -289,12 +284,11 @@ io._reload, io._save, io._save_as, io._close = reload, save, save_as, close
 
 -- Prompts the user to reload the current file if it has been externally modified.
 events.connect(events.FILE_CHANGED, function(filename)
-  local button = ui.dialogs.msgbox{
-    title = _L['Reload?'], text = _L['Reload modified file?'],
-    informative_text = string.format('"%s"\n%s', filename:iconv('UTF-8', _CHARSET),
-      _L['has been modified. Reload it?']), -- LuaFormatter
-    icon = 'dialog-question', button1 = _L['Yes'], button2 = _L['No'],
-    width = CURSES and #filename > 40 and ui.size[1] - 2 or nil
+  local button = ui.dialogs.message{
+    title = _L['Reload modified file?'],
+    text = string.format('"%s"\n%s', filename:iconv('UTF-8', _CHARSET),
+      _L['has been modified. Reload it?']), icon = 'dialog-question', button1 = _L['Yes'],
+    button2 = _L['No']
   }
   if button == 1 then buffer:reload() end
 end)
@@ -321,11 +315,8 @@ function io.open_recent_file()
       table.remove(io.recent_files, i)
     end
   end
-  local button
-  button, i = ui.dialogs.filteredlist{
-    title = _L['Open File'], columns = _L['Filename'], items = utf8_list
-  }
-  if button == 1 and i then io.open_file(io.recent_files[i]) end
+  i = select(2, ui.dialogs.list{title = _L['Open File'], items = utf8_list})
+  if i then io.open_file(io.recent_files[i]) end
 end
 
 -- List of version control directories.
@@ -379,13 +370,11 @@ io.quick_open_filters = {}
 -- If *filter* is `nil` and *paths* is ultimately a string, the filter from the
 -- `io.quick_open_filters` table is used. If that filter does not exist, `lfs.default_filter`
 -- is used.
--- *opts* is an optional table of additional options for `ui.dialogs.filteredlist()`.
 -- @param paths Optional string directory path or table of directory paths to search. The
 --   default value is the current project's root directory, if available.
 -- @param filter Optional filter for files and directories to include and/or exclude. The
 --   default value is `lfs.default_filter` unless a filter for *paths* is defined in
 --   `io.quick_open_filters`.
--- @param opts Optional table of additional options for `ui.dialogs.filteredlist()`.
 -- @usage io.quick_open(buffer.filename:match('^(.+)[/\\]')) -- list all files in the current
 --   file's directory, subject to the default filter
 -- @usage io.quick_open(io.get_current_project(), '.lua') -- list all Lua files in the current
@@ -395,9 +384,8 @@ io.quick_open_filters = {}
 -- @see io.quick_open_filters
 -- @see lfs.default_filter
 -- @see quick_open_max
--- @see ui.dialogs.filteredlist
 -- @name quick_open
-function io.quick_open(paths, filter, opts)
+function io.quick_open(paths, filter)
   if not assert_type(paths, 'string/table/nil', 1) then
     paths = io.get_project_root()
     if not paths then return end
@@ -405,7 +393,6 @@ function io.quick_open(paths, filter, opts)
   if not assert_type(filter, 'string/table/nil', 2) then
     filter = io.quick_open_filters[paths] or lfs.default_filter
   end
-  assert_type(opts, 'table/nil', 3)
   local utf8_list = {}
   for _, path in ipairs(type(paths) == 'table' and paths or {paths}) do
     for filename in lfs.walk(path, filter) do
@@ -414,21 +401,15 @@ function io.quick_open(paths, filter, opts)
     end
   end
   if #utf8_list >= io.quick_open_max then
-    ui.dialogs.msgbox{
+    ui.dialogs.message{
       title = _L['File Limit Exceeded'], text = string.format('%d %s %d', io.quick_open_max,
         _L['files or more were found. Showing the first'], io.quick_open_max),
       icon = 'dialog-information'
     }
   end
-  local options = {
-    title = _L['Open File'], columns = _L['Filename'], items = utf8_list, button1 = _L['OK'],
-    button2 = _L['Cancel'], select_multiple = true, string_output = true,
-    width = CURSES and ui.size[1] - 2 or nil
-  }
-  if opts then for k, v in pairs(opts) do options[k] = v end end
-  local button, utf8_filenames = ui.dialogs.filteredlist(options)
-  if button ~= _L['OK'] or not utf8_filenames then return end
+  local _, selected = ui.dialogs.list{title = _L['Open File'], items = utf8_list, multiple = true}
+  if not selected then return end
   local filenames = {}
-  for i = 1, #utf8_filenames do filenames[i] = utf8_filenames[i]:iconv(_CHARSET, 'UTF-8') end
+  for i = 1, #selected do filenames[i] = utf8_list[selected[i]]:iconv(_CHARSET, 'UTF-8') end
   io.open_file(filenames)
 end

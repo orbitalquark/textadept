@@ -1033,41 +1033,86 @@ function test_ui_output()
   buffer:close()
 end
 
-function test_ui_dialogs_colorselect_interactive()
-  local color = ui.dialogs.colorselect{title = 'Blue', color = 0xFF0000}
-  assert_equal(color, 0xFF0000)
-  color = ui.dialogs.colorselect{
-    title = 'Red', color = '#FF0000', palette = {'#FF0000', 0x00FF00}, string_output = true
+function test_ui_dialogs_message_interactive()
+  local button = ui.dialogs.message{
+    title = 'Title', text = 'text', icon = 'dialog-information', button1 = 'Button 1',
+    button2 = 'Button 2', button3 = 'Button 3'
   }
-  assert_equal(color, '#FF0000')
-
-  assert_raises(function() ui.dialogs.colorselect{title = function() end} end,
-    "bad argument #title to 'colorselect' (string/number/table/boolean expected, got function")
-  assert_raises(function() ui.dialogs.colorselect{palette = {true}} end,
-    "bad argument #palette[1] to 'colorselect' (string/number expected, got boolean")
+  assert_equal(type(button), 'number')
 end
 
-function test_ui_dialogs_dropdown_interactive()
+function test_ui_dialogs_input_interactive()
+  local button, text = ui.dialogs.input{title = 'Title', text = 'foo'}
+  assert_equal(type(button), 'number')
+  assert_equal(text, 'foo')
+end
+
+function test_ui_dialogs_open_save_interactive()
+  local test_filename = file(_HOME .. '/test/ui/empty')
+  local test_dir, test_file = test_filename:match('^(.+[/\\])([^/\\]+)$')
+  local filename = ui.dialogs.save{dir = test_dir, file = test_file}
+  assert_equal(filename, test_filename)
+  filename = ui.dialogs.open{dir = test_dir, file = test_file, multiple = true}
+  assert_equal(filename, {test_filename})
+  filename = ui.dialogs.open{dir = test_dir, only_dirs = true}
+  assert_equal(filename, test_dir:match('^(.+)[/\\]$'))
+end
+
+function test_ui_dialogs_progress_interactive()
+  local i = 0
+  local stopped = ui.dialogs.progress{
+    title = 'foo', work = function()
+      sleep(0.1)
+      i = i + 10
+      if i > 100 then return nil end
+      return i, i .. '%'
+    end
+  }
+  assert(not stopped, 'progressbar was stopped')
+
+  stopped = ui.dialogs.progress{
+    title = 'foo', work = function()
+      sleep(0.1)
+      return 50
+    end
+  }
+  assert(stopped, 'progressbar not stopped')
+
+  local errmsg
+  local handler = function(message)
+    errmsg = message
+    return false -- halt propagation
+  end
+  events.connect(events.ERROR, handler, 1)
+  ui.dialogs.progress{work = function() error('foo') end}
+  assert(errmsg:find('foo'), 'error handler did not run')
+  events.disconnect(events.ERROR, handler)
+end
+
+function test_ui_dialogs_list_interactive()
+  local _, i = ui.dialogs.list{title = 'Title', items = {'bar', 'baz', 'quux'}, text = 'b z'}
+  assert_equal(i, 2)
+  local _, i = ui.dialogs.list{
+    columns = {'1', '2'}, items = {'foo', 'foobar', 'bar', 'barbaz', 'baz', 'bazfoo'},
+    search_column = 2, text = 'baz', multiple = true, button1 = _L['OK'], button2 = _L['Cancel'],
+    button3 = 'Other'
+  }
+  assert_equal(i, {2})
+end
+
+function test_ui_dialogs_colorselect_interactive_legacy()
+  assert_raises(ui.dialogs.colorselect, 'Unsupported dialog')
+end
+
+function test_ui_dialogs_dropdown_interactive_legacy()
   local dropdowns = {'dropdown', 'standard_dropdown'}
   for _, dropdown in ipairs(dropdowns) do
     print('Running ' .. dropdown)
-    local button, i = ui.dialogs[dropdown]{items = {'foo', 'bar', 'baz'}}
-    assert_equal(type(button), 'number')
-    assert_equal(i, 1)
-    button, i = ui.dialogs[dropdown]{
-      text = 'foo', items = {'bar', 'baz', 'quux'}, select = 2, no_cancel = true, width = 400,
-      height = 400
-    }
-    assert_equal(i, 2)
+    assert_raises(ui.dialogs[dropdown], 'Unsupported dialog')
   end
-
-  assert_raises(function() ui.dialogs.dropdown{items = {'foo', 'bar', 'baz'}, select = true} end,
-    "bad argument #select to 'dropdown' (number expected, got boolean")
-  assert_raises(function() ui.dialogs.dropdown{items = {'foo', 'bar', 'baz', true}} end,
-    "bad argument #items[4] to 'dropdown' (string/number expected, got boolean")
 end
 
-function test_ui_dialogs_filesave_fileselect_interactive()
+function test_ui_dialogs_filesave_fileselect_interactive_legacy()
   local test_filename = file(_HOME .. '/test/ui/empty')
   local test_dir, test_file = test_filename:match('^(.+[/\\])([^/\\]+)$')
   local filename = ui.dialogs.filesave{
@@ -1082,7 +1127,7 @@ function test_ui_dialogs_filesave_fileselect_interactive()
   assert_equal(filename, test_dir:match('^(.+)[/\\]$'))
 end
 
-function test_ui_dialogs_filteredlist_interactive()
+function test_ui_dialogs_filteredlist_interactive_legacy()
   local _, i = ui.dialogs.filteredlist{
     informative_text = 'foo', columns = '1', items = {'bar', 'baz', 'quux'}, text = 'b z'
   }
@@ -1093,18 +1138,15 @@ function test_ui_dialogs_filteredlist_interactive()
     select_multiple = true, button1 = _L['OK'], button2 = _L['Cancel'], button3 = 'Other',
     width = ui.size[1] / 2
   }
-  assert_equal(text, {'barbaz'})
+  --assert_equal(text, {'barbaz'})
+  assert_equal(text, {2})
 end
 
-function test_ui_dialogs_fontselect_interactive()
-  local name = not OSX and 'Monospace' or 'Helvetica'
-  local font = ui.dialogs.fontselect{
-    font_name = not OSX and name, font_size = 14, font_style = 'Bold'
-  }
-  assert_equal(font, name .. ' Bold 14')
+function test_ui_dialogs_fontselect_interactive_legacy()
+  assert_raises(ui.dialogs.fontselect, 'Unsupported dialog')
 end
 
-function test_ui_dialogs_inputbox_interactive()
+function test_ui_dialogs_inputbox_interactive_legacy()
   local inputboxes = {
     'inputbox', 'secure_inputbox', 'standard_inputbox', 'secure_standard_inputbox'
   }
@@ -1114,22 +1156,12 @@ function test_ui_dialogs_inputbox_interactive()
     assert_equal(type(button), 'number')
     assert_equal(text, 'foo')
     button, text = ui.dialogs[inputbox]{text = 'foo', string_output = true, no_cancel = true}
-    assert_equal(type(button), 'string')
+    --assert_equal(type(button), 'string')
     assert_equal(text, 'foo')
   end
-
-  local button, text = ui.dialogs.inputbox{
-    informative_text = {'info', 'foo', 'baz'}, text = {'bar', 'quux'}
-  }
-  assert_equal(type(button), 'number')
-  assert_equal(text, {'bar', 'quux'})
-  button = ui.dialogs.inputbox{
-    informative_text = {'info', 'foo', 'baz'}, text = {'bar', 'quux'}, string_output = true
-  }
-  assert_equal(type(button), 'string')
 end
 
-function test_ui_dialogs_msgbox_interactive()
+function test_ui_dialogs_msgbox_interactive_legacy()
   local msgboxes = {'msgbox', 'ok_msgbox', 'yesno_msgbox'}
   local icons = {'dialog-information', 'dialog-warning', 'dialog-question'}
   for i, msgbox in ipairs(msgboxes) do
@@ -1137,26 +1169,17 @@ function test_ui_dialogs_msgbox_interactive()
     local button = ui.dialogs[msgbox]{icon = icons[i]}
     assert_equal(type(button), 'number')
     button = ui.dialogs[msgbox]{
-      icon_file = _HOME .. '/core/images/ta_64x64.png', string_output = true, no_cancel = true
+      icon = 'textadept', string_output = true, no_cancel = true
     }
-    assert_equal(type(button), 'string')
+    --assert_equal(type(button), 'string')
   end
 end
 
-function test_ui_dialogs_optionselect_interactive()
-  local _, selected = ui.dialogs.optionselect{items = 'foo', select = 1}
-  assert_equal(selected, {1})
-  _, selected = ui.dialogs.optionselect{
-    items = {'foo', 'bar', 'baz'}, select = {1, 3}, string_output = true
-  }
-  assert_equal(selected, {'foo', 'baz'})
-
-  assert_raises(function()
-    ui.dialogs.optionselect{items = {'foo', 'bar', 'baz'}, select = {1, 'bar'}}
-  end, "bad argument #select[2] to 'optionselect' (number expected, got string")
+function test_ui_dialogs_optionselect_interactive_legacy()
+  assert_raises(ui.dialogs.optionselect, 'Unsupported dialog')
 end
 
-function test_ui_dialogs_progressbar_interactive()
+function test_ui_dialogs_progressbar_interactive_legacy()
   local i = 0
   ui.dialogs.progressbar({title = 'foo'}, function()
     sleep(0.1)
@@ -1189,14 +1212,13 @@ function test_ui_dialogs_progressbar_interactive()
   events.connect(events.ERROR, handler, 1)
   ui.dialogs.progressbar({}, function() error('foo') end)
   assert(errmsg:find('foo'), 'error handler did not run')
-  ui.dialogs.progressbar({}, function() return true end)
-  assert(errmsg:find('invalid return values'), 'error handler did not run')
+  --ui.dialogs.progressbar({}, function() return true end)
+  --assert(errmsg:find('invalid return values'), 'error handler did not run')
   events.disconnect(events.ERROR, handler)
 end
 
-function test_ui_dialogs_textbox_interactive()
-  ui.dialogs.textbox{text = 'foo', editable = true, selected = true, monospaced_font = true}
-  ui.dialogs.textbox{text_from_file = _HOME .. '/LICENSE', scroll_to = 'bottom'}
+function test_ui_dialogs_textbox_interactive_legacy()
+  assert_raises(ui.dialogs.textbox, 'Unsupported dialog')
 end
 
 function test_ui_switch_buffer_interactive()

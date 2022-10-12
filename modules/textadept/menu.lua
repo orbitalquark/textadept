@@ -275,10 +275,8 @@ local default_menubar = {
         ::continue::
       end
       table.sort(lexers)
-      local button, i = ui.dialogs.filteredlist{
-        title = _L['Select Lexer'], columns = _L['Name'], items = lexers
-      }
-      if button == 1 and i then buffer:set_lexer(lexers[i]) end
+      local _, i = ui.dialogs.list{title = _L['Select Lexer'], items = lexers}
+      if i then buffer:set_lexer(lexers[i]) end
     end}
   },
   {
@@ -320,10 +318,7 @@ local default_menubar = {
     {_L['Show LuaDoc'], function() open_page(_HOME .. '/docs/api.html') end},
     SEPARATOR,
     {_L['About'], function()
-      ui.dialogs.msgbox{
-        title = 'Textadept', text = _RELEASE, informative_text = _COPYRIGHT,
-        icon_file = _HOME .. '/core/images/ta_64x64.png'
-      }
+      ui.dialogs.message{title = _RELEASE, text = _COPYRIGHT, icon = 'textadept'}
     end}
   }
 }
@@ -530,10 +525,10 @@ function M.select_command()
     end
   end
   build_command_tables(getmetatable(M.menubar).menu)
-  local button, i = ui.dialogs.filteredlist{
+  local _, i = ui.dialogs.list{
     title = _L['Run Command'], columns = {_L['Command'], _L['Key Binding']}, items = items
   }
-  if button == 1 and i then events.emit(events.MENU_CLICKED, i) end
+  if i then events.emit(events.MENU_CLICKED, i) end
 end
 
 return setmetatable(M, {

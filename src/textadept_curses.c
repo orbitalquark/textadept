@@ -14,6 +14,7 @@
 #include <sys/ioctl.h>
 #else
 #include <windows.h>
+#define strncasecmp _strnicmp
 #endif
 #include "cdk_int.h" // must come after <windows.h>
 
@@ -410,6 +411,276 @@ void update_ui() {
 char *get_clipboard_text(int *len) { return scintilla_get_clipboard(focused_view, len); }
 
 bool add_timeout(double interval, void *f) { return false; }
+
+// Contains information about a generic dialog shell.
+// Widgets can be added to its 'screen' field.
+typedef struct {
+  WINDOW *border, *content;
+  CDKSCREEN *screen;
+  CDKBUTTONBOX *buttonbox;
+} Dialog;
+
+// Reads the specified button labels into the given array and returns the number of buttons read.
+// The given default label will be used if no buttons are specified.
+// Note: buttons are right-to-left.
+static int read_buttons(DialogOptions *opts, const char *default_, const char *rtl_labels[3]) {
+  int num_buttons = 0;
+  if (opts->buttons[2]) rtl_labels[num_buttons++] = opts->buttons[2];
+  if (opts->buttons[1]) rtl_labels[num_buttons++] = opts->buttons[1];
+  rtl_labels[num_buttons++] = opts->buttons[0] ? opts->buttons[0] : default_;
+  return num_buttons;
+}
+
+int message_dialog(DialogOptions opts, lua_State *L) {
+  const char *rtl_buttons[3];
+  int num_buttons = read_buttons(&opts, "Ok", rtl_buttons), lines = 2;
+  char *text = strcpy(malloc((opts.text ? strlen(opts.text) : 0) + 1), opts.text ? opts.text : "");
+  for (const char *p = text; *p; p++)
+    if (*p == '\n') lines++;
+  const char *message[lines];
+  int i = 0;
+  message[i++] = opts.title, message[i++] = text;
+  for (char *p = text; *p; p++)
+    if (*p == '\n') *p = '\0', message[i++] = p + 1;
+  CDKSCREEN *screen = initCDKScreen(newwin(10, 40, 0, 0));
+  CDKDIALOG *dialog = newCDKDialog(screen, 0, 1, (char **)message, lines, (char **)rtl_buttons,
+    num_buttons, A_REVERSE, true, true, false);
+  int button = (injectCDKDialog(dialog, KEY_BTAB), activateCDKDialog(dialog, NULL));
+  button = (dialog->exitType == vNORMAL) ? num_buttons - button : 0; // buttons are right-to-left
+  destroyCDKDialog(dialog), delwin(screen->window), destroyCDKScreen(screen);
+  return (free(text), button ? (lua_pushinteger(L, button), 1) : 0);
+}
+
+// Returns a new dialog with given specified dimensions and button label to use if no buttons
+// are specified.
+static Dialog new_dialog(DialogOptions *opts, int height, int width, const char *button) {
+  Dialog dialog;
+  dialog.border = newwin(height, width, 1, 1), dialog.content = newwin(height - 2, width - 2, 2, 2);
+  dialog.screen = initCDKScreen(dialog.content);
+  const char *rtl_buttons[3];
+  int num_buttons = read_buttons(opts, button, rtl_buttons);
+  dialog.buttonbox = newCDKButtonbox(dialog.screen, 0, BOTTOM, 1, 0, "", 1, num_buttons,
+    (char **)rtl_buttons, num_buttons, A_REVERSE, true, false);
+  setCDKButtonboxCurrentButton(dialog.buttonbox, num_buttons - 1);
+  return dialog;
+}
+
+// Draws the given dialog to the screen.
+static void draw_dialog(Dialog *dialog) {
+  box(dialog->border, 0, 0), wrefresh(dialog->border), refreshCDKScreen(dialog->screen);
+}
+
+// Deletes the given dialog and frees its resources.
+static void destroy_dialog(Dialog *dialog) {
+  destroyCDKButtonbox(dialog->buttonbox), delwin(dialog->content), delwin(dialog->border),
+    destroyCDKScreen(dialog->screen);
+}
+
+// Signals a buttonbox to process the given key as if it was pressed.
+// This is typically either KEY_TAB or KEY_BTAB in order to cycle the focus between buttons.
+static int buttonbox_keypress(EObjectType _, void *__, void *data, chtype key) {
+  return (injectCDKButtonbox((CDKBUTTONBOX *)data, key), true);
+}
+
+int input_dialog(DialogOptions opts, lua_State *L) {
+  Dialog dialog = new_dialog(&opts, 10, 40, "Ok");
+  CDKENTRY *entry = newCDKEntry(dialog.screen, LEFT, TOP, (char *)opts.title, "", A_NORMAL, '_',
+    vMIXED, 0, 0, 100, false, false);
+  CDKBUTTONBOX *box = dialog.buttonbox;
+  bindCDKObject(vENTRY, entry, KEY_TAB, buttonbox_keypress, box),
+    bindCDKObject(vENTRY, entry, KEY_BTAB, buttonbox_keypress, box);
+  if (opts.text) setCDKEntryValue(entry, (char *)opts.text);
+  draw_dialog(&dialog), activateCDKEntry(entry, NULL);
+  // Note: buttons are right-to-left.
+  int button = (entry->exitType == vNORMAL) ? box->buttonCount - box->currentButton : 0;
+  lua_pushinteger(L, button), lua_pushstring(L, getCDKEntryValue(entry));
+  return (destroyCDKEntry(entry), destroy_dialog(&dialog), button ? 2 : 0);
+}
+
+// `ui.dialogs.open{...}` or `ui.dialogs.save{...}` Lua function.
+static int open_save(DialogOptions *opts, lua_State *L, bool open) {
+  char cwd[FILENAME_MAX];
+  getcwd(cwd, FILENAME_MAX); // save because cdk changes it
+  WINDOW *window = newwin(LINES - 2, COLS - 2, 1, 1);
+  CDKSCREEN *dialog = initCDKScreen(window);
+  CDKFSELECT *select = newCDKFselect(dialog, LEFT, TOP, LINES - 2, COLS - 2, (char *)opts->title,
+    (char *)opts->text, A_NORMAL, '_', A_REVERSE, "</B>", "</N>", "</N>", "</N>", TRUE, FALSE);
+  if (opts->dir) setCDKFselectDirectory(select, (char *)opts->dir);
+  if (opts->file) {
+    char *dir = dirName((char *)opts->file);
+    setCDKFselectDirectory(select, dir);
+    // TODO: select file in the list.
+    free(dir);
+  }
+  lua_pushstring(L, activateCDKFselect(select, NULL)); // returns NULL/pushes nil if canceled
+  if (select->exitType == vNORMAL && opts->only_dirs)
+    lua_pushstring(L, getCDKFselectDirectory(select)), lua_replace(L, -2);
+  if (opts->multiple) lua_createtable(L, 0, 1), lua_insert(L, -2), lua_rawseti(L, -2, 1);
+  return (destroyCDKFselect(select), delwin(window), destroyCDKScreen(dialog), chdir(cwd), 1);
+}
+
+int open_dialog(DialogOptions opts, lua_State *L) { return open_save(&opts, L, true); }
+int save_dialog(DialogOptions opts, lua_State *L) { return open_save(&opts, L, false); }
+
+// Updates the given progressbar with the given percentage and text.
+static void update(double percent, const char *text, void *bar) {
+  setCDKSliderValue(bar, (int)percent);
+}
+
+int progress_dialog(
+  DialogOptions opts, lua_State *L, bool (*work)(void (*)(double, const char *, void *), void *)) {
+  Dialog dialog = new_dialog(&opts, 10, 40, "Stop");
+  CDKSLIDER *bar = newCDKSlider(dialog.screen, LEFT, TOP, (char *)opts.title, "", ' ' | A_REVERSE,
+    0, 0, 0, 100, 1, 2, false, false);
+  bool stop = false;
+  while (work(update, bar)) {
+    draw_dialog(&dialog);
+    int key;
+    timeout(0), key = getch(), timeout(-1);
+    if (key == KEY_ENTER || key == '\n') {
+      stop = true;
+      break;
+    }
+  }
+  return (destroyCDKSlider(bar), destroy_dialog(&dialog), stop ? (lua_pushboolean(L, true), 1) : 0);
+}
+
+// Signals a scroll view to process the given key as if it was pressed.
+static int scroll_keypress(EObjectType _, void *__, void *data, chtype key) {
+  HasFocusObj(ObjOf((CDKSCROLL *)data)) = true; // needed to draw highlight
+  injectCDKScroll((CDKSCROLL *)data, key);
+  HasFocusObj(ObjOf((CDKSCROLL *)data)) = false;
+  return true;
+}
+
+// Contains information about a list view.
+typedef struct {
+  int num_columns, search_column, num_items;
+  char **items, **rows, **filtered_rows;
+  CDKSCROLL *scroll;
+} ListData;
+
+// Shows and hides a list's item/row depending on the current search key.
+// Iterates over all space-separated words in the key, matching each word to the item/row
+// case-insensitively  and sequentially. If all key words match, shows the item/row.
+static int refilter(EObjectType _, void *entry, void *data, chtype __) {
+  char *key = getCDKEntryValue((CDKENTRY *)entry);
+  ListData *list_data = (ListData *)data;
+  if (*key) {
+    int row = 0;
+    for (int i = 0; i < list_data->num_items; i += list_data->num_columns) {
+      char *item = list_data->items[i + list_data->search_column - 1];
+      bool visible = false;
+      const char *match_pos = item;
+      for (const char *s = key, *e = s;; s = e) {
+        while (*e && *e != ' ') e++;
+        bool match = false;
+        for (const char *p = match_pos; *p; p++)
+          if (strncasecmp(s, p, e - s) == 0) {
+            match_pos = p + (e - s), match = true;
+            break;
+          }
+        if (match && !*e) visible = true;
+        if (!match || !*e++) break;
+      }
+      if (visible) list_data->filtered_rows[row++] = list_data->rows[i / list_data->num_columns];
+    }
+    setCDKScrollItems(list_data->scroll, list_data->filtered_rows, row, false);
+  } else
+    setCDKScrollItems(
+      list_data->scroll, list_data->rows, list_data->num_items / list_data->num_columns, false);
+  HasFocusObj(ObjOf(list_data->scroll)) = true; // needed to draw highlight
+  eraseCDKScroll(list_data->scroll); // drawCDKScroll does not completely redraw
+  drawCDKScroll(list_data->scroll, true), drawCDKEntry((CDKENTRY *)entry, false);
+  HasFocusObj(ObjOf(list_data->scroll)) = false;
+  return true;
+}
+
+int list_dialog(DialogOptions opts, lua_State *L) {
+  int num_columns = opts.columns ? lua_rawlen(L, opts.columns) : 1,
+      num_items = lua_rawlen(L, opts.items);
+  // There is an item store for filtering against, a row store that contains column data joined
+  // by '|' separators, and a filtered row store that contains the actual rows to display.
+  // Note the row store also contains a header line which is displayed separately.
+  char *items[num_items];
+  for (int i = 1; i <= num_items; i++) {
+    const char *item = (lua_rawgeti(L, opts.items, i), lua_tostring(L, -1));
+    items[i - 1] = strcpy(malloc(strlen(item) + 1), item), lua_pop(L, 1); // item
+  }
+  int num_rows = (num_items + num_columns - 1) / num_columns; // account for non-full rows
+  char *rows[1 + num_rows] /* include header */, *filtered_rows[num_rows];
+  // Compute the column sizes needed to fit all row items in.
+  int column_widths[num_columns], row_len = 0;
+  for (int i = 1; i <= num_columns; i++) {
+    const char *column = opts.columns ? (lua_rawgeti(L, opts.columns, i), lua_tostring(L, -1)) : "";
+    int utf8max = utf8strlen(column), max = strlen(column);
+    for (int j = i - 1; j < num_items; j += num_columns) {
+      int utf8len = utf8strlen(items[j]);
+      if (utf8len > utf8max) utf8max = utf8len, max = strlen(items[j]);
+    }
+    column_widths[i - 1] = utf8max, row_len += max + 1; // include space for '|' separator or '\0'
+  }
+  // Generate the display rows, padding row items to fit column widths and separating columns
+  // with '|'s.
+  // The column headers are a special case and need to be underlined too.
+  for (int i = -num_columns; i < num_items; i += num_columns) {
+    char *row = malloc((i < 0) ? row_len + 4 : row_len);
+    char *p = (i < 0) ? strcpy(row, "</U>") + 4 : row;
+    for (int j = i; j < i + num_columns && j < num_items; j++) {
+      const char *item = (i < 0) ?
+        (opts.columns ? (lua_rawgeti(L, opts.columns, j - i + 1), lua_tostring(L, -1)) : "") :
+        items[j];
+      p = strcpy(p, item) + strlen(item);
+      int padding = column_widths[j - i] - utf8strlen(item);
+      while (padding-- > 0) *p++ = ' ';
+      *p++ = (i < 0) ? '|' : ' ';
+      if (i < 0 && opts.columns) lua_pop(L, 1); // header
+    }
+    if (p > row) *(p - 1) = '\0';
+    rows[i / num_columns + 1] = row;
+    if (i >= 0) filtered_rows[i / num_columns] = row;
+  }
+
+  Dialog dialog = new_dialog(&opts, LINES - 2, COLS - 2, "Ok");
+  CDKENTRY *entry = newCDKEntry(dialog.screen, LEFT, TOP, (char *)opts.title, "", A_NORMAL, '_',
+    vMIXED, 0, 0, 100, false, false);
+  CDKSCROLL *scroll = newCDKScroll(dialog.screen, LEFT, CENTER, RIGHT, -6, 0,
+    opts.columns ? rows[0] : "", &rows[1], num_rows, false, A_REVERSE, true, false);
+  // TODO: select multiple.
+  CDKBUTTONBOX *box = dialog.buttonbox;
+  bindCDKObject(vENTRY, entry, KEY_TAB, buttonbox_keypress, box),
+    bindCDKObject(vENTRY, entry, KEY_BTAB, buttonbox_keypress, box),
+    bindCDKObject(vENTRY, entry, KEY_UP, scroll_keypress, scroll),
+    bindCDKObject(vENTRY, entry, KEY_DOWN, scroll_keypress, scroll),
+    bindCDKObject(vENTRY, entry, KEY_PPAGE, scroll_keypress, scroll),
+    bindCDKObject(vENTRY, entry, KEY_NPAGE, scroll_keypress, scroll);
+  // TODO: commands to scroll the list to the right and left.
+  ListData data = {
+    num_columns, opts.search_column, num_items, items, &rows[1], filtered_rows, scroll};
+  setCDKEntryPostProcess(entry, refilter, &data);
+  if (opts.text) setCDKEntryValue(entry, (char *)opts.text);
+
+  draw_dialog(&dialog), refilter(vENTRY, entry, &data, 0), activateCDKEntry(entry, NULL);
+  // Note: buttons are right-to-left.
+  int button = (entry->exitType == vNORMAL) ? box->buttonCount - box->currentButton : 0;
+  int index = getCDKScrollItems(scroll, NULL) > 0 ? getCDKScrollCurrentItem(scroll) + 1 : 0;
+  if (index) {
+    char *item = filtered_rows[index - 1];
+    for (int j = 1; j < num_rows + 1; j++) // account for and skip header
+      if (strcmp(item, rows[j]) == 0) {
+        index = j; // non-filtered index of selected item (no +1 due to skipped header)
+        break;
+      }
+  }
+  lua_pushinteger(L, button);
+  // Note: table will be replaced by a single result if multiple is false.
+  lua_createtable(L, 0, 1), lua_pushinteger(L, index), lua_rawseti(L, -2, 1);
+  if (!opts.multiple) lua_rawgeti(L, -1, 1), lua_replace(L, -2); // single result
+  destroyCDKScroll(scroll), destroyCDKEntry(entry), destroy_dialog(&dialog);
+  for (int i = 0; i < num_rows + 1; i++) free(rows[i]); // includes header
+  for (int i = 0; i < num_items; i++) free(items[i]);
+  return button && index ? 2 : 0;
+}
 
 void quit() { quitting = !emit("quit", -1); }
 

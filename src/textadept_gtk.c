@@ -3,9 +3,7 @@
 
 #include "textadept.h"
 
-#include "gtdialog.h"
 #include "lauxlib.h"
-#include "ScintillaWidget.h"
 
 #if _WIN32
 #include <windows.h>
@@ -16,12 +14,22 @@
 #if __APPLE__
 #include <gtkmacintegration/gtkosxapplication.h>
 #endif
+#include "ScintillaWidget.h" // must come after <gtk/gtk.h>
 
 // Translate GTK 2.x API to GTK 3.0 for compatibility.
 #if GTK_CHECK_VERSION(3, 0, 0)
 #define gtk_combo_box_entry_new_with_model(m, _) gtk_combo_box_new_with_model_and_entry(m)
 #define gtk_combo_box_entry_set_text_column gtk_combo_box_set_entry_text_column
 #define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
+#endif
+#if !GTK_CHECK_VERSION(3, 22, 0)
+#define GtkFileChooserNative GtkWidget
+#define gtk_file_chooser_native_new(t, p, m, a, c) \
+  gtk_file_chooser_dialog_new(t, p, m, c, GTK_RESPONSE_CANCEL, a, GTK_RESPONSE_ACCEPT, NULL)
+#define GtkNativeDialog GtkDialog
+#define GTK_NATIVE_DIALOG GTK_DIALOG
+#define gtk_native_dialog_run gtk_dialog_run
+#define gtk_native_dialog_destroy(w) gtk_widget_destroy(GTK_WIDGET(w))
 #endif
 
 // GTK objects.
@@ -66,8 +74,7 @@ static bool window_focused(GtkWidget *_, GdkEventFocus *__, void *___) {
 // Signal for window focus loss.
 // Generates an 'unfocus' event.
 static bool focus_lost(GtkWidget *_, GdkEvent *__, void *___) {
-  if (!dialog_active) emit("unfocus", -1);
-  return is_command_entry_active(); // keep focus if the window is losing focus
+  return (emit("unfocus", -1), is_command_entry_active()); // keep focus if window is losing focus
 }
 
 // Signal for a Textadept window keypress (not a Scintilla keypress).
@@ -161,7 +168,7 @@ static GtkWidget *new_findbox() {
 
   GtkWidget *find_combo = new_combo(&find_label, &find_entry, &find_history),
             *replace_combo = new_combo(&repl_label, &repl_entry, &repl_history);
-  g_signal_connect(GTK_EDITABLE(find_entry), "changed", G_CALLBACK(find_changed), NULL);
+  g_signal_connect(find_entry, "changed", G_CALLBACK(find_changed), NULL);
   find_next = new_button(), find_prev = new_button(), replace = new_button(),
   replace_all = new_button(), match_case = new_option(), whole_word = new_option(),
   regex = new_option(), in_files = new_option();
@@ -194,7 +201,6 @@ void new_window(Scintilla *(*get_view)(void)) {
   g_signal_connect(window, "focus-in-event", G_CALLBACK(window_focused), NULL);
   g_signal_connect(window, "focus-out-event", G_CALLBACK(focus_lost), NULL);
   g_signal_connect(window, "key-press-event", G_CALLBACK(window_keypress), NULL);
-  gtdialog_set_parent(GTK_WINDOW(window));
   accel = gtk_accel_group_new();
 
 #if __APPLE__
@@ -572,6 +578,226 @@ void update_ui() {
     gtk_main_iteration();
   }
 #endif
+}
+
+// Returns a new, resizable message dialog with the specified title, icon, and buttons.
+// If no buttons are specified, uses the given button label.
+// This base dialog is not limited to showing messages. More widgets can be added to it.
+static GtkWidget *new_dialog(DialogOptions *opts, const char *button) {
+  GtkWidget *dialog =
+    gtk_message_dialog_new(GTK_WINDOW(window), 0, GTK_MESSAGE_OTHER, 0, "%s", opts->title);
+  gtk_window_set_resizable(GTK_WINDOW(dialog), true);
+  if (opts->icon) {
+    GtkWidget *image = gtk_image_new_from_icon_name(opts->icon, GTK_ICON_SIZE_DIALOG);
+    gtk_message_dialog_set_image(GTK_MESSAGE_DIALOG(dialog), image), gtk_widget_show(image);
+  }
+  if (opts->buttons[2]) gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[2], 3);
+  if (opts->buttons[1]) gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[1], 2);
+  gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[0] ? opts->buttons[0] : button, 1);
+  return (gtk_dialog_set_default_response(GTK_DIALOG(dialog), 1), dialog);
+}
+
+int message_dialog(DialogOptions opts, lua_State *L) {
+  GtkWidget *dialog = new_dialog(&opts, "gtk-ok");
+  gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", opts.text);
+  int button = gtk_dialog_run(GTK_DIALOG(dialog));
+  return (gtk_widget_destroy(dialog), button > 0 ? (lua_pushinteger(L, button), 1) : 0);
+}
+
+int input_dialog(DialogOptions opts, lua_State *L) {
+  GtkWidget *dialog = new_dialog(&opts, "gtk-ok"), *entry = gtk_entry_new();
+  GtkWidget *box = gtk_message_dialog_get_message_area(GTK_MESSAGE_DIALOG(dialog));
+  gtk_box_pack_start(GTK_BOX(box), entry, false, true, 0), gtk_widget_show(entry);
+  gtk_entry_set_activates_default(GTK_ENTRY(entry), true);
+  if (opts.text) gtk_entry_set_text(GTK_ENTRY(entry), opts.text);
+  int button = gtk_dialog_run(GTK_DIALOG(dialog));
+  lua_pushinteger(L, button);
+  if (button == 1) lua_pushstring(L, gtk_entry_get_text(GTK_ENTRY(entry)));
+  return (gtk_widget_destroy(dialog), button == 1 ? 2 : 1);
+}
+
+// `ui.dialogs.open{...}` or `ui.dialogs.save{...}` Lua function.
+static int open_save_dialog(DialogOptions *opts, lua_State *L, bool open) {
+  int mode = open ? GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE;
+  const char *accept = open ? GTK_STOCK_OPEN : GTK_STOCK_SAVE;
+  GtkFileChooserNative *dialog =
+    gtk_file_chooser_native_new(opts->title, GTK_WINDOW(window), mode, accept, GTK_STOCK_CANCEL);
+  GtkFileChooser *fc = GTK_FILE_CHOOSER(dialog);
+  if (opts->dir) gtk_file_chooser_set_current_folder(fc, opts->dir);
+  if (open) {
+    if (opts->only_dirs) gtk_file_chooser_set_action(fc, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    gtk_file_chooser_set_select_multiple(fc, opts->multiple);
+    if (opts->dir && opts->file) {
+      lua_pushstring(L, opts->dir), lua_pushliteral(L, G_DIR_SEPARATOR_S),
+        lua_pushstring(L, opts->file), lua_concat(L, 3);
+      gtk_file_chooser_select_filename(fc, lua_tostring(L, -1));
+    }
+  } else {
+    gtk_file_chooser_set_do_overwrite_confirmation(fc, true);
+    if (opts->file) gtk_file_chooser_set_current_name(fc, opts->file);
+  }
+
+  if (gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog)) != GTK_RESPONSE_ACCEPT)
+    return (gtk_native_dialog_destroy(GTK_NATIVE_DIALOG(dialog)), 0);
+  lua_newtable(L); // note: will be placed by single value of opts->multiple is false
+  GSList *filenames = gtk_file_chooser_get_filenames(fc), *f = filenames;
+  for (int i = 1; f; f = f->next, i++) lua_pushstring(L, f->data), lua_rawseti(L, -2, i);
+  g_slist_free_full(filenames, free);
+  if (!opts->multiple) lua_rawgeti(L, -1, 1), lua_replace(L, -2); // single value
+  return (gtk_native_dialog_destroy(GTK_NATIVE_DIALOG(dialog)), 1);
+}
+
+int open_dialog(DialogOptions opts, lua_State *L) { return open_save_dialog(&opts, L, true); }
+int save_dialog(DialogOptions opts, lua_State *L) { return open_save_dialog(&opts, L, false); }
+
+// Contains information about a currently active progress dialog.
+typedef struct {
+  GtkWidget *dialog, *bar;
+  bool (*work)(void (*update)(double, const char *, void *), void *);
+} ProgressData;
+
+// Updates the given progressbar with the given percentage and text.
+static void update(double percent, const char *text, void *bar) {
+  gtk_progress_bar_set_fraction(bar, 0.01 * percent);
+  if (text) gtk_progress_bar_set_text(bar, text);
+}
+
+// Signal to update the progressbar by calling the provided work Lua function.
+static int do_work(void *data_) {
+  ProgressData *data = (ProgressData *)data_;
+  bool repeat = data->work(update, data->bar);
+  if (!repeat) g_signal_emit_by_name(data->dialog, "response", 0);
+  while (gtk_events_pending()) gtk_main_iteration();
+  return repeat;
+}
+
+int progress_dialog(
+  DialogOptions opts, lua_State *L, bool (*work)(void (*)(double, const char *, void *), void *)) {
+  GtkWidget *dialog = new_dialog(&opts, "gtk-stop"), *bar = gtk_progress_bar_new();
+  GtkWidget *box = gtk_message_dialog_get_message_area(GTK_MESSAGE_DIALOG(dialog));
+  gtk_box_pack_start(GTK_BOX(box), bar, false, true, 0), gtk_widget_show(bar);
+  if (opts.text) gtk_progress_bar_set_text(GTK_PROGRESS_BAR(bar), opts.text);
+  ProgressData data = {dialog, bar, work};
+  int progressbar_source = g_timeout_add(0, do_work, &data);
+  int stopped = gtk_dialog_run(GTK_DIALOG(dialog));
+  if (stopped) g_source_remove(progressbar_source);
+  return (gtk_widget_destroy(dialog), stopped ? (lua_pushboolean(L, true), 1) : 0);
+}
+
+// Function for comparing the given search key with a list's item/row.
+// Iterates over all space-separated words in the key, matching each word to the item/row
+// case-insensitively  and sequentially. If all key words match, returns 0 on success, like strcmp.
+static int matches(GtkTreeModel *model, int column, const char *key, GtkTreeIter *iter, void *_) {
+  if (!*key) return 0; // true
+  char *item;
+  gtk_tree_model_get(model, iter, column, &item, -1);
+  const char *match_pos = item;
+  for (const char *s = key, *e = s;; s = e) {
+    while (*e && *e != ' ') e++;
+    bool match = false;
+    for (const char *p = match_pos; *p; p++)
+      if (g_strncasecmp(s, p, e - s) == 0) {
+        match_pos = p + (e - s), match = true;
+        break;
+      }
+    if (!match || !*e++) return (free(item), !match); // !match is false, !*e is true (like strcmp)
+  }
+}
+
+// Function for determining whether a list's item/row should be shown.
+// A list item/row should only be shown if it matches the current search key.
+static int visible(GtkTreeModel *model, GtkTreeIter *iter, void *treeview) {
+  const char *key = gtk_entry_get_text(gtk_tree_view_get_search_entry(treeview));
+  return matches(model, gtk_tree_view_get_search_column(treeview), key, iter, NULL) == 0;
+}
+
+// Selects the first item in the given view if an item is not already selected.
+// This is needed particularly when initially showing the list with no search key and after
+// clearing the search key and refiltering.
+static void select_first_item(GtkTreeView *view) {
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(view);
+  if (gtk_tree_selection_count_selected_rows(selection) > 0) return; // already selected
+  GtkTreeIter iter;
+  if (gtk_tree_model_get_iter_first(gtk_tree_view_get_model(view), &iter))
+    gtk_tree_selection_select_iter(selection, &iter);
+}
+
+// Signal for showing and hiding list values/rows depending on the current search key.
+static void refilter(GtkEditable *_, void *view) {
+  gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(view))),
+    select_first_item(view);
+}
+
+// Signal for an Enter keypress or double-click in the treeview.
+static void row_activated(GtkTreeView *_, GtkTreePath *__, GtkTreeViewColumn *___, void *dialog) {
+  g_signal_emit_by_name(dialog, "response", 1);
+}
+
+// Returns the actual model index of the given selected item from its filtered model.
+static int get_index(GtkTreePath *path, GtkTreeModel *model) {
+  path = gtk_tree_model_filter_convert_path_to_child_path(GTK_TREE_MODEL_FILTER(model), path);
+  int index = gtk_tree_path_get_indices(path)[0];
+  return (gtk_tree_path_free(path), index);
+}
+
+int list_dialog(DialogOptions opts, lua_State *L) {
+  int num_columns = opts.columns ? lua_rawlen(L, opts.columns) : 1,
+      num_items = lua_rawlen(L, opts.items);
+  GType cols[num_columns];
+  for (int i = 0; i < num_columns; i++) cols[i] = G_TYPE_STRING;
+  GtkListStore *store = gtk_list_store_newv(num_columns, cols);
+  for (int i = 1, j = 0; i <= num_items; i++) {
+    GtkTreeIter iter;
+    if (j == 0) gtk_list_store_append(store, &iter);
+    const char *item = (lua_rawgeti(L, opts.items, i), lua_tostring(L, -1));
+    gtk_list_store_set(store, &iter, j++, item, -1), lua_pop(L, 1);
+    if (j == num_columns) j = 0; // new row
+  }
+  GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(store), NULL);
+
+  GtkWidget *dialog = new_dialog(&opts, "gtk-ok"), *entry = gtk_entry_new(), *treeview;
+  int window_width, window_height;
+  get_size(&window_width, &window_height);
+  gtk_window_resize(GTK_WINDOW(dialog), window_width - 200, 500);
+  GtkDialog *dlg = GTK_DIALOG(dialog);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dlg)), entry, false, true, 0);
+  gtk_entry_set_activates_default(GTK_ENTRY(entry), true);
+  GtkWidget *scrolled = gtk_scrolled_window_new(NULL, NULL);
+  gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dlg)), scrolled, true, true, 0);
+  gtk_container_add(GTK_CONTAINER(scrolled), treeview = gtk_tree_view_new_with_model(filter));
+  gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(filter), visible, treeview, NULL);
+  for (int i = 1; i <= num_columns; i++) {
+    const char *header = opts.columns ? (lua_rawgeti(L, opts.columns, i), lua_tostring(L, -1)) : "";
+    GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes(
+      header, gtk_cell_renderer_text_new(), "text", i - 1, NULL);
+    // gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+    if (opts.columns) lua_pop(L, 1); // header
+  }
+  gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), opts.columns);
+  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(treeview), true);
+  gtk_tree_view_set_search_column(GTK_TREE_VIEW(treeview), opts.search_column - 1);
+  gtk_tree_view_set_search_entry(GTK_TREE_VIEW(treeview), GTK_ENTRY(entry));
+  gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(treeview), matches, NULL, NULL);
+  g_signal_connect(entry, "changed", G_CALLBACK(refilter), treeview);
+  g_signal_connect(treeview, "row-activated", G_CALLBACK(row_activated), dialog);
+  GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+  if (opts.multiple) gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
+  // Set entry text here to initialize interactive search.
+  if (opts.text) gtk_entry_set_text(GTK_ENTRY(entry), opts.text);
+  select_first_item(GTK_TREE_VIEW(treeview));
+
+  int button = (gtk_widget_show_all(dialog), gtk_dialog_run(dlg));
+  if (button < 1 || !gtk_tree_selection_count_selected_rows(selection))
+    return (gtk_widget_destroy(dialog), 0);
+  lua_pushinteger(L, button);
+  lua_newtable(L); // note: will be replaced by a single result if opts.multiple is false
+  GList *items = gtk_tree_selection_get_selected_rows(selection, &filter), *item = items;
+  for (int i = 1; item; item = item->next, i++)
+    lua_pushnumber(L, get_index(item->data, filter) + 1), lua_rawseti(L, -2, i);
+  g_list_free_full(items, (GDestroyNotify)gtk_tree_path_free);
+  if (!opts.multiple) lua_rawgeti(L, -1, 1), lua_replace(L, -2); // single result
+  return (gtk_widget_destroy(dialog), 2);
 }
 
 void quit() {

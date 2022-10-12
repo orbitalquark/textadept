@@ -296,9 +296,7 @@ events.connect(events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wr
 -- @name find_in_files
 function M.find_in_files(dir, filter)
   if not assert_type(dir, 'string/nil', 1) then
-    dir = ui.dialogs.fileselect{
-      title = _L['Select Directory'], select_only_directories = true, with_directory = ff_dir()
-    }
+    dir = ui.dialogs.open{title = _L['Select Directory'], only_dirs = true, dir = ff_dir()}
     if not dir then return end
   end
   if not assert_type(filter, 'string/table/nil', 2) then
@@ -331,39 +329,39 @@ function M.find_in_files(dir, filter)
   buffer.code_page = 0 -- default is UTF-8
   buffer.search_flags = get_flags()
   local text, i, found, show_names = M.find_entry_text, 1, false, M.show_filenames_in_progressbar
-  local stopped = ui.dialogs.progressbar({
+  local stopped = ui.dialogs.progress{
     title = string.format('%s: %s', _L['Find in Files']:gsub('_', ''), text),
-    text = show_names and utf8_filenames[i], stoppable = true,
-    width = not show_names and not CURSES and 400
-  }, function()
-    local f = io.open(filenames[i], 'rb')
-    buffer:set_text(f:read('a'))
-    f:close()
-    local binary = nil -- determine lazily for performance reasons
-    buffer:target_whole_document()
-    while buffer:search_in_target(text) ~= -1 do
-      found = true
-      if binary == nil then binary = buffer:text_range(1, 65536):find('\0') end
-      if binary then
-        _G.buffer:add_text(string.format('%s:1:%s\n', utf8_filenames[i], _L['Binary file matches.']))
-        break
+    text = show_names and utf8_filenames[i], work = function()
+      local f = io.open(filenames[i], 'rb')
+      buffer:set_text(f:read('a'))
+      f:close()
+      local binary = nil -- determine lazily for performance reasons
+      buffer:target_whole_document()
+      while buffer:search_in_target(text) ~= -1 do
+        found = true
+        if binary == nil then binary = buffer:text_range(1, 65536):find('\0') end
+        if binary then
+          _G.buffer:add_text(string.format('%s:1:%s\n', utf8_filenames[i],
+            _L['Binary file matches.']))
+          break
+        end
+        local line_num = buffer:line_from_position(buffer.target_start)
+        local line = buffer:get_line(line_num)
+        _G.buffer:add_text(string.format('%s:%d:%s', utf8_filenames[i], line_num, line))
+        local pos = _G.buffer.current_pos - #line + buffer.target_start -
+          buffer:position_from_line(line_num)
+        _G.buffer:indicator_fill_range(pos, buffer.target_end - buffer.target_start)
+        if not line:find('\n$') then _G.buffer:add_text('\n') end
+        buffer:set_target_range(buffer.target_end, buffer.length + 1)
       end
-      local line_num = buffer:line_from_position(buffer.target_start)
-      local line = buffer:get_line(line_num)
-      _G.buffer:add_text(string.format('%s:%d:%s', utf8_filenames[i], line_num, line))
-      local pos = _G.buffer.current_pos - #line + buffer.target_start -
-        buffer:position_from_line(line_num)
-      _G.buffer:indicator_fill_range(pos, buffer.target_end - buffer.target_start)
-      if not line:find('\n$') then _G.buffer:add_text('\n') end
-      buffer:set_target_range(buffer.target_end, buffer.length + 1)
+      buffer:clear_all()
+      buffer:empty_undo_buffer()
+      view:scroll_caret() -- [Files Found Buffer]
+      i = i + 1
+      if i > #filenames then return nil end
+      return i * 100 / #filenames, show_names and utf8_filenames[i] or nil
     end
-    buffer:clear_all()
-    buffer:empty_undo_buffer()
-    view:scroll_caret() -- [Files Found Buffer]
-    i = i + 1
-    if i > #filenames then return nil end
-    return i * 100 / #filenames, show_names and utf8_filenames[i] or nil
-  end)
+  }
   buffer:close(true) -- temporary buffer
   local status = stopped and _L['Find in Files aborted'] or not found and _L['No results found']
   ui._print(_L['[Files Found Buffer]'], status and status .. '\n' or '')
