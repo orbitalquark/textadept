@@ -622,22 +622,11 @@ static int reset(lua_State *L) {
   return (emit("reset_after", LUA_TTABLE, persist_ref, -1), 0);
 }
 
-// `_G.timeout()` Lua function.
-static int add_timeout_lua(lua_State *L) {
-  double interval = luaL_checknumber(L, 1);
-  luaL_argcheck(L, interval > 0, 1, "interval must be > 0"), luaL_checktype(L, 2, LUA_TFUNCTION);
-  int n = lua_gettop(L), *refs = calloc(n, sizeof(int));
-  for (int i = 2; i <= n; i++) lua_pushvalue(L, i), refs[i - 2] = luaL_ref(L, LUA_REGISTRYINDEX);
-  if (!add_timeout(interval, refs)) {
-    for (int i = 2; i <= n; i++) luaL_unref(L, LUA_REGISTRYINDEX, refs[i - 2]);
-    free(refs);
-    return luaL_error(L, "could not add timeout");
-  }
-  return 0;
-}
-
-bool call_timeout_function(void *f) {
-  int *refs = f, nargs = 0;
+// Calls the given timeout function passed to `_G.timeout()`.
+// Platforms should repeatedly call this function when the timeout interval has passed for as
+// long as it returns true.
+static bool call_timeout_function(int *refs) {
+  int nargs = 0;
   lua_rawgeti(lua, LUA_REGISTRYINDEX, refs[0]); // function
   while (refs[++nargs]) lua_rawgeti(lua, LUA_REGISTRYINDEX, refs[nargs]);
   bool ok = lua_pcall(lua, nargs - 1, 1, 0) == LUA_OK, repeat;
@@ -647,6 +636,20 @@ bool call_timeout_function(void *f) {
     if (!ok) emit("error", LUA_TSTRING, lua_tostring(lua, -1), -1);
   }
   return (lua_pop(lua, 1), repeat); // result
+}
+
+// `_G.timeout()` Lua function.
+static int add_timeout_lua(lua_State *L) {
+  double interval = luaL_checknumber(L, 1);
+  luaL_argcheck(L, interval > 0, 1, "interval must be > 0"), luaL_checktype(L, 2, LUA_TFUNCTION);
+  int n = lua_gettop(L), *refs = calloc(n, sizeof(int));
+  for (int i = 2; i <= n; i++) lua_pushvalue(L, i), refs[i - 2] = luaL_ref(L, LUA_REGISTRYINDEX);
+  if (!add_timeout(interval, call_timeout_function, refs)) {
+    for (int i = 2; i <= n; i++) luaL_unref(L, LUA_REGISTRYINDEX, refs[i - 2]);
+    free(refs);
+    return luaL_error(L, "could not add timeout");
+  }
+  return 0;
 }
 
 // `string.iconv()` Lua function.

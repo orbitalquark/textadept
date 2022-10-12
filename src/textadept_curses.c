@@ -410,7 +410,7 @@ void update_ui() {
 
 char *get_clipboard_text(int *len) { return scintilla_get_clipboard(focused_view, len); }
 
-bool add_timeout(double interval, void *f) { return false; }
+bool add_timeout(double interval, bool (*f)(int *), int *refs) { return false; }
 
 // Contains information about a generic dialog shell.
 // Widgets can be added to its 'screen' field.

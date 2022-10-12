@@ -70,15 +70,6 @@ void find_clicked(FindButton *button, void *unused);
 void show_context_menu(const char *name, void *userdata);
 
 /**
- * Calls the given timeout function (that was passed to `add_timeout()`).
- * Platforms should call this function when the timeout interval has passed.
- * @param f Timeout function originally passed to `add_timeout()`.
- * @return whether or not to call this function again after the timeout interval
- * @see add_timeout
- */
-bool call_timeout_function(void *f);
-
-/**
  * Closes Textadept.
  * Unsplits panes, closes buffers, deletes Scintilla views, and closes Lua. During this process,
  * Textadept may still call `SS()`, so platforms should take care to call this while Scintilla

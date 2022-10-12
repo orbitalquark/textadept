@@ -248,14 +248,10 @@ void set_menubar(lua_State *L, int index);
 char *get_clipboard_text(int *len);
 
 /**
- * Asks the platform to run the given function after the given number of seconds using
- * `call_timeout_function()`.
- * The platform should continue calling `call_timeout_function()` for as long as it returns `true`.
- * @param interval Number of seconds between calls to the given function.
- * @param f Function to call using `call_timeout_function()`.
- * @see call_timeout_function
+ * Asks the platform to run the given function after the given number of seconds.
+ * The platform should continue calling `f(reference)` for as long as it returns `true`.
  */
-bool add_timeout(double interval, void *f);
+bool add_timeout(double interval, bool (*f)(int *), int *reference);
 
 /**
  * Asks the platform to update the UI by painting views, processing any pending events in the

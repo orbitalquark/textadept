@@ -558,10 +558,25 @@ char *get_clipboard_text(int *len) {
   return text;
 }
 
-// Signal for a timeout.
-static int timed_out(void *f) { return call_timeout_function(f); }
+// Contains information about an active timeout.
+typedef struct {
+  bool (*f)(int *);
+  int *refs;
+} TimeoutData;
 
-bool add_timeout(double sec, void *f) { return (g_timeout_add(sec * 1000, timed_out, f), true); }
+// Signal for a timeout.
+static int timed_out(void *data_) {
+  TimeoutData *data = (TimeoutData *)data_;
+  bool repeat = data->f(data->refs);
+  if (!repeat) free(data);
+  return repeat;
+}
+
+bool add_timeout(double interval, bool (*f)(int *), int *refs) {
+  TimeoutData *data = malloc(sizeof(TimeoutData));
+  data->f = f, data->refs = refs;
+  return (g_timeout_add(interval * 1000, timed_out, data), true);
+}
 
 void update_ui() {
 #if !__APPLE__
