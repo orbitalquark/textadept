@@ -7,6 +7,53 @@
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 11.5 alpha 2 (01 Nov 2022)
+
+Download:
+
+* [Textadept 11.5 alpha 2  -- Windows][]
+* [Textadept 11.5 alpha 2  -- Mac OSX 10.10+][]
+* [Textadept 11.5 alpha 2  -- Linux][]
+* [Textadept 11.5 alpha 2  -- Modules][]
+
+Bugfixes:
+
+* Fixed memory leak after running timeout function.
+* Fixed `buffer.eol_annotation_style*` settings.
+* Fixed bug showing the buffer browser from the first buffer if zorder is `true`.
+
+Changes:
+
+* Separated GUI platform C code from non-GUI C code.
+* Added `_G.GTK`.
+* `_G.OSX` is now always true on macOS, not just in the GUI version.
+* `buffer.tab_label` is now write-only.
+* Replaced gtDialog with smaller set of built-in dialogs.
+  - Deprecated `ui.dialogs.*msgbox()` in favor of [`ui.dialogs.message()`][],
+    `ui.dialogs.*inputbox()` in favor of [`ui.dialogs.input()`][], `ui.dialogs.fileselect()` in
+    favor of [`ui.dialogs.open()`][], `ui.dialogs.filesave()` in favor of [`ui.dialogs.save()`][],
+    `ui.dialogs.progressbar()` in favor of [`ui.dialogs.progress()`][], and
+    `ui.dialogs.filteredlist()` in favor of [`ui.dialogs.list()`][].
+  - Removed `ui.dialogs.textbox()`, `ui.dialogs.*dropdown()`, `ui.dialogs.optionselect()`,
+  `ui.dialogs.colorselect()`, and `ui.dialogs.fontselect()`.
+  - Input and list dialogs return text and selections first before button indices.
+  - Input dialogs no longer accept multiple text entries and labels.
+  - Removed `string_output` option from dialogs.
+  - Renamed the following dialog options: `with_directory` &rarr; `dir`, `with_file` &rarr; `file`,
+    `select_multiple` &rarr; `multiple`, `select_only_directories` &rarr; `only_dirs`.
+* Removed `opts` argument from `io.quick_open()`.
+
+[Textadept 11.5 alpha 2  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha_2.win.zip
+[Textadept 11.5 alpha 2  -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha_2.macOS.zip
+[Textadept 11.5 alpha 2  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha_2.linux.tgz
+[Textadept 11.5 alpha 2  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha_2.modules.zip
+[`ui.dialogs.message()`]: api.html#ui.dialogs.message
+[`ui.dialogs.input()`]: api.html#ui.dialogs.input
+[`ui.dialogs.open()`]: api.html#ui.dialogs.open
+[`ui.dialogs.save()`]: api.html#ui.dialogs.save
+[`ui.dialogs.progress()`]: api.html#ui.dialogs.progress
+[`ui.dialogs.list()`]: api.html#ui.dialogs.list
+
 ### 11.5 alpha (01 Oct 2022)
 
 Download:
@@ -902,7 +949,7 @@ Changes:
 [`events.SESSION_SAVE`]: api.html#events.SESSION_SAVE
 [`events.SESSION_LOAD`]: api.html#events.SESSION_LOAD
 [`keys.mode`]: api.html#keys.mode
-[`ui.dialogs.progressbar()`]: api.html#ui.dialogs.progressbar
+[`ui.dialogs.progressbar()`]: api.html#ui.dialogs.progress
 [PDCurses]: https://pdcurses.sourceforge.io/
 
 ### 10.8 (01 Jan 2020)
@@ -1308,7 +1355,7 @@ Changes:
   in curses) to `Esc`.
 * Added [`buffer.caret_line_frame`][] option for outlining the current line.
 * Added [`buffer:line_reverse()`][] for reversing selected lines.
-* Added [`ui.dialogs.colorselect()`][] and [`ui.dialogs.fontselect()`][] dialogs.
+* Added `ui.dialogs.colorselect()` and `ui.dialogs.fontselect()` dialogs.
 * Handle pipes in shell commands for [filter-through][].
 * The [Lua command entry][] prints results like Lua 5.3's interactive prompt (e.g. no need for
   explicit '=' prefix).
@@ -1320,8 +1367,6 @@ Changes:
 
 [`buffer.caret_line_frame`]: api.html#buffer.caret_line_frame
 [`buffer:line_reverse()`]: api.html#buffer.line_reverse
-[`ui.dialogs.colorselect()`]: api.html#ui.dialogs.colorselect
-[`ui.dialogs.fontselect()`]: api.html#ui.dialogs.fontselect
 [filter-through]: manual.html#shell-commands-and-filtering-text
 [Lua command entry]: manual.html#lua-command-entry
 [Scintilla]: https://scintilla.org
@@ -2099,7 +2144,7 @@ Bugfixes:
 
 Changes:
 
-* New [optionselect][] dialog.
+* New optionselect dialog.
 * Added `ui.SILENT_PRINT` option for printing messages.
 * The GUI version can [spawn processes][] in separate threads.
 * Removed experimental Windows `io.popen()` and `os.execute()` replacements due to spawning
@@ -2111,7 +2156,6 @@ Changes:
 * Updated to [LuaJIT][] 2.0.3.
 * Updated to [Scintilla][] 3.4.1.
 
-[optionselect]: api.html#ui.dialogs.optionselect
 [spawn processes]: api.html#os.spawn
 [Snapopen]: manual.html#quick-open
 [building projects]: api.html#_M.Build.a.Project
@@ -2139,7 +2183,7 @@ Bugfixes:
 Changes:
 
 * Added Swedish translation.
-* Added support for multiple entry boxes in [inputdialogs][].
+* Added support for multiple entry boxes in inputdialogs.
 * Updated LaTeX and Go lexers.
 * Scintilla: added [`buffer:drop_selection_n()`][] for dropping a multiple selection.
 * Scintilla: added `buffer.call_tip_pos_start` for altering call tip backspace behavior.
@@ -2147,7 +2191,6 @@ Changes:
 * Scintilla: better marker drawing.
 * Updated to [Scintilla][] 3.3.9.
 
-[inputdialogs]: api.html#ui.dialogs.inputbox
 [`buffer:drop_selection_n()`]: api.html#buffer.drop_selection_n
 [Scintilla]: https://scintilla.org
 
@@ -2471,7 +2514,7 @@ Changes:
   instead of "ncurses".
 * Better 16-color terminal support in lexer theme.
 * Reduced the delay when pressing `Esc` in the terminal version.
-* [Messagebox][] dialogs can show icons via `--icon` and `--icon-file`.
+* Messagebox dialogs can show icons via `--icon` and `--icon-file`.
 * New Win32 terminal version.
 * New [key modes][] functionality.
 * Scintilla: added [`buffer.auto_c_order`][] for sorting autocompletion lists.
@@ -2492,7 +2535,6 @@ Changes:
 * Renamed `io.try_encodings` to [`io.encodings`][].
 * No need for '!' in front of font faces anymore.
 
-[Messagebox]: https://orbitalquark.github.io/gtdialog/manual.html#messageboxes
 [key modes]: api.html#modes
 [`buffer.auto_c_order`]: api.html#buffer.auto_c_order
 [Scintilla]: https://scintilla.org
@@ -3566,7 +3608,7 @@ Changes:
 
 * Removed `_m.textadept.mlines` module since Scintilla's multiple selections supercedes it.
 * Removed side pane.
-* New [`gui.dialog('filteredlist', ...)][] from [gtdialog][].
+* New `gui.dialog('filteredlist', ...)` from gtdialog.
 * Can select buffer from filteredlist dialog (replacing side pane buffer list).
 * Can select lexer from filteredlist dialog.
 * Can have user `key_commands.lua`, `snippets.lua`, `mime_types.conf`, `locale.conf` that are
@@ -3576,9 +3618,6 @@ Changes:
 * Added notification for session files not found.
 * Snippets use multiple carets.
 * Removed api file support.
-
-[gtdialog]: https://orbitalquark.github.io/gtdialog
-[`gui.dialog('filteredlist', ...)]: api.html#ui.dialog
 
 ### 2.1 (01 Mar 2010)
 
@@ -3669,13 +3708,13 @@ Changes:
 * Textadept compiles as C99 code. (Drops Microsoft Visual Studio support.)
 * Sessions functionality moved to `modules/textadept/session.lua` from `core/file_io.lua`.
 * The `char_added` event now passes an int, not a string, to handler functions.
-* Replaced [cocoaDialog][] and [lua_dialog][] with my C-based [gtdialog][].
+* Replaced cocoaDialog and lua_dialog with my C-based gtdialog.
 * [Incremental find][] via the Lua command entry.
 * *NO* dependencies other than [GTK][] on _all_ platforms.
 
   + Win32 no longer requires the MSVC++ 2008 Runtime.
   + Linux no longer requires `libffi`.
-  + Mac OSX no longer requires [cocoaDialog][].
+  + Mac OSX no longer requires cocoaDialog.
 
 * Can cross compile to Win32 from Linux.
 * Removed confusing `local function` and `local table` LuaDoc.
@@ -3686,9 +3725,6 @@ Changes:
 [Scintilla]: https://scintilla.org
 [compile commands]: api.html#textadept.run.compile_commands
 [run commands]: api.html#textadept.run.run_commands
-[gtdialog]: https://orbitalquark.github.io/gtdialog
-[lua_dialog]: http://luaforge.net/projects/lua-dialog
-[cocoaDialog]: http://cocoadialog.sf.net
 [Incremental find]: manual.html#incremental-find
 [GTK]: https://gtk.org
 
@@ -3930,14 +3966,11 @@ Updates:
 
 * Makefile builds Textadept to optimize for small size.
 * Lua is no longer an external dependency and built into Textadept.
-* [Zenity][] is no longer a dependency on Linux. [lua_dialog][] is used instead.
+* Zenity is no longer a dependency on Linux. lua_dialog is used instead.
 * Resources from `io.popen()` are handled more appropriately.
 * Added `textadept.reset()` function for for reloading Lua scripts.
 * Added new find in files project manager browser.
 * Fixed some code redundancy and typos in documentation.
-
-[Zenity]: https://live.gnome.org/Zenity
-[lua_dialog]: http://luaforge.net/projects/lua-dialog
 
 ### 0.2 (20 Dec 2007)
 
