@@ -5,8 +5,8 @@ local M = {}
 --[[ This comment is for LuaDoc.
 ---
 -- Map of all messages used by Textadept to their localized form.
--- If the table does not contain the localized version of a given message, it returns a string
--- that starts with "No Localization:" via a metamethod.
+-- If the localized version of a given message does not exist, the non-localized message is
+-- returned. Use `rawget()` to check if a localization exists.
 -- Note: the terminal version ignores any "_" mnemonics the GUI version would use.
 module('_L')]]
 
@@ -28,4 +28,4 @@ for line in f:lines() do
 end
 f:close()
 
-return setmetatable(M, {__index = function(_, k) return 'No Localization:' .. k end})
+return setmetatable(M, {__index = function(_, k) return k end})
