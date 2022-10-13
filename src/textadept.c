@@ -410,30 +410,38 @@ static int buffer_newindex(lua_State *L) {
 }
 
 // Returns a DialogOptions constructed from the table at the top of the Lua stack.
-static DialogOptions read_dialog_options(lua_State *L) {
+// If no buttons are specified, uses the given one.
+static DialogOptions read_opts(lua_State *L, const char *button) {
 #define strf(k) (lua_getfield(L, 1, k), lua_tostring(L, -1))
 #define boolf(k) (lua_getfield(L, 1, k), lua_toboolean(L, -1))
 #define tablef(k) (lua_getfield(L, 1, k) == LUA_TTABLE ? lua_absindex(L, -1) : 0)
 #define intf(k) (lua_getfield(L, 1, k), fmax(lua_tointeger(L, -1), 0))
-  lua_checkstack(L, LUA_MINSTACK + 15); // dialog options persist on the stack
+  lua_checkstack(L, LUA_MINSTACK + 20); // dialog options persist on the stack
   DialogOptions opts = {strf("title"), strf("text"), strf("icon"),
     {strf("button1"), strf("button2"), strf("button3")}, strf("dir"), strf("file"),
-    boolf("only_dirs"), boolf("multiple"), tablef("columns"), intf("search_column"),
-    tablef("items")};
+    boolf("only_dirs"), boolf("multiple"), boolf("return_button"), tablef("columns"),
+    intf("search_column"), tablef("items")};
+  if (!opts.buttons[0] && button)
+    opts.buttons[0] = (lua_getglobal(L, "_L"), lua_getfield(L, -1, button), lua_tostring(L, -1));
   return opts;
 }
 
 // `ui.dialogs.message()` Lua function.
-static int message_dialog_lua(lua_State *L) { return message_dialog(read_dialog_options(L), L); }
+static int message_dialog_lua(lua_State *L) { return message_dialog(read_opts(L, "OK"), L); }
 
 // `ui.dialogs.input()` Lua function.
-static int input_dialog_lua(lua_State *L) { return input_dialog(read_dialog_options(L), L); }
+static int input_dialog_lua(lua_State *L) {
+  DialogOptions opts = read_opts(L, "OK");
+  if (!opts.buttons[1])
+    opts.buttons[1] = (lua_getglobal(L, "_L"), lua_getfield(L, -1, "Cancel"), lua_tostring(L, -1));
+  return input_dialog(opts, L);
+}
 
 // `ui.dialogs.open()` Lua function.
-static int open_dialog_lua(lua_State *L) { return open_dialog(read_dialog_options(L), L); }
+static int open_dialog_lua(lua_State *L) { return open_dialog(read_opts(L, NULL), L); }
 
 // `ui.dialogs.save()` Lua function.
-static int save_dialog_lua(lua_State *L) { return save_dialog(read_dialog_options(L), L); }
+static int save_dialog_lua(lua_State *L) { return save_dialog(read_opts(L, NULL), L); }
 
 // Calls the work function passed to `ui.dialogs.progress()`, passes intermediate progress to
 // the given callback function, and returns true if there is still work to be done.
@@ -452,7 +460,7 @@ static bool do_work(void (*update)(double, const char *, void *), void *userdata
 
 // `ui.dialogs.progress()` Lua function.
 static int progress_dialog_lua(lua_State *L) {
-  DialogOptions opts = read_dialog_options(L);
+  DialogOptions opts = read_opts(L, "Stop");
   luaL_argcheck(L, lua_getfield(L, 1, "work") == LUA_TFUNCTION, 1, "'work' function expected"),
     lua_setfield(L, LUA_REGISTRYINDEX, "ta_update");
   return progress_dialog(opts, L, do_work);
@@ -460,13 +468,15 @@ static int progress_dialog_lua(lua_State *L) {
 
 // `ui.dialogs.list()` Lua function.
 static int list_dialog_lua(lua_State *L) {
-  DialogOptions opts = read_dialog_options(L);
+  DialogOptions opts = read_opts(L, "OK");
   int num_columns = opts.columns ? lua_rawlen(L, opts.columns) : 1;
   if (!opts.search_column) opts.search_column = 1;
   luaL_argcheck(
     L, opts.search_column > 0 && opts.search_column <= num_columns, 1, "invalid 'search_column'");
   luaL_argcheck(
     L, opts.items && lua_rawlen(L, opts.items) > 0, 1, "non-empty 'items' table expected");
+  if (!opts.buttons[1])
+    opts.buttons[1] = (lua_getglobal(L, "_L"), lua_getfield(L, -1, "Cancel"), lua_tostring(L, -1));
   return list_dialog(opts, L);
 }
 

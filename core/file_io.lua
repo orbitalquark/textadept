@@ -315,7 +315,7 @@ function io.open_recent_file()
       table.remove(io.recent_files, i)
     end
   end
-  i = select(2, ui.dialogs.list{title = _L['Open File'], items = utf8_list})
+  i = ui.dialogs.list{title = _L['Open File'], items = utf8_list}
   if i then io.open_file(io.recent_files[i]) end
 end
 
@@ -407,7 +407,7 @@ function io.quick_open(paths, filter)
       icon = 'dialog-information'
     }
   end
-  local _, selected = ui.dialogs.list{title = _L['Open File'], items = utf8_list, multiple = true}
+  local selected = ui.dialogs.list{title = _L['Open File'], items = utf8_list, multiple = true}
   if not selected then return end
   local filenames = {}
   for i = 1, #selected do filenames[i] = utf8_list[selected[i]]:iconv(_CHARSET, 'UTF-8') end

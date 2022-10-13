@@ -33,7 +33,7 @@ typedef struct {
  */
 typedef struct {
   const char *title, *text, *icon, *buttons[3], *dir, *file;
-  bool only_dirs, multiple;
+  bool only_dirs, multiple, return_button;
   int columns, search_column, items;
 } DialogOptions;
 
@@ -271,10 +271,10 @@ int message_dialog(DialogOptions opts, lua_State *L);
 
 /**
  * Asks the platform to show an input dialog using the given options.
- * If the user provides input, the platform should push onto the Lua stack the index (starting
- * from 1) of the button pushed (or 1 to signal an affirmation) followed by the string input
- * text, and then return 2 (the number of results pushed). Otherwise the platform should push
- * nothing and return 0.
+ * If the user provides input, the platform should push onto the Lua stack the string input
+ * text and then return 1 (the number of results pushed). If `opts.return_button` is `true`,
+ * the platform should also return the index (starting from 1) of the button pushed (or 1 to
+ * signal an affirmation) and return 2. Otherwise the platform should push nothing and return 0.
  */
 int input_dialog(DialogOptions opts, lua_State *L);
 
@@ -314,10 +314,11 @@ int progress_dialog(DialogOptions opts, lua_State *L,
  * The list data may consist of multiple columns of data. The dialog should contain a text entry
  * that allows the user to filter the items shown based on the a given search column. Spaces
  * in the text entry should be treated as wildcards.
- * If the user selected an item(s), the platform should push onto the Lua stack the index (starting
- * from 1) of the button pushed (or 1 to signal an affirmation) followed by the integer row index
- * or table of row indices (also starting from 1) of the item(s) selected, and then return 2
- * (the number of results pushed). Otherwise the platform should push nothing and return 0.
+ * If the user selected an item(s), the platform should push onto the Lua stack the integer row
+ * index or table of row indices (starting from 1) of the item(s) selected, and then return 1
+ * (the number of results pushed). If `opts.return_button` is `true`, the platform should also
+ * return the index (starting from 1) of the button pushed (or 1 to signal an affirmation)
+ * and return 2. Otherwise the platform should push nothing and return 0.
  * If `opts.multiple` is `true`, the platform should push and populate table, even if only one
  * item was selected.
  * The pushed row index or indices should be relative to the full item list, not a filtered list.

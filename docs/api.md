@@ -7904,7 +7904,7 @@ Provides a set of interactive dialog prompts for user input.
 #### `ui.dialogs.input`(*options*)
 
 Prompts the user with an input dialog defined by dialog options table *options*, returning
-the selected button's index along with the user's input text.
+the user's input text.
 If the user canceled the dialog, returns `nil`.
 
 Parameters:
@@ -7914,8 +7914,9 @@ Parameters:
   * `title`: The dialog's title text.
   * `text`: The dialog's initial input text.
   * `button1`: The right-most button's label. The default value is `_L['OK']`.
-  * `button2`: The middle button's label.
+  * `button2`: The middle button's label. The default value is `_L['Cancel']`.
   * `button3`: The left-most button's label. This option requires `button2` to be set.
+  * `return_button`: Also return the index of the selected button. The default value is `false`.
 
 Usage:
 
@@ -7923,14 +7924,14 @@ Usage:
 
 Return:
 
-* selected button, input text
+* input text[, selected button]
 
 <a id="ui.dialogs.list"></a>
 #### `ui.dialogs.list`(*options*)
 
 Prompts the user with a list item selection dialog defined by dialog options table *options*,
-returning the selected button's index along with the index or indices of the selected item
-or items (depending on whether or not *options*.`multiple` is `true`).
+returning the integer index of the selected item or a table of indices of the selected items
+(depending on whether or not *options*.`multiple` is `true`).
 If the user canceled the dialog, returns `nil`.
 Text typed into the dialog filters the list items. Spaces are treated as wildcards.
 
@@ -7946,11 +7947,12 @@ Parameters:
     available column of the current row. If there is only one column, each item is on its
     own row.
   * `button1`: The right-most button's label. The default value is `_L['OK']`.
-  * `button2`: The middle button's label.
+  * `button2`: The middle button's label. The default value is `_L['Cancel']`.
   * `button3`: The left-most button's label. This option requires `button2` to be set.
   * `multiple`: Allow the user to select multiple items. The default value is `false`.
   * `search_column`: The column number to filter the input text against. The default value is
     `1`.
+  * `return_button`: Also return the index of the selected button. The default value is `false`.
 
 Usage:
 
@@ -7958,7 +7960,7 @@ Usage:
 
 Return:
 
-* selected button, selected item or list of selected items
+* selected item or list of selected items[, selected button]
 
 <a id="ui.dialogs.message"></a>
 #### `ui.dialogs.message`(*options*)

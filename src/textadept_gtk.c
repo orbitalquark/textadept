@@ -595,40 +595,39 @@ void update_ui() {
 #endif
 }
 
-// Returns a new, resizable message dialog with the specified title, icon, and buttons.
-// If no buttons are specified, uses the given button label.
+// Returns a new message dialog with the specified title, icon, and buttons.
 // This base dialog is not limited to showing messages. More widgets can be added to it.
-static GtkWidget *new_dialog(DialogOptions *opts, const char *button) {
+static GtkWidget *new_dialog(DialogOptions *opts) {
   GtkWidget *dialog =
     gtk_message_dialog_new(GTK_WINDOW(window), 0, GTK_MESSAGE_OTHER, 0, "%s", opts->title);
-  gtk_window_set_resizable(GTK_WINDOW(dialog), true);
   if (opts->icon) {
     GtkWidget *image = gtk_image_new_from_icon_name(opts->icon, GTK_ICON_SIZE_DIALOG);
     gtk_message_dialog_set_image(GTK_MESSAGE_DIALOG(dialog), image), gtk_widget_show(image);
   }
   if (opts->buttons[2]) gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[2], 3);
   if (opts->buttons[1]) gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[1], 2);
-  gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[0] ? opts->buttons[0] : button, 1);
+  gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[0], 1);
   return (gtk_dialog_set_default_response(GTK_DIALOG(dialog), 1), dialog);
 }
 
 int message_dialog(DialogOptions opts, lua_State *L) {
-  GtkWidget *dialog = new_dialog(&opts, "gtk-ok");
+  GtkWidget *dialog = new_dialog(&opts);
   gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", opts.text);
   int button = gtk_dialog_run(GTK_DIALOG(dialog));
   return (gtk_widget_destroy(dialog), button > 0 ? (lua_pushinteger(L, button), 1) : 0);
 }
 
 int input_dialog(DialogOptions opts, lua_State *L) {
-  GtkWidget *dialog = new_dialog(&opts, "gtk-ok"), *entry = gtk_entry_new();
+  GtkWidget *dialog = new_dialog(&opts), *entry = gtk_entry_new();
   GtkWidget *box = gtk_message_dialog_get_message_area(GTK_MESSAGE_DIALOG(dialog));
   gtk_box_pack_start(GTK_BOX(box), entry, false, true, 0), gtk_widget_show(entry);
   gtk_entry_set_activates_default(GTK_ENTRY(entry), true);
   if (opts.text) gtk_entry_set_text(GTK_ENTRY(entry), opts.text);
   int button = gtk_dialog_run(GTK_DIALOG(dialog));
-  lua_pushinteger(L, button);
-  if (button == 1) lua_pushstring(L, gtk_entry_get_text(GTK_ENTRY(entry)));
-  return (gtk_widget_destroy(dialog), button == 1 ? 2 : 1);
+  if (button < 1 || (button == 2 && !opts.return_button)) return (gtk_widget_destroy(dialog), 0);
+  lua_pushstring(L, gtk_entry_get_text(GTK_ENTRY(entry)));
+  if (opts.return_button) lua_pushinteger(L, button);
+  return (gtk_widget_destroy(dialog), !opts.return_button ? 1 : 2);
 }
 
 // `ui.dialogs.open{...}` or `ui.dialogs.save{...}` Lua function.
@@ -688,7 +687,7 @@ static int do_work(void *data_) {
 
 int progress_dialog(
   DialogOptions opts, lua_State *L, bool (*work)(void (*)(double, const char *, void *), void *)) {
-  GtkWidget *dialog = new_dialog(&opts, "gtk-stop"), *bar = gtk_progress_bar_new();
+  GtkWidget *dialog = new_dialog(&opts), *bar = gtk_progress_bar_new();
   GtkWidget *box = gtk_message_dialog_get_message_area(GTK_MESSAGE_DIALOG(dialog));
   gtk_box_pack_start(GTK_BOX(box), bar, false, true, 0), gtk_widget_show(bar);
   if (opts.text) gtk_progress_bar_set_text(GTK_PROGRESS_BAR(bar), opts.text);
@@ -770,7 +769,8 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   }
   GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(store), NULL);
 
-  GtkWidget *dialog = new_dialog(&opts, "gtk-ok"), *entry = gtk_entry_new(), *treeview;
+  GtkWidget *dialog = new_dialog(&opts), *entry = gtk_entry_new(), *treeview;
+  gtk_window_set_resizable(GTK_WINDOW(dialog), true);
   int window_width, window_height;
   get_size(&window_width, &window_height);
   gtk_window_resize(GTK_WINDOW(dialog), window_width - 200, 500);
@@ -803,16 +803,17 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   select_first_item(GTK_TREE_VIEW(treeview));
 
   int button = (gtk_widget_show_all(dialog), gtk_dialog_run(dlg));
-  if (button < 1 || !gtk_tree_selection_count_selected_rows(selection))
+  bool cancelled = button < 1 || (button == 2 && !opts.return_button);
+  if (cancelled || !gtk_tree_selection_count_selected_rows(selection))
     return (gtk_widget_destroy(dialog), 0);
-  lua_pushinteger(L, button);
   lua_newtable(L); // note: will be replaced by a single result if opts.multiple is false
   GList *items = gtk_tree_selection_get_selected_rows(selection, &filter), *item = items;
   for (int i = 1; item; item = item->next, i++)
     lua_pushnumber(L, get_index(item->data, filter) + 1), lua_rawseti(L, -2, i);
   g_list_free_full(items, (GDestroyNotify)gtk_tree_path_free);
   if (!opts.multiple) lua_rawgeti(L, -1, 1), lua_replace(L, -2); // single result
-  return (gtk_widget_destroy(dialog), 2);
+  if (opts.return_button) lua_pushinteger(L, button);
+  return (gtk_widget_destroy(dialog), !opts.return_button ? 1 : 2);
 }
 
 void quit() {

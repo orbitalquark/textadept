@@ -604,7 +604,7 @@ function M.select()
   for _, trigger in ipairs(all_snippets) do
     items[#items + 1], items[#items + 2] = trigger, all_snippets[trigger]
   end
-  local _, i = ui.dialogs.list{
+  local i = ui.dialogs.list{
     title = _L['Select Snippet'], columns = {_L['Trigger'], _L['Snippet Text']}, items = items
   }
   if i then M.insert(items[i * 2]) end

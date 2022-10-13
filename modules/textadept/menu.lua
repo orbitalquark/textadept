@@ -275,7 +275,7 @@ local default_menubar = {
         ::continue::
       end
       table.sort(lexers)
-      local _, i = ui.dialogs.list{title = _L['Select Lexer'], items = lexers}
+      local i = ui.dialogs.list{title = _L['Select Lexer'], items = lexers}
       if i then buffer:set_lexer(lexers[i]) end
     end}
   },
@@ -525,7 +525,7 @@ function M.select_command()
     end
   end
   build_command_tables(getmetatable(M.menubar).menu)
-  local _, i = ui.dialogs.list{
+  local i = ui.dialogs.list{
     title = _L['Run Command'], columns = {_L['Command'], _L['Key Binding']}, items = items
   }
   if i then events.emit(events.MENU_CLICKED, i) end

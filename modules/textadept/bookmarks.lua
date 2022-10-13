@@ -71,7 +71,7 @@ function M.goto_mark(next)
   scan_this_buffer = not scan_this_buffer
   if not scan_this_buffer then goto rescan end
   if #utf8_list == 0 then return end
-  local _, i = ui.dialogs.list{title = _L['Select Bookmark'], items = utf8_list}
+  local i = ui.dialogs.list{title = _L['Select Bookmark'], items = utf8_list}
   if not i then return end
   view:goto_buffer(buffers[i])
   textadept.editing.goto_line(tonumber(utf8_list[i]:match('^[^:]+:(%d+):')))

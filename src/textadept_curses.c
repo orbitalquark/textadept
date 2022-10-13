@@ -421,19 +421,18 @@ typedef struct {
 } Dialog;
 
 // Reads the specified button labels into the given array and returns the number of buttons read.
-// The given default label will be used if no buttons are specified.
 // Note: buttons are right-to-left.
-static int read_buttons(DialogOptions *opts, const char *default_, const char *rtl_labels[3]) {
+static int read_buttons(DialogOptions *opts, const char *rtl_labels[3]) {
   int num_buttons = 0;
   if (opts->buttons[2]) rtl_labels[num_buttons++] = opts->buttons[2];
   if (opts->buttons[1]) rtl_labels[num_buttons++] = opts->buttons[1];
-  rtl_labels[num_buttons++] = opts->buttons[0] ? opts->buttons[0] : default_;
+  rtl_labels[num_buttons++] = opts->buttons[0];
   return num_buttons;
 }
 
 int message_dialog(DialogOptions opts, lua_State *L) {
   const char *rtl_buttons[3];
-  int num_buttons = read_buttons(&opts, "Ok", rtl_buttons), lines = 2;
+  int num_buttons = read_buttons(&opts, rtl_buttons), lines = 2;
   char *text = strcpy(malloc((opts.text ? strlen(opts.text) : 0) + 1), opts.text ? opts.text : "");
   for (const char *p = text; *p; p++)
     if (*p == '\n') lines++;
@@ -451,14 +450,13 @@ int message_dialog(DialogOptions opts, lua_State *L) {
   return (free(text), button ? (lua_pushinteger(L, button), 1) : 0);
 }
 
-// Returns a new dialog with given specified dimensions and button label to use if no buttons
-// are specified.
-static Dialog new_dialog(DialogOptions *opts, int height, int width, const char *button) {
+// Returns a new dialog with given specified dimensions.
+static Dialog new_dialog(DialogOptions *opts, int height, int width) {
   Dialog dialog;
   dialog.border = newwin(height, width, 1, 1), dialog.content = newwin(height - 2, width - 2, 2, 2);
   dialog.screen = initCDKScreen(dialog.content);
   const char *rtl_buttons[3];
-  int num_buttons = read_buttons(opts, button, rtl_buttons);
+  int num_buttons = read_buttons(opts, rtl_buttons);
   dialog.buttonbox = newCDKButtonbox(dialog.screen, 0, BOTTOM, 1, 0, "", 1, num_buttons,
     (char **)rtl_buttons, num_buttons, A_REVERSE, true, false);
   setCDKButtonboxCurrentButton(dialog.buttonbox, num_buttons - 1);
@@ -483,7 +481,7 @@ static int buttonbox_keypress(EObjectType _, void *__, void *data, chtype key) {
 }
 
 int input_dialog(DialogOptions opts, lua_State *L) {
-  Dialog dialog = new_dialog(&opts, 10, 40, "Ok");
+  Dialog dialog = new_dialog(&opts, 10, 40);
   CDKENTRY *entry = newCDKEntry(dialog.screen, LEFT, TOP, (char *)opts.title, "", A_NORMAL, '_',
     vMIXED, 0, 0, 100, false, false);
   CDKBUTTONBOX *box = dialog.buttonbox;
@@ -493,8 +491,11 @@ int input_dialog(DialogOptions opts, lua_State *L) {
   draw_dialog(&dialog), activateCDKEntry(entry, NULL);
   // Note: buttons are right-to-left.
   int button = (entry->exitType == vNORMAL) ? box->buttonCount - box->currentButton : 0;
-  lua_pushinteger(L, button), lua_pushstring(L, getCDKEntryValue(entry));
-  return (destroyCDKEntry(entry), destroy_dialog(&dialog), button ? 2 : 0);
+  if (!button || (button == 2 && !opts.return_button))
+    return (destroyCDKEntry(entry), destroy_dialog(&dialog), 0);
+  lua_pushstring(L, getCDKEntryValue(entry));
+  if (opts.return_button) lua_pushinteger(L, button);
+  return (destroyCDKEntry(entry), destroy_dialog(&dialog), !opts.return_button ? 1 : 2);
 }
 
 // `ui.dialogs.open{...}` or `ui.dialogs.save{...}` Lua function.
@@ -529,7 +530,7 @@ static void update(double percent, const char *text, void *bar) {
 
 int progress_dialog(
   DialogOptions opts, lua_State *L, bool (*work)(void (*)(double, const char *, void *), void *)) {
-  Dialog dialog = new_dialog(&opts, 10, 40, "Stop");
+  Dialog dialog = new_dialog(&opts, 10, 40);
   CDKSLIDER *bar = newCDKSlider(dialog.screen, LEFT, TOP, (char *)opts.title, "", ' ' | A_REVERSE,
     0, 0, 0, 100, 1, 2, false, false);
   bool stop = false;
@@ -641,7 +642,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
     if (i >= 0) filtered_rows[i / num_columns] = row;
   }
 
-  Dialog dialog = new_dialog(&opts, LINES - 2, COLS - 2, "Ok");
+  Dialog dialog = new_dialog(&opts, LINES - 2, COLS - 2);
   CDKENTRY *entry = newCDKEntry(dialog.screen, LEFT, TOP, (char *)opts.title, "", A_NORMAL, '_',
     vMIXED, 0, 0, 100, false, false);
   CDKSCROLL *scroll = newCDKScroll(dialog.screen, LEFT, CENTER, RIGHT, -6, 0,
@@ -672,14 +673,15 @@ int list_dialog(DialogOptions opts, lua_State *L) {
         break;
       }
   }
-  lua_pushinteger(L, button);
   // Note: table will be replaced by a single result if multiple is false.
   lua_createtable(L, 0, 1), lua_pushinteger(L, index), lua_rawseti(L, -2, 1);
   if (!opts.multiple) lua_rawgeti(L, -1, 1), lua_replace(L, -2); // single result
+  if (opts.return_button) lua_pushinteger(L, button);
   destroyCDKScroll(scroll), destroyCDKEntry(entry), destroy_dialog(&dialog);
   for (int i = 0; i < num_rows + 1; i++) free(rows[i]); // includes header
   for (int i = 0; i < num_items; i++) free(items[i]);
-  return button && index ? 2 : 0;
+  bool cancelled = !button || (button == 2 && !opts.return_button);
+  return (cancelled || !index ? 0 : (!opts.return_button ? 1 : 2));
 }
 
 void quit() { quitting = !emit("quit", -1); }
