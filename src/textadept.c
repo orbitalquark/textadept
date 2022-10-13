@@ -1092,28 +1092,32 @@ void close_textadept() {
 
 bool init_textadept(int argc, char **argv) {
   char *last_slash = NULL;
-#if __linux__
   textadept_home = malloc(FILENAME_MAX + 1);
+#if __linux__
   textadept_home[readlink("/proc/self/exe", textadept_home, FILENAME_MAX + 1)] = '\0';
   if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
   os = "LINUX";
 #elif _WIN32
-  textadept_home = malloc(FILENAME_MAX + 1);
   GetModuleFileName(NULL, textadept_home, FILENAME_MAX + 1);
   if ((last_slash = strrchr(textadept_home, '\\'))) *last_slash = '\0';
   os = "WIN32";
 #elif __APPLE__
-  char *path = malloc(FILENAME_MAX + 1), *p = NULL;
   uint32_t size = FILENAME_MAX + 1;
-  _NSGetExecutablePath(path, &size);
-  textadept_home = realpath(path, NULL), free(path);
+  _NSGetExecutablePath(textadept_home, &size);
+  char *p = textadept_home;
+  textadept_home = realpath(textadept_home, NULL), free(p);
   p = strstr(textadept_home, "MacOS"), strcpy(p, "Resources\0");
   os = "OSX";
 #elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
-  textadept_home = malloc(FILENAME_MAX + 1);
+#if __FreeBSD__
   int mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
   size_t cb = FILENAME_MAX + 1;
   sysctl(mib, 4, textadept_home, &cb, NULL, 0);
+#elif __NetBSD__
+  textadept_home[readlink("/proc/curproc/exe", textadept_home, FILENAME_MAX + 1)] = '\0';
+#else
+  textadept_home[readlink("/proc/curproc/file", textadept_home, FILENAME_MAX + 1)] = '\0';
+#endif
   if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
   os = "BSD";
 #endif
