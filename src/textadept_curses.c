@@ -525,7 +525,7 @@ int save_dialog(DialogOptions opts, lua_State *L) { return open_save(&opts, L, f
 
 // Updates the given progressbar with the given percentage and text.
 static void update(double percent, const char *text, void *bar) {
-  setCDKSliderValue(bar, (int)percent);
+  if (percent >= 0) setCDKSliderValue(bar, (int)percent);
 }
 
 int progress_dialog(

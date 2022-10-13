@@ -317,10 +317,22 @@ function M.find_in_files(dir, filter)
   buffer.indicator_current = M.INDIC_FIND
 
   -- Determine which files to search.
-  local filenames, utf8_filenames = {}, {}
-  for filename in lfs.walk(dir, filter) do
-    filenames[#filenames + 1] = filename
-    utf8_filenames[#utf8_filenames + 1] = filename:iconv('UTF-8', _CHARSET)
+  local filenames, utf8_filenames, iterator = {}, {}, lfs.walk(dir, filter)
+  local stopped = ui.dialogs.progress{
+    title = string.format('%s\n%s...', _L['Scanning for files to search in'], dir),
+    work = function()
+      for i = 1, 1000 do -- scan filenames (not contents) in blocks for performance
+        local filename = iterator()
+        if not filename then return nil end -- done
+        filenames[#filenames + 1] = filename
+        utf8_filenames[#utf8_filenames + 1] = filename:iconv('UTF-8', _CHARSET)
+      end
+      return -1 -- indeterminate
+    end
+  }
+  if stopped then
+    ui._print(_L['[Files Found Buffer]'], _L['Find in Files aborted'] .. '\n')
+    return
   end
 
   -- Perform the search in a temporary buffer and print results.
@@ -329,7 +341,7 @@ function M.find_in_files(dir, filter)
   buffer.code_page = 0 -- default is UTF-8
   buffer.search_flags = get_flags()
   local text, i, found, show_names = M.find_entry_text, 1, false, M.show_filenames_in_progressbar
-  local stopped = ui.dialogs.progress{
+  stopped = ui.dialogs.progress{
     title = string.format('%s: %s', _L['Find in Files']:gsub('_', ''), text),
     text = show_names and utf8_filenames[i], work = function()
       local f = io.open(filenames[i], 'rb')

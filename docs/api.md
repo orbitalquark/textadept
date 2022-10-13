@@ -8033,7 +8033,7 @@ Parameters:
   * `work`: The function repeatedly called to do work and provide progress updates. The
     function is called without arguments and must return either `nil`, which indicates work
     is complete, or a progress percentage number in the range 0-100 and an optional string
-    to display (GTK only).
+    to display (GTK only). If progress is indeterminate, the percentage can be less than zero.
 
 Usage:
 

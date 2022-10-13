@@ -672,7 +672,10 @@ typedef struct {
 
 // Updates the given progressbar with the given percentage and text.
 static void update(double percent, const char *text, void *bar) {
-  gtk_progress_bar_set_fraction(bar, 0.01 * percent);
+  if (percent >= 0)
+    gtk_progress_bar_set_fraction(bar, 0.01 * percent);
+  else
+    gtk_progress_bar_pulse(bar);
   if (text) gtk_progress_bar_set_text(bar, text);
 }
 
