@@ -5972,8 +5972,8 @@ end
 --------------------------------------------------------------------------------
 
 local TEST_OUTPUT_BUFFER = '[Test Output]'
-function print(...) ui._print(TEST_OUTPUT_BUFFER, ...) end
-function print_silent(...) ui._print_silent(TEST_OUTPUT_BUFFER, ...) end
+function print(...) ui.print_to(TEST_OUTPUT_BUFFER, ...) end
+function print_silent(...) ui.print_silent_to(TEST_OUTPUT_BUFFER, ...) end
 -- Clean up after a previously failed test.
 local function cleanup()
   while #_BUFFERS > 1 do

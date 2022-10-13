@@ -16,6 +16,24 @@ for name, f in pairs(io) do if name:find('^_') then buffer[name:sub(2)], io[name
 textadept = require('textadept')
 
 -- Legacy.
+ui._print = ui.print_to
+-- LuaFormatter off
+local type_map={msgbox='message',ok_msgbox='message',yesno_msgbox='message',inputbox='input',standard_inputbox='input',secure_inputbox='input',secure_standard_inputbox='input',fileselect='open',filesave='save',progressbar='progress',filteredlist='list'}
+local option_map={with_directory='dir',with_file='file',select_multiple='multiple',select_only_directories='only_dirs'}
+-- LuaFormatter on
+setmetatable(ui.dialogs, {
+  __index = function(_, k)
+    return function(options, f)
+      local new_type, new_options = type_map[k], {return_button = true}
+      if not new_type then error('Unsupported dialog', 2) end
+      for k, v in pairs(options) do new_options[option_map[k] or k] = v end
+      if k == 'progressbar' then new_options.work = f end
+      local value, button = rawget(ui.dialogs, new_type)(new_options)
+      if button then return button, value end
+      return value
+    end
+  end
+})
 textadept.file_types = {extensions = lexer.detect_extensions, patterns = lexer.detect_patterns}
 events.connect(events.VIEW_NEW, function()
   for _, k in ipairs{'colors', 'styles'} do rawset(lexer, k, view[k]) end

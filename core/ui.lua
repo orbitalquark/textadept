@@ -45,10 +45,10 @@ local function get_print_buffer(type)
 end
 
 -- Helper function for printing to buffers.
--- @see ui._print
--- @see ui._print_silent
--- @see _output
-local function _print(buffer_type, silent, format, ...)
+-- @see ui.print_to
+-- @see ui.print_silent_to
+-- @see output_to
+local function print_to(buffer_type, silent, format, ...)
   local print_view, buffer = get_print_view(buffer_type), get_print_buffer(buffer_type)
   if not buffer or not silent and not print_view then -- no buffer or buffer not visible
     if #_VIEWS > 1 then
@@ -82,21 +82,21 @@ end
 -- @param type String type of print buffer.
 -- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
 --   They will be printed as tab-separated values.
--- @usage ui._print(_L['[Message Buffer]'], message)
--- @see _print_silent
--- @name _print
-function ui._print(type, ...) _print(assert_type(type, 'string', 1), false, true, ...) end
+-- @usage ui.print_to(_L['[Message Buffer]'], message)
+-- @see print_silent_to
+-- @name print_to
+function ui.print_to(type, ...) print_to(assert_type(type, 'string', 1), false, true, ...) end
 
 ---
 -- Silently prints the given value(s) to the buffer of string type *type* if that buffer is
 -- already open.
--- Otherwise, behaves like `ui._print()`.
+-- Otherwise, behaves like `ui.print_to()`.
 -- @param type String type of print buffer.
 -- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
 --   They will be printed as tab-separated values.
--- @see _print
--- @name _print_silent
-function ui._print_silent(type, ...) _print(assert_type(type, 'string', 1), true, true, ...) end
+-- @see print_to
+-- @name print_silent_to
+function ui.print_silent_to(type, ...) print_to(assert_type(type, 'string', 1), true, true, ...) end
 
 ---
 -- Prints the given value(s) to the message buffer, along with a trailing newline.
@@ -104,7 +104,7 @@ function ui._print_silent(type, ...) _print(assert_type(type, 'string', 1), true
 -- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
 --   They will be printed as tab-separated values.
 -- @name print
-function ui.print(...) ui._print(_L['[Message Buffer]'], ...) end
+function ui.print(...) ui.print_to(_L['[Message Buffer]'], ...) end
 
 ---
 -- Silently prints the given value(s) to the message buffer if it is already open.
@@ -112,13 +112,13 @@ function ui.print(...) ui._print(_L['[Message Buffer]'], ...) end
 -- @param ... Message or values to print.
 -- @see print
 -- @name print_silent
-function ui.print_silent(...) ui._print_silent(_L['[Message Buffer]'], ...) end
+function ui.print_silent(...) ui.print_silent_to(_L['[Message Buffer]'], ...) end
 
 -- Helper function for printing to the output buffer.
 -- @see ui.output
 -- @see ui.output_silent
-local function _output(silent, ...)
-  local buffer = _print(_L['[Output Buffer]'], silent, false, ...)
+local function output_to(silent, ...)
+  local buffer = print_to(_L['[Output Buffer]'], silent, false, ...)
   if buffer.lexer_language ~= 'output' then buffer:set_lexer('output') end
   buffer:colorize(buffer:position_from_line(buffer:line_from_position(buffer.end_styled)), -1)
 end
@@ -130,7 +130,7 @@ end
 -- @param ... Output to print.
 -- @see output_silent
 -- @name output
-function ui.output(...) _output(false, ...) end
+function ui.output(...) output_to(false, ...) end
 
 ---
 -- Silently prints the given value(s) to the output buffer if it is already open.
@@ -138,7 +138,7 @@ function ui.output(...) _output(false, ...) end
 -- @param ... Output to print.
 -- @see output
 -- @name output_silent
-function ui.output_silent(...) _output(true, ...) end
+function ui.output_silent(...) output_to(true, ...) end
 
 if WIN32 and not CURSES then
   -- Normally, GTK's file chooser dialogs return filenames encoded in _CHARSET, but this is
@@ -155,25 +155,6 @@ if WIN32 and not CURSES then
     return filename and filename:iconv(_CHARSET, 'UTF-8') or nil
   end
 end
-
--- Legacy.
--- LuaFormatter off
-local type_map={msgbox='message',ok_msgbox='message',yesno_msgbox='message',inputbox='input',standard_inputbox='input',secure_inputbox='input',secure_standard_inputbox='input',fileselect='open',filesave='save',progressbar='progress',filteredlist='list'}
-local option_map={with_directory='dir',with_file='file',select_multiple='multiple',select_only_directories='only_dirs'}
--- LuaFormatter on
-setmetatable(ui.dialogs, {
-  __index = function(_, k)
-    return function(options, f)
-      local new_type, new_options = type_map[k], {return_button = true}
-      if not new_type then error('Unsupported dialog', 2) end
-      for k, v in pairs(options) do new_options[option_map[k] or k] = v end
-      if k == 'progressbar' then new_options.work = f end
-      local value, button = rawget(ui.dialogs, new_type)(new_options)
-      if button then return button, value end
-      return value
-    end
-  end
-})
 
 local buffers_zorder = {}
 

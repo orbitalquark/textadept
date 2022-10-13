@@ -7572,45 +7572,6 @@ The title text of Textadept's window.
 
 ### Functions defined by `ui`
 
-<a id="ui._print"></a>
-#### `ui._print`(*type, ...*)
-
-Prints the given value(s) to the buffer of string type *type*, along with a trailing newline.
-Opens a new buffer for printing to if necessary. If the print buffer is already open in a
-view, the value(s) is printed to that view. Otherwise the view is split (unless `ui.tabs`
-is `true`) and the print buffer is displayed before being printed to.
-
-Parameters:
-
-* *`type`*: String type of print buffer.
-* *`...`*: Message or values to print. Lua's `tostring()` function is called for each value.
-  They will be printed as tab-separated values.
-
-Usage:
-
-* `ui._print(_L['[Message Buffer]'], message)`
-
-See also:
-
-* [`ui._print_silent`](#ui._print_silent)
-
-<a id="ui._print_silent"></a>
-#### `ui._print_silent`(*type, ...*)
-
-Silently prints the given value(s) to the buffer of string type *type* if that buffer is
-already open.
-Otherwise, behaves like `ui._print()`.
-
-Parameters:
-
-* *`type`*: String type of print buffer.
-* *`...`*: Message or values to print. Lua's `tostring()` function is called for each value.
-  They will be printed as tab-separated values.
-
-See also:
-
-* [`ui._print`](#ui._print)
-
 <a id="ui.get_split_table"></a>
 #### `ui.get_split_table`()
 
@@ -7762,6 +7723,45 @@ Parameters:
 See also:
 
 * [`ui.print`](#ui.print)
+
+<a id="ui.print_silent_to"></a>
+#### `ui.print_silent_to`(*type, ...*)
+
+Silently prints the given value(s) to the buffer of string type *type* if that buffer is
+already open.
+Otherwise, behaves like `ui.print_to()`.
+
+Parameters:
+
+* *`type`*: String type of print buffer.
+* *`...`*: Message or values to print. Lua's `tostring()` function is called for each value.
+  They will be printed as tab-separated values.
+
+See also:
+
+* [`ui.print_to`](#ui.print_to)
+
+<a id="ui.print_to"></a>
+#### `ui.print_to`(*type, ...*)
+
+Prints the given value(s) to the buffer of string type *type*, along with a trailing newline.
+Opens a new buffer for printing to if necessary. If the print buffer is already open in a
+view, the value(s) is printed to that view. Otherwise the view is split (unless `ui.tabs`
+is `true`) and the print buffer is displayed before being printed to.
+
+Parameters:
+
+* *`type`*: String type of print buffer.
+* *`...`*: Message or values to print. Lua's `tostring()` function is called for each value.
+  They will be printed as tab-separated values.
+
+Usage:
+
+* `ui.print_to(_L['[Message Buffer]'], message)`
+
+See also:
+
+* [`ui.print_silent_to`](#ui.print_silent_to)
 
 <a id="ui.switch_buffer"></a>
 #### `ui.switch_buffer`(*zorder*)

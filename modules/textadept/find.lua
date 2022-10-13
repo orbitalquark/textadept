@@ -310,7 +310,7 @@ function M.find_in_files(dir, filter)
   end
 
   if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
-  ui._print(_L['[Files Found Buffer]'],
+  ui.print_to(_L['[Files Found Buffer]'],
     string.format('%s %s\n%s %s\n%s %s', _L['Find:']:gsub('_', ''), M.find_entry_text,
       _L['Directory:'], dir, _L['Filter:']:gsub('_', ''),
       type(filter) == 'string' and filter or table.concat(filter, ',')))
@@ -331,7 +331,7 @@ function M.find_in_files(dir, filter)
     end
   }
   if stopped then
-    ui._print(_L['[Files Found Buffer]'], _L['Find in Files aborted'] .. '\n')
+    ui.print_to(_L['[Files Found Buffer]'], _L['Find in Files aborted'] .. '\n')
     return
   end
 
@@ -376,7 +376,7 @@ function M.find_in_files(dir, filter)
   }
   buffer:close(true) -- temporary buffer
   local status = stopped and _L['Find in Files aborted'] or not found and _L['No results found']
-  ui._print(_L['[Files Found Buffer]'], status and status .. '\n' or '')
+  ui.print_to(_L['[Files Found Buffer]'], status and status .. '\n' or '')
 end
 
 local P, V, C, upper, lower = lpeg.P, lpeg.V, lpeg.C, string.upper, string.lower
