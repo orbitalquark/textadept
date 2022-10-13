@@ -7,10 +7,11 @@ CXXFLAGS := -Os -std=c++17
 WGET = wget -O $@
 
 # Define these once for speed and reference them later.
+gtk_flags := -Wno-deprecated-declarations
 ifdef GTK2
   gtk_flags_linux := $(shell pkg-config --cflags gtk+-2.0 gmodule-2.0)
 else
-  gtk_flags_linux := $(shell pkg-config --cflags gtk+-3.0 gmodule-2.0) -Wno-deprecated-declarations
+  gtk_flags_linux := $(shell pkg-config --cflags gtk+-3.0 gmodule-2.0)
 endif
 glib_flags_linux := $(shell pkg-config --cflags glib-2.0)
 curses_flags_linux := $(shell pkg-config --silence-errors --cflags ncursesw || \
@@ -189,7 +190,7 @@ $(linux_objs): CC := cc
 $(linux_objs): CXX := c++
 endif
 $(linux_objs): lua_flags += -DLUA_USE_LINUX
-$(linux_objs): gtk_flags := $(gtk_flags_linux)
+$(linux_objs): gtk_flags += $(gtk_flags_linux)
 $(linux_objs): glib_flags := $(glib_flags_linux)
 $(linux_objs): curses_flags := $(curses_flags_linux)
 
@@ -200,7 +201,7 @@ $(win_objs): CFLAGS += -mms-bitfields
 $(win_objs): CXXFLAGS += -mms-bitfields
 $(win_objs): WINDRES := x86_64-w64-mingw32-windres
 $(win_objs): lua_flags += -DLUA_BUILD_AS_DLL -DLUA_LIB
-$(win_objs): gtk_flags := $(gtk_flags_win)
+$(win_objs): gtk_flags += $(gtk_flags_win)
 $(win_objs): glib_flags := $(glib_flags_win)
 $(win_objs): curses_flags := -DLIBICONV_STATIC -Ipdcurses
 
@@ -210,7 +211,7 @@ $(osx_objs): CXX := x86_64-apple-darwin17-c++
 $(osx_objs): CFLAGS += -mdynamic-no-pic
 $(osx_objs): CXXFLAGS += -mdynamic-no-pic -stdlib=libc++ -Wno-register
 $(osx_objs): lua_flags += -DLUA_USE_MACOSX
-$(osx_objs): gtk_flags := $(gtk_flags_osx)
+$(osx_objs): gtk_flags += $(gtk_flags_osx)
 $(osx_objs): glib_flags := $(glib_flags_osx)
 
 # Executables.
