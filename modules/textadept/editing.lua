@@ -381,7 +381,7 @@ end
 -- @name goto_line
 function M.goto_line(line)
   if not assert_type(line, 'number/nil', 1) then
-    line = tonumber(ui.dialogs.input{title = _L['Go to line number:']})
+    line = tonumber(ui.dialogs.input{title = _L['Go to line number:']} or nil)
     if not line then return end
   end
   view:ensure_visible_enforce_policy(line)
