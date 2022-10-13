@@ -43,7 +43,7 @@ static bool init_lua(int, char **);
 
 // Shows the given error in an error message dialog.
 static void show_error(const char *title, const char *message) {
-  DialogOptions opts = {title, message, "dialog-error"};
+  DialogOptions opts = {title, message, "dialog-error", {"OK", NULL, NULL}};
   lua_pop(lua, message_dialog(opts, lua));
 }
 
