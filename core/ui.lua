@@ -220,7 +220,7 @@ function ui.switch_buffer(zorder)
     utf8_list[#utf8_list + 1] = (buffer.modify and '*' or '') .. basename
     utf8_list[#utf8_list + 1] = filename
   end
-  local _, i = ui.dialogs.list{title = _L['Switch Buffers'], columns = columns, items = utf8_list}
+  local i = ui.dialogs.list{title = _L['Switch Buffers'], columns = columns, items = utf8_list}
   if i then view:goto_buffer(buffers[not zorder and i or i + 1]) end
 end
 

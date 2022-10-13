@@ -724,7 +724,6 @@ function test_file_io_quick_open_interactive()
 
   assert_raises(function() io.quick_open(1) end, 'string/table/nil expected, got number')
   assert_raises(function() io.quick_open(_HOME, true) end, 'string/table/nil expected, got boolean')
-  assert_raises(function() io.quick_open(_HOME, nil, 1) end, 'table/nil expected, got number')
 end
 
 function test_keys_keychain()
@@ -1042,9 +1041,12 @@ function test_ui_dialogs_message_interactive()
 end
 
 function test_ui_dialogs_input_interactive()
-  local button, text = ui.dialogs.input{title = 'Title', text = 'foo'}
-  assert_equal(type(button), 'number')
+  local text = ui.dialogs.input{title = 'Title', text = 'foo'}
   assert_equal(text, 'foo')
+
+  text, button = ui.dialogs.input{title = 'Title', text = 'bar', return_button = true}
+  assert_equal(text, 'bar')
+  assert_equal(type(button), 'number')
 end
 
 function test_ui_dialogs_open_save_interactive()
@@ -1087,17 +1089,23 @@ function test_ui_dialogs_progress_interactive()
   ui.dialogs.progress{work = function() error('foo') end}
   assert(errmsg:find('foo'), 'error handler did not run')
   events.disconnect(events.ERROR, handler)
+
+  assert_raises(function() ui.dialogs.progress{} end, "'work' function expected")
 end
 
 function test_ui_dialogs_list_interactive()
-  local _, i = ui.dialogs.list{title = 'Title', items = {'bar', 'baz', 'quux'}, text = 'b z'}
+  local i = ui.dialogs.list{title = 'Title', items = {'bar', 'baz', 'quux'}, text = 'b z'}
   assert_equal(i, 2)
-  local _, i = ui.dialogs.list{
+  local i, button = ui.dialogs.list{
     columns = {'1', '2'}, items = {'foo', 'foobar', 'bar', 'barbaz', 'baz', 'bazfoo'},
     search_column = 2, text = 'baz', multiple = true, button1 = _L['OK'], button2 = _L['Cancel'],
-    button3 = 'Other'
+    button3 = 'Other', return_button = true
   }
   assert_equal(i, {2})
+  assert_equal(type(button), 'number')
+
+  assert_raises(function() ui.dialogs.list{} end, "non-empty 'items' table expected")
+  assert_raises(function() ui.dialogs.list{search_column = 2} end, "invalid 'search_column'")
 end
 
 function test_ui_dialogs_colorselect_interactive_legacy()
@@ -1128,9 +1136,10 @@ function test_ui_dialogs_filesave_fileselect_interactive_legacy()
 end
 
 function test_ui_dialogs_filteredlist_interactive_legacy()
-  local _, i = ui.dialogs.filteredlist{
+  local button, i = ui.dialogs.filteredlist{
     informative_text = 'foo', columns = '1', items = {'bar', 'baz', 'quux'}, text = 'b z'
   }
+  assert_equal(type(button), 'number')
   assert_equal(i, 2)
   local _, text = ui.dialogs.filteredlist{
     columns = {'1', '2'}, items = {'foo', 'foobar', 'bar', 'barbaz', 'baz', 'bazfoo'},
@@ -1138,7 +1147,7 @@ function test_ui_dialogs_filteredlist_interactive_legacy()
     select_multiple = true, button1 = _L['OK'], button2 = _L['Cancel'], button3 = 'Other',
     width = ui.size[1] / 2
   }
-  --assert_equal(text, {'barbaz'})
+  -- assert_equal(text, {'barbaz'})
   assert_equal(text, {2})
 end
 
@@ -1156,7 +1165,7 @@ function test_ui_dialogs_inputbox_interactive_legacy()
     assert_equal(type(button), 'number')
     assert_equal(text, 'foo')
     button, text = ui.dialogs[inputbox]{text = 'foo', string_output = true, no_cancel = true}
-    --assert_equal(type(button), 'string')
+    -- assert_equal(type(button), 'string')
     assert_equal(text, 'foo')
   end
 end
@@ -1168,10 +1177,8 @@ function test_ui_dialogs_msgbox_interactive_legacy()
     print('Running ' .. msgbox)
     local button = ui.dialogs[msgbox]{icon = icons[i]}
     assert_equal(type(button), 'number')
-    button = ui.dialogs[msgbox]{
-      icon = 'textadept', string_output = true, no_cancel = true
-    }
-    --assert_equal(type(button), 'string')
+    button = ui.dialogs[msgbox]{icon = 'textadept', string_output = true, no_cancel = true}
+    -- assert_equal(type(button), 'string')
   end
 end
 
@@ -1212,8 +1219,8 @@ function test_ui_dialogs_progressbar_interactive_legacy()
   events.connect(events.ERROR, handler, 1)
   ui.dialogs.progressbar({}, function() error('foo') end)
   assert(errmsg:find('foo'), 'error handler did not run')
-  --ui.dialogs.progressbar({}, function() return true end)
-  --assert(errmsg:find('invalid return values'), 'error handler did not run')
+  -- ui.dialogs.progressbar({}, function() return true end)
+  -- assert(errmsg:find('invalid return values'), 'error handler did not run')
   events.disconnect(events.ERROR, handler)
 end
 
@@ -4880,7 +4887,7 @@ function test_debugger_lua()
   run_and_wait(debugger.set_watch, 'foo', true) -- no break
   events.emit(events.MARGIN_CLICK, 2, buffer.current_pos, 0) -- simulate breakpoint margin click
   run_and_wait(debugger.continue)
-  assert_equal(buffer:line_from_position(buffer.current_pos), 7)
+  assert_equal(buffer:line_from_position(buffer.current_pos), 7) -- TODO: test_debugger_interactive causes failure here
   assert(msg_buf:get_text():find('\n"foo"%s2\n'), 'set breakpoint failed')
   assert(not msg_buf:get_text():find('\n"foo"%s3\n'), 'set breakpoint failed')
   events.emit(events.MARGIN_CLICK, 2, buffer.current_pos, 0) -- simulate breakpoint margin click; clear
