@@ -745,16 +745,24 @@ static void refilter(GtkEditable *_, void *view) {
     select_first_item(view);
 }
 
+// Signal for a treeview keypress.
+// This is needed to avoid triggering "row-activate" when pressing Enter, which collapses a
+// multiple-selection.
+static int list_keypress(GtkWidget *_, GdkEventKey *event, void *dialog) {
+  if (event->keyval == GDK_KEY_Return) return (g_signal_emit_by_name(dialog, "response", 1), true);
+  return false;
+}
+
 // Signal for an Enter keypress or double-click in the treeview.
 static void row_activated(GtkTreeView *_, GtkTreePath *__, GtkTreeViewColumn *___, void *dialog) {
   g_signal_emit_by_name(dialog, "response", 1);
 }
 
-// Returns the actual model index of the given selected item from its filtered model.
-static int get_index(GtkTreePath *path, GtkTreeModel *model) {
+// Appends the selected row to the Lua table at the top of the Lua stack.
+static void add_selected_row(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *_, void *__) {
   path = gtk_tree_model_filter_convert_path_to_child_path(GTK_TREE_MODEL_FILTER(model), path);
   int index = gtk_tree_path_get_indices(path)[0];
-  return (gtk_tree_path_free(path), index);
+  lua_pushnumber(lua, index + 1), lua_rawseti(lua, -2, lua_rawlen(lua, -2) + 1);
 }
 
 int list_dialog(DialogOptions opts, lua_State *L) {
@@ -798,6 +806,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   gtk_tree_view_set_search_entry(GTK_TREE_VIEW(treeview), GTK_ENTRY(entry));
   gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(treeview), matches, NULL, NULL);
   g_signal_connect(entry, "changed", G_CALLBACK(refilter), treeview);
+  g_signal_connect(treeview, "key-press-event", G_CALLBACK(list_keypress), dialog);
   g_signal_connect(treeview, "row-activated", G_CALLBACK(row_activated), dialog);
   GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
   if (opts.multiple) gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
@@ -810,10 +819,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   if (cancelled || !gtk_tree_selection_count_selected_rows(selection))
     return (gtk_widget_destroy(dialog), 0);
   lua_newtable(L); // note: will be replaced by a single result if opts.multiple is false
-  GList *items = gtk_tree_selection_get_selected_rows(selection, &filter), *item = items;
-  for (int i = 1; item; item = item->next, i++)
-    lua_pushnumber(L, get_index(item->data, filter) + 1), lua_rawseti(L, -2, i);
-  g_list_free_full(items, (GDestroyNotify)gtk_tree_path_free);
+  gtk_tree_selection_selected_foreach(selection, add_selected_row, NULL);
   if (!opts.multiple) lua_rawgeti(L, -1, 1), lua_replace(L, -2); // single result
   if (opts.return_button) lua_pushinteger(L, button);
   return (gtk_widget_destroy(dialog), !opts.return_button ? 1 : 2);
