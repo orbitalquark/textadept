@@ -51,6 +51,7 @@ function input(options) end
 --   * `dir`: The initial filesystem directory to show.
 --   * `file`: The initially selected filename. This option requires `dir` to be set.
 --   * `multiple`: Allow the user to select multiple files. The default value is `false`.
+--     The terminal version does not support this option.
 --   * `only_dirs`: Only allow the user to select directories. The default value is `false`.
 -- @return filename, list of filenames, or nil
 -- @usage ui.dialogs.open{title = 'Open File', dir = _HOME, multiple = true}
@@ -103,6 +104,7 @@ function progress(options) end
 --   * `button2`: The middle button's label. The default value is `_L['Cancel']`.
 --   * `button3`: The left-most button's label. This option requires `button2` to be set.
 --   * `multiple`: Allow the user to select multiple items. The default value is `false`.
+--     The terminal version does not support this option.
 --   * `search_column`: The column number to filter the input text against. The default value is
 --     `1`.
 --   * `return_button`: Also return the index of the selected button. The default value is `false`.

@@ -55,10 +55,15 @@ M.MARK_ERROR = _SCINTILLA.next_marker_number()
 local run_events = {'compile_output', 'run_output', 'build_output', 'test_output'}
 for _, event in ipairs(run_events) do events[event:upper()] = event end
 
--- Keep track of the last process spawned in order to kill it if requested, and keep track of
--- the view the process was spawned from in order to jump to messages (which are displayed in
--- a split view) in the original view.
-local proc, preferred_view
+-- Table of currently running spawned processes.
+-- Each entry is a table that contains 'proc' and 'command' fields that describe the process.
+-- @class table
+-- @name procs
+local procs = {}
+
+-- Keep track of the view the most recent process was spawned from in order to jump to messages
+-- (which are displayed in a split view) in the original view.
+local preferred_view
 
 -- Returns whether or not the given buffer is the output buffer.
 local function is_out_buf(buf) return buf._type == _L['[Output Buffer]'] end
@@ -111,16 +116,17 @@ local function run_command(label, command, dir, event, commands, key, macros)
     command_entry_f[id] = function(command, dir, env, event, commands, key, macros)
       if command:find('^%s*$') then return end
       if not is_func then commands[key] = command end -- update if not originally a function
+      if macros then command = command:gsub('%%%a', macros) end
       preferred_view = view
       local function emit(output) events.emit(event, output) end
       events.emit(event, string.format('> cd %s\n', dir:gsub('[/\\]$', '')))
       events.emit(event, string.format('> %s\n', command:iconv('UTF-8', _CHARSET)))
       local args = {
-        macros and command:gsub('%%%a', macros) or command, dir, emit, emit,
+        command, dir, emit, emit,
         function(status) events.emit(event, string.format('> exit status: %d\n', status)) end
       }
       if env then table.insert(args, 3, env) end
-      proc = assert(os.spawn(table.unpack(args)))
+      procs[#procs + 1] = {proc = assert(os.spawn(table.unpack(args))), command = args[1]}
     end
   end
   ui.command_entry.run(label, command_entry_f[id], 'bash', command, working_dir or dir, env, event,
@@ -320,11 +326,22 @@ end
 
 ---
 -- Stops the currently running process, if any.
+-- If there is more than one running process, the user is prompted to select the process to stop.
+-- Processes in the list are sorted from longest lived at the top to shortest lived on the bottom.
 -- @name stop
-function M.stop() if proc then proc:kill() end end
+function M.stop()
+  for i = #procs, 1, -1 do if procs[i].proc:status() ~= 'running' then table.remove(procs, i) end end
+  if #procs == 0 then return end
+  local utf8_cmds = {}
+  for _, proc in ipairs(procs) do utf8_cmds[#utf8_cmds + 1] = proc.command:iconv('UTF-8', _CHARSET) end
+  local selected = #procs == 1 and {1} or
+    ui.dialogs.list{title = _L['Stop Process'], items = utf8_cmds, multiple = true}
+  if selected then for _, i in ipairs(selected) do procs[i].proc:kill() end end
+end
 
 -- Send line as input to process stdin on return.
 events.connect(events.CHAR_ADDED, function(code)
+  local proc = #procs > 0 and procs[#procs].proc or nil
   if code == string.byte('\n') and proc and proc:status() == 'running' and is_out_buf(buffer) then
     local line_num = buffer:line_from_position(buffer.current_pos) - 1
     proc:write(buffer:get_line(line_num))

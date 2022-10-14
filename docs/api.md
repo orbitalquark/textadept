@@ -219,8 +219,8 @@ The current [view](#view).
 ---
 
 Map of all messages used by Textadept to their localized form.
-If the table does not contain the localized version of a given message, it returns a string
-that starts with "No Localization:" via a metamethod.
+If the localized version of a given message does not exist, the non-localized message is
+returned. Use `rawget()` to check if a localization exists.
 Note: the terminal version ignores any "_" mnemonics the GUI version would use.
 
 ---
@@ -7171,6 +7171,8 @@ See also:
 #### `textadept.run.stop`()
 
 Stops the currently running process, if any.
+If there is more than one running process, the user is prompted to select the process to stop.
+Processes in the list are sorted from longest lived at the top to shortest lived on the bottom.
 
 <a id="textadept.run.test"></a>
 #### `textadept.run.test`(*dir*)
@@ -7950,6 +7952,7 @@ Parameters:
   * `button2`: The middle button's label. The default value is `_L['Cancel']`.
   * `button3`: The left-most button's label. This option requires `button2` to be set.
   * `multiple`: Allow the user to select multiple items. The default value is `false`.
+    The terminal version does not support this option.
   * `search_column`: The column number to filter the input text against. The default value is
     `1`.
   * `return_button`: Also return the index of the selected button. The default value is `false`.
@@ -8008,6 +8011,7 @@ Parameters:
   * `dir`: The initial filesystem directory to show.
   * `file`: The initially selected filename. This option requires `dir` to be set.
   * `multiple`: Allow the user to select multiple files. The default value is `false`.
+    The terminal version does not support this option.
   * `only_dirs`: Only allow the user to select directories. The default value is `false`.
 
 Usage:

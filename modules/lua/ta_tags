@@ -940,7 +940,7 @@ start_styling	_HOME/core/.buffer.luadoc	/^function start_styling(buffer, positio
 starts_line	_HOME/lexers/lexer.lua	/^function M.starts_line(patt, allow_indent)$/;"	f	class:lexer
 status	_HOME/core/.os.luadoc	/^function spawn_proc:status() end$/;"	f	class:spawn_proc
 statusbar_text	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
-stop	_HOME/modules/textadept/run.lua	/^function M.stop() if proc then proc:kill() end end$/;"	f	class:textadept.run
+stop	_HOME/modules/textadept/run.lua	/^function M.stop()$/;"	f	class:textadept.run
 string	_HOME/core/.iconv.luadoc	/^module('string')$/;"	m	
 strip_trailing_spaces	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	F	class:textadept.editing
 stuttered_page_down	_HOME/core/.buffer.luadoc	/^function stuttered_page_down(buffer) end$/;"	f	class:buffer
