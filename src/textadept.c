@@ -686,6 +686,120 @@ static int iconv_lua(lua_State *L) {
   return (lua_concat(L, n), free(outbuf), iconv_close(cd), 1);
 }
 
+void process_output(Process *proc, const char *buf, size_t len, bool is_stdout) {
+  lua_rawgetp(lua, LUA_REGISTRYINDEX, proc);
+  lua_getiuservalue(lua, -1, is_stdout ? 1 : 2), lua_replace(lua, -2);
+  if (lua_pushlstring(lua, buf, len), lua_pcall(lua, 1, 0, 0) != LUA_OK)
+    show_error("Process Output Error", lua_tostring(lua, -1)), lua_pop(lua, 1);
+}
+
+void process_exited(Process *proc, int code) {
+  lua_rawgetp(lua, LUA_REGISTRYINDEX, proc);
+  if (lua_getiuservalue(lua, -1, 3)) {
+    if ((lua_pushinteger(lua, code), lua_pcall(lua, 1, 0, 0)) != LUA_OK)
+      show_error("Process Exit Error", lua_tostring(lua, -1)), lua_pop(lua, 1);
+  } else
+    lua_pop(lua, 1); // nil
+  lua_pushnil(lua), lua_replace(lua, -2), lua_rawsetp(lua, LUA_REGISTRYINDEX, proc); // allow GC
+}
+
+// `proc:status()` Lua method.
+static int proc_status(lua_State *L) {
+  Process *proc = luaL_checkudata(L, 1, "ta_spawn");
+  return (lua_pushstring(L, is_process_running(proc) ? "running" : "terminated"), 1);
+}
+
+// `proc:wait()` Lua method.
+static int proc_wait(lua_State *L) {
+  Process *proc = luaL_checkudata(L, 1, "ta_spawn");
+  if (is_process_running(proc)) wait_process(luaL_checkudata(L, 1, "ta_spawn"));
+  return (lua_pushinteger(L, get_process_exit_status(proc)), 1);
+}
+
+// `proc:read()` Lua method.
+static int proc_read(lua_State *L) {
+  Process *proc = luaL_checkudata(L, 1, "ta_spawn");
+  luaL_argcheck(L, is_process_running(proc), 1, "process terminated");
+  const char *p = luaL_optstring(L, 2, "l");
+  if (*p == '*') p++; // skip optional '*' (for compatibility)
+  luaL_argcheck(L, *p == 'l' || *p == 'L' || *p == 'a' || lua_isnumber(L, 2), 2, "invalid option");
+  size_t len = lua_tointeger(L, 2);
+  const char *error;
+  int code;
+  char *buf = read_process_output(proc, !lua_isnumber(L, 2) ? *p : 'n', &len, &error, &code);
+  if (!buf && error) return (lua_pushnil(L), lua_pushinteger(L, code), lua_pushstring(L, error), 3);
+  return (buf ? (lua_pushlstring(L, buf, len), free(buf)) : lua_pushnil(L), 1);
+}
+
+// `proc:write()` Lua method.
+static int proc_write(lua_State *L) {
+  Process *proc = luaL_checkudata(L, 1, "ta_spawn");
+  luaL_argcheck(L, is_process_running(proc), 1, "process terminated");
+  for (int i = 2; i <= lua_gettop(L); i++) {
+    size_t len;
+    const char *s = luaL_checklstring(L, i, &len);
+    write_process_input(proc, s, len);
+  }
+  return 0;
+}
+
+// `proc:close()` Lua method.
+static int proc_close(lua_State *L) {
+  Process *proc = luaL_checkudata(L, 1, "ta_spawn");
+  luaL_argcheck(L, is_process_running(proc), 1, "process terminated");
+  return (close_process_input(proc), 0);
+}
+
+// `proc:kill()` Lua method.
+static int proc_kill(lua_State *L) {
+  return (kill_process(luaL_checkudata(L, 1, "ta_spawn"), lua_tointeger(L, 2)), 0);
+}
+
+// `os.spawn()` Lua function.
+static int spawn_lua(lua_State *L) {
+  int narg = 1, top = lua_gettop(L);
+  const char *cmd = luaL_checkstring(L, narg++);
+  const char *cwd = lua_isstring(L, narg) ? lua_tostring(L, narg++) : NULL;
+  // Replace optional environment table with a pure "key=value" list for platform processing.
+  int envi = lua_istable(L, narg) ? narg++ : 0;
+  if (envi) {
+    lua_newtable(L);
+    for (lua_pushnil(L); lua_next(L, envi); lua_pop(L, 1)) {
+      if (!lua_isstring(L, -2) || !lua_isstring(L, -1)) continue;
+      if (lua_type(L, -2) == LUA_TSTRING)
+        lua_pushvalue(L, -2), lua_pushliteral(L, "="), lua_pushvalue(L, -3), lua_concat(L, 3),
+          lua_replace(L, -2); // construct "KEY=VALUE"
+      lua_pushvalue(L, -1), lua_rawseti(L, -4, lua_rawlen(L, -4) + 1);
+    }
+    lua_replace(L, envi);
+  }
+
+  // Create process object to be returned and link callback functions from optional function params.
+  Process *proc = lua_newuserdatauv(L, process_size(), 3);
+  for (int i = narg; i <= top && i < narg + 3; i++)
+    luaL_argcheck(L, lua_isfunction(L, i) || lua_isnil(L, i), i, "function or nil expected"),
+      lua_pushvalue(L, i), lua_setiuservalue(L, -2, i - narg + 1);
+  if (luaL_newmetatable(L, "ta_spawn")) {
+    lua_pushcfunction(L, proc_status), lua_setfield(L, -2, "status");
+    lua_pushcfunction(L, proc_wait), lua_setfield(L, -2, "wait");
+    lua_pushcfunction(L, proc_read), lua_setfield(L, -2, "read");
+    lua_pushcfunction(L, proc_write), lua_setfield(L, -2, "write");
+    lua_pushcfunction(L, proc_close), lua_setfield(L, -2, "close");
+    lua_pushcfunction(L, proc_kill), lua_setfield(L, -2, "kill");
+    lua_pushvalue(L, -1), lua_setfield(L, -2, "__index");
+  }
+  lua_setmetatable(L, -2);
+
+  // Spawn the process and return it.
+  top = lua_gettop(L);
+  bool monitor_stdout = lua_getiuservalue(L, -1, 1), monitor_stderr = lua_getiuservalue(L, -2, 2);
+  const char *error = NULL;
+  bool ok = spawn(L, proc, top, cmd, cwd, envi, monitor_stdout, monitor_stderr, &error);
+  if (lua_settop(L, top), !ok)
+    return (lua_pushnil(L), lua_pushfstring(L, "%s: %s", lua_tostring(L, 1), error), 2);
+  return ((lua_pushvalue(L, -1), lua_rawsetp(L, LUA_REGISTRYINDEX, proc)), 1); // prevent GC
+}
+
 // Initializes or re-initializes the Lua state and with the given command-line arguments.
 // Populates the state with global variables and functions, runs the 'core/init.lua' script,
 // and returns `true` on success.
@@ -750,6 +864,8 @@ static bool init_lua(int argc, char **argv) {
   lua_pushcfunction(L, add_timeout_lua), lua_setglobal(L, "timeout");
 
   lua_getglobal(L, "string"), lua_pushcfunction(L, iconv_lua), lua_setfield(L, -2, "iconv"),
+    lua_pop(L, 1);
+  lua_getglobal(L, "os"), lua_pushcfunction(L, spawn_lua), lua_setfield(L, -2, "spawn"),
     lua_pop(L, 1);
 
   lua_getfield(L, LUA_REGISTRYINDEX, ARG), lua_setglobal(L, "arg");

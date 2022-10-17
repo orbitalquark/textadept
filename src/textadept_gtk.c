@@ -5,7 +5,11 @@
 
 #include "lauxlib.h"
 
-#if _WIN32
+#if __linux__
+#include <signal.h>
+#include <sys/wait.h>
+#elif _WIN32
+#include <fcntl.h>
 #include <windows.h>
 #define main main_ // entry point should be WinMain
 #endif
@@ -681,7 +685,7 @@ static void update(double percent, const char *text, void *bar) {
 
 // Signal to update the progressbar by calling the provided work Lua function.
 static int do_work(void *data_) {
-  ProgressData *data = (ProgressData *)data_;
+  ProgressData *data = data_;
   bool repeat = data->work(update, data->bar);
   if (!repeat) g_signal_emit_by_name(data->dialog, "response", 0);
   while (gtk_events_pending()) gtk_main_iteration();
@@ -824,6 +828,201 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   if (opts.return_button) lua_pushinteger(L, button);
   return (gtk_widget_destroy(dialog), !opts.return_button ? 1 : 2);
 }
+
+// Contains information about an active process.
+struct Process {
+#if !_WIN32
+  int pid, fstdin;
+#else
+  HANDLE pid, fstdin;
+#endif
+  int fstdout, fstderr, exit_status;
+  GIOChannel *cstdout, *cstderr;
+};
+static inline struct Process *PROCESS(struct Process *proc) { return proc; }
+
+// Signal that channel output is available for reading.
+static int read_channel(GIOChannel *source, GIOCondition cond, void *proc) {
+  if (!PROCESS(proc)->pid || !(cond & G_IO_IN)) return false;
+  char buf[BUFSIZ];
+  size_t len = 0;
+  do {
+    int status = g_io_channel_read_chars(source, buf, BUFSIZ, &len, NULL);
+    if (status == G_IO_STATUS_NORMAL && len > 0)
+      process_output(PROCESS(proc), buf, len, source == PROCESS(proc)->cstdout);
+  } while (len == BUFSIZ);
+  return PROCESS(proc)->pid && !(cond & G_IO_HUP);
+}
+
+// Creates and returns a new channel for reading from the given file descriptor. The channel
+// can optionally monitor that file descriptor for output.
+static GIOChannel *new_channel(int fd, Process *proc, bool watch) {
+#if !_WIN32
+  GIOChannel *channel = g_io_channel_unix_new(fd);
+#else
+  GIOChannel *channel = g_io_channel_win32_new_fd(fd);
+#endif
+  g_io_channel_set_encoding(channel, NULL, NULL), g_io_channel_set_buffered(channel, false);
+  if (watch)
+    g_io_add_watch(channel, G_IO_IN | G_IO_HUP, read_channel, proc), g_io_channel_unref(channel);
+  return channel;
+}
+
+// Cleans up after the process finished executing and returned the given status code.
+static void cleanup_process(struct Process *proc, int status) {
+  g_source_remove_by_user_data(proc); // disconnect stdout watch
+  g_source_remove_by_user_data(proc); // disconnect stderr watch
+  g_source_remove_by_user_data(proc); // disconnect child watch
+  g_spawn_close_pid(proc->pid), proc->pid = 0;
+#if !_WIN32
+  close(proc->fstdin), close(proc->fstdout), close(proc->fstderr);
+#else
+  CloseHandle(proc->fstdin), _close(proc->fstdout), _close(proc->fstderr);
+#endif
+  process_exited(proc, proc->exit_status = status);
+}
+
+// Signal that the child process finished.
+static void proc_exited(GPid _, int status, void *proc) { cleanup_process(proc, status); }
+
+bool spawn(lua_State *L, Process *proc_, int index, const char *cmd, const char *cwd, int envi,
+  bool monitor_stdout, bool monitor_stderr, const char **error) {
+  struct Process *proc = proc_;
+#if !_WIN32
+  // Construct argv from cmd and envp from envi.
+  int envc = envi ? lua_rawlen(L, envi) : 0;
+  char **argv, *envp[envc + 1];
+  GError *err = NULL;
+  if (!g_shell_parse_argv(cmd, NULL, &argv, &err)) return (*error = err->message, false);
+  if (lua_checkstack(L, envc), envi)
+    for (int i = (lua_pushnil(L), 0); lua_next(L, envi); lua_pop(L, 1), i++)
+      envp[i] = (char *)(lua_pushvalue(L, -1), lua_insert(L, -3), lua_tostring(L, -3));
+  envp[envc] = NULL;
+  // Spawn the process with pipes for stdin, stdout, and stderr.
+  bool ok = g_spawn_async_with_pipes(cwd, argv, envi ? envp : NULL,
+    G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, NULL, NULL, &proc->pid, &proc->fstdin,
+    &proc->fstdout, &proc->fstderr, &err);
+  if (g_strfreev(argv), !ok) return (*error = err->message, false);
+#else
+  // Reconstruct cmd and construct envp from envi.
+  // Use "cmd.exe /c" for more versatility (e.g. spawning batch files).
+  // envp needs to be a contiguous block of 'key=value\0' strings terminated by another '\0'.
+  cmd = (lua_pushstring(L, getenv("COMSPEC")), lua_pushliteral(L, " /c "), lua_pushstring(L, cmd),
+    lua_concat(L, 3), lua_tostring(L, -1));
+  char *envp = NULL;
+  if (envi) {
+    luaL_Buffer buf;
+    for (luaL_buffinit(L, &buf), lua_pushnil(L); lua_next(L, envi); lua_pop(L, 1))
+      luaL_addstring(&buf, lua_tostring(L, -1)), luaL_addchar(&buf, '\0');
+    luaL_addchar(&buf, '\0'), luaL_pushresult(&buf);
+    envp = memcpy(malloc(lua_rawlen(L, -1)), lua_tostring(L, -1), lua_rawlen(L, -1));
+  }
+  // Setup pipes for stdin, stdout, and stderr. (Adapted from SciTE.)
+  SECURITY_ATTRIBUTES sa = {sizeof(SECURITY_ATTRIBUTES), NULL, true};
+  HANDLE stdin_read, proc_stdout, stdout_write, proc_stderr, stderr_write;
+  // Redirect stdin.
+  CreatePipe(&stdin_read, &proc->fstdin, &sa, 0);
+  SetHandleInformation(proc->fstdin, HANDLE_FLAG_INHERIT, 0);
+  // Redirect stdout.
+  CreatePipe(&proc_stdout, &stdout_write, &sa, 0);
+  SetHandleInformation(proc_stdout, HANDLE_FLAG_INHERIT, 0);
+  // Redirect stderr.
+  CreatePipe(&proc_stderr, &stderr_write, &sa, 0);
+  SetHandleInformation(proc_stderr, HANDLE_FLAG_INHERIT, 0);
+  // Spawn the process with pipes and no window.
+  STARTUPINFOA startup_info = {sizeof(STARTUPINFOA), NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0,
+    STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES, SW_HIDE, 0, NULL, stdin_read, stdout_write,
+    stderr_write};
+  PROCESS_INFORMATION proc_info = {NULL, NULL, 0, 0};
+  bool ok = CreateProcessA(NULL, (LPSTR)cmd, NULL, NULL, true, CREATE_NEW_PROCESS_GROUP, envp,
+    cwd ? cwd : NULL, &startup_info, &proc_info);
+  if (envp) free(envp);
+  if (!ok) {
+    static char err[65535];
+    FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, (LPSTR)err, 65535, NULL);
+    return (*error = err, false);
+  }
+  proc->pid = proc_info.hProcess;
+  proc->fstdout = _open_osfhandle((intptr_t)proc_stdout, _O_RDONLY); // transfers ownership
+  proc->fstderr = _open_osfhandle((intptr_t)proc_stderr, _O_RDONLY); // transfers ownership
+  // Close unneeded handles.
+  CloseHandle(proc_info.hThread);
+  CloseHandle(stdin_read), CloseHandle(stdout_write), CloseHandle(stderr_write);
+#endif
+  // Monitor stdout, stderr, and the process itself.
+  proc->cstdout = new_channel(proc->fstdout, proc, monitor_stdout),
+  proc->cstderr = new_channel(proc->fstderr, proc, monitor_stderr);
+  return (g_child_watch_add(proc->pid, proc_exited, proc), true);
+}
+
+size_t process_size() { return sizeof(struct Process); }
+
+bool is_process_running(Process *proc) { return PROCESS(proc)->pid; }
+
+void wait_process(Process *proc) {
+#if !_WIN32
+  int status;
+  waitpid(PROCESS(proc)->pid, &status, 0), status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
+#else
+  DWORD status;
+  WaitForSingleObject(PROCESS(proc)->pid, INFINITE),
+    GetExitCodeProcess(PROCESS(proc)->pid, &status);
+#endif
+  cleanup_process(proc, status);
+}
+
+char *read_process_output(Process *proc, char option, size_t *len, const char **error, int *code) {
+  char *buf;
+  GError *err = NULL;
+  GIOStatus status = G_IO_STATUS_NORMAL;
+  if (!g_io_channel_get_buffered(PROCESS(proc)->cstdout))
+    g_io_channel_set_buffered(PROCESS(proc)->cstdout, true); // needed for manual read functions
+  if (option == 'l' || option == 'L') {
+    GString *s = g_string_new(NULL);
+    status = g_io_channel_read_line_string(PROCESS(proc)->cstdout, s, NULL, &err);
+    *len = s->len, buf = g_string_free(s, false);
+  } else if (option == 'a') {
+    status = g_io_channel_read_to_end(PROCESS(proc)->cstdout, &buf, len, &err);
+    if (status == G_IO_STATUS_EOF) status = G_IO_STATUS_NORMAL;
+  } else if (option == 'n') {
+    size_t bytes = *len;
+    status = g_io_channel_read_chars(PROCESS(proc)->cstdout, buf = malloc(bytes), bytes, len, &err);
+  }
+  if ((g_io_channel_get_buffer_condition(PROCESS(proc)->cstdout) & G_IO_IN) == 0)
+    g_io_channel_set_buffered(PROCESS(proc)->cstdout, false); // needed for stdout callback
+  if (option == 'l' && buf[*len - 1] == '\n') (*len)--;
+  if (option == 'l' && buf[*len - 1] == '\r') (*len)--;
+  if (status == G_IO_STATUS_EOF) return (free(buf), *error = NULL, NULL);
+  if (status != G_IO_STATUS_NORMAL) *error = err->message, *code = err->code, free(buf), buf = NULL;
+  return buf;
+}
+
+void write_process_input(Process *proc, const char *s, size_t len) {
+#if !_WIN32
+  write(PROCESS(proc)->fstdin, s, len);
+#else
+  DWORD len_written;
+  WriteFile(PROCESS(proc)->fstdin, s, len, &len_written, NULL);
+#endif
+}
+
+void close_process_input(Process *proc) {
+#if !_WIN32
+  close(PROCESS(proc)->fstdin);
+#else
+  CloseHandle(PROCESS(proc)->fstdin);
+#endif
+}
+
+void kill_process(Process *proc, int signal) {
+#if !_WIN32
+  kill(PROCESS(proc)->pid, signal ? signal : SIGKILL);
+#else
+  TerminateProcess(PROCESS(proc)->pid, 1);
+#endif
+}
+
+int get_process_exit_status(Process *proc) { return PROCESS(proc)->exit_status; }
 
 void quit() {
   GdkEventAny event = {GDK_DELETE, gtk_widget_get_window(window), true};

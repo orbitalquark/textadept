@@ -70,6 +70,18 @@ void find_clicked(FindButton *button, void *unused);
 void show_context_menu(const char *name, void *userdata);
 
 /**
+ * Notifies Textadept that a spawned child process has produced the given stdout or stderr.
+ * Textadept will call any functions listening for that output.
+ */
+void process_output(Process *proc, const char *s, size_t len, bool is_stdout);
+
+/**
+ * Notifies Textadept that a spawned child process has exited with the given exit code.
+ * Textadept will call an exit function (if it exists) for that process.
+ */
+void process_exited(Process *proc, int code);
+
+/**
  * Closes Textadept.
  * Unsplits panes, closes buffers, deletes Scintilla views, and closes Lua. During this process,
  * Textadept may still call `SS()`, so platforms should take care to call this while Scintilla

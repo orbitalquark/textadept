@@ -37,6 +37,12 @@ typedef struct {
   int columns, search_column, items;
 } DialogOptions;
 
+/**
+ * Contains information about a spawned child process.
+ * The platform is expected to implement this (i.e. via a struct).
+ */
+typedef void Process;
+
 /** Returns the name of the platform. */
 const char *get_platform();
 /** Returns the character set used by the platform's filesystem. */
@@ -324,6 +330,75 @@ int progress_dialog(DialogOptions opts, lua_State *L,
  * The pushed row index or indices should be relative to the full item list, not a filtered list.
  */
 int list_dialog(DialogOptions opts, lua_State *L);
+
+/**
+ * Asks the platform to spawn a child process asynchronously and return whether or not it
+ * successfully spawned that process.
+ * When the process exits, it needs to notify Textadept via `process_exited()`.
+ * While the platform is allowed to push values to the given Lua state, it may not pop off any
+ * values it did not push.
+ * @param proc Platform-specific process identifier. This pre-allocated chunk of memory should
+ *   be filled in by the platform (i.e. its implementing struct's members). The size of `proc`
+ *   is defined by `process_size()`.
+ * @param index Lua stack index that contains `proc` in case the platform needs to store or
+ *   refer to it.
+ * @param cmd The command line string of the child process to spawn. The platform is expected
+ *   to perform any processing needed to launch the process.
+ * @param cwd Optional directory to spawn the process in.
+ * @param envi Optional stack index of a Lua table that contains a list of "key=value" environment
+ *   strings. The platform is expected to read from this table in order to create a valid process
+ *   environment. If this index is not provided, the child should inherit Textadept's environment.
+ * @param monitor_stdout Whether or not the platform should notify Textadept of any process
+ *   stdout as it comes in via `process_output()`.
+ * @param monitor_stderr Whether or not the platform should notify Textadept of any process
+ *   stderr as it comes in via `process_output()`.
+ * @param error A message that describes the error that occurred if this function returns
+ *   `false`. This pointer will not be freed -- it is expected to be a stored message.
+ * @return whether or not the child process was successfully spawned
+ * @see process_size
+ * @see process_output
+ * @see process_exited
+ */
+bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *cwd, int envi,
+  bool monitor_stdout, bool monitor_stderr, const char **error);
+
+/** Returns the size of the platform's implemented Process struct. */
+size_t process_size();
+
+/** Returns whether or not the given process is running. */
+bool is_process_running(Process *proc);
+
+/** Asks the platform to wait (blocking) until the given process finishes if it has not already. */
+void wait_process(Process *proc);
+
+/**
+ * Asks the platform to read from the given process' stdout stream, return the data read,
+ * and store the number of bytes read in the given pointer.
+ * The platform should return NULL on EOF. If a read error occurs, it should return NULL and
+ * store the error message and code in the given pointers.
+ * @param option Like Lua's `io.read()` option: 'l' to read a single line excluding end-of-line
+ *   (EOL) characters, 'L' to read a single line including EOL characters, 'a' to read until
+ *   the end-of-file (EOF), or 'n' to read `*len` bytes.
+ */
+char *read_process_output(Process *proc, char option, size_t *len, const char **error, int *code);
+
+/** Asks the platform to write the given data to the given process. */
+void write_process_input(Process *proc, const char *s, size_t len);
+
+/** Asks the platform to close the given process' stdin (i.e. send it an EOF). */
+void close_process_input(Process *proc);
+
+/**
+ * Asks the platform to kill the given process, optionally with the given signal.
+ * Not all operating systems support signals, so the platform should use its discretion.
+ */
+void kill_process(Process *proc, int signal);
+
+/**
+ * Returns the exit status of the given process.
+ * Textadept will only call this after the platform has indicated the process exited.
+ */
+int get_process_exit_status(Process *proc);
 
 /** Asks the platform to quit the application. The user has already been prompted to confirm. */
 void quit();

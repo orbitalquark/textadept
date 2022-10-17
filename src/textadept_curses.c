@@ -12,6 +12,7 @@
 #if !_WIN32
 #include <signal.h>
 #include <sys/ioctl.h>
+#include <sys/wait.h>
 #else
 #include <windows.h>
 #define strncasecmp _strnicmp
@@ -31,7 +32,6 @@ TermKey *ta_tk; // global for CDK use
 
 // Lua objects.
 static bool quitting;
-LUALIB_API int os_spawn_pushfds(lua_State *), os_spawn_readfds(lua_State *);
 
 // Implementation of a Pane.
 struct Pane {
@@ -41,7 +41,6 @@ struct Pane {
   Scintilla *view; // Scintilla view for a non-split view
   struct Pane *child1, *child2; // each pane in a split view
 }; // Pane implementation based on code by Chris Emerson.
-static inline struct Pane *PANED(Pane *pane) { return (struct Pane *)pane; }
 
 const char *get_platform() { return "CURSES"; }
 
@@ -165,7 +164,7 @@ void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
 // Removes all Scintilla views from the given pane and deletes them along with the child panes
 // themselves.
 static void remove_views(Pane *pane_, void (*delete_view)(Scintilla *view)) {
-  struct Pane *pane = PANED(pane_);
+  struct Pane *pane = pane_;
   if (pane->type == VSPLIT || pane->type == HSPLIT) {
     remove_views(pane->child1, delete_view), remove_views(pane->child2, delete_view);
     delwin(pane->win), pane->win = NULL; // delete split bar
@@ -194,7 +193,7 @@ void delete_scintilla(Scintilla *view) { scintilla_delete(view); }
 Pane *get_top_pane() { return pane; }
 
 PaneInfo get_pane_info(Pane *pane_) {
-  struct Pane *pane = PANED(pane_);
+  struct Pane *pane = pane_;
   PaneInfo info = {pane->type != SINGLE, pane->type == VSPLIT, pane->view, pane, pane->child1,
     pane->child2, pane->split_size};
   return info;
@@ -203,7 +202,7 @@ PaneInfo get_pane_info(Pane *pane_) {
 PaneInfo get_pane_info_from_view(Scintilla *v) { return get_pane_info(get_parent_pane(pane, v)); }
 
 void set_pane_size(Pane *pane_, int size) {
-  struct Pane *pane = PANED(pane_);
+  struct Pane *pane = pane_;
   pane->split_size = size, resize_pane(pane, pane->rows, pane->cols, pane->y, pane->x);
 }
 
@@ -398,13 +397,87 @@ void popup_menu(void *menu, void *userdata) {}
 
 void set_menubar(lua_State *L, int index) {}
 
+// Contains information about an active process.
+struct Process {
+  int pid, fstdin, fstdout, fstderr, exit_status;
+  bool monitor_stdout, monitor_stderr;
+};
+static inline struct Process *PROCESS(struct Process *proc) { return proc; }
+
+#if !_WIN32
+// Creates and returns an `fd_set` for all spawned processes that can be used with `select()`
+// and `read_fds()` to wait for input or output.
+// The caller is expected to free the returned pointer.
+fd_set *new_fds(int *nfds) {
+  *nfds = 0;
+  fd_set *fds = malloc(sizeof(fd_set));
+  FD_ZERO(fds); // TODO: is calloc enough?
+  lua_getfield(lua, LUA_REGISTRYINDEX, "spawn_procs");
+  for (lua_pushnil(lua); lua_next(lua, -2); lua_pop(lua, 1)) {
+    struct Process *proc = lua_touserdata(lua, -2);
+    // Note: need to read from pipes so they do not get clogged, even if monitoring is not
+    // requested.
+    FD_SET(proc->fstdout, fds); // note: this is a do/while macro on OSX
+    *nfds = fmax(*nfds, proc->fstdout + 1);
+    FD_SET(proc->fstderr, fds); // note: this is a do/while macro on OSX
+    *nfds = fmax(*nfds, proc->fstderr + 1);
+  }
+  return (lua_pop(lua, 1), fds); // spawn_procs
+}
+
+// Signal that a process has output to read.
+static void read_proc(struct Process *proc, bool is_stdout) {
+  char buf[BUFSIZ];
+  ssize_t len;
+  do {
+    // Note: need to read from pipes to prevent clogging, but only report output if monitoring.
+    bool monitoring = is_stdout ? proc->monitor_stdout : proc->monitor_stderr;
+    if ((len = read(is_stdout ? proc->fstdout : proc->fstderr, buf, BUFSIZ)) > 0 && monitoring)
+      process_output(proc, buf, len, is_stdout);
+  } while (len == BUFSIZ);
+}
+
+// Cleans up after the process finished executing and returned the given status code.
+static void cleanup_process(struct Process *proc, int status) {
+  // Stop tracking and monitoring this proc.
+  lua_getfield(lua, LUA_REGISTRYINDEX, "spawn_procs");
+  for (lua_pushnil(lua); lua_next(lua, -2); lua_pop(lua, 1))
+    if (((struct Process *)lua_touserdata(lua, -2))->pid == proc->pid) {
+      lua_pushnil(lua), lua_replace(lua, -2), lua_settable(lua, -3); // t[proc] = nil
+      break;
+    }
+  lua_pop(lua, 1); // spawn_procs
+  proc->pid = 0, close(proc->fstdin), close(proc->fstdout), close(proc->fstderr);
+  process_exited(proc, proc->exit_status = status);
+}
+
+// Reads output from the given fd_set and returns the number of fds read from.
+// Also monitors child processes for completion and cleans up after them.
+int read_fds(fd_set *fds) {
+  int n = 0;
+  lua_getfield(lua, LUA_REGISTRYINDEX, "spawn_procs");
+  for (lua_pushnil(lua); lua_next(lua, -2); lua_pop(lua, 1)) {
+    struct Process *proc = lua_touserdata(lua, -2);
+    // Read output if any is available.
+    if (FD_ISSET(proc->fstdout, fds)) read_proc(proc, true), n++;
+    if (FD_ISSET(proc->fstderr, fds)) read_proc(proc, false), n++;
+    // Check process status. If finished, read anything left and cleanup.
+    int status;
+    if (waitpid(proc->pid, &status, WNOHANG) > 0)
+      read_proc(proc, true), read_proc(proc, false), cleanup_process(proc, status);
+  }
+  return (lua_pop(lua, 1), n); // spawn_procs
+}
+#endif
+
 void update_ui() {
 #if !_WIN32
   struct timeval timeout = {0, 1e5}; // 0.1s
-  int nfds = os_spawn_pushfds(lua);
-  while (select(nfds, lua_touserdata(lua, -1), NULL, NULL, &timeout) > 0)
-    if (os_spawn_readfds(lua) >= 0) refresh_all();
-  lua_pop(lua, 1); // fd_set
+  int nfds;
+  fd_set *fds = new_fds(&nfds);
+  while (select(nfds, fds, NULL, NULL, &timeout) > 0)
+    if (read_fds(fds) >= 0) refresh_all();
+  free(fds);
 #endif
 }
 
@@ -684,6 +757,131 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   return (cancelled || !index ? 0 : (!opts.return_button ? 1 : 2));
 }
 
+bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *cwd, int envi,
+  bool monitor_stdout, bool monitor_stderr, const char **error) {
+#if !_WIN32
+  int argc = 0, top = lua_gettop(L);
+  // Construct argv from cmd and envp from envi.
+  const char *p = cmd, *param;
+  while (*p) {
+    while (*p == ' ') p++;
+    param = p;
+    if (*p == '"' || *p == '\'') {
+      char q = *p;
+      param = ++p;
+      while (*p && (*p != q || *(p - 1) == '\\')) p++;
+    } else
+      while (*p && *p != ' ') p++;
+    lua_checkstack(L, 1), lua_pushlstring(L, param, p - param), argc++;
+    if (*p == '"' || *p == '\'') p++;
+  }
+  int envc = envi ? lua_rawlen(L, envi) : 0;
+  char *argv[argc + 1], *envp[envc + 1];
+  for (int i = 0; i < argc; i++) argv[i] = (char *)lua_tostring(L, top + 1 + i);
+  argv[argc] = NULL;
+  if (lua_checkstack(L, envc), envi)
+    for (int i = (lua_pushnil(L), 0); lua_next(L, envi); lua_pop(L, 1), i++)
+      envp[i] = (char *)(lua_pushvalue(L, -1), lua_insert(L, -3), lua_tostring(L, -3));
+  envp[envc] = NULL;
+
+  // Adapted from Chris Emerson and GLib.
+  // Attempt to create pipes for stdin, stdout, and stderr and fork process.
+  int pstdin[2] = {-1, -1}, pstdout[2] = {-1, -1}, pstderr[2] = {-1, -1}, pid = -1;
+  if (pipe(pstdin) == 0 && pipe(pstdout) == 0 && pipe(pstderr) == 0 && (pid = fork()) < 0) {
+    if (pstdin[0] >= 0) close(pstdin[0]), close(pstdin[1]);
+    if (pstdout[0] >= 0) close(pstdout[0]), close(pstdout[1]);
+    if (pstderr[0] >= 0) close(pstderr[0]), close(pstderr[1]);
+    return (*error = strerror(errno), false);
+  }
+  if (pid > 0) {
+    // Parent process: register child for monitoring its fds and pid.
+    close(pstdin[0]), close(pstdout[1]), close(pstderr[1]);
+    PROCESS(proc)->pid = pid, PROCESS(proc)->fstdin = pstdin[1],
+    PROCESS(proc)->fstdout = pstdout[0], PROCESS(proc)->fstderr = pstderr[0],
+    PROCESS(proc)->monitor_stdout = monitor_stdout, PROCESS(proc)->monitor_stderr = monitor_stderr;
+    lua_checkstack(L, 3), lua_getfield(L, LUA_REGISTRYINDEX, "spawn_procs"),
+      lua_pushvalue(L, index), lua_pushboolean(L, 1), lua_settable(L, -3); // t[proc] = true
+    return true;
+  }
+  // Child process: redirect stdin, stdout, and stderr, chdir, and exec.
+  close(pstdin[1]), close(pstdout[0]), close(pstderr[0]), close(0), close(1), close(2);
+  dup2(pstdin[0], 0), dup2(pstdout[1], 1), dup2(pstderr[1], 2);
+  close(pstdin[0]), close(pstdout[1]), close(pstderr[1]);
+  if (cwd && chdir(cwd) < 0)
+    fprintf(stderr, "Failed to change directory '%s' (%s)", cwd, strerror(errno)), exit(1);
+  extern char **environ;
+#if __linux__
+  execvpe(argv[0], argv, envi ? envp : environ); // does not return on success
+#else
+  if (envi) environ = envp;
+  execvp(argv[0], argv); // does not return on success
+#endif
+  fprintf(stderr, "Failed to execute child process \"%s\" (%s)", argv[0], strerror(errno)), exit(1);
+#else // _WIN32
+  return (*error = "not implemented in this environment", NULL);
+#endif
+}
+
+size_t process_size() { return sizeof(struct Process); }
+
+bool is_process_running(Process *proc) { return PROCESS(proc)->pid; }
+
+void wait_process(Process *proc) {
+#if !_WIN32
+  int status;
+  waitpid(PROCESS(proc)->pid, &status, 0), status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
+  cleanup_process(proc, status);
+#endif
+}
+
+char *read_process_output(Process *proc, char option, size_t *len, const char **error, int *code) {
+#if !_WIN32
+  char *buf;
+  if (option == 'n') {
+    *len = read(PROCESS(proc)->fstdout, buf = malloc(*len), *len);
+    return (*len == 0 ? (*error = NULL, NULL) : buf);
+  }
+  int n;
+  char ch;
+  luaL_Buffer lbuf;
+  luaL_buffinit(lua, &lbuf);
+  *len = 0;
+  while ((n = read(PROCESS(proc)->fstdout, &ch, 1)) > 0) {
+    if ((ch != '\r' && ch != '\n') || option == 'L' || option == 'a')
+      luaL_addchar(&lbuf, ch), (*len)++;
+    if (ch == '\n' && option != 'a') break;
+  }
+  if (n < 0 && *len == 0) *len = n;
+  luaL_pushresult(&lbuf);
+  if (n == 0 && *len == 0 && option != 'a') return (lua_pop(lua, 1), *error = NULL, NULL); // EOF
+  if (*len < 0) return (lua_pop(lua, 1), *error = strerror(errno), *code = errno, NULL);
+  buf = strcpy(malloc(*len + 1), lua_tostring(lua, -1));
+  return (lua_pop(lua, 1), *error = NULL, buf); // pop buf
+#else
+  return NULL;
+#endif
+}
+
+void write_process_input(Process *proc, const char *s, size_t len) {
+#if !_WIN32
+  write(PROCESS(proc)->fstdin, s, len);
+#endif
+}
+
+void close_process_input(Process *proc) {
+#if !_WIN32
+  close(PROCESS(proc)->fstdin);
+#endif
+}
+
+void kill_process(Process *proc, int signal) {
+#if !_WIN32
+  kill(PROCESS(proc)->pid, signal ? signal : SIGKILL);
+#endif
+}
+
+int get_process_exit_status(Process *proc) { return PROCESS(proc)->exit_status; }
+
 void quit() { quitting = !emit("quit", -1); }
 
 #if !_WIN32
@@ -716,14 +914,15 @@ static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
     if (res != TERMKEY_RES_AGAIN && res != TERMKEY_RES_NONE) return res;
     if (res == TERMKEY_RES_AGAIN) force = true;
     // Wait for input.
-    int nfds = os_spawn_pushfds(lua);
-    fd_set *fds = lua_touserdata(lua, -1);
-    FD_SET(0, fds); // monitor stdin
+    int nfds;
+    fd_set *fds = new_fds(&nfds);
+    FD_SET(0, fds); // monitor stdin (note: this is a do/while macro on OSX)
+    nfds = fmax(nfds, 1);
     if (select(nfds, fds, NULL, NULL, force ? &timeout : NULL) > 0) {
       if (FD_ISSET(0, fds)) termkey_advisereadable(tk);
-      if (os_spawn_readfds(lua) > 0) refresh_all();
+      if (read_fds(fds) > 0) refresh_all();
     }
-    lua_pop(lua, 1); // fd_set
+    free(fds);
   }
 #else
   // TODO: ideally computation of view would not be done twice.
@@ -753,6 +952,8 @@ int main(int argc, char **argv) {
   regex = &find_options[2], in_files = &find_options[3]; // typedefed, so cannot static initialize
 
   if (!init_textadept(argc, argv)) return (endwin(), termkey_destroy(ta_tk), 1);
+  // Need to keep track of running processes for monitoring fds and pids.
+  lua_newtable(lua), lua_setfield(lua, LUA_REGISTRYINDEX, "spawn_procs");
 
 #if !_WIN32
   freopen("/dev/null", "w", stderr); // redirect stderr

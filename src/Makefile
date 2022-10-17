@@ -58,6 +58,8 @@ $(call all-objs, $(ta_curses_objs)): CFLAGS += $(ta_flags) $(lua_flags) -DCURSES
   -Iscintilla/curses -Itermkey -Icdk $(curses_flags)
 # For readlink from unistd.h on Linux only.
 $(ta_objs): CFLAGS += -D_XOPEN_SOURCE=500
+# For execvpe from unistd.h on Linux only.
+$(ta_curses_objs): CFLAGS += -D_GNU_SOURCE
 # For iconv.h on Windows only.
 $(call win-objs, $(ta_objs)): CFLAGS += -Igtkwin/include
 
@@ -104,23 +106,17 @@ $(call osx-objs, $(sci_curses_objs)): osx-%.o: scintilla/curses/%.cxx ; $(build-
 
 # Lua.
 
-lua_objs := $(call objs, lua/src/*.c, lua luac loslib)
-lua_oslib_gtk_objs := $(call objs, lua/src/loslib.c)
-lua_oslib_curses_objs := $(call curses-objs, loslib.c)
-lua_oslib_objs := $(lua_oslib_gtk_objs) $(lua_oslib_curses_objs)
+lua_objs := $(call objs, lua/src/*.c, lua luac)
 lua_lib_objs := $(call objs, lua/src/lib/*.c)
 
 lua_flags := -Ilua/src
 
 $(call all-objs, $(lua_objs)): CFLAGS += $(lua_flags) -ULUA_LIB
-$(call all-objs, $(lua_oslib_objs)): CFLAGS += -std=c99 -pedantic $(lua_flags) -ULUA_LIB
-$(call all-objs, $(lua_oslib_gtk_objs)): CFLAGS += -DGTK $(glib_flags)
 $(call all-objs, $(lua_lib_objs)): CFLAGS += $(lua_flags)
 
 $(lua_objs): %.o: lua/src/%.c ; $(build-cc)
 $(call win-objs, $(lua_objs)): win-%.o: lua/src/%.c ; $(build-cc)
 $(call osx-objs, $(lua_objs)): osx-%.o: lua/src/%.c ; $(build-cc)
-$(call all-objs, $(lua_oslib_objs)): lua/src/loslib.c ; $(build-cc)
 $(lua_lib_objs): %.o: lua/src/lib/%.c ; $(build-cc)
 $(call win-objs, $(lua_lib_objs)): win-%.o: lua/src/lib/%.c ; $(build-cc)
 $(call osx-objs, $(lua_lib_objs)): osx-%.o: lua/src/lib/%.c ; $(build-cc)
@@ -172,9 +168,8 @@ endif
 
 common_objs := $(ta_objs) $(sci_objs) $(sci_lexlib_objs) $(sci_lexer_objs) $(lua_objs) \
   $(lua_lib_objs)
-gui_objs := $(ta_gtk_objs) $(sci_gtk_objs) $(sci_gtk_c_objs) $(lua_oslib_gtk_objs)
-curses_objs := $(ta_curses_objs) $(sci_curses_objs) $(lua_oslib_curses_objs) $(termkey_objs) \
-  $(cdk_objs)
+gui_objs := $(ta_gtk_objs) $(sci_gtk_objs) $(sci_gtk_c_objs)
+curses_objs := $(ta_curses_objs) $(sci_curses_objs) $(termkey_objs) $(cdk_objs)
 
 linux_objs := $(common_objs) $(gui_objs) $(curses_objs) $(termkey_unix_objs)
 win_objs := $(call win-objs, $(common_objs) $(gui_objs) $(curses_objs)) $(termkey_win_objs) \
