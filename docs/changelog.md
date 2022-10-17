@@ -21,6 +21,9 @@ Bugfixes:
 * Fixed memory leak after running timeout function.
 * Fixed `buffer.eol_annotation_style*` settings.
 * Fixed bug showing the buffer browser from the first buffer if zorder is `true`.
+* Fixed display of compile/run commands in output.
+* Fixed inability to use single-quoted command line arguments to `os.spawn()` in the terminal
+  version.
 
 Changes:
 
@@ -42,6 +45,11 @@ Changes:
   - Renamed the following dialog options: `with_directory` &rarr; `dir`, `with_file` &rarr; `file`,
     `select_multiple` &rarr; `multiple`, `select_only_directories` &rarr; `only_dirs`.
 * Removed `opts` argument from `io.quick_open()`.
+* Find in Files' file scanning is shown with a progress dialog and can be stopped.
+* Deprecated `ui._print` in favor of [`ui.print_to()`][].
+* `_L` no longer prefixes non-localized messages with "No Localization:".
+* `textadept.run.stop()` presents a list dialog if there is more than one process running.
+* Moved process spawning into platform C code.
 
 [Textadept 11.5 alpha 2  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha_2.win.zip
 [Textadept 11.5 alpha 2  -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha_2.macOS.zip
@@ -53,6 +61,7 @@ Changes:
 [`ui.dialogs.save()`]: api.html#ui.dialogs.save
 [`ui.dialogs.progress()`]: api.html#ui.dialogs.progress
 [`ui.dialogs.list()`]: api.html#ui.dialogs.list
+[`ui.print_to()`]: api.html#ui.print_to
 
 ### 11.5 alpha (01 Oct 2022)
 
