@@ -12,7 +12,10 @@ lexers/
 # Dependencies.
 src/cdk/
 src/lexilla/
-src/LexLPeg.*
+src/Scintillua.*
 src/lua/
 src/scintilla/
 src/termkey/
+src/gtkosx/
+src/gtkwin/
+src/Textadept.app/
