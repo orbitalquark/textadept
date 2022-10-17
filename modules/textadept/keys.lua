@@ -10,7 +10,7 @@ local M = {}
 --
 -- ### Key Bindings
 --
--- Win32, Linux, BSD | macOS | Terminal | Command
+-- Win32 and Linux | macOS | Terminal | Command
 -- -|-|-|-
 -- **File**|||
 -- Ctrl+N | ⌘N | M-^N | New file
@@ -222,7 +222,7 @@ local M = {}
 -- ‡: Ctrl+Enter in Windows terminal version.
 module('textadept.keys')]]
 
--- Windows, Linux, and BSD key bindings.
+-- Windows and Linux key bindings.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
 -- c:   A             H I               Q       ~ V     Y  _   ) ] }   +
@@ -253,7 +253,7 @@ module('textadept.keys')]]
 --
 -- Key bindings available depend on your implementation of curses.
 --
--- For ncurses (Linux, macOS, BSD):
+-- For ncurses (Linux and macOS):
 --   * The only Control keys recognized are 'ctrl+a'-'ctrl+z', 'ctrl+ ', 'ctrl+\\', 'ctrl+]',
 --     'ctrl+^', and 'ctrl+_'.
 --   * Control+Shift and Control+Meta+Shift keys are not recognized.
@@ -266,7 +266,7 @@ module('textadept.keys')]]
 -- c:        g~~  l~            ~
 -- cm:    d  g~~jk ~   q       yz
 -- m:          e          J             Q   S    vVw   yY  _          +
--- Note: m[befhstv] may be used by Linux/BSD GUI terminals for menu access.
+-- Note: m[befhstv] may be used by Linux GUI terminals for menu access.
 --
 -- c = 'ctrl' (Control ^)
 -- m = 'meta' (Alt)

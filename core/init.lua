@@ -145,7 +145,7 @@ end, 1)
 --   The path to the user's *~/.textadept/* directory, where all preferences and user-data
 --   is stored.
 --   On Windows machines *~/* is the value of the "USERHOME" environment variable (typically
---   *C:\Users\username\\* or *C:\Documents and Settings\username\\*). On Linux, BSD, and macOS
+--   *C:\Users\username\\* or *C:\Documents and Settings\username\\*). On Linux and macOS
 --   machines *~/* is the value of "$HOME" (typically */home/username/* and */Users/username/*
 --   respectively).
 -- @field _LEXERPATH (string)
@@ -159,8 +159,6 @@ end, 1)
 --   Whether or not Textadept is running on macOS.
 -- @field LINUX (bool)
 --   Whether or not Textadept is running on Linux.
--- @field BSD (bool)
---   Whether or not Textadept is running on BSD.
 -- @field GTK (bool)
 --   Whether or not Textadept is running as a GTK GUI application.
 -- @field CURSES (bool)

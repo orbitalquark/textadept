@@ -176,7 +176,7 @@ win_objs := $(call win-objs, $(common_objs) $(gui_objs) $(curses_objs)) $(termke
   $(ta_rc_objs)
 osx_objs := $(call osx-objs, $(common_objs) $(gui_objs) $(curses_objs) $(termkey_unix_objs))
 
-# Compile natively for Linux or BSD.
+# Compile natively for Linux.
 ifeq (Linux, $(shell uname -s))
 $(linux_objs): CC := gcc
 $(linux_objs): CXX := g++
@@ -222,7 +222,7 @@ curses: ../textadept-curses
 win: $(win_exes)
 osx: $(osx_exes)
 
-# Compile natively for Linux or BSD.
+# Compile natively for Linux.
 
 $(linux_exes): $(common_objs)
 ../textadept: $(gui_objs)

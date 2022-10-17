@@ -24,8 +24,8 @@ local M = {}
 -- ### Key Sequences
 --
 -- Key sequences are strings built from an ordered combination of modifier keys and the key's
--- inserted character. Modifier keys are "Control", "Shift", and "Alt" on Windows, Linux, BSD,
--- and in the terminal version. On macOS they are "Control" (`^`), "Alt/Option" (`⌥`), "Command"
+-- inserted character. Modifier keys are "Control", "Shift", and "Alt" on Windows, Linux, and
+-- in the terminal version. On macOS they are "Control" (`^`), "Alt/Option" (`⌥`), "Command"
 -- (`⌘`), and "Shift" (`⇧`). These modifiers have the following string representations:
 --
 -- Modifier |  Linux / Win32 | macOS | Terminal

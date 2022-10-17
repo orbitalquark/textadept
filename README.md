@@ -30,11 +30,11 @@ that runs in a desktop environment, and a terminal version that runs within a te
 
 ## Requirements
 
-In its bid for minimalism, Textadept depends on very little to run. On Windows and macOS,
-it has no external dependencies. On Linux and BSD, the GUI version depends only on [GTK][]
-(a cross-platform GUI toolkit), and the terminal version depends only on a wide-character
-implementation of curses like [ncurses][](w). Lua and any other third-party dependencies are
-compiled into the application itself.
+In its bid for minimalism, Textadept depends on very little to run. On Windows and macOS, it has
+no external dependencies. On Linux, the GUI version depends only on [GTK][] (a cross-platform
+GUI toolkit), and the terminal version depends only on a wide-character implementation of
+curses like [ncurses][](w). Lua and any other third-party dependencies are compiled into the
+application itself.
 
 [GTK]: https://gtk.org
 [ncurses]: https://invisible-island.net/ncurses/ncurses.html
@@ -69,10 +69,10 @@ complement to Textadept's Manual and exhaustive API documentation.
 
 ## Compile
 
-Textadept is a bit unusual in that building it is only supported on Linux and BSD, or within a
-[Docker][] [image][]. The application is cross-compiled for Windows and macOS from Linux. While
-it is certainly possible to compile Textadept natively on those platforms, it is simply not
-supported in any official capacity.
+Textadept is a bit unusual in that building it is only supported on Linux, or within a [Docker][]
+[image][]. The application is cross-compiled for Windows and macOS from Linux. While it is
+certainly possible to compile Textadept natively on those platforms, it is simply not supported
+in any official capacity.
 
 Textadept is built from its *src/* directory and binaries are placed in the application's root
 directory. The general procedure is to have Textadept build its dependencies first, and then
@@ -90,8 +90,7 @@ General Requirements:
 * _**OR**_
 * [Docker][]
 
-The following table provides a brief list of `make` rules for building Textadept on Linux and
-BSD. (On BSD, substitute `make` with `gmake`.)
+The following table provides a brief list of `make` rules for building Textadept on Linux.
 
 Command | Description
 -|-

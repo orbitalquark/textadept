@@ -27,6 +27,7 @@ Bugfixes:
 
 Changes:
 
+* Dropped BSD support.
 * Separated GUI platform C code from non-GUI C code.
 * Added `_G.GTK`.
 * `_G.OSX` is now always true on macOS, not just in the GUI version.
@@ -1986,7 +1987,7 @@ Changes:
 * Support bracketed paste in the terminal version.
 * Allow handling of unknown [CSI events][].
 * Added mouse support for buffers and eliminated many [terminal version incompatibilities][].
-* Added [`_G.LINUX`][] and [`_G.BSD`][] platform flags for the sake of completeness.
+* Added [`_G.LINUX`][] and `_G.BSD` platform flags for the sake of completeness.
 * [Rectangular selections][] with the mouse on Linux use the `Alt` modifier key instead of `Super`.
 * Display the current working directory in fileselect dialogs.
 * Added [`_SCINTILLA.next_image_type()`][] for registering images.
@@ -2000,7 +2001,6 @@ Changes:
 [CSI events]: api.html#events.CSI
 [terminal version incompatibilities]: manual.html#terminal-version-compatibility
 [`_G.LINUX`]: api.html#LINUX
-[`_G.BSD`]: api.html#BSD
 [Rectangular selections]: manual.html#rectangular-selection
 [`_SCINTILLA.next_image_type()`]: api.html#_SCINTILLA.next_image_type
 

@@ -6,7 +6,7 @@
 -- @field ensure_final_newline (bool)
 --   Whether or not to ensure there is a final newline when saving text files.
 --   This has no effect on binary files.
---   The default value is `false` on Windows, and `true` on Linux, macOS, and BSD.
+--   The default value is `false` on Windows, and `true` on Linux and macOS.
 -- @field quick_open_max (number)
 --   The maximum number of files listed in the quick open dialog.
 --   The default value is `1000`.

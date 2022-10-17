@@ -40,11 +40,6 @@ Extends Lua's _G table to provide extra functions and fields for Textadept.
 
 ### Fields defined by `_G`
 
-<a id="BSD"></a>
-#### `BSD` (bool)
-
-Whether or not Textadept is running on BSD.
-
 <a id="CURSES"></a>
 #### `CURSES` (bool)
 
@@ -105,7 +100,7 @@ The Textadept release version string.
 The path to the user's *~/.textadept/* directory, where all preferences and user-data
   is stored.
   On Windows machines *~/* is the value of the "USERHOME" environment variable (typically
-  *C:\Users\username\\* or *C:\Documents and Settings\username\\*). On Linux, BSD, and macOS
+  *C:\Users\username\\* or *C:\Documents and Settings\username\\*). On Linux and macOS
   machines *~/* is the value of "$HOME" (typically */home/username/* and */Users/username/*
   respectively).
 
@@ -4272,7 +4267,7 @@ Emitted after opening a file in a new buffer.
 
 Whether or not to ensure there is a final newline when saving text files.
   This has no effect on binary files.
-  The default value is `false` on Windows, and `true` on Linux, macOS, and BSD.
+  The default value is `false` on Windows, and `true` on Linux and macOS.
 
 <a id="io.quick_open_max"></a>
 #### `io.quick_open_max` (number)
@@ -4456,8 +4451,8 @@ but fall back to word autocompletion if the first command fails.)
 ### Key Sequences
 
 Key sequences are strings built from an ordered combination of modifier keys and the key's
-inserted character. Modifier keys are "Control", "Shift", and "Alt" on Windows, Linux, BSD,
-and in the terminal version. On macOS they are "Control" (`^`), "Alt/Option" (`⌥`), "Command"
+inserted character. Modifier keys are "Control", "Shift", and "Alt" on Windows, Linux, and
+in the terminal version. On macOS they are "Control" (`^`), "Alt/Option" (`⌥`), "Command"
 (`⌘`), and "Shift" (`⇧`). These modifiers have the following string representations:
 
 Modifier |  Linux / Win32 | macOS | Terminal
@@ -6175,8 +6170,8 @@ to `os.spawn()` will not be called until the stdout buffer is clear.
 
 Parameters:
 
-* *`arg`*: Optional argument similar to those in Lua's `io.read()`, but "n" is not
-  supported. The default value is "l", which reads a line.
+* *`arg`*: Optional argument similar to those in Lua's `io.read()`. The default value is
+  "l", which reads a line.
 
 Return:
 
@@ -6429,7 +6424,7 @@ than an OS-specific pipe can hold may hang Textadept. On Linux, this may be 64K.
 
 Parameters:
 
-* *`command`*: The Linux, BSD, macOS, or Windows shell command to filter text through. May
+* *`command`*: The Linux, macOS, or Windows shell command to filter text through. May
   contain pipes.
 
 <a id="textadept.editing.goto_line"></a>
@@ -6702,7 +6697,7 @@ editing commands and movements.
 
 ### Key Bindings
 
-Win32, Linux, BSD | macOS | Terminal | Command
+Win32 and Linux | macOS | Terminal | Command
 -|-|-|-
 **File**|||
 Ctrl+N | ⌘N | M-^N | New file
