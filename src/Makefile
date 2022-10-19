@@ -2,8 +2,8 @@
 
 # Base flags and options.
 
-CFLAGS := -Os
-CXXFLAGS := -Os -std=c++17
+CFLAGS += -Os -std=c11
+CXXFLAGS += -Os -std=c++17
 WGET = wget -O $@
 
 # Define these once for speed and reference them later.

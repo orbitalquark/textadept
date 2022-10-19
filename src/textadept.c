@@ -15,15 +15,16 @@
 //#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if __linux__
-//#include <unistd.h>
+#if (__linux__ || __OpenBSD__)
+#include <sys/types.h>
+#include <unistd.h>
 #elif _WIN32
 #include <windows.h>
 #include <fcntl.h> // for _open_osfhandle, _O_RDONLY
 #define main main_
 #elif __APPLE__
 #include <mach-o/dyld.h> // for _NSGetExecutablePath
-#elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
+#elif (__FreeBSD__ || __NetBSD__)
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #endif
@@ -2485,11 +2486,6 @@ int main(int argc, char **argv) {
   gtk_init(&argc, &argv);
 #elif CURSES
   int termkey_flags = 0; // TERMKEY_FLAG_CTRLC does not work; SIGINT is patched out
-  for (int i = 0; i < argc; i++)
-    if (strcmp("-p", argv[i]) == 0 || strcmp("--preserve", argv[i]) == 0) {
-      termkey_flags |= TERMKEY_FLAG_FLOWCONTROL;
-      break;
-    }
   ta_tk = termkey_new(0, termkey_flags);
   setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
@@ -2522,10 +2518,8 @@ int main(int argc, char **argv) {
   platform = "OSX"; // OSX is only set for GUI version
 #endif
 #elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
-  textadept_home = malloc(FILENAME_MAX + 1);
-  int mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
-  size_t cb = FILENAME_MAX + 1;
-  sysctl(mib, 4, textadept_home, &cb, NULL, 0);
+  textadept_home = realpath(argv[0], NULL);
+  if (!textadept_home) return false;
   if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
   platform = "BSD";
 #endif
