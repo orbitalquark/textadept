@@ -15,7 +15,6 @@ AUTO_C_COMPLETED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 AUTO_C_SELECTION	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 AUTO_C_SELECTION_CHANGE	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 BOLD	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
-BSD	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
 BUFFER_AFTER_REPLACE_TEXT	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 BUFFER_AFTER_SWITCH	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 BUFFER_BEFORE_REPLACE_TEXT	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events

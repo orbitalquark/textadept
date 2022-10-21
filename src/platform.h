@@ -80,7 +80,9 @@ void set_size(int width, int height);
 /**
  * Asks the platform to create and return a new Scintilla view that calls the given callback
  * function with Scintilla notifications.
- * @param notified Scintilla notification function. It may be NULL.
+ * @param notified Scintilla notification function. It may be NULL. The int and void* parameters
+ *   are unused and may be passed 0 and `NULL`, respectively. Only the view and notification
+ *   parameters are needed.
  * @return Scintilla view
  */
 Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, void *));

@@ -120,7 +120,7 @@ view:set_y_caret_policy(view.CARET_SLOP | view.CARET_STRICT | view.CARET_EVEN, 1
 view:set_visible_policy(view.VISIBLE_SLOP | view.VISIBLE_STRICT, 5)
 -- view.h_scroll_bar = CURSES
 -- view.v_scroll_bar = false
-if CURSES and not (WIN32 or LINUX or BSD) then view.v_scroll_bar = false end
+if CURSES and not (WIN32 or LINUX) then view.v_scroll_bar = false end
 -- view.scroll_width =
 -- view.scroll_width_tracking = true
 -- view.end_at_last_line = false

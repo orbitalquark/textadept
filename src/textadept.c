@@ -563,9 +563,12 @@ static int ui_newindex(lua_State *L) {
     SS(focused_view, SCI_COPYTEXT, lua_rawlen(L, 3), (sptr_t)luaL_checkstring(L, 3));
   else if (strcmp(key, "statusbar_text") == 0 || strcmp(key, "buffer_statusbar_text") == 0)
     set_statusbar_text(*key == 's' ? 0 : 1, lua_tostring(L, 3));
-  else if (strcmp(key, "menubar") == 0)
+  else if (strcmp(key, "menubar") == 0) {
+    luaL_argcheck(L, lua_istable(L, 3), 3, "table of menus expected");
+    for (size_t i = 1; i <= lua_rawlen(L, 3); lua_pop(L, 1), i++)
+      luaL_argcheck(L, lua_rawgeti(L, 3, i) == LUA_TLIGHTUSERDATA, 3, "table of menus expected");
     set_menubar(L, 3);
-  else if (strcmp(key, "maximized") == 0)
+  } else if (strcmp(key, "maximized") == 0)
     set_maximized(lua_toboolean(L, 3));
   else if (strcmp(key, "size") == 0) {
     luaL_argcheck(

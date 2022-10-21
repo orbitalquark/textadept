@@ -496,14 +496,14 @@ static void menu_clicked(GtkWidget *_, void *id) {
 
 void *read_menu(lua_State *L, int index) {
   GtkWidget *menu = gtk_menu_new(), *submenu_root = NULL;
-  if (lua_getfield(L, index, "title") != LUA_TNIL) { // submenu title
+  if (lua_getfield(L, index, "title")) { // submenu title
     submenu_root = gtk_menu_item_new_with_mnemonic(lua_tostring(L, -1));
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(submenu_root), menu);
   }
   lua_pop(L, 1); // title
   for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++) {
     if (lua_rawgeti(L, -1, i) != LUA_TTABLE) continue; // popped on loop
-    bool is_submenu = lua_getfield(L, -1, "title") != LUA_TNIL;
+    bool is_submenu = lua_getfield(L, -1, "title");
     if (lua_pop(L, 1), is_submenu) {
       gtk_menu_shell_append(GTK_MENU_SHELL(menu), read_menu(L, -1));
       continue;
@@ -535,12 +535,8 @@ void set_menubar(lua_State *L, int index) {
   // TODO: gtkosx_application_set_menu_bar does not like being called more than once in an app.
   // Random segfaults will happen after a second reset, even if menubar is g_object_ref/unrefed
   // properly.
-  if (lua_getglobal(L, "arg") == LUA_TNIL) return;
+  if (!lua_getglobal(L, "arg")) return;
 #endif
-  luaL_argcheck(L, lua_istable(L, index), index, "table of menus expected");
-  for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++)
-    luaL_argcheck(L, lua_rawgeti(L, index, i) == LUA_TLIGHTUSERDATA, index,
-      "table of menus expected"); // popped on loop
   GtkWidget *new_menubar = gtk_menu_bar_new();
   for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++)
     gtk_menu_shell_append(GTK_MENU_SHELL(new_menubar),
