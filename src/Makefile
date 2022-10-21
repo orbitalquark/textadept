@@ -13,22 +13,16 @@ ifdef GTK2
 else
   gtk_flags_linux := $(shell pkg-config --cflags gtk+-3.0 gmodule-2.0)
 endif
-glib_flags_linux := $(shell pkg-config --cflags glib-2.0)
 curses_flags_linux := $(shell pkg-config --silence-errors --cflags ncursesw || \
   pkg-config --silence-errors --cflags ncurses || pkg-config --silence-errors --cflags curses)
 gtk_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
   pkg-config --silence-errors --define-variable=prefix=gtkwin --cflags gtk+-3.0)
-glib_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
-  pkg-config --silence-errors --define-variable=prefix=gtkwin --cflags glib-2.0)
 gtk_flags_osx := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
   pkg-config --silence-errors --define-variable=prefix=gtkosx --cflags gtk+-3.0)
-glib_flags_osx := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
-  pkg-config --silence-errors --define-variable=prefix=gtkosx --cflags glib-2.0)
 
 # Utility functions.
 
 objs = $(addsuffix .o, $(filter-out $(2), $(basename $(notdir $(wildcard $(1))))))
-curses-objs = $(addsuffix -curses.o, $(basename $(notdir $(1))))
 win-objs = $(addprefix win-, $(1))
 osx-objs = $(addprefix osx-, $(1))
 all-objs = $(1) $(call win-objs, $(1)) $(call osx-objs, $(1))
@@ -181,7 +175,6 @@ $(linux_objs): CC := gcc
 $(linux_objs): CXX := g++
 $(linux_objs): lua_flags += -DLUA_USE_LINUX
 $(linux_objs): gtk_flags += $(gtk_flags_linux)
-$(linux_objs): glib_flags := $(glib_flags_linux)
 $(linux_objs): curses_flags := $(curses_flags_linux)
 
 # Cross-compile for Windows.
@@ -192,7 +185,6 @@ $(win_objs): CXXFLAGS += -mms-bitfields
 $(win_objs): WINDRES := x86_64-w64-mingw32-windres
 $(win_objs): lua_flags += -DLUA_BUILD_AS_DLL -DLUA_LIB
 $(win_objs): gtk_flags += $(gtk_flags_win)
-$(win_objs): glib_flags := $(glib_flags_win)
 $(win_objs): curses_flags := -DLIBICONV_STATIC -Ipdcurses
 
 # Cross-compile for macOS.
@@ -202,7 +194,6 @@ $(osx_objs): CFLAGS += -mdynamic-no-pic
 $(osx_objs): CXXFLAGS += -mdynamic-no-pic -stdlib=libc++ -Wno-register
 $(osx_objs): lua_flags += -DLUA_USE_MACOSX
 $(osx_objs): gtk_flags += $(gtk_flags_osx)
-$(osx_objs): glib_flags := $(glib_flags_osx)
 
 # Executables.
 
