@@ -5,8 +5,7 @@
 #include "platform.h"
 
 // The currently focused view and command entry.
-// Platforms are responsible for updating the focused view.
-Scintilla *focused_view, *command_entry;
+SciObject *focused_view, *command_entry;
 
 // Find & replace pane buttons and options.
 FindButton *find_next, *find_prev, *replace, *replace_all;

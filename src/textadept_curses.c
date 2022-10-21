@@ -38,7 +38,7 @@ struct Pane {
   int y, x, rows, cols, split_size; // dimensions
   enum { SINGLE, VSPLIT, HSPLIT } type; // pane type
   WINDOW *win; // either the Scintilla curses window or the split bar's window
-  Scintilla *view; // Scintilla view for a non-split view
+  SciObject *view; // Scintilla view for a non-split view
   struct Pane *child1, *child2; // each pane in a split view
 }; // Pane implementation based on code by Chris Emerson.
 
@@ -60,7 +60,7 @@ const char *get_charset() {
 }
 
 // Creates and returns a new pane that contains the given Scintilla view.
-static Pane *new_pane(Scintilla *view) {
+static Pane *new_pane(SciObject *view) {
   struct Pane *p = calloc(1, sizeof(struct Pane));
   p->type = SINGLE, p->win = scintilla_get_window(view), p->view = view;
   return p;
@@ -87,7 +87,7 @@ static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
   pane->rows = rows, pane->cols = cols, pane->y = y, pane->x = x;
 }
 
-void new_window(Scintilla *(*get_view)(void)) {
+void new_window(SciObject *(*get_view)(void)) {
   pane = new_pane(get_view()), resize_pane(pane, LINES - 2, COLS, 1, 0);
   wresize(scintilla_get_window(command_entry), 1, COLS);
   mvwin(scintilla_get_window(command_entry), LINES - 2, 0);
@@ -106,20 +106,20 @@ void get_size(int *width, int *height) { *width = COLS, *height = LINES; }
 
 void set_size(int width, int height) {}
 
-Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, void *)) {
+SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, void *)) {
   return scintilla_new(notified, NULL);
 }
 
-void focus_view(Scintilla *view) {
+void focus_view(SciObject *view) {
   (focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, SS(view, SCI_SETFOCUS, 1, 0));
 }
 
-sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
+sptr_t SS(SciObject *view, int message, uptr_t wparam, sptr_t lparam) {
   return scintilla_send_message(view, message, wparam, lparam);
 }
 
 // Searches the given pane for the given view and returns that view's parent pane, if there is one.
-static struct Pane *get_parent_pane(struct Pane *pane, Scintilla *view) {
+static struct Pane *get_parent_pane(struct Pane *pane, SciObject *view) {
   if (pane->type == SINGLE) return NULL;
   if (pane->child1->view == view || pane->child2->view == view) return pane;
   struct Pane *parent = get_parent_pane(pane->child1, view);
@@ -138,7 +138,7 @@ static void refresh_pane(struct Pane *pane) {
     scintilla_noutrefresh(pane->view);
 }
 
-void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
+void split_view(SciObject *view, SciObject *view2, bool vertical) {
   struct Pane *parent = get_parent_pane(pane, view);
   parent = parent ? (parent->child1->view == view ? parent->child1 : parent->child2) : pane;
   Pane *child1 = new_pane(view), *child2 = new_pane(view2);
@@ -163,7 +163,7 @@ void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
 
 // Removes all Scintilla views from the given pane and deletes them along with the child panes
 // themselves.
-static void remove_views(Pane *pane_, void (*delete_view)(Scintilla *view)) {
+static void remove_views(Pane *pane_, void (*delete_view)(SciObject *view)) {
   struct Pane *pane = pane_;
   if (pane->type == VSPLIT || pane->type == HSPLIT) {
     remove_views(pane->child1, delete_view), remove_views(pane->child2, delete_view);
@@ -173,7 +173,7 @@ static void remove_views(Pane *pane_, void (*delete_view)(Scintilla *view)) {
   free(pane);
 }
 
-bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *)) {
+bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
   struct Pane *parent = get_parent_pane(pane, view);
   if (!parent) return false;
   struct Pane *child = parent->child1->view == view ? parent->child1 : parent->child2;
@@ -188,7 +188,7 @@ bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *)) {
   return (scintilla_noutrefresh(view), true);
 }
 
-void delete_scintilla(Scintilla *view) { scintilla_delete(view); }
+void delete_scintilla(SciObject *view) { scintilla_delete(view); }
 
 Pane *get_top_pane() { return pane; }
 
@@ -199,7 +199,7 @@ PaneInfo get_pane_info(Pane *pane_) {
   return info;
 }
 
-PaneInfo get_pane_info_from_view(Scintilla *v) { return get_pane_info(get_parent_pane(pane, v)); }
+PaneInfo get_pane_info_from_view(SciObject *v) { return get_pane_info(get_parent_pane(pane, v)); }
 
 void set_pane_size(Pane *pane_, int size) {
   struct Pane *pane = pane_;
@@ -926,7 +926,7 @@ static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
   }
 #else
   // TODO: ideally computation of view would not be done twice.
-  Scintilla *view = !command_entry_active ? focused_view : command_entry;
+  SciObject *view = !command_entry_active ? focused_view : command_entry;
   termkey_set_fd(ta_tk, scintilla_get_window(view));
   mouse_set(ALL_MOUSE_EVENTS); // _popen() and system() change console mode
   return termkey_getkey(tk, key);
@@ -967,7 +967,7 @@ int main(int argc, char **argv) {
   freopen("NUL", "w", stdout), freopen("NUL", "w", stderr); // redirect
 #endif
 
-  Scintilla *view = focused_view;
+  SciObject *view = focused_view;
   int ch = 0, event = 0, button = 0, y = 0, x = 0;
   TermKeyResult res;
   TermKeyKey key;

@@ -13,7 +13,7 @@
 
 #include <stdbool.h>
 
-typedef void Scintilla;
+typedef void SciObject;
 typedef void Pane;
 typedef void FindButton;
 typedef void FindOption;
@@ -21,7 +21,7 @@ typedef void FindOption;
 /** Contains information about the pane holding one or more Scintilla views. */
 typedef struct {
   bool is_split, vertical;
-  Scintilla *view;
+  SciObject *view;
   Pane *self, *child1, *child2;
   int size;
 } PaneInfo;
@@ -65,7 +65,7 @@ const char *get_charset();
  * @param get_view Function to call when the platform is ready to accept the first Scintilla view.
  *   The platform should be ready to create tab for that view at the very least.
  */
-void new_window(Scintilla *(*get_view)(void));
+void new_window(SciObject *(*get_view)(void));
 /** Sets the title of the Textadept window to the given text. */
 void set_title(const char *title);
 /** Returns whether or not the Textadept window is maximized. */
@@ -85,9 +85,9 @@ void set_size(int width, int height);
  *   parameters are needed.
  * @return Scintilla view
  */
-Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, void *));
+SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, void *));
 /** Signals the platform to focus the given Scintilla view. */
-void focus_view(Scintilla *view);
+void focus_view(SciObject *view);
 /**
  * Asks the platform to send a message to the given Scintilla view.
  * @param view The Scintilla view to send a message to.
@@ -96,14 +96,14 @@ void focus_view(Scintilla *view);
  * @param lparam Second message parameter.
  * @return Scintilla result
  */
-sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam);
+sptr_t SS(SciObject *view, int message, uptr_t wparam, sptr_t lparam);
 /**
  * Asks the platform to split the pane holding the given Scintilla view into two views.
  * @param view The Scintilla view whose pane is to be split.
  * @param view2 The Scintilla view to add to the the newly split pane.
  * @param vertical Flag indicating whether to split the view vertically or horizontally.
  */
-void split_view(Scintilla *view, Scintilla *view2, bool vertical);
+void split_view(SciObject *view, SciObject *view2, bool vertical);
 /**
  * Asks the platform to unsplit the pane the given Scintilla view is in and keep the view.
  * All views in the other pane should be deleted using the given deleter function.
@@ -112,13 +112,13 @@ void split_view(Scintilla *view, Scintilla *view2, bool vertical);
  * @param delete_view Deleter function to call for each view removed from split panes.
  * @return true if the view was in a split pane, false otherwise
  */
-bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *));
+bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *));
 /**
  * Asks the platform to delete the given Scintilla view.
  * All the platform needs to do here is call Scintilla's platform-specific delete function. The
  * view has already been removed from any split panes (if any).
  */
-void delete_scintilla(Scintilla *view);
+void delete_scintilla(SciObject *view);
 
 /** Returns the top-most pane that contains Scintilla views. */
 Pane *get_top_pane();
@@ -131,7 +131,7 @@ PaneInfo get_pane_info(Pane *pane);
  * Returns information about the pane that contains the given Scintilla view.
  * @see get_pane_info
  */
-PaneInfo get_pane_info_from_view(Scintilla *view);
+PaneInfo get_pane_info_from_view(SciObject *view);
 /** Sets the given pane's divider position to the given size. */
 void set_pane_size(Pane *pane, int size);
 

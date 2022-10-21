@@ -195,7 +195,7 @@ static GtkWidget *new_findbox() {
   return findbox;
 }
 
-void new_window(Scintilla *(*get_view)(void)) {
+void new_window(SciObject *(*get_view)(void)) {
   gtk_window_set_default_icon_name("textadept");
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -286,8 +286,8 @@ static bool mouse_clicked(GtkWidget *w, GdkEventButton *event, void *_) {
   return (show_context_menu("context_menu", event), true);
 }
 
-Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, void *)) {
-  Scintilla *view = scintilla_new();
+SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, void *)) {
+  SciObject *view = scintilla_new();
   gtk_widget_set_size_request(view, 1, 1); // minimum size
   if (notified) g_signal_connect(view, SCINTILLA_NOTIFY, G_CALLBACK(notified), NULL);
   g_signal_connect(view, "key-press-event", G_CALLBACK(keypress), NULL);
@@ -295,13 +295,13 @@ Scintilla *new_scintilla(void (*notified)(Scintilla *, int, SCNotification *, vo
   return view;
 }
 
-void focus_view(Scintilla *view) { gtk_widget_grab_focus(view), update_ui(); }
+void focus_view(SciObject *view) { gtk_widget_grab_focus(view), update_ui(); }
 
-sptr_t SS(Scintilla *view, int message, uptr_t wparam, sptr_t lparam) {
+sptr_t SS(SciObject *view, int message, uptr_t wparam, sptr_t lparam) {
   return scintilla_send_message(SCINTILLA(view), message, wparam, lparam);
 }
 
-void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
+void split_view(SciObject *view, SciObject *view2, bool vertical) {
   GtkAllocation allocation;
   gtk_widget_get_allocation(view, &allocation);
   int middle = (vertical ? allocation.width : allocation.height) / 2;
@@ -318,14 +318,13 @@ void split_view(Scintilla *view, Scintilla *view2, bool vertical) {
 
 // Removes all Scintilla views from the given pane and deletes them along with the child panes
 // themselves.
-static void remove_views(Pane *pane, void (*delete_view)(Scintilla *view)) {
-  GtkWidget *child1 = gtk_paned_get_child1(GTK_PANED(pane)),
-            *child2 = gtk_paned_get_child2(GTK_PANED(pane));
-  GTK_IS_PANED(child1) ? remove_views(child1, delete_view) : delete_view(child1);
-  GTK_IS_PANED(child2) ? remove_views(child2, delete_view) : delete_view(child2);
+static void remove_views(GtkPaned *pane, void (*delete_view)(SciObject *view)) {
+  GtkWidget *child1 = gtk_paned_get_child1(pane), *child2 = gtk_paned_get_child2(pane);
+  GTK_IS_PANED(child1) ? remove_views(GTK_PANED(child1), delete_view) : delete_view(child1);
+  GTK_IS_PANED(child2) ? remove_views(GTK_PANED(child2), delete_view) : delete_view(child2);
 }
 
-bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *view)) {
+bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *view)) {
   GtkWidget *pane = gtk_widget_get_parent(view);
   if (!GTK_IS_PANED(pane)) return false;
   GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane)) != view ?
@@ -334,7 +333,7 @@ bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *view)) {
   g_object_ref(view), g_object_ref(other);
   gtk_container_remove(GTK_CONTAINER(pane), view);
   gtk_container_remove(GTK_CONTAINER(pane), other);
-  GTK_IS_PANED(other) ? remove_views(other, delete_view) : delete_view(other);
+  GTK_IS_PANED(other) ? remove_views(GTK_PANED(other), delete_view) : delete_view(other);
   GtkWidget *parent = gtk_widget_get_parent(pane);
   gtk_container_remove(GTK_CONTAINER(parent), pane);
   if (GTK_IS_PANED(parent))
@@ -348,7 +347,7 @@ bool unsplit_view(Scintilla *view, void (*delete_view)(Scintilla *view)) {
   return true;
 }
 
-void delete_scintilla(Scintilla *view) { gtk_widget_destroy(view); }
+void delete_scintilla(SciObject *view) { gtk_widget_destroy(view); }
 
 Pane *get_top_pane() {
   GtkWidget *pane = focused_view;
@@ -368,7 +367,7 @@ PaneInfo get_pane_info(Pane *pane) {
   return info;
 }
 
-PaneInfo get_pane_info_from_view(Scintilla *v) { return get_pane_info(gtk_widget_get_parent(v)); }
+PaneInfo get_pane_info_from_view(SciObject *v) { return get_pane_info(gtk_widget_get_parent(v)); }
 
 void set_pane_size(Pane *pane, int size) { gtk_paned_set_position(GTK_PANED(pane), size); }
 

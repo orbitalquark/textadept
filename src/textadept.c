@@ -24,7 +24,7 @@
 #endif
 
 static char *textadept_home, *os;
-Scintilla *dummy_view; // for working with documents not shown in an existing view
+SciObject *dummy_view; // for working with documents not shown in an existing view
 
 // Lua objects.
 static const char *BUFFERS = "ta_buffers", *VIEWS = "ta_views", *ARG = "ta_arg"; // registry tables
@@ -35,7 +35,7 @@ LUALIB_API int luaopen_lpeg(lua_State *), luaopen_lfs(lua_State *);
 
 // Forward declarations.
 static void add_doc(sptr_t doc);
-static Scintilla *new_view(sptr_t);
+static SciObject *new_view(sptr_t);
 static bool init_lua(int, char **);
 
 // Shows the given error in an error message dialog.
@@ -196,7 +196,7 @@ static void lua_pushdoc(lua_State *L, sptr_t doc) {
 // For non-global, non-command entry documents, loads that document in `dummy_view` (unless
 // it is already loaded). Raises and error if the value is not a Scintilla document or if the
 // document no longer exists.
-static Scintilla *view_for_doc(lua_State *L, int index) {
+static SciObject *view_for_doc(lua_State *L, int index) {
   luaL_argcheck(L, is_type(L, index, "ta_buffer"), index, "Buffer expected");
   sptr_t doc = lua_todoc(L, index);
   if (doc == SS(focused_view, SCI_GETDOCPOINTER, 0, 0)) return focused_view;
@@ -210,8 +210,8 @@ static Scintilla *view_for_doc(lua_State *L, int index) {
 }
 
 // Returns the Scintilla view on the Lua stack at the given acceptable index.
-static Scintilla *lua_toview(lua_State *L, int index) {
-  Scintilla *view = (lua_getfield(L, index, "widget_pointer"), lua_touserdata(L, -1));
+static SciObject *lua_toview(lua_State *L, int index) {
+  SciObject *view = (lua_getfield(L, index, "widget_pointer"), lua_touserdata(L, -1));
   return (lua_pop(L, 1), view); // widget pointer
 }
 
@@ -236,7 +236,7 @@ static sptr_t luaL_checkscintilla(lua_State *L, int *arg, int type) {
 // Lua values to pass start at the given Lua stack index. This function does not remove any
 // arguments from the stack, but does push results and return the number of results pushed.
 static int call_scintilla(
-  lua_State *L, Scintilla *view, int msg, int wtype, int ltype, int rtype, int arg) {
+  lua_State *L, SciObject *view, int msg, int wtype, int ltype, int rtype, int arg) {
   uptr_t wparam = 0;
   sptr_t lparam = 0, len = 0;
   int params_needed = 2, nresults = 0;
@@ -283,7 +283,7 @@ int get_int_field(lua_State *L, int index, int n) {
 
 // `buffer:method()` Lua function.
 static int call_scintilla_lua(lua_State *L) {
-  Scintilla *view = focused_view;
+  SciObject *view = focused_view;
   // If optional buffer/view argument is given, check it.
   if (is_type(L, 1, "ta_buffer"))
     view = view_for_doc(L, 1);
@@ -308,7 +308,7 @@ static void set_metatable(
 // `buffer[k].__index` metamethod.
 static int property_index(lua_State *L) {
   bool not_view = (lua_getfield(L, 1, "_self"), !is_type(L, -1, "ta_view"));
-  Scintilla *view = not_view ? view_for_doc(L, -1) : lua_toview(L, -1);
+  SciObject *view = not_view ? view_for_doc(L, -1) : lua_toview(L, -1);
   lua_getfield(L, 1, "_iface"); // {get_id, set_id, rtype, wtype}.
   int msg = get_int_field(L, -1, 1), wtype = get_int_field(L, -1, 4), ltype = SVOID,
       rtype = get_int_field(L, -1, 3);
@@ -319,7 +319,7 @@ static int property_index(lua_State *L) {
 // `buffer[k].__newindex` metamethod.
 static int property_newindex(lua_State *L) {
   bool not_view = (lua_getfield(L, 1, "_self"), !is_type(L, -1, "ta_view"));
-  Scintilla *view = not_view ? view_for_doc(L, -1) : lua_toview(L, -1);
+  SciObject *view = not_view ? view_for_doc(L, -1) : lua_toview(L, -1);
   lua_getfield(L, 1, "_iface"); // {get_id, set_id, rtype, wtype}.
   int msg = get_int_field(L, -1, 2), wtype = get_int_field(L, -1, 4),
       ltype = get_int_field(L, -1, 3), rtype = SVOID;
@@ -330,7 +330,7 @@ static int property_newindex(lua_State *L) {
 
 // Helper function for `buffer_index()` and `view_index()` that gets Scintilla properties.
 static void get_property(lua_State *L) {
-  Scintilla *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) : lua_toview(L, 1);
+  SciObject *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) : lua_toview(L, 1);
   // Interface table is of the form {get_id, set_id, rtype, wtype}.
   int msg = get_int_field(L, -1, 1), wtype = get_int_field(L, -1, 4), ltype = SVOID,
       rtype = get_int_field(L, -1, 3);
@@ -375,7 +375,7 @@ static int buffer_index(lua_State *L) {
 
 // Helper function for `buffer_newindex()` and `view_newindex()` that sets Scintilla properties.
 static void set_property(lua_State *L) {
-  Scintilla *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) : lua_toview(L, 1);
+  SciObject *view = is_type(L, 1, "ta_buffer") ? view_for_doc(L, 1) : lua_toview(L, 1);
   // Interface table is of the form {get_id, set_id, rtype, wtype}.
   int msg = get_int_field(L, -1, 2), wtype = get_int_field(L, -1, 3),
       ltype = get_int_field(L, -1, 4), rtype = SVOID, temp;
@@ -479,7 +479,7 @@ static int list_dialog_lua(lua_State *L) {
 
 // Pushes the given Scintilla view onto the Lua stack.
 // The view must have previously been added with `add_view()`.
-static void lua_pushview(lua_State *L, Scintilla *view) {
+static void lua_pushview(lua_State *L, SciObject *view) {
   lua_getfield(L, LUA_REGISTRYINDEX, VIEWS), lua_pushlightuserdata(L, view), lua_gettable(L, -2),
     lua_replace(L, -2);
 }
@@ -501,7 +501,7 @@ static void lua_pushsplit(lua_State *L, Pane *pane) {
 static int get_split_table(lua_State *L) { return (lua_pushsplit(L, get_top_pane()), 1); }
 
 // Checks whether the given function argument is a Scintilla view and returns it.
-static Scintilla *luaL_checkview(lua_State *L, int arg) {
+static SciObject *luaL_checkview(lua_State *L, int arg) {
   return (luaL_argcheck(L, is_type(L, arg, "ta_view"), arg, "View expected"), lua_toview(L, arg));
 }
 
@@ -895,7 +895,7 @@ static void sync_tabbar() {
 
 // Signal that focus has changed to the given Scintilla view.
 // Generates 'view_before_switch' and 'view_after_switch' events.
-static void view_focused(Scintilla *view) {
+static void view_focused(SciObject *view) {
   if (!initing && !closing) emit("view_before_switch", -1);
   lua_pushview(lua, focused_view = view), lua_setglobal(lua, "view"), sync_tabbar();
   lua_pushdoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
@@ -934,7 +934,7 @@ static void emit_notification(SCNotification *n) {
 }
 
 // Signal for a Scintilla notification.
-static void notified(Scintilla *view, int _, SCNotification *n, void *__) {
+static void notified(SciObject *view, int _, SCNotification *n, void *__) {
   if (view == command_entry) {
     if (n->nmhdr.code == SCN_MODIFIED &&
       (n->modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)))
@@ -950,7 +950,7 @@ static void notified(Scintilla *view, int _, SCNotification *n, void *__) {
 
 // Switches, in the given view, to a Scintilla document at a relative or absolute index.
 // An absolute value of -1 represents the last document.
-static void goto_doc(lua_State *L, Scintilla *view, int n, bool relative) {
+static void goto_doc(lua_State *L, SciObject *view, int n, bool relative) {
   if (relative && n == 0) return;
   lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS);
   if (relative) {
@@ -990,7 +990,7 @@ static void new_buffer(sptr_t doc) {
 static void remove_doc(sptr_t doc) {
   lua_getfield(lua, LUA_REGISTRYINDEX, VIEWS);
   for (size_t i = 1; i <= lua_rawlen(lua, -1); lua_pop(lua, 1), i++) {
-    Scintilla *view = (lua_rawgeti(lua, -1, i), lua_toview(lua, -1)); // popped on loop
+    SciObject *view = (lua_rawgeti(lua, -1, i), lua_toview(lua, -1)); // popped on loop
     if (doc == SS(view, SCI_GETDOCPOINTER, 0, 0)) goto_doc(lua, view, -1, true);
   }
   lua_pop(lua, 1); // views
@@ -1018,7 +1018,7 @@ static void delete_buffer(sptr_t doc) {
 
 // `buffer.delete()` Lua function.
 static int delete_buffer_lua(lua_State *L) {
-  Scintilla *view = view_for_doc(L, 1);
+  SciObject *view = view_for_doc(L, 1);
   luaL_argcheck(L, view != command_entry, 1, "cannot delete command entry");
   sptr_t doc = SS(view, SCI_GETDOCPOINTER, 0, 0);
   if (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawlen(L, -1) == 1) new_buffer(0);
@@ -1060,7 +1060,7 @@ static void add_doc(sptr_t doc) {
 
 // `view.goto_buffer()` Lua function.
 static int goto_doc_lua(lua_State *L) {
-  Scintilla *view = luaL_checkview(L, 1), *prev_view = focused_view;
+  SciObject *view = luaL_checkview(L, 1), *prev_view = focused_view;
   bool relative = lua_isnumber(L, 2);
   if (!relative) {
     lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_pushvalue(L, 2), lua_gettable(L, -2),
@@ -1079,11 +1079,11 @@ static int goto_doc_lua(lua_State *L) {
 
 // `view.split()` Lua function.
 static int split_view_lua(lua_State *L) {
-  Scintilla *view = luaL_checkview(L, 1);
+  SciObject *view = luaL_checkview(L, 1);
   int first_line = SS(view, SCI_GETFIRSTVISIBLELINE, 0, 0),
       x_offset = SS(view, SCI_GETXOFFSET, 0, 0), current_pos = SS(view, SCI_GETCURRENTPOS, 0, 0),
       anchor = SS(view, SCI_GETANCHOR, 0, 0);
-  Scintilla *view2 = new_view(SS(view, SCI_GETDOCPOINTER, 0, 0));
+  SciObject *view2 = new_view(SS(view, SCI_GETDOCPOINTER, 0, 0));
   split_view(view, view2, lua_toboolean(L, 2)), focus_view(view2);
   SS(view2, SCI_SETSEL, anchor, current_pos);
   SS(view2, SCI_LINESCROLL, first_line - SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0), 0);
@@ -1093,7 +1093,7 @@ static int split_view_lua(lua_State *L) {
 
 // Removes the given Scintilla view from the 'views' Lua registry table.
 // The view must have been previously added with `add_view()`.
-static void remove_view(Scintilla *view) {
+static void remove_view(SciObject *view) {
   lua_getfield(lua, LUA_REGISTRYINDEX, VIEWS);
   for (size_t i = 1; i <= lua_rawlen(lua, -1); lua_pop(lua, 1), i++)
     if (view == (lua_rawgeti(lua, -1, i), lua_toview(lua, -1))) {
@@ -1110,7 +1110,7 @@ static void remove_view(Scintilla *view) {
 }
 
 // Removes the given Scintilla view, typically after unsplitting a pane.
-static void delete_view(Scintilla *view) { remove_view(view), delete_scintilla(view); }
+static void delete_view(SciObject *view) { remove_view(view), delete_scintilla(view); }
 
 // `view.unsplit()` Lua function.
 static int unsplit_view_lua(lua_State *L) {
@@ -1158,7 +1158,7 @@ static int view_newindex(lua_State *L) {
 }
 
 // Adds the given Scintilla view with a metatable to the 'views' Lua registry table.
-static void add_view(Scintilla *view) {
+static void add_view(SciObject *view) {
   lua_getfield(lua, LUA_REGISTRYINDEX, VIEWS);
   lua_newtable(lua);
   lua_pushlightuserdata(lua, view), lua_setfield(lua, -2, "widget_pointer");
@@ -1177,8 +1177,8 @@ static void add_view(Scintilla *view) {
 // in it.
 // The document can only be zero if this is the first Scintilla view being created.
 // Generates a 'view_new' event.
-static Scintilla *new_view(sptr_t doc) {
-  Scintilla *view = new_scintilla(notified);
+static SciObject *new_view(sptr_t doc) {
+  SciObject *view = new_scintilla(notified);
   SS(view, SCI_USEPOPUP, SC_POPUP_NEVER, 0);
   add_view(view);
   lua_pushview(lua, view), lua_setglobal(lua, "view");
@@ -1190,7 +1190,7 @@ static Scintilla *new_view(sptr_t doc) {
 }
 
 // Creates and returns the first Scintilla view when the platform is ready for it.
-static Scintilla *create_first_view() { return new_view(0); }
+static SciObject *create_first_view() { return new_view(0); }
 
 void close_textadept() {
   if (lua) {
