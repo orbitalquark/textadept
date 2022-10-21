@@ -362,7 +362,7 @@ local proxies = {}
 local key_shortcuts, menu_items, contextmenu_items
 
 local sci = _SCINTILLA.constants
-local SHIFT, CTRL, ALT, META = sci.MOD_SHIFT, sci.MOD_SHIFT, sci.MOD_SHIFT, sci.MOD_SHIFT
+local SHIFT, CTRL, ALT, META = sci.MOD_SHIFT, sci.MOD_CTRL, sci.MOD_ALT, sci.MOD_META
 -- Returns for a key sequence the integer keycode and modifier mask used to create a menu
 -- item accelerator.
 -- Keycodes are either ASCII bytes or codes from `keys.KEYSYMS`. Modifiers are a combination of
