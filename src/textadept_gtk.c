@@ -513,9 +513,14 @@ void *read_menu(lua_State *L, int index) {
     // Menu item table is of the form {label, id, key, modifiers}.
     GtkWidget *menu_item =
       *label ? gtk_menu_item_new_with_mnemonic(label) : gtk_separator_menu_item_new();
-    if (*label && get_int_field(L, -1, 3) > 0)
-      gtk_widget_add_accelerator(menu_item, "activate", accel, get_int_field(L, -1, 3),
-        get_int_field(L, -1, 4), GTK_ACCEL_VISIBLE);
+    if (*label && get_int_field(L, -1, 3) > 0) {
+      int key = get_int_field(L, -1, 3), modifiers = get_int_field(L, -1, 4), gdk_mods = 0;
+      if (modifiers & SCMOD_SHIFT) gdk_mods |= GDK_SHIFT_MASK;
+      if (modifiers & SCMOD_CTRL) gdk_mods |= GDK_CONTROL_MASK;
+      if (modifiers & SCMOD_ALT) gdk_mods |= GDK_MOD1_MASK;
+      if (modifiers & SCMOD_META) gdk_mods |= GDK_META_MASK;
+      gtk_widget_add_accelerator(menu_item, "activate", accel, key, gdk_mods, GTK_ACCEL_VISIBLE);
+    }
     g_signal_connect(
       menu_item, "activate", G_CALLBACK(menu_clicked), (void *)(long)get_int_field(L, -1, 2));
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_item);

@@ -361,17 +361,21 @@ local proxies = {}
 
 local key_shortcuts, menu_items, contextmenu_items
 
--- Returns the GDK integer keycode and modifier mask for a key sequence.
--- This is used for creating menu accelerators.
+local sci = _SCINTILLA.constants
+local SHIFT, CTRL, ALT, META = sci.MOD_SHIFT, sci.MOD_SHIFT, sci.MOD_SHIFT, sci.MOD_SHIFT
+-- Returns for a key sequence the integer keycode and modifier mask used to create a menu
+-- item accelerator.
+-- Keycodes are either ASCII bytes or codes from `keys.KEYSYMS`. Modifiers are a combination of
+-- `SCMOD_*` modifiers.
 -- @param key_seq The string key sequence.
 -- @return keycode and modifier mask
-local function get_gdk_key(key_seq)
+local function get_menu_key_seq(key_seq)
   if not key_seq then return nil end
   local mods, key = key_seq:match('^(.*%+)(.+)$')
   if not mods and not key then mods, key = '', key_seq end
-  local modifiers = ((mods:find('shift%+') or key:lower() ~= key) and 1 or 0) +
-    (mods:find('ctrl%+') and 4 or 0) + (mods:find('alt%+') and 8 or 0) +
-    (mods:find('cmd%+') and 0x10000000 or 0)
+  local modifiers = ((mods:find('shift%+') or key:lower() ~= key) and SHIFT or 0) +
+    (mods:find('ctrl%+') and CTRL or 0) + (mods:find('alt%+') and ALT or 0) +
+    (mods:find('cmd%+') and META or 0)
   local code = string.byte(key)
   if #key > 1 or code < 32 then
     for i, s in pairs(keys.KEYSYMS) do
@@ -386,27 +390,27 @@ end
 
 -- Creates a menu suitable for `ui.menu()` from the menu table format.
 -- Also assigns key bindings.
--- @param menu The menu to create a GTK menu from.
+-- @param menu The menu to create a menu from.
 -- @param contextmenu Flag indicating whether or not the menu is a context menu. If so, menu_id
 --   offset is 1000. The default value is `false`.
--- @return GTK menu that can be passed to `ui.menu()`.
+-- @return menu that can be passed to `ui.menu()`.
 -- @see ui.menu
 local function read_menu_table(menu, contextmenu)
-  local gtkmenu = {title = menu.title}
+  local ui_menu = {title = menu.title}
   for _, item in ipairs(menu) do
     if item.title then
-      gtkmenu[#gtkmenu + 1] = read_menu_table(item, contextmenu)
+      ui_menu[#ui_menu + 1] = read_menu_table(item, contextmenu)
     else -- item = {label, function}
       local menu_id = not contextmenu and #menu_items + 1 or #contextmenu_items + 1000 + 1
-      local key, mods = get_gdk_key(key_shortcuts[tostring(item[2])])
-      gtkmenu[#gtkmenu + 1] = {item[1], menu_id, key, mods}
+      local key, mods = get_menu_key_seq(key_shortcuts[tostring(item[2])])
+      ui_menu[#ui_menu + 1] = {item[1], menu_id, key, mods}
       if item[2] then
         local items = not contextmenu and menu_items or contextmenu_items
         items[menu_id < 1000 and menu_id or menu_id - 1000] = item
       end
     end
   end
-  return gtkmenu
+  return ui_menu
 end
 
 -- Returns a proxy table for menu table *menu* such that when a menu item is changed or added,
