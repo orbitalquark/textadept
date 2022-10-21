@@ -177,13 +177,8 @@ win_objs := $(call win-objs, $(common_objs) $(gui_objs) $(curses_objs)) $(termke
 osx_objs := $(call osx-objs, $(common_objs) $(gui_objs) $(curses_objs) $(termkey_unix_objs))
 
 # Compile natively for Linux.
-ifeq (Linux, $(shell uname -s))
 $(linux_objs): CC := gcc
 $(linux_objs): CXX := g++
-else
-$(linux_objs): CC := cc
-$(linux_objs): CXX := c++
-endif
 $(linux_objs): lua_flags += -DLUA_USE_LINUX
 $(linux_objs): gtk_flags += $(gtk_flags_linux)
 $(linux_objs): glib_flags := $(glib_flags_linux)
@@ -228,11 +223,7 @@ $(linux_exes): $(common_objs)
 ../textadept: $(gui_objs)
 ../textadept-curses: $(curses_objs) $(termkey_unix_objs)
 
-ifeq (Linux, $(shell uname -s))
 $(linux_exes): CXX := g++
-else
-$(linux_exes): CXX := c++
-endif
 $(linux_exes): LDFLAGS := -rdynamic
 ifndef PROFILE
 $(linux_exes): LDFLAGS += -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
@@ -245,11 +236,7 @@ endif
 ../textadept-curses: LDFLAGS += $(shell pkg-config --silence-errors --libs ncursesw || \
   pkg-config --silence-errors --libs ncurses || pkg-config --silence-errors --libs curses || \
   echo -lncursesw) -lpthread
-ifeq (Linux, $(shell uname -s))
 $(linux_exes): LDLIBS := -ldl
-else
-$(linux_exes): LDLIBS := -liconv
-endif
 ifdef PROFILE
 $(linux_exes): LDLIBS += -lgcov
 endif
