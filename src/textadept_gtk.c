@@ -45,7 +45,6 @@ static GtkosxApplication *osxapp;
 static GtkWidget *findbox, *find_entry, *repl_entry, *find_label, *repl_label;
 static GtkListStore *find_history, *repl_history;
 
-// Lua objects.
 static bool tab_sync;
 static int current_tab;
 
@@ -357,13 +356,12 @@ Pane *get_top_pane() {
 
 PaneInfo get_pane_info(Pane *pane) {
   PaneInfo info = {GTK_IS_PANED(pane), false, pane, pane, NULL, NULL, 0};
-  if (info.is_split) {
+  GtkPaned *p = GTK_PANED(pane);
+  if (info.is_split)
     info.vertical =
-      gtk_orientable_get_orientation(GTK_ORIENTABLE(pane)) == GTK_ORIENTATION_HORIZONTAL;
-    GtkPaned *p = GTK_PANED(pane);
-    info.child1 = gtk_paned_get_child1(p), info.child2 = gtk_paned_get_child2(p);
+      gtk_orientable_get_orientation(GTK_ORIENTABLE(pane)) == GTK_ORIENTATION_HORIZONTAL,
+    info.child1 = gtk_paned_get_child1(p), info.child2 = gtk_paned_get_child2(p),
     info.size = gtk_paned_get_position(p);
-  }
   return info;
 }
 
