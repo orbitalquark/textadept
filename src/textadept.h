@@ -5,15 +5,15 @@
 #include "platform.h"
 
 // The currently focused view and command entry.
-SciObject *focused_view, *command_entry;
+extern SciObject *focused_view, *command_entry;
 
 // Find & replace pane buttons and options.
-FindButton *find_next, *find_prev, *replace, *replace_all;
-FindOption *match_case, *whole_word, *regex, *in_files;
+extern FindButton *find_next, *find_prev, *replace, *replace_all;
+extern FindOption *match_case, *whole_word, *regex, *in_files;
 
 // Textadept's Lua state. Platforms should generally refrain from modifying it, but access may
 // be occasionally needed.
-lua_State *lua;
+extern lua_State *lua;
 
 /**
  * Initializes Textadept.

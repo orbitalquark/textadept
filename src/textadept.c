@@ -23,6 +23,12 @@
 #include <mach-o/dyld.h> // for _NSGetExecutablePath
 #endif
 
+// Variables declared in textadept.h.
+SciObject *focused_view, *command_entry;
+FindButton *find_next, *find_prev, *replace, *replace_all;
+FindOption *match_case, *whole_word, *regex, *in_files;
+lua_State *lua;
+
 static char *textadept_home, *os;
 SciObject *dummy_view; // for working with documents not shown in an existing view
 
