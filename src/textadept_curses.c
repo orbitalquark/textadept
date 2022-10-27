@@ -351,7 +351,7 @@ void focus_find() {
     copyfree(&find_text, getCDKEntryValue(find_entry));
     copyfree(&repl_text, getCDKEntryValue(repl_entry));
     if (focused_entry->exitType == vNORMAL)
-      find_clicked(button_labels + getCDKButtonboxCurrentButton(buttonbox), NULL), refresh_all();
+      find_clicked(button_labels + getCDKButtonboxCurrentButton(buttonbox)), refresh_all();
     find_entry->exitType = repl_entry->exitType = vNEVER_ACTIVATED;
     refreshCDKScreen(findbox), activateCDKEntry(focused_entry, NULL);
   }

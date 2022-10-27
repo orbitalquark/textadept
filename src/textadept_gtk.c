@@ -126,7 +126,7 @@ static bool find_keypress(GtkWidget *widget, GdkEventKey *event, void *_) {
   FindButton *button = (event->state & GDK_SHIFT_MASK) == 0 ?
     (widget == find_entry ? find_next : replace) :
     (widget == find_entry ? find_prev : replace_all);
-  return (find_clicked(button, NULL), true);
+  return (find_clicked(button), true);
 }
 
 // Creates and returns for the findbox a new GtkComboBoxEntry, storing its GtkLabel, GtkEntry,
@@ -150,10 +150,13 @@ static GtkWidget *new_combo(GtkWidget **label, GtkWidget **entry, GtkListStore *
 // Generates a 'find_text_changed' event.
 static void find_changed(GtkEditable *_, void *__) { emit("find_text_changed", -1); }
 
+// Signal for a Find button click.
+static void button_clicked(GtkWidget *button, void *_) { find_clicked(button); }
+
 // Creates and returns a new button for the findbox.
 static GtkWidget *new_button() {
   GtkWidget *button = gtk_button_new_with_mnemonic(""); // localized via Lua
-  g_signal_connect(button, "clicked", G_CALLBACK(find_clicked), NULL);
+  g_signal_connect(button, "clicked", G_CALLBACK(button_clicked), NULL);
   gtk_widget_set_can_focus(button, false);
   return button;
 }

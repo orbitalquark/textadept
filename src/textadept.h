@@ -52,11 +52,8 @@ void move_buffer(int from, int to, bool reorder_tabs);
  * Signal for a find & replace pane button click.
  * Emits 'find', 'replace', and/or 'replace_all' events depending on the button clicked.
  * @param button The button clicked.
- * @param unused Unused. Callbacks for platforms typically involve a void* userdata parameter,
- *   so this function includes one so that it (the function) can be used directly in platform
- *   API calls.
  */
-void find_clicked(FindButton *button, void *unused);
+void find_clicked(FindButton *button);
 
 /**
  * Requests to show a context menu.

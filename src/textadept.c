@@ -79,7 +79,7 @@ bool emit(const char *name, ...) {
   return (lua_pop(lua, 2), ret); // result, events
 }
 
-void find_clicked(FindButton *button, void *unused) {
+void find_clicked(FindButton *button) {
   const char *find_text = get_find_text(), *repl_text = get_repl_text();
   if (find_text && !*find_text) return;
   (button == find_next || button == find_prev) ? add_to_find_history(find_text) :
@@ -94,16 +94,16 @@ void find_clicked(FindButton *button, void *unused) {
 }
 
 // `find.find_next()` Lua function.
-static int click_find_next(lua_State *L) { return (find_clicked(find_next, NULL), 0); }
+static int click_find_next(lua_State *L) { return (find_clicked(find_next), 0); }
 
 // `find.find_prev()` Lua function.
-static int click_find_prev(lua_State *L) { return (find_clicked(find_prev, NULL), 0); }
+static int click_find_prev(lua_State *L) { return (find_clicked(find_prev), 0); }
 
 // `find.replace()` Lua function.
-static int click_replace(lua_State *L) { return (find_clicked(replace, NULL), 0); }
+static int click_replace(lua_State *L) { return (find_clicked(replace), 0); }
 
 // `find.replace_all()` Lua function.
-static int click_replace_all(lua_State *L) { return (find_clicked(replace_all, NULL), 0); }
+static int click_replace_all(lua_State *L) { return (find_clicked(replace_all), 0); }
 
 // `find.focus()` Lua function.
 static int focus_find_lua(lua_State *L) { return (focus_find(), 0); }
