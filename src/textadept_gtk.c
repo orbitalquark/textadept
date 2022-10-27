@@ -26,11 +26,13 @@
 #define gtk_combo_box_entry_set_text_column gtk_combo_box_set_entry_text_column
 #define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
 #endif
+// Translate GTK 3.22 API downward for compatibility.
 #if !GTK_CHECK_VERSION(3, 22, 0)
 #define GtkFileChooserNative GtkWidget
-#define gtk_file_chooser_native_new(t, p, m, a, c) \
-  gtk_file_chooser_dialog_new(t, p, m, c, GTK_RESPONSE_CANCEL, a, GTK_RESPONSE_ACCEPT, NULL)
-#define GtkNativeDialog GtkDialog
+#define gtk_file_chooser_native_new(title, parent, action, ...) \
+  gtk_file_chooser_dialog_new(title, parent, action, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, \
+    action == GTK_FILE_CHOOSER_ACTION_OPEN ? GTK_STOCK_OPEN : GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, \
+    NULL)
 #define GTK_NATIVE_DIALOG GTK_DIALOG
 #define gtk_native_dialog_run gtk_dialog_run
 #define gtk_native_dialog_destroy(w) gtk_widget_destroy(GTK_WIDGET(w))
@@ -637,10 +639,9 @@ int input_dialog(DialogOptions opts, lua_State *L) {
 
 // `ui.dialogs.open{...}` or `ui.dialogs.save{...}` Lua function.
 static int open_save_dialog(DialogOptions *opts, lua_State *L, bool open) {
-  int mode = open ? GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE;
-  const char *accept = open ? GTK_STOCK_OPEN : GTK_STOCK_SAVE;
+  int action = open ? GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE;
   GtkFileChooserNative *dialog =
-    gtk_file_chooser_native_new(opts->title, GTK_WINDOW(window), mode, accept, GTK_STOCK_CANCEL);
+    gtk_file_chooser_native_new(opts->title, GTK_WINDOW(window), action, NULL, NULL);
   GtkFileChooser *fc = GTK_FILE_CHOOSER(dialog);
   if (opts->dir) gtk_file_chooser_set_current_folder(fc, opts->dir);
   if (open) {
