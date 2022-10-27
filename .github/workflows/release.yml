@@ -29,9 +29,9 @@ jobs:
       version: ${{ steps.build.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Checkout textadept-build dependencies
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: orbitalquark/textadept-build
           path: textadept-build
@@ -65,7 +65,7 @@ jobs:
           if [[ -z $version ]]; then
             version=`ls -1 src/textadept_*.zip | head -1 | sed 's/[^_]\+_\(.\+\)\.[^.]\+\.zip/\1/;'`
           fi
-          echo "::set-output name=version::$version"
+          echo "version=$version" >> $GITHUB_OUTPUT
       - name: Package modules
         shell: bash
         run: |
@@ -80,18 +80,19 @@ jobs:
           done
           zip -r src/textadept_${{ steps.build.outputs.version }}.modules.zip textadept-modules
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: artifacts
           path: |
-            src/textadept_*
+            src/textadept_*.tgz
+            src/textadept_*.zip
             docs/changelog.md
   tag:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Tag
         run: |
           git tag textadept_${{ needs.build.outputs.version }}
@@ -101,7 +102,7 @@ jobs:
     needs: [build, tag]
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: artifacts
       - name: Create release log
