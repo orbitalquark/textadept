@@ -597,7 +597,7 @@ void move_buffer(int from, int to, bool reorder_tabs) {
   lua_getglobal(lua, "table"), lua_getfield(lua, -1, "remove"), lua_replace(lua, -2),
     lua_pushvalue(lua, -5), lua_pushinteger(lua, from), lua_call(lua, 2, 1);
   lua_call(lua, 3, 0); // table.insert(_BUFFERS, to, buf)
-  for (int i = 1; i <= lua_rawlen(lua, -1); i++)
+  for (size_t i = 1; i <= lua_rawlen(lua, -1); i++)
     lua_rawgeti(lua, -1, i), lua_pushinteger(lua, i), lua_rawset(lua, -3); // _BUFFERS[buf] = i
   if (lua_pop(lua, 1), reorder_tabs) move_tab(from - 1, to - 1);
 }
@@ -606,8 +606,8 @@ void move_buffer(int from, int to, bool reorder_tabs) {
 static int move_buffer_lua(lua_State *L) {
   int from = luaL_checkinteger(L, 1), to = luaL_checkinteger(L, 2);
   lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS);
-  luaL_argcheck(L, from >= 1 && from <= lua_rawlen(L, -1), 1, "position out of bounds");
-  luaL_argcheck(L, to >= 1 && to <= lua_rawlen(L, -1), 2, "position out of bounds");
+  luaL_argcheck(L, from >= 1 && (size_t)from <= lua_rawlen(L, -1), 1, "position out of bounds");
+  luaL_argcheck(L, to >= 1 && (size_t)to <= lua_rawlen(L, -1), 2, "position out of bounds");
   return (lua_pop(L, 1), move_buffer(from, to, true), 0);
 }
 
@@ -917,7 +917,7 @@ static void emit_notification(SCNotification *n) {
   lua_pushinteger(lua, n->modifiers), lua_setfield(lua, -2, "modifiers");
   lua_pushinteger(lua, n->modificationType), lua_setfield(lua, -2, "modification_type");
   if (n->text)
-    lua_pushlstring(lua, n->text, n->length ? n->length : strlen(n->text)),
+    lua_pushlstring(lua, n->text, n->length ? (size_t)n->length : strlen(n->text)),
       lua_setfield(lua, -2, "text");
   lua_pushinteger(lua, n->length), lua_setfield(lua, -2, "length");
   lua_pushinteger(lua, n->linesAdded), lua_setfield(lua, -2, "lines_added");
@@ -1008,7 +1008,7 @@ static void remove_doc(sptr_t doc) {
       lua_pushlightuserdata(lua, (sptr_t *)doc), lua_pushnil(lua), lua_rawset(lua, -3);
       lua_getglobal(lua, "table"), lua_getfield(lua, -1, "remove"), lua_replace(lua, -2),
         lua_pushvalue(lua, -2), lua_pushinteger(lua, i), lua_call(lua, 2, 0);
-      for (int i = 1; i <= lua_rawlen(lua, -1); i++)
+      for (size_t i = 1; i <= lua_rawlen(lua, -1); i++)
         lua_rawgeti(lua, -1, i), lua_pushinteger(lua, i), lua_rawset(lua, -3); // t[buf] = i
       remove_tab(i - 1), show_tabs(tabs && (tabs > 1 || lua_rawlen(lua, -1) > 1));
       break;
@@ -1108,7 +1108,7 @@ static void remove_view(SciObject *view) {
       lua_pushlightuserdata(lua, view), lua_pushnil(lua), lua_rawset(lua, -3);
       lua_getglobal(lua, "table"), lua_getfield(lua, -1, "remove"), lua_replace(lua, -2),
         lua_pushvalue(lua, -2), lua_pushinteger(lua, i), lua_call(lua, 2, 0);
-      for (int i = 1; i <= lua_rawlen(lua, -1); i++)
+      for (size_t i = 1; i <= lua_rawlen(lua, -1); i++)
         lua_rawgeti(lua, -1, i), lua_pushinteger(lua, i), lua_rawset(lua, -3); // t[view] = i
       break;
     }
