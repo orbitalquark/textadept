@@ -24,6 +24,7 @@ Bugfixes:
 * Fixed display of compile/run commands in output.
 * Fixed inability to use single-quoted command line arguments to `os.spawn()` in the terminal
   version.
+* Open file mode: Fixed bug loading module during Textadept initialization.
 
 Changes:
 
