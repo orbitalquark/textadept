@@ -53,10 +53,10 @@ Changes:
 * `textadept.run.stop()` presents a list dialog if there is more than one process running.
 * Moved process spawning into platform C code.
 
-[Textadept 11.5 alpha 2  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha_2.win.zip
-[Textadept 11.5 alpha 2  -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha_2.macOS.zip
-[Textadept 11.5 alpha 2  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha_2.linux.tgz
-[Textadept 11.5 alpha 2  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha_2.modules.zip
+[Textadept 11.5 alpha 2  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha_2/textadept_11.5_alpha_2.win.zip
+[Textadept 11.5 alpha 2  -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha_2/textadept_11.5_alpha_2.macOS.zip
+[Textadept 11.5 alpha 2  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha_2/textadept_11.5_alpha_2.linux.tgz
+[Textadept 11.5 alpha 2  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha_2/textadept_11.5_alpha_2.modules.zip
 [`ui.dialogs.message()`]: api.html#ui.dialogs.message
 [`ui.dialogs.input()`]: api.html#ui.dialogs.input
 [`ui.dialogs.open()`]: api.html#ui.dialogs.open
