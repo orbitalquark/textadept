@@ -595,6 +595,31 @@ function test_file_io_close_modified_interactive()
   buffer:close(true)
 end
 
+function test_file_io_close_hidden()
+  local buffer1 = buffer.new()
+  buffer1:add_text('1')
+  view:split(true)
+  local buffer2 = buffer.new()
+  buffer2:add_text('2')
+  local buffer3 = buffer.new()
+  buffer3:add_text('3')
+  view:split()
+  local buffer4 = buffer.new()
+  buffer4:add_text('4')
+  assert(_VIEWS[1].buffer == buffer1, 'buffer1 not visible')
+  assert(_VIEWS[2].buffer == buffer3, 'buffer3 not visible')
+  assert(_VIEWS[3].buffer == buffer4, 'buffer4 not visible')
+  buffer2:close(true)
+  assert(_VIEWS[1].buffer == buffer1, 'buffer1 not visible')
+  assert(_VIEWS[2].buffer == buffer3, 'buffer3 not visible')
+  assert(_VIEWS[3].buffer == buffer4, 'buffer4 not visible')
+  buffer1:close(true)
+  buffer3:close(true)
+  buffer4:close(true)
+  while view:unsplit() do end
+end
+expected_failure(test_file_io_close_hidden)
+
 function test_file_io_file_detect_modified()
   local modified = false
   local handler = function(filename)
