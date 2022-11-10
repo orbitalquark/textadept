@@ -20,12 +20,6 @@
 #endif
 #include "ScintillaWidget.h" // must come after <gtk/gtk.h>
 
-// Translate GTK 2.x API to GTK 3.0 for compatibility.
-#if GTK_CHECK_VERSION(3, 0, 0)
-#define gtk_combo_box_entry_new_with_model(m, _) gtk_combo_box_new_with_model_and_entry(m)
-#define gtk_combo_box_entry_set_text_column gtk_combo_box_set_entry_text_column
-#define GTK_COMBO_BOX_ENTRY GTK_COMBO_BOX
-#endif
 // Translate GTK 3.22 API downward for compatibility.
 #if !GTK_CHECK_VERSION(3, 22, 0)
 #define GtkFileChooserNative GtkWidget
@@ -58,8 +52,7 @@ const char *get_platform() { return "GTK"; }
 
 const char *get_charset() {
   const char *charset;
-  g_get_charset(&charset);
-  return charset;
+  return (g_get_charset(&charset), charset);
 }
 
 // Signal for exiting Textadept.
@@ -84,10 +77,10 @@ static bool focus_lost(GtkWidget *_, GdkEvent *__, void *___) {
 
 // Signal for a Textadept window keypress (not a Scintilla keypress).
 static bool window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
-  if (event->keyval != GDK_KEY_Escape || !gtk_widget_get_visible(findbox) ||
-    gtk_widget_has_focus(command_entry))
-    return false;
-  return (gtk_widget_hide(findbox), gtk_widget_grab_focus(focused_view), true);
+  if (event->keyval == GDK_KEY_Escape && gtk_widget_get_visible(findbox) &&
+    !gtk_widget_has_focus(command_entry))
+    return (gtk_widget_hide(findbox), gtk_widget_grab_focus(focused_view), true);
+  return false;
 }
 
 #if __APPLE__
@@ -136,13 +129,11 @@ static bool find_keypress(GtkWidget *widget, GdkEventKey *event, void *_) {
 static GtkWidget *new_combo(GtkWidget **label, GtkWidget **entry, GtkListStore **history) {
   *label = gtk_label_new(""); // localized label text set later via Lua
   *history = gtk_list_store_new(1, G_TYPE_STRING);
-  GtkWidget *combo = gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(*history), 0);
-  g_object_unref(*history);
-  gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(combo), 0);
+  GtkWidget *combo = gtk_combo_box_new_with_model_and_entry(GTK_TREE_MODEL(*history));
+  gtk_combo_box_set_entry_text_column(GTK_COMBO_BOX(combo), 0);
   gtk_combo_box_set_focus_on_click(GTK_COMBO_BOX(combo), false);
   *entry = gtk_bin_get_child(GTK_BIN(combo));
-  gtk_entry_set_text(GTK_ENTRY(*entry), " "),
-    gtk_entry_set_text(GTK_ENTRY(*entry), ""); // initialize with non-NULL
+  gtk_entry_set_text(GTK_ENTRY(*entry), " "), gtk_entry_set_text(GTK_ENTRY(*entry), ""); // non-NULL
   gtk_label_set_mnemonic_widget(GTK_LABEL(*label), *entry);
   g_signal_connect(*entry, "key-press-event", G_CALLBACK(find_keypress), NULL);
   return combo;
@@ -181,20 +172,18 @@ static GtkWidget *new_findbox() {
   replace_all = new_button(), match_case = new_option(), whole_word = new_option(),
   regex = new_option(), in_files = new_option();
 
-  GtkTable *table = GTK_TABLE(findbox);
-  int expand = GTK_FILL | GTK_EXPAND, shrink = GTK_FILL | GTK_SHRINK;
-  gtk_table_attach(table, find_label, 0, 1, 0, 1, shrink, shrink, 5, 0);
-  gtk_table_attach(table, repl_label, 0, 1, 1, 2, shrink, shrink, 5, 0);
-  gtk_table_attach(table, find_combo, 1, 2, 0, 1, expand, shrink, 5, 0);
-  gtk_table_attach(table, replace_combo, 1, 2, 1, 2, expand, shrink, 5, 0);
-  gtk_table_attach(table, find_next, 2, 3, 0, 1, shrink, shrink, 0, 0);
-  gtk_table_attach(table, find_prev, 3, 4, 0, 1, shrink, shrink, 0, 0);
-  gtk_table_attach(table, replace, 2, 3, 1, 2, shrink, shrink, 0, 0);
-  gtk_table_attach(table, replace_all, 3, 4, 1, 2, shrink, shrink, 0, 0);
-  gtk_table_attach(table, match_case, 4, 5, 0, 1, shrink, shrink, 5, 0);
-  gtk_table_attach(table, whole_word, 4, 5, 1, 2, shrink, shrink, 5, 0);
-  gtk_table_attach(table, regex, 5, 6, 0, 1, shrink, shrink, 5, 0);
-  gtk_table_attach(table, in_files, 5, 6, 1, 2, shrink, shrink, 5, 0);
+  gtk_table_attach(GTK_TABLE(findbox), find_label, 0, 1, 0, 1, GTK_FILL, 0, 5, 0);
+  gtk_table_attach(GTK_TABLE(findbox), repl_label, 0, 1, 1, 2, GTK_FILL, 0, 5, 0);
+  gtk_table_attach(GTK_TABLE(findbox), find_combo, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 5, 0);
+  gtk_table_attach(GTK_TABLE(findbox), replace_combo, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 5, 0);
+  gtk_table_attach(GTK_TABLE(findbox), find_next, 2, 3, 0, 1, GTK_FILL, 0, 0, 0);
+  gtk_table_attach(GTK_TABLE(findbox), find_prev, 3, 4, 0, 1, GTK_FILL, 0, 0, 0);
+  gtk_table_attach(GTK_TABLE(findbox), replace, 2, 3, 1, 2, GTK_FILL, 0, 0, 0);
+  gtk_table_attach(GTK_TABLE(findbox), replace_all, 3, 4, 1, 2, GTK_FILL, 0, 0, 0);
+  gtk_table_attach(GTK_TABLE(findbox), match_case, 4, 5, 0, 1, GTK_FILL, 0, 5, 0);
+  gtk_table_attach(GTK_TABLE(findbox), whole_word, 4, 5, 1, 2, GTK_FILL, 0, 5, 0);
+  gtk_table_attach(GTK_TABLE(findbox), regex, 5, 6, 0, 1, GTK_FILL, 0, 5, 0);
+  gtk_table_attach(GTK_TABLE(findbox), in_files, 5, 6, 1, 2, GTK_FILL, 0, 5, 0);
 
   return findbox;
 }
@@ -219,10 +208,8 @@ void new_window(SciObject *(*get_view)(void)) {
 #endif
 
   GtkWidget *vbox = gtk_vbox_new(false, 0);
-  gtk_container_add(GTK_CONTAINER(window), vbox);
 
-  menubar = gtk_menu_bar_new();
-  gtk_box_pack_start(GTK_BOX(vbox), menubar, false, false, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), menubar = gtk_menu_bar_new(), false, false, 0);
 
   tabbar = gtk_notebook_new();
   g_signal_connect(tabbar, "switch-page", G_CALLBACK(tab_changed), NULL);
@@ -232,32 +219,24 @@ void new_window(SciObject *(*get_view)(void)) {
   gtk_box_pack_start(GTK_BOX(vbox), tabbar, false, false, 0);
 
   GtkWidget *paned = gtk_vpaned_new();
-  gtk_box_pack_start(GTK_BOX(vbox), paned, true, true, 0);
-
-  GtkWidget *vboxp = gtk_vbox_new(false, 0);
+  GtkWidget *vboxp = gtk_vbox_new(false, 0), *hboxp = gtk_hbox_new(false, 0);
+  gtk_box_pack_start(GTK_BOX(hboxp), get_view(), true, true, 0);
+  gtk_box_pack_start(GTK_BOX(vboxp), hboxp, true, true, 0);
+  gtk_box_pack_start(GTK_BOX(vboxp), new_findbox(), false, false, 5);
   gtk_paned_add1(GTK_PANED(paned), vboxp);
-
-  GtkWidget *hbox = gtk_hbox_new(false, 0);
-  gtk_box_pack_start(GTK_BOX(vboxp), hbox, true, true, 0);
-
-  gtk_box_pack_start(GTK_BOX(hbox), get_view(), true, true, 0);
-  gtk_widget_grab_focus(focused_view);
-
   gtk_paned_add2(GTK_PANED(paned), command_entry);
   gtk_container_child_set(GTK_CONTAINER(paned), command_entry, "shrink", false, NULL);
+  gtk_box_pack_start(GTK_BOX(vbox), paned, true, true, 0);
 
-  gtk_box_pack_start(GTK_BOX(vboxp), new_findbox(), false, false, 5);
+  GtkWidget *hbox = gtk_hbox_new(false, 0);
+  gtk_box_pack_start(GTK_BOX(hbox), statusbar[0] = gtk_label_new(NULL), true, true, 5);
+  gtk_misc_set_alignment(GTK_MISC(statusbar[0]), 0, 0); // left-align
+  gtk_box_pack_start(GTK_BOX(hbox), statusbar[1] = gtk_label_new(NULL), false, false, 5);
+  gtk_box_pack_start(GTK_BOX(vbox), hbox, false, false, 1);
 
-  GtkWidget *hboxs = gtk_hbox_new(false, 0);
-  gtk_box_pack_start(GTK_BOX(vbox), hboxs, false, false, 1);
+  gtk_container_add(GTK_CONTAINER(window), vbox);
 
-  statusbar[0] = gtk_label_new(NULL), statusbar[1] = gtk_label_new(NULL);
-  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[0], true, true, 5);
-  gtk_misc_set_alignment(GTK_MISC(statusbar[0]), 0, 0);
-  gtk_box_pack_start(GTK_BOX(hboxs), statusbar[1], true, true, 5);
-  gtk_misc_set_alignment(GTK_MISC(statusbar[1]), 1, 0);
-
-  gtk_widget_show_all(window);
+  gtk_widget_show_all(window), gtk_widget_grab_focus(focused_view);
   gtk_widget_hide(menubar), gtk_widget_hide(tabbar), gtk_widget_hide(findbox),
     gtk_widget_hide(command_entry); // hide initially
 }
@@ -292,7 +271,6 @@ static bool mouse_clicked(GtkWidget *w, GdkEventButton *event, void *_) {
 
 SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, void *)) {
   SciObject *view = scintilla_new();
-  gtk_widget_set_size_request(view, 1, 1); // minimum size
   if (notified) g_signal_connect(view, SCINTILLA_NOTIFY, G_CALLBACK(notified), NULL);
   g_signal_connect(view, "key-press-event", G_CALLBACK(keypress), NULL);
   g_signal_connect(view, "button-press-event", G_CALLBACK(mouse_clicked), NULL);
@@ -335,8 +313,7 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *view)) {
     gtk_paned_get_child1(GTK_PANED(pane)) :
     gtk_paned_get_child2(GTK_PANED(pane));
   g_object_ref(view), g_object_ref(other);
-  gtk_container_remove(GTK_CONTAINER(pane), view);
-  gtk_container_remove(GTK_CONTAINER(pane), other);
+  gtk_container_remove(GTK_CONTAINER(pane), view), gtk_container_remove(GTK_CONTAINER(pane), other);
   GTK_IS_PANED(other) ? remove_views(GTK_PANED(other), delete_view) : delete_view(other);
   GtkWidget *parent = gtk_widget_get_parent(pane);
   gtk_container_remove(GTK_CONTAINER(parent), pane);
@@ -346,9 +323,8 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *view)) {
   else
     gtk_container_add(GTK_CONTAINER(parent), view);
   // gtk_widget_show_all(parent);
-  gtk_widget_grab_focus(GTK_WIDGET(view));
-  g_object_unref(view), g_object_unref(other);
-  return true;
+  gtk_widget_grab_focus(focused_view);
+  return (g_object_unref(view), g_object_unref(other), true);
 }
 
 void delete_scintilla(SciObject *view) { gtk_widget_destroy(view); }
@@ -444,7 +420,7 @@ static void add_to_history(GtkListStore *store, const char *text) {
       gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &last_text, -1);
   if (!last_text || strcmp(text, last_text) != 0)
     gtk_list_store_append(store, &iter), gtk_list_store_set(store, &iter, 0, text, -1);
-  g_free(last_text);
+  free(last_text);
 }
 
 void add_to_find_history(const char *text) { add_to_history(find_history, text); }
@@ -478,8 +454,7 @@ void focus_command_entry() {
 bool is_command_entry_active() { return gtk_widget_has_focus(command_entry); }
 int get_command_entry_height() {
   GtkAllocation allocation;
-  gtk_widget_get_allocation(command_entry, &allocation);
-  return allocation.height;
+  return (gtk_widget_get_allocation(command_entry, &allocation), allocation.height);
 }
 void set_command_entry_height(int height) {
   GtkWidget *paned = gtk_widget_get_parent(command_entry);
@@ -531,7 +506,7 @@ void *read_menu(lua_State *L, int index) {
 }
 
 void popup_menu(void *menu, void *userdata) {
-  GdkEventButton *event = (GdkEventButton *)userdata;
+  GdkEventButton *event = userdata;
   gtk_widget_show_all(menu);
   gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event ? event->button : 0,
     gdk_event_get_time((GdkEvent *)event));
@@ -573,7 +548,7 @@ typedef struct {
 
 // Signal for a timeout.
 static int timed_out(void *data_) {
-  TimeoutData *data = (TimeoutData *)data_;
+  TimeoutData *data = data_;
   bool repeat = data->f(data->refs);
   if (!repeat) free(data);
   return repeat;
@@ -645,11 +620,10 @@ static int open_save_dialog(DialogOptions *opts, lua_State *L, bool open) {
   if (open) {
     if (opts->only_dirs) gtk_file_chooser_set_action(fc, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
     gtk_file_chooser_set_select_multiple(fc, opts->multiple);
-    if (opts->dir && opts->file) {
-      lua_pushstring(L, opts->dir), lua_pushliteral(L, G_DIR_SEPARATOR_S),
-        lua_pushstring(L, opts->file), lua_concat(L, 3);
-      gtk_file_chooser_select_filename(fc, lua_tostring(L, -1));
-    }
+    if (opts->dir && opts->file)
+      gtk_file_chooser_select_filename(fc,
+        (lua_pushstring(L, opts->dir), lua_pushliteral(L, G_DIR_SEPARATOR_S),
+          lua_pushstring(L, opts->file), lua_concat(L, 3), lua_tostring(L, -1)));
   } else {
     gtk_file_chooser_set_do_overwrite_confirmation(fc, true);
     if (opts->file) gtk_file_chooser_set_current_name(fc, opts->file);
@@ -657,7 +631,7 @@ static int open_save_dialog(DialogOptions *opts, lua_State *L, bool open) {
 
   if (gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog)) != GTK_RESPONSE_ACCEPT)
     return (gtk_native_dialog_destroy(GTK_NATIVE_DIALOG(dialog)), 0);
-  lua_newtable(L); // note: will be placed by single value of opts->multiple is false
+  lua_newtable(L); // note: will be replaced by single value if opts->multiple is false
   GSList *filenames = gtk_file_chooser_get_filenames(fc), *f = filenames;
   for (int i = 1; f; f = f->next, i++) lua_pushstring(L, f->data), lua_rawseti(L, -2, i);
   g_slist_free_full(filenames, free);
@@ -676,10 +650,7 @@ typedef struct {
 
 // Updates the given progressbar with the given percentage and text.
 static void update(double percent, const char *text, void *bar) {
-  if (percent >= 0)
-    gtk_progress_bar_set_fraction(bar, 0.01 * percent);
-  else
-    gtk_progress_bar_pulse(bar);
+  percent >= 0 ? gtk_progress_bar_set_fraction(bar, 0.01 * percent) : gtk_progress_bar_pulse(bar);
   if (text) gtk_progress_bar_set_text(bar, text);
 }
 
@@ -784,7 +755,8 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   }
   GtkTreeModel *filter = gtk_tree_model_filter_new(GTK_TREE_MODEL(store), NULL);
 
-  GtkWidget *dialog = new_dialog(&opts), *entry = gtk_entry_new(), *treeview;
+  GtkWidget *dialog = new_dialog(&opts), *entry = gtk_entry_new(),
+            *treeview = gtk_tree_view_new_with_model(filter);
   gtk_window_set_resizable(GTK_WINDOW(dialog), true);
   int window_width, window_height;
   get_size(&window_width, &window_height);
@@ -794,7 +766,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   gtk_entry_set_activates_default(GTK_ENTRY(entry), true);
   GtkWidget *scrolled = gtk_scrolled_window_new(NULL, NULL);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dlg)), scrolled, true, true, 0);
-  gtk_container_add(GTK_CONTAINER(scrolled), treeview = gtk_tree_view_new_with_model(filter));
+  gtk_container_add(GTK_CONTAINER(scrolled), treeview);
   gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(filter), visible, treeview, NULL);
   for (int i = 1; i <= num_columns; i++) {
     const char *header = opts.columns ? (lua_rawgeti(L, opts.columns, i), lua_tostring(L, -1)) : "";
@@ -805,7 +777,6 @@ int list_dialog(DialogOptions opts, lua_State *L) {
     if (opts.columns) lua_pop(L, 1); // header
   }
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), opts.columns);
-  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(treeview), true);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(treeview), opts.search_column - 1);
   gtk_tree_view_set_search_entry(GTK_TREE_VIEW(treeview), GTK_ENTRY(entry));
   gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(treeview), matches, NULL, NULL);
@@ -847,8 +818,7 @@ static int read_channel(GIOChannel *source, GIOCondition cond, void *proc) {
   char buf[BUFSIZ];
   size_t len = 0;
   do {
-    int status = g_io_channel_read_chars(source, buf, BUFSIZ, &len, NULL);
-    if (status == G_IO_STATUS_NORMAL && len > 0)
+    if (g_io_channel_read_chars(source, buf, BUFSIZ, &len, NULL) == G_IO_STATUS_NORMAL && len > 0)
       process_output(PROCESS(proc), buf, len, source == PROCESS(proc)->cstdout);
   } while (len == BUFSIZ);
   return PROCESS(proc)->pid && !(cond & G_IO_HUP);
@@ -952,7 +922,8 @@ bool spawn(lua_State *L, Process *proc_, int index, const char *cmd, const char 
   // Monitor stdout, stderr, and the process itself.
   proc->cstdout = new_channel(proc->fstdout, proc, monitor_stdout),
   proc->cstderr = new_channel(proc->fstderr, proc, monitor_stderr);
-  return (g_child_watch_add(proc->pid, proc_exited, proc), true);
+  g_child_watch_add(proc->pid, proc_exited, proc);
+  return true;
 }
 
 size_t process_size() { return sizeof(struct Process); }
@@ -1046,8 +1017,7 @@ static int process(GApplication *_, GApplicationCommandLine *line, void *buf) {
     while (--argc) lua_pushstring(lua, argv[argc]), lua_rawseti(lua, -2, argc);
     emit("command_line", LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
   }
-  g_strfreev(argv);
-  return (gtk_window_present(GTK_WINDOW(window)), 0);
+  return (g_strfreev(argv), gtk_window_present(GTK_WINDOW(window)), 0);
 }
 
 #if _WIN32
