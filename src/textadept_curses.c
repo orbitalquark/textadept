@@ -111,7 +111,8 @@ SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, vo
 }
 
 void focus_view(SciObject *view) {
-  (focused_view ? SS(focused_view, SCI_SETFOCUS, 0, 0) : 0, SS(view, SCI_SETFOCUS, 1, 0));
+  if (focused_view) SS(focused_view, SCI_SETFOCUS, 0, 0);
+  SS(view, SCI_SETFOCUS, 1, 0);
 }
 
 sptr_t SS(SciObject *view, int message, uptr_t wparam, sptr_t lparam) {
@@ -246,7 +247,7 @@ void set_entry_font(const char *name) {}
 bool is_checked(FindOption *option) { return *(bool *)option; }
 // Use pointer arithmetic to highlight/unhighlight options as necessary.
 void toggle(FindOption *option, bool on) {
-  bool *opt = (bool *)option;
+  bool *opt = option;
   if (*opt != on) *opt = on, option_labels[opt - find_options] += *opt ? -4 : 4;
 }
 void set_find_label(const char *text) { copyfree(&find_label, text); }
@@ -255,7 +256,7 @@ void set_button_label(FindButton *button, const char *text) {
   copyfree(&button_labels[(char **)button - button_labels], text);
 }
 void set_option_label(FindOption *option, const char *text) {
-  bool *opt = (bool *)option;
+  bool *opt = option;
   // TODO: stop using Lua for this.
   lua_pushstring(lua, "</R>"), lua_pushstring(lua, text), lua_concat(lua, 2);
   if (option_labels[opt - find_options] && !*opt) option_labels[opt - find_options] -= 4;
@@ -278,10 +279,10 @@ static void refresh_all() {
 // For up and down keys, toggle entry focus.
 // Otherwise, emit 'find_text_changed' events for entry text changes.
 static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
-  CDKENTRY *entry = (CDKENTRY *)object;
+  CDKENTRY *entry = object;
   char *text = getCDKEntryValue(entry);
   if (key == KEY_TAB) {
-    CDKBUTTONBOX *box = (CDKBUTTONBOX *)data;
+    CDKBUTTONBOX *box = data;
     FindButton *current = button_labels + getCDKButtonboxCurrentButton(box);
     char **button = entry == find_entry ? (current == find_next ? find_prev : find_next) :
                                           (current == replace ? replace_all : replace);
@@ -297,7 +298,7 @@ static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
   } else if (key >= KEY_F(1) && key <= KEY_F(4)) {
     toggle(&find_options[key - KEY_F(1)], !find_options[key - KEY_F(1)]);
     // Redraw the optionbox.
-    CDKBUTTONBOX **optionbox = (CDKBUTTONBOX **)data;
+    CDKBUTTONBOX **optionbox = data;
     int width = (*optionbox)->boxWidth - 1;
     destroyCDKButtonbox(*optionbox);
     *optionbox = newCDKButtonbox(
@@ -641,7 +642,7 @@ typedef struct {
 // case-insensitively  and sequentially. If all key words match, shows the item/row.
 static int refilter(EObjectType _, void *entry, void *data, chtype __) {
   char *key = getCDKEntryValue((CDKENTRY *)entry);
-  ListData *list_data = (ListData *)data;
+  ListData *list_data = data;
   if (*key) {
     int row = 0;
     for (int i = 0; i < list_data->num_items; i += list_data->num_columns) {
@@ -798,9 +799,9 @@ bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *
   if (pid > 0) {
     // Parent process: register child for monitoring its fds and pid.
     close(pstdin[0]), close(pstdout[1]), close(pstderr[1]);
-    PROCESS(proc)->pid = pid, PROCESS(proc)->fstdin = pstdin[1],
-    PROCESS(proc)->fstdout = pstdout[0], PROCESS(proc)->fstderr = pstderr[0],
-    PROCESS(proc)->monitor_stdout = monitor_stdout, PROCESS(proc)->monitor_stderr = monitor_stderr;
+    struct Process *p = proc;
+    p->pid = pid, p->fstdin = pstdin[1], p->fstdout = pstdout[0], p->fstderr = pstderr[0],
+    p->monitor_stdout = monitor_stdout, p->monitor_stderr = monitor_stderr;
     lua_checkstack(L, 3), lua_getfield(L, LUA_REGISTRYINDEX, "spawn_procs"),
       lua_pushvalue(L, index), lua_pushboolean(L, 1), lua_settable(L, -3); // t[proc] = true
     return true;
