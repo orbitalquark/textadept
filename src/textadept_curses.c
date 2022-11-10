@@ -463,8 +463,10 @@ int read_fds(fd_set *fds) {
     if (FD_ISSET(proc->fstderr, fds)) read_proc(proc, false), n++;
     // Check process status. If finished, read anything left and cleanup.
     int status;
-    if (waitpid(proc->pid, &status, WNOHANG) > 0)
+    if (waitpid(proc->pid, &status, WNOHANG) > 0) {
       read_proc(proc, true), read_proc(proc, false), cleanup_process(proc, status);
+      lua_pushnil(lua), lua_replace(lua, -3); // key no longer exists
+    }
   }
   return (lua_pop(lua, 1), n); // spawn_procs
 }
