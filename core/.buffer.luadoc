@@ -1692,19 +1692,21 @@ function style_of_name(buffer, style_name) end
 function reload(buffer) end
 
 ---
--- Saves the buffer to its file.
+-- Saves the buffer to its file, returning `true` on success.
 -- If the buffer does not have a file, the user is prompted for one.
 -- Emits `FILE_BEFORE_SAVE` and `FILE_AFTER_SAVE` events.
 -- @param buffer A buffer.
+-- @return `true` if the file was saved; `nil` otherwise.
 -- @name save
 function save(buffer) end
 
 ---
--- Saves the buffer to file *filename* or the user-specified filename.
+-- Saves the buffer to file *filename* or the user-specified filename, returning `true` on success.
 -- Emits a `FILE_AFTER_SAVE` event.
 -- @param buffer A buffer.
 -- @param filename Optional new filepath to save the buffer to. If `nil`, the user is prompted
 --   for one.
+-- @return `true` if the file was saved; `nil` otherwise.
 -- @name save_as
 function save_as(buffer, filename) end
 

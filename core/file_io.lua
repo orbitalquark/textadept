@@ -186,10 +186,7 @@ end
 -- LuaDoc is in core/.buffer.luadoc.
 local function save(buffer)
   if not buffer then buffer = _G.buffer end
-  if not buffer.filename then
-    buffer:save_as()
-    return
-  end
+  if not buffer.filename then return buffer:save_as() end
   events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
   if io.ensure_final_newline and buffer.encoding and buffer.char_at[buffer.length] ~= 10 then
     buffer:append_text(buffer.eol_mode == buffer.EOL_LF and '\n' or '\r\n')
@@ -201,6 +198,7 @@ local function save(buffer)
   buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
   if buffer._type then buffer._type = nil end
   events.emit(events.FILE_AFTER_SAVE, buffer.filename)
+  return true
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
@@ -215,14 +213,26 @@ local function save_as(buffer, filename)
   buffer:save()
   buffer:set_lexer() -- auto-detect
   events.emit(events.FILE_AFTER_SAVE, filename, true)
+  return true
 end
 
 ---
--- Saves all unsaved buffers to their respective files.
+-- Saves all unsaved buffers to their respective files, prompting the user for filenames for
+-- untitled buffers if *untitled* is `true`, and returns `true` on success.
+-- Print and output buffers are ignored.
+-- @param untitled Whether or not to prompt for filenames for untitled buffers. The default
+--   value is `false`.
+-- @return `true` if all savable files were saved; `nil` otherwise.
 -- @see buffer.save
 -- @name save_all_files
-function io.save_all_files()
-  for _, buffer in ipairs(_BUFFERS) do if buffer.filename and buffer.modify then buffer:save() end end
+function io.save_all_files(untitled)
+  for _, buffer in ipairs(_BUFFERS) do
+    if buffer.modify and (buffer.filename or untitled and not buffer._type) then
+      if not buffer.filename then view:goto_buffer(buffer) end
+      if not buffer:save() then return end
+    end
+  end
+  return true
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
@@ -234,9 +244,11 @@ local function close(buffer, force)
     local button = ui.dialogs.message{
       title = _L['Close without saving?'],
       text = string.format('%s\n%s', _L['There are unsaved changes in'], filename),
-      icon = 'dialog-question', button1 = _L['Cancel'], button2 = _L['Close without saving']
+      icon = 'dialog-question', button1 = _L['Save'], button2 = _L['Cancel'],
+      button3 = _L['Close without saving']
     }
-    if button ~= 2 then return nil end -- do not propagate key command
+    if button == 1 then return buffer:save() end
+    if button ~= 3 then return nil end -- do not propagate key command
   end
   buffer:delete()
   return true

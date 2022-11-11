@@ -863,7 +863,7 @@ save	_HOME/core/.buffer.luadoc	/^function save(buffer) end$/;"	f	class:buffer
 save	_HOME/core/.ui.dialogs.luadoc	/^function save(options) end$/;"	f	class:ui.dialogs
 save	_HOME/modules/textadept/macros.lua	/^function M.save(filename)$/;"	f	class:textadept.macros
 save	_HOME/modules/textadept/session.lua	/^function M.save(filename)$/;"	f	class:textadept.session
-save_all_files	_HOME/core/file_io.lua	/^function io.save_all_files()$/;"	f	class:io
+save_all_files	_HOME/core/file_io.lua	/^function io.save_all_files(untitled)$/;"	f	class:io
 save_as	_HOME/core/.buffer.luadoc	/^function save_as(buffer, filename) end$/;"	f	class:buffer
 save_on_quit	_HOME/modules/textadept/session.lua	/^module('textadept.session')]]$/;"	F	class:textadept.session
 scroll_caret	_HOME/core/.view.luadoc	/^function scroll_caret(view) end$/;"	f	class:view

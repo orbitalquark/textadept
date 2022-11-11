@@ -3046,7 +3046,7 @@ Parameters:
 <a id="buffer.save"></a>
 #### `buffer.save`(*buffer*)
 
-Saves the buffer to its file.
+Saves the buffer to its file, returning `true` on success.
 If the buffer does not have a file, the user is prompted for one.
 Emits `FILE_BEFORE_SAVE` and `FILE_AFTER_SAVE` events.
 
@@ -3054,10 +3054,14 @@ Parameters:
 
 * *`buffer`*: A buffer.
 
+Return:
+
+* `true` if the file was saved; `nil` otherwise.
+
 <a id="buffer.save_as"></a>
 #### `buffer.save_as`(*buffer, filename*)
 
-Saves the buffer to file *filename* or the user-specified filename.
+Saves the buffer to file *filename* or the user-specified filename, returning `true` on success.
 Emits a `FILE_AFTER_SAVE` event.
 
 Parameters:
@@ -3065,6 +3069,10 @@ Parameters:
 * *`buffer`*: A buffer.
 * *`filename`*: Optional new filepath to save the buffer to. If `nil`, the user is prompted
   for one.
+
+Return:
+
+* `true` if the file was saved; `nil` otherwise.
 
 <a id="buffer.search_anchor"></a>
 #### `buffer.search_anchor`(*buffer*)
@@ -4381,9 +4389,19 @@ See also:
 * [`io.quick_open_max`](#io.quick_open_max)
 
 <a id="io.save_all_files"></a>
-#### `io.save_all_files`()
+#### `io.save_all_files`(*untitled*)
 
-Saves all unsaved buffers to their respective files.
+Saves all unsaved buffers to their respective files, prompting the user for filenames for
+untitled buffers if *untitled* is `true`, and returns `true` on success.
+
+Parameters:
+
+* *`untitled`*: Whether or not to prompt for filenames for untitled buffers. The default
+  value is `false`.
+
+Return:
+
+* `true` if all savable files were saved; `nil` otherwise.
 
 See also:
 

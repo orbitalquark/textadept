@@ -389,10 +389,11 @@ events.connect(events.QUIT, function()
   local button = ui.dialogs.message{
     title = _L['Quit without saving?'],
     text = string.format('%s\n • %s', _L['The following buffers are unsaved:'],
-      table.concat(utf8_list, '\n • ')), icon = 'dialog-question', button1 = _L['Cancel'],
-    button2 = _L['Quit without saving']
+      table.concat(utf8_list, '\n • ')), icon = 'dialog-question', button1 = _L['Save all'],
+    button2 = _L['Cancel'], button3 = _L['Quit without saving']
   }
-  if button ~= 2 then return true end -- prevent quit
+  if button == 1 then return not io.save_all_files(true) end
+  if button ~= 3 then return true end -- prevent quit
 end)
 
 -- Keeps track of, and switches back to the previous buffer after buffer close.
