@@ -1337,6 +1337,23 @@ function test_ui_buffer_switch_save_restore_properties()
   view.folding = false -- restore
 end
 
+function test_ui_quit()
+  assert(not events.emit('quit'), 'should quit') -- simulate
+
+  ui.print('foo')
+  buffer:append_text('bar') -- modify print buffer
+  if #_VIEWS > 1 then view:unsplit() end
+  assert(not events.emit('quit'), 'should still quit') -- simulate
+  buffer:close(true)
+end
+
+function test_ui_quit_interactive()
+  buffer.new()
+  buffer:append_text('foo')
+  assert(events.emit('quit'), 'should not quit') -- simulate
+  buffer:close(true)
+end
+
 if CURSES then
   function test_ui_mouse()
     view:split(true)

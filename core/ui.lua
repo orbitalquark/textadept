@@ -379,7 +379,7 @@ events.connect(events.RESET_AFTER, function() ui.statusbar_text = _L['Lua reset'
 events.connect(events.QUIT, function()
   local utf8_list = {}
   for _, buffer in ipairs(_BUFFERS) do
-    if not buffer.modify then goto continue end
+    if not buffer.modify or buffer._type then goto continue end
     local filename = buffer.filename or buffer._type or _L['Untitled']
     if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
     utf8_list[#utf8_list + 1] = filename
