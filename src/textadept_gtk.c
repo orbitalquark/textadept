@@ -337,12 +337,12 @@ Pane *get_top_pane() {
 
 PaneInfo get_pane_info(Pane *pane) {
   PaneInfo info = {GTK_IS_PANED(pane), false, pane, pane, NULL, NULL, 0};
-  GtkPaned *p = GTK_PANED(pane);
   if (info.is_split)
     info.vertical =
       gtk_orientable_get_orientation(GTK_ORIENTABLE(pane)) == GTK_ORIENTATION_HORIZONTAL,
-    info.child1 = gtk_paned_get_child1(p), info.child2 = gtk_paned_get_child2(p),
-    info.size = gtk_paned_get_position(p);
+    info.child1 = gtk_paned_get_child1(GTK_PANED(pane)),
+    info.child2 = gtk_paned_get_child2(GTK_PANED(pane)),
+    info.size = gtk_paned_get_position(GTK_PANED(pane));
   return info;
 }
 
