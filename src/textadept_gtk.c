@@ -606,8 +606,7 @@ int input_dialog(DialogOptions opts, lua_State *L) {
   int button = gtk_dialog_run(GTK_DIALOG(dialog));
   if (button < 1 || (button == 2 && !opts.return_button)) return (gtk_widget_destroy(dialog), 0);
   lua_pushstring(L, gtk_entry_get_text(GTK_ENTRY(entry)));
-  if (opts.return_button) lua_pushinteger(L, button);
-  return (gtk_widget_destroy(dialog), !opts.return_button ? 1 : 2);
+  return (gtk_widget_destroy(dialog), !opts.return_button ? 1 : (lua_pushinteger(L, button), 2));
 }
 
 // `ui.dialogs.open{...}` or `ui.dialogs.save{...}` Lua function.
@@ -720,6 +719,21 @@ static void refilter(GtkEditable *_, void *view) {
     select_first_item(view);
 }
 
+// Signal for an entry keypress.
+// This is needed to scroll through list items when interactive search is not active.
+// Note: key-press-event is never emitted for some reason (perhaps because this widget is an
+// interactive search widget).
+static int entry_keypress(GtkWidget *entry, GdkEventKey *event, void *treeview) {
+  if (*gtk_entry_get_text(GTK_ENTRY(entry))) return false;
+  bool down = event->keyval == GDK_KEY_Down || event->keyval == GDK_KEY_Page_Down,
+       page = event->keyval == GDK_KEY_Page_Down || event->keyval == GDK_KEY_Page_Up, moved;
+  if (!down && !page && event->keyval != GDK_KEY_Up) return false;
+  gtk_widget_grab_focus(treeview);
+  g_signal_emit_by_name(treeview, "move-cursor",
+    !page ? GTK_MOVEMENT_DISPLAY_LINES : GTK_MOVEMENT_PAGES, down ? 1 : -1, &moved);
+  return (gtk_widget_grab_focus(entry), moved);
+}
+
 // Signal for a treeview keypress.
 // This is needed to avoid triggering "row-activate" when pressing Enter, which collapses a
 // multiple-selection.
@@ -781,6 +795,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   gtk_tree_view_set_search_entry(GTK_TREE_VIEW(treeview), GTK_ENTRY(entry));
   gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(treeview), matches, NULL, NULL);
   g_signal_connect(entry, "changed", G_CALLBACK(refilter), treeview);
+  g_signal_connect(entry, "key-release-event", G_CALLBACK(entry_keypress), treeview);
   g_signal_connect(treeview, "key-press-event", G_CALLBACK(list_keypress), dialog);
   g_signal_connect(treeview, "row-activated", G_CALLBACK(row_activated), dialog);
   GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
