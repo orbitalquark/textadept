@@ -270,6 +270,14 @@ local M = {}
 --   * _`ctrl`_: The "Control" modifier key is held down.
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
 --   * _`cmd`_: The "Command" modifier key on macOS is held down.
+-- @field TAB_CLOSE_CLICKED (string)
+--   Emitted when the user clicks a buffer tab's close button.
+--   When connecting to this event, connect with an index of 1 if the handler needs to run
+--   before Textadept closes the buffer.
+--   This event is only emitted in the Qt GUI version.
+--   Arguments:
+--
+--   * _`index`_: The numeric index of the clicked tab.
 -- @field UNFOCUS (string)
 --   Emitted when Textadept loses focus.
 --   This event is never emitted when Textadept is running in the terminal.
@@ -405,7 +413,7 @@ end)
 -- Set event constants.
 for _, v in pairs(_SCINTILLA.events) do M[v[1]:upper()] = v[1] end
 -- LuaFormatter off
-local textadept_events = {'appleevent_odoc','buffer_after_replace_text','buffer_after_switch','buffer_before_replace_text','buffer_before_switch','buffer_deleted','buffer_new','csi','command_text_changed','error','find','find_text_changed','focus','initialized','keypress','menu_clicked','mouse','quit','replace','replace_all','reset_after','reset_before','resume','suspend', 'tab_clicked','unfocus','view_after_switch','view_before_switch','view_new'}
+local textadept_events = {'appleevent_odoc','buffer_after_replace_text','buffer_after_switch','buffer_before_replace_text','buffer_before_switch','buffer_deleted','buffer_new','csi','command_text_changed','error','find','find_text_changed','focus','initialized','keypress','menu_clicked','mouse','quit','replace','replace_all','reset_after','reset_before','resume','suspend', 'tab_clicked','tab_close_clicked','unfocus','view_after_switch','view_before_switch','view_new'}
 -- LuaFormatter on
 for _, v in pairs(textadept_events) do M[v:upper()] = v end
 

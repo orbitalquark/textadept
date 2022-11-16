@@ -19,6 +19,9 @@ gtk_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
   pkg-config --silence-errors --define-variable=prefix=gtkwin --cflags gtk+-3.0)
 gtk_flags_osx := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
   pkg-config --silence-errors --define-variable=prefix=gtkosx --cflags gtk+-3.0)
+qt_headers := $(shell qmake -query QT_INSTALL_HEADERS)
+qt_includes := -I$(qt_headers) -I$(qt_headers)/QtCore -I$(qt_headers)/QtWidgets -I$(qt_headers)/QtGui
+qt_flags := -fPIC $(qt_includes)
 
 # Utility functions.
 
@@ -41,14 +44,21 @@ endef
 
 ta_objs := $(call objs, textadept.c)
 ta_gtk_objs := $(call objs, textadept_gtk.c)
+ta_qt_objs := $(call objs, textadept_qt.cpp)
+ta_qt_moc_srcs := $(patsubst %.o, %-moc.cpp, $(ta_qt_objs))
+ta_qt_moc_objs := $(patsubst %.cpp, %.o, $(ta_qt_moc_srcs))
 ta_curses_objs := $(call objs, textadept_curses.c)
 ta_rc_objs := win-textadept_rc.o
 
-ta_flags := -std=c99 -pedantic -I. -Iscintilla/include -Wall
+ta_flags := -pedantic -I. -Iscintilla/include -Wall -Wextra -Wno-unused-parameter \
+  -Wno-missing-field-initializers
 
-$(call all-objs, $(ta_objs)): CFLAGS += $(ta_flags) $(lua_flags)
-$(call all-objs, $(ta_gtk_objs)): CFLAGS += $(ta_flags) $(lua_flags) -DGTK $(gtk_flags)
-$(call all-objs, $(ta_curses_objs)): CFLAGS += $(ta_flags) $(lua_flags) -DCURSES \
+$(call all-objs, $(ta_objs)): CFLAGS += -std=c99 $(ta_flags) $(lua_flags)
+$(call all-objs, $(ta_gtk_objs)): CFLAGS += -std=c99 $(ta_flags) $(lua_flags) -DGTK $(gtk_flags)
+$(ta_qt_objs): CXXFLAGS += -std=c++17 $(ta_flags) $(lua_flags) $(qt_flags) -DQT_NO_KEYWORDS \
+  -Wno-deprecated-copy
+$(ta_qt_moc_objs): CXXFLAGS += $(qt_flags)
+$(call all-objs, $(ta_curses_objs)): CFLAGS += -std=c99 $(ta_flags) $(lua_flags) -DCURSES \
   -Iscintilla/curses -Itermkey -Icdk $(curses_flags)
 # For readlink from unistd.h on Linux only.
 $(ta_objs): CFLAGS += -D_XOPEN_SOURCE=500
@@ -59,6 +69,11 @@ $(call win-objs, $(ta_objs)): CFLAGS += -Igtkwin/include
 
 $(call all-objs, $(ta_objs)): textadept.c ; $(build-cc)
 $(call all-objs, $(ta_gtk_objs)): textadept_gtk.c ; $(build-cc)
+$(ta_qt_objs): %.o: %.cpp ; $(build-cxx)
+textadept_qt_ui.h: textadept_qt.ui ; uic -o $@ $<
+$(ta_qt_moc_srcs): textadept_qt_ui.h
+$(ta_qt_moc_srcs): %-moc.cpp: %.h ; moc $(qt_includes) -o $@ $<
+$(ta_qt_moc_objs): %.o: %.cpp ; $(build-cxx)
 $(call all-objs, $(ta_curses_objs)): textadept_curses.c ; $(build-cc)
 $(ta_rc_objs): textadept.rc ; $(WINDRES) $< $@
 
@@ -69,16 +84,24 @@ sci_lexlib_objs := $(call objs, lexilla/lexlib/*.cxx)
 sci_lexer_objs := $(call objs, Scintillua.cxx)
 sci_gtk_objs := $(call objs, scintilla/gtk/*.cxx)
 sci_gtk_c_objs := $(call objs, scintilla/gtk/*.c)
+sci_qt_objs := $(call objs, scintilla/qt/ScintillaEditBase/*.cpp)
+sci_qt_moc_srcs := $(patsubst %.o, %-moc.cpp, $(filter-out PlatQt.o, $(sci_qt_objs)))
+sci_qt_moc_objs := $(patsubst %.cpp, %.o, $(sci_qt_moc_srcs))
 sci_curses_objs := $(call objs, scintilla/curses/*.cxx)
 
-sci_flags := -pedantic -DSCI_LEXER -DNDEBUG -Iscintilla/include -Iscintilla/src -Ilexilla/include \
+sci_includes := -Iscintilla/include -Iscintilla/src
+sci_flags := -pedantic -DSCI_LEXER -DNDEBUG $(sci_includes) -Ilexilla/include \
   -Ilexilla/lexlib -Wall
+qt_includes += $(sci_includes) -Iscintilla/qt/ScintillaEditBase
+qt_flags += $(sci_includes) -Iscintilla/qt/ScintillaEditBase
 
 $(call all-objs, $(sci_objs)): CXXFLAGS += $(sci_flags)
 $(call all-objs, $(sci_lexlib_objs)): CXXFLAGS += $(sci_flags)
 $(call all-objs, $(sci_lexer_objs)): CXXFLAGS += $(sci_flags) $(lua_flags) -DNO_DLL
 $(call all-objs, $(sci_gtk_objs)): CXXFLAGS += $(sci_flags) -DGTK $(gtk_flags)
 $(call all-objs, $(sci_gtk_c_objs)): CFLAGS += $(gtk_flags)
+$(sci_qt_objs): CXXFLAGS += $(sci_flags) -DSCINTILLA_QT $(qt_flags)
+$(sci_qt_moc_objs): CXXFLAGS += $(qt_flags)
 $(call all-objs, $(sci_curses_objs)): CXXFLAGS += $(sci_flags) -DCURSES $(curses_flags)
 
 $(sci_objs): %.o: scintilla/src/%.cxx ; $(build-cxx)
@@ -94,6 +117,9 @@ $(call osx-objs, $(sci_gtk_objs)): osx-%.o: scintilla/gtk/%.cxx ; $(build-cxx)
 $(sci_gtk_c_objs): %.o: scintilla/gtk/%.c ; $(build-cc)
 $(call win-objs, $(sci_gtk_c_objs)): win-%.o: scintilla/gtk/%.c ; $(build-cc)
 $(call osx-objs, $(sci_gtk_c_objs)): osx-%.o: scintilla/gtk/%.c ; $(build-cc)
+$(sci_qt_objs): %.o: scintilla/qt/ScintillaEditBase/%.cpp ; $(build-cxx)
+$(sci_qt_moc_srcs): %-moc.cpp: scintilla/qt/ScintillaEditBase/%.h ; moc $(qt_includes) -o $@ $<
+$(sci_qt_moc_objs): %.o: %.cpp ; $(build-cxx)
 $(sci_curses_objs): %.o: scintilla/curses/%.cxx ; $(build-cxx)
 $(call win-objs, $(sci_curses_objs)): win-%.o: scintilla/curses/%.cxx ; $(build-cxx)
 $(call osx-objs, $(sci_curses_objs)): osx-%.o: scintilla/curses/%.cxx ; $(build-cxx)
@@ -162,13 +188,14 @@ endif
 
 common_objs := $(ta_objs) $(sci_objs) $(sci_lexlib_objs) $(sci_lexer_objs) $(lua_objs) \
   $(lua_lib_objs)
-gui_objs := $(ta_gtk_objs) $(sci_gtk_objs) $(sci_gtk_c_objs)
+gtk_objs := $(ta_gtk_objs) $(sci_gtk_objs) $(sci_gtk_c_objs)
+qt_objs := $(ta_qt_moc_objs) $(ta_qt_objs) $(sci_qt_moc_objs) $(sci_qt_objs)
 curses_objs := $(ta_curses_objs) $(sci_curses_objs) $(termkey_objs) $(cdk_objs)
 
-linux_objs := $(common_objs) $(gui_objs) $(curses_objs) $(termkey_unix_objs)
-win_objs := $(call win-objs, $(common_objs) $(gui_objs) $(curses_objs)) $(termkey_win_objs) \
+linux_objs := $(common_objs) $(gtk_objs) $(qt_objs) $(curses_objs) $(termkey_unix_objs)
+win_objs := $(call win-objs, $(common_objs) $(gtk_objs) $(curses_objs)) $(termkey_win_objs) \
   $(ta_rc_objs)
-osx_objs := $(call osx-objs, $(common_objs) $(gui_objs) $(curses_objs) $(termkey_unix_objs))
+osx_objs := $(call osx-objs, $(common_objs) $(gtk_objs) $(curses_objs) $(termkey_unix_objs))
 
 # Compile natively for Linux.
 $(linux_objs): CC := gcc
@@ -197,13 +224,14 @@ $(osx_objs): gtk_flags += $(gtk_flags_osx)
 
 # Executables.
 
-linux_exes := $(addprefix ../, textadept textadept-curses)
+linux_exes := $(addprefix ../, textadept textadept-qt textadept-curses)
 win_exes := $(addprefix ../, textadept.exe textadept-curses.exe)
 osx_exes := $(addprefix ../, textadept-osx textadept-osx-curses)
 
-.PHONY: all curses win osx
+.PHONY: all qt curses win osx
 .DEFAULT_GOAL := all
 all: $(linux_exes)
+qt: ../textadept-qt
 curses: ../textadept-curses
 win: $(win_exes)
 osx: $(osx_exes)
@@ -211,7 +239,8 @@ osx: $(osx_exes)
 # Compile natively for Linux.
 
 $(linux_exes): $(common_objs)
-../textadept: $(gui_objs)
+../textadept: $(gtk_objs)
+../textadept-qt: $(qt_objs)
 ../textadept-curses: $(curses_objs) $(termkey_unix_objs)
 
 $(linux_exes): CXX := g++
@@ -224,6 +253,8 @@ ifdef GTK2
 else
 ../textadept: LDFLAGS += $(shell pkg-config --libs gtk+-3.0 gmodule-2.0)
 endif
+../textadept-qt: LDFLAGS += -L$(shell qmake -query QT_INSTALL_LIBS) -lQt5Widgets -lQt5Gui \
+  -lQt5Core -lpthread
 ../textadept-curses: LDFLAGS += $(shell pkg-config --silence-errors --libs ncursesw || \
   pkg-config --silence-errors --libs ncurses || pkg-config --silence-errors --libs curses || \
   echo -lncursesw) -lpthread
@@ -237,7 +268,7 @@ $(linux_exes): ; $(build-exe)
 # Cross-compile for Windows.
 
 $(win_exes): $(call win-objs, $(common_objs)) $(ta_rc_objs)
-../textadept.exe: $(call win-objs, $(gui_objs))
+../textadept.exe: $(call win-objs, $(gtk_objs))
 ../textadept-curses.exe: $(call win-objs, $(curses_objs)) $(termkey_win_objs)
 
 $(win_exes): CXX := x86_64-w64-mingw32-g++-posix
@@ -254,7 +285,7 @@ $(win_exes): ; $(build-exe)
 # Cross-compile for macOS.
 
 $(osx_exes): $(call osx-objs, $(common_objs))
-../textadept-osx: $(call osx-objs, $(gui_objs))
+../textadept-osx: $(call osx-objs, $(gtk_objs))
 ../textadept-osx-curses: $(call osx-objs, $(curses_objs) $(termkey_unix_objs))
 
 $(osx_exes): CXX := x86_64-apple-darwin17-c++

@@ -625,7 +625,7 @@ function test_file_io_close_hidden()
   buffer4:close(true)
   while view:unsplit() do end
 end
-expected_failure(test_file_io_close_hidden)
+if not QT then expected_failure(test_file_io_close_hidden) end
 
 function test_file_io_file_detect_modified()
   local modified = false
@@ -1404,10 +1404,12 @@ end
 function test_spawn_callbacks()
   local exit_status = -1
   os.spawn('echo foo', ui.print, nil, function(status) exit_status = status end)
+  if QT then ui.update() end
   sleep(0.1)
   ui.update()
   assert_equal(buffer._type, _L['[Message Buffer]'])
   assert(buffer:get_text():find('^foo'), 'no spawn stdout')
+  if QT then ui.update() end
   assert_equal(exit_status, 0)
   buffer:close(true)
   view:unsplit()
@@ -1425,7 +1427,7 @@ function test_spawn_wait()
   if not (WIN32 and CURSES) then assert_equal(p:status(), "running") end
   assert_equal(p:wait(), 0)
   assert_equal(exit_status, 0)
-  assert_equal(p:status(), "terminated")
+  assert_equal(p:status(), 'terminated')
   -- Verify call to wait again returns previous exit status.
   assert_equal(p:wait(), exit_status)
 end
@@ -1435,7 +1437,7 @@ function test_spawn_kill()
   local p = os.spawn(not WIN32 and 'sleep 1' or 'ping 127.0.0.1 -n 2')
   p:kill()
   assert(p:wait() ~= 0)
-  assert_equal(p:status(), "terminated")
+  assert_equal(p:status(), 'terminated')
 end
 
 function test_buffer_text_range()
@@ -1605,8 +1607,8 @@ function test_command_entry_run_lua_abbreviated_env()
   if #_VIEWS > 1 then view:unsplit() end
   run_lua_command('split')
   assert_equal(#_VIEWS, 2)
-  run_lua_command('size=1')
-  assert_equal(view.size, 1)
+  run_lua_command('size=100')
+  assert_equal(view.size, 100)
   run_lua_command('unsplit')
   assert_equal(#_VIEWS, 1)
   -- ui get/set.
@@ -3613,7 +3615,7 @@ function test_run_compile_run()
   assert_equal(buffer._type, _L['[Output Buffer]'])
   ui.update() -- process output
   assert(buffer:get_text():find("'end' expected"), 'no compile error')
-  assert(buffer:get_text():find('> exit status: 256'), 'no compile error')
+  assert(buffer:get_text():find('> exit status: %d+'), 'no compile error')
   if #_VIEWS > 1 then view:unsplit() end
   textadept.run.goto_error(true) -- wraps
   assert_equal(#_VIEWS, 2)
@@ -3681,6 +3683,7 @@ function test_run_distinct_command_histories()
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   ui.update() -- process output
   assert(buffer:get_text():find('nil'), 'unexpected argument was passed to run command')
+  if QT then ui.update() end -- process exit
   if #_VIEWS > 1 then view:unsplit() end
   buffer:close()
   textadept.run.run()
@@ -3689,6 +3692,7 @@ function test_run_distinct_command_histories()
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   ui.update() -- process output
   assert(buffer:get_text():find('bar'), 'argument not passed to run command')
+  if QT then ui.update() end -- process exit
   if #_VIEWS > 1 then view:unsplit() end
   buffer:close() -- output buffer
   textadept.run.run()
@@ -3721,6 +3725,11 @@ function test_run_no_command()
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   ui.update() -- process output
   assert(buffer:get_text():find('bar'), 'did not run command')
+  if QT then -- process exit
+    ui.update()
+    sleep(0.1)
+    ui.update()
+  end
   if #_VIEWS > 1 then view:unsplit() end
   buffer:close()
   textadept.run.run()
@@ -3747,11 +3756,13 @@ function test_run_build()
   buffer:add_text('foo')
   buffer:new_line() -- should send previous line as stdin
   sleep(0.1) -- ensure process processed stdin
+  if QT then ui.update() end -- ensure Qt processed stdin
   textadept.run.stop()
   ui.update() -- process output
   assert(buffer:get_text():find('> cd '), 'did not change directory')
   assert(buffer:get_text():find('build%.lua'), 'did not run build command')
   assert(buffer:get_text():find('read "foo"'), 'did not send stdin')
+  if QT then ui.update() end -- process exit
   assert(buffer:get_text():find('> exit status: 9'), 'build not stopped')
   textadept.run.stop() -- should not do anything
   buffer:close()
@@ -3771,6 +3782,11 @@ function test_run_build_no_command()
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   ui.update() -- process output
   assert(buffer:get_text():find('BuildFile'), 'did not run command')
+  if QT then -- process exit
+    ui.update()
+    sleep(0.1)
+    ui.update()
+  end
   if #_VIEWS > 1 then view:unsplit() end
   buffer:close()
   textadept.run.build()
@@ -3791,6 +3807,11 @@ function test_run_test()
   assert_equal(ui.command_entry.active, true)
   assert_equal(ui.command_entry:get_text(), test_command)
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  if QT then -- process exit
+    ui.update()
+    sleep(0.1)
+    ui.update()
+  end
   if #_VIEWS > 1 then view:unsplit() end
   ui.update() -- process output
   assert(buffer:get_text():find('test%.lua'), 'did not run test command')
@@ -3822,6 +3843,11 @@ function test_run_run_project()
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   ui.update() -- process output
   assert(buffer:get_text():find('README.md'), 'did not run project command')
+  if QT then -- process exit
+    ui.update()
+    sleep(0.1)
+    ui.update()
+  end
   if #_VIEWS > 1 then view:unsplit() end
   buffer:close()
 end
@@ -3852,6 +3878,7 @@ function test_run_commands_function()
     sleep(0.1)
     ui.update() -- process output
     assert(buffer:get_text():find('> cd /tmp'), 'cwd not set properly')
+    if QT then ui.update() end -- process exit
     assert(buffer:get_text():find('bar'), 'env not set properly')
     if #_VIEWS > 1 then view:unsplit() end
     buffer:close()
@@ -4349,10 +4376,14 @@ end
 
 function test_ui_size()
   local size = ui.size
-  ui.size = {size[1] - 50, size[2] + 50}
-  assert_equal(ui.size, size)
+  local new_size = {size[1] - 50, size[2] + 50}
+  ui.size = new_size
+  -- For some reason, reading ui.size fails, even though the window has been resized.
+  -- `ui.update()` does not seem to help.
+  assert_equal(ui.size, new_size)
   ui.size = size
 end
+if LINUX and GTK then expected_failure(test_ui_size) end
 
 function test_ui_maximized()
   if CURSES then return end -- not applicable
@@ -4364,7 +4395,7 @@ function test_ui_maximized()
   -- `ui.update()` does not seem to help.
   assert_equal(not_maximized, not maximized)
 end
-if LINUX and not CURSES then expected_failure(test_ui_maximized) end
+if LINUX and GTK then expected_failure(test_ui_maximized) end
 
 function test_ui_restore_view_state()
   buffer.new() -- 1
@@ -5483,7 +5514,7 @@ function test_lsp_clangd()
 
   -- Test completions.
   buffer:goto_pos(buffer:find_column(1, 13)) -- #include "F
-  sleep(0.1)
+  sleep(0.5)
   textadept.editing.autocomplete('lsp')
   assert(buffer:auto_c_active(), 'no autocompletions')
   assert_equal(buffer.auto_c_current_text, 'Foo.h"')
@@ -5545,6 +5576,11 @@ function test_lsp_clangd()
   lsp.stop()
   sleep(0.5)
   ui.update()
+  if QT then -- process exit
+    ui.update()
+    sleep(0.5)
+    ui.update()
+  end
   assert(lsp_buf:get_text():find('Server exited with status 0'), 'clangd did not stop')
   buffer:close(true)
   lsp_buf:close()
@@ -5577,6 +5613,11 @@ function test_lsp_clangd_interactive()
     sleep(0.5)
     ui.update()
   end
+  if QT then -- process start
+    ui.update()
+    sleep(0.5)
+    ui.update()
+  end
   local lsp_buf = _BUFFERS[#_BUFFERS] -- LSP view opened
   if #_VIEWS > 1 then view:unsplit() end
 
@@ -5594,6 +5635,11 @@ function test_lsp_clangd_interactive()
   lsp_menu[_L['Stop Server']][2]()
   sleep(0.5)
   ui.update()
+  if QT then -- process exit
+    ui.update()
+    sleep(0.1)
+    ui.update()
+  end
   assert(lsp_buf:get_text():find('Server exited with status 0'), 'clangd did not stop')
   buffer:close(true)
   buffer:close() -- [LSP]

@@ -43,7 +43,7 @@ typedef struct {
  */
 typedef void Process;
 
-/** Returns the name of the platform. */
+/** Returns the upper-cased name of the platform. */
 const char *get_platform();
 /** Returns the character set used by the platform's filesystem. */
 const char *get_charset();
@@ -401,6 +401,9 @@ void kill_process(Process *proc, int signal);
  * Textadept will only call this after the platform has indicated the process exited.
  */
 int get_process_exit_status(Process *proc);
+
+/** Allows the platform to cleanup a process about to be garbage-collected by Lua. */
+void cleanup_process(Process *proc);
 
 /** Asks the platform to quit the application. The user has already been prompted to confirm. */
 void quit();

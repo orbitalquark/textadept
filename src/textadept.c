@@ -761,6 +761,9 @@ static int proc_kill(lua_State *L) {
   return (kill_process(luaL_checkudata(L, 1, "ta_spawn"), lua_tointeger(L, 2)), 0);
 }
 
+// `proc:__gc()` Lua metamethod.
+static int proc_gc(lua_State *L) { return (cleanup_process(luaL_checkudata(L, 1, "ta_spawn")), 0); }
+
 // `os.spawn()` Lua function.
 static int spawn_lua(lua_State *L) {
   int narg = 1, top = lua_gettop(L);
@@ -792,6 +795,7 @@ static int spawn_lua(lua_State *L) {
     lua_pushcfunction(L, proc_write), lua_setfield(L, -2, "write");
     lua_pushcfunction(L, proc_close), lua_setfield(L, -2, "close");
     lua_pushcfunction(L, proc_kill), lua_setfield(L, -2, "kill");
+    lua_pushcfunction(L, proc_gc), lua_setfield(L, -2, "__gc");
     lua_pushvalue(L, -1), lua_setfield(L, -2, "__index");
   }
   lua_setmetatable(L, -2);

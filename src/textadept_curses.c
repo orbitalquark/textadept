@@ -439,7 +439,7 @@ static void read_proc(struct Process *proc, bool is_stdout) {
 }
 
 // Cleans up after the process finished executing and returned the given status code.
-static void cleanup_process(struct Process *proc, int status) {
+static void process_finished(struct Process *proc, int status) {
   // Stop tracking and monitoring this proc.
   lua_getfield(lua, LUA_REGISTRYINDEX, "spawn_procs");
   for (lua_pushnil(lua); lua_next(lua, -2); lua_pop(lua, 1))
@@ -465,7 +465,7 @@ int read_fds(fd_set *fds) {
     // Check process status. If finished, read anything left and cleanup.
     int status;
     if (waitpid(proc->pid, &status, WNOHANG) > 0) {
-      read_proc(proc, true), read_proc(proc, false), cleanup_process(proc, status);
+      read_proc(proc, true), read_proc(proc, false), process_finished(proc, status);
       lua_pushnil(lua), lua_replace(lua, -3); // key no longer exists
     }
   }
@@ -833,7 +833,7 @@ void wait_process(Process *proc) {
 #if !_WIN32
   int status;
   waitpid(PROCESS(proc)->pid, &status, 0), status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
-  cleanup_process(proc, status);
+  process_finished(proc, status);
 #endif
 }
 
@@ -883,6 +883,8 @@ void kill_process(Process *proc, int signal) {
 }
 
 int get_process_exit_status(Process *proc) { return PROCESS(proc)->exit_status; }
+
+void cleanup_process(Process *proc) {}
 
 void quit() { quitting = !emit("quit", -1); }
 

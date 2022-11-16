@@ -854,7 +854,7 @@ static GIOChannel *new_channel(int fd, Process *proc, bool watch) {
 }
 
 // Cleans up after the process finished executing and returned the given status code.
-static void cleanup_process(struct Process *proc, int status) {
+static void process_finished(struct Process *proc, int status) {
   g_source_remove_by_user_data(proc); // disconnect stdout watch
   g_source_remove_by_user_data(proc); // disconnect stderr watch
   g_source_remove_by_user_data(proc); // disconnect child watch
@@ -868,7 +868,7 @@ static void cleanup_process(struct Process *proc, int status) {
 }
 
 // Signal that the child process finished.
-static void proc_exited(GPid _, int status, void *proc) { cleanup_process(proc, status); }
+static void proc_exited(GPid _, int status, void *proc) { process_finished(proc, status); }
 
 bool spawn(lua_State *L, Process *proc_, int index, const char *cmd, const char *cwd, int envi,
   bool monitor_stdout, bool monitor_stderr, const char **error) {
@@ -954,7 +954,7 @@ void wait_process(Process *proc) {
   WaitForSingleObject(PROCESS(proc)->pid, INFINITE),
     GetExitCodeProcess(PROCESS(proc)->pid, &status);
 #endif
-  cleanup_process(proc, status);
+  process_finished(proc, status);
 }
 
 char *read_process_output(Process *proc, char option, size_t *len, const char **error, int *code) {
@@ -1009,6 +1009,8 @@ void kill_process(Process *proc, int signal) {
 }
 
 int get_process_exit_status(Process *proc) { return PROCESS(proc)->exit_status; }
+
+void cleanup_process(Process *proc) {}
 
 void quit() {
   GdkEventAny event = {GDK_DELETE, gtk_widget_get_window(window), true};
