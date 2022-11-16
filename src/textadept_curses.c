@@ -765,18 +765,23 @@ bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *
 #if !_WIN32
   int argc = 0, top = lua_gettop(L);
   // Construct argv from cmd and envp from envi.
-  const char *p = cmd, *param;
+  const char *p = cmd;
   while (*p) {
     while (*p == ' ') p++;
-    param = p;
-    if (*p == '"' || *p == '\'') {
-      char q = *p;
-      param = ++p;
-      while (*p && (*p != q || *(p - 1) == '\\')) p++;
-    } else
-      while (*p && *p != ' ') p++;
-    lua_checkstack(L, 1), lua_pushlstring(L, param, p - param), argc++;
-    if (*p == '"' || *p == '\'') p++;
+    luaL_Buffer buf;
+    luaL_buffinit(L, &buf);
+    do {
+      const char *s = p;
+      while (*p && *p != ' ' && *p != '"' && *p != '\'') p++;
+      luaL_addlstring(&buf, s, p - s);
+      if (*p == '"' || *p == '\'') {
+        s = p + 1;
+        for (char q = *p++; *p && (*p != q || *(p - 1) == '\\'); p++) {}
+        luaL_addlstring(&buf, s, p - s);
+        if (*p == '"' || *p == '\'') p++;
+      }
+    } while (*p && *p != ' ');
+    lua_checkstack(L, 1), luaL_pushresult(&buf), argc++;
   }
   int envc = envi ? lua_rawlen(L, envi) : 0;
   char *argv[argc + 1], *envp[envc + 1];
@@ -842,7 +847,7 @@ char *read_process_output(Process *proc, char option, size_t *len, const char **
   char *buf;
   if (option == 'n') {
     *len = read(PROCESS(proc)->fstdout, buf = malloc(*len), *len);
-    return (*len == 0 ? (*error = NULL, NULL) : buf);
+    return (!*len ? (*error = NULL, NULL) : buf);
   }
   int n;
   char ch;
@@ -855,8 +860,8 @@ char *read_process_output(Process *proc, char option, size_t *len, const char **
     if (ch == '\n' && option != 'a') break;
   }
   luaL_pushresult(&lbuf);
-  if (n < 0 && *len == 0) return (lua_pop(lua, 1), *error = strerror(errno), *code = errno, NULL);
-  if (n == 0 && *len == 0 && option != 'a') return (lua_pop(lua, 1), *error = NULL, NULL); // EOF
+  if (n < 0 && !*len) return (lua_pop(lua, 1), *error = strerror(errno), *code = errno, NULL);
+  if (n == 0 && !*len && option != 'a') return (lua_pop(lua, 1), *error = NULL, NULL); // EOF
   buf = strcpy(malloc(*len + 1), lua_tostring(lua, -1));
   return (lua_pop(lua, 1), *error = NULL, buf); // pop buf
 #else
