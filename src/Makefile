@@ -20,22 +20,16 @@ gtk_flags_win := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
 gtk_flags_osx := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
   pkg-config --silence-errors --define-variable=prefix=gtkosx --cflags gtk+-3.0)
 
-# Utility functions.
+# Utility functions and build recipes.
 
 objs = $(addsuffix .o, $(filter-out $(2), $(basename $(notdir $(wildcard $(1))))))
 win-objs = $(addprefix win-, $(1))
 osx-objs = $(addprefix osx-, $(1))
 all-objs = $(1) $(call win-objs, $(1)) $(call osx-objs, $(1))
 
-define build-cxx =
-  $(CXX) $(CXXFLAGS) -c $< -o $@
-endef
-define build-cc =
-  $(CC) $(CFLAGS) -c $< -o $@
-endef
-define build-exe =
-  $(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
-endef
+build-cxx = $(CXX) $(CXXFLAGS) -c $< -o $@
+build-cc = $(CC) $(CFLAGS) -c $< -o $@
+build-exe = $(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 # Textadept.
 
@@ -220,14 +214,14 @@ ifndef PROFILE
 $(linux_exes): LDFLAGS += -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
 endif
 ifdef GTK2
-../textadept: LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gmodule-2.0)
+../textadept: LDLIBS := $(shell pkg-config --libs gtk+-2.0 gmodule-2.0)
 else
-../textadept: LDFLAGS += $(shell pkg-config --libs gtk+-3.0 gmodule-2.0)
+../textadept: LDLIBS := $(shell pkg-config --libs gtk+-3.0 gmodule-2.0)
 endif
-../textadept-curses: LDFLAGS += $(shell pkg-config --silence-errors --libs ncursesw || \
+../textadept-curses: LDLIBS := $(shell pkg-config --silence-errors --libs ncursesw || \
   pkg-config --silence-errors --libs ncurses || pkg-config --silence-errors --libs curses || \
   echo -lncursesw) -lpthread
-$(linux_exes): LDLIBS := -ldl
+$(linux_exes): LDLIBS += -ldl
 ifdef PROFILE
 $(linux_exes): LDLIBS += -lgcov
 endif
@@ -244,9 +238,8 @@ $(win_exes): CXX := x86_64-w64-mingw32-g++-posix
 ../textadept.exe: CXXFLAGS += -mwindows
 $(win_exes): LDFLAGS := -static-libgcc -static-libstdc++ \
   -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
-../textadept.exe: LDFLAGS += $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
-  pkg-config --define-variable=prefix=gtkwin --libs gtk+-3.0 gmodule-2.0)
-../textadept.exe: LDLIBS := -liconv
+../textadept.exe: LDLIBS := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
+  pkg-config --define-variable=prefix=gtkwin --libs gtk+-3.0 gmodule-2.0) -liconv
 ../textadept-curses.exe: LDLIBS := pdcurses/pdcurses.a pdcurses/libiconv.dll.a
 
 $(win_exes): ; $(build-exe)
@@ -259,11 +252,11 @@ $(osx_exes): $(call osx-objs, $(common_objs))
 
 $(osx_exes): CXX := x86_64-apple-darwin17-c++
 $(osx_exes): CXXFLAGS += -mdynamic-no-pic -stdlib=libc++ -Wno-register
-../textadept-osx: LDFLAGS += $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
+../textadept-osx: LDLIBS := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
   pkg-config --define-variable=prefix=gtkosx --libs gtk+-3.0 gmodule-2.0 gtk-mac-integration) \
   -framework Cocoa
-$(osx_exes): LDLIBS := -liconv
-../textadept-osx-curses: LDLIBS += -lncurses
+../textadept-osx-curses: LDLIBS := -lncurses
+$(osx_exes): LDLIBS += -liconv
 
 $(osx_exes): ; $(build-exe)
 
