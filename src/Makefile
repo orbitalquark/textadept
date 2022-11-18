@@ -23,22 +23,16 @@ qt_headers := $(shell qmake -query QT_INSTALL_HEADERS)
 qt_includes := -I$(qt_headers) -I$(qt_headers)/QtCore -I$(qt_headers)/QtWidgets -I$(qt_headers)/QtGui
 qt_flags := -fPIC $(qt_includes)
 
-# Utility functions.
+# Utility functions and build recipes.
 
 objs = $(addsuffix .o, $(filter-out $(2), $(basename $(notdir $(wildcard $(1))))))
 win-objs = $(addprefix win-, $(1))
 osx-objs = $(addprefix osx-, $(1))
 all-objs = $(1) $(call win-objs, $(1)) $(call osx-objs, $(1))
 
-define build-cxx =
-  $(CXX) $(CXXFLAGS) -c $< -o $@
-endef
-define build-cc =
-  $(CC) $(CFLAGS) -c $< -o $@
-endef
-define build-exe =
-  $(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
-endef
+build-cxx = $(CXX) $(CXXFLAGS) -c $< -o $@
+build-cc = $(CC) $(CFLAGS) -c $< -o $@
+build-exe = $(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 # Textadept.
 
@@ -260,13 +254,13 @@ ifndef PROFILE
 $(linux_exes): LDFLAGS += -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
 endif
 ifdef GTK2
-../textadept: LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gmodule-2.0)
+../textadept: LDLIBS := $(shell pkg-config --libs gtk+-2.0 gmodule-2.0)
 else
-../textadept: LDFLAGS += $(shell pkg-config --libs gtk+-3.0 gmodule-2.0)
+../textadept: LDLIBS := $(shell pkg-config --libs gtk+-3.0 gmodule-2.0)
 endif
 ../textadept-qt: LDLIBS := -L$(shell qmake -query QT_INSTALL_LIBS) -lQt5Widgets -lQt5Gui \
   -lQt5Core -lpthread
-../textadept-curses: LDFLAGS += $(shell pkg-config --silence-errors --libs ncursesw || \
+../textadept-curses: LDLIBS := $(shell pkg-config --silence-errors --libs ncursesw || \
   pkg-config --silence-errors --libs ncurses || pkg-config --silence-errors --libs curses || \
   echo -lncursesw) -lpthread
 $(linux_exes): LDLIBS += -ldl
@@ -286,9 +280,8 @@ $(win_exes): CXX := x86_64-w64-mingw32-g++-posix
 ../textadept.exe: CXXFLAGS += -mwindows
 $(win_exes): LDFLAGS := -static-libgcc -static-libstdc++ \
   -Wl,--retain-symbols-file -Wl,$(shell pwd)/lua.sym
-../textadept.exe: LDFLAGS += $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
-  pkg-config --define-variable=prefix=gtkwin --libs gtk+-3.0 gmodule-2.0)
-../textadept.exe: LDLIBS := -liconv
+../textadept.exe: LDLIBS := $(shell PKG_CONFIG_PATH=`pwd`/gtkwin/lib/pkgconfig \
+  pkg-config --define-variable=prefix=gtkwin --libs gtk+-3.0 gmodule-2.0) -liconv
 ../textadept-curses.exe: LDLIBS := pdcurses/pdcurses.a pdcurses/libiconv.dll.a
 
 $(win_exes): ; $(build-exe)
@@ -302,7 +295,7 @@ $(osx_exes): $(call osx-objs, $(common_objs))
 
 $(osx_exes): CXX := x86_64-apple-darwin17-c++
 $(osx_exes): CXXFLAGS += -mdynamic-no-pic -stdlib=libc++ -Wno-register
-../textadept-osx: LDFLAGS += $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
+../textadept-osx: LDLIBS := $(shell PKG_CONFIG_PATH=`pwd`/gtkosx/lib/pkgconfig \
   pkg-config --define-variable=prefix=gtkosx --libs gtk+-3.0 gmodule-2.0 gtk-mac-integration) \
   -framework Cocoa
 ../textadept-qt-osx: LDFLAGS := -mmacosx-version-min=10.13
@@ -531,7 +524,7 @@ clean-deps:
 
 .PHONY: count plots
 sources := ../core ../modules/ansi_c ../modules/lua ../modules/textadept textadept.c textadept.h \
-  platform.h textadept_gtk.c Makefile ../init.lua
+  textadept_platform.h textadept_gtk.c Makefile ../init.lua
 count: cloc ; perl $< $(sources) --not-match-f=tadoc.lua --exclude-lang=SVG --force-lang=C,h
 plots: ; ../scripts/gen_plots.sh
 

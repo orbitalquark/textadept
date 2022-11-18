@@ -2,7 +2,7 @@
 // Interface between platforms and Textadept.
 // Platforms use this interface to communicate with Textadept.
 
-#include "platform.h"
+#include "textadept_platform.h"
 
 // The currently focused view and command entry.
 extern SciObject *focused_view, *command_entry;
