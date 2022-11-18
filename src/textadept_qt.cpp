@@ -172,27 +172,23 @@ void set_pane_size(Pane *pane_, int size) {
   pane->setSizes(QList<int>{size, max - size - pane->handleWidth()});
 }
 
-void show_tabs(bool show) {
-  ta->ui->tabbar->setVisible(show), ta->ui->tabbar->tabBar()->setVisible(show);
-}
+void show_tabs(bool show) { ta->ui->tabFrame->setVisible(show); }
 
-void add_tab() { set_tab(ta->ui->tabbar->tabBar()->addTab("")); }
+void add_tab() { set_tab(ta->ui->tabbar->addTab("")); }
 
 void set_tab(int index) {
-  QSignalBlocker blocker{ta->ui->tabbar->tabBar()};
-  ta->ui->tabbar->tabBar()->setCurrentIndex(index);
+  QSignalBlocker blocker{ta->ui->tabbar};
+  ta->ui->tabbar->setCurrentIndex(index);
 }
 
-void set_tab_label(int index, const char *text) {
-  ta->ui->tabbar->tabBar()->setTabText(index, text);
-}
+void set_tab_label(int index, const char *text) { ta->ui->tabbar->setTabText(index, text); }
 
 void move_tab(int from, int to) {
-  QSignalBlocker blocker{ta->ui->tabbar->tabBar()}; // prevent tabMoved
-  ta->ui->tabbar->tabBar()->moveTab(from, to);
+  QSignalBlocker blocker{ta->ui->tabbar}; // prevent tabMoved
+  ta->ui->tabbar->moveTab(from, to);
 }
 
-void remove_tab(int index) { ta->ui->tabbar->tabBar()->removeTab(index); }
+void remove_tab(int index) { ta->ui->tabbar->removeTab(index); }
 
 const char *get_find_text() {
   static std::string text;
@@ -540,7 +536,7 @@ bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *
       process_output(proc, bytes.data(), bytes.size(), false);
     });
   QObject::connect(qProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), ta,
-    [proc, qProc](int exitCode, QProcess::ExitStatus) { process_exited(proc, exitCode); });
+    [proc](int exitCode, QProcess::ExitStatus) { process_exited(proc, exitCode); });
   qProc->start();
   if (!qProc->waitForStarted(500)) return (*error = "process failed to start", false);
   return (static_cast<struct _process *>(proc)->proc = qProc, true);
@@ -556,7 +552,8 @@ char *read_process_output(Process *proc, char option, size_t *len, const char **
   char *buf;
   QSignalBlocker blocker{PROCESS(proc)}; // prevent readyReadStandardOutput
   if (option == 'n') {
-    while (PROCESS(proc)->bytesAvailable() < *len) PROCESS(proc)->waitForReadyRead(-1);
+    while (static_cast<size_t>(PROCESS(proc)->bytesAvailable()) < *len)
+      PROCESS(proc)->waitForReadyRead(-1);
     *len = PROCESS(proc)->read(buf = static_cast<char *>(malloc(*len)), *len);
     return (*len == 0 ? (*error = nullptr, nullptr) : buf);
   }
@@ -617,7 +614,7 @@ protected:
 Textadept::Textadept(QWidget *parent) : QMainWindow(parent), ui(new Ui::Textadept) {
   ui->setupUi(this);
 
-  connect(ui->tabbar->tabBar(), &QTabBar::tabBarClicked, this, [](int index) {
+  connect(ui->tabbar, &QTabBar::tabBarClicked, this, [](int index) {
     Qt::MouseButtons button = QApplication::mouseButtons();
     Qt::KeyboardModifiers mods = QApplication::keyboardModifiers();
 #if !__APPLE__
@@ -630,12 +627,12 @@ Textadept::Textadept(QWidget *parent) : QMainWindow(parent), ui(new Ui::Textadep
       mods & Qt::AltModifier, LUA_TBOOLEAN, mods & metaModifier, -1);
     if (button == Qt::RightButton) show_context_menu("tab_context_menu", nullptr);
   });
-  connect(ui->tabbar->tabBar(), &QTabBar::currentChanged, this,
+  connect(ui->tabbar, &QTabBar::currentChanged, this,
     [](int index) { emit("tab_clicked", LUA_TNUMBER, index + 1, -1); });
-  connect(ui->tabbar->tabBar(), &QTabBar::tabMoved, this,
+  connect(ui->tabbar, &QTabBar::tabMoved, this,
     [](int from, int to) { move_buffer(from + 1, to + 1, false); });
-  connect(ui->tabbar->tabBar(), &QTabBar::tabCloseRequested, this,
-    [this](int index) { emit("tab_close_clicked", LUA_TNUMBER, index + 1, -1); });
+  connect(ui->tabbar, &QTabBar::tabCloseRequested, this,
+    [](int index) { emit("tab_close_clicked", LUA_TNUMBER, index + 1, -1); });
 
   auto findKeypressHandler = new FindKeypressHandler{this};
   ui->findCombo->installEventFilter(findKeypressHandler);
@@ -653,7 +650,7 @@ Textadept::Textadept(QWidget *parent) : QMainWindow(parent), ui(new Ui::Textadep
   connect(ui->replaceAll, &QPushButton::clicked, this, [this]() { find_clicked(ui->replaceAll); });
 
   statusBar()->addPermanentWidget(docStatusBar = new QLabel);
-  ui->tabbar->hide(), SCI(command_entry)->hide(), ui->findBox->hide();
+  ui->tabFrame->hide(), SCI(command_entry)->hide(), ui->findBox->hide();
 }
 
 void Textadept::closeEvent(QCloseEvent *ev) {

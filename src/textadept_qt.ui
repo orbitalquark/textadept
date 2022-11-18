@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">
-     <number>6</number>
+     <number>0</number>
     </property>
     <property name="leftMargin">
      <number>0</number>
@@ -31,32 +31,81 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QTabWidget" name="tabbar">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+     <widget class="QFrame" name="tabFrame">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
       </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="currentIndex">
-       <number>-1</number>
-      </property>
-      <property name="tabsClosable">
-       <bool>true</bool>
-      </property>
-      <property name="movable">
-       <bool>true</bool>
-      </property>
-      <property name="tabBarAutoHide">
-       <bool>true</bool>
-      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QTabBar" name="tabbar" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="currentIndex" stdset="0">
+          <number>-1</number>
+         </property>
+         <property name="tabsClosable" stdset="0">
+          <bool>true</bool>
+         </property>
+         <property name="movable" stdset="0">
+          <bool>true</bool>
+         </property>
+         <property name="autoHide" stdset="0">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </widget>
     </item>
     <item>
      <widget class="QSplitter" name="splitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Panel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
@@ -94,16 +143,16 @@
       </property>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">
-        <number>0</number>
+        <number>6</number>
        </property>
        <property name="topMargin">
-        <number>0</number>
+        <number>6</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>6</number>
        </property>
        <property name="bottomMargin">
-        <number>0</number>
+        <number>6</number>
        </property>
        <property name="verticalSpacing">
         <number>6</number>
@@ -112,6 +161,9 @@
         <widget class="QLabel" name="findLabel">
          <property name="text">
           <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -178,6 +230,9 @@
         <widget class="QLabel" name="replaceLabel">
          <property name="text">
           <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -246,6 +301,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QTabBar</class>
+   <extends>QWidget</extends>
+   <header>QTabBar</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>findCombo</tabstop>
   <tabstop>findNext</tabstop>
