@@ -50,11 +50,11 @@ ta_flags := -pedantic -I. -Iscintilla/include -Wall -Wextra -Wno-unused-paramete
 
 $(call all-objs, $(ta_objs)): CFLAGS += -std=c99 $(ta_flags) $(lua_flags)
 $(call all-objs, $(ta_gtk_objs)): CFLAGS += -std=c99 $(ta_flags) $(lua_flags) -DGTK $(gtk_flags)
-$(call all-objs, $(ta_qt_objs)): CXXFLAGS += -std=c++17 $(ta_flags) $(lua_flags) $(qt_flags) \
-  -DQT_NO_KEYWORDS -Wno-deprecated-copy
+$(call all-objs, $(ta_qt_objs)): CXXFLAGS += $(ta_flags) $(lua_flags) $(qt_flags) -DQT_NO_KEYWORDS \
+  -Wno-deprecated-copy
 $(call all-objs, $(ta_qt_moc_objs)): CXXFLAGS += $(qt_flags)
 $(call all-objs, $(ta_curses_objs)): CFLAGS += -std=c99 $(ta_flags) $(lua_flags) -DCURSES \
-  -Iscintilla/curses -Itermkey -Icdk $(curses_flags)
+  -Iscintilla/curses -Itermkey -Icdk -Icdk/include $(curses_flags)
 # For readlink from unistd.h on Linux only.
 $(ta_objs): CFLAGS += -D_XOPEN_SOURCE=500
 # For execvpe from unistd.h on Linux only.
@@ -64,10 +64,11 @@ $(call win-objs, $(ta_objs)): CFLAGS += -Igtkwin/include
 
 $(call all-objs, $(ta_objs)): textadept.c ; $(build-cc)
 $(call all-objs, $(ta_gtk_objs)): textadept_gtk.c ; $(build-cc)
-$(call all-objs, $(ta_qt_objs)): %.o: %.cpp ; $(build-cxx)
-textadept_qt_ui.h: textadept_qt.ui ; uic -o $@ $<
-$(ta_qt_moc_srcs): textadept_qt_ui.h
-$(ta_qt_moc_srcs): moc-%.cpp: %.h ; moc $(qt_includes) -o $@ $<
+$(call all-objs, $(ta_qt_objs)): ui_textadept_qt.h
+$(call all-objs, $(ta_qt_objs)): textadept_qt.cpp ; $(build-cxx)
+ui_textadept_qt.h: textadept_qt.ui ; uic $< -o $@
+$(ta_qt_moc_srcs): moc-%.cpp: %.h ; moc $(qt_includes) $< -o $@
+$(ta_qt_moc_objs): ui_textadept_qt.h
 $(ta_qt_moc_objs): %.o: %.cpp ; $(build-cxx)
 $(call win-objs, $(ta_qt_moc_objs)): win-%.o: %.cpp ; $(build-cxx)
 $(call osx-objs, $(ta_qt_moc_objs)): osx-%.o: %.cpp ; $(build-cxx)
@@ -118,7 +119,7 @@ $(call osx-objs, $(sci_gtk_c_objs)): osx-%.o: scintilla/gtk/%.c ; $(build-cc)
 $(sci_qt_objs): %.o: scintilla/qt/ScintillaEditBase/%.cpp ; $(build-cxx)
 $(call win-objs, $(sci_qt_objs)): win-%.o: scintilla/qt/ScintillaEditBase/%.cpp ; $(build-cxx)
 $(call osx-objs, $(sci_qt_objs)): osx-%.o: scintilla/qt/ScintillaEditBase/%.cpp ; $(build-cxx)
-$(sci_qt_moc_srcs): moc-%.cpp: scintilla/qt/ScintillaEditBase/%.h ; moc $(qt_includes) -o $@ $<
+$(sci_qt_moc_srcs): moc-%.cpp: scintilla/qt/ScintillaEditBase/%.h ; moc $(qt_includes) $< -o $@
 $(sci_qt_moc_objs): %.o: %.cpp ; $(build-cxx)
 $(call win-objs, $(sci_qt_moc_objs)): win-%.o: %.cpp ; $(build-cxx)
 $(call osx-objs, $(sci_qt_moc_objs)): osx-%.o: %.cpp ; $(build-cxx)
@@ -165,7 +166,7 @@ cdk_src := $(addprefix cdk/, $(addsuffix .c, binding buttonbox cdk cdk_display c
   select_file selection slider traverse version))
 cdk_objs := $(addprefix cdk-, $(call objs, $(cdk_src)))
 
-$(call all-objs, $(cdk_objs)): CFLAGS += -D_GNU_SOURCE -Itermkey -Icdk $(curses_flags)
+$(call all-objs, $(cdk_objs)): CFLAGS += -D_GNU_SOURCE -Itermkey -Icdk -Icdk/include $(curses_flags)
 
 $(cdk_objs): cdk-%.o: cdk/%.c ; $(build-cc)
 $(call win-objs, $(cdk_objs)): win-cdk-%.o: cdk/%.c ; $(build-cc)
@@ -487,8 +488,7 @@ $(cdk_tgz): ; $(WGET) https://invisible-mirror.net/archives/cdk/$@
 cdk: cdk.patch | $(cdk_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
-	mv $@/include/*.h $@
-	$@/gen-scale.sh SLIDER Slider Int int $@/gen-slider.h > $@/slider.h
+	$@/gen-scale.sh SLIDER Slider Int int $@/include/gen-slider.h > $@/include/slider.h
 	$@/gen-scale.sh SLIDER Slider Int int $@/gen-slider.c > $@/slider.c
 	patch -d $@ -N -p1 < $<
 $(termkey_tgz): ; $(WGET) http://www.leonerd.org.uk/code/libtermkey/$@

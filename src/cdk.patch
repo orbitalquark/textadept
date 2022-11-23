@@ -169,8 +169,8 @@ diff -r c40f79827990 cdk.c
  	 dir[x--] = '\0';
        }
 diff -r c40f79827990 cdk.h
---- a/cdk.h	Sun Nov 23 16:42:21 2014 -0500
-+++ b/cdk.h	Sun Nov 23 16:45:38 2014 -0500
+--- a/include/cdk.h	Sun Nov 23 16:42:21 2014 -0500
++++ b/include/cdk.h	Sun Nov 23 16:45:38 2014 -0500
 @@ -226,6 +226,10 @@
   */
  typedef enum {vEARLY_EXIT, vESCAPE_HIT, vNORMAL, vNEVER_ACTIVATED, vERROR} EExitType;
@@ -294,8 +294,8 @@ diff -r c40f79827990 cdk_config.h
 +
 +#endif /* CDK_CONFIG_H */
 diff -r c40f79827990 cdk_util.h
---- a/cdk_util.h	Sun Nov 23 16:42:21 2014 -0500
-+++ b/cdk_util.h	Sun Nov 23 16:45:38 2014 -0500
+--- a/include/cdk_util.h	Sun Nov 23 16:42:21 2014 -0500
++++ b/include/cdk_util.h	Sun Nov 23 16:45:38 2014 -0500
 @@ -53,6 +53,10 @@
   * SUCH DAMAGE.
   */
@@ -1494,7 +1494,7 @@ diff -r c40f79827990 gen-scale.c
 -
 -dummySaveData (<MIXED>)
 diff -r c40f79827990 gen-scale.h
---- a/gen-scale.h	Sun Nov 23 16:42:21 2014 -0500
+--- a/include/gen-scale.h	Sun Nov 23 16:42:21 2014 -0500
 +++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
 @@ -1,233 +0,0 @@
 -/*

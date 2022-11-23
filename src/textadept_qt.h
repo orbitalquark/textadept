@@ -1,7 +1,7 @@
 // Copyright 2022 Mitchell. See LICENSE.
 // Qt platform for Textadept.
 
-#include "textadept_qt_ui.h"
+#include "ui_textadept_qt.h"
 
 namespace Ui {
 class Textadept;

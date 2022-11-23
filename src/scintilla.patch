@@ -5,6 +5,8 @@ Scintilla changes:
 * Handle leading whitespace in XPM images in order to prevent crashes.
 * Do not use fractional positioning on Gtk 2.
 * Do not clear per-line-values when clearing the first line of a 1-line document.
+* Fixed crash registering an XPM image on Qt.
+* Use Qt macros instead of keywords in header.
 
 diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
 --- a/gtk/ScintillaGTK.cxx	Fri Apr 09 15:11:26 2021 +1000
@@ -67,3 +69,36 @@ diff -r 123ae5de5bd2 src/CellBuffer.cxx
  		// If whole buffer is being deleted, faster to reinitialise lines data
  		// than to delete each line.
  		plv->Init();
+diff -r 123ae5de5bd2 qt/ScintillaEditBase/PlatQt.cpp
+--- a/qt/ScintillaEditBase/PlatQt.cpp	Sat Aug 27 08:02:08 2022 +1000
++++ b/qt/ScintillaEditBase/PlatQt.cpp	Tue Nov 22 00:11:05 2022 -0500
+@@ -1146,7 +1146,7 @@
+ 
+ void ListBoxImpl::RegisterImage(int type, const char *xpmData)
+ {
+-	RegisterQPixmapImage(type, QPixmap(reinterpret_cast<const char * const *>(xpmData)));
++	RegisterQPixmapImage(type, QPixmap(reinterpret_cast<const char * const>(xpmData)));
+ }
+ 
+ void ListBoxImpl::RegisterRGBAImage(int type, int width, int height, const unsigned char *pixelsImage)
+diff -r 123ae5de5bd2 qt/ScintillaEditBase/ScintillaEditBase.h
+--- a/qt/ScintillaEditBase/ScintillaEditBase.h	Sat Aug 27 08:02:08 2022 +1000
++++ b/qt/ScintillaEditBase/ScintillaEditBase.h	Tue Nov 22 00:11:05 2022 -0500
+@@ -69,7 +69,7 @@
+ 		uptr_t wParam = 0,
+ 		const char *s = 0) const;
+ 
+-public slots:
++public Q_SLOTS:
+ 	// Scroll events coming from GUI to be sent to Scintilla.
+ 	void scrollHorizontal(int value);
+ 	void scrollVertical(int value);
+@@ -78,7 +78,7 @@
+ 	void notifyParent(Scintilla::NotificationData scn);
+ 	void event_command(Scintilla::uptr_t wParam, Scintilla::sptr_t lParam);
+ 
+-signals:
++Q_SIGNALS:
+ 	void horizontalScrolled(int value);
+ 	void verticalScrolled(int value);
+ 	void horizontalRangeChanged(int max, int page);
