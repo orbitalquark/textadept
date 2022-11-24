@@ -35,7 +35,7 @@ const char *get_platform() { return "QT"; }
 
 const char *get_charset() { return QTextCodec::codecForLocale()->name().data(); }
 
-// Returns a SciObject casted to its Qt equivalent.
+// Returns a SciObject cast to its Qt equivalent.
 static ScintillaEditBase *SCI(SciObject *sci) { return static_cast<ScintillaEditBase *>(sci); }
 
 void new_window(SciObject *(*get_view)(void)) {
@@ -328,18 +328,14 @@ int message_dialog(DialogOptions opts, lua_State *L) {
   QMessageBox dialog{ta};
   if (opts.title) dialog.setText(opts.title);
   if (opts.text) dialog.setInformativeText(opts.text);
-  if (opts.icon && strcmp(opts.icon, "dialog-question") == 0)
-    dialog.setIcon(QMessageBox::Question);
-  else if (opts.icon && strcmp(opts.icon, "dialog-information") == 0)
-    dialog.setIcon(QMessageBox::Information);
-  else if (opts.icon && strcmp(opts.icon, "dialog-warning") == 0)
-    dialog.setIcon(QMessageBox::Warning);
-  else if (opts.icon && strcmp(opts.icon, "dialog-error") == 0)
-    dialog.setIcon(QMessageBox::Critical);
+  if (opts.icon && QIcon::hasThemeIcon(opts.icon))
+    dialog.setIconPixmap(QIcon::fromTheme(opts.icon).pixmap(
+      QApplication::style()->pixelMetric(QStyle::PM_MessageBoxIconSize)));
   if (opts.buttons[2]) dialog.addButton(opts.buttons[2], static_cast<QMessageBox::ButtonRole>(2));
   if (opts.buttons[1]) dialog.addButton(opts.buttons[1], static_cast<QMessageBox::ButtonRole>(1));
   dialog.setDefaultButton(
     dialog.addButton(opts.buttons[0], static_cast<QMessageBox::ButtonRole>(0)));
+  for (auto &button : dialog.buttons()) button->setFocusPolicy(Qt::StrongFocus);
   // Note: QMessageBox returns an opaque value from dialog.exec().
   return (dialog.exec(), lua_pushinteger(L, dialog.buttonRole(dialog.clickedButton()) + 1), 1);
 }
@@ -674,7 +670,7 @@ class Application : public QApplication {
 public:
   Application(int &argc, char **argv)
       : QApplication(argc, argv), inited(init_textadept(argc, argv)) {
-    setApplicationDisplayName("Textadept");
+    setApplicationName("Textadept");
     QObject::connect(this, &QApplication::aboutToQuit, this, []() { close_textadept(); });
   }
   ~Application() override {
