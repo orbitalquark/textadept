@@ -54,7 +54,7 @@ $(call all-objs, $(ta_qt_objs)): CXXFLAGS += $(ta_flags) $(lua_flags) $(qt_flags
   -Wno-deprecated-copy
 $(call all-objs, $(ta_qt_moc_objs)): CXXFLAGS += $(qt_flags)
 $(call all-objs, $(ta_curses_objs)): CFLAGS += -std=c99 $(ta_flags) $(lua_flags) -DCURSES \
-  -Iscintilla/curses -Itermkey -Icdk -Icdk/include $(curses_flags)
+  -Iscintilla/curses -Itermkey -Icdk/include $(curses_flags)
 # For readlink from unistd.h on Linux only.
 $(ta_objs): CFLAGS += -D_XOPEN_SOURCE=500
 # For execvpe from unistd.h on Linux only.
@@ -166,7 +166,7 @@ cdk_src := $(addprefix cdk/, $(addsuffix .c, binding buttonbox cdk cdk_display c
   select_file selection slider traverse version))
 cdk_objs := $(addprefix cdk-, $(call objs, $(cdk_src)))
 
-$(call all-objs, $(cdk_objs)): CFLAGS += -D_GNU_SOURCE -Itermkey -Icdk -Icdk/include $(curses_flags)
+$(call all-objs, $(cdk_objs)): CFLAGS += -D_GNU_SOURCE -Itermkey -Icdk/include $(curses_flags)
 
 $(cdk_objs): cdk-%.o: cdk/%.c ; $(build-cc)
 $(call win-objs, $(cdk_objs)): win-cdk-%.o: cdk/%.c ; $(build-cc)
@@ -488,8 +488,6 @@ $(cdk_tgz): ; $(WGET) https://invisible-mirror.net/archives/cdk/$@
 cdk: cdk.patch | $(cdk_tgz)
 	if [ -d $@ ]; then rm -r $@; fi
 	mkdir $@ && tar xzf $| -C $@ && mv $@/*/* $@
-	$@/gen-scale.sh SLIDER Slider Int int $@/include/gen-slider.h > $@/include/slider.h
-	$@/gen-scale.sh SLIDER Slider Int int $@/gen-slider.c > $@/slider.c
 	patch -d $@ -N -p1 < $<
 $(termkey_tgz): ; $(WGET) http://www.leonerd.org.uk/code/libtermkey/$@
 termkey: termkey.patch | $(termkey_tgz)

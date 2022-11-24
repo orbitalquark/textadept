@@ -512,7 +512,7 @@ int message_dialog(DialogOptions opts, lua_State *L) {
   char *text = strcpy(malloc((opts.text ? strlen(opts.text) : 0) + 1), opts.text ? opts.text : "");
   for (const char *p = text; *p; p++)
     if (*p == '\n') lines++;
-  const char *message[lines];
+  const char **message = malloc(lines * sizeof(const char *));
   int i = 0;
   message[i++] = opts.title, message[i++] = text;
   for (char *p = text; *p; p++)
@@ -523,7 +523,7 @@ int message_dialog(DialogOptions opts, lua_State *L) {
   int button = (injectCDKDialog(dialog, KEY_BTAB), activateCDKDialog(dialog, NULL));
   button = (dialog->exitType == vNORMAL) ? num_buttons - button : 0; // buttons are right-to-left
   destroyCDKDialog(dialog), delwin(screen->window), destroyCDKScreen(screen);
-  return (free(text), button ? (lua_pushinteger(L, button), 1) : 0);
+  return (free(message), free(text), button ? (lua_pushinteger(L, button), 1) : 0);
 }
 
 // Returns a new dialog with given specified dimensions.
@@ -679,15 +679,16 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   // There is an item store for filtering against, a row store that contains column data joined
   // by '|' separators, and a filtered row store that contains the actual rows to display.
   // Note the row store also contains a header line which is displayed separately.
-  char *items[num_items];
+  char **items = malloc(num_items * sizeof(char *));
   for (int i = 1; i <= num_items; i++) {
     const char *item = (lua_rawgeti(L, opts.items, i), lua_tostring(L, -1));
     items[i - 1] = strcpy(malloc(strlen(item) + 1), item), lua_pop(L, 1); // item
   }
   int num_rows = (num_items + num_columns - 1) / num_columns; // account for non-full rows
-  char *rows[1 + num_rows] /* include header */, *filtered_rows[num_rows];
+  char **rows = malloc((1 + num_rows) * sizeof(char *)), // include header
+    **filtered_rows = malloc(num_rows * sizeof(char *));
   // Compute the column sizes needed to fit all row items in.
-  int column_widths[num_columns], row_len = 0;
+  int *column_widths = malloc(num_columns * sizeof(int)), row_len = 0;
   for (int i = 1; i <= num_columns; i++) {
     const char *column = opts.columns ? (lua_rawgeti(L, opts.columns, i), lua_tostring(L, -1)) : "";
     int utf8max = utf8strlen(column), max = strlen(column);
@@ -756,6 +757,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   destroyCDKScroll(scroll), destroyCDKEntry(entry), destroy_dialog(&dialog);
   for (int i = 0; i < num_rows + 1; i++) free(rows[i]); // includes header
   for (int i = 0; i < num_items; i++) free(items[i]);
+  free(column_widths), free(filtered_rows), free(rows), free(items);
   bool cancelled = !button || (button == 2 && !opts.return_button);
   return (cancelled || !index ? 0 : (!opts.return_button ? 1 : 2));
 }
