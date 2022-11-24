@@ -202,7 +202,7 @@ void set_find_text(const char *text) { ta->ui->findCombo->setCurrentText(text); 
 void set_repl_text(const char *text) { ta->ui->replaceCombo->setCurrentText(text); }
 void add_to_find_history(const char *text) { ta->ui->findCombo->addItem(text); }
 void add_to_repl_history(const char *text) { ta->ui->replaceCombo->addItem(text); }
-void set_entry_font(const char *name) {}
+void set_entry_font(const char * /*name*/) {}
 bool is_checked(FindOption *option) { return static_cast<QCheckBox *>(option)->isChecked(); }
 void toggle(FindOption *option, bool on) { static_cast<QCheckBox *>(option)->setChecked(on); }
 void set_find_label(const char *text) { ta->ui->findLabel->setText(text); }
@@ -488,7 +488,7 @@ struct _process { // Note: C++ does not allow `struct Process`
 };
 static inline QProcess *PROCESS(Process *p) { return static_cast<struct _process *>(p)->proc; }
 
-bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *cwd, int envi,
+bool spawn(lua_State *L, Process *proc, int /*index*/, const char *cmd, const char *cwd, int envi,
   bool monitor_stdout, bool monitor_stderr, const char **error) {
   QStringList args;
   // Construct argv from cmd and envp from envi.
@@ -569,7 +569,7 @@ char *read_process_output(Process *proc, char option, size_t *len, const char **
   if (n < 0 && !*len && option != 'a') {
     static std::string err;
     err = PROCESS(proc)->errorString().toStdString();
-    return (lua_pop(lua, 1), *error = err.c_str(), nullptr);
+    return (lua_pop(lua, 1), *error = err.c_str(), *code = QProcess::ReadError, nullptr);
   }
   if (n == 0 && !*len && option != 'a') return (lua_pop(lua, 1), *error = nullptr, nullptr); // EOF
   buf = strcpy(static_cast<char *>(malloc(*len + 1)), lua_tostring(lua, -1));
@@ -580,7 +580,7 @@ void write_process_input(Process *proc, const char *s, size_t len) { PROCESS(pro
 
 void close_process_input(Process *proc) { PROCESS(proc)->closeWriteChannel(); }
 
-void kill_process(Process *proc, int signal) { PROCESS(proc)->kill(); }
+void kill_process(Process *proc, int /*signal*/) { PROCESS(proc)->kill(); }
 
 int get_process_exit_status(Process *proc) { return PROCESS(proc)->exitCode(); }
 
@@ -653,7 +653,7 @@ void Textadept::closeEvent(QCloseEvent *ev) {
   if (emit("quit", -1)) ev->ignore();
 }
 
-void Textadept::focusInEvent(QFocusEvent *ev) {
+void Textadept::focusInEvent(QFocusEvent * /*ev*/) {
   if (!SCI(command_entry)->hasFocus()) emit("focus", -1);
 }
 

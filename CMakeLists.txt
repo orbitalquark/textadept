@@ -13,7 +13,7 @@ FetchContent_Declare(scintilla
 FetchContent_MakeAvailable(scintilla)
 FetchContent_Declare(lexilla URL https://www.scintilla.org/lexilla510.tgz)
 FetchContent_MakeAvailable(lexilla)
-if(NOT DEFINED ENV{NIGHTLY})
+if(NOT NIGHTLY)
   set(scinterm_zip scinterm_4.0.zip)
   set(scintillua_zip scintillua_6.0.zip)
 else()
@@ -33,8 +33,8 @@ FetchContent_Declare(lpeg URL http://www.inf.puc-rio.br/~roberto/lpeg/lpeg-1.0.2
 FetchContent_MakeAvailable(lpeg)
 FetchContent_Declare(lfs URL https://github.com/keplerproject/luafilesystem/archive/v1_8_0.zip)
 FetchContent_MakeAvailable(lfs)
-FetchContent_Declare(cdk 
-  URL https://invisible-mirror.net/archives/cdk/cdk-5.0-20200923.tgz 
+FetchContent_Declare(cdk
+  URL https://invisible-mirror.net/archives/cdk/cdk-5.0-20200923.tgz
   PATCH_COMMAND patch -N -p1 < ${ta}/src/cdk.patch)
 FetchContent_MakeAvailable(cdk)
 FetchContent_Declare(termkey
@@ -115,7 +115,7 @@ target_sources(scintilla PRIVATE ${sci_src})
 target_include_directories(scintilla PUBLIC ${sci_dir}/include PRIVATE ${sci_dir}/src)
 target_compile_definitions(scintilla PUBLIC SCI_LEXER)
 if(WIN32)
-target_compile_options(scintilla PRIVATE /EHsc)
+  target_compile_options(scintilla PRIVATE /EHsc)
 endif()
 target_link_libraries(scintilla PRIVATE Threads::Threads)
 
@@ -151,6 +151,11 @@ if(plat_curses)
     PUBLIC ${sci_curses_dir}
     PRIVATE ${sci_dir}/src ${CURSES_INCLUDE_DIRS})
   target_compile_definitions(scintilla_curses PUBLIC CURSES)
+  if(NOT WIN32)
+    target_compile_options(scintilla_curses PRIVATE -pedantic -Wall)
+  else()
+    target_compile_options(scintilla_curses PRIVATE /W4)
+  endif()
   target_link_directories(scintilla_curses PRIVATE ${CURSES_LIBRARY_DIRS})
   target_link_libraries(scintilla_curses PUBLIC scintilla PRIVATE ${CURSES_LIBRARIES})
 endif()
@@ -169,7 +174,11 @@ set(scilua_dir ${scintillua_SOURCE_DIR})
 target_sources(scintillua PRIVATE ${scilua_dir}/Scintillua.cxx)
 target_include_directories(scintillua PUBLIC ${scilua_dir})
 target_compile_definitions(scintillua PRIVATE NO_DLL)
-target_compile_options(scintillua PRIVATE -pedantic -Wall)
+if(NOT WIN32)
+  target_compile_options(scintillua PRIVATE -pedantic -Wall)
+elseif(WIN32)
+  target_compile_options(scintillua PRIVATE /W4 /EHsc)
+endif()
 target_link_libraries(scintillua PRIVATE scintilla lexilla lua)
 
 # Lua.
@@ -247,12 +256,12 @@ endif()
 if(WIN32)
   add_library(iconv SHARED)
   set(iconv_dir ${iconv_SOURCE_DIR})
-  target_sources(iconv 
-    PRIVATE ${iconv_dir}/lib/iconv.c ${iconv_dir}/lib/relocatable.c 
-      ${iconv_dir}/libcharset/lib/localcharset.c ${iconv_dir}/libcharset/lib/relocatable-stub.c 
+  target_sources(iconv
+    PRIVATE ${iconv_dir}/lib/iconv.c ${iconv_dir}/lib/relocatable.c
+      ${iconv_dir}/libcharset/lib/localcharset.c ${iconv_dir}/libcharset/lib/relocatable-stub.c
       ${iconv_dir}/windows/libiconv.rc)
-  target_include_directories(iconv 
-    PUBLIC ${iconv_dir}/include 
+  target_include_directories(iconv
+    PUBLIC ${iconv_dir}/include
     PRIVATE ${iconv_dir}/libcharset/include)
   target_compile_definitions(iconv PRIVATE BUILDING_LIBICONV)
 endif()
@@ -262,8 +271,9 @@ set(CMAKE_ENABLE_EXPORTS ON)
 # Textadept core.
 set(ta_src src/textadept.c)
 if(NOT WIN32)
-set(ta_compile_opts -pedantic -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers
-  -Wno-deprecated-declarations)
+  set(ta_compile_opts -pedantic -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers)
+else()
+  set(ta_compile_opts /W4)
 endif()
 set(ta_link_libs scintilla scintillua lua lpeg lfs)
 if(WIN32)
@@ -306,6 +316,9 @@ if(plat_curses)
   target_sources(textadept_curses PRIVATE src/textadept_curses.c)
   target_include_directories(textadept_curses PRIVATE ${CURSES_INCLUDE_DIRS})
   target_compile_options(textadept_curses PRIVATE ${ta_compile_opts})
+  if(NOT (WIN32 OR APPLE))
+    target_compile_definitions(textadept_curses PRIVATE _GNU_SOURCE) # for execvpe from unistd.h
+  endif()
   target_link_directories(textadept_curses PRIVATE ${CURSES_LIBRARY_DIRS})
   target_link_libraries(textadept_curses
     PRIVATE scintilla_curses lua termkey cdk ${CURSES_LIBRARIES})

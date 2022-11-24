@@ -65,7 +65,7 @@ const char *get_charset();
  * @param get_view Function to call when the platform is ready to accept the first Scintilla view.
  *   The platform should be ready to create tab for that view at the very least.
  */
-void new_window(SciObject *(*get_view)(void));
+void new_window(SciObject *(*get_view)());
 /** Sets the title of the Textadept window to the given text. */
 void set_title(const char *title);
 /** Returns whether or not the Textadept window is maximized. */

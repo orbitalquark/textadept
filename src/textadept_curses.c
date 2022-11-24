@@ -15,12 +15,15 @@
 #include <sys/wait.h>
 #else
 #include <windows.h>
+#include <direct.h>
 #define strncasecmp _strnicmp
+#define getcwd _getcwd
+#define chdir _chdir
 #endif
 #include "cdk_int.h" // must come after <windows.h>
 
 // Curses objects.
-static Pane *pane;
+static Pane *root_pane;
 static CDKSCREEN *findbox;
 static CDKENTRY *find_entry, *repl_entry, *focused_entry;
 static char *find_text, *repl_text, *find_label, *repl_label;
@@ -69,14 +72,14 @@ static Pane *new_pane(SciObject *view) {
 // Resizes and repositions the given pane.
 static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
   if (pane->type == VSPLIT) {
-    int ssize = pane->split_size * cols / fmax(pane->cols, 1);
+    int ssize = (int)(pane->split_size * cols / fmax(pane->cols, 1));
     if (ssize < 1 || ssize >= cols - 1) ssize = ssize < 1 ? 1 : cols - 2;
     pane->split_size = ssize;
     resize_pane(pane->child1, rows, ssize, y, x);
     resize_pane(pane->child2, rows, cols - ssize - 1, y, x + ssize + 1);
     wresize(pane->win, rows, 1), mvwin(pane->win, y, x + ssize); // split bar
   } else if (pane->type == HSPLIT) {
-    int ssize = pane->split_size * rows / fmax(pane->rows, 1);
+    int ssize = (int)(pane->split_size * rows / fmax(pane->rows, 1));
     if (ssize < 1 || ssize >= rows - 1) ssize = ssize < 1 ? 1 : rows - 2;
     pane->split_size = ssize;
     resize_pane(pane->child1, ssize, cols, y, x);
@@ -88,7 +91,7 @@ static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
 }
 
 void new_window(SciObject *(*get_view)(void)) {
-  pane = new_pane(get_view()), resize_pane(pane, LINES - 2, COLS, 1, 0);
+  root_pane = new_pane(get_view()), resize_pane(root_pane, LINES - 2, COLS, 1, 0);
   wresize(scintilla_get_window(command_entry), 1, COLS);
   mvwin(scintilla_get_window(command_entry), LINES - 2, 0);
 }
@@ -140,8 +143,8 @@ static void refresh_pane(struct Pane *pane) {
 }
 
 void split_view(SciObject *view, SciObject *view2, bool vertical) {
-  struct Pane *parent = get_parent_pane(pane, view);
-  parent = parent ? (parent->child1->view == view ? parent->child1 : parent->child2) : pane;
+  struct Pane *parent = get_parent_pane(root_pane, view);
+  parent = parent ? (parent->child1->view == view ? parent->child1 : parent->child2) : root_pane;
   Pane *child1 = new_pane(view), *child2 = new_pane(view2);
   parent->type = vertical ? VSPLIT : HSPLIT;
   parent->child1 = child1, parent->child2 = child2, parent->view = NULL;
@@ -175,7 +178,7 @@ static void remove_views(Pane *pane_, void (*delete_view)(SciObject *view)) {
 }
 
 bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
-  struct Pane *parent = get_parent_pane(pane, view);
+  struct Pane *parent = get_parent_pane(root_pane, view);
   if (!parent) return false;
   struct Pane *child = parent->child1->view == view ? parent->child1 : parent->child2;
   remove_views(child == parent->child1 ? parent->child2 : parent->child1, delete_view);
@@ -191,7 +194,7 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
 
 void delete_scintilla(SciObject *view) { scintilla_delete(view); }
 
-Pane *get_top_pane() { return pane; }
+Pane *get_top_pane() { return root_pane; }
 
 PaneInfo get_pane_info(Pane *pane_) {
   struct Pane *pane = pane_;
@@ -200,7 +203,9 @@ PaneInfo get_pane_info(Pane *pane_) {
   return info;
 }
 
-PaneInfo get_pane_info_from_view(SciObject *v) { return get_pane_info(get_parent_pane(pane, v)); }
+PaneInfo get_pane_info_from_view(SciObject *v) {
+  return get_pane_info(get_parent_pane(root_pane, v));
+}
 
 void set_pane_size(Pane *pane_, int size) {
   struct Pane *pane = pane_;
@@ -266,7 +271,7 @@ void set_option_label(FindOption *option, const char *text) {
 
 // Refreshes the entire screen.
 static void refresh_all() {
-  refresh_pane(pane);
+  refresh_pane(root_pane);
   if (command_entry_active) scintilla_noutrefresh(command_entry);
   refresh();
   if (!findbox) scintilla_update_cursor(!command_entry_active ? focused_view : command_entry);
@@ -286,7 +291,7 @@ static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
     FindButton *current = button_labels + getCDKButtonboxCurrentButton(box);
     char **button = entry == find_entry ? (current == find_next ? find_prev : find_next) :
                                           (current == replace ? replace_all : replace);
-    setCDKButtonboxCurrentButton(box, button - button_labels);
+    setCDKButtonboxCurrentButton(box, (int)(button - button_labels));
     drawCDKButtonbox(box, false), drawCDKEntry(entry, false);
   } else if (key == CDK_PREV || key == CDK_NEXT) {
     char **store = entry == find_entry ? find_history : repl_history;
@@ -307,7 +312,7 @@ static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
   } else if (key == KEY_UP || key == KEY_DOWN) {
     focused_entry = entry == find_entry ? repl_entry : find_entry;
     FindButton *button = focused_entry == find_entry ? find_next : replace;
-    setCDKButtonboxCurrentButton((CDKBUTTONBOX *)data, (char **)button - button_labels);
+    setCDKButtonboxCurrentButton((CDKBUTTONBOX *)data, (int)((char **)button - button_labels));
     injectCDKEntry(entry, KEY_ENTER); // exit this entry
   } else if ((!find_text || strcmp(find_text, text) != 0)) {
     copyfree(&find_text, text);
@@ -320,15 +325,15 @@ void focus_find() {
   if (findbox) return; // already active
   wresize(scintilla_get_window(focused_view), LINES - 4, COLS);
   findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0)), eraseCDKScreen(findbox);
-  int b_width = fmax(strlen(button_labels[0]), strlen(button_labels[1])) +
-    fmax(strlen(button_labels[2]), strlen(button_labels[3])) + 3;
-  int o_width = fmax(strlen(option_labels[0]), strlen(option_labels[1])) +
-    fmax(strlen(option_labels[2]), strlen(option_labels[3])) + 3;
-  int l_width = fmax(strlen(find_label), strlen(repl_label));
+  int b_width = (int)(fmax(strlen(button_labels[0]), strlen(button_labels[1])) +
+    fmax(strlen(button_labels[2]), strlen(button_labels[3])) + 3);
+  int o_width = (int)(fmax(strlen(option_labels[0]), strlen(option_labels[1])) +
+    fmax(strlen(option_labels[2]), strlen(option_labels[3])) + 3);
+  int l_width = (int)fmax(strlen(find_label), strlen(repl_label));
   int e_width = COLS - o_width - b_width - l_width - 1;
-  find_entry = newCDKEntry(findbox, l_width - strlen(find_label), TOP, NULL, find_label, A_NORMAL,
-    '_', vMIXED, e_width, 0, 1024, false, false);
-  repl_entry = newCDKEntry(findbox, l_width - strlen(repl_label), BOTTOM, NULL, repl_label,
+  find_entry = newCDKEntry(findbox, (int)(l_width - strlen(find_label)), TOP, NULL, find_label,
+    A_NORMAL, '_', vMIXED, e_width, 0, 1024, false, false);
+  repl_entry = newCDKEntry(findbox, (int)(l_width - strlen(repl_label)), BOTTOM, NULL, repl_label,
     A_NORMAL, '_', vMIXED, e_width, 0, 1024, false, false);
   CDKBUTTONBOX *buttonbox, *optionbox;
   buttonbox = newCDKButtonbox(findbox, COLS - o_width - b_width, TOP, 2, b_width, NULL, 2, 2,
@@ -387,7 +392,7 @@ void set_statusbar_text(int bar, const char *text) {
   int start = bar == 0 ? 0 : statusbar_length[0];
   int end = bar == 0 ? COLS - statusbar_length[1] : COLS;
   for (int i = start; i < end; i++) mvaddch(LINES - 1, i, ' '); // clear
-  int len = utf8strlen(text);
+  int len = (int)utf8strlen(text);
   mvaddstr(LINES - 1, bar == 0 ? 0 : COLS - len, text), refresh();
   statusbar_length[bar] = len;
 }
@@ -688,12 +693,12 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   char **rows = malloc((1 + num_rows) * sizeof(char *)), // include header
     **filtered_rows = malloc(num_rows * sizeof(char *));
   // Compute the column sizes needed to fit all row items in.
-  int *column_widths = malloc(num_columns * sizeof(int)), row_len = 0;
+  size_t *column_widths = malloc(num_columns * sizeof(size_t)), row_len = 0;
   for (int i = 1; i <= num_columns; i++) {
     const char *column = opts.columns ? (lua_rawgeti(L, opts.columns, i), lua_tostring(L, -1)) : "";
-    int utf8max = utf8strlen(column), max = strlen(column);
+    size_t utf8max = utf8strlen(column), max = strlen(column);
     for (int j = i - 1; j < num_items; j += num_columns) {
-      int utf8len = utf8strlen(items[j]);
+      size_t utf8len = utf8strlen(items[j]);
       if (utf8len > utf8max) utf8max = utf8len, max = strlen(items[j]);
     }
     column_widths[i - 1] = utf8max, row_len += max + 1; // include space for '|' separator or '\0'
@@ -709,7 +714,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
         (opts.columns ? (lua_rawgeti(L, opts.columns, j - i + 1), lua_tostring(L, -1)) : "") :
         items[j];
       p = strcpy(p, item) + strlen(item);
-      int padding = column_widths[j - i] - utf8strlen(item);
+      size_t padding = column_widths[j - i] - utf8strlen(item);
       while (padding-- > 0) *p++ = ' ';
       *p++ = (i < 0) ? '|' : ' ';
       if (i < 0 && opts.columns) lua_pop(L, 1); // header
@@ -828,7 +833,7 @@ bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *
 #endif
   fprintf(stderr, "Failed to execute child process \"%s\" (%s)", argv[0], strerror(errno)), exit(1);
 #else // _WIN32
-  return (*error = "not implemented in this environment", NULL);
+  return (*error = "not implemented in this environment", false);
 #endif
 }
 
@@ -903,7 +908,7 @@ static void signalled(int signal) {
     if (signal == SIGCONT) termkey_start(ta_tk);
     struct winsize w;
     ioctl(0, TIOCGWINSZ, &w);
-    resizeterm(w.ws_row, w.ws_col), resize_pane(pane, LINES - 2, COLS, 1, 0);
+    resizeterm(w.ws_row, w.ws_col), resize_pane(root_pane, LINES - 2, COLS, 1, 0);
     WINDOW *win = scintilla_get_window(command_entry);
     wresize(win, 1, COLS), mvwin(win, LINES - 1 - getmaxy(win), 0);
     if (signal == SIGCONT) emit("resume", -1);
@@ -1022,7 +1027,7 @@ int main(int argc, char **argv) {
   }
   close_textadept(), endwin(), termkey_destroy(ta_tk);
 
-  free(pane), free(find_label), free(repl_label);
+  free(root_pane), free(find_label), free(repl_label);
   if (find_text) free(find_text);
   if (repl_text) free(repl_text);
   for (int i = 0; i < 10; i++) {

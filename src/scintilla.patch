@@ -83,7 +83,18 @@ diff -r 123ae5de5bd2 qt/ScintillaEditBase/PlatQt.cpp
  void ListBoxImpl::RegisterRGBAImage(int type, int width, int height, const unsigned char *pixelsImage)
 diff -r 123ae5de5bd2 qt/ScintillaEditBase/ScintillaEditBase.h
 --- a/qt/ScintillaEditBase/ScintillaEditBase.h	Sat Aug 27 08:02:08 2022 +1000
-+++ b/qt/ScintillaEditBase/ScintillaEditBase.h	Tue Nov 22 00:11:05 2022 -0500
++++ b/qt/ScintillaEditBase/ScintillaEditBase.h	Thu Nov 24 10:30:29 2022 -0500
+@@ -44,8 +44,8 @@
+ #define EXPORT_IMPORT_API __declspec(dllexport)
+ #else
+ // Defining dllimport upsets moc
+-#define EXPORT_IMPORT_API __declspec(dllimport)
+-//#define EXPORT_IMPORT_API
++//#define EXPORT_IMPORT_API __declspec(dllimport)
++#define EXPORT_IMPORT_API
+ #endif
+ #else
+ #define EXPORT_IMPORT_API
 @@ -69,7 +69,7 @@
  		uptr_t wParam = 0,
  		const char *s = 0) const;
