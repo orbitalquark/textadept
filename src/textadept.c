@@ -988,7 +988,7 @@ static void new_buffer(sptr_t doc) {
   } else
     add_doc(doc), SS(focused_view, SCI_ADDREFDOCUMENT, 0, doc);
   lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS);
-  add_tab(), show_tabs(tabs && (tabs > 1 || lua_rawlen(lua, -1) > 0));
+  add_tab(), show_tabs(tabs && (tabs > 1 || lua_rawlen(lua, -1) > 1));
   lua_pop(lua, 1); // buffers
   lua_pushdoc(lua, doc), lua_setglobal(lua, "buffer");
   if (!initing) emit("buffer_new", -1);
