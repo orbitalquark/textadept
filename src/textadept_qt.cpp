@@ -42,8 +42,6 @@ void new_window(SciObject *(*get_view)(void)) {
   ta = new Textadept;
   ta->ui->editors->addWidget(SCI(get_view())), ta->ui->splitter->addWidget(SCI(command_entry));
   ta->show();
-  if (QIcon::hasThemeIcon("textadept"))
-    ta->windowHandle()->setIcon(QIcon::fromTheme("textadept")); // must come after show()
 }
 
 void set_title(const char *title) { ta->setWindowTitle(title); }
@@ -671,6 +669,12 @@ public:
   Application(int &argc, char **argv)
       : QApplication(argc, argv), inited(init_textadept(argc, argv)) {
     setApplicationName("Textadept");
+    // Note: for some reason, on Linux a theme SVG icon looks nicer than the same SVG as a QIcon,
+    // so prefer that. All dialogs will inherit that icon. Otherwise (i.e. Windows), use a path.
+    if (QIcon::hasThemeIcon("textadept"))
+      ta->windowHandle()->setIcon(QIcon::fromTheme("textadept")); // must come after QWindow::show()
+    else
+      setWindowIcon(QIcon{QString{textadept_home} + "/core/images/textadept.svg"});
     QObject::connect(this, &QApplication::aboutToQuit, this, []() { close_textadept(); });
   }
   ~Application() override {

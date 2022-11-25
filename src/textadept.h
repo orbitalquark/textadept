@@ -4,6 +4,9 @@
 
 #include "textadept_platform.h"
 
+// Textadept's home directory.
+extern char *textadept_home;
+
 // The currently focused view and command entry.
 extern SciObject *focused_view, *command_entry;
 
