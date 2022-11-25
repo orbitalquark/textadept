@@ -7,50 +7,105 @@ set(ta ${CMAKE_SOURCE_DIR})
 # Dependencies.
 include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
+# Scintilla.
+set(deps_dir ${CMAKE_BINARY_DIR}/_deps)
+set(scintilla_tgz scintilla530.tgz)
+set(scintilla_url file://${deps_dir}/${scintilla_tgz})
+if(NOT EXISTS ${deps_dir}/${scintilla_tgz})
+  set(scintilla_url https://www.scintilla.org/${scintilla_tgz})
+endif()
 FetchContent_Declare(scintilla
-  URL https://www.scintilla.org/scintilla530.tgz
+  URL ${scintilla_url}
   PATCH_COMMAND patch -N -p1 < ${ta}/src/scintilla.patch)
 FetchContent_MakeAvailable(scintilla)
-FetchContent_Declare(lexilla URL https://www.scintilla.org/lexilla510.tgz)
+# Lexilla.
+set(lexilla_tgz lexilla510.tgz)
+set(lexilla_url file://${deps_dir}/${lexilla_tgz})
+if(NOT EXISTS ${deps_dir}/${lexilla_tgz})
+  set(lexilla_url https://www.scintilla.org/${lexilla_tgz})
+endif()
+FetchContent_Declare(lexilla URL ${lexilla_url})
 FetchContent_MakeAvailable(lexilla)
-if(NOT NIGHTLY)
-  set(scinterm_zip scinterm_4.0.zip)
-  set(scintillua_zip scintillua_6.0.zip)
-else()
+# Scinterm.
+set(scinterm_zip scinterm_4.0.zip)
+set(scinterm_url file://${deps_dir}/${scinterm_zip})
+if(NIGHTLY)
   set(scinterm_zip default.zip)
+endif()
+if(NIGHTLY OR NOT EXISTS ${deps_dir}/${scinterm_zip})
+  set(scinterm_url https://github.com/orbitalquark/scinterm/archive/${scinterm_zip})
+endif()
+FetchContent_Declare(scinterm URL ${scinterm_url})
+FetchContent_MakeAvailable(scinterm)
+# Scintillua.
+set(scintillua_zip scintillua_6.0.zip)
+set(scintillua_url file://${deps_dir}/${scintillua_zip})
+if(NIGHTLY)
   set(scintillua_zip default.zip)
 endif()
-FetchContent_Declare(scinterm URL https://github.com/orbitalquark/scinterm/archive/${scinterm_zip})
-FetchContent_MakeAvailable(scinterm)
-FetchContent_Declare(scintillua
-  URL https://github.com/orbitalquark/scintillua/archive/${scintillua_zip})
+if(NIGHTLY OR NOT EXISTS ${deps_dir}/${scintillua_zip})
+  set(scintillua_url https://github.com/orbitalquark/scintillua/archive/${scintillua_zip})
+endif()
+FetchContent_Declare(scintillua URL ${scintillua_url})
 FetchContent_MakeAvailable(scintillua)
-FetchContent_Declare(lua
-  URL https://www.lua.org/ftp/lua-5.4.4.tar.gz
-  PATCH_COMMAND patch -N -p1 < ${ta}/src/lua.patch)
+# Lua.
+set(lua_tgz lua-5.4.4.tar.gz)
+set(lua_url file://${deps_dir}/${lua_tgz})
+if(NOT EXISTS ${deps_dir}/${lua_tgz})
+  set(lua_url https://www.lua.org/ftp/${lua_tgz})
+endif()
+FetchContent_Declare(lua URL ${lua_url} PATCH_COMMAND patch -N -p1 < ${ta}/src/lua.patch)
 FetchContent_MakeAvailable(lua)
-FetchContent_Declare(lpeg URL http://www.inf.puc-rio.br/~roberto/lpeg/lpeg-1.0.2.tar.gz)
+# LPeg.
+set(lpeg_tgz lpeg-1.0.2.tar.gz)
+set(lpeg_url file://${deps_dir}/${lpeg_tgz})
+if(NOT EXISTS ${deps_dir}/${lpeg_tgz})
+  set(lpeg_url http://www.inf.puc-rio.br/~roberto/lpeg/${lpeg_tgz})
+endif()
+FetchContent_Declare(lpeg URL ${lpeg_url})
 FetchContent_MakeAvailable(lpeg)
-FetchContent_Declare(lfs URL https://github.com/keplerproject/luafilesystem/archive/v1_8_0.zip)
+# LFS.
+set(lfs_zip v1_8_0.zip)
+set(lfs_url file://${deps_dir}/${lfs_zip})
+if(NOT EXISTS ${deps_dir}/${lfs_zip})
+  set(lfs_url https://github.com/keplerproject/luafilesystem/archive/${lfs_zip})
+endif()
+FetchContent_Declare(lfs URL ${lfs_url})
 FetchContent_MakeAvailable(lfs)
-FetchContent_Declare(cdk
-  URL https://invisible-mirror.net/archives/cdk/cdk-5.0-20200923.tgz
-  PATCH_COMMAND patch -N -p1 < ${ta}/src/cdk.patch)
+# CDK.
+set(cdk_tgz cdk-5.0-20200923.tgz)
+set(cdk_url file://${deps_dir}/${cdk_tgz})
+if(NOT EXISTS ${deps_dir}/${cdk_tgz})
+  set(cdk_url https://invisible-mirror.net/archives/cdk/${cdk_tgz})
+endif()
+FetchContent_Declare(cdk URL ${cdk_url} PATCH_COMMAND patch -N -p1 < ${ta}/src/cdk.patch)
 FetchContent_MakeAvailable(cdk)
-FetchContent_Declare(termkey
-  URL http://www.leonerd.org.uk/code/libtermkey/libtermkey-0.22.tar.gz
-  PATCH_COMMAND patch -N -p1 < ${ta}/src/termkey.patch)
+# Termkey.
+set(cdk_tgz libtermkey-0.22.tar.gz)
+set(cdk_url file://${deps_dir}/${cdk_tgz})
+if(NOT EXISTS ${deps_dir}/${cdk_tgz})
+  set(cdk_url http://www.leonerd.org.uk/code/libtermkey/${cdk_tgz})
+endif()
+FetchContent_Declare(termkey URL ${cdk_url} PATCH_COMMAND patch -N -p1 < ${ta}/src/termkey.patch)
 FetchContent_MakeAvailable(termkey)
 if(WIN32)
+  # PDCurses.
+  set(pdcurses_zip PDCurses-3.9.zip)
+  set(pdcurses_url file://${deps_dir}/${pdcurses_zip})
+  if(NOT EXISTS ${deps_dir}/${pdcurses_zip})
+    set(pdcurses_url http://prdownloads.sourceforge.net/pdcurses/${pdcurses_zip})
+  endif()
   FetchContent_Declare(pdcurses
-    URL http://prdownloads.sourceforge.net/pdcurses/PDCurses-3.9.zip
+    URL ${pdcurses_url}
     PATCH_COMMAND patch -N -p1 < ${ta}/src/pdcurses.patch)
   FetchContent_MakeAvailable(pdcurses)
-endif()
-if(WIN32)
-  FetchContent_Declare(iconv
-    URL https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz
-    PATCH_COMMAND patch -N -p1 < ${ta}/src/iconv.patch)
+  # iconv.
+  set(iconv_tgz libiconv-1.17.tar.gz)
+  set(iconv_url file://${deps_dir}/${iconv_tgz})
+  if(NOT EXISTS ${deps_dir}/${iconv_tgz})
+    set(iconv_url https://ftp.gnu.org/pub/gnu/libiconv/${iconv_tgz})
+  endif()
+  FetchContent_Declare(iconv URL ${iconv_url} PATCH_COMMAND patch -N -p1 < ${ta}/src/iconv.patch)
   FetchContent_MakeAvailable(iconv)
 endif()
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL "Do not update deps if already set up")
