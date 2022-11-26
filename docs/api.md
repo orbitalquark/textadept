@@ -4093,6 +4093,17 @@ Emitted when the user clicks on a buffer tab.
   * _`alt`_: The "Alt"/"Option" modifier key is held down.
   * _`cmd`_: The "Command" modifier key on macOS is held down.
 
+<a id="events.TAB_CLOSE_CLICKED"></a>
+#### `events.TAB_CLOSE_CLICKED` (string)
+
+Emitted when the user clicks a buffer tab's close button.
+  When connecting to this event, connect with an index of 1 if the handler needs to run
+  before Textadept closes the buffer.
+  This event is only emitted in the Qt GUI version.
+  Arguments:
+
+  * _`index`_: The numeric index of the clicked tab.
+
 <a id="events.UNFOCUS"></a>
 #### `events.UNFOCUS` (string)
 
@@ -4393,6 +4404,7 @@ See also:
 
 Saves all unsaved buffers to their respective files, prompting the user for filenames for
 untitled buffers if *untitled* is `true`, and returns `true` on success.
+Print and output buffers are ignored.
 
 Parameters:
 

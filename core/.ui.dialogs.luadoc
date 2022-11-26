@@ -75,11 +75,11 @@ function save(options) end
 -- @param options Table of key-value option pairs for the progressbar dialog.
 --
 --   * `title`: The dialog's title text.
---   * `text`: The initial progressbar display text (GTK only).
+--   * `text`: The initial progressbar display text (GUI only).
 --   * `work`: The function repeatedly called to do work and provide progress updates. The
 --     function is called without arguments and must return either `nil`, which indicates work
 --     is complete, or a progress percentage number in the range 0-100 and an optional string
---     to display (GTK only). If progress is indeterminate, the percentage can be less than zero.
+--     to display (GUI only). If progress is indeterminate, the percentage can be less than zero.
 -- @return nil if all work completed, or true if work was stopped
 -- @usage ui.dialogs.progress{
 --   work = function() if work() then return percent, status else return nil end end}

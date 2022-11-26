@@ -41,17 +41,15 @@ jobs:
           mv textadept-build/* build/_deps && rm -r textadept-build
 
           # Build.
+          type="Release"
           if [[ ${{ github.event_name }} != schedule ]]; then
             if [[ "${{ github.event.inputs.nightly }}" = true ]]; then nightly="-D NIGHTLY=1"; fi
-            type="Release"
             if [[ "${{ github.event.inputs.debug }}" = true ]]; then type="Debug"; fi
           else
             nightly="-D NIGHTLY=1"
-            type="Debug"
           fi
-          cmake -S . -B build ${nightly} -D CMAKE_BUILD_TYPE=${type} \
-            -D CMAKE_INSTALL_PREFIX=build/install
-          cmake --build build -j
+          cmake -S . -B build ${nightly} -D CMAKE_INSTALL_PREFIX=build/install
+          cmake --build build --config ${type} -j
           cmake --install build --config ${type}
       - name: Upload artifacts
         uses: actions/upload-artifact@v3

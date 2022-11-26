@@ -537,7 +537,7 @@ local menu
 local popup_menu
 
 ---
--- Processes pending GTK events, including reading from spawned processes.
+-- Processes pending UI events, including reading from spawned processes.
 -- This function is primarily used in unit tests.
 -- @class function
 -- @name update

@@ -7,7 +7,7 @@ local M = {}
 -- Map of all messages used by Textadept to their localized form.
 -- If the localized version of a given message does not exist, the non-localized message is
 -- returned. Use `rawget()` to check if a localization exists.
--- Note: the terminal version ignores any "_" mnemonics the GUI version would use.
+-- Note: the terminal version ignores any "_" or "&" mnemonics the GUI version would use.
 module('_L')]]
 
 local f = io.open(_USERHOME .. '/locale.conf', 'rb')
