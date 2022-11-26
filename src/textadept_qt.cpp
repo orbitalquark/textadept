@@ -120,7 +120,7 @@ void split_view(SciObject *view, SciObject *view2, bool vertical) {
     parentPane->replaceWidget(parentPane->indexOf(SCI(view)), pane);
   else
     SCI(view)->parentWidget()->layout()->replaceWidget(SCI(view), pane);
-  pane->addWidget(SCI(view)), pane->addWidget(SCI(view2));
+  pane->addWidget(SCI(view)), pane->addWidget(SCI(view2)), update_ui(); // ensure views are painted
   pane->setSizes(QList<int>{middle, middle});
 }
 
