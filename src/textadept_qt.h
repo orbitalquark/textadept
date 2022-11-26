@@ -7,6 +7,7 @@ namespace Ui {
 class Textadept;
 }
 
+// A Textadept window.
 class Textadept : public QMainWindow {
   Q_OBJECT
 

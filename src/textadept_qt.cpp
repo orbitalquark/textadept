@@ -29,6 +29,7 @@ extern "C" {
 #include <QSortFilterProxyModel>
 #include <QProcessEnvironment>
 
+// Qt objects.
 static Textadept *ta;
 
 const char *get_platform() { return "QT"; }
@@ -68,7 +69,7 @@ protected:
     auto keyEvent = static_cast<QKeyEvent *>(event);
 
     // Propagate an Escape keypress up to the window if the find & replace pane is visible.
-    // This gives the window the opportunity to hide it.
+    // This gives the window the opportunity to hide that pane.
     if (keyEvent->key() == Qt::Key_Escape && ta->ui->findBox->isVisible() &&
       !SCI(command_entry)->hasFocus())
       return QApplication::sendEvent(ta, event);
@@ -123,6 +124,8 @@ void split_view(SciObject *view, SciObject *view2, bool vertical) {
   pane->setSizes(QList<int>{middle, middle});
 }
 
+// Removes all Scintilla views from the given pane and deletes them along with the child panes
+// themselves.
 static void remove_views(QSplitter *pane, void (*delete_view)(SciObject *view)) {
   QWidget *child1 = pane->widget(0), *child2 = pane->widget(1);
   auto pane1 = qobject_cast<QSplitter *>(child1);
@@ -302,22 +305,23 @@ char *get_clipboard_text(int *len) {
   return static_cast<char *>(memcpy(malloc(*len), text.toStdString().c_str(), *len));
 }
 
-class TimeoutData {
+// An active timeout that cleans up after itself.
+class Timeout {
 public:
-  TimeoutData(double interval, bool (*f)(int *), int *refs) : timer(new QTimer{ta}) {
+  Timeout(double interval, bool (*f)(int *), int *refs) : timer(new QTimer{ta}) {
     QObject::connect(timer, &QTimer::timeout, ta, [this, f, refs]() {
       if (!f(refs)) delete this;
     });
     timer->setInterval(interval * 1000), timer->start();
   }
-  ~TimeoutData() { delete timer; }
+  ~Timeout() { delete timer; }
 
 private:
   QTimer *timer;
 };
 
 bool add_timeout(double interval, bool (*f)(int *), int *refs) {
-  return (new TimeoutData{interval, f, refs}, true);
+  return (new Timeout{interval, f, refs}, true);
 }
 
 void update_ui() { QApplication::sendPostedEvents(), QApplication::processEvents(); }
@@ -388,6 +392,9 @@ int progress_dialog(
   return dialog.wasCanceled() ? (lua_pushboolean(L, true), 1) : 0;
 }
 
+// Event filter that forwards keypresses to a target widget.
+// This is primarily used to forward movement keys from the list dialog's line edit to its
+// tree view. This allows for cursor movement from the line edit while it has focus.
 class KeyForwarder : public QObject {
 public:
   KeyForwarder(QWidget *target, QObject *parent = nullptr) : QObject(parent), target(target) {}
@@ -481,7 +488,9 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   return !opts.return_button ? 1 : (lua_pushinteger(L, buttonClicked), 2);
 }
 
-struct _process { // Note: C++ does not allow `struct Process`
+// Contains information about an active process.
+// Note: C++ does not allow `struct Process`, unlike C.
+struct _process {
   QProcess *proc;
 };
 static inline QProcess *PROCESS(Process *p) { return static_cast<struct _process *>(p)->proc; }
@@ -589,6 +598,8 @@ void cleanup_process(Process *proc) {
 
 void quit() { ta->close(); }
 
+// Event filter for find & replace comboboxes that activates a find/replace button when Enter
+// is pressed, and another button when Shift+Enter is pressed.
 class FindKeypressHandler : public QObject {
 public:
   FindKeypressHandler(QObject *parent = nullptr) : QObject(parent) {}
@@ -664,13 +675,15 @@ void Textadept::keyPressEvent(QKeyEvent *ev) {
     SCI(focused_view)->setFocus(), ui->findBox->hide(), ev->ignore();
 }
 
+// The Textadept application.
 class Application : public QApplication {
 public:
   Application(int &argc, char **argv)
       : QApplication(argc, argv), inited(init_textadept(argc, argv)) {
     setApplicationName("Textadept");
     // Note: for some reason, on Linux a theme SVG icon looks nicer than the same SVG as a QIcon,
-    // so prefer that. All dialogs will inherit that icon. Otherwise (i.e. Windows), use a path.
+    // so prefer that. All dialogs will inherit that icon. Otherwise (i.e. Windows or macOS),
+    // use a path.
     if (QIcon::hasThemeIcon("textadept"))
       ta->windowHandle()->setIcon(QIcon::fromTheme("textadept")); // must come after QWindow::show()
     else
