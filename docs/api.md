@@ -216,7 +216,7 @@ The current [view](#view).
 Map of all messages used by Textadept to their localized form.
 If the localized version of a given message does not exist, the non-localized message is
 returned. Use `rawget()` to check if a localization exists.
-Note: the terminal version ignores any "_" mnemonics the GUI version would use.
+Note: the terminal version ignores any "_" or "&" mnemonics the GUI version would use.
 
 ---
 <a id="_M"></a>
@@ -7805,7 +7805,7 @@ Parameters:
 <a id="ui.update"></a>
 #### `ui.update`()
 
-Processes pending GTK events, including reading from spawned processes.
+Processes pending UI events, including reading from spawned processes.
 This function is primarily used in unit tests.
 
 
@@ -8058,11 +8058,11 @@ Parameters:
 * *`options`*: Table of key-value option pairs for the progressbar dialog.
 
   * `title`: The dialog's title text.
-  * `text`: The initial progressbar display text (GTK only).
+  * `text`: The initial progressbar display text (GUI only).
   * `work`: The function repeatedly called to do work and provide progress updates. The
     function is called without arguments and must return either `nil`, which indicates work
     is complete, or a progress percentage number in the range 0-100 and an optional string
-    to display (GTK only). If progress is indeterminate, the percentage can be less than zero.
+    to display (GUI only). If progress is indeterminate, the percentage can be less than zero.
 
 Usage:
 
