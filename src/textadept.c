@@ -1236,6 +1236,7 @@ bool init_textadept(int argc, char **argv) {
   p = strstr(textadept_home, "MacOS"), strcpy(p, "Resources\0");
   os = "OSX";
 #endif
+  if (getenv("TEXTADEPT_HOME")) strcpy(textadept_home, getenv("TEXTADEPT_HOME"));
 
   setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
   if (!init_lua(argc, argv)) return (close_textadept(), false);

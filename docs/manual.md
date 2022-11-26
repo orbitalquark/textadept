@@ -1506,6 +1506,10 @@ For example:
 On Windows, you can either use the Visual Studio solution to build Textadept, or run `cmake
 --build -j` from the build directory in Visual Studio's developer command prompt.
 
+**Tip:** you can use the environment variable `TEXTADEPT_HOME` to specify the location of
+Textadept's root directory. Doing so allows you to run Textadept executables directly from the
+binary directory without having to install or copy them.
+
 **Windows and macOS Note:** when installing the Qt version of Textadept, Qt's *bin/* directory
 should be in your `%PATH%` or `$PATH`, respectively.
 
