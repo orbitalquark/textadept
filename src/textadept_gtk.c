@@ -79,7 +79,7 @@ static bool focus_lost(GtkWidget *_, GdkEvent *__, void *___) {
 static bool window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
   if (event->keyval == GDK_KEY_Escape && gtk_widget_get_visible(findbox) &&
     !gtk_widget_has_focus(command_entry))
-    return (gtk_widget_hide(findbox), gtk_widget_grab_focus(focused_view), true);
+    return (gtk_widget_grab_focus(focused_view), gtk_widget_hide(findbox), true);
   return false;
 }
 
@@ -441,7 +441,7 @@ void focus_find() {
   if (!gtk_widget_has_focus(find_entry) && !gtk_widget_has_focus(repl_entry))
     gtk_widget_show(findbox), gtk_widget_grab_focus(find_entry);
   else
-    gtk_widget_hide(findbox), gtk_widget_grab_focus(focused_view);
+    gtk_widget_grab_focus(focused_view), gtk_widget_hide(findbox);
 }
 bool is_find_active() { return gtk_widget_get_visible(findbox); }
 
@@ -449,7 +449,7 @@ void focus_command_entry() {
   if (!gtk_widget_get_visible(command_entry))
     gtk_widget_show(command_entry), gtk_widget_grab_focus(command_entry);
   else
-    gtk_widget_hide(command_entry), gtk_widget_grab_focus(focused_view);
+    gtk_widget_grab_focus(focused_view), gtk_widget_hide(command_entry);
 }
 bool is_command_entry_active() { return gtk_widget_has_focus(command_entry); }
 int get_command_entry_height() {

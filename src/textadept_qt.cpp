@@ -216,7 +216,7 @@ void focus_find() {
     ta->ui->findBox->show(), ta->ui->findCombo->setFocus(),
       ta->ui->findCombo->lineEdit()->selectAll();
   else
-    ta->ui->findBox->hide(), SCI(focused_view)->setFocus();
+    SCI(focused_view)->setFocus(), ta->ui->findBox->hide();
 }
 bool is_find_active() { return ta->ui->findBox->isVisible(); }
 
@@ -224,7 +224,7 @@ void focus_command_entry() {
   if (!SCI(command_entry)->isVisible())
     SCI(command_entry)->show(), SCI(command_entry)->setFocus();
   else
-    SCI(command_entry)->hide(), SCI(focused_view)->setFocus();
+    SCI(focused_view)->setFocus(), SCI(command_entry)->hide();
 }
 bool is_command_entry_active() { return SCI(command_entry)->hasFocus(); }
 int get_command_entry_height() { return SCI(command_entry)->height(); }
@@ -661,7 +661,7 @@ void Textadept::focusOutEvent(QFocusEvent *ev) {
 
 void Textadept::keyPressEvent(QKeyEvent *ev) {
   if (ev->key() == Qt::Key_Escape && ui->findBox->isVisible() && !SCI(command_entry)->hasFocus())
-    ui->findBox->hide(), SCI(focused_view)->setFocus(), ev->ignore();
+    SCI(focused_view)->setFocus(), ui->findBox->hide(), ev->ignore();
 }
 
 class Application : public QApplication {
