@@ -10,13 +10,18 @@ languages="`hg root`/docs/images/languages.png"
 tmp=/tmp/count
 hg clone `hg root` $tmp && pushd $tmp
 plotfile=gnuplot.dat
-for rev in `hg tags | awk '{print $2}' | cut -d: -f1 | tac`; do
+for rev in `hg tags | awk "{print $2}" | cut -d: -f1 | tac`; do
   date=`hg log -r $rev | grep ^date | cut -d: -f2- | tr + - | cut -d- -f1`
   hg update -r $rev -q
   timestamp=`date -d "$date" "+%s"`
-  counts=`cloc --force-lang=C,h --include-lang=C,Lua,make --quiet --csv \
+  if [[ -f $tmp/src/textadept_qt.cpp ]]; then
+    other_platforms="textadept_(curses|gtk)"
+  else
+    other_platforms="textadept_curses"
+  fi
+  counts=`cloc --force-lang=C,h --include-lang=C,Lua,make,C++,CMake --quiet --csv \
     --exclude-dir=doc,docs,scripts,themes,test,.github \
-    --not-match-f=adeptsensedoc\\|tadoc\\|textadept_curses . | \
+    --not-match-f="adeptsensedoc|tadoc|$other_platforms" . | \
     tail -n +3 | head -n -1 | cut -d, -f2- | sort | tr '\n' ,`
   echo $timestamp,$counts
 done | lua -e "
@@ -42,12 +47,14 @@ done | lua -e "
   local counts, langs = {}, {}
   for line in io.lines() do
     local time, data = line:match('^(%d+),(.+)$')
+    if counts[time] then goto continue end
     counts[#counts + 1], counts[time] = time, {}
     for lang, data in data:gmatch('([^,]+),([^,]+,[^,]+,[^,]+)') do
       lang = lang:match('%S+$')
       if not langs[lang] then langs[#langs + 1], langs[lang] = lang, true end
       counts[time][lang] = data
     end
+    ::continue::
   end
   table.sort(langs)
   -- Output a data series for each language counted.
