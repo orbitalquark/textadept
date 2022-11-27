@@ -29,10 +29,15 @@ jobs:
         with:
           repository: orbitalquark/textadept-build
           path: textadept-build
-      - name: Install Qt
+      - name: Install Qt (Windows, macOS)
         uses: jurplel/install-qt-action@v3
         with:
-          version: '5.12.12'
+          version: '5.15.2'
+        if: "!startsWith(matrix.os, 'ubuntu')"
+      - name: Install Qt (Linux)
+        shell: bash
+        run: sudo apt-get install qtbase5-dev --no-install-recommends -y
+        if: startsWith(matrix.os, 'ubuntu')
       - name: Build
         shell: bash
         run: |
