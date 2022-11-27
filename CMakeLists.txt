@@ -110,6 +110,10 @@ if(WIN32)
 endif()
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL "Do not update deps if already set up")
 
+if(APPLE)
+  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "")
+endif()
+
 project(textadept LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -388,7 +392,7 @@ if(plat_curses)
 endif()
 
 # Version information.
-file(STRINGS ${ta}/core/init.lua version_line REGEX ^_RELEASE)
+file(STRINGS core/init.lua version_line REGEX ^_RELEASE)
 string(REGEX MATCH "[1-9][^']+" version ${version_line})
 if(NOT DEFINED NIGHTLY)
   string(REPLACE " " _ version_ ${version})
@@ -466,9 +470,10 @@ elseif(APPLE)
   install(CODE "file(RENAME ${ta_data_dir}/core/images/textadept.icns
     ${ta_data_dir}/textadept.icns)")
   install(CODE "execute_process(COMMAND macdeployqt ${CMAKE_INSTALL_PREFIX}/Textadept.app)")
+  install(FILES scripts/osx/ta DESTINATION ${CMAKE_INSTALL_PREFIX})
   install(CODE "execute_process(
     COMMAND ${CMAKE_COMMAND} -E tar cf ${CMAKE_BINARY_DIR}/textadept_${version_}.zip --format=zip
-      Textadept.app scripts/osx/ta
+      Textadept.app ta
     WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX})")
 endif()
 
