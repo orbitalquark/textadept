@@ -5,7 +5,7 @@ Scintilla changes:
 * Handle leading whitespace in XPM images in order to prevent crashes.
 * Do not use fractional positioning on Gtk 2.
 * Do not clear per-line-values when clearing the first line of a 1-line document.
-* Fixed crash registering an XPM image on Qt.
+* Handle incoming XPM images as a single string on Qt.
 * Use Qt macros instead of keywords in header.
 
 diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
@@ -72,12 +72,14 @@ diff -r 123ae5de5bd2 src/CellBuffer.cxx
 diff -r 123ae5de5bd2 qt/ScintillaEditBase/PlatQt.cpp
 --- a/qt/ScintillaEditBase/PlatQt.cpp	Sat Aug 27 08:02:08 2022 +1000
 +++ b/qt/ScintillaEditBase/PlatQt.cpp	Tue Nov 22 00:11:05 2022 -0500
-@@ -1146,7 +1146,7 @@
+@@ -1146,7 +1146,9 @@
  
  void ListBoxImpl::RegisterImage(int type, const char *xpmData)
  {
 -	RegisterQPixmapImage(type, QPixmap(reinterpret_cast<const char * const *>(xpmData)));
-+	RegisterQPixmapImage(type, QPixmap(reinterpret_cast<const char * const>(xpmData)));
++	QPixmap pixmap;
++	if (pixmap.loadFromData(reinterpret_cast<const unsigned char*>(xpmData), static_cast<unsigned int>(strlen(xpmData))))
++		RegisterQPixmapImage(type, pixmap);
  }
  
  void ListBoxImpl::RegisterRGBAImage(int type, int width, int height, const unsigned char *pixelsImage)
