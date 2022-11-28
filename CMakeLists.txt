@@ -2,6 +2,12 @@
 
 cmake_minimum_required(VERSION 3.16)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED true)
+if(APPLE)
+  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "")
+endif()
+
 set(ta ${CMAKE_SOURCE_DIR})
 
 # Dependencies.
@@ -110,14 +116,7 @@ if(WIN32)
 endif()
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL "Do not update deps if already set up")
 
-if(APPLE)
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "")
-endif()
-
 project(textadept LANGUAGES CXX C)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 # Determine available platforms.
 find_package(Qt5 COMPONENTS Widgets)
@@ -449,7 +448,34 @@ elseif(WIN32)
   install(FILES init.lua LICENSE DESTINATION ${ta_dir})
   install(DIRECTORY core docs ${scilua_dir}/lexers modules themes DESTINATION ${ta_dir})
   if(NOT (EXISTS ${ta_dir}/Qt5Core.dll OR EXISTS ${ta_dir}/Qt5Cored.dll))
-    install(CODE "execute_process(COMMAND windeployqt ${ta_dir}/textadept.exe)")
+    install(CODE
+      "execute_process(COMMAND windeployqt --no-compiler-runtime ${ta_dir}/textadept.exe)")
+    if(DEFINED ENV{VCINSTALLDIR})
+      execute_process(COMMAND $ENV{COMSPEC} /C dir /S $ENV{VCINSTALLDIR}\\Redist /B
+        OUTPUT_FILE ${CMAKE_BINARY_DIR}/vcrun_dlls.txt)
+      # Output is of the form:
+      # C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Redist\
+      #   MSVC\14.16.27012\x64\Microsoft.VC141.CRT\concrt140.dll
+      # C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\
+      #   MSVC\14.34.31931\x86\Microsoft.VC143.CRT\concrt140.dll
+      file(STRINGS ${CMAKE_BINARY_DIR}/vcrun_dlls.txt vcrun_dlls
+        REGEX [0-9]\\\\x64\\\\Microsoft\.VC[0-9]+\.CRT.+\.dll$)
+    endif()
+    if(NOT DEFINED vcrun_dlls OR vcrun_dlls STREQUAL "")
+      if(NOT DEFINED ENV{VCINSTALLDIR})
+        set(vcrun_dlls "%VCINSTALLDIR% is not defined")
+      elseif(NOT EXISTS $ENV{VCINSTALLDIR})
+        set(vcrun_dlls"$ENV{VCINSTALLDIR} does not exist")
+      else()
+        set(vcrun_dlls "No VC runtime dlls were found in $ENV{VCINSTALLDIR}")
+      endif()
+      message(WARNING "${vcrun_dlls}; compiling will work, but installation will fail")
+    else()
+      message(STATUS "VC runtime DLLS to install: ${vcrun_dlls}")
+    endif()
+    # Note that there may be duplicate runtime files installed. However, `dir` shows files in
+    # sorted name order so the most recent runtime files will overwrite any older ones.
+    install(FILES ${vcrun_dlls} DESTINATION ${ta_dir})
   endif()
   install(CODE "execute_process(
     COMMAND ${CMAKE_COMMAND} -E tar cf ${CMAKE_BINARY_DIR}/textadept_${version_}.zip --format=zip
