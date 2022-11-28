@@ -491,7 +491,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 // Contains information about an active process.
 // Note: C++ does not allow `struct Process`, unlike C.
 struct _process {
-  QProcess *proc;
+  QProcess *proc = nullptr;
 };
 static inline QProcess *PROCESS(Process *p) { return static_cast<struct _process *>(p)->proc; }
 
@@ -592,7 +592,8 @@ void kill_process(Process *proc, int /*signal*/) { PROCESS(proc)->kill(); }
 int get_process_exit_status(Process *proc) { return PROCESS(proc)->exitCode(); }
 
 void cleanup_process(Process *proc) {
-  QSignalBlocker blocker{PROCESS(proc)}; // prevent finished signal for running processes
+  // Prevent finished signal if the process is still running (likely quitting Textadept).
+  QObject::disconnect(PROCESS(proc), nullptr, nullptr, nullptr);
   delete PROCESS(proc);
 }
 
