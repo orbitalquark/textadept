@@ -464,12 +464,15 @@ elseif(APPLE)
   if(plat_curses)
     install(TARGETS textadept-curses DESTINATION ${ta_bin_dir})
   endif()
-  install(FILES scripts/osx/textadept_osx DESTINATION ${ta_bin_dir})
+  install(PROGRAMS scripts/osx/textadept_osx DESTINATION ${ta_bin_dir})
   install(FILES init.lua LICENSE DESTINATION ${ta_data_dir})
+  install(FILES src/Info.plist DESTINATION ${ta_data_dir}/../)
   install(DIRECTORY core docs ${scilua_dir}/lexers modules themes DESTINATION ${ta_data_dir})
   install(CODE "file(RENAME ${ta_data_dir}/core/images/textadept.icns
     ${ta_data_dir}/textadept.icns)")
-  install(CODE "execute_process(COMMAND macdeployqt ${CMAKE_INSTALL_PREFIX}/Textadept.app)")
+  if(NOT EXISTS ${ta_data_dir}/qt.conf)
+    install(CODE "execute_process(COMMAND macdeployqt ${CMAKE_INSTALL_PREFIX}/Textadept.app)")
+  endif()
   install(FILES scripts/osx/ta DESTINATION ${CMAKE_INSTALL_PREFIX})
   install(CODE "execute_process(
     COMMAND ${CMAKE_COMMAND} -E tar cf ${CMAKE_BINARY_DIR}/textadept_${version_}.zip --format=zip
