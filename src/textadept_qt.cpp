@@ -28,13 +28,25 @@ extern "C" {
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 #include <QProcessEnvironment>
+#if _WIN32
+#include <windows.h> // for GetACP
+#endif
 
 // Qt objects.
 static Textadept *ta;
 
 const char *get_platform() { return "QT"; }
 
-const char *get_charset() { return QTextCodec::codecForLocale()->name().data(); }
+const char *get_charset() {
+#if !_WIN32
+  return QTextCodec::codecForLocale()->name().data();
+#else
+  // Ask Windows for its charset encoding because QTextCodec returns "System", which is not a
+  // valid iconv encoding.
+  static char codepage[8];
+  return (sprintf(codepage, "CP%d", GetACP()), codepage);
+#endif
+}
 
 // Returns a SciObject cast to its Qt equivalent.
 static ScintillaEditBase *SCI(SciObject *sci) { return static_cast<ScintillaEditBase *>(sci); }
