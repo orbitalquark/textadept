@@ -789,6 +789,14 @@ static int spawn_lua(lua_State *L) {
   for (int i = narg; i <= top && i < narg + 3; i++)
     luaL_argcheck(L, lua_isfunction(L, i) || lua_isnil(L, i), i, "function or nil expected"),
       lua_pushvalue(L, i), lua_setiuservalue(L, -2, i - narg + 1);
+
+  // Spawn the process and return it.
+  top = lua_gettop(L);
+  bool monitor_stdout = lua_getiuservalue(L, -1, 1), monitor_stderr = lua_getiuservalue(L, -2, 2);
+  const char *error = NULL;
+  bool ok = spawn(L, proc, top, cmd, cwd, envi, monitor_stdout, monitor_stderr, &error);
+  if (lua_settop(L, top), !ok)
+    return (lua_pushnil(L), lua_pushfstring(L, "%s: %s", lua_tostring(L, 1), error), 2);
   if (luaL_newmetatable(L, "ta_spawn")) {
     lua_pushcfunction(L, proc_status), lua_setfield(L, -2, "status");
     lua_pushcfunction(L, proc_wait), lua_setfield(L, -2, "wait");
@@ -800,14 +808,6 @@ static int spawn_lua(lua_State *L) {
     lua_pushvalue(L, -1), lua_setfield(L, -2, "__index");
   }
   lua_setmetatable(L, -2);
-
-  // Spawn the process and return it.
-  top = lua_gettop(L);
-  bool monitor_stdout = lua_getiuservalue(L, -1, 1), monitor_stderr = lua_getiuservalue(L, -2, 2);
-  const char *error = NULL;
-  bool ok = spawn(L, proc, top, cmd, cwd, envi, monitor_stdout, monitor_stderr, &error);
-  if (lua_settop(L, top), !ok)
-    return (lua_pushnil(L), lua_pushfstring(L, "%s: %s", lua_tostring(L, 1), error), 2);
   return ((lua_pushvalue(L, -1), lua_rawsetp(L, LUA_REGISTRYINDEX, proc)), 1); // prevent GC
 }
 
