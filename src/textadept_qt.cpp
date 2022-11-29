@@ -215,7 +215,14 @@ void set_find_text(const char *text) { ta->ui->findCombo->setCurrentText(text); 
 void set_repl_text(const char *text) { ta->ui->replaceCombo->setCurrentText(text); }
 void add_to_find_history(const char *text) { ta->ui->findCombo->addItem(text); }
 void add_to_repl_history(const char *text) { ta->ui->replaceCombo->addItem(text); }
-void set_entry_font(const char * /*name*/) {}
+void set_entry_font(const char *name_) {
+  if (const char *p = strrchr(name_, ' '); p) {
+    std::string name{name_, static_cast<size_t>(p - name_)};
+    int size = atoi(p);
+    QFont font{name.c_str(), size ? size : -1};
+    ta->ui->findCombo->setFont(font), ta->ui->replaceCombo->setFont(font);
+  }
+}
 bool is_checked(FindOption *option) { return static_cast<QCheckBox *>(option)->isChecked(); }
 void toggle(FindOption *option, bool on) { static_cast<QCheckBox *>(option)->setChecked(on); }
 void set_find_label(const char *text) { ta->ui->findLabel->setText(text); }
