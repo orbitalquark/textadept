@@ -24,13 +24,14 @@
 #endif
 
 // Variables declared in textadept.h.
+char *textadept_home;
 SciObject *focused_view, *command_entry;
 FindButton *find_next, *find_prev, *replace, *replace_all;
 FindOption *match_case, *whole_word, *regex, *in_files;
 lua_State *lua;
 
-static char *textadept_home, *os;
-SciObject *dummy_view; // for working with documents not shown in an existing view
+static char *os;
+static SciObject *dummy_view; // for working with documents not shown in an existing view
 
 // Lua objects.
 static const char *BUFFERS = "ta_buffers", *VIEWS = "ta_views", *ARG = "ta_arg"; // registry tables
@@ -761,6 +762,9 @@ static int proc_kill(lua_State *L) {
   return (kill_process(luaL_checkudata(L, 1, "ta_spawn"), lua_tointeger(L, 2)), 0);
 }
 
+// `proc:__gc()` Lua metamethod.
+static int proc_gc(lua_State *L) { return (cleanup_process(luaL_checkudata(L, 1, "ta_spawn")), 0); }
+
 // `os.spawn()` Lua function.
 static int spawn_lua(lua_State *L) {
   int narg = 1, top = lua_gettop(L);
@@ -785,16 +789,6 @@ static int spawn_lua(lua_State *L) {
   for (int i = narg; i <= top && i < narg + 3; i++)
     luaL_argcheck(L, lua_isfunction(L, i) || lua_isnil(L, i), i, "function or nil expected"),
       lua_pushvalue(L, i), lua_setiuservalue(L, -2, i - narg + 1);
-  if (luaL_newmetatable(L, "ta_spawn")) {
-    lua_pushcfunction(L, proc_status), lua_setfield(L, -2, "status");
-    lua_pushcfunction(L, proc_wait), lua_setfield(L, -2, "wait");
-    lua_pushcfunction(L, proc_read), lua_setfield(L, -2, "read");
-    lua_pushcfunction(L, proc_write), lua_setfield(L, -2, "write");
-    lua_pushcfunction(L, proc_close), lua_setfield(L, -2, "close");
-    lua_pushcfunction(L, proc_kill), lua_setfield(L, -2, "kill");
-    lua_pushvalue(L, -1), lua_setfield(L, -2, "__index");
-  }
-  lua_setmetatable(L, -2);
 
   // Spawn the process and return it.
   top = lua_gettop(L);
@@ -803,6 +797,17 @@ static int spawn_lua(lua_State *L) {
   bool ok = spawn(L, proc, top, cmd, cwd, envi, monitor_stdout, monitor_stderr, &error);
   if (lua_settop(L, top), !ok)
     return (lua_pushnil(L), lua_pushfstring(L, "%s: %s", lua_tostring(L, 1), error), 2);
+  if (luaL_newmetatable(L, "ta_spawn")) {
+    lua_pushcfunction(L, proc_status), lua_setfield(L, -2, "status");
+    lua_pushcfunction(L, proc_wait), lua_setfield(L, -2, "wait");
+    lua_pushcfunction(L, proc_read), lua_setfield(L, -2, "read");
+    lua_pushcfunction(L, proc_write), lua_setfield(L, -2, "write");
+    lua_pushcfunction(L, proc_close), lua_setfield(L, -2, "close");
+    lua_pushcfunction(L, proc_kill), lua_setfield(L, -2, "kill");
+    lua_pushcfunction(L, proc_gc), lua_setfield(L, -2, "__gc");
+    lua_pushvalue(L, -1), lua_setfield(L, -2, "__index");
+  }
+  lua_setmetatable(L, -2);
   return ((lua_pushvalue(L, -1), lua_rawsetp(L, LUA_REGISTRYINDEX, proc)), 1); // prevent GC
 }
 
@@ -983,7 +988,7 @@ static void new_buffer(sptr_t doc) {
   } else
     add_doc(doc), SS(focused_view, SCI_ADDREFDOCUMENT, 0, doc);
   lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS);
-  add_tab(), show_tabs(tabs && (tabs > 1 || lua_rawlen(lua, -1) > 0));
+  add_tab(), show_tabs(tabs && (tabs > 1 || lua_rawlen(lua, -1) > 1));
   lua_pop(lua, 1); // buffers
   lua_pushdoc(lua, doc), lua_setglobal(lua, "buffer");
   if (!initing) emit("buffer_new", -1);
@@ -1231,6 +1236,7 @@ bool init_textadept(int argc, char **argv) {
   p = strstr(textadept_home, "MacOS"), strcpy(p, "Resources\0");
   os = "OSX";
 #endif
+  if (getenv("TEXTADEPT_HOME")) strcpy(textadept_home, getenv("TEXTADEPT_HOME"));
 
   setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
   if (!init_lua(argc, argv)) return (close_textadept(), false);

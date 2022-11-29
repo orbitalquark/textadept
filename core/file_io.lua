@@ -348,7 +348,7 @@ local vcs = {'.bzr', '.git', '.hg', '.svn', '_FOSSIL_'}
 function io.get_project_root(path, submodule)
   if type(path) == 'boolean' then path, submodule = nil, path end
   if not assert_type(path, 'string/nil', 1) then path = buffer.filename or lfs.currentdir() end
-  local dir = path:match('^(.+)[/\\]?')
+  local dir = path:match('^(.-)[/\\]?$')
   while dir do
     for i = 1, #vcs do
       local mode = lfs.attributes(dir .. '/' .. vcs[i], 'mode')

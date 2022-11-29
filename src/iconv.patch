@@ -1,0 +1,750 @@
+Replaced the following with sensible defaults for WIN32:
+  * include/iconv.h.build.in
+  * lib/config.h.in
+  * libcharset/include/libcharset.h.build.in
+  * libcharset/include/localcharset.h.build.in
+  * libcharset/config.h.in
+
+Also added version defines to libiconv.rc.
+
+--- /dev/null
++++ b/include/iconv.h
+@@ -0,0 +1,249 @@
++/* Copyright (C) 1999-2022 Free Software Foundation, Inc.
++   This file is part of the GNU LIBICONV Library.
++
++   The GNU LIBICONV Library is free software; you can redistribute it
++   and/or modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either version 2.1
++   of the License, or (at your option) any later version.
++
++   The GNU LIBICONV Library is distributed in the hope that it will be
++   useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU LIBICONV Library; see the file COPYING.LIB.
++   If not, see <https://www.gnu.org/licenses/>.  */
++
++/* When installed, this file is called "iconv.h". */
++
++#ifndef _LIBICONV_H
++#define _LIBICONV_H
++
++#define _LIBICONV_VERSION 0x0111    /* version number: (major<<8) + minor */
++
++#if 0 && BUILDING_LIBICONV
++#define LIBICONV_DLL_EXPORTED __attribute__((__visibility__("default")))
++#elif defined _MSC_VER && BUILDING_LIBICONV
++#define LIBICONV_DLL_EXPORTED __declspec(dllexport)
++#else
++#define LIBICONV_DLL_EXPORTED
++#endif
++extern LIBICONV_DLL_EXPORTED int _libiconv_version; /* Likewise */
++
++/* We would like to #include any system header file which could define
++   iconv_t, 1. in order to eliminate the risk that the user gets compilation
++   errors because some other system header file includes /usr/include/iconv.h
++   which defines iconv_t or declares iconv after this file, 2. when compiling
++   for LIBICONV_PLUG, we need the proper iconv_t type in order to produce
++   binary compatible code.
++   But gcc's #include_next is not portable. Thus, once libiconv's iconv.h
++   has been installed in /usr/local/include, there is no way any more to
++   include the original /usr/include/iconv.h. We simply have to get away
++   without it.
++   Ad 1. The risk that a system header file does
++   #include "iconv.h"  or  #include_next "iconv.h"
++   is small. They all do #include <iconv.h>.
++   Ad 2. The iconv_t type is a pointer type in all cases I have seen. (It
++   has to be a scalar type because (iconv_t)(-1) is a possible return value
++   from iconv_open().) */
++
++/* Define iconv_t ourselves. */
++#undef iconv_t
++#define iconv_t libiconv_t
++typedef void* iconv_t;
++
++/* Get size_t declaration.
++   Get wchar_t declaration if it exists. */
++#include <stddef.h>
++
++/* Get errno declaration and values. */
++#include <errno.h>
++/* Some systems, like SunOS 4, don't have EILSEQ. Some systems, like BSD/OS,
++   have EILSEQ in a different header.  On these systems, define EILSEQ
++   ourselves. */
++#ifndef EILSEQ
++#define EILSEQ
++#endif
++
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++
++/* Allocates descriptor for code conversion from encoding ‘fromcode’ to
++   encoding ‘tocode’. */
++#ifndef LIBICONV_PLUG
++#define iconv_open libiconv_open
++#endif
++extern LIBICONV_DLL_EXPORTED iconv_t iconv_open (const char* tocode, const char* fromcode);
++
++/* Converts, using conversion descriptor ‘cd’, at most ‘*inbytesleft’ bytes
++   starting at ‘*inbuf’, writing at most ‘*outbytesleft’ bytes starting at
++   ‘*outbuf’.
++   Decrements ‘*inbytesleft’ and increments ‘*inbuf’ by the same amount.
++   Decrements ‘*outbytesleft’ and increments ‘*outbuf’ by the same amount. */
++#ifndef LIBICONV_PLUG
++#define iconv libiconv
++#endif
++extern LIBICONV_DLL_EXPORTED size_t iconv (iconv_t cd, const char* * inbuf, size_t *inbytesleft, char* * outbuf, size_t *outbytesleft);
++
++/* Frees resources allocated for conversion descriptor ‘cd’. */
++#ifndef LIBICONV_PLUG
++#define iconv_close libiconv_close
++#endif
++extern LIBICONV_DLL_EXPORTED int iconv_close (iconv_t cd);
++
++
++#ifdef __cplusplus
++}
++#endif
++
++
++#ifndef LIBICONV_PLUG
++
++/* Nonstandard extensions. */
++
++#if 1
++#if 0
++/* Tru64 with Desktop Toolkit C has a bug: <stdio.h> must be included before
++   <wchar.h>.
++   BSD/OS 4.0.1 has a bug: <stddef.h>, <stdio.h> and <time.h> must be
++   included before <wchar.h>.  */
++#include <stddef.h>
++#include <stdio.h>
++#include <time.h>
++#endif
++#include <wchar.h>
++#endif
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++/* A type that holds all memory needed by a conversion descriptor.
++   A pointer to such an object can be used as an iconv_t. */
++typedef struct {
++  void* dummy1[28];
++#if 1
++  mbstate_t dummy2;
++#endif
++} iconv_allocation_t;
++
++/* Allocates descriptor for code conversion from encoding ‘fromcode’ to
++   encoding ‘tocode’ into preallocated memory. Returns an error indicator
++   (0 or -1 with errno set). */
++#define iconv_open_into libiconv_open_into
++extern LIBICONV_DLL_EXPORTED int iconv_open_into (const char* tocode, const char* fromcode,
++                            iconv_allocation_t* resultp);
++
++/* Control of attributes. */
++#define iconvctl libiconvctl
++extern LIBICONV_DLL_EXPORTED int iconvctl (iconv_t cd, int request, void* argument);
++
++/* Hook performed after every successful conversion of a Unicode character. */
++typedef void (*iconv_unicode_char_hook) (unsigned int uc, void* data);
++/* Hook performed after every successful conversion of a wide character. */
++typedef void (*iconv_wide_char_hook) (wchar_t wc, void* data);
++/* Set of hooks. */
++struct iconv_hooks {
++  iconv_unicode_char_hook uc_hook;
++  iconv_wide_char_hook wc_hook;
++  void* data;
++};
++
++/* Fallback function.  Invoked when a small number of bytes could not be
++   converted to a Unicode character.  This function should process all
++   bytes from inbuf and may produce replacement Unicode characters by calling
++   the write_replacement callback repeatedly.  */
++typedef void (*iconv_unicode_mb_to_uc_fallback)
++             (const char* inbuf, size_t inbufsize,
++              void (*write_replacement) (const unsigned int *buf, size_t buflen,
++                                         void* callback_arg),
++              void* callback_arg,
++              void* data);
++/* Fallback function.  Invoked when a Unicode character could not be converted
++   to the target encoding.  This function should process the character and
++   may produce replacement bytes (in the target encoding) by calling the
++   write_replacement callback repeatedly.  */
++typedef void (*iconv_unicode_uc_to_mb_fallback)
++             (unsigned int code,
++              void (*write_replacement) (const char *buf, size_t buflen,
++                                         void* callback_arg),
++              void* callback_arg,
++              void* data);
++#if 1
++/* Fallback function.  Invoked when a number of bytes could not be converted to
++   a wide character.  This function should process all bytes from inbuf and may
++   produce replacement wide characters by calling the write_replacement
++   callback repeatedly.  */
++typedef void (*iconv_wchar_mb_to_wc_fallback)
++             (const char* inbuf, size_t inbufsize,
++              void (*write_replacement) (const wchar_t *buf, size_t buflen,
++                                         void* callback_arg),
++              void* callback_arg,
++              void* data);
++/* Fallback function.  Invoked when a wide character could not be converted to
++   the target encoding.  This function should process the character and may
++   produce replacement bytes (in the target encoding) by calling the
++   write_replacement callback repeatedly.  */
++typedef void (*iconv_wchar_wc_to_mb_fallback)
++             (wchar_t code,
++              void (*write_replacement) (const char *buf, size_t buflen,
++                                         void* callback_arg),
++              void* callback_arg,
++              void* data);
++#else
++/* If the wchar_t type does not exist, these two fallback functions are never
++   invoked.  Their argument list therefore does not matter.  */
++typedef void (*iconv_wchar_mb_to_wc_fallback) ();
++typedef void (*iconv_wchar_wc_to_mb_fallback) ();
++#endif
++/* Set of fallbacks. */
++struct iconv_fallbacks {
++  iconv_unicode_mb_to_uc_fallback mb_to_uc_fallback;
++  iconv_unicode_uc_to_mb_fallback uc_to_mb_fallback;
++  iconv_wchar_mb_to_wc_fallback mb_to_wc_fallback;
++  iconv_wchar_wc_to_mb_fallback wc_to_mb_fallback;
++  void* data;
++};
++
++/* Requests for iconvctl. */
++#define ICONV_TRIVIALP            0  /* int *argument */
++#define ICONV_GET_TRANSLITERATE   1  /* int *argument */
++#define ICONV_SET_TRANSLITERATE   2  /* const int *argument */
++#define ICONV_GET_DISCARD_ILSEQ   3  /* int *argument */
++#define ICONV_SET_DISCARD_ILSEQ   4  /* const int *argument */
++#define ICONV_SET_HOOKS           5  /* const struct iconv_hooks *argument */
++#define ICONV_SET_FALLBACKS       6  /* const struct iconv_fallbacks *argument */
++
++/* Listing of locale independent encodings. */
++#define iconvlist libiconvlist
++extern LIBICONV_DLL_EXPORTED void iconvlist (int (*do_one) (unsigned int namescount,
++                                      const char * const * names,
++                                      void* data),
++                       void* data);
++
++/* Canonicalize an encoding name.
++   The result is either a canonical encoding name, or name itself. */
++extern LIBICONV_DLL_EXPORTED const char * iconv_canonicalize (const char * name);
++
++/* Support for relocatable packages.  */
++
++/* Sets the original and the current installation prefix of the package.
++   Relocation simply replaces a pathname starting with the original prefix
++   by the corresponding pathname with the current prefix instead.  Both
++   prefixes should be directory names without trailing slash (i.e. use ""
++   instead of "/").  */
++extern LIBICONV_DLL_EXPORTED void libiconv_set_relocation_prefix (const char *orig_prefix,
++                                            const char *curr_prefix);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif
++
++
++#endif /* _LIBICONV_H */
+--- /dev/null
++++ b/lib/config.h
+@@ -0,0 +1,81 @@
++/* Copyright (C) 1999-2003, 2005, 2007, 2010, 2012 Free Software Foundation, Inc.
++  This file is part of the GNU LIBICONV Library.
++
++  The GNU LIBICONV Library is free software; you can redistribute it
++  and/or modify it under the terms of the GNU Lesser General Public
++  License as published by the Free Software Foundation; either version 2.1
++  of the License, or (at your option) any later version.
++
++  The GNU LIBICONV Library is distributed in the hope that it will be
++  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
++  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++  Lesser General Public License for more details.
++
++  You should have received a copy of the GNU Lesser General Public
++  License along with the GNU LIBICONV Library; see the file COPYING.LIB.
++  If not, see <https://www.gnu.org/licenses/>.  */
++
++
++/* Define to 1 to enable a few rarely used encodings. */
++#undef ENABLE_EXTRA
++
++/* Define to 1 if the package shall run at any location in the filesystem. */
++#undef ENABLE_RELOCATABLE
++
++/* Define to a type if <wchar.h> does not define. */
++#undef mbstate_t
++
++/* Define if you have <iconv.h>, the iconv_t type, and the
++  iconv_open, iconv, iconv_close functions. */
++#undef HAVE_ICONV
++/* Define as const if the declaration of iconv() needs const. */
++#define ICONV_CONST /* empty by default */
++
++/* Define to 1 if you have the getc_unlocked() function. */
++#undef HAVE_GETC_UNLOCKED
++
++/* Define if you have <langinfo.h> and nl_langinfo(CODESET). */
++#undef HAVE_LANGINFO_CODESET
++
++/* Define if you have the mbrtowc() function. */
++#define HAVE_MBRTOWC 1
++
++/* Define to 1 if you have the setlocale() function. */
++#define HAVE_SETLOCALE 1
++
++/* Define to 1 if you have the <stddef.h> header file. */
++#undef HAVE_STDDEF_H
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#define HAVE_STDLIB_H 1
++
++/* Define to 1 if you have the <string.h> header file. */
++#define HAVE_STRING_H 1
++
++/* Define to 1 or 0, depending whether the compiler supports simple visibility
++  declarations. */
++#define HAVE_VISIBILITY 0
++
++/* Define if you have the wcrtomb() function. */
++#define HAVE_WCRTOMB 1
++
++/* Define to 1 if O_NOFOLLOW works. */
++#undef HAVE_WORKING_O_NOFOLLOW
++
++/* Define if the machine's byte ordering is little endian. */
++#define WORDS_LITTLEENDIAN 1
++
++/* Define to the value of ${prefix}, as a string. */
++#undef INSTALLPREFIX
++
++/* Define to '__inline__' or '__inline' if that's what the C compiler
++  calls it, or to nothing if 'inline' is not supported under any name.  */
++#ifndef __cplusplus
++#undef inline
++#endif
++
++/* Define to 'int' if <sys/types.h> does not define. */
++#define mode_t int
++
++/* Define as a signed type of the same size as size_t. */
++#define ssize_t int
+--- /dev/null
++++ b/libcharset/include/config.h
+@@ -0,0 +1,184 @@
++/* config.h.in.  Generated from configure.ac by autoheader.  */
++
++/* Define to 1 if the package shall run at any location in the file system. */
++#undef ENABLE_RELOCATABLE
++
++/* Define to 1 if you have the `copy_file_range' function. */
++#undef HAVE_COPY_FILE_RANGE
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#undef HAVE_DLFCN_H
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#define HAVE_INTTYPES_H 1
++
++/* Define if you have <langinfo.h> and nl_langinfo(CODESET). */
++#undef HAVE_LANGINFO_CODESET
++
++/* Define to 1 if you have the <mach-o/dyld.h> header file. */
++#undef HAVE_MACH_O_DYLD_H
++
++/* Define to 1 if you have the <minix/config.h> header file. */
++#undef HAVE_MINIX_CONFIG_H
++
++/* Define to 1 if you have the `setlocale' function. */
++#define HAVE_SETLOCALE 1
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#define HAVE_STDINT_H 1
++
++/* Define to 1 if you have the <stdio.h> header file. */
++#define HAVE_STDIO_H 1
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#define HAVE_STDLIB_H 1
++
++/* Define to 1 if you have the <strings.h> header file. */
++#undef HAVE_STRINGS_H
++
++/* Define to 1 if you have the <string.h> header file. */
++#define undef HAVE_STRING_H 1
++
++/* Define to 1 if you have the `symlink' function. */
++#undef HAVE_SYMLINK
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#define HAVE_SYS_STAT_H 1
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#define HAVE_SYS_TYPES_H 1
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#undef HAVE_UNISTD_H
++
++/* Define to 1 or 0, depending whether the compiler supports simple visibility
++   declarations. */
++#define HAVE_VISIBILITY 0
++
++/* Define to 1 if you have the <wchar.h> header file. */
++#define HAVE_WCHAR_H 1
++
++/* Define to 1 if O_NOATIME works. */
++#undef HAVE_WORKING_O_NOATIME
++
++/* Define to 1 if O_NOFOLLOW works. */
++#undef HAVE_WORKING_O_NOFOLLOW
++
++/* Define to 1 if you have the `_NSGetExecutablePath' function. */
++#undef HAVE__NSGETEXECUTABLEPATH
++
++/* Define to the value of ${prefix}, as a string. */
++#undef INSTALLPREFIX
++
++/* Define to the sub-directory where libtool stores uninstalled libraries. */
++#undef LT_OBJDIR
++
++/* Define to the address where bug reports for this package should be sent. */
++#undef PACKAGE_BUGREPORT
++
++/* Define to the full name of this package. */
++#undef PACKAGE_NAME
++
++/* Define to the full name and version of this package. */
++#undef PACKAGE_STRING
++
++/* Define to the one symbol short name of this package. */
++#undef PACKAGE_TARNAME
++
++/* Define to the home page for this package. */
++#undef PACKAGE_URL
++
++/* Define to the version of this package. */
++#undef PACKAGE_VERSION
++
++/* Define to 1 if all of the C90 standard headers exist (not just the ones
++   required in a freestanding environment). This macro is provided for
++   backward compatibility; new code need not use it. */
++#undef STDC_HEADERS
++
++/* Enable extensions on AIX 3, Interix.  */
++#ifndef _ALL_SOURCE
++# undef _ALL_SOURCE
++#endif
++/* Enable general extensions on macOS.  */
++#ifndef _DARWIN_C_SOURCE
++# undef _DARWIN_C_SOURCE
++#endif
++/* Enable general extensions on Solaris.  */
++#ifndef __EXTENSIONS__
++# undef __EXTENSIONS__
++#endif
++/* Enable GNU extensions on systems that have them.  */
++#ifndef _GNU_SOURCE
++# undef _GNU_SOURCE
++#endif
++/* Enable X/Open compliant socket functions that do not require linking
++   with -lxnet on HP-UX 11.11.  */
++#ifndef _HPUX_ALT_XOPEN_SOCKET_API
++# undef _HPUX_ALT_XOPEN_SOCKET_API
++#endif
++/* Identify the host operating system as Minix.
++   This macro does not affect the system headers' behavior.
++   A future release of Autoconf may stop defining this macro.  */
++#ifndef _MINIX
++# undef _MINIX
++#endif
++/* Enable general extensions on NetBSD.
++   Enable NetBSD compatibility extensions on Minix.  */
++#ifndef _NETBSD_SOURCE
++# undef _NETBSD_SOURCE
++#endif
++/* Enable OpenBSD compatibility extensions on NetBSD.
++   Oddly enough, this does nothing on OpenBSD.  */
++#ifndef _OPENBSD_SOURCE
++# undef _OPENBSD_SOURCE
++#endif
++/* Define to 1 if needed for POSIX-compatible behavior.  */
++#ifndef _POSIX_SOURCE
++# undef _POSIX_SOURCE
++#endif
++/* Define to 2 if needed for POSIX-compatible behavior.  */
++#ifndef _POSIX_1_SOURCE
++# undef _POSIX_1_SOURCE
++#endif
++/* Enable POSIX-compatible threading on Solaris.  */
++#ifndef _POSIX_PTHREAD_SEMANTICS
++# undef _POSIX_PTHREAD_SEMANTICS
++#endif
++/* Enable extensions specified by ISO/IEC TS 18661-5:2014.  */
++#ifndef __STDC_WANT_IEC_60559_ATTRIBS_EXT__
++# undef __STDC_WANT_IEC_60559_ATTRIBS_EXT__
++#endif
++/* Enable extensions specified by ISO/IEC TS 18661-1:2014.  */
++#ifndef __STDC_WANT_IEC_60559_BFP_EXT__
++# undef __STDC_WANT_IEC_60559_BFP_EXT__
++#endif
++/* Enable extensions specified by ISO/IEC TS 18661-2:2015.  */
++#ifndef __STDC_WANT_IEC_60559_DFP_EXT__
++# undef __STDC_WANT_IEC_60559_DFP_EXT__
++#endif
++/* Enable extensions specified by ISO/IEC TS 18661-4:2015.  */
++#ifndef __STDC_WANT_IEC_60559_FUNCS_EXT__
++# undef __STDC_WANT_IEC_60559_FUNCS_EXT__
++#endif
++/* Enable extensions specified by ISO/IEC TS 18661-3:2015.  */
++#ifndef __STDC_WANT_IEC_60559_TYPES_EXT__
++# undef __STDC_WANT_IEC_60559_TYPES_EXT__
++#endif
++/* Enable extensions specified by ISO/IEC TR 24731-2:2010.  */
++#ifndef __STDC_WANT_LIB_EXT2__
++# undef __STDC_WANT_LIB_EXT2__
++#endif
++/* Enable extensions specified by ISO/IEC 24747:2009.  */
++#ifndef __STDC_WANT_MATH_SPEC_FUNCS__
++# undef __STDC_WANT_MATH_SPEC_FUNCS__
++#endif
++/* Enable extensions on HP NonStop.  */
++#ifndef _TANDEM_SOURCE
++# undef _TANDEM_SOURCE
++#endif
++/* Enable X/Open extensions.  Define to 500 only if necessary
++   to make mbstate_t available.  */
++#ifndef _XOPEN_SOURCE
++# undef _XOPEN_SOURCE
++#endif
+--- /dev/null
++++ b/libcharset/include/libcharset.h
+@@ -0,0 +1,53 @@
++/* Copyright (C) 2003 Free Software Foundation, Inc.
++   This file is part of the GNU CHARSET Library.
++
++   The GNU CHARSET Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public License as
++   published by the Free Software Foundation; either version 2 of the
++   License, or (at your option) any later version.
++
++   The GNU CHARSET Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License
++   along with the GNU CHARSET Library; see the file COPYING.LIB.  If not,
++   see <https://www.gnu.org/licenses/>.  */
++
++#ifndef _LIBCHARSET_H
++#define _LIBCHARSET_H
++
++#if 0 && BUILDING_LIBCHARSET
++#define LIBCHARSET_DLL_EXPORTED __attribute__((__visibility__("default")))
++#elif defined _MSC_VER && BUILDING_LIBCHARSET
++#define LIBCHARSET_DLL_EXPORTED __declspec(dllexport)
++#else
++#define LIBCHARSET_DLL_EXPORTED
++#endif
++
++#include <localcharset.h>
++
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++
++/* Support for relocatable packages.  */
++
++/* Sets the original and the current installation prefix of the package.
++   Relocation simply replaces a pathname starting with the original prefix
++   by the corresponding pathname with the current prefix instead.  Both
++   prefixes should be directory names without trailing slash (i.e. use ""
++   instead of "/").  */
++extern LIBCHARSET_DLL_EXPORTED void libcharset_set_relocation_prefix (const char *orig_prefix,
++                                              const char *curr_prefix);
++
++
++#ifdef __cplusplus
++}
++#endif
++
++
++#endif /* _LIBCHARSET_H */
+--- /dev/null
++++ b/libcharset/include/localcharset.h
+@@ -0,0 +1,145 @@
++/* Determine a canonical name for the current locale's character encoding.
++   Copyright (C) 2000-2003, 2009-2019 Free Software Foundation, Inc.
++   This file is part of the GNU CHARSET Library.
++
++   This program is free software; you can redistribute it and/or modify it
++   under the terms of the GNU Lesser General Public License as published
++   by the Free Software Foundation; either version 2, or (at your option)
++   any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License
++   along with this program; if not, see <https://www.gnu.org/licenses/>.  */
++
++#ifndef _LOCALCHARSET_H
++#define _LOCALCHARSET_H
++
++#if 0 && BUILDING_LIBCHARSET
++#define LIBCHARSET_DLL_EXPORTED __attribute__((__visibility__("default")))
++#elif defined _MSC_VER && BUILDING_LIBCHARSET
++#define LIBCHARSET_DLL_EXPORTED __declspec(dllexport)
++#else
++#define LIBCHARSET_DLL_EXPORTED
++#endif
++
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++
++/* Determine the current locale's character encoding, and canonicalize it
++   into one of the canonical names listed below.
++   The result must not be freed; it is statically allocated.  The result
++   becomes invalid when setlocale() is used to change the global locale, or
++   when the value of one of the environment variables LC_ALL, LC_CTYPE, LANG
++   is changed; threads in multithreaded programs should not do this.
++   If the canonical name cannot be determined, the result is a non-canonical
++   name.  */
++extern LIBCHARSET_DLL_EXPORTED const char * locale_charset (void);
++
++/* About GNU canonical names for character encodings:
++
++   Every canonical name must be supported by GNU libiconv.  Support by GNU libc
++   is also desirable.
++
++   The name is case insensitive.  Usually an upper case MIME charset name is
++   preferred.
++
++   The current list of these GNU canonical names is:
++
++       name              MIME?             used by which systems
++                                    (darwin = Mac OS X, windows = native Windows)
++
++   ASCII, ANSI_X3.4-1968       glibc solaris freebsd netbsd darwin minix cygwin
++   ISO-8859-1              Y   glibc aix hpux irix osf solaris freebsd netbsd openbsd darwin cygwin zos
++   ISO-8859-2              Y   glibc aix hpux irix osf solaris freebsd netbsd openbsd darwin cygwin zos
++   ISO-8859-3              Y   glibc solaris cygwin
++   ISO-8859-4              Y   hpux osf solaris freebsd netbsd openbsd darwin
++   ISO-8859-5              Y   glibc aix hpux irix osf solaris freebsd netbsd openbsd darwin cygwin zos
++   ISO-8859-6              Y   glibc aix hpux solaris cygwin
++   ISO-8859-7              Y   glibc aix hpux irix osf solaris freebsd netbsd openbsd darwin cygwin zos
++   ISO-8859-8              Y   glibc aix hpux osf solaris cygwin zos
++   ISO-8859-9              Y   glibc aix hpux irix osf solaris freebsd darwin cygwin zos
++   ISO-8859-13                 glibc hpux solaris freebsd netbsd openbsd darwin cygwin
++   ISO-8859-14                 glibc cygwin
++   ISO-8859-15                 glibc aix irix osf solaris freebsd netbsd openbsd darwin cygwin
++   KOI8-R                  Y   glibc hpux solaris freebsd netbsd openbsd darwin
++   KOI8-U                  Y   glibc freebsd netbsd openbsd darwin cygwin
++   KOI8-T                      glibc
++   CP437                       dos
++   CP775                       dos
++   CP850                       aix osf dos
++   CP852                       dos
++   CP855                       dos
++   CP856                       aix
++   CP857                       dos
++   CP861                       dos
++   CP862                       dos
++   CP864                       dos
++   CP865                       dos
++   CP866                       freebsd netbsd openbsd darwin dos
++   CP869                       dos
++   CP874                       windows dos
++   CP922                       aix
++   CP932                       aix cygwin windows dos
++   CP943                       aix zos
++   CP949                       osf darwin windows dos
++   CP950                       windows dos
++   CP1046                      aix
++   CP1124                      aix
++   CP1125                      dos
++   CP1129                      aix
++   CP1131                      freebsd darwin
++   CP1250                      windows
++   CP1251                      glibc hpux solaris freebsd netbsd openbsd darwin cygwin windows
++   CP1252                      aix windows
++   CP1253                      windows
++   CP1254                      windows
++   CP1255                      glibc windows
++   CP1256                      windows
++   CP1257                      windows
++   GB2312                  Y   glibc aix hpux irix solaris freebsd netbsd darwin cygwin zos
++   EUC-JP                  Y   glibc aix hpux irix osf solaris freebsd netbsd darwin cygwin
++   EUC-KR                  Y   glibc aix hpux irix osf solaris freebsd netbsd darwin cygwin zos
++   EUC-TW                      glibc aix hpux irix osf solaris netbsd
++   BIG5                    Y   glibc aix hpux osf solaris freebsd netbsd darwin cygwin zos
++   BIG5-HKSCS                  glibc hpux solaris netbsd darwin
++   GBK                         glibc aix osf solaris freebsd darwin cygwin windows dos
++   GB18030                     glibc hpux solaris freebsd netbsd darwin
++   SHIFT_JIS               Y   hpux osf solaris freebsd netbsd darwin
++   JOHAB                       glibc solaris windows
++   TIS-620                     glibc aix hpux osf solaris cygwin zos
++   VISCII                  Y   glibc
++   TCVN5712-1                  glibc
++   ARMSCII-8                   glibc freebsd netbsd darwin
++   GEORGIAN-PS                 glibc cygwin
++   PT154                       glibc netbsd cygwin
++   HP-ROMAN8                   hpux
++   HP-ARABIC8                  hpux
++   HP-GREEK8                   hpux
++   HP-HEBREW8                  hpux
++   HP-TURKISH8                 hpux
++   HP-KANA8                    hpux
++   DEC-KANJI                   osf
++   DEC-HANYU                   osf
++   UTF-8                   Y   glibc aix hpux osf solaris netbsd darwin cygwin zos
++
++   Note: Names which are not marked as being a MIME name should not be used in
++   Internet protocols for information interchange (mail, news, etc.).
++
++   Note: ASCII and ANSI_X3.4-1968 are synonymous canonical names.  Applications
++   must understand both names and treat them as equivalent.
++ */
++
++
++#ifdef __cplusplus
++}
++#endif
++
++
++#endif /* _LOCALCHARSET_H */
+--- a/windows/libiconv.rc
++++ b/windows/libiconv.rc
+@@ -1,6 +1,11 @@
+ /* Resources for iconv.dll */
+ 
+ #include <winver.h>
++
++#define PACKAGE_VERSION_MAJOR 1
++#define PACKAGE_VERSION_MINOR 17
++#define PACKAGE_VERSION_SUBMINOR 0
++#define PACKAGE_VERSION_STRING "1.17"
+ 
+ VS_VERSION_INFO VERSIONINFO
+  FILEVERSION PACKAGE_VERSION_MAJOR,PACKAGE_VERSION_MINOR,PACKAGE_VERSION_SUBMINOR,0

@@ -85,7 +85,7 @@ local M = ui.find
 module('ui.find')]]
 
 local _L = _L
-M.find_label_text, M.replace_label_text = _L['Find:'], _L['Replace:']
+M.find_label_text, M.replace_label_text = _L['Find:']:gsub('&', ''), _L['Replace:']:gsub('&', '')
 M.find_next_button_text = not CURSES and _L['Find Next'] or _L['[Next]']
 M.find_prev_button_text = not CURSES and _L['Find Prev'] or _L['[Prev]']
 M.replace_button_text = not CURSES and _L['Replace'] or _L['[Replace]']
@@ -139,7 +139,7 @@ function M.focus(options)
   if not options.in_files then options.in_files = false end -- reset
   if not options.incremental then options.incremental = false end -- reset
   for k, v in pairs(options) do M[k] = v end
-  M.replace_label_text = not M.in_files and _L['Replace:'] or _L['Filter:']
+  M.replace_label_text = (not M.in_files and _L['Replace:'] or _L['Filter:']):gsub('&', '')
   if M.in_files then
     if not already_in_files then repl_text = M.replace_entry_text end -- save
     local filter = M.find_in_files_filters[ff_dir()] or lfs.default_filter
@@ -311,8 +311,8 @@ function M.find_in_files(dir, filter)
 
   if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
   ui.print_to(_L['[Files Found Buffer]'],
-    string.format('%s %s\n%s %s\n%s %s', _L['Find:']:gsub('_', ''), M.find_entry_text,
-      _L['Directory:'], dir, _L['Filter:']:gsub('_', ''),
+    string.format('%s %s\n%s %s\n%s %s', _L['Find:']:gsub('[_&]', ''), M.find_entry_text,
+      _L['Directory:'], dir, _L['Filter:']:gsub('[_&]', ''),
       type(filter) == 'string' and filter or table.concat(filter, ',')))
   buffer.indicator_current = M.INDIC_FIND
 
@@ -342,7 +342,7 @@ function M.find_in_files(dir, filter)
   buffer.search_flags = get_flags()
   local text, i, found, show_names = M.find_entry_text, 1, false, M.show_filenames_in_progressbar
   stopped = ui.dialogs.progress{
-    title = string.format('%s: %s', _L['Find in Files']:gsub('_', ''), text),
+    title = string.format('%s: %s', _L['Find in Files']:gsub('[_&]', ''), text),
     text = show_names and utf8_filenames[i], work = function()
       local f = io.open(filenames[i], 'rb')
       buffer:set_text(f:read('a'))

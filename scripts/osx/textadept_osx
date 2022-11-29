@@ -1,20 +1,9 @@
 #!/bin/sh
 # Copyright 2007-2022 Mitchell. See LICENSE.
 
-# Set the GTK environment variables of resources within Textadept.app.
+# Set environment variables of resources within Textadept.app.
 bundle=$(cd "$(dirname "$0")/../../" && pwd)
-bundle_res="$bundle/Contents/Resources"
-export DYLD_LIBRARY_PATH="$bundle_res/lib"
-export GTK_DATA_PREFIX="$bundle_res"
-export GTK_EXE_PREFIX="$bundle_res"
-export GTK_PATH="$bundle_res"
-export GTK_IM_MODULE_FILE="$bundle_res/lib/gtk-3.0/3.0.0/gtk.immodules"
-export GDK_PIXBUF_MODULE_FILE="$bundle_res/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"
-export XDG_DATA_DIRS="$bundle_res/share"
-export XDG_CONFIG_DIRS="$bundle_res/etc"  
-export PANGO_LIBDIR="$bundle_res/lib"
-export PANGO_SYSCONFDIR="$bundle_res/etc"
-export CHARSETALIASDIR="$bundle_res/lib"
+export DYLD_FRAMEWORK_PATH="$bundle/Contents/Frameworks"
 
 # Strip out the argument added by macOS.
 if [ x`echo "x$1" | sed "s/^x-psn_.*//"` == x ]; then shift 1; fi

@@ -378,7 +378,7 @@ local function get_menu_key_seq(key_seq)
   local code = string.byte(key)
   if #key > 1 or code < 32 then
     for i, s in pairs(keys.KEYSYMS) do
-      if s == key and i > 0xFE20 then
+      if s == key and i >= (not QT and 0xFE20 or 0x01000000) then
         code = i
         break
       end
@@ -522,7 +522,7 @@ function M.select_command()
         build_command_tables(item)
       elseif item[1] ~= '' then -- item = {label, function}
         local label = menu.title and string.format('%s: %s', menu.title, item[1]) or item[1]
-        items[#items + 1] = label:gsub('_([^_])', '%1')
+        items[#items + 1] = label:gsub('[_&]([^_&])', '%1')
         items[#items + 1] = key_shortcuts[tostring(item[2])] or ''
       end
     end

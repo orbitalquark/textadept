@@ -1,11 +1,12 @@
 # Textadept
 
 Textadept is a fast, minimalist, and remarkably extensible cross-platform text editor for
-programmers. Written in a combination of C and [Lua][] and relentlessly optimized for speed and
-minimalism for more than 12 years, Textadept is an ideal editor for programmers who want endless
-extensibility without sacrificing speed and disk space, and without succumbing to code bloat and
-a superabundance of features. The application has both a graphical user interface (GUI) version
-that runs in a desktop environment, and a terminal version that runs within a terminal emulator.
+programmers. Written in a combination of C, C++, and [Lua][] and relentlessly optimized for
+speed and minimalism for more than 12 years, Textadept is an ideal editor for programmers who
+want endless extensibility without sacrificing speed and disk space, and without succumbing to
+code bloat and a superabundance of features. The application has both a graphical user interface
+(GUI) version that runs in a desktop environment, and a terminal version that runs within a
+terminal emulator.
 
 ![Linux](https://orbitalquark.github.io/textadept/images/linux.png)
 ![macOS](https://orbitalquark.github.io/textadept/images/macosx.png)
@@ -30,12 +31,13 @@ that runs in a desktop environment, and a terminal version that runs within a te
 
 ## Requirements
 
-In its bid for minimalism, Textadept depends on very little to run. On Windows and macOS, it has
-no external dependencies. On Linux, the GUI version depends only on [GTK][] (a cross-platform
-GUI toolkit), and the terminal version depends only on a wide-character implementation of
-curses like [ncurses][](w). Lua and any other third-party dependencies are compiled into the
-application itself.
+In its bid for minimalism, Textadept depends on very little to run. On Windows and macOS,
+it has no external dependencies. On Linux, the GUI version depends only on either [Qt][] or
+[GTK][] (cross-platform GUI toolkits), and the terminal version depends only on a wide-character
+implementation of curses like [ncurses][](w). Lua and any other third-party dependencies are
+compiled into the application itself.
 
+[Qt]: https://www.qt.io/
 [GTK]: https://gtk.org
 [ncurses]: https://invisible-island.net/ncurses/ncurses.html
 
@@ -69,56 +71,57 @@ complement to Textadept's Manual and exhaustive API documentation.
 
 ## Compile
 
-Textadept is a bit unusual in that building it is only supported on Linux, or within a [Docker][]
-[image][]. The application is cross-compiled for Windows and macOS from Linux. While it is
-certainly possible to compile Textadept natively on those platforms, it is simply not supported
-in any official capacity.
-
-Textadept is built from its *src/* directory and binaries are placed in the application's root
-directory. The general procedure is to have Textadept build its dependencies first, and then
-its binaries. Textadept is self-contained, meaning you do not have to install it; it can run
-from its current location.
+Textadept can be built on Windows, macOS, or Linux using [CMake][]. CMake will automatically
+detect which platforms you can compile Textadept for (e.g. Qt, GTK, and/or Curses) and build
+for them. On Windows and macOS you can then use CMake to create a self-contained application
+to run from anywhere. On Linux you can either use CMake to install Textadept, or place compiled
+binaries into Textadept's root directory and run it from there.
 
 General Requirements:
 
-* [GNU C compiler][] (*gcc*) 7.1+ (circa mid-2017)
-* [GNU Make][] (*make*)
-* [GTK][] 3 development libraries for the GUI version (GTK 2.24 is also supported)
-* [ncurses][](w) development libraries (wide character support) for the terminal version
-* [mingw-w64][] 5.0+ with GCC 7.1+ when cross-compiling for Windows.
-* [OSX cross toolchain][] with [Clang][] 4.0+ when cross-compiling for macOS.
-* _**OR**_
-* [Docker][]
+* [CMake][] 3.16+
+* A C and C++ compiler, such as:
+  - [GNU C compiler][] (*gcc*) 7.1+
+  - [Microsoft Visual Studio][] 2019+
+  - [Clang][] 9+
+* A UI toolkit (at least one of the following):
+  - [Qt][] 5 development libraries for the GUI version
+  - [GTK][] 3 development libraries for the GUI version (GTK 2.24 is also supported)
+  - [ncurses][](w) development libraries (wide character support) for the terminal version
 
-The following table provides a brief list of `make` rules for building Textadept on Linux.
+Basic procedure:
 
-Command | Description
--|-
-`make deps` | Downloads and builds all of Textadept's core dependencies
-`make deps NIGHTLY=1` | Optionally downloads and builds bleeding-edge dependencies
-`make` | Builds Textadept, provided all dependencies are in place
-`make GTK2=1` | Builds Textadept using GTK 2.x instead of GTK 3.x
-`make DEBUG=1` | Optionally builds Textadept with debug symbols
-`make curses` | Builds the terminal version of Textadept
-`make win-deps` | Downloads and builds Textadept's Windows dependencies
-`make win` | Cross-compiles Textadept for Windows
-`make osx-deps` | Downloads and builds Textadept's macOS dependencies
-`make osx` | Cross-compiles Textadept for macOS
+1. Configure CMake to build Textadept by pointing it to Textadept's source directory (where
+   *CMakeLists.txt* is) and specifying a binary directory to compile to.
+2. Build Textadept.
+3. Either copy the built Textadept binaries to Textadept's directory or use CMake to install it.
 
-When building within Docker, the relevant container [image][] is
-`ghcr.io/orbitalquark/textadept-build:v2.0`.
+For example:
+
+    cmake -S . -B build_dir -D CMAKE_BUILD_TYPE=RelWithDebInfo \
+      -D CMAKE_INSTALL_PREFIX=build_dir/install
+    cmake --build build_dir -j # compiled binaries are in build_dir/
+    cmake --install build_dir # self-contained installation in build_dir/install/
+
+CMake boolean variables that affect the build:
+
+* `NIGHTLY`: Whether or not to build Textadept with bleeding-edge dependencies (i.e. the
+   nightly version). Defaults to off.
+* `plat_qt`: Unless off, builds the Qt version of Textadept. The default is auto-detected.
+* `plat_gtk3`: Unless off, builds the Gtk 3 version of Textadept. The default is auto-detected.
+* `plat_gtk2`: Unless off, builds the Gtk 2 version of Textadept. The default is auto-detected.
+* `plat_curses`: Unless off, builds the Curses (terminal) version of Textadept. The default
+   is auto-detected.
 
 For more information on compiling Textadept, please see the [manual][].
 
-[Docker]: https://www.docker.com/
-[image]: https://github.com/users/orbitalquark/packages/container/textadept-build
+[CMake]: https://cmake.org
 [GNU C compiler]: https://gcc.gnu.org
-[GNU Make]: https://www.gnu.org/software/make/
-[GTK]: https://www.gtk.org
-[ncurses]: https://invisible-island.net/ncurses/ncurses.html
-[mingw-w64]: https://mingw-w64.org/
-[OSX cross toolchain]: https://github.com/tpoechtrager/osxcross
+[Microsoft Visual Studio]: https://visualstudio.microsoft.com/
 [Clang]: https://clang.llvm.org/
+[Qt]: https://www.qt.io
+[GTK]: https://gtk.org
+[ncurses]: https://invisible-island.net/ncurses/ncurses.html
 [manual]: https://orbitalquark.github.io/textadept/manual.html#compiling
 
 ## Contribute

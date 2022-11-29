@@ -216,7 +216,7 @@ The current [view](#view).
 Map of all messages used by Textadept to their localized form.
 If the localized version of a given message does not exist, the non-localized message is
 returned. Use `rawget()` to check if a localization exists.
-Note: the terminal version ignores any "_" mnemonics the GUI version would use.
+Note: the terminal version ignores any "_" or "&" mnemonics the GUI version would use.
 
 ---
 <a id="_M"></a>
@@ -4093,6 +4093,17 @@ Emitted when the user clicks on a buffer tab.
   * _`alt`_: The "Alt"/"Option" modifier key is held down.
   * _`cmd`_: The "Command" modifier key on macOS is held down.
 
+<a id="events.TAB_CLOSE_CLICKED"></a>
+#### `events.TAB_CLOSE_CLICKED` (string)
+
+Emitted when the user clicks a buffer tab's close button.
+  When connecting to this event, connect with an index of 1 if the handler needs to run
+  before Textadept closes the buffer.
+  This event is only emitted in the Qt GUI version.
+  Arguments:
+
+  * _`index`_: The numeric index of the clicked tab.
+
 <a id="events.UNFOCUS"></a>
 #### `events.UNFOCUS` (string)
 
@@ -4393,6 +4404,7 @@ See also:
 
 Saves all unsaved buffers to their respective files, prompting the user for filenames for
 untitled buffers if *untitled* is `true`, and returns `true` on success.
+Print and output buffers are ignored.
 
 Parameters:
 
@@ -7793,7 +7805,7 @@ Parameters:
 <a id="ui.update"></a>
 #### `ui.update`()
 
-Processes pending GTK events, including reading from spawned processes.
+Processes pending UI events, including reading from spawned processes.
 This function is primarily used in unit tests.
 
 
@@ -8046,11 +8058,11 @@ Parameters:
 * *`options`*: Table of key-value option pairs for the progressbar dialog.
 
   * `title`: The dialog's title text.
-  * `text`: The initial progressbar display text (GTK only).
+  * `text`: The initial progressbar display text (GUI only).
   * `work`: The function repeatedly called to do work and provide progress updates. The
     function is called without arguments and must return either `nil`, which indicates work
     is complete, or a progress percentage number in the range 0-100 and an optional string
-    to display (GTK only). If progress is indeterminate, the percentage can be less than zero.
+    to display (GUI only). If progress is indeterminate, the percentage can be less than zero.
 
 Usage:
 

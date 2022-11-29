@@ -43,7 +43,7 @@ typedef struct {
  */
 typedef void Process;
 
-/** Returns the name of the platform. */
+/** Returns the upper-cased name of the platform. */
 const char *get_platform();
 /** Returns the character set used by the platform's filesystem. */
 const char *get_charset();
@@ -65,7 +65,7 @@ const char *get_charset();
  * @param get_view Function to call when the platform is ready to accept the first Scintilla view.
  *   The platform should be ready to create tab for that view at the very least.
  */
-void new_window(SciObject *(*get_view)(void));
+void new_window(SciObject *(*get_view)());
 /** Sets the title of the Textadept window to the given text. */
 void set_title(const char *title);
 /** Returns whether or not the Textadept window is maximized. */
@@ -401,6 +401,9 @@ void kill_process(Process *proc, int signal);
  * Textadept will only call this after the platform has indicated the process exited.
  */
 int get_process_exit_status(Process *proc);
+
+/** Allows the platform to cleanup a process about to be garbage-collected by Lua. */
+void cleanup_process(Process *proc);
 
 /** Asks the platform to quit the application. The user has already been prompted to confirm. */
 void quit();

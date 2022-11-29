@@ -261,6 +261,9 @@ events.connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI, 3) end)
 -- Switches between buffers when a tab is clicked.
 events.connect(events.TAB_CLICKED, function(index) view:goto_buffer(_BUFFERS[index]) end)
 
+-- Closes a buffer when its tab close button is clicked.
+events.connect(events.TAB_CLOSE_CLICKED, function(index) _BUFFERS[index]:close() end)
+
 -- Sets the title of the Textadept window to the buffer's filename.
 local function set_title()
   local filename = buffer.filename or buffer._type or _L['Untitled']
@@ -534,7 +537,7 @@ local menu
 local popup_menu
 
 ---
--- Processes pending GTK events, including reading from spawned processes.
+-- Processes pending UI events, including reading from spawned processes.
 -- This function is primarily used in unit tests.
 -- @class function
 -- @name update

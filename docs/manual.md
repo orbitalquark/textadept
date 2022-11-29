@@ -23,22 +23,23 @@
 ![Textadept](images/textadept.png)
 
 Textadept is a fast, minimalist, and remarkably extensible cross-platform text editor for
-programmers. Written in a combination of C and [Lua][] and relentlessly optimized for speed and
-minimalism over the last 15+ years, Textadept is an ideal editor for programmers who want endless
-extensibility without sacrificing speed and disk space, and without succumbing to code bloat and
-a superabundance of features. The application has both a graphical user interface (GUI) version
-that runs in a desktop environment, and a terminal version that runs within a terminal emulator.
+programmers. Written in a combination of C, C++, and [Lua][] and relentlessly optimized for
+speed and minimalism over the last 15+ years, Textadept is an ideal editor for programmers who
+want endless extensibility without sacrificing speed and disk space, and without succumbing to
+code bloat and a superabundance of features. The application has both a graphical user interface
+(GUI) version that runs in a desktop environment, and a terminal version that runs within a
+terminal emulator.
 
 [Lua]: https://www.lua.org
 
-Textadept is _fast_. It starts up instantly and has a very responsive user interface. C code is
-about as fast as you can get, and Lua is widely regarded as being one of the fastest scripting
-languages available.
+Textadept is _fast_. It starts up instantly and has a very responsive user interface. C and C++
+code is about as fast as you can get, and Lua is widely regarded as being one of the fastest
+scripting languages available.
 
-Textadept is minimalist. Not only is this evident in the editor's appearance, but its C core
-is limited to around 2000 lines of code and its Lua extension code tries to avoid going beyond
-4000 lines. After more than 15 years of development, Textadept contains [roughly the same amount
-of code][] since its inception while significantly improving year after year.
+Textadept is minimalist. Not only is this evident in the editor's appearance, but its C and C++
+core is limited to around 2000 lines of code and its Lua extension code tries to avoid going
+beyond 4000 lines. After more than 15 years of development, Textadept contains [roughly the
+same amount of code][] since its inception while significantly improving year after year.
 
 [roughly the same amount of code]: index.html#plots
 
@@ -154,15 +155,16 @@ connected to events.
 
 #### Requirements
 
-In its bid for minimalism, Textadept depends on very little to run. On Windows and macOS, it has
-no external dependencies. On Linux, the GUI version depends only on [GTK][] (a cross-platform GUI
-toolkit), and the terminal version depends only on a wide-character implementation of curses
-like [ncurses][](w). Most Linux systems either already have these dependencies installed,
-or they are readily available from a package manager.
+In its bid for minimalism, Textadept depends on very little to run. On Windows and macOS,
+it has no external dependencies. On Linux, the GUI version depends only on [Qt][] or [GTK][]
+(cross-platform GUI toolkits), and the terminal version depends only on a wide-character
+implementation of curses like [ncurses][](w). Most Linux systems either already have these
+dependencies installed, or they are readily available from a package manager.
 
-Windows 7 (64-bit) and Mac OSX 10.10 (Yosemite) are the minimum required operating systems. Linux
+Windows 7 (64-bit) and macOS 10.13 (High Sierra) are the minimum required operating systems. Linux
 has no defined minimum.
 
+[Qt]: https://www.qt.io
 [GTK]: https://gtk.org
 [ncurses]: https://invisible-island.net/ncurses/ncurses.html
 
@@ -180,9 +182,9 @@ The following table lists Textadept's approximate download and installation size
 
 Platform | Download Size | Installed Size
 -|-|-
-Linux | 4 MB | 8 MB
-Windows | 21 MB | 57 MB (11 MB without bundled GTK Runtime)
-macOS | 20 MB | 65 MB (9 MB without bundled GTK Runtime)
+Linux | 6 MB | 10 MB
+Windows | 25 MB | 62 MB (7 MB without bundled Qt Runtime)
+macOS | 14 MB | 35 MB (13 MB without bundled Qt Runtime)
 
 **Note:** each platform package contains two executables, one for the GUI version of Textadept,
 and one for the terminal version.
@@ -233,35 +235,37 @@ double-click *Textadept.app* or invoke the *ta* script from the command line. On
 
 For convenience, you can create shortcuts to the executables on the Windows Desktop, Start Menu,
 Quick Launch toolbar, etc. On macOS, you can pin the app to your dock. On Linux, you can use
-Textadept's *src/textadept.desktop* and *src/textadept-curses.desktop* files: either (1) create a
-symbolic link to the executables from somewhere in your `$PATH` (e.g. */usr/local/bin/*) and then
-copy those desktop files to a Freedesktop.org-specified applications directory on your system
-(e.g. */usr/local/share/applications* or *~/.local/share/applications/*); or (2) edit those
-desktop files with the absolute path to the Textadept executables and then copy those desktop
-files to an applications directory; or (3) edit those desktop files with the absolute path to
-the Textadept executables and then double-click the desktop file you want to run. By copying
-Textadept's desktop files to an applications directory on your system, Textadept will show up in
-your desktop environment's menu system (GNOME, KDE, XFCE, etc.). You can properly set Textadept's
-icon by either copying Textadept's *core/images/textadept.svg* to a Freedesktop.org-specified
-"hicolor" theme directory (e.g. */usr/share/icons/scalable/apps*), or by editing Textadept's
-desktop files to set "Icon" to the absolute path to *core/images/textadept.svg*.
+Textadept's *src/textadept.desktop* and *src/textadept-curses.desktop* files: either (1) create
+a symbolic link to the executables from somewhere in your `$PATH` (e.g. */usr/local/bin/*)
+and then copy those desktop files to a Freedesktop.org-specified applications directory on
+your system (e.g. */usr/local/share/applications* or *~/.local/share/applications/*); or (2)
+edit those desktop files with the absolute path to the Textadept executables and then copy
+those desktop files to an applications directory; or (3) edit those desktop files with the
+absolute path to the Textadept executables and then double-click the desktop file you want
+to run. By copying Textadept's desktop files to an applications directory on your system,
+Textadept will show up in your desktop environment's menu system (GNOME, KDE, XFCE, etc.). You
+can properly set Textadept's icon by either copying Textadept's *core/images/textadept.svg*
+to a Freedesktop.org-specified "hicolor" theme directory (e.g. */usr/share/icons/scalable/apps*
+or *~/.local/share/icons/scalable/apps*), or by editing Textadept's desktop files to set "Icon"
+to the absolute path to *core/images/textadept.svg*.
 
 Textadept accepts a variety of command line arguments, which are listed in the table below.
 
 Option | Arguments | Description
 -|:-:|-
 `-e`, `--execute` | 1 | Run the given Lua code
-`-f`, `--force` | 0 | Forces unique instance
-`-h`, `--help` | 0 | Shows this<sup>a</sup>
+`-f`, `--force` | 0 | Forces unique instance<sup>a</sup>
+`-h`, `--help` | 0 | Shows this<sup>b</sup>
 `-l`, `--line` | 1 | Jumps to a line in the previously opened file
 `-n`, `--nosession` | 0 | No state saving/restoring functionality
-`-p`, `--preserve` | 0 | Preserve ^Q and ^S flow control sequences<sup>b</sup>
+`-p`, `--preserve` | 0 | Preserve ^Q and ^S flow control sequences<sup>c</sup>
 `-s`, `--session` | 1 | Loads the given session on startup
 `-u`, `--userhome` | 1 | Sets alternate user data directory
-`-v`, `--version` | 0 | Prints version and copyright info<sup>a</sup>
+`-v`, `--version` | 0 | Prints version and copyright info<sup>b</sup>
 
-<sup>a</sup>The terminal version does not support these.<br/>
-<sup>b</sup>Non-Windows terminal version only.
+<sup>a</sup>GTK version only.<br/>
+<sup>b</sup>The terminal version does not support these.<br/>
+<sup>c</sup>Non-Windows terminal version only.
 
 You can add your own command line arguments using [`args.register()`][]. For example, in your
 *~/.textadept/init.lua*:
@@ -295,11 +299,10 @@ restore its state at last exit.
 command line argument. You can disable session functionality using `-n` or `--nosession`. Session
 files are stored in *~/.textadept/*, and the default session name is "session".
 
-The GUI version of Textadept is a single-instance application. This means that after you start
-Textadept, any time you invoke it again (e.g. opening a file from a file browser or command
-line), the action happens in the original instance. If you want to run separate instances of
-Textadept, pass the `-f` or `--force` command line flag. On Windows, you can create a shortcut
-to *textadept.exe* that passes this flag and use that shortcut to run Textadept. On Linux,
+The GTK version of Textadept is a single-instance application. (The Qt version is not.) This
+means that after you start Textadept, any time you invoke it again (e.g. opening a file from
+a file browser or command line), the action happens in the original instance. If you want to
+run separate instances of Textadept, pass the `-f` or `--force` command line flag. On Linux,
 you can set up your button or menu launchers to pass the flag to the *textadept* executable.
 
 Textadept can be run as a portable application. This is useful if, for example, you want to
@@ -331,15 +334,9 @@ see. For example:
     export PATH=$PATH
 
 **Linux Note:** providing a single binary that runs on all Linux systems proves challenging,
-since the versions of software installed vary widely from distribution to distribution. If you
-get errors like:
-
-  * `error while loading shared libraries: <lib>: cannot open shared object file: No such file
-    or directory`
-  * `/<path>/libc.so.6: version 'GLIBC_<version>' not found`
-
-you will need to [compile](#compiling) Textadept manually for your system, which is a very
-straightforward and easy process.
+since the versions of software installed vary widely from distribution to distribution. If
+Textadept will not start on your machine, you will need to [compile](#compiling) Textadept
+manually for your system, which is a very straightforward and easy process.
 
 ---
 ### User Interface
@@ -383,7 +380,7 @@ mentioned previously, even in the terminal version.  For example, in your *~/.te
 
     local tools = textadept.menu.menubar[_L['Tools']]
     tools[#tools + 1] = {''} -- separator
-    tools[#tools + 1] = {'Reset L_ua State', reset}
+    tools[#tools + 1] = {'Reset L&ua State', reset}
 
 [`textadept.menu.menubar`]: api.html#textadept.menu.menubar
 
@@ -601,7 +598,7 @@ You can specify on the command line Lua commands and code to run on startup usin
 `--execute` command line argument. This is useful when you want to run dynamic commands that
 do not belong in *~/.textadept/init.lua*.
 
-**Tip:** a side-effect of single-instance functionality in the GUI version of Textadept is that
+**Tip:** a side-effect of single-instance functionality in the GTK version of Textadept is that
 you can remotely control the original instance of Textadept.  For example:
 
     ta ~/.textadept/init.lua &
@@ -1362,11 +1359,9 @@ your changes.
 [`view.set_theme()`]: api.html#view.set_theme
 [`reset()`]: api.html#reset
 
-The widgets in the GUI version of Textadept cannot be themed using Lua theme files. Instead, you
+The widgets in the GTK version of Textadept cannot be themed using Lua theme files. Instead, you
 must use [GTK Themes][] or [GTK CSS][], which are part of the GUI toolkit Textadept uses. The
-exception to this is find & replace entry font, which can be changed. For Windows and macOS,
-place themes in Textadept's *share/themes/* directory and edit *etc/gtk-3.0/settings.ini*
-to set the `gtk-theme-name` to the directory name of your theme.
+exception to this is find & replace entry font, which can be changed.
 
 [GTK Themes]: https://www.gnome-look.org/browse?cat=135&ord=latest
 [GTK CSS]: https://docs.gtk.org/gtk3/css-overview.html
@@ -1458,128 +1453,75 @@ example, in your *~/.textadept/init.lua*:
 ### Compiling
 ---
 
-Textadept is a bit unusual in that building it is only supported on Linux, or within a [Docker][]
-[image][]. The application is cross-compiled for Windows and macOS from Linux. While it is
-certainly possible to compile Textadept natively on those platforms, it is simply not supported
-in any official capacity.
+Textadept can be built on Windows, macOS, or Linux using [CMake][]. CMake will automatically
+detect which platforms you can compile Textadept for (e.g. Qt, GTK, and/or Curses) and build
+for them. On Windows and macOS you can then use CMake to create a self-contained application
+to run from anywhere. On Linux you can either use CMake to install Textadept, or place compiled
+binaries into Textadept's root directory and run it from there.
 
 #### Requirements
 
-The requirements for compiling Textadept on Linux should be readily available from a package
-manager. The requirements for cross-compiling Textadept for Windows from Linux should also be
-easily obtainable.
+Requirements:
 
-Linux requirements:
+* [CMake][] 3.16+
+* A C and C++ compiler, such as:
+  - [GNU C compiler][] (*gcc*) 7.1+
+  - [Microsoft Visual Studio][] 2019+
+  - [Clang][] 9+
+* A UI toolkit (at least one of the following):
+  - [Qt][] 5 development libraries for the GUI version
+  - [GTK][] 3 development libraries for the GUI version (GTK 2.24 is also supported)
+  - [ncurses][](w) development libraries (wide character support) for the terminal version
 
-* [GNU C compiler][] (*gcc*) 7.1+ (circa mid-2017)
-* [GNU Make][] (*make*)
-* [GTK][] 3 development libraries for the GUI version (GTK 2.24 is also supported)
-* [ncurses][](w) development libraries (wide character support) for the terminal version
-* _**OR**_
-* [Docker][]
+**macOS Note:** [XCode][] provides Clang.
 
-**Note:** on Ubuntu for example, these dependencies would be provided by the `build-essential`,
-`libgtk-3-dev` (or `libgtk2.0-dev`), `libncurses-dev`, and `docker.io` packages.
+**Linux Note:** these requirements should be readily available from a package manager.  On Ubuntu
+for example, these dependencies would be provided by the `build-essential`, `qtbase5-dev`,
+`libgtk-3-dev` (or `libgtk2.0-dev`), and `libncurses-dev` packages.
 
-Windows cross-compiling requirements:
-
-* [mingw-w64][] 5.0+ with GCC 7.1+
-* _**OR**_
-* [Docker][]
-
-**Note:** on Ubuntu for example, the compiler dependency would be provided by the `gcc-mingw-w64`
-and `g++-mingw-w64` packages.
-
-macOS cross-compiling requirements:
-
-* [OSX cross toolchain][] with [Clang][] 4.0+
-* _**OR**_
-* [Docker][]
-
-**Note:** Textadept's *src/Dockerfile* contains an example of how to build an OSX cross toolchain.
-
-[Docker]: https://www.docker.com
-[image]: https://hub.docker.com/repository/docker/textadept/build
+[CMake]: https://cmake.org
 [GNU C compiler]: https://gcc.gnu.org
-[GNU Make]: https://www.gnu.org/software/make
+[Microsoft Visual Studio]: https://visualstudio.microsoft.com/
 [Clang]: https://clang.llvm.org
+[Qt]: https://www.qt.io
 [GTK]: https://www.gtk.org/download/linux.php
 [ncurses]: https://invisible-island.net/ncurses/#download_ncurses
-[mingw-w64]: http://mingw-w64.org
-[OSX cross toolchain]: https://github.com/tpoechtrager/osxcross
+[XCode]: https://developer.apple.com/xcode/
 
 #### Compiling
 
-Textadept is built from its *src/* directory and binaries are placed in the application's root
-directory. The general procedure is to have Textadept build its dependencies first, and then
-its binaries. Textadept is self-contained, meaning you do not have to install it; it can run
-from its current location.
+Basic procedure:
 
-The following table provides a brief summary of `make` rules for building Textadept on Linux.
+1. Configure CMake to build Textadept by pointing it to Textadept's source directory (where
+   *CMakeLists.txt* is) and specifying a binary directory to compile to.
+2. Build Textadept.
+3. Either copy the built Textadept binaries to Textadept's directory or use CMake to install it.
 
-Command | Description
--|-
-`make deps` | Downloads and builds all of Textadept's core dependencies
-`make deps NIGHTLY=1` | Optionally downloads and builds bleeding-edge dependencies
-`make` | Builds Textadept, provided all dependencies are in place
-`make GTK2=1` | Builds Textadept using GTK 2.x instead of GTK 3
-`make DEBUG=1` | Optionally builds Textadept with debug symbols
-`make install` | Optionally installs Textadept (to */usr/local* by default)
-`make textadept` | Builds only the GUI version of Textadept
-`make curses` | Builds only the terminal version of Textadept
-`make curses install`| Optionally installs the terminal version of Textadept
-`make uninstall` | Uninstalls Textadept (from */usr/local* by default)
-`make clean` | Deletes all compiled files, leaving only source files
-`make clean-deps` | Deletes all unpacked dependencies, leaving only downloads
-`make win-deps` | Downloads and builds Textadept's Windows dependencies
-`make win` | Cross-compiles Textadept for Windows
-`make osx-deps` | Downloads and builds Textadept's macOS dependencies
-`make osx` | Cross-compiles Textadept for macOS
-`make Textadept.app` | Optionally creates *Textadept.app* for macOS
+For example:
 
-If you want to install Textadept into a non-standard location, you can specify that location
-using the `DESTDIR` variable. For example:
+    cmake -S . -B build_dir -D CMAKE_INSTALL_PREFIX=build_dir/install
+    cmake --build build_dir -j # compiled binaries are in build_dir/
+    cmake --install build_dir # self-contained installation in build_dir/install/
 
-    make install DESTDIR=/prefix/to/install/to
+On Windows, you can either use the Visual Studio solution to build Textadept, or run `cmake
+--build -j` from the build directory in Visual Studio's developer command prompt.
 
-**Linux note:** if any of Textadept's dependencies are installed under a prefix that your compiler
-flags do not include by default (e.g. */usr/local/*), you will have to run something like:
+**Tip:** you can use the environment variable `TEXTADEPT_HOME` to specify the location of
+Textadept's root directory. Doing so allows you to run Textadept executables directly from the
+binary directory without having to install or copy them.
 
-    make CFLAGS="-I/usr/local/include" CXXFLAGS="-I/usr/local/include -L/usr/local/lib"
+**Windows and macOS Note:** when installing the Qt version of Textadept, Qt's *bin/* directory
+should be in your `%PATH%` or `$PATH`, respectively.
 
-Also, if you want to compile with Clang, you will have to run something like:
+CMake boolean variables that affect the build:
 
-    make CC=cc CXX=c++
-
-##### Compiling using Docker
-
-You can use [Docker][] to build Textadept for Windows, macOS, or Linux. The [image][] required
-to do so is about 3GB in size. For example:
-
-    localhost$ docker pull ghcr.io/orbitalquark/textadept-build:v2.0
-    localhost$ docker run -t -i -v /path/to/textadept:/ta -w /ta/src \
-      ghcr.io/orbitalquark/textadept-build:v2.0
-    container# make deps
-    container# make
-    container# exit
-
-If you prefer to build your own Docker image instead of pulling one, you can run `docker build .`
-from Textadept's *src/* directory, which contains the relevant *Dockerfile*.
-
-You can issue within the container any of the build commands given in the previous table,
-though the install commands are meaningless.
-
-**Linux note:** if, when running one of the Linux binaries produced, you get an error like
-`/<path>/libstdc++.so.6: version 'GLIBCXX_<version>' not found`, then try compiling with the
-following flags:
-
-    container# make CXXFLAGS="-0s -std=c++17 -static-libstdc++"
-
-If you still get an error, this time like `/<path>/libc.so.6: version 'GLIBC_<version>' not
-found`, then you will have to compile Textadept manually without Docker.
-
-[Docker]: https://www.docker.com
-[image]: https://github.com/users/orbitalquark/packages/container/textadept-build
+* `NIGHTLY`: Whether or not to build Textadept with bleeding-edge dependencies (i.e. the
+   nightly version). Defaults to off.
+* `plat_qt`: Unless off, builds the Qt version of Textadept. The default is auto-detected.
+* `plat_gtk3`: Unless off, builds the Gtk 3 version of Textadept. The default is auto-detected.
+* `plat_gtk2`: Unless off, builds the Gtk 2 version of Textadept. The default is auto-detected.
+* `plat_curses`: Unless off, builds the Curses (terminal) version of Textadept. The default
+   is auto-detected.
 
 ---
 ### Appendix
@@ -1676,13 +1618,14 @@ Textadept's directory structure is organized as follows:
 * *lexers/*: Houses the lexer modules that analyze source code for syntax highlighting.
 * *modules/*: Contains modules for editing text and source code, as well as language modules.
 * *themes/*: Contains built-in themes that customize the look and feel of Textadept.
-* *etc/*, *lib/*, and *share/*: GTK support directories and only appear in the Windows and
-  macOS packages.
+* *iconengines/*, *imageformats/*, *platforms/*, *styles/*, and *translations/*: Qt support
+  directories and only appear in the Windows package.
 
 #### Technologies
 
 Textadept is composed of the following technologies:
 
+* [Qt][]: cross-platform GUI toolkit
 * [GTK][]: cross-platform GUI toolkit
 * [ncurses][]: terminal UI library for Linux and macOS
 * [pdcurses][]: terminal UI library for Windows
@@ -1695,7 +1638,9 @@ Textadept is composed of the following technologies:
 * [Lua][]: core scripting language
 * [LPeg][]: Lua pattern matching library for syntax highlighting
 * [LuaFileSystem][]: Lua library for accessing the host filesystem
+* [iconv][]: library for converting text to and from Unicode
 
+[Qt]: https://www.qt.io
 [GTK]: https://www.gtk.org
 [Scintilla]: https://scintilla.org
 [Lexilla]: https://scintilla.org/Lexilla.html
@@ -1708,6 +1653,7 @@ Textadept is composed of the following technologies:
 [pdcurses]: http://pdcurses.sourceforge.net
 [cdk]: https://invisible-island.net/cdk
 [libtermkey]: http://www.leonerd.org.uk/code/libtermkey
+[iconv]: https://www.gnu.org/software/libiconv
 
 #### Migrating from Textadept 10 to 11
 

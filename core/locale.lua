@@ -7,7 +7,7 @@ local M = {}
 -- Map of all messages used by Textadept to their localized form.
 -- If the localized version of a given message does not exist, the non-localized message is
 -- returned. Use `rawget()` to check if a localization exists.
--- Note: the terminal version ignores any "_" mnemonics the GUI version would use.
+-- Note: the terminal version ignores any "_" or "&" mnemonics the GUI version would use.
 module('_L')]]
 
 local f = io.open(_USERHOME .. '/locale.conf', 'rb')
@@ -22,10 +22,11 @@ for line in f:lines() do
   if not line:find('^%s*[%w_%[]') then goto continue end
   local id, str = line:match('^(.-)%s*=%s*(.-)\r?$')
   if id and str and assert(not M[id], 'duplicate locale key "%s"', id) then
-    M[id] = not CURSES and str or str:gsub('_', '')
+    M[id] = GTK and str or str:gsub('_', QT and '&' or '')
   end
   ::continue::
 end
 f:close()
 
-return setmetatable(M, {__index = function(_, k) return k end})
+if QT then setmetatable(M, {__newindex = function(t, k, v) rawset(t, k, v:gsub('_', '&')) end}) end
+return M
