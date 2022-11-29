@@ -5,48 +5,20 @@
 
 #include "lauxlib.h"
 
-#if __linux__
 #include <signal.h>
 #include <sys/wait.h>
-#elif _WIN32
-#include <fcntl.h>
-#include <windows.h>
-#define main main_ // entry point should be WinMain
-#endif
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
-#if __APPLE__
-#include <gtkmacintegration/gtkosxapplication.h>
-#endif
 #include "ScintillaWidget.h" // must come after <gtk/gtk.h>
-
-// Translate GTK 3.22 API downward for compatibility.
-#if !GTK_CHECK_VERSION(3, 22, 0)
-#define GtkFileChooserNative GtkWidget
-#define gtk_file_chooser_native_new(title, parent, action, ...) \
-  gtk_file_chooser_dialog_new(title, parent, action, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, \
-    action == GTK_FILE_CHOOSER_ACTION_OPEN ? GTK_STOCK_OPEN : GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, \
-    NULL)
-#define GTK_NATIVE_DIALOG GTK_DIALOG
-#define gtk_native_dialog_run gtk_dialog_run
-#define gtk_native_dialog_destroy(w) gtk_widget_destroy(GTK_WIDGET(w))
-#endif
 
 // GTK objects.
 static GtkWidget *window, *menubar, *tabbar, *statusbar[2];
 static GtkAccelGroup *accel;
-#if __APPLE__
-static GtkosxApplication *osxapp;
-#endif
 static GtkWidget *findbox, *find_entry, *repl_entry, *find_label, *repl_label;
 static GtkListStore *find_history, *repl_history;
 
 static bool tab_sync;
 static int current_tab;
-
-#if _WIN32
-static const char *pipe_id = "\\\\.\\pipe\\textadept.editor"; // for single-instance functionality
-#endif
 
 const char *get_platform() { return "GTK"; }
 
@@ -82,24 +54,6 @@ static bool window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
     return (gtk_widget_grab_focus(focused_view), gtk_widget_hide(findbox), true);
   return false;
 }
-
-#if __APPLE__
-// Signal for opening files from macOS.
-// Generates an 'appleevent_odoc' event for each document sent.
-static bool open_file(GtkosxApplication *_, char *path, void *__) {
-  return (emit("appleevent_odoc", LUA_TSTRING, path, -1), true);
-}
-
-// Signal for block terminating Textadept from macOS.
-// Generates a 'quit' event. There is no way to avoid quitting the application.
-static bool terminating(GtkosxApplication *_, void *__) { return emit("quit", -1); }
-
-// Signal for terminating Textadept from macOS.
-// Closes Textadept and releases resources.
-static void terminate(GtkosxApplication *_, void *__) {
-  close_textadept(), scintilla_release_resources(), g_object_unref(osxapp), gtk_main_quit();
-}
-#endif
 
 // Signal for switching buffer tabs.
 // When triggered by the user (i.e. not synchronizing the tabbar), switches to the specified
@@ -199,13 +153,6 @@ void new_window(SciObject *(*get_view)(void)) {
   g_signal_connect(window, "focus-out-event", G_CALLBACK(focus_lost), NULL);
   g_signal_connect(window, "key-press-event", G_CALLBACK(window_keypress), NULL);
   accel = gtk_accel_group_new();
-
-#if __APPLE__
-  gtkosx_application_set_use_quartz_accelerators(osxapp, false);
-  g_signal_connect(osxapp, "NSApplicationOpenFile", G_CALLBACK(open_file), NULL);
-  g_signal_connect(osxapp, "NSApplicationBlockTermination", G_CALLBACK(terminating), NULL);
-  g_signal_connect(osxapp, "NSApplicationWillTerminate", G_CALLBACK(terminate), NULL);
-#endif
 
   GtkWidget *vbox = gtk_vbox_new(false, 0);
 
@@ -513,12 +460,6 @@ void popup_menu(void *menu, void *userdata) {
 }
 
 void set_menubar(lua_State *L, int index) {
-#if __APPLE__
-  // TODO: gtkosx_application_set_menu_bar does not like being called more than once in an app.
-  // Random segfaults will happen after a second reset, even if menubar is g_object_ref/unrefed
-  // properly.
-  if (!lua_getglobal(L, "arg")) return;
-#endif
   GtkWidget *new_menubar = gtk_menu_bar_new();
   for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++)
     gtk_menu_shell_append(GTK_MENU_SHELL(new_menubar),
@@ -528,10 +469,6 @@ void set_menubar(lua_State *L, int index) {
   gtk_box_pack_start(GTK_BOX(vbox), menubar = new_menubar, false, false, 0);
   gtk_box_reorder_child(GTK_BOX(vbox), new_menubar, 0);
   if (lua_rawlen(L, index) > 0) gtk_widget_show_all(new_menubar);
-#if __APPLE__
-  gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(new_menubar));
-  gtk_widget_hide(new_menubar); // hide in window
-#endif
 }
 
 char *get_clipboard_text(int *len) {
@@ -561,20 +498,7 @@ bool add_timeout(double interval, bool (*f)(int *), int *refs) {
 }
 
 void update_ui() {
-#if !__APPLE__
   while (gtk_events_pending()) gtk_main_iteration();
-#else
-  // The idle event monitor created by os.spawn() on macOS is considered to be a pending event,
-  // so use its provided registry key to help determine when there are no longer any non-idle
-  // events pending.
-  lua_pushboolean(lua, false), lua_setfield(lua, LUA_REGISTRYINDEX, "spawn_procs_polled");
-  while (gtk_events_pending()) {
-    bool polled =
-      (lua_getfield(lua, LUA_REGISTRYINDEX, "spawn_procs_polled"), lua_toboolean(lua, -1));
-    if (lua_pop(lua, 1), polled) break;
-    gtk_main_iteration();
-  }
-#endif
 }
 
 // Returns a new message dialog with the specified title, icon, and buttons.
@@ -611,9 +535,9 @@ int input_dialog(DialogOptions opts, lua_State *L) {
 
 // `ui.dialogs.open{...}` or `ui.dialogs.save{...}` Lua function.
 static int open_save_dialog(DialogOptions *opts, lua_State *L, bool open) {
-  int action = open ? GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE;
-  GtkFileChooserNative *dialog =
-    gtk_file_chooser_native_new(opts->title, GTK_WINDOW(window), action, NULL, NULL);
+  GtkWidget *dialog = gtk_file_chooser_dialog_new(opts->title, GTK_WINDOW(window),
+    open ? GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL,
+    GTK_RESPONSE_CANCEL, open ? GTK_STOCK_OPEN : GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
   GtkFileChooser *fc = GTK_FILE_CHOOSER(dialog);
   if (opts->dir) gtk_file_chooser_set_current_folder(fc, opts->dir);
   if (open) {
@@ -628,14 +552,14 @@ static int open_save_dialog(DialogOptions *opts, lua_State *L, bool open) {
     if (opts->file) gtk_file_chooser_set_current_name(fc, opts->file);
   }
 
-  if (gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog)) != GTK_RESPONSE_ACCEPT)
-    return (gtk_native_dialog_destroy(GTK_NATIVE_DIALOG(dialog)), 0);
+  if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_ACCEPT)
+    return (gtk_widget_destroy(dialog), 0);
   lua_newtable(L); // note: will be replaced by single value if opts->multiple is false
   GSList *filenames = gtk_file_chooser_get_filenames(fc), *f = filenames;
   for (int i = 1; f; f = f->next, i++) lua_pushstring(L, f->data), lua_rawseti(L, -2, i);
   g_slist_free_full(filenames, free);
   if (!opts->multiple) lua_rawgeti(L, -1, 1), lua_replace(L, -2); // single value
-  return (gtk_native_dialog_destroy(GTK_NATIVE_DIALOG(dialog)), 1);
+  return (gtk_widget_destroy(dialog), 1);
 }
 
 int open_dialog(DialogOptions opts, lua_State *L) { return open_save_dialog(&opts, L, true); }
@@ -817,12 +741,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 
 // Contains information about an active process.
 struct Process {
-#if !_WIN32
-  int pid, fstdin;
-#else
-  HANDLE pid, fstdin;
-#endif
-  int fstdout, fstderr, exit_status;
+  int pid, fstdin, fstdout, fstderr, exit_status;
   GIOChannel *cstdout, *cstderr;
 };
 static inline struct Process *PROCESS(struct Process *proc) { return proc; }
@@ -842,11 +761,7 @@ static int read_channel(GIOChannel *source, GIOCondition cond, void *proc) {
 // Creates and returns a new channel for reading from the given file descriptor. The channel
 // can optionally monitor that file descriptor for output.
 static GIOChannel *new_channel(int fd, Process *proc, bool watch) {
-#if !_WIN32
   GIOChannel *channel = g_io_channel_unix_new(fd);
-#else
-  GIOChannel *channel = g_io_channel_win32_new_fd(fd);
-#endif
   g_io_channel_set_encoding(channel, NULL, NULL), g_io_channel_set_buffered(channel, false);
   if (watch)
     g_io_add_watch(channel, G_IO_IN | G_IO_HUP, read_channel, proc), g_io_channel_unref(channel);
@@ -859,11 +774,7 @@ static void process_finished(struct Process *proc, int status) {
   g_source_remove_by_user_data(proc); // disconnect stderr watch
   g_source_remove_by_user_data(proc); // disconnect child watch
   g_spawn_close_pid(proc->pid), proc->pid = 0;
-#if !_WIN32
   close(proc->fstdin), close(proc->fstdout), close(proc->fstderr);
-#else
-  CloseHandle(proc->fstdin), _close(proc->fstdout), _close(proc->fstderr);
-#endif
   process_exited(proc, proc->exit_status = status);
 }
 
@@ -873,7 +784,6 @@ static void proc_exited(GPid _, int status, void *proc) { process_finished(proc,
 bool spawn(lua_State *L, Process *proc_, int index, const char *cmd, const char *cwd, int envi,
   bool monitor_stdout, bool monitor_stderr, const char **error) {
   struct Process *proc = proc_;
-#if !_WIN32
   // Construct argv from cmd and envp from envi.
   int envc = envi ? lua_rawlen(L, envi) : 0;
   char **argv, *envp[envc + 1];
@@ -888,52 +798,6 @@ bool spawn(lua_State *L, Process *proc_, int index, const char *cmd, const char 
     G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, NULL, NULL, &proc->pid, &proc->fstdin,
     &proc->fstdout, &proc->fstderr, &err);
   if (g_strfreev(argv), !ok) return (*error = err->message, false);
-#else
-  // Reconstruct cmd and construct envp from envi.
-  // Use "cmd.exe /c" for more versatility (e.g. spawning batch files).
-  // envp needs to be a contiguous block of 'key=value\0' strings terminated by another '\0'.
-  cmd = (lua_pushstring(L, getenv("COMSPEC")), lua_pushliteral(L, " /c "), lua_pushstring(L, cmd),
-    lua_concat(L, 3), lua_tostring(L, -1));
-  char *envp = NULL;
-  if (envi) {
-    luaL_Buffer buf;
-    for (luaL_buffinit(L, &buf), lua_pushnil(L); lua_next(L, envi); lua_pop(L, 1))
-      luaL_addstring(&buf, lua_tostring(L, -1)), luaL_addchar(&buf, '\0');
-    luaL_addchar(&buf, '\0'), luaL_pushresult(&buf);
-    envp = memcpy(malloc(lua_rawlen(L, -1)), lua_tostring(L, -1), lua_rawlen(L, -1));
-  }
-  // Setup pipes for stdin, stdout, and stderr. (Adapted from SciTE.)
-  SECURITY_ATTRIBUTES sa = {sizeof(SECURITY_ATTRIBUTES), NULL, true};
-  HANDLE stdin_read, proc_stdout, stdout_write, proc_stderr, stderr_write;
-  // Redirect stdin.
-  CreatePipe(&stdin_read, &proc->fstdin, &sa, 0);
-  SetHandleInformation(proc->fstdin, HANDLE_FLAG_INHERIT, 0);
-  // Redirect stdout.
-  CreatePipe(&proc_stdout, &stdout_write, &sa, 0);
-  SetHandleInformation(proc_stdout, HANDLE_FLAG_INHERIT, 0);
-  // Redirect stderr.
-  CreatePipe(&proc_stderr, &stderr_write, &sa, 0);
-  SetHandleInformation(proc_stderr, HANDLE_FLAG_INHERIT, 0);
-  // Spawn the process with pipes and no window.
-  STARTUPINFOA startup_info = {sizeof(STARTUPINFOA), NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0,
-    STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES, SW_HIDE, 0, NULL, stdin_read, stdout_write,
-    stderr_write};
-  PROCESS_INFORMATION proc_info = {NULL, NULL, 0, 0};
-  bool ok = CreateProcessA(NULL, (LPSTR)cmd, NULL, NULL, true, CREATE_NEW_PROCESS_GROUP, envp,
-    cwd ? cwd : NULL, &startup_info, &proc_info);
-  if (envp) free(envp);
-  if (!ok) {
-    static char err[65535];
-    FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, (LPSTR)err, 65535, NULL);
-    return (*error = err, false);
-  }
-  proc->pid = proc_info.hProcess;
-  proc->fstdout = _open_osfhandle((intptr_t)proc_stdout, _O_RDONLY); // transfers ownership
-  proc->fstderr = _open_osfhandle((intptr_t)proc_stderr, _O_RDONLY); // transfers ownership
-  // Close unneeded handles.
-  CloseHandle(proc_info.hThread);
-  CloseHandle(stdin_read), CloseHandle(stdout_write), CloseHandle(stderr_write);
-#endif
   // Monitor stdout, stderr, and the process itself.
   proc->cstdout = new_channel(proc->fstdout, proc, monitor_stdout),
   proc->cstderr = new_channel(proc->fstderr, proc, monitor_stderr);
@@ -946,14 +810,8 @@ size_t process_size() { return sizeof(struct Process); }
 bool is_process_running(Process *proc) { return PROCESS(proc)->pid; }
 
 void wait_process(Process *proc) {
-#if !_WIN32
   int status;
   waitpid(PROCESS(proc)->pid, &status, 0), status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
-#else
-  DWORD status;
-  WaitForSingleObject(PROCESS(proc)->pid, INFINITE),
-    GetExitCodeProcess(PROCESS(proc)->pid, &status);
-#endif
   process_finished(proc, status);
 }
 
@@ -984,28 +842,13 @@ char *read_process_output(Process *proc, char option, size_t *len, const char **
 }
 
 void write_process_input(Process *proc, const char *s, size_t len) {
-#if !_WIN32
   write(PROCESS(proc)->fstdin, s, len);
-#else
-  DWORD len_written;
-  WriteFile(PROCESS(proc)->fstdin, s, len, &len_written, NULL);
-#endif
 }
 
-void close_process_input(Process *proc) {
-#if !_WIN32
-  close(PROCESS(proc)->fstdin);
-#else
-  CloseHandle(PROCESS(proc)->fstdin);
-#endif
-}
+void close_process_input(Process *proc) { close(PROCESS(proc)->fstdin); }
 
 void kill_process(Process *proc, int signal) {
-#if !_WIN32
   kill(PROCESS(proc)->pid, signal ? signal : SIGKILL);
-#else
-  TerminateProcess(PROCESS(proc)->pid, 1);
-#endif
 }
 
 int get_process_exit_status(Process *proc) { return PROCESS(proc)->exit_status; }
@@ -1018,16 +861,11 @@ void quit() {
 }
 
 // Signal for processing a remote Textadept's command line arguments.
-static int process(GApplication *_, GApplicationCommandLine *line, void *buf) {
+static int process(GApplication *_, GApplicationCommandLine *line, void *__) {
   if (!lua) return 0; // only process argv for secondary/remote instances
-#if !_WIN32
   int argc = 0;
   char **argv = g_application_command_line_get_arguments(line, &argc);
   const char *cwd = g_application_command_line_get_cwd(line);
-#else
-  char **argv = g_strsplit(buf, "\n", 0), *cwd = argv[0];
-  int argc = g_strv_length(argv);
-#endif
   if (argc > 1) {
     lua_newtable(lua);
     lua_pushstring(lua, cwd), lua_rawseti(lua, -2, -1);
@@ -1036,46 +874,6 @@ static int process(GApplication *_, GApplicationCommandLine *line, void *buf) {
   }
   return (g_strfreev(argv), gtk_window_present(GTK_WINDOW(window)), 0);
 }
-
-#if _WIN32
-// Replacement for `g_application_register()` that always "works".
-int g_application_register(GApplication *_, GCancellable *__, GError **___) { return true; }
-
-// Replacement for `g_application_get_is_remote()` that uses a named pipe.
-int g_application_get_is_remote(GApplication *_) {
-  return WaitNamedPipe(pipe_id, NMPWAIT_WAIT_FOREVER) != 0;
-}
-
-// Replacement for `g_application_run()` that handles multiple instances.
-int g_application_run(GApplication *_, int __, char **___) {
-  HANDLE pipe = CreateFile(pipe_id, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-  char cwd[FILENAME_MAX + 1]; // TODO: is this big enough?
-  GetCurrentDirectory(FILENAME_MAX + 1, cwd);
-  DWORD len_written;
-  WriteFile(pipe, cwd, strlen(cwd) + 1, &len_written, NULL);
-  for (int i = 1; i < __argc; i++)
-    WriteFile(pipe, __argv[i], strlen(__argv[i]) + 1, &len_written, NULL);
-  return (CloseHandle(pipe), 0);
-}
-
-// Processes a remote Textadept's command line arguments.
-static int pipe_read(void *buf) { return (process(NULL, NULL, buf), free(buf), false); }
-
-// Listens for remote Textadept communications and reads command line arguments.
-// Processing can only happen in the GTK main thread because GTK is single-threaded.
-static DWORD WINAPI pipe_listener(HANDLE pipe) {
-  while (true)
-    if (pipe != INVALID_HANDLE_VALUE && ConnectNamedPipe(pipe, NULL)) {
-      char *buf = malloc(65536 * sizeof(char)), *p = buf; // arbitrary size
-      DWORD len;
-      while (ReadFile(pipe, p, buf + 65536 - 1 - p, &len, NULL) && len > 0) p += len;
-      for (*p = '\0', len = p - buf - 1, p = buf; p < buf + len; p++)
-        if (!*p) *p = '\n'; // but preserve trailing '\0'
-      g_idle_add(pipe_read, buf), DisconnectNamedPipe(pipe);
-    }
-  return 0;
-}
-#endif
 
 // Runs Textadept.
 // On Windows, also creates a pipe and thread for communication with remote instances.
@@ -1093,28 +891,8 @@ int main(int argc, char **argv) {
   if (g_application_register(app, NULL, NULL) && g_application_get_is_remote(app) && !force)
     return (g_application_run(app, argc, argv), g_object_unref(app), 0);
 
-#if __APPLE__
-  osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
-#endif
   if (!init_textadept(argc, argv)) return (g_object_unref(app), 1);
-#if _WIN32
-  HANDLE pipe = NULL, thread = NULL;
-  if (!g_application_get_is_remote(app))
-    pipe = CreateNamedPipe(pipe_id, PIPE_ACCESS_INBOUND, PIPE_WAIT, 1, 0, 0, INFINITE, NULL),
-    thread = CreateThread(NULL, 0, &pipe_listener, pipe, 0, NULL);
   gtk_main();
-  if (pipe && thread) TerminateThread(thread, 0), CloseHandle(thread), CloseHandle(pipe);
-#elif __APPLE__
-  gtkosx_application_ready(osxapp), gtk_main();
-#else
-  gtk_main();
-#endif
 
   return (g_object_unref(app), 0); // close_textadept() was called before gtk_main_quit()
 }
-
-#if _WIN32
-// Runs Textadept in Windows.
-// Note: __argc and __argv are MSVC extensions.
-int WINAPI WinMain(HINSTANCE _, HINSTANCE __, LPSTR ___, int ____) { return main(__argc, __argv); }
-#endif
