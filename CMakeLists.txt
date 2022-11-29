@@ -513,7 +513,7 @@ add_custom_target(docs DEPENDS manual luadoc)
 add_custom_target(manual DEPENDS luadoc
   COMMAND for file in `basename -a -s .md ${ta_md_docs}`\; do
     cat _layouts/default.html | ../scripts/fill_layout.lua $$file.md > $$file.html\; done
-  COMMAND sed -i "\"s/\\(\\# Textadept\\).\\*\\?\\(Manual\\|API\\)/\\1 ${version} \\2/;\""
+  COMMAND sed -i "\"s/\\(\\# Textadept\\).\\+\\?\\(Manual\\|API\\)/\\1 ${version} \\2/;\""
     ${ta_md_docs}
   DEPENDS ${ta_md_docs}
   WORKING_DIRECTORY ${ta}/docs)
