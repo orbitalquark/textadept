@@ -497,8 +497,8 @@ elseif(APPLE)
   install(CODE "file(RENAME ${ta_data_dir}/core/images/textadept.icns
     ${ta_data_dir}/textadept.icns)")
   if(NOT EXISTS ${ta_data_dir}/qt.conf)
-    install(CODE "execute_process(
-      COMMAND macdeployqt ${CMAKE_INSTALL_PREFIX}/Textadept.app -executable=textadept)")
+    install(CODE "execute_process(COMMAND macdeployqt ${CMAKE_INSTALL_PREFIX}/Textadept.app
+      -executable=${ta_bin_dir}/textadept)")
   endif()
   install(FILES scripts/osx/ta DESTINATION ${CMAKE_INSTALL_PREFIX})
   install(CODE "execute_process(
