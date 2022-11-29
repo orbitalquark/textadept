@@ -122,7 +122,7 @@ jobs:
         shell: bash
         run: |
           mkdir textadept-modules
-          modules="css ctags debugger export file_diff format html lsp lua_repl open_file_mode \
+          modules="css ctags debugger export file_diff format go html lsp lua_repl open_file_mode \
             python rest ruby spellcheck yaml"
           for module in $modules; do
             gh_name="`echo -n $module | sed -e 's/_/-/g;'`"
