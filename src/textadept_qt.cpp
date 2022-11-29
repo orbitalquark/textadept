@@ -511,6 +511,11 @@ bool spawn(lua_State *L, Process *proc, int /*index*/, const char *cmd, const ch
   bool monitor_stdout, bool monitor_stderr, const char **error) {
   QStringList args;
   // Construct argv from cmd and envp from envi.
+#if _WIN32
+  // Use "cmd.exe /c" for more versatility (e.g. spawning batch files).
+  cmd = (lua_pushstring(L, getenv("COMSPEC")), lua_pushliteral(L, " /c "), lua_pushstring(L, cmd),
+    lua_concat(L, 3), lua_tostring(L, -1));
+#endif
   const char *p = cmd;
   while (*p) {
     while (*p == ' ') p++;
