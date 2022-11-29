@@ -7,6 +7,42 @@
 [donate]: https://gum.co/textadept
 [book]: book.html
 
+### 12.0 alpha (01 Jan 2023)
+
+Download:
+
+* [Textadept 12.0 alpha  -- Windows][]
+* [Textadept 12.0 alpha  -- macOS 10.13+][]
+* [Textadept 12.0 alpha  -- Linux][]
+* [Textadept 12.0 alpha  -- Modules][]
+
+Bugfixes:
+
+* Fixed `io.get_project_root()` on Windows network shares.
+* GTK version: fixed invalid cast warning for split views.
+* GTK version: handle movement keys from the list dialog entry when interactive search is not active.
+* Terminal version: fixed crash cleaning up after a spawned process.
+* Terminal version: improved spawn command parsing.
+
+Changes:
+
+* Added Qt version and made it the default for all platforms.
+* The Qt version of Textadept is not a single-instance application, only the GTK version is.
+* The minimum required version of macOS is 10.13 (High Sierra).
+* Switched to [CMake-based build][] for building natively on Windows, macOS, and Linux.
+* Added 'Save' buttons to close and quit dialogs when there are unsaved buffers.
+* Removed GTK support for Windows and macOS (Linux is still supported).
+* Utilize "TEXTADEPT_HOME" environment variable, if it exists, in place of autodetected `_HOME`
+  based on Textadept executable location.
+* Added `_G.QT`.
+* Include Go language module in separate set of modules.
+
+[Textadept 12.0 alpha  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.win.zip
+[Textadept 12.0 alpha  -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.macOS.zip
+[Textadept 12.0 alpha  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.linux.tgz
+[Textadept 12.0 alpha  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.modules.zip
+[CMake-based build]: manual.html#compiling
+
 ### 11.5 alpha 2 (01 Nov 2022)
 
 Download:
