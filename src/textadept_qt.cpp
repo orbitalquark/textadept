@@ -119,7 +119,14 @@ SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, vo
   return view;
 }
 
-void focus_view(SciObject *view) { SCI(view)->setFocus(); }
+void focus_view(SciObject *view) {
+  if (SCI(view)->setFocus(); !SCI(view)->hasFocus()) {
+    // Simulate a FocusIn event so Scintilla sends an SCN_FOCUSIN notification, which emits
+    // events and sets focused_view.
+    QFocusEvent event{QEvent::FocusIn};
+    QApplication::sendEvent(SCI(view), &event);
+  }
+}
 
 sptr_t SS(SciObject *view, int message, uptr_t wparam, sptr_t lparam) {
   return SCI(view)->send(message, wparam, lparam);
