@@ -42,16 +42,15 @@ jobs:
         shell: bash
         run: |
           # Move cached dependencies into build/_deps.
-          mkdir -p build/_deps
-          mv textadept-build/* build/_deps && rm -r textadept-build
+          mkdir -p build/_deps && mv textadept-build/* build/_deps && rm -r textadept-build
 
           # Build.
           type="Release"
           if [[ ${{ github.event_name }} != schedule ]]; then
-            if [[ "${{ github.event.inputs.nightly }}" = true ]]; then nightly="-D NIGHTLY=1"; fi
+            if [[ "${{ github.event.inputs.nightly }}" = true ]]; then nightly="-D nightly=1"; fi
             if [[ "${{ github.event.inputs.debug }}" = true ]]; then type="Debug"; fi
           else
-            nightly="-D NIGHTLY=1"
+            nightly="-D nightly=1"
           fi
           cmake -S . -B build ${nightly} -D CMAKE_INSTALL_PREFIX=build/install
           cmake --build build --config ${type} -j

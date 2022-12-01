@@ -1515,7 +1515,7 @@ should be in your `%PATH%` or `$PATH`, respectively.
 
 CMake boolean variables that affect the build:
 
-* `NIGHTLY`: Whether or not to build Textadept with bleeding-edge dependencies (i.e. the
+* `nightly`: Whether or not to build Textadept with bleeding-edge dependencies (i.e. the
    nightly version). Defaults to off.
 * `plat_qt`: Unless off, builds the Qt version of Textadept. The default is auto-detected.
 * `plat_gtk3`: Unless off, builds the Gtk 3 version of Textadept. The default is auto-detected.
