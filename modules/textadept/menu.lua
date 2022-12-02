@@ -514,7 +514,7 @@ end)
 -- @name select_command
 function M.select_command()
   local items = {}
-  -- Builds the item tables for the filtered list dialog.
+  -- Builds the item tables for the list dialog.
   -- @param menu The menu to read from.
   local function build_command_tables(menu)
     for _, item in ipairs(menu) do

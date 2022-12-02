@@ -368,7 +368,7 @@ io.quick_open_filters = {}
 
 ---
 -- Prompts the user to select files to be opened from *paths*, a string directory path or list
--- of directory paths, using a filtered list dialog.
+-- of directory paths, using a list dialog.
 -- If *paths* is `nil`, uses the current project's root directory, which is obtained from
 -- `io.get_project_root()`.
 -- String or list *filter* determines which files to show in the dialog, with the default
@@ -406,9 +406,12 @@ function io.quick_open(paths, filter)
     filter = io.quick_open_filters[paths] or lfs.default_filter
   end
   local utf8_list = {}
-  for _, path in ipairs(type(paths) == 'table' and paths or {paths}) do
+  paths = type(paths) == 'table' and paths or {paths}
+  local prefix = #paths == 1 and paths[1] .. (not WIN32 and '/' or '\\')
+  for _, path in ipairs(paths) do
     for filename in lfs.walk(path, filter) do
       if #utf8_list >= io.quick_open_max then break end
+      if prefix then filename = filename:sub(#prefix + 1) end
       utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
     end
   end
@@ -419,9 +422,15 @@ function io.quick_open(paths, filter)
       icon = 'dialog-information'
     }
   end
-  local selected = ui.dialogs.list{title = _L['Open File'], items = utf8_list, multiple = true}
+  local title = _L['Open File']
+  if prefix then title = title .. ': ' .. prefix:iconv('UTF-8', _CHARSET) end
+  local selected = ui.dialogs.list{title = title, items = utf8_list, multiple = true}
   if not selected then return end
   local filenames = {}
-  for i = 1, #selected do filenames[i] = utf8_list[selected[i]]:iconv(_CHARSET, 'UTF-8') end
+  for i = 1, #selected do
+    local filename = utf8_list[selected[i]]:iconv(_CHARSET, 'UTF-8')
+    if prefix then filename = prefix .. filename end
+    filenames[i] = filename
+  end
   io.open_file(filenames)
 end

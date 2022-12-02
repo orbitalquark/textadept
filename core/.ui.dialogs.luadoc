@@ -91,7 +91,7 @@ function progress(options) end
 -- (depending on whether or not *options*.`multiple` is `true`).
 -- If the user canceled the dialog, returns `nil`.
 -- Text typed into the dialog filters the list items. Spaces are treated as wildcards.
--- @param options Table of key-value option pairs for the filtered list dialog.
+-- @param options Table of key-value option pairs for the list dialog.
 --
 --   * `title`: The dialog's title text.
 --   * `text`: The dialog's initial input text.
