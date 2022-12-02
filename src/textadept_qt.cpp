@@ -64,15 +64,15 @@ void get_size(int *width, int *height) { *width = ta->width(), *height = ta->hei
 void set_size(int width, int height) { ta->resize(width, height); }
 
 // Event filter for Scintilla views. This avoids the need to subclass ScintillaEditBase.
-class EventFilter : public QObject {
+class ScintillaEventFilter : public QObject {
 public:
-  EventFilter(QObject *parent = nullptr) : QObject(parent) {}
+  ScintillaEventFilter(QObject *parent = nullptr) : QObject{parent} {}
 
 protected:
-  bool eventFilter(QObject *object, QEvent *event) override {
+  bool eventFilter(QObject *watched, QEvent *event) override {
     // Do not propagate focusOutEvent while the command entry is active and the window loses focus.
     // Otherwise the command entry will auto-hide.
-    if (event->type() == QEvent::FocusOut && SCI(object) == SCI(command_entry))
+    if (event->type() == QEvent::FocusOut && SCI(watched) == SCI(command_entry))
       return static_cast<QFocusEvent *>(event)->reason() == Qt::ActiveWindowFocusReason;
 
     // Propagate non-keypress events as normal.
@@ -102,20 +102,16 @@ protected:
 
 SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, void *)) {
   auto view = new ScintillaEditBase;
-
   if (notified)
     QObject::connect(
       view, &ScintillaEditBase::notify, view, [notified, view](Scintilla::NotificationData *pscn) {
         notified(view, 0, reinterpret_cast<SCNotification *>(pscn), nullptr);
       });
-
-  static EventFilter filter; // only need one instance for the whole application
+  static ScintillaEventFilter filter; // only need one instance for the whole application
   view->installEventFilter(&filter);
-
   QObject::connect(view, &ScintillaEditBase::buttonPressed, view, [](QMouseEvent *event) {
     if (event->button() == Qt::RightButton) show_context_menu("context_menu", event);
   });
-
   return view;
 }
 
@@ -162,7 +158,7 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
   otherPane ? remove_views(otherPane, delete_view) : delete_view(other);
   if (auto parentPane = qobject_cast<QSplitter *>(pane->parentWidget()); parentPane)
     parentPane->replaceWidget(parentPane->indexOf(pane), SCI(view));
-  else
+  else // note: cannot use ternary operator here due to distinct pointer types.
     pane->parentWidget()->layout()->replaceWidget(pane, SCI(view));
   return (SCI(focused_view)->setFocus(), true);
 }
@@ -197,7 +193,7 @@ void show_tabs(bool show) { ta->ui->tabFrame->setVisible(show); }
 void add_tab() { set_tab(ta->ui->tabbar->addTab("")); }
 
 void set_tab(int index) {
-  QSignalBlocker blocker{ta->ui->tabbar};
+  QSignalBlocker blocker{ta->ui->tabbar}; // prevent currentChanged
   ta->ui->tabbar->setCurrentIndex(index);
 }
 
@@ -263,7 +259,7 @@ void set_command_entry_height(int height) {
 }
 
 void set_statusbar_text(int bar, const char *text) {
-  bar ? ta->docStatusBar->setText(text) : ta->statusBar()->showMessage(text);
+  bar == 0 ? ta->statusBar()->showMessage(text) : ta->docStatusBar->setText(text);
 }
 
 void *read_menu(lua_State *L, int index) {
@@ -272,8 +268,7 @@ void *read_menu(lua_State *L, int index) {
   lua_pop(L, 1); // title
   for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++) {
     if (lua_rawgeti(L, -1, i) != LUA_TTABLE) continue; // popped on loop
-    bool isSubmenu = lua_getfield(L, -1, "title");
-    if (lua_pop(L, 1), isSubmenu) {
+    if (bool isSubmenu = lua_getfield(L, -1, "title"); lua_pop(L, 1), isSubmenu) {
       auto submenu = static_cast<QMenu *>(read_menu(L, -1));
       menu->addMenu(submenu); // TODO: menu does not take ownership; does this leak?
       continue;
@@ -297,7 +292,7 @@ void *read_menu(lua_State *L, int index) {
     }
     int id = get_int_field(L, -1, 2);
     QObject::connect(
-      menuItem, &QAction::triggered, ta, [id]() { emit("menu_clicked", LUA_TNUMBER, id, -1); });
+      menuItem, &QAction::triggered, menu, [id]() { emit("menu_clicked", LUA_TNUMBER, id, -1); });
   }
   // Enable menu items prior to showing the menu, and then disable them prior to hiding.
   // When key shortcuts are enabled, Qt handles key bindings, and this interferes with Textadept's
@@ -334,8 +329,8 @@ char *get_clipboard_text(int *len) {
 // An active timeout that cleans up after itself.
 class Timeout {
 public:
-  Timeout(double interval, bool (*f)(int *), int *refs) : timer(new QTimer{ta}) {
-    QObject::connect(timer, &QTimer::timeout, ta, [this, f, refs]() {
+  Timeout(double interval, bool (*f)(int *), int *refs) : timer{new QTimer{ta}} {
+    QObject::connect(timer, &QTimer::timeout, timer, [this, f, refs]() {
       if (!f(refs)) delete this;
     });
     timer->setInterval(interval * 1000), timer->start();
@@ -356,7 +351,15 @@ int message_dialog(DialogOptions opts, lua_State *L) {
   QMessageBox dialog{ta};
   if (opts.title) dialog.setText(opts.title);
   if (opts.text) dialog.setInformativeText(opts.text);
-  if (opts.icon && QIcon::hasThemeIcon(opts.icon))
+  if (opts.icon && strcmp(opts.icon, "dialog-question") == 0)
+    dialog.setIcon(QMessageBox::Question);
+  else if (opts.icon && strcmp(opts.icon, "dialog-information") == 0)
+    dialog.setIcon(QMessageBox::Information);
+  else if (opts.icon && strcmp(opts.icon, "dialog-warning") == 0)
+    dialog.setIcon(QMessageBox::Warning);
+  else if (opts.icon && strcmp(opts.icon, "dialog-error") == 0)
+    dialog.setIcon(QMessageBox::Critical);
+  else if (opts.icon && QIcon::hasThemeIcon(opts.icon))
     dialog.setIconPixmap(QIcon::fromTheme(opts.icon).pixmap(
       QApplication::style()->pixelMetric(QStyle::PM_MessageBoxIconSize)));
   if (opts.buttons[2]) dialog.addButton(opts.buttons[2], static_cast<QMessageBox::ButtonRole>(2));
@@ -393,7 +396,7 @@ static int open_save_dialog(DialogOptions *opts, lua_State *L, bool open) {
   if (opts->dir) dialog.setDirectory(opts->dir);
   if (opts->file) dialog.selectFile(opts->file);
   if (!dialog.exec()) return 0;
-  lua_newtable(L); // note: will be replaced by a single value of opts->multiple is false
+  lua_newtable(L); // note: will be replaced by a single value if opts->multiple is false
   for (int i = 0; i < dialog.selectedFiles().size(); i++)
     lua_pushstring(L, dialog.selectedFiles()[i].toLocal8Bit().data()), lua_rawseti(L, -2, i + 1);
   if (!opts->multiple) lua_rawgeti(L, -1, 1), lua_replace(L, -2); // single value
@@ -404,14 +407,18 @@ int open_dialog(DialogOptions opts, lua_State *L) { return open_save_dialog(&opt
 int save_dialog(DialogOptions opts, lua_State *L) { return open_save_dialog(&opts, L, false); }
 
 // Updates the given progressbar dialog with the given percentage and text.
-static void update(double percent, const char *text, void *dialog) {
-  if (percent >= 0) static_cast<QProgressDialog *>(dialog)->setValue(percent);
-  if (text) static_cast<QProgressDialog *>(dialog)->setLabelText(text);
+static void update(double percent, const char *text, void *dialog_) {
+  auto dialog = static_cast<QProgressDialog *>(dialog_);
+  if (percent >= 0)
+    dialog->setValue(percent);
+  else if (dialog->maximum() > 0)
+    dialog->setMaximum(0), dialog->show(); // switch to indeterminate and show immediately
+  if (text) dialog->setLabelText(text);
 }
 
 int progress_dialog(
   DialogOptions opts, lua_State *L, bool (*work)(void (*)(double, const char *, void *), void *)) {
-  QProgressDialog dialog{opts.text ? opts.text : "", opts.buttons[0], 0, 100};
+  QProgressDialog dialog{opts.title ? opts.title : "", opts.buttons[0], 0, 100};
   dialog.setWindowModality(Qt::WindowModal), dialog.setMinimumDuration(0);
   while (work(update, &dialog))
     if (QApplication::processEvents(), dialog.wasCanceled()) break;
@@ -423,86 +430,75 @@ int progress_dialog(
 // tree view. This allows for cursor movement from the line edit while it has focus.
 class KeyForwarder : public QObject {
 public:
-  KeyForwarder(QWidget *target, QObject *parent = nullptr) : QObject(parent), target(target) {}
+  KeyForwarder(QWidget *target, QObject *parent = nullptr) : QObject{parent}, target{target} {}
 
 protected:
-  bool eventFilter(QObject *object, QEvent *event) override {
+  bool eventFilter(QObject *watched, QEvent *event) override {
     if (event->type() != QEvent::KeyPress) return false;
     int key = static_cast<QKeyEvent *>(event)->key();
     if (key != Qt::Key_Down && key != Qt::Key_Up && key != Qt::Key_PageDown &&
       key != Qt::Key_PageUp)
       return false;
     return (target->setFocus(), QApplication::sendEvent(target, event),
-      static_cast<QWidget *>(object)->setFocus(), true);
+      qobject_cast<QWidget *>(watched)->setFocus(), true);
   }
   QWidget *target;
 };
 
 int list_dialog(DialogOptions opts, lua_State *L) {
-  QDialog dialog{ta};
-  int window_width, window_height;
-  get_size(&window_width, &window_height);
-  dialog.resize(window_width - 200, 500);
-  auto vbox = new QVBoxLayout{&dialog};
-  if (opts.title) vbox->addWidget(new QLabel{opts.title});
-  auto lineEdit = new QLineEdit;
-  QObject::connect(lineEdit, &QLineEdit::returnPressed, &dialog, &QDialog::accept);
-  vbox->addWidget(lineEdit);
-  auto treeView = new QTreeView;
-  vbox->addWidget(treeView);
-  auto buttonBox = new QDialogButtonBox;
-  QObject::connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-  QObject::connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-  vbox->addWidget(buttonBox);
-
-  auto myFilter = new KeyForwarder{treeView, &dialog};
-  lineEdit->installEventFilter(myFilter);
-
-  int num_columns = opts.columns ? lua_rawlen(L, opts.columns) : 1,
-      num_items = lua_rawlen(L, opts.items);
-  QStandardItemModel model{num_items / num_columns, num_columns};
-  for (int i = 0; i < num_items; i++) {
+  int numColumns = opts.columns ? lua_rawlen(L, opts.columns) : 1,
+      numItems = lua_rawlen(L, opts.items);
+  QStandardItemModel model{numItems / numColumns, numColumns};
+  for (int i = 1; i <= numColumns; i++) {
+    const char *header = opts.columns ? (lua_rawgeti(L, opts.columns, i), lua_tostring(L, -1)) : "";
+    model.setHorizontalHeaderItem(i - 1, new QStandardItem{QString{header}});
+    if (opts.columns) lua_pop(L, 1); // header
+  }
+  for (int i = 0; i < numItems; lua_pop(L, 1), i++) {
     const char *item = (lua_rawgeti(L, opts.items, i + 1), lua_tostring(L, -1));
-    model.setItem(i / num_columns, i % num_columns, new QStandardItem{QString{item}});
-    lua_pop(L, 1); // item
+    model.setItem(i / numColumns, i % numColumns, new QStandardItem{QString{item}});
   }
   QSortFilterProxyModel filter;
   filter.setFilterCaseSensitivity(Qt::CaseInsensitive);
   filter.setFilterKeyColumn(opts.search_column - 1);
   filter.setSourceModel(&model);
-  treeView->setModel(&filter);
 
-  for (int i = 1; i <= num_columns; i++) {
-    const char *header = opts.columns ? (lua_rawgeti(L, opts.columns, i), lua_tostring(L, -1)) : "";
-    model.setHorizontalHeaderItem(i - 1, new QStandardItem{QString{header}});
-    if (opts.columns) lua_pop(L, 1); // header
-  }
-  treeView->setHeaderHidden(!opts.columns);
+  QDialog dialog{ta};
+  auto vbox = new QVBoxLayout{&dialog};
+  if (opts.title) vbox->addWidget(new QLabel{opts.title});
+  auto lineEdit = new QLineEdit;
+  QObject::connect(lineEdit, &QLineEdit::returnPressed, &dialog, &QDialog::accept);
+  auto treeView = new QTreeView;
+  treeView->setModel(&filter);
+  treeView->setHeaderHidden(!opts.columns), treeView->setIndentation(0);
   treeView->header()->resizeSections(QHeaderView::ResizeToContents);
   treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
-  treeView->setIndentation(0);
-
-  QItemSelectionModel *selection = treeView->selectionModel();
   if (opts.multiple) treeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
-
+  QItemSelectionModel *selection = treeView->selectionModel();
   QObject::connect(
     lineEdit, &QLineEdit::textChanged, &filter, [&filter, &selection](const QString &text) {
       filter.setFilterWildcard(QString{text}.replace(' ', '*'));
       selection->select(filter.index(0, 0), QItemSelectionModel::Select);
     });
-
   if (opts.text) lineEdit->setText(opts.text);
   selection->select(filter.index(0, 0), QItemSelectionModel::Select);
-
+  lineEdit->installEventFilter(new KeyForwarder{treeView, &dialog});
+  auto buttonBox = new QDialogButtonBox;
   int buttonClicked = 2; // cancel/reject by default
   if (opts.buttons[2])
     buttonBox->addButton(opts.buttons[2], static_cast<QDialogButtonBox::ButtonRole>(2));
   if (opts.buttons[1])
     buttonBox->addButton(opts.buttons[1], static_cast<QDialogButtonBox::ButtonRole>(1));
   buttonBox->addButton(opts.buttons[0], static_cast<QDialogButtonBox::ButtonRole>(0));
-  QObject::connect(buttonBox, &QDialogButtonBox::clicked, ta,
+  QObject::connect(buttonBox, &QDialogButtonBox::clicked, buttonBox,
     [buttonBox, &buttonClicked](
       QAbstractButton *button) { buttonClicked = buttonBox->buttonRole(button) + 1; });
+  QObject::connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+  QObject::connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+  vbox->addWidget(lineEdit), vbox->addWidget(treeView), vbox->addWidget(buttonBox);
+  int treeViewWidth = 0;
+  for (int i = 0; i < numColumns; i++) treeViewWidth += treeView->columnWidth(i);
+  dialog.resize(treeViewWidth, treeViewWidth * 10 / 16); // 16:10 ratio
 
   bool ok = dialog.exec();
   if (!ok && !opts.return_button) return 0;
@@ -523,35 +519,35 @@ static inline QProcess *PROCESS(Process *p) { return static_cast<struct _process
 
 bool spawn(lua_State *L, Process *proc, int /*index*/, const char *cmd, const char *cwd, int envi,
   bool monitor_stdout, bool monitor_stderr, const char **error) {
-  QStringList args;
   // Construct argv from cmd and envp from envi.
+  QStringList args;
 #if _WIN32
   // Use "cmd.exe /c" for more versatility (e.g. spawning batch files).
-  cmd = (lua_pushstring(L, getenv("COMSPEC")), lua_pushliteral(L, " /c "), lua_pushstring(L, cmd),
-    lua_concat(L, 3), lua_tostring(L, -1));
+  std::string full_cmd = std::string{getenv("COMSPEC")} + " /c " + cmd;
+  cmd = full_cmd.c_str();
 #endif
+  // TODO: Qt 5.15 introduced QProcess:splitCommand().
   const char *p = cmd;
   while (*p) {
     while (*p == ' ') p++;
-    luaL_Buffer buf;
-    luaL_buffinit(L, &buf);
+    std::string arg;
     do {
       const char *s = p;
       while (*p && *p != ' ' && *p != '"' && *p != '\'') p++;
-      luaL_addlstring(&buf, s, p - s);
+      arg.append(s, p - s);
       if (*p == '"' || *p == '\'') {
         s = p + 1;
         for (char q = *p++; *p && (*p != q || *(p - 1) == '\\'); p++) {}
-        luaL_addlstring(&buf, s, p - s);
+        arg.append(s, p - s);
         if (*p == '"' || *p == '\'') p++;
       }
     } while (*p && *p != ' ');
-    lua_checkstack(L, 1), luaL_pushresult(&buf), args.append(lua_tostring(L, -1)), lua_pop(L, 1);
+    args.append(arg.c_str());
   }
   QProcessEnvironment env;
   if (envi)
     for (int i = (lua_pushnil(L), 0); lua_next(L, envi); lua_pop(L, 1), i++) {
-      std::string pair = lua_tostring(L, -1);
+      std::string pair{lua_tostring(L, -1)};
       env.insert(pair.substr(0, pair.find('=')).c_str(), pair.substr(pair.find('=') + 1).c_str());
     }
 
@@ -560,16 +556,16 @@ bool spawn(lua_State *L, Process *proc, int /*index*/, const char *cmd, const ch
   if (cwd) qProc->setWorkingDirectory(cwd);
   qProc->setProcessEnvironment(envi ? env : QProcessEnvironment::systemEnvironment());
   if (monitor_stdout)
-    QObject::connect(qProc, &QProcess::readyReadStandardOutput, ta, [proc, qProc]() {
+    QObject::connect(qProc, &QProcess::readyReadStandardOutput, qProc, [proc, qProc]() {
       QByteArray bytes = qProc->readAllStandardOutput();
       process_output(proc, bytes.data(), bytes.size(), true);
     });
   if (monitor_stderr)
-    QObject::connect(qProc, &QProcess::readyReadStandardError, ta, [proc, qProc]() {
+    QObject::connect(qProc, &QProcess::readyReadStandardError, qProc, [proc, qProc]() {
       QByteArray bytes = qProc->readAllStandardError();
       process_output(proc, bytes.data(), bytes.size(), false);
     });
-  QObject::connect(qProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), ta,
+  QObject::connect(qProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), qProc,
     [proc](int exitCode, QProcess::ExitStatus) { process_exited(proc, exitCode); });
   qProc->start();
   if (!qProc->waitForStarted(500)) return (*error = "process failed to start", false);
@@ -583,35 +579,31 @@ bool is_process_running(Process *proc) { return PROCESS(proc)->state() == QProce
 void wait_process(Process *proc) { PROCESS(proc)->waitForFinished(-1); }
 
 char *read_process_output(Process *proc, char option, size_t *len, const char **error, int *code) {
-  char *buf;
   QSignalBlocker blocker{PROCESS(proc)}; // prevent readyReadStandardOutput
   if (option == 'n') {
     while (static_cast<size_t>(PROCESS(proc)->bytesAvailable()) < *len)
       PROCESS(proc)->waitForReadyRead(-1);
-    *len = PROCESS(proc)->read(buf = static_cast<char *>(malloc(*len)), *len);
-    return (*len == 0 ? (*error = nullptr, nullptr) : buf);
+    auto buf = static_cast<char *>(malloc(*len));
+    *len = PROCESS(proc)->read(buf, *len);
+    return *len == 0 ? (*error = nullptr, nullptr) : buf;
   }
   int n;
   char ch;
-  luaL_Buffer lbuf;
-  luaL_buffinit(lua, &lbuf);
-  *len = 0;
+  std::string output;
   if (!PROCESS(proc)->bytesAvailable()) PROCESS(proc)->waitForReadyRead(-1);
   while ((n = PROCESS(proc)->read(&ch, 1)) > 0) {
-    if ((ch != '\r' && ch != '\n') || option == 'L' || option == 'a')
-      luaL_addchar(&lbuf, ch), (*len)++;
+    if ((ch != '\r' && ch != '\n') || option == 'L' || option == 'a') output.push_back(ch);
     if (ch == '\n' && option != 'a') break;
     if (!PROCESS(proc)->bytesAvailable()) PROCESS(proc)->waitForReadyRead(-1);
   }
-  luaL_pushresult(&lbuf);
+  *len = output.size();
   if (n < 0 && !*len && option != 'a') {
     static std::string err;
     err = PROCESS(proc)->errorString().toStdString();
-    return (lua_pop(lua, 1), *error = err.c_str(), *code = QProcess::ReadError, nullptr);
+    return (*error = err.c_str(), *code = QProcess::ReadError, nullptr);
   }
-  if (n == 0 && !*len && option != 'a') return (lua_pop(lua, 1), *error = nullptr, nullptr); // EOF
-  buf = strcpy(static_cast<char *>(malloc(*len + 1)), lua_tostring(lua, -1));
-  return (lua_pop(lua, 1), *error = nullptr, buf); // pop buf
+  if (n == 0 && !*len && option != 'a') return (*error = nullptr, nullptr); // EOF
+  return (*error = nullptr, strcpy(static_cast<char *>(malloc(*len + 1)), output.c_str()));
 }
 
 void write_process_input(Process *proc, const char *s, size_t len) { PROCESS(proc)->write(s, len); }
@@ -634,21 +626,21 @@ void quit() { ta->close(); }
 // is pressed, and another button when Shift+Enter is pressed.
 class FindKeypressHandler : public QObject {
 public:
-  FindKeypressHandler(QObject *parent = nullptr) : QObject(parent) {}
+  FindKeypressHandler(QObject *parent = nullptr) : QObject{parent} {}
 
 protected:
-  bool eventFilter(QObject *target, QEvent *event) override {
+  bool eventFilter(QObject *watched, QEvent *event) override {
     if (event->type() != QEvent::KeyPress) return false;
     auto keyEvent = static_cast<QKeyEvent *>(event);
     if (keyEvent->key() != Qt::Key_Return) return false;
     auto button = (keyEvent->modifiers() & Qt::ShiftModifier) == 0 ?
-      (target == ta->ui->findCombo ? ta->ui->findNext : ta->ui->replace) :
-      (target == ta->ui->findCombo ? ta->ui->findPrevious : ta->ui->replaceAll);
+      (watched == ta->ui->findCombo ? ta->ui->findNext : ta->ui->replace) :
+      (watched == ta->ui->findCombo ? ta->ui->findPrevious : ta->ui->replaceAll);
     return (find_clicked(button), true);
   }
 };
 
-Textadept::Textadept(QWidget *parent) : QMainWindow(parent), ui(new Ui::Textadept) {
+Textadept::Textadept(QWidget *parent) : QMainWindow{parent}, ui{new Ui::Textadept} {
   ui->setupUi(this);
 
   connect(ui->tabbar, &QTabBar::tabBarClicked, this, [](int index) {
@@ -671,20 +663,18 @@ Textadept::Textadept(QWidget *parent) : QMainWindow(parent), ui(new Ui::Textadep
   connect(ui->tabbar, &QTabBar::tabCloseRequested, this,
     [](int index) { emit("tab_close_clicked", LUA_TNUMBER, index + 1, -1); });
 
-  auto findKeypressHandler = new FindKeypressHandler{this};
-  ui->findCombo->installEventFilter(findKeypressHandler);
-  ui->replaceCombo->installEventFilter(findKeypressHandler);
+  auto filter = new FindKeypressHandler{this};
+  ui->findCombo->installEventFilter(filter), ui->replaceCombo->installEventFilter(filter);
   connect(ui->findCombo->lineEdit(), &QLineEdit::textChanged, this,
     []() { emit("find_text_changed", -1); });
   find_next = ui->findNext, find_prev = ui->findPrevious, replace = ui->replace,
   replace_all = ui->replaceAll;
   match_case = ui->matchCase, whole_word = ui->wholeWord, regex = ui->regex, in_files = ui->inFiles;
-  // auto clicked = [this]() { find_clicked(QObject::sender()); };
-  connect(ui->findNext, &QPushButton::clicked, this, [this]() { find_clicked(ui->findNext); });
-  connect(
-    ui->findPrevious, &QPushButton::clicked, this, [this]() { find_clicked(ui->findPrevious); });
-  connect(ui->replace, &QPushButton::clicked, this, [this]() { find_clicked(ui->replace); });
-  connect(ui->replaceAll, &QPushButton::clicked, this, [this]() { find_clicked(ui->replaceAll); });
+  auto clicked = [this]() { find_clicked(QObject::sender()); };
+  connect(ui->findNext, &QPushButton::clicked, this, clicked);
+  connect(ui->findPrevious, &QPushButton::clicked, this, clicked);
+  connect(ui->replace, &QPushButton::clicked, this, clicked);
+  connect(ui->replaceAll, &QPushButton::clicked, this, clicked);
 
   statusBar()->addPermanentWidget(docStatusBar = new QLabel);
   ui->tabFrame->hide(), SCI(command_entry)->hide(), ui->findBox->hide();
@@ -692,14 +682,6 @@ Textadept::Textadept(QWidget *parent) : QMainWindow(parent), ui(new Ui::Textadep
 
 void Textadept::closeEvent(QCloseEvent *ev) {
   if (emit("quit", -1)) ev->ignore();
-}
-
-void Textadept::focusInEvent(QFocusEvent * /*ev*/) {
-  if (!SCI(command_entry)->hasFocus()) emit("focus", -1);
-}
-
-void Textadept::focusOutEvent(QFocusEvent *ev) {
-  if (ev->reason() != Qt::FocusReason::PopupFocusReason) emit("unfocus", -1);
 }
 
 void Textadept::keyPressEvent(QKeyEvent *ev) {
@@ -711,26 +693,27 @@ void Textadept::keyPressEvent(QKeyEvent *ev) {
 class Application : public QApplication {
 public:
   Application(int &argc, char **argv)
-      : QApplication(argc, argv), inited(init_textadept(argc, argv)) {
+      : QApplication{argc, argv}, inited{init_textadept(argc, argv)} {
     setApplicationName("Textadept");
-    // Note: for some reason, on Linux a theme SVG icon looks nicer than the same SVG as a QIcon,
-    // so prefer that. All dialogs will inherit that icon. Otherwise (i.e. Windows or macOS),
-    // use a path.
-    if (QIcon::hasThemeIcon("textadept"))
-      ta->windowHandle()->setIcon(QIcon::fromTheme("textadept")); // must come after QWindow::show()
-    else
-      setWindowIcon(QIcon{QString{textadept_home} + "/core/images/textadept.svg"});
-    QObject::connect(this, &QApplication::aboutToQuit, this, []() { close_textadept(); });
+    setWindowIcon(QIcon{QString{textadept_home} + "/core/images/textadept.svg"});
+    connect(this, &QGuiApplication::applicationStateChanged, this, [](Qt::ApplicationState state) {
+      if (state == Qt::ApplicationInactive)
+        emit("unfocus", -1);
+      else if (state == Qt::ApplicationActive)
+        emit("focus", -1);
+    });
+    // TODO: connect to QGuiApplication::paletteChanged for light/dark theme changes?
+    connect(this, &QApplication::aboutToQuit, this, &close_textadept);
   }
   ~Application() override {
     if (inited) delete ta;
   }
 
   bool event(QEvent *event) override {
-    if (event->type() != QEvent::FileOpen) return QApplication::event(event);
-    emit("appleevent_odoc", LUA_TSTRING,
-      static_cast<QFileOpenEvent *>(event)->file().toStdString().c_str(), -1);
-    return true;
+    if (event->type() == QEvent::FileOpen)
+      emit("appleevent_odoc", LUA_TSTRING,
+        static_cast<QFileOpenEvent *>(event)->file().toStdString().c_str(), -1);
+    return QApplication::event(event);
   }
 
   int exec() { return inited ? QApplication::exec() : 1; }

@@ -16,11 +16,9 @@ public:
   ~Textadept() override = default;
 
   Ui::Textadept *ui;
-  QLabel *docStatusBar;
+  QLabel *docStatusBar; // permanent statusbar widget
 
 protected:
   void closeEvent(QCloseEvent *ev) override;
-  void focusInEvent(QFocusEvent *ev) override;
-  void focusOutEvent(QFocusEvent *ev) override;
   void keyPressEvent(QKeyEvent *ev) override;
 };
