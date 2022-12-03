@@ -5,6 +5,7 @@
 
 #include "lauxlib.h"
 
+#include <math.h> // for fmax
 #include <signal.h>
 #include <sys/wait.h>
 #include <gdk/gdkkeysyms.h>
@@ -696,9 +697,6 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   GtkWidget *dialog = new_dialog(&opts), *entry = gtk_entry_new(),
             *treeview = gtk_tree_view_new_with_model(filter);
   gtk_window_set_resizable(GTK_WINDOW(dialog), true);
-  int window_width, window_height;
-  get_size(&window_width, &window_height);
-  gtk_window_resize(GTK_WINDOW(dialog), window_width - 200, 500);
   GtkDialog *dlg = GTK_DIALOG(dialog);
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dlg)), entry, false, true, 0);
   gtk_entry_set_activates_default(GTK_ENTRY(entry), true);
@@ -727,6 +725,15 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   // Set entry text here to initialize interactive search.
   if (opts.text) gtk_entry_set_text(GTK_ENTRY(entry), opts.text);
   select_first_item(GTK_TREE_VIEW(treeview));
+  gtk_widget_show_all(dialog); // compute and draw columns
+  int treeview_width = 0;
+  for (int i = 0; i < num_columns; i++) {
+    treeview_width +=
+      gtk_tree_view_column_get_width(gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), i));
+  }
+  treeview_width = fmax(treeview_width, 800); // minimum 800x500
+  gtk_window_resize(GTK_WINDOW(dialog), treeview_width, treeview_width * 10 / 16); // 16:10 ratio
+  gtk_widget_hide(dialog), gtk_widget_show(dialog); // re-center on Textadept window
 
   int button = (gtk_widget_show_all(dialog), gtk_dialog_run(dlg));
   bool cancelled = button < 1 || (button == 2 && !opts.return_button);
