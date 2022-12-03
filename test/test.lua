@@ -550,8 +550,16 @@ end
 
 function test_file_io_save_all_interactive()
   buffer.new()
+  local cwd = lfs.currentdir()
+  local name = os.tmpname()
+  os.remove(name)
+  lfs.mkdir(name)
+  io.open(name .. '/test', 'w'):close()
+  lfs.chdir(name)
   buffer:append_text('foo')
-  assert(not io.save_all_files(true), 'files should not have been saved')
+  assert(io.save_all_files(true), 'files should have been saved')
+  removedir(name)
+  lfs.chdir(cwd) -- restore
   buffer:close(true)
 end
 

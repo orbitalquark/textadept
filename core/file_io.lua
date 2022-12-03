@@ -204,7 +204,7 @@ end
 -- LuaDoc is in core/.buffer.luadoc.
 local function save_as(buffer, filename)
   if not buffer then buffer = _G.buffer end
-  local dir, name = (buffer.filename or ''):match('^(.-[/\\]?)([^/\\]*)$')
+  local dir, name = (buffer.filename or lfs.currentdir() .. '/'):match('^(.-[/\\]?)([^/\\]*)$')
   if not assert_type(filename, 'string/nil', 1) then
     filename = ui.dialogs.save{title = _L['Save File'], dir = dir, file = name}
     if not filename then return end
