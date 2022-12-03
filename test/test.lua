@@ -2905,11 +2905,12 @@ function test_ui_find_find_in_files()
   ui.find.match_case = true
   ui.find.find_in_files(_HOME .. '/test')
   assert_equal(buffer._type, _L['[Files Found Buffer]'])
+  assert(buffer:get_text():find('\nDirectory: ' .. _HOME .. '[/\\]test[\r\n]'),
+    'directory not shown')
   if #_VIEWS > 1 then view:unsplit() end
   local count = 0
   for filename, text in buffer:get_text():gmatch('\n([^:]+):%d+:([^\n]+)') do
-    assert(filename:find('^' .. _HOME:gsub('/', '[/\\]') .. '[/\\]test'), 'invalid filename "%s"',
-      filename)
+    assert(not filename:find('^[/\\]'), 'invalid filename "%s"', filename)
     assert(text:find('foo'), '"foo" not found in "%s"', text)
     count = count + 1
   end
@@ -2927,6 +2928,7 @@ function test_ui_find_find_in_files()
   ui.goto_view(1)
   assert_equal(view.buffer._type, _L['[Files Found Buffer]'])
   local filename, line_num = view.buffer:get_sel_text():match('^([^:]+):(%d+)')
+  filename = file(_HOME .. '/test/' .. filename)
   ui.goto_view(-1)
   assert_equal(buffer.filename, filename)
   assert_equal(buffer:line_from_position(buffer.current_pos), tonumber(line_num))

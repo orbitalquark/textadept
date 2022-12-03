@@ -325,7 +325,7 @@ function M.find_in_files(dir, filter)
         local filename = iterator()
         if not filename then return nil end -- done
         filenames[#filenames + 1] = filename
-        utf8_filenames[#utf8_filenames + 1] = filename:iconv('UTF-8', _CHARSET)
+        utf8_filenames[#utf8_filenames + 1] = filename:sub(#dir + 2):iconv('UTF-8', _CHARSET)
       end
       return -1 -- indeterminate
     end
@@ -497,11 +497,20 @@ function M.goto_file_found(line_num, next)
   end
   buffer:goto_line(line_num)
 
+  -- Get the search directory for relative result paths.
+  local utf8_dir, patt = nil, '^' .. _L['Directory:']:gsub('%p', '%%%0') .. ' ([^\r\n]+)'
+  for i = line_num, 1, -1 do
+    utf8_dir = buffer:get_line(i):match(patt)
+    if utf8_dir then break end
+  end
+  if not utf8_dir then return end
+
   -- Goto the source of the search result.
   local line = buffer:get_cur_line()
   local utf8_filename, pos
   utf8_filename, line_num, pos = line:match('^(.+):(%d+):()')
   if not utf8_filename then return end
+  utf8_filename = utf8_dir .. (not WIN32 and '/' or '\\') .. utf8_filename
   line_num = tonumber(line_num)
   textadept.editing.select_line()
   pos = buffer.selection_start + pos - 1 -- absolute pos of result text on line
