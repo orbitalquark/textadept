@@ -535,3 +535,13 @@ add_custom_command(
   DEPENDS ${ta_lua_src} modules/lua/lua.luadoc
   WORKING_DIRECTORY ${ta}/modules/lua
   VERBATIM)
+
+# Count lines of code.
+add_custom_target(count DEPENDS CMakeLists.txt
+  COMMAND cloc core modules/ansi_c modules/lua modules/textadept src/textadept.c src/textadept.h
+    src/textadept_platform.h CMakeLists.txt init.lua
+    src/textadept_qt.cpp src/textadept_qt.h
+    #src/textadept_gtk.c
+    #src/textadept_curses.c
+    --not-match-f=tadoc.lua --exclude-lang=SVG --force-lang=C,h
+  WORKING_DIRECTORY ${ta})
