@@ -105,13 +105,13 @@ For example:
 
 CMake boolean variables that affect the build:
 
-* `nightly`: Whether or not to build Textadept with bleeding-edge dependencies (i.e. the
-   nightly version). Defaults to off.
-* `plat_qt`: Unless off, builds the Qt version of Textadept. The default is auto-detected.
-* `plat_gtk3`: Unless off, builds the Gtk 3 version of Textadept. The default is auto-detected.
-* `plat_gtk2`: Unless off, builds the Gtk 2 version of Textadept. The default is auto-detected.
-* `plat_curses`: Unless off, builds the Curses (terminal) version of Textadept. The default
-   is auto-detected.
+* `NIGHTLY`: Whether or not to build Textadept with bleeding-edge dependencies (i.e. the nightly
+   version). Defaults to off.
+* `QT`: Unless off, builds the Qt version of Textadept. The default is auto-detected.
+* `GTK3`: Unless off, builds the Gtk 3 version of Textadept. The default is auto-detected.
+* `GTK2`: Unless off, builds the Gtk 2 version of Textadept. The default is auto-detected.
+* `CURSES`: Unless off, builds the Curses (terminal) version of Textadept. The default is
+   auto-detected.
 
 For more information on compiling Textadept, please see the [manual][].
 
