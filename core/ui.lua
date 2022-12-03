@@ -187,6 +187,7 @@ events.connect(events.RESET_AFTER, function(persist) buffers_zorder = persist.ui
 -- Prompts the user to select a buffer to switch to.
 -- Buffers are listed in the order they were opened unless `zorder` is `true`, in which case
 -- buffers are listed by their z-order (most recently viewed to least recently viewed).
+-- Buffers in the same project as the current buffer are shown with relative paths.
 -- @param zorder Flag that indicates whether or not to list buffers by their z-order. The
 --   default value is `false`.
 -- @name switch_buffer
@@ -194,10 +195,14 @@ function ui.switch_buffer(zorder)
   local buffers = not zorder and _BUFFERS or buffers_zorder
   if zorder and #buffers == 1 then zorder = false end
   local columns, utf8_list = {_L['Name'], _L['Filename']}, {}
+  local root = io.get_project_root()
   for i = not zorder and 1 or 2, #buffers do
     local buffer = buffers[i]
     local filename = buffer.filename or buffer._type or _L['Untitled']
-    if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
+    if buffer.filename then
+      if filename:find(root, 1, true) then filename = filename:sub(#root + 2) end
+      filename = filename:iconv('UTF-8', _CHARSET)
+    end
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
     utf8_list[#utf8_list + 1] = (buffer.modify and '*' or '') .. basename
     utf8_list[#utf8_list + 1] = filename
