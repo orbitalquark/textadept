@@ -200,7 +200,7 @@ function ui.switch_buffer(zorder)
     local buffer = buffers[i]
     local filename = buffer.filename or buffer._type or _L['Untitled']
     if buffer.filename then
-      if filename:find(root, 1, true) then filename = filename:sub(#root + 2) end
+      if root and filename:find(root, 1, true) then filename = filename:sub(#root + 2) end
       filename = filename:iconv('UTF-8', _CHARSET)
     end
     local basename = buffer.filename and filename:match('[^/\\]+$') or filename
