@@ -36,6 +36,12 @@ Changes:
   based on Textadept executable location.
 * Added `_G.QT`.
 * Include Go language module in separate set of modules.
+* Quick open list shows relative paths if possible.
+* Find in files result paths are relative to the searched directory.
+* Buffer browser shows relative paths for files in the current project.
+* More reasonable initial list dialog sizes.
+* "Save As" dialog falls back onto the current directory if necessary.
+* Deprecated YAML module.
 
 [Textadept 12.0 alpha  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.win.zip
 [Textadept 12.0 alpha  -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.macOS.zip
