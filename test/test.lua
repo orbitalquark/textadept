@@ -777,6 +777,9 @@ function test_keys_keychain()
   assert_equal(keys.keychain[1], 'ctrl+a')
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
   assert_equal(#keys.keychain, 0, 'keychain not canceled')
+  events.emit(events.KEYPRESS, string.byte('a'), false, true)
+  events.emit(events.KEYPRESS, string.byte('b')) -- invalid sequence
+  assert_equal(#keys.keychain, 0, 'keychain still active')
   events.emit(events.KEYPRESS, string.byte('a'))
   assert(not foo, 'foo set outside keychain')
   events.emit(events.KEYPRESS, string.byte('a'), false, true)
@@ -1212,7 +1215,7 @@ end
 
 function test_ui_dialogs_msgbox_interactive_legacy()
   local msgboxes = {'msgbox', 'ok_msgbox', 'yesno_msgbox'}
-  local icons = {'dialog-information', 'dialog-warning', 'dialog-question'}
+  local icons = {'dialog-information', 'dialog-warning', 'dialog-question', 'dialog-error'}
   for i, msgbox in ipairs(msgboxes) do
     print('Running ' .. msgbox)
     local button = ui.dialogs[msgbox]{icon = icons[i]}
@@ -1282,6 +1285,15 @@ function test_ui_switch_buffer_interactive()
   ui.switch_buffer(true)
   assert_equal(buffer:get_text(), 'bar')
   for i = 1, 3 do buffer:close(true) end
+
+  -- Test relative path display for project files.
+  io.open_file(file(_HOME .. '/README.md'))
+  io.open_file(file(_HOME .. '/init.lua'))
+  local name = os.tmpname()
+  io.open_file(name)
+  ui.switch_buffer(true) -- back to init.lua
+  ui.switch_buffer(true) -- back to temp file
+  for i = 1, 3 do buffer:close() end
 end
 
 function test_ui_goto_file()
@@ -1412,12 +1424,10 @@ end
 function test_spawn_callbacks()
   local exit_status = -1
   os.spawn('echo foo', ui.print, nil, function(status) exit_status = status end)
-  if QT then ui.update() end
   sleep(0.1)
   ui.update()
   assert_equal(buffer._type, _L['[Message Buffer]'])
   assert(buffer:get_text():find('^foo'), 'no spawn stdout')
-  if QT then ui.update() end
   assert_equal(exit_status, 0)
   buffer:close(true)
   view:unsplit()
@@ -1446,6 +1456,14 @@ function test_spawn_kill()
   p:kill()
   assert(p:wait() ~= 0)
   assert_equal(p:status(), 'terminated')
+end
+
+function test_spawn_errors_interactive()
+  local ok, errmsg = os.spawn('does not exist')
+  assert(not ok, 'no spawn error')
+  assert(type(errmsg) == 'string' and errmsg:find('^does not exist:'), 'incorrect spawn error')
+  os.spawn('echo foo', error)
+  os.spawn('echo foo', nil, nil, error)
 end
 
 function test_buffer_text_range()
@@ -2222,6 +2240,12 @@ function test_editing_goto_line()
   buffer:close(true)
 
   assert_raises(function() textadept.editing.goto_line(true) end, 'number/nil expected, got boolean')
+end
+
+function test_editing_goto_line_interactive()
+  buffer.new()
+  textadept.editing.goto_line() -- verify the popup dialog is shown
+  buffer:close()
 end
 
 function test_editing_transpose_chars()
@@ -3460,6 +3484,7 @@ function test_macro_record_play_with_keys_only()
     print('Note: not running since F9 does not toggle macro recording')
     return
   end
+  if OSX then return end -- 'end' key is not bound to buffer.line_end
   buffer.new()
   buffer.eol_mode = buffer.EOL_LF
   buffer:append_text('foo\nbar\nbaz\n')
@@ -3627,6 +3652,7 @@ function test_run_compile_run()
   assert(buffer:get_text():find("'end' expected"), 'no compile error')
   assert(buffer:get_text():find('> exit status: %d+'), 'no compile error')
   if #_VIEWS > 1 then view:unsplit() end
+  view:goto_buffer(-1) -- hide output buffer
   textadept.run.goto_error(true) -- wraps
   assert_equal(#_VIEWS, 2)
   assert_equal(buffer.filename, compile_file)
@@ -3693,7 +3719,6 @@ function test_run_distinct_command_histories()
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
   ui.update() -- process output
   assert(buffer:get_text():find('nil'), 'unexpected argument was passed to run command')
-  if QT then ui.update() end -- process exit
   if #_VIEWS > 1 then view:unsplit() end
   buffer:close()
   textadept.run.run()
@@ -3803,6 +3828,11 @@ function test_run_build_no_command()
   assert(ui.command_entry:get_text():find(not WIN32 and '^ls' or '^dir'),
     'previous command not saved')
   events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  textadept.run.build_commands[dir] = nil -- reset
+  io.open(dir .. '/Makefile', 'w'):close()
+  textadept.run.build()
+  assert_equal(ui.command_entry:get_text(), 'make')
+  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
   buffer:close()
   removedir(dir)
 end
@@ -3888,7 +3918,11 @@ function test_run_commands_function()
     sleep(0.1)
     ui.update() -- process output
     assert(buffer:get_text():find('> cd /tmp'), 'cwd not set properly')
-    if QT then ui.update() end -- process exit
+    if QT then -- process exit
+      ui.update()
+      sleep(0.1)
+      ui.update()
+    end
     assert(buffer:get_text():find('bar'), 'env not set properly')
     if #_VIEWS > 1 then view:unsplit() end
     buffer:close()
@@ -4541,6 +4575,8 @@ function test_buffer_read_write_only_properties()
   assert_raises(function() buffer.annotation_text = {} end, 'read-only property')
   assert_raises(function() buffer.char_at[1] = string.byte(' ') end, 'read-only property')
   assert_raises(function() return view.marker_alpha[1] end, 'write-only property')
+  assert_raises(function() return buffer.tab_label end, 'write-only property')
+  assert_raises(function() view.buffer = nil end, 'read-only property')
 end
 
 function test_set_theme()
