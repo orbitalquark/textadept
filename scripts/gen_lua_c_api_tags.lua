@@ -7,7 +7,7 @@ local f = io.open('../modules/ansi_c/lua_tags', 'w')
 -- The function name enclosed in parenthesis is causing the problem. A regex must be used to
 -- capture those definitions.
 local p = io.popen('ctags -o - --regex-c++="/\\(([a-zA-Z_]+)\\) +\\(/\\1/f/" ' ..
-  '../src/lua/src/lua.h ../src/lua/src/lauxlib.h')
+  '../build/_deps/lua-src/src/lua.h ../build/_deps/lua-src/lauxlib.h')
 for line in p:read('*a'):gmatch('[^\n]+') do
   -- Strip comment lines and replace file and ex_cmd fields with empty info.
   if not line:find('^!') then

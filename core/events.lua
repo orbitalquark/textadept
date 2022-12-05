@@ -176,7 +176,7 @@ local M = {}
 --   * _`ctrl`_: The "Control" modifier key is held down.
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
 --   * _`cmd`_: The "Command" modifier key on macOS is held down.
---   * _`caps_lock`_: The "Caps Lock" modifier is on.
+--   * _`caps_lock`_: The "Caps Lock" modifier is on (GTK only).
 -- @field LEXER_LOADED (string)
 --   Emitted after loading a language lexer.
 --   This is useful for overriding a language module's key bindings or other properties since

@@ -663,8 +663,7 @@ static int add_timeout_lua(lua_State *L) {
   for (int i = 2; i <= n; i++) lua_pushvalue(L, i), refs[i - 2] = luaL_ref(L, LUA_REGISTRYINDEX);
   if (!add_timeout(interval, call_timeout_function, refs)) {
     for (int i = 2; i <= n; i++) luaL_unref(L, LUA_REGISTRYINDEX, refs[i - 2]);
-    free(refs);
-    return luaL_error(L, "could not add timeout");
+    return (free(refs), luaL_error(L, "could not add timeout"));
   }
   return 0;
 }

@@ -1502,7 +1502,7 @@ For example:
 
     cmake -S . -B build_dir -D CMAKE_INSTALL_PREFIX=build_dir/install
     cmake --build build_dir -j # compiled binaries are in build_dir/
-    cmake --install build_dir # self-contained installation in build_dir/install/
+    cmake --install build_dir # self-contained installation is in build_dir/install/
 
 On Windows, you can either use the Visual Studio solution to build Textadept, or run `cmake
 --build -j` from the build directory in Visual Studio's developer command prompt.

@@ -101,7 +101,7 @@ For example:
     cmake -S . -B build_dir -D CMAKE_BUILD_TYPE=RelWithDebInfo \
       -D CMAKE_INSTALL_PREFIX=build_dir/install
     cmake --build build_dir -j # compiled binaries are in build_dir/
-    cmake --install build_dir # self-contained installation in build_dir/install/
+    cmake --install build_dir # self-contained installation is in build_dir/install/
 
 CMake boolean variables that affect the build:
 

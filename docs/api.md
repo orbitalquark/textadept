@@ -3956,7 +3956,7 @@ Emitted when pressing a key.
   * _`ctrl`_: The "Control" modifier key is held down.
   * _`alt`_: The "Alt"/"Option" modifier key is held down.
   * _`cmd`_: The "Command" modifier key on macOS is held down.
-  * _`caps_lock`_: The "Caps Lock" modifier is on.
+  * _`caps_lock`_: The "Caps Lock" modifier is on (GTK only).
 
 <a id="events.LEXER_LOADED"></a>
 #### `events.LEXER_LOADED` (string)
@@ -4361,7 +4361,7 @@ See also:
 #### `io.quick_open`(*paths, filter*)
 
 Prompts the user to select files to be opened from *paths*, a string directory path or list
-of directory paths, using a filtered list dialog.
+of directory paths, using a list dialog.
 If *paths* is `nil`, uses the current project's root directory, which is obtained from
 `io.get_project_root()`.
 String or list *filter* determines which files to show in the dialog, with the default
@@ -7796,6 +7796,7 @@ See also:
 Prompts the user to select a buffer to switch to.
 Buffers are listed in the order they were opened unless `zorder` is `true`, in which case
 buffers are listed by their z-order (most recently viewed to least recently viewed).
+Buffers in the same project as the current buffer are shown with relative paths.
 
 Parameters:
 
@@ -7964,7 +7965,7 @@ Text typed into the dialog filters the list items. Spaces are treated as wildcar
 
 Parameters:
 
-* *`options`*: Table of key-value option pairs for the filtered list dialog.
+* *`options`*: Table of key-value option pairs for the list dialog.
 
   * `title`: The dialog's title text.
   * `text`: The dialog's initial input text.
