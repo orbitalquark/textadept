@@ -140,22 +140,6 @@ function ui.output(...) output_to(false, ...) end
 -- @name output_silent
 function ui.output_silent(...) output_to(true, ...) end
 
-if WIN32 and not CURSES then
-  -- Normally, GTK's file chooser dialogs return filenames encoded in _CHARSET, but this is
-  -- not the case on Windows, so the conversion must be done manually.
-  local _open, _save = ui.dialogs.open, ui.dialogs.save
-  function ui.dialogs.open(opts)
-    local result = _open(opts)
-    if type(result) ~= 'table' then return result and result:iconv(_CHARSET, 'UTF-8') or nil end
-    for i, filename in ipairs(result) do result[i] = filename:iconv(_CHARSET, 'UTF-8') end
-    return result
-  end
-  function ui.dialogs.save(opts)
-    local filename = _save(opts)
-    return filename and filename:iconv(_CHARSET, 'UTF-8') or nil
-  end
-end
-
 local buffers_zorder = {}
 
 -- Adds new buffers to the z-order list.
