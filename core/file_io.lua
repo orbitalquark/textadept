@@ -434,3 +434,9 @@ function io.quick_open(paths, filter)
   end
   io.open_file(filenames)
 end
+
+args.register('-', '-', 0, function()
+  if buffer.filename or buffer._type then buffer.new() end
+  buffer:set_text(io.read('a'))
+  buffer:set_save_point()
+end, 'Read stdin into a new buffer')

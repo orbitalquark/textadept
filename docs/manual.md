@@ -262,6 +262,7 @@ Option | Arguments | Description
 `-s`, `--session` | 1 | Loads the given session on startup
 `-u`, `--userhome` | 1 | Sets alternate user data directory
 `-v`, `--version` | 0 | Prints version and copyright info<sup>b</sup>
+`-` | 0 | Read stdin into a new buffer<sup>b</sup>
 
 <sup>a</sup>GTK version only.<br/>
 <sup>b</sup>The terminal version does not support these.<br/>

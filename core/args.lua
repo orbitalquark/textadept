@@ -74,7 +74,7 @@ if not CURSES then
     print('Usage: textadept [args] [filenames]')
     local list = {}
     for name in pairs(options) do list[#list + 1] = name end
-    table.sort(list, function(a, b) return a:match('[^-]+') < b:match('[^-]+') end)
+    table.sort(list, function(a, b) return a:match('^%-*(.*)$') < b:match('^%-*(.*)$') end)
     for _, name in ipairs(list) do
       local option = options[name]
       print(string.format('  %s [%d args]: %s', name, option.narg, option.description))
