@@ -456,7 +456,8 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   }
   for (int i = 0; i < numItems; lua_pop(L, 1), i++) {
     const char *item = (lua_rawgeti(L, opts.items, i + 1), lua_tostring(L, -1));
-    model.setItem(i / numColumns, i % numColumns, new QStandardItem{QString{item}});
+    auto qitem = new QStandardItem{QString{item}};
+    model.setItem(i / numColumns, i % numColumns, (qitem->setEditable(false), qitem));
   }
   QSortFilterProxyModel filter;
   filter.setFilterCaseSensitivity(Qt::CaseInsensitive);
@@ -473,15 +474,17 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   treeView->setHeaderHidden(!opts.columns), treeView->setIndentation(0);
   treeView->header()->resizeSections(QHeaderView::ResizeToContents);
   treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+  QObject::connect(treeView, &QTreeView::doubleClicked, &dialog, &QDialog::accept);
   if (opts.multiple) treeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
   QItemSelectionModel *selection = treeView->selectionModel();
   QObject::connect(
     lineEdit, &QLineEdit::textChanged, &filter, [&filter, &selection](const QString &text) {
       filter.setFilterWildcard(QString{text}.replace(' ', '*'));
-      selection->select(filter.index(0, 0), QItemSelectionModel::Select);
+      selection->select(
+        filter.index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
     });
   if (opts.text) lineEdit->setText(opts.text);
-  selection->select(filter.index(0, 0), QItemSelectionModel::Select);
+  selection->select(filter.index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
   lineEdit->installEventFilter(new KeyForwarder{treeView, &dialog});
   auto buttonBox = new QDialogButtonBox;
   int buttonClicked = 2; // cancel/reject by default
