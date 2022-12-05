@@ -54,7 +54,7 @@
        <item>
         <widget class="QTabBar" name="tabbar" native="true">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -72,6 +72,9 @@
           <bool>true</bool>
          </property>
          <property name="autoHide" stdset="0">
+          <bool>true</bool>
+         </property>
+         <property name="usesScrollButtons" stdset="0">
           <bool>true</bool>
          </property>
         </widget>

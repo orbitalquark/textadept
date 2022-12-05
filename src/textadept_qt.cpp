@@ -704,6 +704,8 @@ public:
     });
     // TODO: connect to QGuiApplication::paletteChanged for light/dark theme changes?
     connect(this, &QApplication::aboutToQuit, this, &close_textadept);
+    // There is a bug in Qt where a tab scroll button could have focus at this time.
+    if (!SCI(focused_view)->hasFocus()) SCI(focused_view)->setFocus();
   }
   ~Application() override {
     if (inited) delete ta;
