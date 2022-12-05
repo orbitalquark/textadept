@@ -84,7 +84,7 @@ if not CURSES then
   -- Shows Textadept version and copyright on the command line.
   M.register('-v', '--version', 0, function()
     print(_RELEASE .. '\n' .. _COPYRIGHT)
-    quit()
+    os.exit()
   end, 'Prints Textadept version and copyright')
   -- After Textadept finishes initializing and processes arguments, remove the help and
   -- version options in order to prevent another instance from sending '-h', '--help', '-v',
