@@ -216,8 +216,14 @@ const char *get_repl_text() {
 }
 void set_find_text(const char *text) { ta->ui->findCombo->setCurrentText(text); }
 void set_repl_text(const char *text) { ta->ui->replaceCombo->setCurrentText(text); }
-void add_to_find_history(const char *text) { ta->ui->findCombo->addItem(text); }
-void add_to_repl_history(const char *text) { ta->ui->replaceCombo->addItem(text); }
+void add_to_find_history(const char *text) {
+  if (int n = ta->ui->findCombo->count(); ta->ui->findCombo->itemText(n - 1) != text)
+    ta->ui->findCombo->addItem(text), ta->ui->findCombo->setCurrentIndex(n);
+}
+void add_to_repl_history(const char *text) {
+  if (int n = ta->ui->replaceCombo->count(); ta->ui->replaceCombo->itemText(n - 1) != text)
+    ta->ui->replaceCombo->addItem(text), ta->ui->replaceCombo->setCurrentIndex(n);
+}
 void set_entry_font(const char *name_) {
   if (const char *p = strrchr(name_, ' '); p) {
     std::string name{name_, static_cast<size_t>(p - name_)};
@@ -666,6 +672,7 @@ Textadept::Textadept(QWidget *parent) : QMainWindow{parent}, ui{new Ui::Textadep
   connect(ui->tabbar, &QTabBar::tabCloseRequested, this,
     [](int index) { emit("tab_close_clicked", LUA_TNUMBER, index + 1, -1); });
 
+  ui->findCombo->setCompleter(nullptr), ui->replaceCombo->setCompleter(nullptr);
   auto filter = new FindKeypressHandler{this};
   ui->findCombo->installEventFilter(filter), ui->replaceCombo->installEventFilter(filter);
   connect(ui->findCombo->lineEdit(), &QLineEdit::textChanged, this,

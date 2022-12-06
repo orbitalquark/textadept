@@ -466,15 +466,17 @@ through files and directories. The pane is available only when you need it and q
 out of your way when you do not, minimizing distractions.
 
 You can summon the find & replace pane via `Ctrl+F` on Windows and Linux, `⌘F` on macOS, and
-`M-F` or `M-S-F` in the terminal version. It has the usual find and replace functionality you would
-expect, along with "Match Case", "Whole Word", "[Regex](#regex-and-lua-pattern-syntax)", and "In
-Files" options.  The pane also stores find and replace history, up to 10 entries for each. As you
-search, Textadept can automatically highlight all instances of found text in the current buffer
-by setting [`ui.find.highlight_all_matches`][]. For example, in your *~/.textadept/init.lua*:
+`M-F` or `M-S-F` in the terminal version. It has the usual find and replace functionality you
+would expect, along with "Match Case", "Whole Word", "[Regex](#regex-and-lua-pattern-syntax)",
+and "In Files" options. The pane also stores find and replace history. As you search, Textadept
+can automatically highlight all instances of found text in the current buffer by setting
+[`ui.find.highlight_all_matches`][]. For example, in your *~/.textadept/init.lua*:
 
     ui.find.highlight_all_matches = true
 
 **Note:** Textadept does not support multi-line regex searches.
+
+**Terminal version note:** find and replace history is limited to 10 items each.
 
 While the pane is open in the GUI, the following key bindings apply:
 

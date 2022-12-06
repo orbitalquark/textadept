@@ -359,9 +359,6 @@ void set_repl_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(repl_entry),
 static void add_to_history(GtkListStore *store, const char *text) {
   int n = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store), NULL);
   GtkTreeIter iter;
-  if (n > 9)
-    gtk_tree_model_get_iter_first(GTK_TREE_MODEL(store), &iter),
-      gtk_list_store_remove(store, &iter), n--; // keep 10 items
   char *last_text = NULL;
   if (n > 0)
     gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(store), &iter, NULL, n - 1),
