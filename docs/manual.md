@@ -23,10 +23,10 @@
 ![Textadept](images/textadept.png)
 
 Textadept is a fast, minimalist, and remarkably extensible cross-platform text editor for
-programmers. Written in a combination of C, C++, and [Lua][] and relentlessly optimized for
-speed and minimalism over the last 15+ years, Textadept is an ideal editor for programmers who
-want endless extensibility without sacrificing speed and disk space, and without succumbing to
-code bloat and a superabundance of features. The application has both a graphical user interface
+programmers. Written in a combination of C, C++, and [Lua][] and relentlessly optimized for speed
+and minimalism over the last 15+ years, Textadept is an ideal editor for programmers who desire
+endless extensibility without sacrificing speed and disk space, and without succumbing to code
+bloat and a superabundance of features. The application has both a graphical user interface
 (GUI) version that runs in a desktop environment, and a terminal version that runs within a
 terminal emulator.
 
@@ -104,7 +104,7 @@ a color theme, specify default buffer and view settings, change the settings of 
 load custom modules, configure key bindings, extend menus, enhance support for file types and
 programming languages, and run arbitrary Lua code. These topics will be covered throughout
 the manual. Textadept's comprehensive [Lua API][] lists, among other things, all configurable
-settings for buffers, views, and modules.  You can open your *~/.textadept/init.lua* file via
+settings for buffers, views, and modules. You can open your *~/.textadept/init.lua* file via
 `Ctrl+P` on Windows and Linux, `⌘,` on macOS, and `M-~` in the terminal version.
 
 Here is a simple *~/.textadept/init.lua* for illustration:
@@ -300,22 +300,22 @@ restore its state at last exit.
 command line argument. You can disable session functionality using `-n` or `--nosession`. Session
 files are stored in *~/.textadept/*, and the default session name is "session".
 
-The GTK version of Textadept is a single-instance application. (The Qt version is not.) This
-means that after you start Textadept, any time you invoke it again (e.g. opening a file from
-a file browser or command line), the action happens in the original instance. If you want to
-run separate instances of Textadept, pass the `-f` or `--force` command line flag. On Linux,
-you can set up your button or menu launchers to pass the flag to the *textadept* executable.
+**Linux Note:** the GTK version of Textadept is a single-instance application. (The Qt version
+is not.) This means that after you start Textadept, any time you invoke it again (e.g. opening a
+file from a file browser or command line), the action happens in the original instance. If you
+want to run separate instances of Textadept, pass the `-f` or `--force` command line flag. On
+Linux, you can set up your button or menu launchers to pass the flag to the *textadept* executable.
 
 Textadept can be run as a portable application. This is useful if, for example, you want to
 install Textadept onto a flash drive and take it with you for use on multiple machines. Normally,
 all settings and user data is stored in *~/.textadept/* (a local user directory that varies,
-depending on the platform).  However, this user directory can be controlled using the `-u` or
+depending on the platform). However, this user directory can be controlled using the `-u` or
 `--userhome` command line argument. For example, invoking *textadept.exe* with the command line
 arguments `-u userdata` will read from and store settings and user data to a *userdata/* directory
 located inside an installation of Textadept. You can create a Windows shortcut that passes these
 command line arguments to the Textadept executable and use that shortcut to run Textadept portably.
 
-Textadept's user interface has been translated into a few different languages.  When the
+Textadept's user interface has been translated into a few different languages. When the
 application starts, it attempts to auto-detect your language settings by reading from the `$LANG`
 environment variable. If Textadept cannot determine what language to use, or if it does not
 support your language, it falls back on English. You can manually set your locale by copying
@@ -365,19 +365,19 @@ item that selects the current line.
 
 Textadept's menu is also accessible in the form of a searchable dialog via `Ctrl+Shift+E`
 on Windows and Linux, `⌘⇧E` on macOS, and `M-S-C` in the terminal version. (Despite the
-fact that the terminal version does not have a menu, it does have this dialog.) Typing part of
-the name of any command in the dialog filters the list, with spaces being wildcards. The arrow
-keys move the selection up and down. Pressing `Enter`, selecting `OK`, or double-clicking on a
-command invokes it. (The terminal requires pressing `Enter`.) This feature is an alternative
-to navigating the menus or remembering key bindings. It can also be used to quickly look up
-key bindings for particular commands.
+fact that the terminal version does not have a menu, it does have this dialog.) Typing part
+of the name of any command in the dialog filters the list, with spaces being wildcards. The
+arrow keys move the selection up and down. Pressing `Enter`, selecting `OK`, or double-clicking
+on a command invokes it. (The terminal version requires pressing `Enter`.) This feature is an
+alternative to navigating the menus or remembering key bindings. It can also be used to quickly
+look up key bindings for particular commands.
 
 **Note:** for commands that have more than one key binding, only one of those bindings is shown
 in the menu and dialog, and that binding is randomly chosen.
 
 You can extend Textadept's menu with your own menus, sub-menus, and menu items by modifying
 the [`textadept.menu.menubar`][] table. Any modifications will show up in the selection dialog
-mentioned previously, even in the terminal version.  For example, in your *~/.textadept/init.lua*:
+mentioned previously, even in the terminal version. For example, in your *~/.textadept/init.lua*:
 
     local tools = textadept.menu.menubar[_L['Tools']]
     tools[#tools + 1] = {''} -- separator
@@ -387,14 +387,14 @@ mentioned previously, even in the terminal version.  For example, in your *~/.te
 
 #### Tab Bar
 
-The GUI version of Textadept has a tab bar that displays all of Textadept's open buffers by name,
-though it is only visible when two or more buffers are open. A '\*' character, if present,
-indicates there are unsaved changes in the marked buffer. There is only one tab bar for the
-entire application, even if there are multiple split views. When two or more views are open, the
-state of the tab bar applies only to the active view, and using the tab bar to switch between
-files also applies only to that view. Right-clicking on the tab bar brings up a configurable
-context menu that is defined by [`textadept.menu.tab_context_menu`][]. Tabs can be rearranged
-by clicking on their tops and dragging and dropping them. You can turn off the tab bar by setting
+The GUI version of Textadept has a tab bar that displays all of Textadept's open buffers
+by name, though it is only visible when two or more buffers are open. A '\*' character, if
+present, indicates there are unsaved changes in the marked buffer. There is only one tab bar
+for the entire application, even if there are multiple split views. When two or more views
+are open, the state of the tab bar applies only to the active view, and using the tab bar to
+switch between files also applies only to that view. Right-clicking on the tab bar brings up
+a configurable context menu that is defined by [`textadept.menu.tab_context_menu`][]. Tabs can
+be rearranged by clicking, dragging, and dropping them. You can turn off the tab bar by setting
 [`ui.tabs`][]. For example, in your *~/.textadept/init.lua*:
 
     ui.tabs = false
@@ -408,7 +408,7 @@ the terminal version. Cycle to the previous buffer via `Ctrl+Shift+Tab`, `^⇧�
 The tab bar is also accessible in the form of a searchable dialog via `Ctrl+B` on Windows and
 Linux, `⌘B` on macOS, and `M-B` or `M-S-B` in the terminal version. (Despite the fact that
 the terminal version does not have a tab bar, it does have this dialog.) The dialog displays a
-list of currently open buffers.  Typing part of any filename filters the list, with spaces being
+list of currently open buffers. Typing part of any filename filters the list, with spaces being
 wildcards. The arrow keys move the selection up and down. Pressing `Enter`, selecting `OK`, or
 double-clicking on a buffer switches to it. (The terminal requires pressing `Enter`.) This feature
 is particularly useful when many files are open, and navigating through the tab bar is tedious.
@@ -419,7 +419,7 @@ is particularly useful when many files are open, and navigating through the tab 
 
 By default, the list shows buffers in the same order as the tab bar (the most recently opened
 buffers are shown towards the bottom). You can configure the list to show the most recently
-viewed buffers first by changing the key binding.  For example, in your *~/.textadept/init.lua*:
+viewed buffers first by changing the key binding. For example, in your *~/.textadept/init.lua*:
 
     keys['ctrl+b'] = function() ui.switch_buffer(true) end
 
@@ -580,7 +580,7 @@ all of the application's built-in commands. For convenience, the contents of the
 [`view`][], [`ui`][], and [`textadept`][] tables are considered to be global variables, the
 first parameter to `buffer` and `view` functions may be omitted, and function call parentheses
 can also be omitted. For example, instead of entering `buffer:append_text('foo')`, you can
-enter `append_text('foo')`.  Instead of `view:split()`, you can simply use `split`. These
+enter `append_text('foo')`. Instead of `view:split()`, you can simply use `split`. These
 convenience facilities are not available in normally executed Lua code, such as code in
 *~/.textadept/init.lua*.
 
@@ -592,7 +592,7 @@ The following key bindings apply in the Lua command entry:
 * Show a documentation popup for the command under or behind the caret via `Ctrl+H` on Windows
   and Linux, `^H` on macOS, and `M-H` or `M-S-H` in the terminal version.
 * Show completion candidates for Lua variables, tables, functions, and fields via `Tab` on
-  Windows, Linux, and the terminal version, and `⇥` on macOS.  Use the arrow keys to make a
+  Windows, Linux, and the terminal version, and `⇥` on macOS. Use the arrow keys to make a
   selection and press `Enter` to insert it.
 
 ![Command Completion](images/commandentrycompletion.png)
@@ -602,10 +602,10 @@ You can specify on the command line Lua commands and code to run on startup usin
 do not belong in *~/.textadept/init.lua*.
 
 **Tip:** a side-effect of single-instance functionality in the GTK version of Textadept is that
-you can remotely control the original instance of Textadept.  For example:
+you can remotely control the original instance of Textadept. For example:
 
-    ta ~/.textadept/init.lua &
-    ta -e "events.emit(events.FIND, 'require')"
+    textadept ~/.textadept/init.lua &
+    textadept -e "events.emit(events.FIND, 'require')"
 
 This will search for the first instance of the word "require" in the current file.
 
@@ -623,10 +623,11 @@ which accepts lines in a buffer as standard input (stdin), sorts those lines, an
 them to standard output (stdout), which Textadept replaces the original input text with.
 [`textadept.editing.filter_through()`][] describes how this feature determines stdin.
 
-**Note:** be careful when using commands that emit stdout while reading stdin (as opposed
-to emitting stdout only after stdin is closed).  Input that generates more output than stdout
-can buffer may hang Textadept. On Linux for example, stdout may only be able to hold 64K while
-there is still incoming input.
+**Note:** when using the GTK or terminal versions of Textadept, be careful when using commands
+that emit stdout while reading stdin (as opposed to emitting stdout only after stdin is
+closed). Input that generates more output than stdout can buffer may hang Textadept. On Linux
+for example, stdout may only be able to hold 64K while there is still incoming input. The Qt
+version of Textadept does not exhibit this limitation.
 
 [`textadept.editing.filter_through()`]: api.html#textadept.editing.filter_through
 
@@ -637,7 +638,7 @@ while the right section shows buffer status information. Buffer status informati
 
 * The current line and column number.
 * The lexer language name.
-* The line ending mode, or EOL mode, which is either CRLF ("\r\n") or LF ('\n').  Line endings
+* The line ending mode, or EOL mode, which is either CRLF ("\r\n") or LF ('\n'). Line endings
   are the characters that separate lines.
 * The indentation settings, which are a combination of an indentation character (either a tab
   or a space) and an indentation size (a measure of how many space characters are in one level
@@ -680,7 +681,7 @@ Textadept allows you to open files using a variety of methods:
 When it comes to projects, Textadept's only concept of a project is a parent directory under
 a recognized form of version control (Git, Mercurial, SVN, Bazaar, and Fossil). There is no
 "Open Project" action. Textadept can work with multiple projects at once, since the current
-project depends largely on context.  The current project is determined as follows:
+project depends largely on context. The current project is determined as follows:
 
 1. If the current buffer is a file, its parent directory is searched for a version control
    directory. If none is found, that directory's parent directory is searched next, and so
@@ -773,7 +774,7 @@ known encoding list, before attempting to open one. For example, in your *~/.tex
     table.insert(io.encodings, 3, 'Macintosh') -- before CP1252
 
 You can convert a buffer's encoding using the "Buffer > Encoding" menu or
-[`buffer.set_encoding()`][]. You can extend the menu to include more encodings.  For example,
+[`buffer.set_encoding()`][]. You can extend the menu to include more encodings. For example,
 in your *~/.textadept/init.lua*:
 
     local menu = textadept.menu.menubar[_L['Buffer']][_L['Encoding']]
@@ -952,7 +953,7 @@ You can create contiguous selections as follows:
   up/down, etc. while holding down the `Shift` key, or by simply clicking and dragging the mouse.
 * The terminal version can also make an arbitrary selection by entering selection mode via `^^`
   and using normal movement keys. This feature is available since some terminals do not recognize
-  `Shift` with movement keys.  While in selection mode, swap the start and end positions via
+  `Shift` with movement keys. While in selection mode, swap the start and end positions via
   `^]` in order to alter the selection from its opposite side. Exit selection mode by typing
   text, deleting text, performing an action that changes text, or by pressing `^^` again.
 * Select the current word via `Ctrl+Shift+D` on Windows and Linux, `⌘⇧D` on macOS, and
@@ -1103,7 +1104,7 @@ describes snippets and their contents in more detail.
 The following key bindings apply for snippets:
 
 * Insert a snippet from a list of available snippets via `Ctrl+Shift+K` on Windows and Linux,
-  `⌥⇧⇥` on macOS, and `M-S-K` in the terminal version.  Typing part of a snippet trigger
+  `⌥⇧⇥` on macOS, and `M-S-K` in the terminal version. Typing part of a snippet trigger
   in the dialog filters the list, with spaces being wildcards. The arrow keys move the selection
   up and down. Pressing `Enter`, selecting `OK`, or double-clicking on a snippet inserts it
   into the current buffer. (The terminal requires pressing `Enter`.)
@@ -1118,7 +1119,7 @@ The following key bindings apply for snippets:
 * Navigate to the next placeholder in the current snippet via `Tab` on Windows, Linux, and in
   the terminal version, and `⇥` on macOS.
 * Navigate to the previous placeholder in the current snippet via `Shift+Tab` on Windows and Linux,
-  `⇧⇥` on macOS, and `S-Tab` in the terminal version.  If there is no previous placeholder,
+  `⇧⇥` on macOS, and `S-Tab` in the terminal version. If there is no previous placeholder,
   the current snippet is canceled.
 * Cancel the current snippet via `Esc`.
 
@@ -1232,7 +1233,7 @@ the [`textadept.run.compile_commands`][], [`textadept.run.run_commands`][],
 
 When you execute a compile, run, build, test, or project command, that command's output is printed
 to a temporary buffer in real-time. You can configure Textadept to print output in the background
-by setting [`textadept.run.run_in_background`][].  For example, in your *~/.textadept/init.lua*:
+by setting [`textadept.run.run_in_background`][]. For example, in your *~/.textadept/init.lua*:
 
     textadept.run.run_in_background = true
 
@@ -1282,8 +1283,8 @@ for developing modules and some things to keep in mind:
   behaves as expected.
 * Modules should not define global variables, as all modules share the same Lua state.
 * Only [language modules][] should be named after lexer languages.
-* Modules must not call any functions that create buffers and views (e.g.  `ui.print()`,
-  `io.open_file()`, and `buffer.new()`) at file-level scope.  Buffers and views can only be
+* Modules must not call any functions that create buffers and views (e.g. `ui.print()`,
+  `io.open_file()`, and `buffer.new()`) at file-level scope. Buffers and views can only be
   created within functions assigned to keys, associated with menu items, or connected to events.
 * Additional documentation on creating language modules can be found in the the [language
   modules][] documentation.
@@ -1355,7 +1356,7 @@ on a per-language basis. For example, in your *~/.textadept/init.lua*:
     end)
 
 **Tip:** you can experiment with themes without having to restart Textadept by using the
-[`reset()`][] command in the [Lua Command Entry](#lua-command-entry).  Once you make changes
+[`reset()`][] command in the [Lua Command Entry](#lua-command-entry). Once you make changes
 to either your *~/.textadept/init.lua* or theme file, issuing the `reset` command will reload
 your changes.
 
@@ -1373,7 +1374,7 @@ exception to this is find & replace entry font, which can be changed.
 ### Scripting
 ---
 
-Nearly every aspect of Textadept can be scripted, or controlled, using Lua.  Textadept contains
+Nearly every aspect of Textadept can be scripted, or controlled, using Lua. Textadept contains
 its own internal copy of [Lua 5.4][], which is largely unmodified compared to the official Lua
 release. The main difference is that Textadept's Lua does not have any compatibility options
 turned on for previous versions of Lua.
@@ -1478,7 +1479,7 @@ Requirements:
 
 **macOS Note:** [XCode][] provides Clang.
 
-**Linux Note:** these requirements should be readily available from a package manager.  On Ubuntu
+**Linux Note:** these requirements should be readily available from a package manager. On Ubuntu
 for example, these dependencies would be provided by the `build-essential`, `qtbase5-dev`,
 `libgtk-3-dev` (or `libgtk2.0-dev`), and `libncurses-dev` packages.
 
@@ -1571,7 +1572,7 @@ $ | $ | Matches the end of a line unless inside a set
 
 <sup>a</sup>In replacement text, "\0" (Regex) or "%0" (Lua) represents all matched text.
 
-Textadept's regular expressions are based on the C++11 standard for ECMAScript.  There are a
+Textadept's regular expressions are based on the C++11 standard for ECMAScript. There are a
 number of references for this syntax on the internet, including:
 
 * [ECMAScript syntax C++ reference](https://www.cplusplus.com/reference/regex/ECMAScript/)
@@ -1784,7 +1785,7 @@ All buffer positions, lines, and countable entities now start from `1` instead o
 and marker and indicator numbers now count from 1 instead of 0.
 
 While this change may seem daunting for migrating user scripts, in practice it is not, since most
-usage is internal, and an offset of 1 or 0 does not matter.  In migrating Textadept's internals,
+usage is internal, and an offset of 1 or 0 does not matter. In migrating Textadept's internals,
 the following changes were made:
 
 * Themes that loop through marker numbers will need to be updated from something like
