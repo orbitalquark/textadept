@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Runs the specified tests and shows overall C/C++ and Lua code coverage.
 
 delete_previous_coverage=
