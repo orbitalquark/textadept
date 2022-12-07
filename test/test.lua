@@ -1465,6 +1465,7 @@ function test_spawn_errors_interactive()
   os.spawn('echo foo', error)
   os.spawn('echo foo', nil, nil, error)
 end
+if CURSES then expected_failure(test_spawn_errors_interactive) end
 
 function test_buffer_text_range()
   buffer.new()
@@ -1633,8 +1634,9 @@ function test_command_entry_run_lua_abbreviated_env()
   if #_VIEWS > 1 then view:unsplit() end
   run_lua_command('split')
   assert_equal(#_VIEWS, 2)
-  run_lua_command('size=100')
-  assert_equal(view.size, 100)
+  local size = not CURSES and 100 or 10
+  run_lua_command('size=' .. size)
+  assert_equal(view.size, size)
   run_lua_command('unsplit')
   assert_equal(#_VIEWS, 1)
   -- ui get/set.
@@ -4428,7 +4430,7 @@ function test_ui_size()
   assert_equal(ui.size, new_size)
   ui.size = size
 end
-if LINUX and GTK then expected_failure(test_ui_size) end
+if LINUX and GTK or CURSES then expected_failure(test_ui_size) end
 
 function test_ui_maximized()
   if CURSES then return end -- not applicable
@@ -5053,6 +5055,7 @@ end
 -- TODO: debug status buffers
 
 function test_export_interactive()
+  if CURSES then return end -- cannot add timeout
   local export = require('export')
   buffer.new()
   buffer:add_text("_G.foo=table.concat{1,'bar',true,print}\nbar=[[<>& ]]")
@@ -6104,7 +6107,7 @@ function test_buffer_view_usage()
   local filter = {
     '.lua', '.luadoc', '!/lexers', '!/modules/lsp/dkjson.lua', '!/modules/lua/lua.luadoc',
     '!/modules/debugger/lua/mobdebug.lua', '!/modules/debugger/lua/socket.lua',
-    '!/modules/debugger/luasocket', '!/modules/yaml/lyaml', '!/scripts', '!/src'
+    '!/modules/debugger/luasocket', '!/modules/yaml/lyaml', '!/scripts', '!/build'
   }
   for filename in lfs.walk(_HOME, filter) do
     check_property_usage(filename, buffer_props, view_props)

@@ -418,7 +418,8 @@ fd_set *new_fds(int *nfds) {
   *nfds = 0;
   fd_set *fds = malloc(sizeof(fd_set));
   FD_ZERO(fds); // TODO: is calloc enough?
-  lua_getfield(lua, LUA_REGISTRYINDEX, "spawn_procs");
+  if (!lua_getfield(lua, LUA_REGISTRYINDEX, "spawn_procs"))
+    lua_newtable(lua), lua_pushvalue(lua, -1), lua_setfield(lua, LUA_REGISTRYINDEX, "spawn_procs");
   for (lua_pushnil(lua); lua_next(lua, -2); lua_pop(lua, 1)) {
     struct Process *proc = lua_touserdata(lua, -2);
     // Note: need to read from pipes so they do not get clogged, even if monitoring is not
@@ -968,8 +969,6 @@ int main(int argc, char **argv) {
   regex = &find_options[2], in_files = &find_options[3]; // typedefed, so cannot static initialize
 
   if (!init_textadept(argc, argv)) return (endwin(), termkey_destroy(ta_tk), 1);
-  // Need to keep track of running processes for monitoring fds and pids.
-  lua_newtable(lua), lua_setfield(lua, LUA_REGISTRYINDEX, "spawn_procs");
 
 #if !_WIN32
   freopen("/dev/null", "w", stderr); // redirect stderr
