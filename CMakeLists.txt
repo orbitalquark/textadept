@@ -427,13 +427,13 @@ if(NOT (WIN32 OR APPLE))
   endif()
   if(GTK3 OR GTK2)
     install(TARGETS textadept-gtk DESTINATION ${ta_data_dir})
-    install(CODE "file(CREATE_LINK ${ta_data_dir}/textadept-gtk
+    install(CODE "file(CREATE_LINK ../share/textadept/textadept-gtk
       ${ta_bin_dir}/textadept-gtk SYMBOLIC)")
     install(FILES src/textadept-gtk.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
   endif()
   if(CURSES)
     install(TARGETS textadept-curses DESTINATION ${ta_data_dir})
-    install(CODE "file(CREATE_LINK ${ta_data_dir}/textadept-curses
+    install(CODE "file(CREATE_LINK ../share/textadept/textadept-curses
       ${ta_bin_dir}/textadept-curses SYMBOLIC)")
     install(FILES src/textadept-curses.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
   endif()
