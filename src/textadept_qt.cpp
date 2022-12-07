@@ -512,8 +512,8 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   bool ok = dialog.exec();
   if (!ok && !opts.return_button) return 0;
   lua_newtable(L); // note: will be replaced by a single result if opts.multiple is false
-  for (int i = 0; i < selection->selectedIndexes().size(); i++)
-    lua_pushinteger(L, filter.mapToSource(selection->selectedIndexes()[i]).row() + 1),
+  for (int i = 0; i < selection->selectedRows(0).size(); i++)
+    lua_pushinteger(L, filter.mapToSource(selection->selectedRows(0)[i]).row() + 1),
       lua_rawseti(L, -2, i + 1);
   if (!opts.multiple) lua_rawgeti(L, -1, 1), lua_replace(L, -2); // single value
   return !opts.return_button ? 1 : (lua_pushinteger(L, buttonClicked), 2);
