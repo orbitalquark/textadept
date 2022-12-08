@@ -1,10 +1,10 @@
 L	_	0;"	m	struct:luaL_Buffer
+LUAI_MAXALIGN	_	0;"	m	union:luaL_Buffer::__anon1
 LUAL_NUMSIZES	_	0;"	d
 LUA_AUTHORS	_	0;"	d
 LUA_COPYRIGHT	_	0;"	d
 LUA_ERRERR	_	0;"	d
 LUA_ERRFILE	_	0;"	d
-LUA_ERRGCMM	_	0;"	d
 LUA_ERRMEM	_	0;"	d
 LUA_ERRRUN	_	0;"	d
 LUA_ERRSYNTAX	_	0;"	d
@@ -12,17 +12,21 @@ LUA_FILEHANDLE	_	0;"	d
 LUA_GCCOLLECT	_	0;"	d
 LUA_GCCOUNT	_	0;"	d
 LUA_GCCOUNTB	_	0;"	d
+LUA_GCGEN	_	0;"	d
+LUA_GCINC	_	0;"	d
 LUA_GCISRUNNING	_	0;"	d
 LUA_GCRESTART	_	0;"	d
 LUA_GCSETPAUSE	_	0;"	d
 LUA_GCSETSTEPMUL	_	0;"	d
 LUA_GCSTEP	_	0;"	d
 LUA_GCSTOP	_	0;"	d
+LUA_GNAME	_	0;"	d
 LUA_HOOKCALL	_	0;"	d
 LUA_HOOKCOUNT	_	0;"	d
 LUA_HOOKLINE	_	0;"	d
 LUA_HOOKRET	_	0;"	d
 LUA_HOOKTAILCALL	_	0;"	d
+LUA_LOADED_TABLE	_	0;"	d
 LUA_MASKCALL	_	0;"	d
 LUA_MASKCOUNT	_	0;"	d
 LUA_MASKLINE	_	0;"	d
@@ -31,6 +35,7 @@ LUA_MINSTACK	_	0;"	d
 LUA_MULTRET	_	0;"	d
 LUA_NOREF	_	0;"	d
 LUA_NUMTAGS	_	0;"	d
+LUA_NUMTYPES	_	0;"	d
 LUA_OK	_	0;"	d
 LUA_OPADD	_	0;"	d
 LUA_OPBAND	_	0;"	d
@@ -49,6 +54,7 @@ LUA_OPSHL	_	0;"	d
 LUA_OPSHR	_	0;"	d
 LUA_OPSUB	_	0;"	d
 LUA_OPUNM	_	0;"	d
+LUA_PRELOAD_TABLE	_	0;"	d
 LUA_REFNIL	_	0;"	d
 LUA_REGISTRYINDEX	_	0;"	d
 LUA_RELEASE	_	0;"	d
@@ -71,15 +77,18 @@ LUA_VERSION_MAJOR	_	0;"	d
 LUA_VERSION_MINOR	_	0;"	d
 LUA_VERSION_NUM	_	0;"	d
 LUA_VERSION_RELEASE	_	0;"	d
+LUA_VERSION_RELEASE_NUM	_	0;"	d
 LUA_YIELD	_	0;"	d
+b	_	0;"	m	union:luaL_Buffer::__anon1
 b	_	0;"	m	struct:luaL_Buffer
 closef	_	0;"	m	struct:luaL_Stream
 currentline	_	0;"	m	struct:lua_Debug
 event	_	0;"	m	struct:lua_Debug
 f	_	0;"	m	struct:luaL_Stream
+ftransfer	_	0;"	m	struct:lua_Debug
 func	_	0;"	m	struct:luaL_Reg
 i_ci	_	0;"	m	struct:lua_Debug	typeref:struct:lua_Debug::CallInfo
-initb	_	0;"	m	struct:luaL_Buffer
+init	_	0;"	m	struct:luaL_Buffer	typeref:union:luaL_Buffer::__anon1
 istailcall	_	0;"	m	struct:lua_Debug
 isvararg	_	0;"	m	struct:lua_Debug
 lastlinedefined	_	0;"	m	struct:lua_Debug
@@ -92,14 +101,19 @@ luaL_Reg	_	0;"	t	typeref:struct:luaL_Reg
 luaL_Stream	_	0;"	s
 luaL_Stream	_	0;"	t	typeref:struct:luaL_Stream
 luaL_addchar	_	0;"	d
+luaL_addgsub	_	0;"	f
 luaL_addlstring	_	0;"	f
 luaL_addsize	_	0;"	d
 luaL_addstring	_	0;"	f
 luaL_addvalue	_	0;"	f
 luaL_argcheck	_	0;"	d
 luaL_argerror	_	0;"	f
+luaL_argexpected	_	0;"	d
+luaL_buffaddr	_	0;"	d
 luaL_buffinit	_	0;"	f
 luaL_buffinitsize	_	0;"	f
+luaL_bufflen	_	0;"	d
+luaL_buffsub	_	0;"	d
 luaL_callmeta	_	0;"	f
 luaL_checkany	_	0;"	f
 luaL_checkint	_	0;"	d
@@ -124,6 +138,7 @@ luaL_getmetafield	_	0;"	f
 luaL_getmetatable	_	0;"	d
 luaL_getsubtable	_	0;"	f
 luaL_gsub	_	0;"	f
+luaL_intop	_	0;"	d
 luaL_len	_	0;"	f
 luaL_loadbuffer	_	0;"	d
 luaL_loadbufferx	_	0;"	f
@@ -134,7 +149,6 @@ luaL_newlib	_	0;"	d
 luaL_newlibtable	_	0;"	d
 luaL_newmetatable	_	0;"	f
 luaL_newstate	_	0;"	f
-luaL_openlib	_	0;"	f
 luaL_opt	_	0;"	d
 luaL_optint	_	0;"	d
 luaL_optinteger	_	0;"	f
@@ -145,17 +159,17 @@ luaL_optstring	_	0;"	d
 luaL_optunsigned	_	0;"	d
 luaL_prepbuffer	_	0;"	d
 luaL_prepbuffsize	_	0;"	f
-luaL_pushmodule	_	0;"	f
+luaL_pushfail	_	0;"	d
 luaL_pushresult	_	0;"	f
 luaL_pushresultsize	_	0;"	f
 luaL_ref	_	0;"	f
-luaL_register	_	0;"	d
 luaL_requiref	_	0;"	f
 luaL_setfuncs	_	0;"	f
 luaL_setmetatable	_	0;"	f
 luaL_testudata	_	0;"	f
 luaL_tolstring	_	0;"	f
 luaL_traceback	_	0;"	f
+luaL_typeerror	_	0;"	f
 luaL_typename	_	0;"	d
 luaL_unref	_	0;"	f
 luaL_where	_	0;"	f
@@ -171,14 +185,18 @@ lua_Number	_	0;"	t
 lua_Reader	_	0;"	t
 lua_State	_	0;"	t	typeref:struct:lua_State
 lua_Unsigned	_	0;"	t
+lua_WarnFunction	_	0;"	t
 lua_Writer	_	0;"	t
 lua_absindex	_	0;"	f
 lua_arith	_	0;"	f
+lua_assert	_	0;"	d
+lua_assert	_	0;"	d
 lua_atpanic	_	0;"	f
 lua_call	_	0;"	d
 lua_callk	_	0;"	f
 lua_checkstack	_	0;"	f
 lua_close	_	0;"	f
+lua_closeslot	_	0;"	f
 lua_compare	_	0;"	f
 lua_concat	_	0;"	f
 lua_copy	_	0;"	f
@@ -195,13 +213,14 @@ lua_gethookcount	_	0;"	f
 lua_gethookmask	_	0;"	f
 lua_geti	_	0;"	f
 lua_getinfo	_	0;"	f
+lua_getiuservalue	_	0;"	f
 lua_getlocal	_	0;"	f
 lua_getmetatable	_	0;"	f
 lua_getstack	_	0;"	f
 lua_gettable	_	0;"	f
 lua_gettop	_	0;"	f
 lua_getupvalue	_	0;"	f
-lua_getuservalue	_	0;"	f
+lua_getuservalue	_	0;"	d
 lua_h	_	0;"	d
 lua_insert	_	0;"	d
 lua_isboolean	_	0;"	d
@@ -223,7 +242,8 @@ lua_load	_	0;"	f
 lua_newstate	_	0;"	f
 lua_newtable	_	0;"	d
 lua_newthread	_	0;"	f
-lua_newuserdata	_	0;"	f
+lua_newuserdata	_	0;"	d
+lua_newuserdatauv	_	0;"	f
 lua_next	_	0;"	f
 lua_pcall	_	0;"	d
 lua_pcallk	_	0;"	f
@@ -255,23 +275,28 @@ lua_rawsetp	_	0;"	f
 lua_register	_	0;"	d
 lua_remove	_	0;"	d
 lua_replace	_	0;"	d
+lua_resetthread	_	0;"	f
 lua_resume	_	0;"	f
 lua_rotate	_	0;"	f
 lua_setallocf	_	0;"	f
+lua_setcstacklimit	_	0;"	f
 lua_setfield	_	0;"	f
 lua_setglobal	_	0;"	f
 lua_sethook	_	0;"	f
 lua_seti	_	0;"	f
+lua_setiuservalue	_	0;"	f
 lua_setlocal	_	0;"	f
 lua_setmetatable	_	0;"	f
 lua_settable	_	0;"	f
 lua_settop	_	0;"	f
 lua_setupvalue	_	0;"	f
-lua_setuservalue	_	0;"	f
+lua_setuservalue	_	0;"	d
+lua_setwarnf	_	0;"	f
 lua_status	_	0;"	f
 lua_stringtonumber	_	0;"	f
 lua_toboolean	_	0;"	f
 lua_tocfunction	_	0;"	f
+lua_toclose	_	0;"	f
 lua_tointeger	_	0;"	d
 lua_tointegerx	_	0;"	f
 lua_tolstring	_	0;"	f
@@ -289,6 +314,7 @@ lua_upvalueid	_	0;"	f
 lua_upvalueindex	_	0;"	d
 lua_upvaluejoin	_	0;"	f
 lua_version	_	0;"	f
+lua_warning	_	0;"	f
 lua_writeline	_	0;"	d
 lua_writestring	_	0;"	d
 lua_writestringerror	_	0;"	d
@@ -300,8 +326,10 @@ name	_	0;"	m	struct:luaL_Reg
 name	_	0;"	m	struct:lua_Debug
 namewhat	_	0;"	m	struct:lua_Debug
 nparams	_	0;"	m	struct:lua_Debug
+ntransfer	_	0;"	m	struct:lua_Debug
 nups	_	0;"	m	struct:lua_Debug
 short_src	_	0;"	m	struct:lua_Debug
 size	_	0;"	m	struct:luaL_Buffer
 source	_	0;"	m	struct:lua_Debug
+srclen	_	0;"	m	struct:lua_Debug
 what	_	0;"	m	struct:lua_Debug

@@ -1,6 +1,12 @@
 #!/usr/bin/lua
 -- Copyright 2007-2022 Mitchell. See LICENSE.
 
+-- Generates Lua to C interface for Scintilla by parsing Scintilla.iface and turning it into
+-- a set of data tables. Whenever Textadept is to communicate with Scintilla using a given
+-- string identifier, this interface contains that identifier's message ID, argument types,
+-- and return types. Whenever Scintilla emits a notification, this interface contains that
+-- notification's type and parameters.
+
 local constants, functions, properties, events = {}, {}, {}, {}
 local const_patt = '^val ([%w_]+)=([-%dx%x]+)'
 local event_patt = '^evt %a+ ([%w_]+)=(%d+)(%b())'
@@ -37,7 +43,7 @@ local function is_index(ptype, param)
       param == 'selection')
 end
 
-for line in io.lines('../src/scintilla/include/Scintilla.iface') do
+for line in io.lines('../build/_deps/scintilla-src/include/Scintilla.iface') do
   if line:find('^val ') then
     local name, value = line:match(const_patt)
     for i = 1, #ignores do if name:find(ignores[i]) then goto continue end end

@@ -1,5 +1,6 @@
 #!/bin/bash
-# Generate code count plots by iterating over tagged revisions and running cloc.
+
+# Generates code count plots by iterating over tagged revisions and running cloc.
 # Requires cloc and gnuplot.
 
 # Output images.

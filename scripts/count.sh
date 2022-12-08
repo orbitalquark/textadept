@@ -1,4 +1,8 @@
 #!/bin/bash
+# Copyright 2022 Mitchell. See LICENSE.
+
+# Counts lines of code for the given platform (default is Qt).
+# Requires cloc.
 
 if [[ "$1" = "gtk" ]]; then
   ta="src/textadept_gtk.c"

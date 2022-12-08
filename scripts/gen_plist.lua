@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 -- Copyright 2007-2022 Mitchell. See LICENSE.
 
--- This script generates the "Info.plist" file for the macOS App bundle.
+-- Generates the "Info.plist" file for the macOS App bundle.
 
 local lang, exts
 local languages, extensions = {}, {}

@@ -163,7 +163,7 @@ function M.start(doc)
   end
 
   -- Convert module functions in the Lua luadoc into LuaDoc modules.
-  local lua_luadoc = files['lua.luadoc'] or files['../modules/lua/lua.luadoc']
+  local lua_luadoc = files['lua.luadoc'] or files['lua/lua.luadoc']
   if lua_luadoc and #files == 1 then
     for _, function_name in ipairs(lua_luadoc.functions) do
       local func = lua_luadoc.functions[function_name]

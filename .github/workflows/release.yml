@@ -93,7 +93,7 @@ jobs:
           rm docs/*.html
           pushd docs
           for file in `ls *.md`; do
-            cat $file | ../scripts/fill_layout.lua $file > `basename -s .md $file`.html
+            cat _layouts/default.html | ../scripts/fill_layout.lua $file > `basename -s .md $file`.html
           done
           popd
 

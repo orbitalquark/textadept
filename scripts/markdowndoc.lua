@@ -1,7 +1,7 @@
 -- Copyright 2007-2022 Mitchell. See LICENSE.
 
 -- Markdown doclet for Luadoc.
--- @usage luadoc -doclet path/to/markdowndoc [file(s)] > api.md
+-- @usage luadoc --doclet path/to/markdowndoc [file(s)] > api.md
 local M = {}
 
 local TOC = '1. [%s](%s)\n'

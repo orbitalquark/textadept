@@ -1,13 +1,15 @@
 #!/usr/bin/lua
 -- Copyright 2007-2022 Mitchell. See LICENSE.
 
+-- Generates a C tags file for Lua's C API (lua.h and lauxlib.h) using ctags.
+
 local f = io.open('../modules/ansi_c/lua_tags', 'w')
 -- Lua header files define API functions in a way ctags cannot detect.
 -- For example: `LUA_API lua_State *(lua_newstate) (lua_Alloc f, void *ud);`.
 -- The function name enclosed in parenthesis is causing the problem. A regex must be used to
 -- capture those definitions.
 local p = io.popen('ctags -o - --regex-c++="/\\(([a-zA-Z_]+)\\) +\\(/\\1/f/" ' ..
-  '../build/_deps/lua-src/src/lua.h ../build/_deps/lua-src/lauxlib.h')
+  '../build/_deps/lua-src/src/lua.h ../build/_deps/lua-src/src/lauxlib.h')
 for line in p:read('*a'):gmatch('[^\n]+') do
   -- Strip comment lines and replace file and ex_cmd fields with empty info.
   if not line:find('^!') then

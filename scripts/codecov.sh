@@ -1,5 +1,7 @@
 #!/bin/bash
+
 # Runs the specified tests and shows overall C/C++ and Lua code coverage.
+# Requires xterm for launching executables in a separate terminal/process.
 
 delete_previous_coverage=
 tests="-locale,-buffer_view_usage"

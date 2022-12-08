@@ -402,16 +402,16 @@ endif()
 file(STRINGS core/init.lua version_line REGEX "^_RELEASE")
 string(REGEX MATCH "[1-9][^']+" version ${version_line})
 if(NOT DEFINED NIGHTLY)
-  string(REPLACE " " "_" version_ ${version})
+  string(REPLACE " " "_" version ${version})
 else()
-  set(version_ nightly)
+  set(version nightly)
 endif()
 if(NOT (WIN32 OR APPLE))
-  string(APPEND version_ ".linux")
+  string(APPEND version ".linux")
 elseif(WIN32)
-  string(APPEND version_ ".win")
+  string(APPEND version ".win")
 elseif(APPLE)
-  string(APPEND version_ ".macOS")
+  string(APPEND version ".macOS")
 endif()
 
 # Install/release.
@@ -442,7 +442,7 @@ if(NOT (WIN32 OR APPLE))
   install(FILES core/images/textadept.svg
     DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
   install(CODE "execute_process(
-    COMMAND ${CMAKE_COMMAND} -E tar czf ${CMAKE_BINARY_DIR}/textadept_${version_}.tgz textadept
+    COMMAND ${CMAKE_COMMAND} -E tar czf ${CMAKE_BINARY_DIR}/textadept_${version}.tgz textadept
     WORKING_DIRECTORY ${CMAKE_INSTALL_FULL_DATADIR})")
 elseif(WIN32)
   set(ta_dir ${CMAKE_INSTALL_PREFIX}/textadept)
@@ -486,7 +486,7 @@ elseif(WIN32)
     install(FILES ${vcrun_dlls} DESTINATION ${ta_dir})
   endif()
   install(CODE "execute_process(
-    COMMAND ${CMAKE_COMMAND} -E tar cf ${CMAKE_BINARY_DIR}/textadept_${version_}.zip --format=zip
+    COMMAND ${CMAKE_COMMAND} -E tar cf ${CMAKE_BINARY_DIR}/textadept_${version}.zip --format=zip
       textadept
     WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX})")
 elseif(APPLE)
@@ -510,36 +510,7 @@ elseif(APPLE)
   endif()
   install(FILES scripts/osx/ta DESTINATION ${CMAKE_INSTALL_PREFIX})
   install(CODE "execute_process(
-    COMMAND ${CMAKE_COMMAND} -E tar cf ${CMAKE_BINARY_DIR}/textadept_${version_}.zip --format=zip
+    COMMAND ${CMAKE_COMMAND} -E tar cf ${CMAKE_BINARY_DIR}/textadept_${version}.zip --format=zip
       Textadept.app ta
     WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX})")
 endif()
-
-# Documentation.
-file(GLOB ta_md_docs docs/*.md)
-add_custom_target(docs DEPENDS manual luadoc)
-add_custom_target(manual DEPENDS luadoc
-  COMMAND for file in `basename -a -s .md ${ta_md_docs}`\; do
-    cat _layouts/default.html | ../scripts/fill_layout.lua $$file.md > $$file.html\; done
-  COMMAND sed -i "\"s/\\(\\# Textadept\\).\\+\\?\\(Manual\\|API\\)/\\1 ${version} \\2/;\""
-    ${ta_md_docs}
-  DEPENDS ${ta_md_docs}
-  WORKING_DIRECTORY ${ta}/docs)
-add_custom_target(luadoc DEPENDS docs/api.md modules/lua/tags modules/lua/api
-  modules/lua/ta_tags modules/lua/ta_api)
-file(GLOB ta_lua_src core modules/ansi_c modules/lua modules/textadept
-  ${scilua_dir}/lexers/lexer.lua)
-add_custom_command(OUTPUT ${ta}/docs/api.md
-  COMMAND luadoc --doclet markdowndoc ${ta_lua_src} > ${ta}/docs/api.md
-  DEPENDS ${ta_lua_src}
-  WORKING_DIRECTORY ${ta}/scripts
-  VERBATIM)
-add_custom_command(
-  OUTPUT ${ta}/modules/lua/tags ${ta}/modules/lua/api ${ta}/modules/lua/ta_tags
-    ${ta}/modules/lua/ta_api
-  COMMAND luadoc -d . --doclet tadoc ${ta_lua_src} --ta-home=${ta}
-  COMMAND mv tags ta_tags COMMAND mv api ta_api
-  COMMAND luadoc -d . --doclet tadoc lua.luadoc --ta-home=${ta}
-  DEPENDS ${ta_lua_src} modules/lua/lua.luadoc
-  WORKING_DIRECTORY ${ta}/modules/lua
-  VERBATIM)
