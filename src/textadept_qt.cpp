@@ -704,6 +704,7 @@ class Application : public QApplication {
 public:
   Application(int &argc, char **argv)
       : QApplication{argc, argv}, inited{init_textadept(argc, argv)} {
+    if (!inited) return;
     setApplicationName("Textadept");
     setWindowIcon(QIcon{QString{textadept_home} + "/core/images/textadept.svg"});
     connect(this, &QGuiApplication::applicationStateChanged, this, [](Qt::ApplicationState state) {
