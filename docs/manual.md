@@ -419,9 +419,10 @@ is particularly useful when many files are open, and navigating through the tab 
 
 By default, the list shows buffers in the same order as the tab bar (the most recently opened
 buffers are shown towards the bottom). You can configure the list to show the most recently
-viewed buffers first by changing the key binding. For example, in your *~/.textadept/init.lua*:
+viewed buffers first by changing the [`ui.buffer_list_zorder`][]. For example, in your
+*~/.textadept/init.lua*:
 
-    keys['ctrl+b'] = function() ui.switch_buffer(true) end
+    ui.buffer_list_zorder = true
 
 #### Editor View
 

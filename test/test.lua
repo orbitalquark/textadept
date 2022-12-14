@@ -1272,6 +1272,8 @@ function test_ui_dialogs_textbox_interactive_legacy()
 end
 
 function test_ui_switch_buffer_interactive()
+  local buffer_list_zorder = ui.buffer_list_zorder
+  ui.buffer_list_zorder = false
   buffer.new()
   buffer:append_text('foo')
   buffer.new()
@@ -1282,7 +1284,8 @@ function test_ui_switch_buffer_interactive()
   local text = buffer:get_text()
   assert(text ~= 'foo' and text ~= 'bar' and text ~= 'baz')
   for i = 1, 3 do view:goto_buffer(1) end -- cycle back to baz
-  ui.switch_buffer(true)
+  ui.buffer_list_zorder = true
+  ui.switch_buffer()
   assert_equal(buffer:get_text(), 'bar')
   for i = 1, 3 do buffer:close(true) end
 
@@ -1291,9 +1294,11 @@ function test_ui_switch_buffer_interactive()
   io.open_file(file(_HOME .. '/init.lua'))
   local name = os.tmpname()
   io.open_file(name)
-  ui.switch_buffer(true) -- back to init.lua
-  ui.switch_buffer(true) -- back to temp file
+  ui.switch_buffer() -- back to init.lua
+  ui.switch_buffer() -- back to temp file
   for i = 1, 3 do buffer:close() end
+
+  ui.buffer_list_zorder = buffer_list_zorder -- restore
 end
 
 function test_ui_goto_file()

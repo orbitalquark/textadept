@@ -417,6 +417,7 @@ brace_matches	_HOME/modules/textadept/editing.lua	/^M.brace_matches = {}$/;"	t	c
 buffer	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	m	
 buffer	_HOME/core/.view.luadoc	/^local buffer$/;"	t	class:view
 buffer	_HOME/core/init.lua	/^local buffer$/;"	t	
+buffer_list_zorder	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
 buffer_statusbar_text	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
 build	_HOME/modules/textadept/run.lua	/^function M.build(dir)$/;"	f	class:textadept.run
 build_commands	_HOME/modules/textadept/run.lua	/^M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='docker build .',--[[Make]]Makefile='make',GNUmakefile='make',makefile='make',--[[Meson]]['meson.build']='meson compile',--[[Maven]]['pom.xml']='mvn',--[[Ruby]]Rakefile='rake'}$/;"	t	class:textadept.run
@@ -965,7 +966,7 @@ style_underline	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 style_visible	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 styles	_HOME/core/.view.luadoc	/^local styles$/;"	t	class:view
 swap_main_anchor_caret	_HOME/core/.buffer.luadoc	/^function swap_main_anchor_caret(buffer) end$/;"	f	class:buffer
-switch_buffer	_HOME/core/ui.lua	/^function ui.switch_buffer(zorder)$/;"	f	class:ui
+switch_buffer	_HOME/core/ui.lua	/^function ui.switch_buffer()$/;"	f	class:ui
 tab	_HOME/core/.buffer.luadoc	/^function tab(buffer) end$/;"	f	class:buffer
 tab_context_menu	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
 tab_context_menu	_HOME/modules/textadept/menu.lua	/^local default_tab_context_menu = {$/;"	t	class:textadept.menu

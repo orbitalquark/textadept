@@ -7548,6 +7548,13 @@ Utilities for interacting with Textadept's user interface.
 
 
 
+<a id="ui.buffer_list_zorder"></a>
+#### `ui.buffer_list_zorder` (bool)
+
+Whether or not to list buffers by their z-order (most recently viewed to least recently
+  viewed) in the switcher dialog.
+  The default value is `false`.
+
 <a id="ui.buffer_statusbar_text"></a>
 #### `ui.buffer_statusbar_text` (string, Write-only)
 
@@ -7791,17 +7798,16 @@ See also:
 * [`ui.print_silent_to`](#ui.print_silent_to)
 
 <a id="ui.switch_buffer"></a>
-#### `ui.switch_buffer`(*zorder*)
+#### `ui.switch_buffer`()
 
 Prompts the user to select a buffer to switch to.
-Buffers are listed in the order they were opened unless `zorder` is `true`, in which case
-buffers are listed by their z-order (most recently viewed to least recently viewed).
+Buffers are listed in the order they were opened unless `ui.buffer_list_zorder` is `true`, in
+which case buffers are listed by their z-order (most recently viewed to least recently viewed).
 Buffers in the same project as the current buffer are shown with relative paths.
 
-Parameters:
+See also:
 
-* *`zorder`*: Flag that indicates whether or not to list buffers by their z-order. The
-  default value is `false`.
+* [`ui.buffer_list_zorder`](#ui.buffer_list_zorder)
 
 <a id="ui.update"></a>
 #### `ui.update`()
