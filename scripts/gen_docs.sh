@@ -4,17 +4,17 @@
 # Generates Textadept's documentation.
 # Requires LuaDoc and Discount.
 
-# Generate HTML from Markdown (docs/*.html from docs/*.md)
-cd ../docs
-for file in `ls *.md`; do
-  cat _layouts/default.html | ../scripts/fill_layout.lua $file > `basename -s .md $file`.html
-done
-
 # Generate API documentation using LuaDoc.
 cd ../scripts
 lua_src="../core ../modules/ansi_c ../modules/lua ../modules/textadept \
   ../build/_deps/scintillua-src/lexers/lexer.lua"
 luadoc --doclet markdowndoc $lua_src > ../docs/api.md
+
+# Generate HTML from Markdown (docs/*.html from docs/*.md)
+cd ../docs
+for file in `ls *.md`; do
+  cat _layouts/default.html | ../scripts/fill_layout.lua $file > `basename -s .md $file`.html
+done
 
 # Generate Lua tags and api documentation files using LuaDoc.
 cd ../modules
