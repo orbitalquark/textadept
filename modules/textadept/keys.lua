@@ -217,7 +217,7 @@ local M = {}
 -- *: For use when the `-p` or `--preserve` command line option is given to the non-Windows
 -- terminal version, since ^S and ^Q are flow control sequences.
 --
--- †: Some terminals interpret ^Z as suspend; see FAQ for workaround.
+-- †: If you prefer ^Z to suspend, you can bind it to [`ui.suspend()`]().
 --
 -- ‡: Ctrl+Enter in Windows terminal version.
 module('textadept.keys')]]
@@ -263,7 +263,7 @@ module('textadept.keys')]]
 --   * Ctrl+Meta+Symbol keys are not recognized.
 --
 -- Unassigned keys (~ denotes keys reserved by the operating system):
--- c:        g~~  l~            ~
+-- c:        g~~  l~
 -- cm:    d  g~~jk ~   q       yz
 -- m:          e          J             Q   S    vVw   yY  _          +
 -- Note: m[befhstv] may be used by Linux GUI terminals for menu access.

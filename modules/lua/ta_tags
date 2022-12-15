@@ -965,6 +965,7 @@ style_size	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 style_underline	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 style_visible	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 styles	_HOME/core/.view.luadoc	/^local styles$/;"	t	class:view
+suspend	_HOME/core/ui.lua	/^local suspend$/;"	f	class:ui
 swap_main_anchor_caret	_HOME/core/.buffer.luadoc	/^function swap_main_anchor_caret(buffer) end$/;"	f	class:buffer
 switch_buffer	_HOME/core/ui.lua	/^function ui.switch_buffer()$/;"	f	class:ui
 tab	_HOME/core/.buffer.luadoc	/^function tab(buffer) end$/;"	f	class:buffer

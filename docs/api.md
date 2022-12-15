@@ -4073,7 +4073,7 @@ Emitted after reaching a save point.
 <a id="events.SUSPEND"></a>
 #### `events.SUSPEND` (string)
 
-Emitted when suspending Textadept. If any handler returns `true`, Textadept does not suspend.
+Emitted prior to suspending Textadept.
   This event is only emitted by the terminal version.
 
 <a id="events.TAB_CLICKED"></a>
@@ -6934,7 +6934,7 @@ N/A | N/A | F4 | Toggle "Find in Files"
 *: For use when the `-p` or `--preserve` command line option is given to the non-Windows
 terminal version, since ^S and ^Q are flow control sequences.
 
-†: Some terminals interpret ^Z as suspend; see FAQ for workaround.
+†: If you prefer ^Z to suspend, you can bind it to [`ui.suspend()`](#ui.suspend).
 
 ‡: Ctrl+Enter in Windows terminal version.
 
@@ -7796,6 +7796,23 @@ Usage:
 See also:
 
 * [`ui.print_silent_to`](#ui.print_silent_to)
+
+<a id="ui.suspend"></a>
+#### `ui.suspend`()
+
+Suspends Textadept.
+This only works in the terminal version. By default, Textadept ignores ^Z suspend signals from
+the terminal.
+Emits `events.SUSPEND` and `events.RESUME` events.
+
+Usage:
+
+* `keys['ctrl+z'] = ui.suspend`
+
+See also:
+
+* [`events.SUSPEND`](#events.SUSPEND)
+* [`events.RESUME`](#events.RESUME)
 
 <a id="ui.switch_buffer"></a>
 #### `ui.switch_buffer`()

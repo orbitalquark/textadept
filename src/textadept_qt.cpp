@@ -629,6 +629,8 @@ void cleanup_process(Process *proc) {
   delete PROCESS(proc);
 }
 
+void suspend() {}
+
 void quit() { ta->close(); }
 
 // Event filter for find & replace comboboxes that activates a find/replace button when Enter

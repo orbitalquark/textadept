@@ -538,6 +538,9 @@ static int popup_menu_lua(lua_State *L) {
 // `ui.update()` Lua function.
 static int update_ui_lua(lua_State *L) { return (update_ui(), 0); }
 
+// `ui.suspend()` Lua function.
+static int suspend_lua(lua_State *L) { return (suspend(), 0); }
+
 // `ui.__index` Lua metamethod.
 static int ui_index(lua_State *L) {
   const char *key = lua_tostring(L, 2);
@@ -865,6 +868,7 @@ static bool init_lua(int argc, char **argv) {
   lua_pushcfunction(L, menu), lua_setfield(L, -2, "menu");
   lua_pushcfunction(L, popup_menu_lua), lua_setfield(L, -2, "popup_menu");
   lua_pushcfunction(L, update_ui_lua), lua_setfield(L, -2, "update");
+  lua_pushcfunction(L, suspend_lua), lua_setfield(L, -2, "suspend");
   set_metatable(L, -1, "ta_ui", ui_index, ui_newindex);
   lua_setglobal(L, "ui");
 

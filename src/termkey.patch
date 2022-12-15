@@ -203,14 +203,14 @@ diff -r e0a74e8d32b3 termkey.c
        termios.c_lflag &= ~(ICANON|ECHO
  #ifdef IEXTEN
            | IEXTEN
-@@ -514,9 +520,9 @@
+@@ -520,9 +520,10 @@
          /* want no signal keys at all, so just disable ISIG */
          termios.c_lflag &= ~ISIG;
        else {
 -        /* Disable Ctrl-\==VQUIT and Ctrl-D==VSUSP but leave Ctrl-C as SIGINT */
-+        /* Disable Ctrl-\==VQUIT and Ctrl-C==VINTR */
++        /* Disable Ctrl-\==VQUIT and Ctrl-D==VSUSP and Ctrl-C==SIGINT */
          termios.c_cc[VQUIT] = _POSIX_VDISABLE;
--        termios.c_cc[VSUSP] = _POSIX_VDISABLE;
+         termios.c_cc[VSUSP] = _POSIX_VDISABLE;
 +        termios.c_cc[VINTR] = _POSIX_VDISABLE;
          /* Some OSes have Ctrl-Y==VDSUSP */
  #ifdef VDSUSP

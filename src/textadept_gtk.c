@@ -859,6 +859,8 @@ int get_process_exit_status(Process *proc) { return PROCESS(proc)->exit_status; 
 
 void cleanup_process(Process *proc) {}
 
+void suspend() {}
+
 void quit() {
   GdkEventAny event = {GDK_DELETE, gtk_widget_get_window(window), true};
   gdk_event_put((GdkEvent *)&event);

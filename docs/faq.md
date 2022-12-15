@@ -78,20 +78,6 @@ The LuaDoc describes [compile and run commands][] and you can configure them in 
 - - -
 
 **Q:**
-In the terminal version on Linux, pressing `^Z` suspends Textadept instead of performing an
-"Undo" action. How can I disable suspend and perform "Undo" instead?
-
-**A:**
-Place the following in your `~/.textadept/init.lua` file:
-
-    events.connect(events.SUSPEND, function()
-      buffer:undo()
-      return true
-    end, 1)
-
-- - -
-
-**Q:**
 In Linux, middle-clicking in the terminal version does not paste the primary selection and
 selecting text does copy to the primary selection. All other terminal apps support this
 functionality, why not Textadept?

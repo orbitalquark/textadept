@@ -424,6 +424,8 @@ viewed buffers first by changing the [`ui.buffer_list_zorder`][]. For example, i
 
     ui.buffer_list_zorder = true
 
+[`ui.buffer_list_zorder`]: api.html#ui.buffer_list_zorder
+
 #### Editor View
 
 The editor view is where you will spend most of your time in Textadept. You can split it vertically

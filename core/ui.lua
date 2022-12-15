@@ -534,4 +534,16 @@ local popup_menu
 -- @class function
 -- @name update
 local update
+
+---
+-- Suspends Textadept.
+-- This only works in the terminal version. By default, Textadept ignores ^Z suspend signals from
+-- the terminal.
+-- Emits `events.SUSPEND` and `events.RESUME` events.
+-- @usage keys['ctrl+z'] = ui.suspend
+-- @see events.SUSPEND
+-- @see events.RESUME
+-- @class function
+-- @name suspend
+local suspend
 ]]

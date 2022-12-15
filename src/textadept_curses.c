@@ -899,24 +899,25 @@ int get_process_exit_status(Process *proc) { return PROCESS(proc)->exit_status; 
 
 void cleanup_process(Process *proc) {}
 
+void suspend() {
+#if !_WIN32
+  emit("suspend", -1), endwin(), termkey_stop(ta_tk), kill(0, SIGSTOP);
+#endif
+}
+
 void quit() { quitting = !emit("quit", -1); }
 
 #if !_WIN32
-// Signal for a terminal suspend, continue, and resize.
-// libtermkey has been patched to enable suspend as well as enable/disable mouse mode (1002).
+// Signal for a terminal continue or resize.
 static void signalled(int signal) {
-  if (signal != SIGTSTP) {
-    if (signal == SIGCONT) termkey_start(ta_tk);
-    struct winsize w;
-    ioctl(0, TIOCGWINSZ, &w);
-    resizeterm(w.ws_row, w.ws_col), resize_pane(root_pane, LINES - 2, COLS, 1, 0);
-    WINDOW *win = scintilla_get_window(command_entry);
-    wresize(win, 1, COLS), mvwin(win, LINES - 1 - getmaxy(win), 0);
-    if (signal == SIGCONT) emit("resume", -1);
-    emit("update_ui", LUA_TNUMBER, 0, -1);
-  } else if (!emit("suspend", -1))
-    endwin(), termkey_stop(ta_tk), kill(0, SIGSTOP);
-  refresh_all();
+  if (signal == SIGCONT) termkey_start(ta_tk);
+  struct winsize w;
+  ioctl(0, TIOCGWINSZ, &w);
+  resizeterm(w.ws_row, w.ws_col), resize_pane(root_pane, LINES - 2, COLS, 1, 0);
+  WINDOW *win = scintilla_get_window(command_entry);
+  wresize(win, 1, COLS), mvwin(win, LINES - 1 - getmaxy(win), 0);
+  if (signal == SIGCONT) emit("resume", -1);
+  emit("update_ui", LUA_TNUMBER, 0, -1), refresh_all();
 }
 #endif
 
@@ -972,12 +973,11 @@ int main(int argc, char **argv) {
 
 #if !_WIN32
   freopen("/dev/null", "w", stderr); // redirect stderr
-  // Set terminal suspend, resume, and resize handlers, preventing any signals in them from
-  // causing interrupts.
+  // Set terminal resume and resize handlers.
   struct sigaction act;
   memset(&act, 0, sizeof(struct sigaction));
   act.sa_handler = signalled, sigfillset(&act.sa_mask);
-  sigaction(SIGTSTP, &act, NULL), sigaction(SIGCONT, &act, NULL), sigaction(SIGWINCH, &act, NULL);
+  sigaction(SIGCONT, &act, NULL), sigaction(SIGWINCH, &act, NULL);
 #else
   freopen("NUL", "w", stdout), freopen("NUL", "w", stderr); // redirect
 #endif
