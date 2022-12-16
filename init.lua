@@ -40,6 +40,7 @@ events.connect(events.VIEW_NEW, function()
 end)
 setmetatable(lexer, {__newindex = function(_, k, v) if k:find('^fold') then view[k] = v end end})
 textadept.editing.INDIC_BRACEMATCH = _SCINTILLA.next_indic_number()
+textadept.editing.brace_matches = {}
 
 -- The remainder of this file defines default buffer and view properties and applies them to
 -- subsequent buffers and views. Normally, a setting like `buffer.use_tabs = false` only applies

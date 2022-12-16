@@ -859,14 +859,10 @@ section of that list. (They are also shown in the "Edit" menu.)
 
 #### Brace Matching, Auto-pair, and Typeover
 
-Textadept automatically highlights matching brace characters when the caret is over one of
-them: '(', ')', '[', ']', '{', or '}'. You can jump to the current character's complement via
-`Ctrl+M` on Windows and Linux, `^M` on macOS, and `M-M` in the terminal version. You can add
-highlighting for '<' and '>' by modifying [`textadept.editing.brace_matches`][]. For example,
-in your *~/.textadept/init.lua*:
-
-    textadept.editing.brace_matches[string.byte('<')] = true
-    textadept.editing.brace_matches[string.byte('>')] = true
+Textadept automatically highlights matching brace characters when the caret is over one of them:
+'(', ')', '[', ']', '{', or '}' for programming languages, and '<' or '>' for XML-like markup
+languages. You can jump to the current character's complement via `Ctrl+M` on Windows and Linux,
+`^M` on macOS, and `M-M` in the terminal version.
 
 ![Matching Braces](images/matchingbrace.png)
 
@@ -885,7 +881,6 @@ can configure or disable this behavior by modifying [`textadept.editing.auto_pai
     textadept.editing.auto_pairs = nil
     textadept.editing.typeover_chars = nil
 
-[`textadept.editing.brace_matches`]: api.html#textadept.editing.brace_matches
 [`textadept.editing.auto_pairs`]: api.html#textadept.editing.auto_pairs
 [`textadept.editing.typeover_chars`]: api.html#textadept.editing.typeover_chars
 
@@ -1296,12 +1291,9 @@ for developing modules and some things to keep in mind:
 features. You can simply put language-specific features inside an [`events.LEXER_LOADED`][]
 event handler. For example, in your *~/.textadept/init.lua*:
 
-    -- Auto-pair and brace-match '<' and '>' only in HTML and XML files.
+    -- Setup language-specific indentation settings.
     events.connect(events.LEXER_LOADED, function(name)
-      local is_markup = name == 'html' or name == 'xml'
-      textadept.editing.auto_pairs[string.byte('<')] = is_markup and '>'
-      textadept.editing.brace_matches[string.byte('<')] = is_markup
-      textadept.editing.brace_matches[string.byte('>')] = is_markup
+      if name == 'python' then buffer.tab_width, buffer.use_tabs = 4, false end
     end)
 
 [language modules]: api.html#_M

@@ -413,7 +413,6 @@ brace_bad_light_indicator	_HOME/core/.view.luadoc	/^function brace_bad_light_ind
 brace_highlight	_HOME/core/.view.luadoc	/^function brace_highlight(view, pos1, pos2) end$/;"	f	class:view
 brace_highlight_indicator	_HOME/core/.view.luadoc	/^function brace_highlight_indicator(view, use_indicator, indicator) end$/;"	f	class:view
 brace_match	_HOME/core/.buffer.luadoc	/^function brace_match(buffer, pos, max_re_style) end$/;"	f	class:buffer
-brace_matches	_HOME/modules/textadept/editing.lua	/^M.brace_matches = {}$/;"	t	class:textadept.editing
 buffer	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	m	
 buffer	_HOME/core/.view.luadoc	/^local buffer$/;"	t	class:view
 buffer	_HOME/core/init.lua	/^local buffer$/;"	t	

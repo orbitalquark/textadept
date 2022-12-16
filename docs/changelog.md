@@ -1605,7 +1605,7 @@ Changes:
 * Locale files can optionally use `#` for comments instead of `%`.
 * Renamed `ui.SILENT_PRINT` to `ui.silent_print`.
 * Renamed all [`textadept.editing`][]`.[A-Z]+` options to their lower-case equivalents and
-  renamed `textadept.editing.braces` to [`textadept.editing.brace_matches`][].
+  renamed `textadept.editing.braces` to `textadept.editing.brace_matches`.
 * *post_init.lua* files for language modules are [no longer auto-loaded][]; use
   [`events.LEXER_LOADED`][] to load additional bits instead.
 * Renamed `ui.find.FILTER` to [`ui.find.find_in_files_filter`][] and added an optional argument
@@ -1630,7 +1630,6 @@ Changes:
 [must be Lua functions]: manual.html#key-and-menu-command-changes
 [`lfs.default_filter`]: api.html#lfs.default_filter
 [`textadept.editing`]: api.html#textadept.editing
-[`textadept.editing.brace_matches`]: api.html#textadept.editing.brace_matches
 [no longer auto-loaded]: manual.html#language-module-handling-changes
 [`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
 [`ui.find.find_in_files_filter`]: api.html#ui.find.find_in_files_filter
@@ -3397,12 +3396,11 @@ Changes:
 * Added indentation settings to "Buffer" menu (finally).
 * Added `gui.filteredlist()` shortcut for `gui.dialog('filteredlist', ...)`.
 * Can navigate between bookmarks with a filteredlist.
-* Language-specific [`char_matches`][] and [`braces`][] can be defined.
+* Language-specific [`char_matches`][] and `braces` can be defined.
 * `command_entry_keypress` event accepts modifier keys.
 * Updated BibTeX and Lua lexers.
 
 [`char_matches`]: api.html#textadept.editing.auto_pairs
-[`braces`]: api.html#textadept.editing.brace_matches
 
 ### 3.6 (01 Jan 2011)
 

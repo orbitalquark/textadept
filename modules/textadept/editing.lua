@@ -80,36 +80,31 @@ M.comment_string = {}
 -- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
 -- The ASCII values of opening characters are assigned to strings that contain complement
 -- characters. The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;",
--- "&quot;&quot;", and "``".
+-- "&quot;&quot;", and "``". For certain XML-like lexers, "<>" is also auto-paired.
 -- @class table
 -- @name auto_pairs
--- @usage textadept.editing.auto_pairs[string.byte('<')] = '>'
+-- @usage textadept.editing.auto_pairs[string.byte('*')] = '*'
 -- @usage textadept.editing.auto_pairs = nil -- disable completely
 M.auto_pairs = {}
-for k, v in pairs{['('] = ')', ['['] = ']', ['{'] = '}', ["'"] = "'", ['"'] = '"', ['`'] = '`'} do
-  M.auto_pairs[string.byte(k)] = v
-end
-
----
--- Table of brace characters to highlight.
--- The ASCII values of brace characters are keys and are assigned `true`. The default brace
--- characters are '(', ')', '[', ']', '{', and '}'.
--- @class table
--- @name brace_matches
--- @usage textadept.editing.brace_matches[string.byte('<')] = true
--- @usage textadept.editing.brace_matches[string.byte('>')] = true
-M.brace_matches = {}
-for _, c in utf8.codes('()[]{}') do M.brace_matches[c] = true end
+for _, k, v in string.gmatch([[()[]{}''""``]], '((.)(.))') do M.auto_pairs[k:byte()] = v end
 
 ---
 -- Table of characters to move over when typed.
 -- The ASCII values of characters are keys and are assigned `true` values. The default characters
--- are ')', ']', '}', '&apos;', '&quot;', and '`'.
+-- are ')', ']', '}', '&apos;', '&quot;', and '`'. For certain XML-like lexers, '>' is also included.
 -- @class table
 -- @name typeover_chars
--- @usage textadept.editing.typeover_chars[string.byte('>')] = true
+-- @usage textadept.editing.typeover_chars[string.byte('*')] = true
 M.typeover_chars = {}
 for _, c in utf8.codes([[)]}'"`]]) do M.typeover_chars[c] = true end
+
+-- Table of brace characters to highlight.
+-- The ASCII values of brace characters are keys and are assigned `true`.
+-- Recognized characters are '(', ')', '[', ']', '{', '}', '<', and '>'. This table is updated
+-- based on a lexer's "scintillua.angle.braces" property.
+-- @class table
+-- @name brace_matches
+local brace_matches = {}
 
 ---
 -- Map of autocompleter names to autocompletion functions.
@@ -136,6 +131,18 @@ M.api_files = setmetatable({}, {
     return t[k]
   end
 })
+
+-- Update auto_pairs, typeover_chars, brace_matches based on lexer.
+local function update_language_specific_features()
+  local angles = buffer.property_int['scintillua.angle.braces'] ~= 0
+  if M.auto_pairs then M.auto_pairs[string.byte('<')] = angles and '>' end
+  if M.typeover_chars then M.typeover_chars[string.byte('>')] = angles ~= nil end
+  brace_matches = {} -- clear
+  for _, c in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[c] = true end
+end
+events.connect(events.LEXER_LOADED, update_language_specific_features)
+events.connect(events.BUFFER_AFTER_SWITCH, update_language_specific_features)
+events.connect(events.VIEW_AFTER_SWITCH, update_language_specific_features)
 
 -- Matches characters specified in auto_pairs, taking multiple selections into account.
 events.connect(events.CHAR_ADDED, function(code)
@@ -167,7 +174,7 @@ end, 1) -- need index of 1 because default key handler halts propagation
 -- Highlights matching braces.
 events.connect(events.UPDATE_UI, function(updated)
   if updated & 3 == 0 then return end -- ignore scrolling
-  if M.brace_matches[buffer.char_at[buffer.current_pos]] then
+  if brace_matches[buffer.char_at[buffer.current_pos]] then
     local match = buffer:brace_match(buffer.current_pos, 0)
     local f = match ~= -1 and view.brace_highlight or view.brace_bad_light
     f(buffer, buffer.current_pos, match)
@@ -476,14 +483,15 @@ function M.select_enclosed(left, right)
   elseif M.auto_pairs then
     s = buffer.selection_start
     while s >= 1 do
-      local match = M.auto_pairs[buffer.char_at[s]]
+      local byte = buffer.char_at[s]
+      local match = M.auto_pairs[byte] or
+        (byte == string.byte('>') and M.auto_pairs[string.byte('<')] and '<') -- in-between > and <
       if not match then goto continue end
-      left, right = string.char(buffer.char_at[s]), match
+      left, right = string.char(byte), match
       if buffer:brace_match(s, 0) >= buffer.selection_end - 1 then
         e = buffer:brace_match(s, 0)
         break
-      elseif M.brace_matches[buffer.char_at[s]] or
-        (buffer.style_at[s] == buffer.style_at[buffer.selection_start]) then
+      elseif brace_matches[byte] or buffer.style_at[s] == buffer.style_at[buffer.selection_start] then
         buffer.search_flags = 0
         buffer:set_target_range(s + 1, buffer.length + 1)
         if buffer:search_in_target(match) >= buffer.selection_end - 1 then

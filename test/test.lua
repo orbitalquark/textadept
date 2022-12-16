@@ -1887,6 +1887,27 @@ function test_editing_auto_pair()
   buffer:close(true)
 end
 
+function test_editing_auto_pair_html()
+  buffer.new()
+  buffer:add_text('<')
+  events.emit(events.CHAR_ADDED, string.byte('<'))
+  assert_equal(buffer:get_text(), '<') -- not auto-paired by default
+  buffer:set_lexer('html')
+  events.emit(events.CHAR_ADDED, string.byte('<'))
+  assert_equal(buffer:get_text(), '<>')
+  buffer:clear() -- delete '>'
+  buffer.new()
+  buffer:add_text('<')
+  events.emit(events.CHAR_ADDED, string.byte('<'))
+  assert_equal(buffer:get_text(), '<') -- updated for plain text
+  view:goto_buffer(-1)
+  events.emit(events.CHAR_ADDED, string.byte('<'))
+  assert_equal(buffer:get_text(), '<>') -- updated again for HTML
+  view:goto_buffer(1)
+  buffer:close(true)
+  buffer:close(true)
+end
+
 function test_editing_auto_indent()
   buffer.new()
   buffer:add_text('foo')
@@ -2372,6 +2393,28 @@ function test_editing_select_enclosed()
   assert_raises(function() textadept.editing.select_enclosed('"') end, 'string expected, got nil')
 end
 expected_failure(test_editing_select_enclosed)
+
+function test_editing_select_enclosed_html()
+  buffer.new()
+  buffer:add_text('<foo>(bar) baz</foo>')
+  buffer:goto_pos(3)
+  textadept.editing.select_enclosed()
+  assert(buffer.selection_empty, 'selected text') -- <> are not paired by default
+  buffer:set_lexer('html')
+  textadept.editing.select_enclosed()
+  assert_equal(buffer:get_sel_text(), 'foo')
+  textadept.editing.select_enclosed()
+  assert_equal(buffer:get_sel_text(), '<foo>')
+  textadept.editing.select_enclosed()
+  assert_equal(buffer:get_sel_text(), 'foo')
+  buffer:goto_pos(8)
+  textadept.editing.select_enclosed()
+  assert_equal(buffer:get_sel_text(), 'bar')
+  buffer:goto_pos(13)
+  textadept.editing.select_enclosed()
+  assert_equal(buffer:get_sel_text(), '(bar) baz')
+  buffer:close(true)
+end
 
 function test_editing_select_word()
   buffer.new()
