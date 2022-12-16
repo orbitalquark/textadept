@@ -43,8 +43,6 @@ local M = {}
 -- Ctrl+Shift+J | ^J | M-J | Join lines
 -- Ctrl+&#124; | ⌘&#124; | ^\ | Filter text through
 -- Ctrl+Shift+M | ^⇧M | M-S-M | Select between delimiters
--- Ctrl+< | ⌘< | M-< | Select between XML tags
--- Ctrl+> | ⌘> | None | Select in XML tag
 -- Ctrl+Shift+D | ⌘⇧D | M-S-W | Select word
 -- Ctrl+Shift+N | ⌘⇧N | M-S-N | Select line
 -- Ctrl+Shift+P | ⌘⇧P | M-S-P | Select paragraph
@@ -320,8 +318,6 @@ local bindings = {
   [m('Edit/Filter Through')] = {'ctrl+|', 'cmd+|', 'ctrl+\\'},
   -- Select.
   [m('Edit/Select/Select between Matching Delimiters')] = {'ctrl+M', 'ctrl+M', 'meta+M'},
-  [m('Edit/Select/Select between XML Tags')] = {'ctrl+<', 'cmd+<', 'meta+<'},
-  [m('Edit/Select/Select in XML Tag')] = {'ctrl+>', 'cmd+>', nil},
   [textadept.editing.select_word] = {'ctrl+D', 'cmd+D', 'meta+W'},
   [textadept.editing.select_line] = {'ctrl+N', 'cmd+N', 'meta+N'},
   [textadept.editing.select_paragraph] = {'ctrl+P', 'cmd+P', 'meta+P'},

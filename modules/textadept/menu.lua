@@ -22,8 +22,6 @@ view.zoom_in, view.zoom_out = view.zoom_in, view.zoom_out
 -- LuaFormatter on
 
 -- Commonly used functions in menu commands.
-local sel_enc = textadept.editing.select_enclosed
-local enc = textadept.editing.enclose
 local function set_indentation(i)
   buffer.tab_width = i
   events.emit(events.UPDATE_UI, 1) -- for updating statusbar
@@ -100,9 +98,7 @@ local default_menubar = {
     end},
     {
       title = _L['Select'],
-      {_L['Select between Matching Delimiters'], sel_enc},
-      {_L['Select between XML Tags'], function() sel_enc('>', '<') end},
-      {_L['Select in XML Tag'], function() sel_enc('<', '>') end},
+      {_L['Select between Matching Delimiters'], textadept.editing.select_enclosed},
       {_L['Select Word'], textadept.editing.select_word},
       {_L['Select Line'], textadept.editing.select_line},
       {_L['Select Paragraph'], textadept.editing.select_paragraph}
@@ -114,7 +110,7 @@ local default_menubar = {
       SEPARATOR,
       {_L['Enclose as XML Tags'], function()
         buffer:begin_undo_action()
-        enc('<', '>')
+        textadept.editing.enclose('<', '>')
         for i = 1, buffer.selections do
           local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
           while buffer.char_at[s - 1] ~= 60 do s = s - 1 end -- '<'
@@ -124,12 +120,12 @@ local default_menubar = {
         end
         buffer:end_undo_action()
       end},
-      {_L['Enclose as Single XML Tag'], function() enc('<', ' />') end},
-      {_L['Enclose in Single Quotes'], function() enc("'", "'") end},
-      {_L['Enclose in Double Quotes'], function() enc('"', '"') end},
-      {_L['Enclose in Parentheses'], function() enc('(', ')') end},
-      {_L['Enclose in Brackets'], function() enc('[', ']') end},
-      {_L['Enclose in Braces'], function() enc('{', '}') end},
+      {_L['Enclose as Single XML Tag'], function() textadept.editing.enclose('<', ' />') end},
+      {_L['Enclose in Single Quotes'], function() textadept.editing.enclose("'", "'") end},
+      {_L['Enclose in Double Quotes'], function() textadept.editing.enclose('"', '"') end},
+      {_L['Enclose in Parentheses'], function() textadept.editing.enclose('(', ')') end},
+      {_L['Enclose in Brackets'], function() textadept.editing.enclose('[', ']') end},
+      {_L['Enclose in Braces'], function() textadept.editing.enclose('{', '}') end},
       SEPARATOR,
       {_L['Move Selected Lines Up'], buffer.move_selected_lines_up},
       {_L['Move Selected Lines Down'], buffer.move_selected_lines_down}
