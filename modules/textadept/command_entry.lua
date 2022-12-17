@@ -70,7 +70,7 @@ end
 -- @name editing_keys
 M.editing_keys = {__index = {}}
 
--- Fill in default key bindings for Linux/Win32, macOS, Terminal.
+-- Fill in default key bindings for Windows/Linux, macOS, Terminal.
 local bindings = {
   -- Note: cannot use `M.cut`, `M.copy`, etc. since M is never considered the global buffer.
   [function() M:undo() end] = {'ctrl+z', 'cmd+z', 'ctrl+z'},

@@ -4485,7 +4485,7 @@ inserted character. Modifier keys are "Control", "Shift", and "Alt" on Windows, 
 in the terminal version. On macOS they are "Control" (`^`), "Alt/Option" (`⌥`), "Command"
 (`⌘`), and "Shift" (`⇧`). These modifiers have the following string representations:
 
-Modifier |  Linux / Win32 | macOS | Terminal
+Modifier |  Windows / Linux | macOS | Terminal
 -|-|-|-
 Control | `'ctrl'` | `'ctrl'` | `'ctrl'`
 Alt | `'alt'` | `'alt'` | `'meta'`
@@ -6156,7 +6156,7 @@ Parameters:
 * *`stdout_cb`*: Optional Lua function that accepts a string parameter for a block of standard
   output read from the child. Stdout is read asynchronously in 1KB or 0.5KB blocks (depending
   on the platform), or however much data is available at the time.
-  At the moment, only the Win32 terminal version sends all output, whether it be stdout or
+  At the moment, only the Windows terminal version sends all output, whether it be stdout or
   stderr, to this callback after the process finishes.
 * *`stderr_cb`*: Optional Lua function that accepts a string parameter for a block of
   standard error read from the child. Stderr is read asynchronously in 1KB or 0.5kB blocks
@@ -6727,7 +6727,7 @@ editing commands and movements.
 
 ### Key Bindings
 
-Win32 and Linux | macOS | Terminal | Command
+Windows and Linux | macOS | Terminal | Command
 -|-|-|-
 **File**|||
 Ctrl+N | ⌘N | M-^N | New file

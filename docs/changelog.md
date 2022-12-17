@@ -938,7 +938,7 @@ Bugfixes:
 * Fixed `--help` command line option.
 * Fixed Textadept API autocompletion and documentation on Windows.
 * Fixed bug that regards lexer-specific snippet files as global.
-* Fixed hangs on Win32 terminal version with `textadept.editing.filter_through()`.
+* Fixed hangs on Windows terminal version with `textadept.editing.filter_through()`.
 * Fixed issues with buffer z-order when switching between views.
 * Fixed accidental clipping of first character in a snippet under certain circumstances.
 * Fixed C autocompletion error with typerefs.
@@ -953,7 +953,7 @@ Bugfixes:
 Changes:
 
 * All buffer positions, lines, and countable entities start from 1 instead of 0.
-* Support more Alt and Shift+Alt keys in the Win32 terminal version.
+* Support more Alt and Shift+Alt keys in the Windows terminal version.
 * `textadept.editing.api_files` acts as if it already has lexer tables defined.
 * `textadept.run.goto_error()` wraps searches now.
 * Added snippet trigger autocompletion via `textadept.editing.autocomplete('snippet')`.
@@ -1718,7 +1718,7 @@ Changes:
 * Enabled idle-styling of buffers in the background in the GUI version.
 * Undocumented `buffer:clear_cmd_key()` only takes one argument now.
 * Added `-v` and `--version` command line parameters.
-* Added single-instance functionality on Win32.
+* Added single-instance functionality on Windows.
 * Require GLib 2.28+.
 * Recognize the `weight` [style property][].
 * Added [`lexer.line_state`][] and [`lexer.line_from_position()`][] for [stateful lexers][].
@@ -1784,10 +1784,10 @@ Changes:
 
 Bugfixes:
 
-* Stop annoying black box from flashing when saving some files on Win32.
+* Stop annoying black box from flashing when saving some files on Windows.
 * Fixed bug in parsing Ruby error output.
 * Do not emit `events.LEXER_LOADED` for the command entry.
-* Fixed bug with Python syntax checking on Win32.
+* Fixed bug with Python syntax checking on Windows.
 * Scintilla: fixed bug in `buffer:count_characters()`.
 * Scintilla: small GTK fixes.
 
@@ -1964,7 +1964,7 @@ Changes:
 
 Bugfixes:
 
-* Fixed opening files with network paths on Win32.
+* Fixed opening files with network paths on Windows.
 * Fixed minor GTK 3 issues.
 * Fixed bug in hiding caret when Textadept loses focus.
 * Fixed bug in overwriting fold levels set by custom fold functions.
@@ -2011,7 +2011,7 @@ Changes:
 
 Bugfixes:
 
-* Fixed extra space pasting from external Win32 apps.
+* Fixed extra space pasting from external Windows apps.
 * Fixed bug in C autocompletion.
 * Disable GCC optimizations when compiling with debug symbols.
 * Ensure "find in files" is off when activating normal find.
@@ -2186,7 +2186,7 @@ Changes:
 
 Bugfixes:
 
-* Fixed bug in Win32 terminal version with "shifted" character input.
+* Fixed bug in Windows terminal version with "shifted" character input.
 * Scintilla: fixed bug when moving caret down on wrapped lines.
 * Scintilla: fixed instances of bad caret positioning within characters.
 * Scintilla: fixed automatic indentation when the caret is within virtual space.
@@ -2566,7 +2566,7 @@ Changes:
 * Better 16-color terminal support in lexer theme.
 * Reduced the delay when pressing `Esc` in the terminal version.
 * Messagebox dialogs can show icons via `--icon` and `--icon-file`.
-* New Win32 terminal version.
+* New Windows terminal version.
 * New [key modes][] functionality.
 * Scintilla: added [`buffer.auto_c_order`][] for sorting autocompletion lists.
 * Updated to [Scintilla][] 3.3.1.
@@ -2864,7 +2864,7 @@ Changes:
 * No more `'gtk-'` stock menu item support and changed `'separator'` to `''`.
 * Renamed `gui.gtkmenu()` to [`gui.menu()`][].
 * Changed `gui.statusbar_text` to be write-only.
-* Changed 'Quit' key command to 'Ctrl+Q' on Win32 and Linux.
+* Changed 'Quit' key command to 'Ctrl+Q' on Windows and Linux.
 * Show text that could not be localized.
 * Changed `make` commands for [compiling][] Textadept.
 * x86\_64 binary provides `libpng12` executables by default.
@@ -3338,7 +3338,7 @@ Changes:
 
 Bugfixes:
 
-* Fixed bug with Win32 paths in Adeptsense `goto_ctag()`.
+* Fixed bug with Windows paths in Adeptsense `goto_ctag()`.
 * Adeptsense could not recognize some symbols.
 * Handle `\n` sequences correctly in Adeptsense apidoc.
 * Fixed bug with Adeptsense C/C++ type declarations.
@@ -3386,7 +3386,7 @@ Bugfixes:
 
 * `update_ui` is called properly for `buffer_new` and `view_new` events.
 * Use proper pointer type for Scintilla calls.
-* Fixed bug with loading lexers from `_USERHOME` on Win32.
+* Fixed bug with loading lexers from `_USERHOME` on Windows.
 
 Changes:
 
@@ -3435,7 +3435,7 @@ Changes:
 * Lua files are syntax-checked for errors on save.
 * [Menus][] are easier to create.
 * Changed `_m.textadept.editing.enclose()` behavior.
-* Win32 and Mac OSX packages are all-in-one bundles; GTK is no longer an external dependency.
+* Windows and Mac OSX packages are all-in-one bundles; GTK is no longer an external dependency.
 * New [manual][].
 * Added [`file_after_save`][] event.
 
@@ -3473,7 +3473,7 @@ Changes:
 * `gui.statusbar_text` is now readable instead of being write-only.
 * Can [highlight][] all occurances of a word.
 * Added jsp lexer.
-* More consistant handling of `\` directory separator for Win32.
+* More consistant handling of `\` directory separator for Windows.
 * Consolidated `textadept.h` and `lua_interface.c` into single `textadept.c` file.
 * Added [`_G.timeout()`][] function for calling functions and/or events after a period of time.
 * Find in files is accessible through [find API][].
@@ -3624,7 +3624,7 @@ Bugfixes:
 * Fixed crash with `buffer:text_range()`.
 * Fixed snippets bug with `%n` sequences.
 * Respect tab settings for snippets.
-* Fixed help hanging bug in Win32.
+* Fixed help hanging bug in Windows.
 * Fixed Lua module commands bug.
 * Fixed bug with style metatables.
 * Fixed bug with XML namespaces.
@@ -3676,7 +3676,7 @@ Bugfixes:
 * Do not close files opened from command line when loading PM session.
 * Fixed bug for running a file with no path.
 * Fixed error message for session file not being found.
-* Fixed key command for word autocomplete on Win32.
+* Fixed key command for word autocomplete on Windows.
 * Changed conflicting menu shortcut for Lexers menu.
 * Fixed typos in templates generated by modules PM browser.
 * Scintilla: fixed crash after adding an annotation and then adding a new line below it.
@@ -3762,11 +3762,11 @@ Changes:
 * [Incremental find][] via the Lua command entry.
 * *NO* dependencies other than [GTK][] on _all_ platforms.
 
-  + Win32 no longer requires the MSVC++ 2008 Runtime.
+  + Windows no longer requires the MSVC++ 2008 Runtime.
   + Linux no longer requires `libffi`.
   + Mac OSX no longer requires cocoaDialog.
 
-* Can cross compile to Win32 from Linux.
+* Can cross compile to Windows from Linux.
 * Removed confusing `local function` and `local table` LuaDoc.
 * Rewrote the manual and most of the documentation.
 

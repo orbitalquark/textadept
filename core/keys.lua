@@ -28,7 +28,7 @@ local M = {}
 -- in the terminal version. On macOS they are "Control" (`^`), "Alt/Option" (`⌥`), "Command"
 -- (`⌘`), and "Shift" (`⇧`). These modifiers have the following string representations:
 --
--- Modifier |  Linux / Win32 | macOS | Terminal
+-- Modifier |  Windows / Linux | macOS | Terminal
 -- -|-|-|-
 -- Control | `'ctrl'` | `'ctrl'` | `'ctrl'`
 -- Alt | `'alt'` | `'alt'` | `'meta'`

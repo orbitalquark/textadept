@@ -10,7 +10,7 @@ local M = {}
 --
 -- ### Key Bindings
 --
--- Win32 and Linux | macOS | Terminal | Command
+-- Windows and Linux | macOS | Terminal | Command
 -- -|-|-|-
 -- **File**|||
 -- Ctrl+N | ⌘N | M-^N | New file
