@@ -55,7 +55,7 @@ diff -r c40f79827990 binding.c
 -   int result = wgetch (InputWindowOf (obj));
 +   int result = ERR;
 +   TermKeyKey key;
-+   int keysyms[] = {0,KEY_BACKSPACE,KEY_TAB,KEY_ENTER,KEY_ESC,0,0,KEY_UP,KEY_DOWN,KEY_LEFT,KEY_RIGHT,0,0,KEY_IC,KEY_DC,0,KEY_PPAGE,KEY_NPAGE,KEY_HOME,KEY_END};
++   int keysyms[] = {0,KEY_BACKSPACE,KEY_TAB,KEY_ENTER,KEY_ESC,0,KEY_BACKSPACE,KEY_UP,KEY_DOWN,KEY_LEFT,KEY_RIGHT,0,0,KEY_IC,KEY_DC,0,KEY_PPAGE,KEY_NPAGE,KEY_HOME,KEY_END};
 +   TermKeyResult res;
 +retry:
 +   res = termkey_waitkey(ta_tk, &key);
@@ -700,6 +700,15 @@ diff -r c40f79827990 entry.c
 diff -r c40f79827990 fselect.c
 --- a/fselect.c	Sun Nov 23 16:42:21 2014 -0500
 +++ b/fselect.c	Sun Nov 23 16:45:38 2014 -0500
+@@ -416,7 +416,7 @@
+    copyExitType (fselect, fselect->entryField);
+ 
+    /* If we exited early, make sure we don't interpret it as a file. */
+-   if (fselect->exitType == vEARLY_EXIT)
++   if (fselect->exitType == vEARLY_EXIT || fselect->exitType == vESCAPE_HIT)
+    {
+       return 0;
+    }
 @@ -1104,7 +1104,7 @@
  
  static char *make_pathname (const char *directory, const char *filename)
