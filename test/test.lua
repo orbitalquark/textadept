@@ -1026,7 +1026,7 @@ function test_ui_print()
   assert_equal(buffer:get_text(), '1\t2\t3\n')
   ui.goto_view(-1) -- first view
   assert(buffer._type ~= _L['[Message Buffer]'], 'still in message buffer')
-  ui.print(4, 5, 6) -- should jump to second view
+  ui.print(4, 5, 6) -- should go to second view
   assert_equal(buffer._type, _L['[Message Buffer]'])
   assert_equal(buffer:get_text(), '1\t2\t3\n4\t5\t6\n')
   ui.goto_view(-1) -- first view
@@ -3717,7 +3717,7 @@ function test_run_compile_run()
   assert_equal(buffer.filename, compile_file)
   ui.goto_view(1) -- output buffer
   events.emit(events.DOUBLE_CLICK, nil, buffer:line_from_position(buffer.current_pos) + 1)
-  assert_equal(buffer._type, _L['[Output Buffer]']) -- there was no error to jump to
+  assert_equal(buffer._type, _L['[Output Buffer]']) -- there was no error to go to
   events.emit(events.DOUBLE_CLICK, nil, buffer:line_from_position(buffer.current_pos))
   assert_equal(buffer.filename, compile_file)
   textadept.run.compile() -- clears annotation

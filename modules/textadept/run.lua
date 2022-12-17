@@ -61,7 +61,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 -- @name procs
 local procs = {}
 
--- Keep track of the view the most recent process was spawned from in order to jump to messages
+-- Keep track of the view the most recent process was spawned from in order to go to messages
 -- (which are displayed in a split view) in the original view.
 local preferred_view
 
@@ -410,7 +410,7 @@ function M.goto_error(line_num, next)
     end
   end
 
-  -- Goto the warning or error and show an annotation.
+  -- Go to the warning or error and show an annotation.
   if buffer.line_state[line_num] == 0 then return end
   local filename = get_tagged_text(line_num, 'filename')
   if filename == '' then return end -- incorrectly tagged message

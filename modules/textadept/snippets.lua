@@ -407,7 +407,7 @@ function snippet:next()
 
   buffer:begin_undo_action()
 
-  -- Jump to the default placeholder and clear its marker.
+  -- Go to the default placeholder and clear its marker.
   buffer:set_sel(ph.position, ph.position + ph.length)
   local e = buffer:indicator_end(M.INDIC_PLACEHOLDER, ph.position)
   buffer.indicator_current = M.INDIC_PLACEHOLDER

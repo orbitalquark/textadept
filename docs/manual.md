@@ -545,8 +545,8 @@ in Lua by modifying [`ui.find_in_files_filters`][]. For example, in your *~/.tex
     ui.find.find_in_files_filters['/path/to/project'] = {'/include', '/src'}
 
 After performing a "Find in Files" search, a temporary buffer lists the search results. You can
-use the arrow keys to navigate within the list and press `Enter` to jump to a result's location
-in its respective file. You can also double-click on results or jump to the next or previous
+use the arrow keys to navigate within the list and press `Enter` to go to a result's location
+in its respective file. You can also double-click on results or go to the next or previous
 result via `Ctrl+Alt+G` or `Ctrl+Alt+Shift+G`, respectively, on Windows and Linux; and `^⌘G`
 or `^⌘⇧G`, respectively, on macOS. (The terminal version does not have default key bindings
 for these actions.)
@@ -861,7 +861,7 @@ section of that list. (They are also shown in the "Edit" menu.)
 
 Textadept automatically highlights matching brace characters when the caret is over one of them:
 '(', ')', '[', ']', '{', or '}' for programming languages, and '<' or '>' for XML-like markup
-languages. You can jump to the current character's complement via `Ctrl+M` on Windows and Linux,
+languages. You can go to the current character's complement via `Ctrl+M` on Windows and Linux,
 `^M` on macOS, and `M-M` in the terminal version.
 
 ![Matching Braces](images/matchingbrace.png)
@@ -1044,10 +1044,10 @@ Textadept records buffer positions within views over time and allows for navigat
 history. Navigate backward or forward via `Alt+,` or `Alt+.`, respectively, on Windows and Linux;
 `^,` or `^.`, respectively, on macOS; and `M-,` or `M-.`, respectively, in the terminal version.
 
-#### Goto Line
+#### Go To Line
 
-You can jump to a specific line in the current buffer via `Ctrl+J` on Windows and Linux, `⌘J`
-on macOS, and `^J` in the terminal version. Enter the line number to jump to in the prompt,
+You can go to a specific line in the current buffer via `Ctrl+J` on Windows and Linux, `⌘J`
+on macOS, and `^J` in the terminal version. Enter the line number to go to in the prompt,
 and press `Enter` or click `OK`.
 
 #### Bookmarks
@@ -1059,10 +1059,10 @@ following key bindings apply for bookmarks:
 
 * Toggle a bookmark on the current line via `Ctrl+F2` on Windows and Linux, `⌘F2` on macOS,
   and `F1` in the terminal version.
-* Jump to the next bookmarked line via `F2`.
-* Jump to the previously bookmarked line via `Shift+F2` on Windows and Linux, `⇧F2` on macOS,
+* Go to the next bookmarked line via `F2`.
+* Go to the previously bookmarked line via `Shift+F2` on Windows and Linux, `⇧F2` on macOS,
   and `F3` in the terminal version.
-* Jump to the bookmarked line selected from a list via `Alt+F2` on Windows and Linux, `⌥F2`
+* Go to the bookmarked line selected from a list via `Alt+F2` on Windows and Linux, `⌥F2`
   on macOS, and `F4` in the terminal version.
 * Clear all bookmarks in the current buffer via `Ctrl+Shift+F2` on Windows and Linux, `⌘⇧F2`
   on macOS, and `F6` in the terminal version.
@@ -1184,11 +1184,11 @@ projects and running tests and project commands:
   on macOS, and `M-C` in the terminal version.
 * Stop the currently running compile, run, build, or test process via `Ctrl+Shift+X` on Windows
   and Linux, `⌘⇧X` on macOS, and `M-^X` in the terminal version.
-* Jump to the source of the next recognized warning or error via `Ctrl+Alt+E` on Windows and
-  Linux, `^⌘E` on macOS, and `M-X` in the terminal version.
-* Jump to the source of the previously recognized warning or error via `Ctrl+Alt+Shift+E`
-  on Windows and Linux, `^⌘⇧E` on macOS, and `M-S-X` in the terminal version.
-* Jump to the source of the recognized warning or error on the current line via `Enter`.
+* Go to the source of the next recognized warning or error via `Ctrl+Alt+E` on Windows and Linux,
+  `^⌘E` on macOS, and `M-X` in the terminal version.
+* Go to the source of the previously recognized warning or error via `Ctrl+Alt+Shift+E` on
+  Windows and Linux, `^⌘⇧E` on macOS, and `M-S-X` in the terminal version.
+* Go to the source of the recognized warning or error on the current line via `Enter`.
 
 Prior to running a compile, run, build, or test command, Textadept will prompt you with either:
 

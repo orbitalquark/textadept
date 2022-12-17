@@ -204,7 +204,7 @@ Bugfixes:
 * Fixed lack of HTML documentation in releases since 11.3.
 * Ensure the statusbar is updated after `buffer:set_lexer()`.
 * Ensure `events.LEXER_LOADED` is emitted on `buffer.new()`.
-* LSP: Fixed off-by-one errors for goto definition et. al. and find references.
+* LSP: Fixed off-by-one errors for go to definition et. al. and find references.
 * LSP: Fixed bug attempting to start a language server manually.
 * Lua REPL: Fixed key bindings.
 * Ruby: Fixed bug when trying to toggle a block at the end of the buffer.
@@ -1165,7 +1165,7 @@ Changes:
 * Added optional position argument to [`textadept.editing.show_documentation()`][].
 * `textadept.editing.highlight_word()` does not select the word by default anymore.
 * Changed [file filter][] format to be more flat and intuitive.
-* Added `-l` and `--line` command line options to jump to a buffer line.
+* Added `-l` and `--line` command line options to go to a buffer line.
 * Updated to [PDCurses][] 3.6 for the Windows terminal version.
 
 [`textadept.editing.show_documentation()`]: api.html#textadept.editing.show_documentation
@@ -1908,7 +1908,7 @@ Changes:
 * Removed long-hand [compile and run macros][] in favor of shorter ones.
 * [`textadept.bookmarks.toggle()`][] accepts an optional line to bookmark.
 * Added support for Rust and TOML.
-* "Goto Bookmark" now lists bookmarks in all open buffers.
+* "Go To Bookmark" now lists bookmarks in all open buffers.
 * [`spawn_proc:kill()`][] can send signals to processes.
 * New [`lexer._FOLDBYINDENTATION`][] field for lexers that fold based on indentation.
 
@@ -3448,7 +3448,7 @@ Changes:
 Bugfixes:
 
 * Fixed menu item conflicts.
-* Pressing `Cancel` in the [Switch Buffers][] dialog does not jump to the selected buffer anymore.
+* Pressing `Cancel` in the [Switch Buffers][] dialog does not go to the selected buffer anymore.
 * Autocomplete lists sort properly for machines with a different locale.
 * Statusbar is not cleared when set from a key command.
 * Unreadable files are handled appropriately.

@@ -151,10 +151,10 @@ local default_menubar = {
     {_L['Find Incremental'], function() ui.find.focus{incremental = true} end},
     SEPARATOR,
     {_L['Find in Files'], function() ui.find.focus{in_files = true} end},
-    {_L['Goto Next File Found'], function() ui.find.goto_file_found(true) end},
-    {_L['Goto Previous File Found'], function() ui.find.goto_file_found(false) end},
+    {_L['Go To Next File Found'], function() ui.find.goto_file_found(true) end},
+    {_L['Go To Previous File Found'], function() ui.find.goto_file_found(false) end},
     SEPARATOR,
-    {_L['Jump to'], textadept.editing.goto_line}
+    {_L['Go To Line...'], textadept.editing.goto_line}
   },
   {
     title = _L['Tools'],
@@ -176,7 +176,7 @@ local default_menubar = {
       {_L['Clear Bookmarks'], textadept.bookmarks.clear},
       {_L['Next Bookmark'], function() textadept.bookmarks.goto_mark(true) end},
       {_L['Previous Bookmark'], function() textadept.bookmarks.goto_mark(false) end},
-      {_L['Goto Bookmark...'], textadept.bookmarks.goto_mark},
+      {_L['Go To Bookmark...'], textadept.bookmarks.goto_mark},
     },
     {
       title = _L['Macros'],

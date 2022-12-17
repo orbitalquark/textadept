@@ -57,7 +57,7 @@ local function print_to(buffer_type, silent, format, ...)
   local print_view, buffer = get_print_view(buffer_type), get_print_buffer(buffer_type)
   if not buffer or not silent and not print_view then -- no buffer or buffer not visible
     if #_VIEWS > 1 then
-      ui.goto_view(1) -- jump to another view to print to
+      ui.goto_view(1) -- go to another view to print to
     elseif not ui.tabs then
       view:split() -- create a new view to print to
     end

@@ -505,7 +505,7 @@ function M.goto_file_found(line_num, next)
   end
   if not utf8_dir then return end
 
-  -- Goto the source of the search result.
+  -- Go to the source of the search result.
   local line = buffer:get_cur_line()
   local utf8_filename, pos
   utf8_filename, line_num, pos = line:match('^(.+):(%d+):()')
