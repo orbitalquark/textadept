@@ -100,6 +100,7 @@ local default_menubar = {
       title = _L['Select'],
       {_L['Select between Matching Delimiters'], textadept.editing.select_enclosed},
       {_L['Select Word'], textadept.editing.select_word},
+      {_L['Deselect Word'], function() buffer:drop_selection_n(buffer.selections) end},
       {_L['Select Line'], textadept.editing.select_line},
       {_L['Select Paragraph'], textadept.editing.select_paragraph}
     },

@@ -319,6 +319,7 @@ local bindings = {
   -- Select.
   [m('Edit/Select/Select between Matching Delimiters')] = {'ctrl+M', 'ctrl+M', 'meta+M'},
   [textadept.editing.select_word] = {'ctrl+D', 'cmd+D', 'meta+W'},
+  [m('Edit/Select/Deselect Word')] = {'ctrl+alt+d', 'ctrl+cmd+d', 'ctrl+meta+d'},
   [textadept.editing.select_line] = {'ctrl+N', 'cmd+N', 'meta+N'},
   [textadept.editing.select_paragraph] = {'ctrl+P', 'cmd+P', 'meta+P'},
   -- Selection.

@@ -956,7 +956,8 @@ You can create contiguous selections as follows:
   text, deleting text, performing an action that changes text, or by pressing `^^` again.
 * Select the current word via `Ctrl+Shift+D` on Windows and Linux, `⌘⇧D` on macOS, and
   `M-S-W` in the terminal version. Repeated use of this action selects subsequent occurrences
-  of that word as additional (multiple) selections.
+  of that word as additional (multiple) selections. Undo the most recent multiple selection via
+  `Ctrl+Alt+D`, `^⌘D`, or `M-^D`.
 * Select the current line via `Ctrl+Shift+N` on Windows and Linux, `⌘⇧N` on macOS, and
   `M-S-N` in the terminal version.
 * Double click to select a word, and triple-click to select a line.
