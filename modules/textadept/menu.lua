@@ -22,6 +22,12 @@ view.zoom_in, view.zoom_out = view.zoom_in, view.zoom_out
 -- LuaFormatter on
 
 -- Commonly used functions in menu commands.
+local function change_case(upper)
+  local select = buffer.selection_empty
+  if select then textadept.editing.select_word() end
+  buffer[upper and 'upper_case' or 'lower_case'](buffer)
+  if select then buffer:char_right() end
+end
 local function set_indentation(i)
   buffer.tab_width = i
   events.emit(events.UPDATE_UI, 1) -- for updating statusbar
@@ -106,8 +112,8 @@ local default_menubar = {
     },
     {
       title = _L['Selection'],
-      {_L['Upper Case Selection'], buffer.upper_case},
-      {_L['Lower Case Selection'], buffer.lower_case},
+      {_L['Upper Case Selection'], function() change_case(true) end},
+      {_L['Lower Case Selection'], change_case},
       SEPARATOR,
       {_L['Enclose as XML Tags'], function()
         buffer:begin_undo_action()

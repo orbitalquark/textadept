@@ -323,8 +323,8 @@ local bindings = {
   [textadept.editing.select_line] = {'ctrl+N', 'cmd+N', 'meta+N'},
   [textadept.editing.select_paragraph] = {'ctrl+P', 'cmd+P', 'meta+P'},
   -- Selection.
-  [buffer.upper_case] = {'ctrl+alt+u', 'ctrl+u', 'ctrl+meta+u'},
-  [buffer.lower_case] = {'ctrl+alt+U', 'ctrl+U', 'ctrl+meta+l'},
+  [m('Edit/Selection/Upper Case Selection')] = {'ctrl+alt+u', 'ctrl+u', 'ctrl+meta+u'},
+  [m('Edit/Selection/Lower Case Selection')] = {'ctrl+alt+U', 'ctrl+U', 'ctrl+meta+l'},
   [m('Edit/Selection/Enclose as XML Tags')] = {'alt+<', 'ctrl+<', 'meta+>'},
   [m('Edit/Selection/Enclose as Single XML Tag')] = {'alt+>', 'ctrl+>', nil},
   [m('Edit/Selection/Enclose in Single Quotes')] = {"alt+'", "ctrl+'", nil},

@@ -1015,9 +1015,9 @@ Textadept can apply many different transformations to the current word, line, an
 * Enclose the current word or selected text within delimiters like parentheses, braces, brackets,
   single quotes, double quotes, or HTML/XML tags using the key bindings listed in the "Edit >
   Selection" submenu.
-* Convert the selected text to upper or lower case via `Ctrl+Alt+U` or `Ctrl+Alt+Shift+U`,
-  respectively, on Windows and Linux; `^U` or `^⇧U`, respectively, on macOS; and `M-^U` or
-  `M-^L` in the terminal version.
+* Convert the selected text or current word to upper or lower case via `Ctrl+Alt+U` or
+  `Ctrl+Alt+Shift+U`, respectively, on Windows and Linux; `^U` or `^⇧U`, respectively, on
+  macOS; and `M-^U` or `M-^L` in the terminal version.
 * Increase or decrease the indentation of the selected lines via `Tab` or `Shift+Tab`,
   respectively, on Windows and Linux; `⇥` or `⇧⇥`, respectively on macOS; and `Tab` or
   `S-Tab` in the terminal version. You do not have to select whole lines; selecting any part
