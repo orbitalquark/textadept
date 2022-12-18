@@ -23,10 +23,10 @@ view.zoom_in, view.zoom_out = view.zoom_in, view.zoom_out
 
 -- Commonly used functions in menu commands.
 local function change_case(upper)
-  local select = buffer.selection_empty
+  local select, pos = buffer.selection_empty, buffer.current_pos
   if select then textadept.editing.select_word() end
   buffer[upper and 'upper_case' or 'lower_case'](buffer)
-  if select then buffer:char_right() end
+  if select then buffer:goto_pos(pos) end
 end
 local function set_indentation(i)
   buffer.tab_width = i
