@@ -365,6 +365,7 @@ local proxies = {}
 local key_shortcuts, menu_items, contextmenu_items
 
 local SHIFT, CTRL, ALT, META = view.MOD_SHIFT, view.MOD_CTRL, view.MOD_ALT, view.MOD_META
+local ignore = {[0xFE20] = true, [0x01000002] = true}
 -- Returns for a key sequence the integer keycode and modifier mask used to create a menu
 -- item accelerator.
 -- Keycodes are either ASCII bytes or codes from `keys.KEYSYMS`. Modifiers are a combination of
@@ -381,7 +382,7 @@ local function get_menu_key_seq(key_seq)
   local code = string.byte(key)
   if #key > 1 or code < 32 then
     for i, s in pairs(keys.KEYSYMS) do
-      if s == key and i >= (not QT and 0xFE20 or 0x01000000) then
+      if s == key and i >= (not QT and 0xFE20 or 0x01000000) and not ignore[i] then
         code = i
         break
       end
