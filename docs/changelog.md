@@ -19,10 +19,13 @@ Download:
 Bugfixes:
 
 * Fixed `io.get_project_root()` on Windows network shares.
+* Fixed display of `Shift+Tab` key bindings in menus.
 * GTK version: fixed invalid cast warning for split views.
 * GTK version: handle movement keys from the list dialog entry when interactive search is not active.
 * Terminal version: fixed crash cleaning up after a spawned process.
 * Terminal version: improved spawn command parsing.
+* Terminal version: fixed suspend/resume.
+* Terminal version: fixed interpretation of backspace key in CDK entry boxes.
 
 Changes:
 
@@ -30,6 +33,7 @@ Changes:
 * The Qt version of Textadept is not a single-instance application, only the GTK version is.
 * The minimum required version of macOS is 10.13 (High Sierra).
 * Switched to [CMake-based build][] for building natively on Windows, macOS, and Linux.
+* Redesigned key bindings to be more consistent and deterministic across OSes and platforms.
 * Added 'Save' buttons to close and quit dialogs when there are unsaved buffers.
 * Removed GTK support for Windows and macOS (Linux is still supported).
 * Utilize "TEXTADEPT_HOME" environment variable, if it exists, in place of autodetected `_HOME`
@@ -41,13 +45,22 @@ Changes:
 * Buffer browser shows relative paths for files in the current project.
 * More reasonable initial list dialog sizes.
 * "Save As" dialog falls back onto the current directory if necessary.
-* Deprecated YAML module.
+* Deprecated reST and YAML modules.
+* Added '-' command line option for reading from stdin into a new buffer.
+* Removed 10-item find/replace history limit for the GUI version.
+* Added [`ui.buffer_list_zorder`][] option and removed *zorder* parameter from `ui.switch_buffer()`.
+* Added [`ui.suspend()`][] for the terminal version, allowing any key binding to suspend the editor.
+* `textadept.editing.auto_pairs` and `textadept.editing.typeover_chars` auto-include '<>'
+  characters for XML-like languages and removed `textadept.editing.brace_matches`.
+* Added menu option and key binding to undo last selected word.
 
 [Textadept 12.0 alpha  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.win.zip
 [Textadept 12.0 alpha  -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.macOS.zip
 [Textadept 12.0 alpha  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.linux.tgz
 [Textadept 12.0 alpha  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.modules.zip
 [CMake-based build]: manual.html#compiling
+[`ui.buffer_list_zorder`]: api.html#ui.buffer_list_zorder
+[`ui.suspend()`]: api.html#ui.suspend
 
 ### 11.5 alpha 2 (01 Nov 2022)
 
