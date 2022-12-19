@@ -105,7 +105,7 @@ load custom modules, configure key bindings, extend menus, enhance support for f
 programming languages, and run arbitrary Lua code. These topics will be covered throughout
 the manual. Textadept's comprehensive [Lua API][] lists, among other things, all configurable
 settings for buffers, views, and modules. You can open your *~/.textadept/init.lua* file via
-`Ctrl+P` on Windows and Linux, `⌘,` on macOS, and `M-~` in the terminal version.
+the "Edit > Preferences" menu item.
 
 Here is a simple *~/.textadept/init.lua* for illustration:
 
@@ -363,14 +363,14 @@ menu and menu item also has a unique mnemonic that can be used to activate it. F
 `Alt+E` accesses the "Edit" menu, `S` opens the "Select" sub-menu, and `L` invokes the menu
 item that selects the current line.
 
-Textadept's menu is also accessible in the form of a searchable dialog via `Ctrl+Shift+E`
-on Windows and Linux, `⌘⇧E` on macOS, and `M-S-C` in the terminal version. (Despite the
-fact that the terminal version does not have a menu, it does have this dialog.) Typing part
-of the name of any command in the dialog filters the list, with spaces being wildcards. The
-arrow keys move the selection up and down. Pressing `Enter`, selecting `OK`, or double-clicking
-on a command invokes it. (The terminal version requires pressing `Enter`.) This feature is an
-alternative to navigating the menus or remembering key bindings. It can also be used to quickly
-look up key bindings for particular commands.
+Textadept's menu is also accessible in the form of a searchable dialog via `Ctrl+P` on Windows
+and Linux, `⌘P` on macOS, and `^P` in the terminal version. (Despite the fact that the
+terminal version does not have a menu, it does have this dialog.) Typing part of the name of
+any command in the dialog filters the list, with spaces being wildcards. The arrow keys move
+the selection up and down. Pressing `Enter`, selecting `OK`, or double-clicking on a command
+invokes it. (The terminal version requires pressing `Enter`.) This feature is an alternative
+to navigating the menus or remembering key bindings. It can also be used to quickly look up
+key bindings for particular commands.
 
 **Note:** for commands that have more than one key binding, only one of those bindings is shown
 in the menu and dialog, and that binding is randomly chosen.
@@ -402,16 +402,17 @@ be rearranged by clicking, dragging, and dropping them. You can turn off the tab
 [`textadept.menu.tab_context_menu`]: api.html#textadept.menu.tab_context_menu
 [`ui.tabs`]: api.html#ui.tabs
 
-Cycle to the next buffer via `Ctrl+Tab` on Windows and Linux, `^⇥` on macOS, and `M-N` in
-the terminal version. Cycle to the previous buffer via `Ctrl+Shift+Tab`, `^⇧⇥`, and `M-P`.
+Cycle to the next buffer via `Ctrl+Tab` or `Ctrl+PgDn` on Windows and Linux, `^⇥` or `⌘⇟`on
+macOS, and `M-PgDn` in the terminal version. Cycle to the previous buffer via `Ctrl+Shift+Tab`
+or `Ctrl+PgUp`, `^⇧⇥` or `⌘⇞`, and `M-PgUp`.
 
 The tab bar is also accessible in the form of a searchable dialog via `Ctrl+B` on Windows and
-Linux, `⌘B` on macOS, and `M-B` or `M-S-B` in the terminal version. (Despite the fact that
-the terminal version does not have a tab bar, it does have this dialog.) The dialog displays a
-list of currently open buffers. Typing part of any filename filters the list, with spaces being
-wildcards. The arrow keys move the selection up and down. Pressing `Enter`, selecting `OK`, or
-double-clicking on a buffer switches to it. (The terminal requires pressing `Enter`.) This feature
-is particularly useful when many files are open, and navigating through the tab bar is tedious.
+Linux, `⌘B` on macOS, and `^B` in the terminal version. (Despite the fact that the terminal
+version does not have a tab bar, it does have this dialog.) The dialog displays a list of currently
+open buffers. Typing part of any filename filters the list, with spaces being wildcards. The arrow
+keys move the selection up and down. Pressing `Enter`, selecting `OK`, or double-clicking on a
+buffer switches to it. (The terminal requires pressing `Enter`.) This feature is particularly
+useful when many files are open, and navigating through the tab bar is tedious.
 
 ![Buffer Browser](images/bufferbrowser.png)
 &nbsp;&nbsp;
@@ -437,26 +438,22 @@ a view brings up a configurable context menu that is defined by [`textadept.menu
 Split views can be dynamically resized by clicking and dragging on the splitter bar that
 separates them. The following key bindings apply for split views:
 
-* Split a view horizontally into top and bottom views via `Ctrl+Alt+S` or `Ctrl+Alt+H` on
-  Windows and Linux, `^S` on macOS, and `M-^V S` in the terminal version.
-* Split a view vertically into side-by-side views via `Ctrl+Alt+V` on Windows and Linux, `^V`
-  on macOS, and `M-^V V` in the terminal version.
-* Cycle to the next split view via `Ctrl+Alt+N` on Windows and Linux, `^⌥⇥` on macOS, and
-  `M-^V N` in the terminal version.
-* Cycle to the previous split view via `Ctrl+Alt+P` on Windows and Linux, `^⌥⇧⇥` on macOS,
-  and `M-^V P` in the terminal version.
+a* Split a view horizontally into top and bottom views via `Ctrl+Alt+_` on Windows and Linux,
+  `^⌘_` on macOS, and `M-_` in the terminal version.
+* Split a view vertically into side-by-side views via `Ctrl+Alt+|` on Windows and Linux,
+  `^⌘|` on macOS, and `M-|` in the terminal version.
+* Cycle to the next split view via `Ctrl+Alt+PgDn` on Windows and Linux, `^⌘⇟` on macOS,
+  and `M-^PgDn` in the terminal version.
+* Cycle to the previous split view via `Ctrl+Alt+PgUp` on Windows and Linux, `^⌘⇞` on macOS,
+  and `M-^PgUp` in the terminal version.
 * Grow or shrink a view via `Ctrl+Alt++` or `Ctrl+Alt+-`, respectively, on Windows and Linux;
-  `^+` or `^-`, respectively, on macOS; and `M-^V +` or `M-^V -` in the terminal version.
+  `^⌘+` or `^⌘-`, respectively, on macOS; and `M-+` or `M--` in the terminal version.
 * Unsplit the current view by removing its complement view(s) via `Ctrl+Alt+W` on Windows and
-  Linux, `^W` on macOS, and `M-^V W` in the terminal version.
+  Linux, `^⌘W` on macOS, and `M-W` in the terminal version.
 * Unsplit the current view by removing all other views via `Ctrl+Alt+Shift+W` on Windows and
-  Linux, `^⇧W` on macOS, and `M-^V S-W` in the terminal version.
+  Linux, `^⌘⇧W` on macOS, and `M-S-W` in the terminal version.
 
 **Note:** depending on the split sequence, the order when cycling between views may not be linear.
-
-**Terminal version note:** `M-^V` is the key chain prefix for split views. Press and release
-the prefix, and then type the next key in the chain by itself in order to perform the split
-view action.
 
 [`buffer`]: api.html#buffer
 [`view`]: api.html#view
@@ -468,10 +465,10 @@ The find & replace pane is a compact, full-featured pane that allows you to quic
 through files and directories. The pane is available only when you need it and quickly gets
 out of your way when you do not, minimizing distractions.
 
-You can summon the find & replace pane via `Ctrl+F` on Windows and Linux, `⌘F` on macOS, and
-`M-F` or `M-S-F` in the terminal version. It has the usual find and replace functionality you
-would expect, along with "Match Case", "Whole Word", "[Regex](#regex-and-lua-pattern-syntax)",
-and "In Files" options. The pane also stores find and replace history. As you search, Textadept
+You can summon the find & replace pane via `Ctrl+F` on Windows and Linux, `⌘F` on macOS,
+and `^F` in the terminal version. It has the usual find and replace functionality you would
+expect, along with "Match Case", "Whole Word", "[Regex](#regex-and-lua-pattern-syntax)", and
+"In Files" options. The pane also stores find and replace history. As you search, Textadept
 can automatically highlight all instances of found text in the current buffer by setting
 [`ui.find.highlight_all_matches`][]. For example, in your *~/.textadept/init.lua*:
 
@@ -512,11 +509,6 @@ While the pane is open in the terminal version, the following key bindings apply
 * Erase the contents of the focused entry via `^U`.
 * Hide the pane via `Esc`.
 
-When the pane is closed, you can quickly perform "Find Next", "Find Prev", "Replace", and
-"Replace All" via `Ctrl+G`, `Ctrl+Shift+G`, `Ctrl+Alt+R`, and `Ctrl+Alt+Shift+R`, respectively,
-on Windows and Linux; `⌘G`, `⌘⇧G`, `^R`, and `^⇧R`, respectively, on macOS; and `M-G`,
-`M-S-G`, `M-R`, and `M-S-R` in the terminal version.
-
 **Tip:** by default, "Replace All" replaces all text in the buffer. Selecting text and then
 performing "Replace All" replaces all text in that selection only.
 
@@ -524,11 +516,10 @@ performing "Replace All" replaces all text in that selection only.
 
 ##### Find in Files
 
-Textadept can search for text within multiple files and directories via `Ctrl+Shift+F` on Windows
-and Linux, and `⌘⇧F` on macOS. (The terminal version does not have a default key binding for
-finding in files.) Invoking "Find Next" prompts you for a directory to search in. The "Replace"
-entry has been substituted for a "Filter" entry that contains files and directories to include
-or exclude from the search.
+Textadept can search for text within multiple files and directories via `Ctrl+Shift+F` on
+Windows and Linux, `⌘⇧F` on macOS, and `M-^F` in the terminal version. Invoking "Find Next"
+prompts you for a directory to search in. The "Replace" entry has been substituted for a "Filter"
+entry that contains files and directories to include or exclude from the search.
 
 A filter consists of a comma-separated list of [Lua patterns](#regex-and-lua-pattern-syntax)
 that match filenames and directories to include or exclude. Patterns are inclusive by
@@ -547,9 +538,8 @@ in Lua by modifying [`ui.find_in_files_filters`][]. For example, in your *~/.tex
 After performing a "Find in Files" search, a temporary buffer lists the search results. You can
 use the arrow keys to navigate within the list and press `Enter` to go to a result's location
 in its respective file. You can also double-click on results or go to the next or previous
-result via `Ctrl+Alt+G` or `Ctrl+Alt+Shift+G`, respectively, on Windows and Linux; and `^⌘G`
-or `^⌘⇧G`, respectively, on macOS. (The terminal version does not have default key bindings
-for these actions.)
+result via `Ctrl+Alt+G` or `Ctrl+Alt+Shift+G`, respectively, on Windows and Linux; `^⌘G` or
+`^⌘⇧G`, respectively, on macOS; and `M-G` or `M-S-G`, respectively, in the terminal version.
 
 ![Find in Files](images/findinfiles.png)
 
@@ -557,9 +547,9 @@ for these actions.)
 
 ##### Incremental Find
 
-Textadept searches for text incrementally as you type when you summon the find & replace pane
-via `Ctrl+Alt+F` on Windows and Linux, `^⌘F` on macOS, and `M-^F` in the terminal version. All
-of the find options apply except for "In Files".
+Textadept searches for text incrementally as you type when you summon the find & replace pane via
+`Ctrl+Alt+F` on Windows and Linux, `^⌘F` on macOS, and `M-F` in the terminal version. All of
+the find options apply except for "In Files".
 
 #### Command Entry
 
@@ -576,7 +566,7 @@ through via the `Up` and `Down` key bindings on Windows, Linux, and the terminal
 
 ![Command Entry](images/commandentry.png)
 
-You can open the Lua command entry via `Ctrl+E` on Windows and Linux, `⌘E` on macOS, and `M-C`
+You can open the Lua command entry via `Ctrl+E` on Windows and Linux, `⌘E` on macOS, and `^E`
 in the terminal version. It acts very similarly to Lua's interactive prompt. Type in the Lua
 command or code to run and press `Enter` to invoke or run it. Textadept's [Lua API][] contains
 all of the application's built-in commands. For convenience, the contents of the [`buffer`][],
@@ -592,8 +582,8 @@ so be careful.
 
 The following key bindings apply in the Lua command entry:
 
-* Show a documentation popup for the command under or behind the caret via `Ctrl+H` on Windows
-  and Linux, `^H` on macOS, and `M-H` or `M-S-H` in the terminal version.
+* Show a documentation popup for the command under or behind the caret via `Ctrl+?` on Windows
+  and Linux, `⌘?` or `^?` on macOS, and `M-?` or `^?` in the terminal version.
 * Show completion candidates for Lua variables, tables, functions, and fields via `Tab` on
   Windows, Linux, and the terminal version, and `⇥` on macOS. Use the arrow keys to make a
   selection and press `Enter` to insert it.
@@ -621,7 +611,7 @@ This will search for the first instance of the word "require" in the current fil
 ##### Shell Command Entry and Filtering Text
 
 You can filter text through shell commands via `Ctrl+|` on Windows and Linux, `⌘|` on macOS,
-and `^\` in the terminal version. An example would be running the shell command `sort`,
+and `^\` or `^|` in the terminal version. An example would be running the shell command `sort`,
 which accepts lines in a buffer as standard input (stdin), sorts those lines, and then emits
 them to standard output (stdout), which Textadept replaces the original input text with.
 [`textadept.editing.filter_through()`][] describes how this feature determines stdin.
@@ -661,23 +651,22 @@ Textadept allows you to open files using a variety of methods:
 * Open, using a standard file chooser dialog, one or more files in a single directory via
   `Ctrl+O` on Windows and Linux, `⌘O` on macOS, and `^O` in the terminal version.
 * Open, using a quick open dialog, one or more files in the current project or Textadept's
-  current working directory via `Ctrl+Alt+Shift+P` on Windows and Linux, `^⌘⇧P` on macOS,
-  and `M-^P` in the terminal version. Typing part of any filename filters the list, with spaces
+  current working directory via `Ctrl+Shift+O` on Windows and Linux, `^⌘O` on macOS, and
+  `M-^O` in the terminal version. Typing part of any filename filters the list, with spaces
   being wildcards. The arrow keys move the selection up and down. Holding down `Shift` while
   pressing the arrow keys selects multiple files, as does holding down `Ctrl` while clicking.
   Pressing `Enter` or selecting `OK` opens all selected files. Double-clicking on a single file
   opens it. (The terminal requires pressing `Enter`.)
 * Open, using a quick open dialog, one or more files in the directory of the currently opened
-  file via `Ctrl+Alt+Shift+O` on Windows and Linux, `^⌘⇧O` on macOS, and `M-S-O` in the
-  terminal version.
+  file via the "Tools > Quick Open > Quickly Open Current Directory" menu item.
 * Open a file by dragging it from a file manager and dropping it into one of Textadept's views.
-* Open a recently opened file from a list of recent files via `Ctrl+Alt+O` on Windows and Linux,
-  `^⌘O` on macOS, and `M-^O` in the terminal version.
-* Open, using a quick open dialog, one or more files in *~/.textadept/* via `Ctrl+U` on Windows
-  and Linux, `⌘U` on macOS, and `^U` in the terminal version.
-* Reopen the currently opened file, discarding any unsaved changes, via `Ctrl+Shift+O` on Windows
-  and Linux, `⌘⇧O` on macOS, and `M-O` in the terminal version. Textadept will prompt you
-  to reload a file if the editor detects it has been modified externally.
+* Open a recently opened file from a list of recent files via the "File > Open Recent..." menu
+  item.
+* Open, using a quick open dialog, one or more files in *~/.textadept/* via `Ctrl+Alt+U`
+  on Windows and Linux, `⌘⇧U` on macOS, and `M-U` in the terminal version.
+* Reopen the currently opened file, discarding any unsaved changes, via the "File > Reload"
+  menu item. Textadept will prompt you to reload a file if the editor detects it has been
+  modified externally.
 
 ![Quick Open](images/snapopen.png)
 
@@ -757,7 +746,7 @@ them when you update Textadept. These lexers also take precedence over the ones 
 with Textadept.
 
 You can manually change a buffer's lexer via `Ctrl+Shift+L` on Windows and Linux, `⌘⇧L` on
-macOS, and `M-S-L` in the terminal version. Typing part of a lexer name in the dialog filters
+macOS, and `M-^L` in the terminal version. Typing part of a lexer name in the dialog filters
 the list, with spaces being wildcards. The arrow keys move the selection up and down. Pressing
 `Enter`, selecting `OK`, or double-clicking on a lexer assigns it to the current buffer. (The
 terminal requires pressing `Enter`.)
@@ -817,24 +806,24 @@ language-specific basis. For example, in your *~/.textadept/init.lua*:
 
 You can manually change a buffer's indentation using the following process:
 
-1. Toggle between using tabs and spaces via `Ctrl+Alt+Shift+T` on Windows and Linux, `^⇧T`
-   on macOS, and `M-T` or `M-S-T` in the terminal version.
+1. Toggle between using tabs and spaces via `Ctrl+Alt+T` on Windows and Linux, `^⌘T` on macOS,
+   and `M-T` in the terminal version.
 2. Set the indentation size via the "Buffer > Indentation" menu.
-3. Optionally convert existing indentation to the new indentation settings via `Ctrl+Alt+I`
-   on Windows and Linux, `^I` on macOS, and `M-I` in the terminal version.
+3. Optionally convert existing indentation to the new indentation settings via the "Buffer >
+  Indentation > Convert Indentation" menu item.
 
 ##### View Settings
 
 Textadept normally does not wrap long lines into view, nor does it show whitespace characters. You
-can toggle line wrapping for the current buffer via `Ctrl+Alt+\` on Windows and Linux, and `^\`
-on macOS. You can toggle whitespace visibility for the current buffer via `Ctrl+Alt+Shift+S`
-on Windows and Linux, and `^⇧S` on macOS. Visible spaces are represented by dots, and visible
-tabs are represented by arrows. (The terminal version does not have default key bindings for
-either of these actions.)
+can toggle line wrapping for the current buffer via `Ctrl+\` on Windows and Linux, `⌘\` on
+macOS, and `M-\` in the terminal version. You can toggle whitespace visibility for the current
+buffer via the "Buffer > Toggle View Whitespace" menu item. Visible spaces are represented by
+dots, and visible tabs are represented by arrows. (The terminal version does not have default
+key bindings for either of these actions.)
 
-The GUI version of Textadept can show small guiding lines based on indentation level, and
-does so by default. You can toggle the visibility of these guides for the current view via
-`Ctrl+Alt+Shift+I` on Windows and Linux, and `^⇧I` on macOS.
+The GUI version of Textadept can show small guiding lines based on indentation level, and does so
+by default. You can toggle the visibility of these guides for the current view via the "View >
+Toggle Show Indent Guides" menu item.
 
 The GUI version of Textadept also allows you to temporarily increase or decrease the font size
 in the current view. The following key bindings apply for this feature:
@@ -862,7 +851,7 @@ section of that list. (They are also shown in the "Edit" menu.)
 Textadept automatically highlights matching brace characters when the caret is over one of them:
 '(', ')', '[', ']', '{', or '}' for programming languages, and '<' or '>' for XML-like markup
 languages. You can go to the current character's complement via `Ctrl+M` on Windows and Linux,
-`^M` on macOS, and `M-M` in the terminal version.
+`⌘M` on macOS, and `M-M` in the terminal version.
 
 ![Matching Braces](images/matchingbrace.png)
 
@@ -907,8 +896,8 @@ highlighting.
 Textadept provides buffer-based word completion. It can also autocomplete symbols for programming
 languages and display documentation for functions and other symbols.
 
-You can show word completion candidates for partially-typed words via `Ctrl+Enter` on
-Windows and Linux, `^Esc` on macOS, and `M-Enter` in the terminal version. Continuing to type
+You can show word completion candidates for partially-typed words via `Ctrl+Enter` on Windows
+and Linux, `⌘↩` on macOS, and `^Enter` in the terminal version. Continuing to type
 changes the suggested completion. Use the arrow keys to navigate within the list and press
 `Enter` to insert the rest of the selected word. By default, the list of completions comes
 from the current buffer. You can configure Textadept to look in all open buffers by setting
@@ -919,14 +908,15 @@ from the current buffer. You can configure Textadept to look in all open buffers
 ![Word Completion](images/wordcompletion.png)
 
 For languages that support it, you can show symbol completion candidates at the current position
-via `Ctrl+Space` on Windows and Linux, `⌥Esc` on macOS, and `^Space` in the terminal version.
+via `Ctrl+Space` on Windows and Linux, `⌘Space` or `^Space` on macOS, and `^Space` in the
+terminal version.
 
 ![Autocomplete Lua](images/adeptsense_lua.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Autocomplete Lua String](images/adeptsense_string.png)
 
-Also for languages that support it, you can show any known documentation for the current
-symbol via `Ctrl+H` on Windows and Linux, `^H` on macOS, and `M-H` or `M-S-H` in the terminal
+Also for languages that support it, you can show any known documentation for the current symbol
+via `Ctrl+?` on Windows and Linux, `⌘?` or `^?` on macOS, and `M-?` or `^?` in the terminal
 version. Textadept has built-in autocompletion and documentation support for Lua and C, including
 for its own Lua API.
 
@@ -954,39 +944,36 @@ You can create contiguous selections as follows:
   `Shift` with movement keys. While in selection mode, swap the start and end positions via
   `^]` in order to alter the selection from its opposite side. Exit selection mode by typing
   text, deleting text, performing an action that changes text, or by pressing `^^` again.
-* Select the current word via `Ctrl+Shift+D` on Windows and Linux, `⌘⇧D` on macOS, and
-  `M-S-W` in the terminal version. Repeated use of this action selects subsequent occurrences
-  of that word as additional (multiple) selections. Undo the most recent multiple selection via
-  `Ctrl+Alt+D`, `^⌘D`, or `M-^D`.
-* Select the current line via `Ctrl+Shift+N` on Windows and Linux, `⌘⇧N` on macOS, and
-  `M-S-N` in the terminal version.
+* Select the current word via `Ctrl+D` on Windows and Linux, `⌘D` on macOS, and `^D` in the
+  terminal version. Repeated use of this action selects subsequent occurrences of that word as
+  additional (multiple) selections. Undo the most recent multiple selection via `Ctrl+Alt+D`,
+  `^⌘D`, or `M-D`.
+* Select the current line via `Ctrl+L` on Windows and Linux, `⌘L` on macOS, and `^L` in the
+  terminal version.
 * Double click to select a word, and triple-click to select a line.
 * Click and optionally drag within the line number margin to select whole lines.
 * Select the current paragraph via `Ctrl+Shift+P` on Windows and Linux, `⌘⇧P` on macOS,
-  and `M-S-P` in the terminal version. Paragraphs are surrounded by one or more blank lines.
-* Select all buffer text via `Ctrl+A` on Windows and Linux, `⌘A` on macOS, and `M-A` in the
+  and `M-^P` in the terminal version. Paragraphs are surrounded by one or more blank lines.
+* Select all buffer text via `Ctrl+A` on Windows and Linux, `⌘A` on macOS, and `^A` in the
   terminal version.
 * Select text between matching delimiters (parentheses, brackets, braces, single quotes,
-  double-quotes, and back quotes) via `Ctrl+Shift+M` on Windows and Linux, `^⇧M` on macOS,
-  and `M-S-M` in the terminal version. Repeated use of this action toggles the selection of
-  the delimiters themselves.
-* Select between HTML/XML tags via `Ctrl+<` on Windows and Linux, `⌘<` on macOS, and `M-<`
-  in the terminal version.
-* Select an HTML/XML tag via `Ctrl+>` on Windows and Linux, and `⌘>` on macOS.
+  double-quotes, back quotes, and HTML/XML tag characters) via `Ctrl+Shift+M` on Windows and
+  Linux, `⌘⇧M` on macOS, and `M-^M` in the terminal version. Repeated use of this action
+  toggles the selection of the delimiters themselves.
 
 You can create multiple selections as follows:
 
 * Add another selection by holding down `Ctrl`, clicking, and optionally dragging the mouse
   over a range of text.
-* Select as an additional selection the next occurrence of the current word via `Ctrl+Shift+D`
-  on Windows and Linux, `⌘⇧D` on macOS, and `M-S-W` in the terminal version.
+* Select as an additional selection the next occurrence of the current word via `Ctrl+D`
+  on Windows and Linux, `⌘D` on macOS, and `^D` in the terminal version.
 
 Textadept mirrors any typed or pasted text at each selection.
 
 You can create a rectangular selection as follows:
 
 * Press the arrow keys, home/end, or page up/down, while holding down `Alt+Shift` on Windows
-  and Linux, `⌥⇧` on macOS, and `M-S-` in the terminal version.
+  and Linux, `^⇧` on macOS, and `M-S-` in the terminal version.
 * Click and drag the mouse while holding down the `Alt` key on Windows and Linux, and `⌥`
   on macOS.
 * Click and drag the mouse without holding down any modifiers (thus making a normal, multi-line
@@ -1015,19 +1002,19 @@ Textadept can apply many different transformations to the current word, line, an
 * Enclose the current word or selected text within delimiters like parentheses, braces, brackets,
   single quotes, double quotes, or HTML/XML tags using the key bindings listed in the "Edit >
   Selection" submenu.
-* Convert the selected text or current word to upper or lower case via `Ctrl+Alt+U` or
-  `Ctrl+Alt+Shift+U`, respectively, on Windows and Linux; `^U` or `^⇧U`, respectively, on
-  macOS; and `M-^U` or `M-^L` in the terminal version.
+* Convert the selected text or current word to upper or lower case via `Ctrl+Shift+U` or
+  `Ctrl+U`, respectively, on Windows and Linux; `⌘U` or `⌘⇧U`, respectively, on macOS;
+  and `M-^U` or `M-U` in the terminal version.
 * Increase or decrease the indentation of the selected lines via `Tab` or `Shift+Tab`,
   respectively, on Windows and Linux; `⇥` or `⇧⇥`, respectively on macOS; and `Tab` or
   `S-Tab` in the terminal version. You do not have to select whole lines; selecting any part
   of a line is sufficient.
-* Move the current or selected line(s) up or down via `Ctrl+Shift+Up` or `Ctrl+Shift+Down`,
-  respectively, on Windows and Linux; `^⇧⇡` or `^⇧⇣`, respectively, on macOS; and `S-^Up`
-  or `S-^Down` in the terminal version. You do not have to select whole lines; selecting any
-  part of a line is sufficient.
-* Comment out code on the current or selected line(s) via `Ctrl+/` on Windows and Linux,
-  `⌘/` on macOS, and `M-/` in the terminal version. You do not have to select whole lines;
+* Move the current or selected line(s) up or down via `Ctrl+Alt+Shift+Up` or
+  `Ctrl+Alt+Shift+Down`, respectively, on Windows and Linux; and `^⌘⇧⇡` or `^⌘⇧⇣`,
+  respectively, on macOS. You do not have to select whole lines; selecting any part of a line
+  is sufficient.
+* Comment out code on the current or selected line(s) via `Ctrl+/` on Windows and Linux, `⌘/`
+  on macOS, and `^?` or `M-/` in the terminal version. You do not have to select whole lines;
   selecting any part of a line is sufficient.
 
 You can auto-enclose selected text between any typed punctuation character (taking into account
@@ -1041,14 +1028,15 @@ in your *~/.textadept/init.lua*:
 
 #### Navigate Through History
 
-Textadept records buffer positions within views over time and allows for navigating through that
-history. Navigate backward or forward via `Alt+,` or `Alt+.`, respectively, on Windows and Linux;
-`^,` or `^.`, respectively, on macOS; and `M-,` or `M-.`, respectively, in the terminal version.
+Textadept records buffer positions within views over time and allows for navigating through
+that history. Navigate backward or forward via `Ctrl+[` or `Ctrl+]`, respectively, on Windows
+and Linux; `⌘[` or `⌘]`, respectively, on macOS; and `M-[` or `M-]`, respectively, in the
+terminal version.
 
 #### Go To Line
 
-You can go to a specific line in the current buffer via `Ctrl+J` on Windows and Linux, `⌘J`
-on macOS, and `^J` in the terminal version. Enter the line number to go to in the prompt,
+You can go to a specific line in the current buffer via `Ctrl+G` on Windows and Linux, `⌘G`
+on macOS, and `^G` in the terminal version. Enter the line number to go to in the prompt,
 and press `Enter` or click `OK`.
 
 #### Bookmarks
@@ -1058,26 +1046,26 @@ added to as buffer text is inserted and deleted. Bookmarks show up in the left-h
 after line numbers. Textadept allows you to bookmark lines and jump back to them later. The
 following key bindings apply for bookmarks:
 
-* Toggle a bookmark on the current line via `Ctrl+F2` on Windows and Linux, `⌘F2` on macOS,
-  and `F1` in the terminal version.
-* Go to the next bookmarked line via `F2`.
-* Go to the previously bookmarked line via `Shift+F2` on Windows and Linux, `⇧F2` on macOS,
-  and `F3` in the terminal version.
-* Go to the bookmarked line selected from a list via `Alt+F2` on Windows and Linux, `⌥F2`
-  on macOS, and `F4` in the terminal version.
-* Clear all bookmarks in the current buffer via `Ctrl+Shift+F2` on Windows and Linux, `⌘⇧F2`
-  on macOS, and `F6` in the terminal version.
+* Toggle a bookmark on the current line via `Ctrl+K` on Windows and Linux, `⌘K` on macOS,
+  and `^K` in the terminal version.
+* Go to the next bookmarked line via `Ctrl+Alt+K` on Windows and Linux, `^⌘K` on macOS, and
+  `M-K` in the terminal version.
+* Go to the previously bookmarked line via `Ctrl+Alt+Shift+K` on Windows and Linux, `^⌘⇧K`
+  on macOS, and `M-S-K` in the terminal version.
+* Go to the bookmarked line selected from a list via `Ctrl+Shift+K` on Windows and Linux,
+  `⌘⇧K` on macOS, and `M-^K` in the terminal version.
+* Clear all bookmarks in the current buffer via the "Tools > Bookmarks > Clear Bookmarks"
+  menu item.
 
 #### Macros
 
 Macros allow you to quickly record a series of edits and play them back without having to write
 a custom Lua script. The following key bindings apply for macros:
 
-* Start recording a macro via `F9`.
-* Stop recording a macro via `Shift+F9` on Windows and Linux, `⇧F9` on macOS, and `F10`
-  in the terminal version.
-* Play back the most recently recorded macro via `Alt+F9` on Windows and Linux, `⌥F9` on macOS,
-  and `F12` in the terminal version.
+* Start and stop recording a macro via `Alt+,` on Windows and Linux, `^,` on macOS, and `M-,`
+  in the terminal version. The status bar will display when a macro starts and stops recording.
+* Play back the most recently recorded macro via `Alt+.` on Windows and Linux, `^.` on macOS,
+  and `M-.` in the terminal version.
 
 You can use the "Tools > Macros" menu to save the most recently recorded macro to a file,
 and to load one for playback on demand.
@@ -1102,15 +1090,14 @@ describes snippets and their contents in more detail.
 
 The following key bindings apply for snippets:
 
-* Insert a snippet from a list of available snippets via `Ctrl+Shift+K` on Windows and Linux,
-  `⌥⇧⇥` on macOS, and `M-S-K` in the terminal version. Typing part of a snippet trigger
-  in the dialog filters the list, with spaces being wildcards. The arrow keys move the selection
-  up and down. Pressing `Enter`, selecting `OK`, or double-clicking on a snippet inserts it
-  into the current buffer. (The terminal requires pressing `Enter`.)
-* Show completion candidates for a partially-typed snippet trigger word via `Ctrl+K` on Windows
-  and Linux, `⌥⇥` on macOS, and `M-K` in the terminal version. Continuing to type changes
-  the suggested completion. Use the arrow keys to navigate within the list and press `Enter`
-  to insert the rest of the trigger word.
+* Insert a snippet from a list of available snippets via the "Tools > Snippets > Insert
+  Snippet..." menu item. Typing part of a snippet trigger in the dialog filters the list, with
+  spaces being wildcards. The arrow keys move the selection up and down. Pressing `Enter`,
+  selecting `OK`, or double-clicking on a snippet inserts it into the current buffer. (The
+  terminal requires pressing `Enter`.)
+* Show completion candidates for a partially-typed snippet trigger word via the "Tools > Snippets >
+  Complete Trigger Word" menu item. Continuing to type changes the suggested completion. Use the
+  arrow keys to navigate within the list and press `Enter` to insert the rest of the trigger word.
 * Insert a snippet based on the trigger word behind the caret via `Tab` on Windows, Linux,
   and in the terminal version, and `⇥` on macOS. You can insert another snippet within an
   active snippet. A previously active snippet will pick up where it left off after a nested
@@ -1130,7 +1117,7 @@ The following key bindings apply for snippets:
 
 Textadept can temporarily hide blocks of code in supported languages. Markers in the margin to
 the left of code denote fold points. Clicking on those markers toggles folding. You can toggle
-folding for the current block via `Ctrl+*` on Windows and Linux, `⌘*` on macOS, and `M-*`
+folding for the current block via `Ctrl+}` on Windows and Linux, `⌘}` on macOS, and `M-}`
 in the terminal version.
 
 ![Folding](images/folding.png)
@@ -1139,8 +1126,7 @@ in the terminal version.
 
 Textadept normally constrains the caret to remain within text lines. Enabling virtual space
 allows you to move the caret into the space beyond the ends of lines. Toggle virtual space via
-`Ctrl+Alt+Shift+V` on Windows and Linux, and `^⇧V` in macOS. (The terminal version does not
-have a default key binding for toggling virtual space.)
+the "View > Toggle Virtual Space" menu item.
 
 #### Key Bindings
 
@@ -1173,22 +1159,22 @@ jumps to its source.
 The following key bindings apply for compiling and running source files, and for building
 projects and running tests and project commands:
 
-* Compile the current file via `Ctrl+Shift+R` on Windows and Linux, `⌘⇧R` on macOS, and
-  `M-^R` in the terminal version.
+* Compile the current file via `Ctrl+Shift+C` on Windows and Linux, `⌘⇧C` on macOS, and
+  `M-^C` in the terminal version.
 * Run the current file via `Ctrl+R` on Windows and Linux, `⌘R` on macOS, and `^R` in the
   terminal version.
 * Build the current project via `Ctrl+Shift+B` on Windows and Linux, `⌘⇧B` on macOS, and
   `M-^B` in the terminal version.
 * Run tests for the current project via `Ctrl+Shift+T` on Windows and Linux, `⌘⇧T` on macOS,
   and `M-^T` in the terminal version.
-* Run a command for the current project via `Ctrl+Shift+C` on Windows and Linux, `⌘⇧C`
-  on macOS, and `M-C` in the terminal version.
+* Run a command for the current project via `Ctrl+Shift+R` on Windows and Linux, `⌘⇧R`
+  on macOS, and `M-^R` in the terminal version.
 * Stop the currently running compile, run, build, or test process via `Ctrl+Shift+X` on Windows
   and Linux, `⌘⇧X` on macOS, and `M-^X` in the terminal version.
 * Go to the source of the next recognized warning or error via `Ctrl+Alt+E` on Windows and Linux,
-  `^⌘E` on macOS, and `M-X` in the terminal version.
+  `^⌘E` on macOS, and `M-E` in the terminal version.
 * Go to the source of the previously recognized warning or error via `Ctrl+Alt+Shift+E` on
-  Windows and Linux, `^⌘⇧E` on macOS, and `M-S-X` in the terminal version.
+  Windows and Linux, `^⌘⇧E` on macOS, and `M-S-E` in the terminal version.
 * Go to the source of the recognized warning or error on the current line via `Enter`.
 
 Prior to running a compile, run, build, or test command, Textadept will prompt you with either:

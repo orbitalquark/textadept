@@ -74,20 +74,20 @@ M.editing_keys = {__index = {}}
 local bindings = {
   -- Note: cannot use `M.cut`, `M.copy`, etc. since M is never considered the global buffer.
   [function() M:undo() end] = {'ctrl+z', 'cmd+z', 'ctrl+z'},
-  [function() M:undo() end] = {nil, nil, 'meta+z'},
   [function() M:redo() end] = {'ctrl+y', 'cmd+Z', 'ctrl+y'},
-  [function() M:redo() end] = {'ctrl+Z', nil, 'meta+Z'},
+  [function() M:redo() end] = {'ctrl+Z', 'cmd+y', 'ctrl+meta+z'},
   [function() M:cut() end] = {'ctrl+x', 'cmd+x', 'ctrl+x'},
   [function() M:copy() end] = {'ctrl+c', 'cmd+c', 'ctrl+c'},
   [function() M:paste() end] = {'ctrl+v', 'cmd+v', 'ctrl+v'},
-  [function() M:select_all() end] = {'ctrl+a', 'cmd+a', 'meta+a'},
+  [function() M:select_all() end] = {'ctrl+a', 'cmd+a', 'ctrl+a'},
   [function() cycle_history(true) end] = {'up', 'up', 'up'},
   [cycle_history] = {'down', 'down', 'down'}, -- LuaFormatter
-  [require('textadept.editing').show_documentation] = {'ctrl+h', 'ctrl+h', {'meta+h', 'meta+H'}},
+  [require('textadept.editing').show_documentation] = {'ctrl+?', 'cmd+?', 'ctrl+?'},
+  [function() require('textadept.editing').show_documentation() end] = {nil, 'ctrl+?', 'meta+?'},
   -- Movement keys.
   [function() M:char_right() end] = {nil, 'ctrl+f', 'ctrl+f'},
   [function() M:char_left() end] = {nil, 'ctrl+b', 'ctrl+b'},
-  [function() M:vc_home() end] = {nil, 'ctrl+a', 'ctrl+a'},
+  [function() M:vc_home() end] = {nil, 'ctrl+a', nil},
   [function() M:line_end() end] = {nil, 'ctrl+e', 'ctrl+e'},
   [function() M:clear() end] = {nil, 'ctrl+d', 'ctrl+d'}
 }

@@ -314,16 +314,6 @@ key for easy access:
       buffer:new_line()
     end
 
-When defining key bindings for other commands, you may make use of a `Ctrl+L` (`⌘L` on
-macOS | `M-L` in the terminal version) keychain. Traditionally this prefix has been reserved
-for use by language modules (although neither Textadept nor its modules utilize it at the
-moment). Users may define this keychain for new or existing modules and it will not conflict
-with any default key bindings. For example:
-
-    keys.lua[CURSES and 'meta+l' or OSX and 'cmd+l' or 'ctrl+l'] = {
-      ...
-    }
-
 ### Menus
 
 It may be useful to add language-specific menu options to the top-level menu and/or right-click
@@ -6598,11 +6588,11 @@ See also:
 Map of auto-paired characters like parentheses, brackets, braces, and quotes.
 The ASCII values of opening characters are assigned to strings that contain complement
 characters. The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;",
-"&quot;&quot;", and "``".
+"&quot;&quot;", and "``". For certain XML-like lexers, "<>" is also auto-paired.
 
 Usage:
 
-* `textadept.editing.auto_pairs[string.byte('<')] = '>'`
+* `textadept.editing.auto_pairs[string.byte('*')] = '*'`
 * `textadept.editing.auto_pairs = nil -- disable completely`
 
 <a id="textadept.editing.autocompleters"></a>
@@ -6617,18 +6607,6 @@ be shown. Autocompletion lists are sorted automatically.
 See also:
 
 * [`textadept.editing.autocomplete`](#textadept.editing.autocomplete)
-
-<a id="textadept.editing.brace_matches"></a>
-#### `textadept.editing.brace_matches`
-
-Table of brace characters to highlight.
-The ASCII values of brace characters are keys and are assigned `true`. The default brace
-characters are '(', ')', '[', ']', '{', and '}'.
-
-Usage:
-
-* `textadept.editing.brace_matches[string.byte('<')] = true`
-* `textadept.editing.brace_matches[string.byte('>')] = true`
 
 <a id="textadept.editing.comment_string"></a>
 #### `textadept.editing.comment_string`
@@ -6648,11 +6626,11 @@ See also:
 
 Table of characters to move over when typed.
 The ASCII values of characters are keys and are assigned `true` values. The default characters
-are ')', ']', '}', '&apos;', '&quot;', and '`'.
+are ')', ']', '}', '&apos;', '&quot;', and '`'. For certain XML-like lexers, '>' is also included.
 
 Usage:
 
-* `textadept.editing.typeover_chars[string.byte('>')] = true`
+* `textadept.editing.typeover_chars[string.byte('*')] = true`
 
 ---
 <a id="textadept.history"></a>
@@ -6725,15 +6703,36 @@ Defines key bindings for Textadept.
 This set of key bindings is pretty standard among other text editors, at least for basic
 editing commands and movements.
 
+They are designed to be as consistent as possible between operating systems and platforms
+so that users familiar with one set of bindings can intuit a given binding on another OS or
+platform, minimizing the need for memorization.
+
+In general, bindings for macOS are the same as for Windows/Linux except the "Control" modifier
+key on Windows/Linux is replaced by "Command" (`⌘`) and the "Alt" modifier key is replaced by
+"Control" (`^`). The only exception is for word- and paragraph-based movement keys, which use
+"Alt" (`⌥`) instead of "Command" (`⌘`).
+
+In general, bindings for the terminal version are the same as for Windows/Linux except:
+
+  * Most `Ctrl+Shift+`*`key`* combinations become `M-^`*`key`* since most terminals recognize
+    few, if any, `Ctrl+Shift` key sequences.
+  * Most `Ctrl+`*`symbol`* combinations become `M-`*`symbol`* since most terminals recognize
+    only a few `Ctrl` combinations with symbol keys.
+  * All `Ctrl+Alt+`*`key`* combinations become `M-`*`key`* except for word part movement
+    keys and those involving `PgDn` and `PgUp`. The former are not supported and the latter
+    use both modifier keys.
+  * `Ctrl+J` and `Ctrl+M` become `M-J` and `M-M`, respectively, because control sequences
+    involving the `J` and `M` keys are often interpreted as involving the Enter key.
+
 ### Key Bindings
 
 Windows and Linux | macOS | Terminal | Command
 -|-|-|-
 **File**|||
-Ctrl+N | ⌘N | M-^N | New file
+Ctrl+N | ⌘N | ^N | New file
 Ctrl+O | ⌘O | ^O | Open file
-Ctrl+Alt+O | ^⌘O | M-^O | Open recent file...
-Ctrl+Shift+O | ⌘⇧O | M-O | Reload file
+None | None | None | Open recent file...
+None | None | None | Reload file
 Ctrl+S | ⌘S | ^S<br/>M-S^(*) | Save file
 Ctrl+Shift+S | ⌘⇧S | M-^S | Save file as..
 None | None | None | Save all files
@@ -6743,183 +6742,193 @@ None | None | None | Load session...
 None | None | None | Save session...
 Ctrl+Q | ⌘Q | ^Q<br/>M-Q^(*) | Quit
 **Edit**| | |
-Ctrl+Z<br/>Alt+Bksp | ⌘Z | ^Z^(†)<br/>M-Z | Undo
-Ctrl+Y<br/>Ctrl+Shift+Z | ⌘⇧Z | ^Y<br/>M-S-Z | Redo
-Ctrl+X<br/>Shift+Del | ⌘X<br/>⇧⌦ | ^X | Cut
+Ctrl+Z<br/>Alt+Bksp | ⌘Z | ^Z^(†)<br/>M-Bksp | Undo
+Ctrl+Y<br/>Ctrl+Shift+Z | ⌘⇧Z<br/>⌘Y | ^Y<br/>M-^Z | Redo
+Ctrl+X<br/>Shift+Del | ⌘X<br/>⇧⌦ | ^X<br/>S-Del | Cut
 Ctrl+C<br/>Ctrl+Ins | ⌘C | ^C | Copy
-Ctrl+V<br/>Shift+Ins | ⌘V | ^V | Paste
-Ctrl+Shift+V | ⌘⇧V | M-V | Paste Reindent
-Ctrl+D | ⌘D | None | Duplicate line/selection
-Del | ⌦<br/>^D | Del<br/>^D | Delete
-Alt+Del | ^⌦ | M-Del<br/>M-D | Delete word
-Ctrl+A | ⌘A | M-A | Select all
-Ctrl+M | ^M | M-M | Match brace
-Ctrl+Enter | ^Esc | M-Enter^(‡) | Complete word
-Ctrl+/ | ^/ | M-/ | Toggle block comment
-Ctrl+T | ^T | ^T | Transpose characters
-Ctrl+Shift+J | ^J | M-J | Join lines
-Ctrl+&#124; | ⌘&#124; | ^\ | Filter text through
-Ctrl+Shift+M | ^⇧M | M-S-M | Select between delimiters
-Ctrl+< | ⌘< | M-< | Select between XML tags
-Ctrl+> | ⌘> | None | Select in XML tag
-Ctrl+Shift+D | ⌘⇧D | M-S-W | Select word
-Ctrl+Shift+N | ⌘⇧N | M-S-N | Select line
-Ctrl+Shift+P | ⌘⇧P | M-S-P | Select paragraph
-Ctrl+Alt+U | ^U | M-^U | Upper case selection
-Ctrl+Alt+Shift+U | ^⇧U | M-^L | Lower case selection
-Alt+< | ^< | M-> | Enclose as XML tags
-Alt+> | ^> | None | Enclose as single XML tag
-Alt+" | ^" | None | Enclose in double quotes
-Alt+' | ^' | None | Enclose in single quotes
-Alt+( | ^( | M-) | Enclose in parentheses
-Alt+[ | ^[ | M-] | Enclose in brackets
-Alt+{ | ^{ | M-} | Enclose in braces
-Ctrl+Shift+Up | ^⇧⇡ | S-^Up | Move selected lines up
-Ctrl+Shift+Down | ^⇧⇣ | S-^Down | Move selected lines down
-Alt+, | ^, | M-, | Navigate backward
-Alt+. | ^. | M-. | Navigate forward
+Ctrl+V<br/>Shift+Ins | ⌘V | ^V<br/>S-Ins | Paste
+Ctrl+Shift+V | ⌘⇧V | M-^V | Paste Reindent
+Ctrl+Shift+D | ⌘⇧D | M-^D | Duplicate line/selection
+Del | ⌦<br/> ^D | Del | Delete
+Alt+Del | ^⌦ | M-Del | Delete word
+Ctrl+A | ⌘A | ^A | Select all
+Ctrl+M | ⌘M | M-M | Match brace
+Ctrl+Enter | ⌘↩ | ^Enter | Complete word
+Ctrl+/ | ⌘/ | ^/<br/>M-/ | Toggle block comment
+None | ^T | None | Transpose characters
+Ctrl+J | ⌘J | M-J | Join lines
+Ctrl+&#124; | ⌘&#124; | ^&#124;<br/>^\ | Filter text through
+Ctrl+Shift+M | ⌘⇧M | M-^M | Select between delimiters
+Ctrl+D | ⌘D | ^D | Select word
+Ctrl+Alt+D | ^⌘D | M-D | Deselect word
+Ctrl+L | ⌘L | ^L | Select line
+Ctrl+Shift+P | ⌘⇧P | M-^P | Select paragraph
+Ctrl+Shift+U | ⌘⇧U | M-^U | Upper case selection
+Ctrl+U | ⌘U | ^U | Lower case selection
+Alt+< | ^< | M-< | Enclose selection as XML tags
+Alt+> | ^> | M-> | Enclose selection as single XML tag
+Alt+" | ^" | M-" | Enclose selection in double quotes
+Alt+' | ^' | M-' | Enclose selection in single quotes
+Alt+( | ^( | M-( | Enclose selection in parentheses
+Alt+[ | ^[ | None | Enclose selection in brackets
+Alt+{ | ^{ | M-{ | Enclose selection in braces
+Ctrl+Alt+Shift+Up | ^⌘⇧⇡ | None | Move selected lines up
+Ctrl+Alt+Shift+Down | ^⌘⇧⇣ | None | Move selected lines down
+Ctrl+[<br/>Alt+Left | ⌘[ | M-[<br/>M-Left | Navigate backward
+Ctrl+]<br/>Alt+Right | ⌘] | M-]<br/>M-Right | Navigate forward
 None | None | None | Record location
 None | None | None | Clear navigation history
-Ctrl+P | ⌘, | M-~ | Preferences
+None | ⌘, | None | Preferences
 **Search**| | |
-Ctrl+F | ⌘F | M-F<br/>M-S-F | Find
-Ctrl+G<br/>F3 | ⌘G | M-G | Find next
-Ctrl+Shift+G<br/>Shift+F3 | ⌘⇧G | M-S-G | Find previous
-Ctrl+Alt+R | ^R | M-R | Replace
-Ctrl+Alt+Shift+R | ^⇧R | M-S-R | Replace all
-Ctrl+Alt+F | ^⌘F | M-^F | Find incremental
-Ctrl+Shift+F | ⌘⇧F | None | Find in files
-Ctrl+Alt+G | ^⌘G | None | Goto next file found
-Ctrl+Alt+Shift+G | ^⌘⇧G | None | Goto previous file found
-Ctrl+J | ⌘J | ^J | Jump to line
+Ctrl+F | ⌘F | ^F | Find
+None | None | None | Find next
+None | None | None | Find previous
+None | None | None | Replace
+None | None | None | Replace all
+Ctrl+Alt+F | ^⌘F | M-F | Find incremental
+Ctrl+Shift+F | ⌘⇧F | M-^F | Find in files
+Ctrl+Alt+G | ^⌘G | M-G | Go to next file found
+Ctrl+Alt+Shift+G | ^⌘⇧G | M-S-G | Go to previous file found
+Ctrl+G | ⌘G | ^G | Go to line
 **Tools**| | |
-Ctrl+E | ⌘E | M-C | Command entry
-Ctrl+Shift+E | ⌘⇧E | M-S-C | Select command
+Ctrl+E | ⌘E | ^E | Command entry
+Ctrl+P | ⌘P | ^P | Select command
 Ctrl+R | ⌘R | ^R | Run
-Ctrl+Shift+R | ⌘⇧R | M-^R | Compile
+Ctrl+Shift+C | ⌘⇧C | M-^C | Compile
 Ctrl+Shift+B | ⌘⇧B | M-^B | Build
 Ctrl+Shift+T | ⌘⇧T | M-^T | Run tests
-Ctrl+Shift+C | ⌘⇧C | M-^C | Run project
+Ctrl+Shift+R | ⌘⇧R | M-^R | Run project
 Ctrl+Shift+X | ⌘⇧X | M-^X | Stop
-Ctrl+Alt+E | ^⌘E | M-X | Next Error
-Ctrl+Alt+Shift+E | ^⌘⇧E | M-S-X | Previous Error
-Ctrl+F2 | ⌘F2 | F1 | Toggle bookmark
-Ctrl+Shift+F2 | ⌘⇧F2 | F6 | Clear bookmarks
-F2 | F2 | F2 | Next bookmark
-Shift+F2 | ⇧F2 | F3 | Previous bookmark
-Alt+F2 | ⌥F2 | F4 | Goto bookmark...
-F9 | F9 | F9 | Start/stop recording macro
-Shift+F9 | ⇧F9 | F10 | Play recorded macro
-Ctrl+U | ⌘U | ^U | Quickly open `_USERHOME`
-None | None | None | Quickly open `_HOME`
-Ctrl+Alt+Shift+O | ^⌘⇧O | M-S-O | Quickly open current directory
-Ctrl+Alt+Shift+P | ^⌘⇧P | M-^P | Quickly open current project
-Ctrl+Shift+K | ⌥⇧⇥ | M-S-K | Insert snippet...
+Ctrl+Alt+E | ^⌘E | M-E | Next Error
+Ctrl+Alt+Shift+E | ^⌘⇧E | M-S-E | Previous Error
+Ctrl+K | ⌘K | ^K | Toggle bookmark
+None | None | None | Clear bookmarks
+Ctrl+Alt+K | ^⌘K | M-K | Next bookmark
+Ctrl+Alt+Shift+K | ^⌘⇧K | M-S-K | Previous bookmark
+Ctrl+Shift+K | ⌘⇧K | M-^K | Go to bookmark...
+Alt+, | ^, | M-, | Start/stop recording macro
+Alt+. | ^. | M-. | Play recorded macro
+None | None | None | Save recorded macro
+None | None | None | Load saved macro
+Ctrl+Alt+U | ⌘⇧U | M-U | Quickly open `_USERHOME`
+Ctrl+Alt+H | ⌘⇧H | M-H | Quickly open `_HOME`
+None | None | None | Quickly open current directory
+Ctrl+Shift+O | ⌘⇧O | M-^O | Quickly open current project
+None | None | None | Insert snippet...
 Tab | ⇥ | Tab | Expand snippet or next placeholder
 Shift+Tab | ⇧⇥ | S-Tab | Previous snippet placeholder
 Esc | Esc | Esc | Cancel snippet
-Ctrl+K | ⌥⇥ | M-K | Complete trigger word
-Ctrl+Space | ⌥Esc | ^Space | Complete symbol
-Ctrl+H | ^H | M-H<br/>M-S-H | Show documentation
-Ctrl+I | ⌘I | M-S-I | Show style
+None | None | None | Complete trigger word
+Ctrl+Space | ⌘Space<br/> ^Space | ^Space | Complete symbol
+Ctrl+? | ⌘?<br/>^? | M-?<br/>Ctrl+?<sup>‡</sup> | Show documentation
+None | None | None | Show style
 **Buffer**| | |
-Ctrl+Tab | ^⇥ | M-N | Next buffer
-Ctrl+Shift+Tab | ^⇧⇥ | M-P | Previous buffer
-Ctrl+B | ⌘B | M-B<br/>M-S-B | Switch to buffer...
+Ctrl+Tab<br/>Ctrl+PgDn | ^⇥<br/>⌘⇟ | M-PgDn<br/> ^Tab^(‡) | Next buffer
+Ctrl+Shift+Tab<br/>Ctrl+PgUp | ^⇧⇥<br/>⌘⇞ | M-PgUp<br/>S-^Tab^(‡) | Previous buffer
+Ctrl+B | ⌘B | ^B | Switch to buffer...
 None | None | None | Tab width: 2
 None | None | None | Tab width: 3
 None | None | None | Tab width: 4
 None | None | None | Tab width: 8
-Ctrl+Alt+Shift+T | ^⇧T | M-T<br/>M-S-T | Toggle use tabs
-Ctrl+Alt+I | ^I | M-I | Convert indentation
+Ctrl+Alt+T | ^⌘T | M-T | Toggle use tabs
+None | None | None | Convert indentation
 None | None | None | CR+LF EOL mode
 None | None | None | LF EOL mode
 None | None | None | UTF-8 encoding
 None | None | None | ASCII encoding
 None | None | None | CP-1252 encoding
 None | None | None | UTF-16 encoding
-Ctrl+Alt+\\ | ^\\ | None | Toggle wrap mode
-Ctrl+Alt+Shift+S | ^⇧S | None | Toggle view whitespace
-Ctrl+Shift+L | ⌘⇧L | M-S-L | Select lexer...
+Ctrl+\\ | ⌘\\ | M-\\ | Toggle wrap mode
+None | None | None | Toggle view whitespace
+Ctrl+Shift+L | ⌘⇧L | M-^L | Select lexer...
 **View**| | |
-Ctrl+Alt+N | ^⌥⇥ | M-^V N | Next view
-Ctrl+Alt+P | ^⌥⇧⇥ | M-^V P | Previous view
-Ctrl+Alt+S<br/>Ctrl+Alt+H | ^S | M-^V S<br/>M-^V H | Split view horizontal
-Ctrl+Alt+V | ^V | M-^V V | Split view vertical
-Ctrl+Alt+W | ^W | M-^V W | Unsplit view
-Ctrl+Alt+Shift+W | ^⇧W | M-^V S-W | Unsplit all views
-Ctrl+Alt++<br/>Ctrl+Alt+= | ^+<br/>^= | M-^V +<br/>M-^V = | Grow view
-Ctrl+Alt+- | ^- | M-^V - | Shrink view
-Ctrl+* | ⌘* | M-* | Toggle current fold
-Ctrl+Alt+Shift+I | ^⇧I | N/A | Toggle indent guides
-Ctrl+Alt+Shift+V | ^⇧V | None | Toggle virtual space
+Ctrl+Alt+PgDn | ^⌘⇟ | M-^PgDn<br/>M-PgUp^(‡) | Next view
+Ctrl+Alt+PgUp | ^⌘⇞ | M-^PgUp<br/>M-PgDn^(‡) | Previous view
+Ctrl+Alt+_ | ^⌘_ | M-_ | Split view horizontal
+Ctrl+Alt+&#124; | ^⌘&#124; | M-&#124; | Split view vertical
+Ctrl+Alt+W | ^⌘W | M-W | Unsplit view
+Ctrl+Alt+Shift+W | ^⌘⇧W | M-S-W | Unsplit all views
+Ctrl+Alt++<br/>Ctrl+Alt+= | ^⌘+<br/>^⌘= | M-+<br/>M-= | Grow view
+Ctrl+Alt+- | ^⌘- | M-- | Shrink view
+Ctrl+} | ⌘} | M-} | Toggle current fold
+None | None | N/A | Toggle indent guides
+None | None | None | Toggle virtual space
 Ctrl+= | ⌘= | N/A | Zoom in
 Ctrl+- | ⌘- | N/A | Zoom out
 Ctrl+0 | ⌘0 | N/A | Reset zoom
-**Help**|| |
+**Help**| | |
 F1 | F1 | None | Open manual
 Shift+F1 | ⇧F1 | None | Open LuaDoc
 None | None | None | About
+**Other**| | |
+Shift+Enter | ⇧↩ | None | Start a new line below the current one
+Ctrl+Shift+Enter | ⌘⇧↩ | None | Start a new line above the current one
+Ctrl+Alt+Down | ^⌘⇣ | M-Down | Scroll line down
+Ctrl+Alt+Up | ^⌘⇡ | M-Up | Scroll line up
 **Movement**| | |
-Down | ⇣<br/>^N | ^N<br/>Down | Line down
+Down | ⇣<br/> ^N | Down | Line down
 Shift+Down | ⇧⇣<br/>^⇧N | S-Down | Line down extend selection
-Ctrl+Down | ^⇣ | ^Down | Scroll line down
-Alt+Shift+Down | ⌥⇧⇣ | M-S-Down | Line down extend rect. selection
-Up | ⇡<br/>^P | ^P<br/>Up | Line up
+Alt+Shift+Down | ^⇧⇣ | M-S-Down | Line down extend rect. selection
+Ctrl+Down | ⌥⇣ | ^Down | Paragraph down
+Ctrl+Shift+Down | ⌥⇧⇣ | None | Paragraph down extend selection
+Up | ⇡<br/> ^P | Up | Line up
 Shift+Up | ⇧⇡<br/>^⇧P | S-Up | Line up extend selection
-Ctrl+Up | ^⇡ | ^Up | Scroll line up
-Alt+Shift+Up | ⌥⇧⇡ | M-S-Up | Line up extend rect. selection
-Left | ⇠<br/>^B | ^B<br/>Left | Char left
+Alt+Shift+Up | ^⇧⇡ | M-S-Up | Line up extend rect. selection
+Ctrl+Up | ⌥⇡ | ^Up | Paragraph up
+Ctrl+Shift+Up | ⌥⇧⇡ | None | Paragraph up extend selection
+Left | ⇠<br/> ^B | Left | Char left
 Shift+Left | ⇧⇠<br/>^⇧B | S-Left | Char left extend selection
-Ctrl+Left | ⌥⇠<br/>^⌘B | ^Left | Word left
-Ctrl+Shift+Left | ^⇧⇠<br/>^⌘⇧B | S-^Left | Word left extend selection
-Alt+Shift+Left | ⌥⇧⇠ | M-S-Left | Char left extend rect. selection
-Right | ⇢<br/>^F | ^F<br/>Right | Char right
+Alt+Shift+Left | ^⇧⇠ | M-S-Left | Char left extend rect. selection
+Ctrl+Left | ⌥⇠ | ^Left | Word left
+Ctrl+Shift+Left | ⌥⇧⇠ | S-^Left | Word left extend selection
+Ctrl+Alt+Left | ^⌥⇠ | None | Word part left
+Ctrl+Alt+Shift+Left | ^⌥⇧⇠ | None | Word part left extend selection
+Right | ⇢<br/> ^F | Right | Char right
 Shift+Right | ⇧⇢<br/>^⇧F | S-Right | Char right extend selection
-Ctrl+Right | ⌥⇢<br/>^⌘F | ^Right | Word right
-Ctrl+Shift+Right | ^⇧⇢<br/>^⌘⇧F | S-^Right | Word right extend selection
-Alt+Shift+Right | ⌥⇧⇢ | M-S-Right | Char right extend rect. selection
-Home | ⌘⇠<br/>^A | ^A<br/>Home | Line start
-Shift+Home | ⌘⇧⇠<br/>^⇧A | M-S-A | Line start extend selection
-Ctrl+Home | ⌘⇡<br/>⌘↖ | M-^A | Document start
-Ctrl+Shift+Home | ⌘⇧⇡<br/>⌘⇧↖ | None | Document start extend selection
-Alt+Shift+Home | ⌥⇧↖ | None | Line start extend rect. selection
-End | ⌘⇢<br/>^E | ^E<br/>End | Line end
-Shift+End | ⌘⇧⇢<br/>^⇧E | M-S-E | Line end extend selection
-Ctrl+End | ⌘⇣<br/>⌘↘ | M-^E | Document end
-Ctrl+Shift+End | ⌘⇧⇣<br/>⌘⇧↘ | None | Document end extend selection
-Alt+Shift+End | ⌥⇧↘ | None | Line end extend rect. selection
+Alt+Shift+Right | ^⇧⇢ | M-S-Right | Char right extend rect. selection
+Ctrl+Right | ⌥⇢ | ^Right | Word right
+Ctrl+Shift+Right | ⌥⇧⇢ | S-^Right | Word right extend selection
+Ctrl+Alt+Right | ^⌥⇢ | None | Word part right
+Ctrl+Alt+Shift+Right | ^⌥⇧⇢ | None | Word part right extend selection
+Home | ↖<br/>⌘⇠<br/> ^A | Home | Line start
+Shift+Home | ⇧↖<br/>⌘⇧⇠<br/>^⇧A | None | Line start extend selection
+Alt+Shift+Home | ^⇧↖ | None | Line start extend rect. selection
+Ctrl+Home | ⌘↖ | None | Document start
+Ctrl+Shift+Home | ⌘⇧↖ | None | Document start extend selection
+End | ↘<br/>⌘⇢<br/> ^E | End | Line end
+Shift+End | ⇧↘<br/>⌘⇧⇢<br/>^⇧E | None | Line end extend selection
+Alt+Shift+End | ^⇧↘ | None | Line end extend rect. selection
+Ctrl+End | ⌘↘ | None | Document end
+Ctrl+Shift+End | ⌘⇧↘ | None | Document end extend selection
 PgUp | ⇞ | PgUp | Page up
-Shift+PgUp | ⇧⇞ | M-S-U | Page up extend selection
-Alt+Shift+PgUp | ⌥⇧⇞ | None | Page up extend rect. selection
+Shift+PgUp | ⇧⇞ | None | Page up extend selection
+Alt+Shift+PgUp | ^⇧⇞ | None | Page up extend rect. selection
 PgDn | ⇟ | PgDn | Page down
-Shift+PgDn | ⇧⇟ | M-S-D | Page down extend selection
-Alt+Shift+PgDn | ⌥⇧⇟ | None | Page down extend rect. selection
+Shift+PgDn | ⇧⇟ | None | Page down extend selection
+Alt+Shift+PgDn | ^⇧⇟ | None | Page down extend rect. selection
 Ctrl+Del | ⌘⌦ | ^Del | Delete word right
 Ctrl+Shift+Del | ⌘⇧⌦ | S-^Del | Delete line right
 Ins | Ins | Ins | Toggle overtype
-Bksp | ⌫<br/>⇧⌫ | ^H<br/>Bksp | Delete back
+Bksp | ⌫<br/> ^H | Bksp<br/> ^H | Delete back
 Ctrl+Bksp | ⌘⌫ | None | Delete word left
 Ctrl+Shift+Bksp | ⌘⇧⌫ | None | Delete line left
-Tab | ⇥ | Tab<br/>^I | Insert tab or indent
+Tab | ⇥ | Tab<br/> ^I | Insert tab or indent
 Shift+Tab | ⇧⇥ | S-Tab | Dedent
-None | ^K | ^K | Cut to line end
+None | ^K | None | Cut to line end
 None | ^L | None | Center line vertically
 N/A | N/A | ^^ | Mark text at the caret position
 N/A | N/A | ^] | Swap caret and mark anchor
-**UTF-8 Input**|||
-Ctrl+Shift+U *xxxx* Enter | ⌘⇧U *xxxx* ↩ | M-U *xxxx* Enter | Insert U-*xxxx* char.
 **Find Fields**|||
-Left | ⇠<br/>^B | ^B<br/>Left | Cursor left
-Right | ⇢<br/>^F | ^F<br/>Right | Cursor right
+Left | ⇠<br/> ^B | Left<br/> ^B | Cursor left
+Right | ⇢<br/> ^F | Right<br/> ^F | Cursor right
 Del | ⌦ | Del | Delete forward
-Bksp | ⌫ | ^H<br/>Bksp | Delete back
+Bksp | ⌫ | Bksp<br/> ^H | Delete back
 Ctrl+V | ⌘V | ^V | Paste
 N/A | N/A | ^X | Cut all
 N/A | N/A | ^Y | Copy all
 N/A | N/A | ^U | Erase all
-Home | ↖<br/>⌘⇠<br/>^A | ^A | Home
-End | ↘<br/>⌘⇢<br/>^E | ^E | End
+Home | ↖<br/>⌘⇠<br/> ^A | Home<br/> ^A | Home
+End | ↘<br/>⌘⇢<br/> ^E | End<br/> ^E | End
 N/A | N/A | ^T | Transpose characters
 N/A | N/A | Tab | Toggle find/replace buttons
 Tab | ⇥ | Down | Focus replace field
@@ -6936,7 +6945,7 @@ terminal version, since ^S and ^Q are flow control sequences.
 
 †: If you prefer ^Z to suspend, you can bind it to [`ui.suspend()`](#ui.suspend).
 
-‡: Ctrl+Enter in Windows terminal version.
+‡: Windows terminal version only.
 
 ---
 <a id="textadept.macros"></a>
