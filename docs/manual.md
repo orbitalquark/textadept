@@ -418,12 +418,12 @@ useful when many files are open, and navigating through the tab bar is tedious.
 &nbsp;&nbsp;
 ![Buffer Browser Filtered](images/bufferbrowserfiltered.png)
 
-By default, the list shows buffers in the same order as the tab bar (the most recently opened
-buffers are shown towards the bottom). You can configure the list to show the most recently
-viewed buffers first by changing the [`ui.buffer_list_zorder`][]. For example, in your
+By default, the list shows more recently used buffers towards the top. You can configure the
+list to show buffers in the same order as the tab bar (the most recently opened buffers are
+shown towards the bottom) by changing the [`ui.buffer_list_zorder`][]. For example, in your
 *~/.textadept/init.lua*:
 
-    ui.buffer_list_zorder = true
+    ui.buffer_list_zorder = false
 
 [`ui.buffer_list_zorder`]: api.html#ui.buffer_list_zorder
 

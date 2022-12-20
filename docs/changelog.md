@@ -49,6 +49,7 @@ Changes:
 * Added '-' command line option for reading from stdin into a new buffer.
 * Removed 10-item find/replace history limit for the GUI version.
 * Added [`ui.buffer_list_zorder`][] option and removed *zorder* parameter from `ui.switch_buffer()`.
+  The buffer list order is most recently used first by default.
 * Added [`ui.suspend()`][] for the terminal version, allowing any key binding to suspend the editor.
 * `textadept.editing.auto_pairs` and `textadept.editing.typeover_chars` auto-include '<>'
   characters for XML-like languages and removed `textadept.editing.brace_matches`.

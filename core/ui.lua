@@ -32,14 +32,14 @@ local ui = ui
 -- @field buffer_list_zorder (bool)
 --   Whether or not to list buffers by their z-order (most recently viewed to least recently
 --   viewed) in the switcher dialog.
---   The default value is `false`.
+--   The default value is `true`.
 -- @field SHOW_ALL_TABS (number)
 --
 module('ui')]]
 
 ui.SHOW_ALL_TABS = 2 -- ui.tabs options must be greater than 1
 if CURSES then ui.tabs = false end -- not supported right now
-ui.buffer_list_zorder = false
+ui.buffer_list_zorder = true
 
 -- Helper functions for getting print views and buffers.
 local function get_print_view(type)

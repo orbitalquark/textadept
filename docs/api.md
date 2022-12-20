@@ -7562,7 +7562,7 @@ Utilities for interacting with Textadept's user interface.
 
 Whether or not to list buffers by their z-order (most recently viewed to least recently
   viewed) in the switcher dialog.
-  The default value is `false`.
+  The default value is `true`.
 
 <a id="ui.buffer_statusbar_text"></a>
 #### `ui.buffer_statusbar_text` (string, Write-only)
