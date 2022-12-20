@@ -8270,7 +8270,7 @@ The text of the "Replace" label.
 Whether to show filenames in the find in files search progressbar.
   This can be useful for determining whether or not custom filters are working as expected.
   Showing filenames can slow down searches on computers with really fast SSDs.
-  The default value is `true`.
+  The default value is `false`.
 
 <a id="ui.find.whole_word"></a>
 #### `ui.find.whole_word` (bool)

@@ -67,7 +67,7 @@ local M = ui.find
 --   Whether to show filenames in the find in files search progressbar.
 --   This can be useful for determining whether or not custom filters are working as expected.
 --   Showing filenames can slow down searches on computers with really fast SSDs.
---   The default value is `true`.
+--   The default value is `false`.
 -- @field INDIC_FIND (number)
 --   The find results highlight indicator number.
 -- @field _G.events.FIND_RESULT_FOUND (string)
@@ -95,7 +95,7 @@ M.whole_word_label_text = not CURSES and _L['Whole word'] or _L['Word(F2)']
 M.regex_label_text = not CURSES and _L['Regex'] or _L['Regex(F3)']
 M.in_files_label_text = not CURSES and _L['In files'] or _L['Files(F4)']
 M.highlight_all_matches = false
-M.show_filenames_in_progressbar = true
+M.show_filenames_in_progressbar = false
 
 M.INDIC_FIND = _SCINTILLA.next_indic_number()
 
