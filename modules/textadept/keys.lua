@@ -452,9 +452,9 @@ local bindings = {
 
   -- View.
   [m('View/Next View')] =
-    {'ctrl+alt+pgdn', 'cmd+alt+pgdn', WIN32 and 'meta+pgdn' or 'ctrl+meta+pgdn'},
+    {'ctrl+alt+pgdn', 'ctrl+cmd+pgdn', WIN32 and 'meta+pgdn' or 'ctrl+meta+pgdn'},
   [m('View/Previous View')] =
-    {'ctrl+alt+pgup', 'cmd+alt+pgup', WIN32 and 'meta+pgup' or 'ctrl+meta+pgup'},
+    {'ctrl+alt+pgup', 'ctrl+cmd+pgup', WIN32 and 'meta+pgup' or 'ctrl+meta+pgup'},
   [m('View/Split View Horizontal')] = {'ctrl+alt+_', 'ctrl+cmd+_', 'meta+_'},
   [m('View/Split View Vertical')] = {'ctrl+alt+|', 'ctrl+cmd+|', 'meta+|'},
   [m('View/Unsplit View')] = {'ctrl+alt+w', 'ctrl+cmd+w', 'meta+w'},
