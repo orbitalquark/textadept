@@ -1696,12 +1696,13 @@ patterns | Renamed | [lexer.detect_patterns][]
 select_lexer() | Replaced | `textadept.menu.menubar[L['Buffer']]`<br/>`[L['Select Lexer...']][2]`
 **textadept.run**||
 error_patterns | Removed | N/A
-set_arguments() | Removed | N/A
+set_arguments() | Removed | N/A<sup>d</sup>
 N/A | Added | [run_project()][], [run_project_commands][]
 
 <sup>a</sup>No longer part of `textadept.editing.strip_trailing_spaces`<br/>
 <sup>b</sup>Use view.STYLE_BRACEBAD and view.STYLE_BRACELIGHT instead<br/>
 <sup>c</sup>Angles as brace characters is auto-detected now<br/>
+<sup>d</sup>See below how compile and run commands have changed<br/>
 
 [OSX]: api.html#OSX
 [tab_label]: api.html#buffer.tab_label
@@ -1766,6 +1767,17 @@ from within them.
 [convention]: api.html#migrating-legacy-lexers
 [`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
 [`buffer.lexer_language`]: api.html#buffer.lexer_language
+
+##### Compile, Run, Build, and Test Changes
+
+All compile, run, build, and test commands no longer fire immediately when invoked. Instead,
+candidate commands are displayed in the command entry first. Pressing `Enter` will run the
+command. This allows for in-place modifications of commands that will be remembered next time
+the command is run for a particular file/project. As a result, per-file and per-project command
+histories are now available.
+
+Also, command output uses a new "output" lexer which recognizes warnings and errors. Textadept
+no longer attempts its own warning/error detection.
 
 ##### Key Bindings Changes
 
