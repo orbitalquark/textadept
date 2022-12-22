@@ -20,6 +20,7 @@ Bugfixes:
 
 * Fixed `io.get_project_root()` on Windows network shares.
 * Fixed display of `Shift+Tab` key bindings in menus.
+* Fixed toggling comments in multi-language lexers.
 * GTK version: fixed invalid cast warning for split views.
 * GTK version: handle movement keys from the list dialog entry when interactive search is not active.
 * Terminal version: fixed crash cleaning up after a spawned process.
