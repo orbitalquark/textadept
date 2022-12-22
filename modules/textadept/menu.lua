@@ -273,7 +273,9 @@ local default_menubar = {
         if lfs.attributes(dir, 'mode') ~= 'directory' then goto continue end
         for file in lfs.dir(dir) do
           local name = file:match('^(.+)%.lua$')
-          if name and name ~= 'lexer' then lexers[#lexers + 1] = name end
+          if name and name ~= 'lexer' and not lexers[name] then
+            lexers[#lexers + 1], lexers[name] = name, true
+          end
         end
         ::continue::
       end
