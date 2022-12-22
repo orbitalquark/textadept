@@ -1641,250 +1641,147 @@ Textadept is composed of the following technologies:
 [libtermkey]: http://www.leonerd.org.uk/code/libtermkey
 [iconv]: https://www.gnu.org/software/libiconv
 
-#### Migrating from Textadept 10 to 11
+#### Migrating from Textadept 11 to 12
 
 ##### API Changes
 
 Old API | Change | New API
 -|:-:|-
+**_G**||
+N/A | Added | [GTK](api.html#GTK), [QT](api.html#QT)
+[OSX][] | Changed | Always true on macOS, not just in the GUI version
 **buffer**||
-set_theme() | Renamed | [view:set_theme()][]
-style_name[n] | Replaced | [name_of_style][](n)
-CASEINSENSITIVEBEHAVIOUR\_* | Renamed | CASEINSENSITIVEBEHAVIOR\_*
-INDIC\_GRADIENTCENTRE | Renamed | INDIC\_GRADIENTCENTER
-MARGIN\_COLOUR | Renamed | MARGIN\_COLOR
-auto\_c\_case_insensitive\_behaviour | Renamed | auto\_c\_case\_insensitive\_behavior
-colourise | Renamed | colorize
-edge\_colour | Renamed | edge\_color
-set\_fold\_margin\_\*colour | Renamed | set\_fold\_margin\_\*color
-vertical\_centre\_caret | Renamed | vertical\_center\_caret
-**events**||
-AUTO\_C\_CANCELLED | Renamed | AUTO\_C\_CANCELED
-N/A | Added | [COMMAND_TEXT_CHANGED][]
-N/A | Added | FILE_BEFORE_RELOAD
-N/A | Added | FILE_AFTER_RELOAD
-N/A | Added | [FIND_RESULT_FOUND][]
-N/A | Added | [FIND_TEXT_CHANGED][]
-N/A | Added | [SESSION_SAVE][]
-N/A | Added | [SESSION_LOAD][]
-N/A | Added | [UNFOCUS][]
+[tab_label][] | Changed | Write-only
 **io**||
-reload_file() | Renamed | [buffer:reload()][]
-save_file() | Renamed | [buffer:save()][]
-save_file_as() | Renamed | [buffer:save_as()][]
-close_buffer() | Renamed | [buffer:close()][]
-**keys**||
-MODE | Renamed | [mode][]
+N/A | Added | [ensure_final_newline][]<sup>a</sup>
+[quick_open()][] | Changed | Removed *opts* parameter
 **lexer**||
-N/A | Added | [to_eol()][]
-delimited\_range() | Replaced | [range()][]
-nested\_pair() | Replaced | [range()][]
-fold\_line\_comments() | Replaced | [fold_consecutive_lines()][]<sup>a</sup>
-N/A | Added | [number][]
-N/A | Added | colors
-N/A | Added | styles
-N/A | Added | [folding][] and other fold\* properties
-**lfs**||
-dir\_foreach() | Replaced | for filename in [lfs.walk()][] do ... end
-**textadept.bookmarks**||
-toggle(line, on) | Changed | [toggle()][]
-**textadept.editing**||
-block\_comment() | Renamed | [toggle_comment()][]
-highlight_word() | Replaced | [highlight_words][]
-**textadept.file_types**||
-lexers | Removed | N/A<sup>b</sup>
-**textadept.find**||
-find\_incremental() | Replaced | [incremental][]<sup>c</sup>
-find\_incremental\_keys | Removed |
-N/A | Added | [highlight_all_matches][]
-**textadept.history** | Added | [textadept.history][]
-**textadept.run**||
-N/A | Added | set_arguments
-**textadept.snippets** ||
-\_insert() | Renamed | [insert()][]
-\_previous() | Renamed | [previous()][]
-\_cancel_current() | Renamed | [cancel_current()][]
-\_select() | Renamed | [select()][]
-\_paths | Renamed | [paths][]
-**ui**||
-bufstatusbar\_text | Renamed | [buffer_statusbar_text][]
-**ui.command_entry**||
-N/A | Added | [active][]
-N/A | Added | [append_history][]
-**ui.dialogs**||
-N/A | Added | [progressbar()][]
-**ui.find**||
-find\_in\_files\_timeout | Removed | N/A
-N/A | Added | [active][]
+lexer.colors | Renamed | [view.colors][]
+lexer.styles | Renamed | [view.styles][]
+lexer.fold\* | Renamed | view.fold\*
+token() | Renamed | [tag()][], and made into an instance method
+property_expanded | Removed | N/A
+starts_line() | Changed | Added *allow_indent* parameter
+last\_char\_includes() | Renamed | [after_set()][]
+[word_match()][] | Changed | Can also be used as an instance method
+N/A | Added | [set_word_list()][]
+N/A | Added | [number_()][] and friends
+[to_eol()][] | Changed | *prefix* parameter is optional
+fold\_line\_groups | Removed | N/A
 **view**||
-N/A | Added | _buffer functions and fields_<sup>d</sup>
+N/A | Added | [set_styles()][]
+**ui**||
+N/A | Added | [output()][]
+silent_print | Replaced | [print_silent()][], [output_silent()][]
+_print() | Renamed | [print_to()][]
+[switch_buffer()][] | Changed | Removed *zorder* parameter in favor of [buffer_list_zorder][]
+N/A | Added | [suspend()][]
+**ui.command_entry**||
+[run()][] | Changed | Changed parameter list
+**ui.dialogs**||
+msgbox(), ok\_msgbox(), yesno\_msgbox() | Replaced | [message()][]
+inputbox(), standard_inputbox() | Replaced | [input()][]
+secure\_inputbox(), secure\_standard\_inputbox() | Removed | N/A
+fileselect(), filesave() | Replaced | [open()][], [save()][]
+progressbar() | Replaced | [progress()][]
+filteredlist() | Replaced | [list()][]
+dropdown(), standard_dropdown() | Removed | N/A
+textbox(), optionselect(), colorselect(), fontselect() | Removed | N/A
+**textadept.editing**||
+INDIC_BRACEMATCH | Removed | N/A<sup>b</sup>
+brace_matches | Removed | N/A<sup>c</sup>
+**textadept.file_types**| Removed | N/A
+extensions | Renamed | [lexer.detect_extensions][]
+patterns | Renamed | [lexer.detect_patterns][]
+select_lexer() | Replaced | `textadept.menu.menubar[L['Buffer']]`<br/>`[L['Select Lexer...']][2]`
+**textadept.run**||
+error_patterns | Removed | N/A
+set_arguments() | Removed | N/A
+N/A | Added | [run_project()][], [run_project_commands][]
 
-<sup>a</sup>Returns prefix and function, instead of just function.<br/>
-<sup>b</sup>Use `for name in buffer:private_lexer_call(_SCINTILLA.properties.lexer_language[1]):gmatch('[^\n]+') do ... end`.<br/>
-<sup>c</sup>Use `textadept.menu.menubar[_L['Search']][_L['Find Incremental']][2]`.<br/>
-<sup>d</sup>Most buffer functions and fields are available in views now. See section below.
+<sup>a</sup>No longer part of `textadept.editing.strip_trailing_spaces`<br/>
+<sup>b</sup>Use view.STYLE_BRACEBAD and view.STYLE_BRACELIGHT instead<br/>
+<sup>c</sup>Angles as brace characters is auto-detected now<br/>
 
-[view:set_theme()]: api.html#view.set_theme
-[name_of_style]: api.html#buffer.name_of_style
-[COMMAND_TEXT_CHANGED]: api.html#events.COMMAND_TEXT_CHANGED
-[FIND_RESULT_FOUND]: api.html#events.FIND_RESULT_FOUND
-[FIND_TEXT_CHANGED]: api.html#events.FIND_TEXT_CHANGED
-[SESSION_SAVE]: api.html#events.SESSION_SAVE
-[SESSION_LOAD]: api.html#events.SESSION_LOAD
-[UNFOCUS]: api.html#events.UNFOCUS
-[buffer:reload()]: api.html#buffer.reload
-[buffer:save()]: api.html#buffer.save
-[buffer:save_as()]: api.html#buffer.save_as
-[buffer:close()]: api.html#buffer.close
-[mode]: api.html#keys.mode
+[OSX]: api.html#OSX
+[tab_label]: api.html#buffer.tab_label
+[ensure_final_newline]: api.html#io.ensure_final_newline
+[quick_open()]: api.html#io.quick_open
+[view.colors]: api.html#view.colors
+[view.styles]: api.html#view.styles
+[tag()]: api.html#lexer.tag
+[after_set()]: api.html#lexer.after_set
+[word_match()]: api.html#lexer.word_match
+[set_word_list()]: api.html#lexer.set_word_list
+[number_()]: api.html#lexer.number_
 [to_eol()]: api.html#lexer.to_eol
-[range()]: api.html#lexer.range
-[fold_consecutive_lines()]: api.html#lexer.fold_consecutive_lines
-[number]: api.html#lexer.number
-[folding]: api.html#lexer.folding
-[lfs.walk()]: api.html#lfs.walk
-[toggle()]: api.html#textadept.bookmarks.toggle
-[toggle_comment()]: api.html#textadept.editing.toggle_comment
-[highlight_words]: api.html#textadept.editing.highlight_words
-[incremental]: api.html#ui.find.incremental
-[highlight_all_matches]: api.html#ui.find.highlight_all_matches
-[textadept.history]: api.html#textadept.history
-[insert()]: api.html#textadept.snippets.insert
-[previous()]: api.html#textadept.snippets.previous
-[cancel_current()]: api.html#textadept.snippets.cancel_current
-[select()]: api.html#textadept.snippets.select
-[paths]: api.html#textadept.snippets.paths
-[buffer_statusbar_text]: api.html#ui.buffer_statusbar_text
-[active]: api.html#ui.command_entry.active
-[append_history]: api.html#ui.command_entry.append_history
-[progressbar()]: api.html#ui.dialogs.progress
-[active]: api.html#ui.find.active
+[set_styles()]: api.html#view.set_styles
+[output()]: api.html#ui.output
+[print_silent()]: api.html#ui.print_silent
+[output_silent()]: api.html#ui.output_silent
+[print_to()]: api.html#ui.print_to
+[switch_buffer()]: api.html#ui.switch_buffer
+[buffer_list_zorder]: api.html#ui.buffer_list_zorder
+[suspend()]: api.html#ui.suspend
+[run()]: api.html#ui.command_entry.run
+[message()]: api.html#ui.dialogs.message
+[input()]: api.html#ui.dialogs.input
+[open()]: api.html#ui.dialogs.open
+[save()]: api.html#ui.dialogs.save
+[progress()]: api.html#ui.dialogs.progress
+[list()]: api.html#ui.dialogs.list
+[lexer.detect_extensions]: api.html#lexer.detect_extensions
+[lexer.detect_patterns]: api.html#lexer.detect_patterns
+[run_project()]: api.html#textadept.run.run_project
+[run_project_commands]: api.html#textadept.run.run_project_commands
 
-##### Buffer Indexing Changes
+##### Theme Changes
 
-All buffer positions, lines, and countable entities now start from `1` instead of `0`. For example,
-`buffer:get_line(1)` now returns the contents of the first line instead of `buffer:get_line(0)`,
-and marker and indicator numbers now count from 1 instead of 0.
+Textadept has a new set of themes and [styles][] to set. All styles are view-specific; they
+are no longer tied to lexers. This means one view can have a light theme, and another can have
+a dark theme.
 
-While this change may seem daunting for migrating user scripts, in practice it is not, since most
-usage is internal, and an offset of 1 or 0 does not matter. In migrating Textadept's internals,
-the following changes were made:
+Themes can be migrated from Textadept 11 to 12 in the following way:
 
-* Themes that loop through marker numbers will need to be updated from something like
-  `for i = 25, 31 do ... end` to either `for i = 26, 32 do ... end` or
-  `for i = buffer.MARKNUM_FOLDEREND, buffer.MARKNUM_FOLDEROPEN do ... end`.
-* Most references of `buffer.length` will need to be changed to `buffer.length + 1`. For example,
-  something like `buffer:goto_pos(buffer.length)` needs to be `buffer:goto_pos(buffer.length + 1)`.
-  The exceptions are when `buffer.length` is not used as a position, as in
-  `buffer:indicator_clear_range(1, buffer.length)`, which is still valid.
-* Any `buffer` function calls and property indexing with bare numbers should be changed to
-  calls or indexes with those numbers plus 1. For example, `buffer:contracted_fold_next(0)`
-  changes to `buffer:contracted_fold_next(1)`, and `buffer.margin_n_width[1] = ...` changes to
-  `buffer.margin_n_width[2] = ...`.
-* Any looping through lines, margins, and selections via
-  `for i = 0, buffer.{line_count,margins,selections} - 1 do ... end` needs to be
-  `for i = 1, buffer.{line_count,margins,selections} do ... end`.
-* Similarly, any language modules that loop back through lines (e.g. to determine types for
-  autocompletion) via `for i = current_line, 0, -1 do ... end` needs to be
-  `for i = current_line, 1, -1 do ... end`.
-* Marker or indicator masks are produced by subtracting 1 from marker or indicator
-  numbers. For example, `1 << textadept.bookmarks.MARK_BOOKMARK` changes to
-  `1 << textadept.bookmarks.MARK_BOOKMARK - 1`.
-* Logic that depends on the return value of `buffer:get_cur_line()` may need to be changed. For
-  example, any subsequent references to `pos` after `local line, pos = buffer:get_cur_line()`
-  like `if line:sub(1, pos) ... end` need to be changed to `if line:sub(1, pos - 1) ... end`.
+* Replace `lexer.colors` and `lexer.styles` with `view.colors` and `view.styles`.
+* Instead of using style names directly, use `view` and `lexer` constants. For example, change
+  `styles.default = {...}` to `styles[view.STYLE_DEFAULT] = {...}` and `styles.comment = {...}`
+  to `styles[lexer.COMMENT] = {...}`.
+* Lexer-specific style names do not have constants, so they can be used directly (e.g. CSS
+  `styles.property = {...}`).
 
-I found it helpful to quickly scan source files for syntax-highlighted numbers and then seeing
-if those numbers needed to be changed. Searching for "- 1", "+ 1", "buffer.length", etc. was
-also helpful.
+[styles]: api.html#view.styles
 
-##### View API Additions and Buffer API Changes
+##### Lexer Changes
 
-Textadept's [buffer][] API is largely based on the [Scintilla API][], which does not distinguish
-between buffer- and view-specific functionality. Textadept 11 now attempts to separate this
-functionality, but only superficially. Buffers and views may be used interchangeably for the
-most part, but the [buffer][] and [view][] API provides _guidance_ (not hard requirements)
-on which functions and fields are more appropriate for their respective objects. _User scripts
-do not need to be updated and will continue to function normally_. The following "Find" regex
-can be used to help convert `buffer.*` functionality to `view.*`:
+Textadept's lexers use a new [convention][] and no longer contain styling information. Custom
+lexers should be migrated, and themes are responsible for styling custom tags. Also, lexers no
+longer have access to Textadept's Lua state or any buffer information. They are strictly sandboxed.
 
-<pre style="word-wrap: break-word;">
-<code>(\w+)([.:])\b(additional_caret_fore|additional_carets_blink|additional_carets_visible|additional_sel_alpha|additional_sel_back|additional_sel_fore|all_lines_visible|annotation_visible|auto_c_max_height|auto_c_max_width|call_tip_fore_hlt|call_tip_pos_start|call_tip_position|call_tip_use_style|caret_fore|caret_line_back|caret_line_back_alpha|caret_line_frame|caret_line_visible|caret_line_visible_always|caret_period|caret_style|caret_width|cursor|edge_colour|edge_column|edge_mode|end_at_last_line|extra_ascent|extra_descent|first_visible_line|fold_display_text_style|fold_expanded|fold_flags|h_scroll_bar|highlight_guide|idle_styling|indentation_guides|indic_alpha|indic_fore|indic_hover_fore|indic_hover_style|indic_outline_alpha|indic_style|indic_under|line_visible|lines_on_screen|margins|margin_back_n|margin_cursor_n|margin_left|margin_mask_n|margin_options|margin_right|margin_sensitive_n|margin_type_n|margin_width_n|marker_alpha|marker_back|marker_back_selected|marker_fore|mouse_dwell_time|mouse_selection_rectangular_switch|property|property_expanded|property_int|rectangular_selection_modifier|representation|rgba_image_height|rgba_image_scale|rgba_image_width|scroll_width|scroll_width_tracking|sel_alpha|sel_eol_filled|size|style_back|style_bold|style_case|style_changeable|style_eol_filled|style_font|style_fore|style_italic|style_size|style_underline|style_visible|tab_draw_mode|v_scroll_bar|view_eol|view_ws|whitespace_size|wrap_indent_mode|wrap_mode|wrap_start_indent|wrap_visual_flags|wrap_visual_flags_location|x_offset|zoom|ANNOTATION_BOXED|ANNOTATION_HIDDEN|ANNOTATION_STANDARD|ANNOTATION_INDENTED|CARETSTYLE_BLOCK|CARETSTYLE_INVISIBLE|CARETSTYLE_LINE|CARET_EVEN|CARET_JUMPS|CARET_SLOP|CARET_STRICT|EDGE_BACKGROUND|EDGE_LINE|EDGE_MULTILINE|EDGE_NONE|FOLDACTION_CONTRACT|FOLDACTION_EXPAND|FOLDACTION_TOGGLE|FOLDDISPLAYTEXT_HIDDEN|FOLDDISPLAYTEXT_STANDARD|FOLDDISPLAYTEXT_BOXED|INDIC_BOX|INDIC_COMPOSITIONTHICK|INDIC_COMPOSITIONTHIN|INDIC_DASH|INDIC_DIAGONAL|INDIC_DOTBOX|INDIC_DOTS|INDIC_FULLBOX|INDIC_GRADIENT|INDIC_GRADIENTCENTRE|INDIC_HIDDEN|INDIC_PLAIN|INDIC_POINT|INDIC_POINTCHARACTER|INDIC_ROUNDBOX|INDIC_SQUIGGLE|INDIC_SQUIGGLELOW|INDIC_SQUIGGLEPIXMAP|INDIC_STRAIGHTBOX|INDIC_STRIKE|INDIC_TEXTFORE|INDIC_TT|MOD_ALT|MOD_CTRL|MOD_META|MOD_SHIFT|MOD_SUPER|MOUSE_DRAG|MOUSE_PRESS|MOUSE_RELEASE|WS_INVISIBLE|WS_VISIBLEAFTERINDENT|WS_VISIBLEALWAYS|WS_VISIBLEONLYININDENT|ALPHA_NOALPHA|ALPHA_OPAQUE|ALPHA_TRANSPARENT|CASE_CAMEL|CASE_LOWER|CASE_MIXED|CASE_UPPER|CURSORARROW|CURSORNORMAL|CURSORREVERSEARROW|CURSORWAIT|FOLDFLAG_LEVELNUMBERS|FOLDFLAG_LINEAFTER_CONTRACTED|FOLDFLAG_LINEAFTER_EXPANDED|FOLDFLAG_LINEBEFORE_CONTRACTED|FOLDFLAG_LINEBEFORE_EXPANDED|FOLDFLAG_LINESTATE|IV_LOOKBOTH|IV_LOOKFORWARD|IV_NONE|IV_REAL|MARGINOPTION_NONE|MARGINOPTION_SUBLINESELECT|MARGIN_BACK|MARGIN_COLOUR|MARGIN_FORE|MARGIN_NUMBER|MARGIN_RTEXT|MARGIN_SYMBOL|MARGIN_TEXT|MARK_ARROW|MARK_ARROWDOWN|MARK_ARROWS|MARK_BACKGROUND|MARK_BOOKMARK|MARK_BOXMINUS|MARK_BOXMINUSCONNECTED|MARK_BOXPLUS|MARK_BOXPLUSCONNECTED|MARK_CHARACTER|MARK_CIRCLE|MARK_CIRCLEMINUS|MARK_CIRCLEMINUSCONNECTED|MARK_CIRCLEPLUS|MARK_CIRCLEPLUSCONNECTED|MARK_DOTDOTDOT|MARK_EMPTY|MARK_FULLRECT|MARK_LCORNER|MARK_LCORNERCURVE|MARK_LEFTRECT|MARK_MINUS|MARK_PIXMAP|MARK_PLUS|MARK_RGBAIMAGE|MARK_ROUNDRECT|MARK_SHORTARROW|MARK_SMALLRECT|MARK_TCORNER|MARK_TCORNERCURVE|MARK_UNDERLINE|MARK_VERTICALBOOKMARK|MARK_VLINE|MASK_FOLDERS|TD_LONGARROW|TD_STRIKEOUT|TIME_FOREVER|WRAPINDENT_DEEPINDENT|WRAPINDENT_FIXED|WRAPINDENT_INDENT|WRAPINDENT_SAME|WRAPVISUALFLAGLOC_DEFAULT|WRAPVISUALFLAGLOC_END_BY_TEXT|WRAPVISUALFLAGLOC_START_BY_TEXT|WRAPVISUALFLAG_END|WRAPVISUALFLAG_MARGIN|WRAPVISUALFLAG_NONE|WRAPVISUALFLAG_START|WRAP_CHAR|WRAP_NONE|WRAP_WHITESPACE|WRAP_WORD|STYLE_BRACEBAD|STYLE_BRACELIGHT|STYLE_CALLTIP|STYLE_CONTROLCHAR|STYLE_DEFAULT|STYLE_FOLDDISPLAYTEXT|STYLE_INDENTGUIDE|STYLE_LINENUMBER|STYLE_MAX|UPDATE_H_SCROLL|UPDATE_V_SCROLL|VISIBLE_SLOP|VISIBLE_STRICT|brace_bad_light|brace_bad_light_indicator|brace_highlight|brace_highlight_indicator|call_tip_active|call_tip_cancel|call_tip_pos_start|call_tip_set_hlt|call_tip_show|clear_registered_images|clear_representation|contracted_fold_next|doc_line_from_visible|ensure_visible|ensure_visible_enforce_policy|fold_all|fold_children|fold_line|get_default_fold_display_text|hide_lines|line_scroll|line_scroll_down|line_scroll_up|marker_define|marker_define_pixmap|marker_define_rgba_image|marker_enable_highlight|marker_symbol_defined|multi_edge_add_line|multi_edge_clear_all|register_image|register_rgba_image|scroll_caret|scroll_to_end|scroll_to_start|scroll_range|set_default_fold_display_text|set_fold_margin_colour|set_fold_margin_hi_colour|set_sel_back|set_sel_fore|set_visible_policy|set_whitespace_back|set_whitespace_fore|set_x_caret_policy|set_y_caret_policy|show_lines|style_clear_all|style_reset_default|text_height|text_width|toggle_fold|toggle_fold_show_text|vertical_centre_caret|visible_from_doc_line|wrap_count|zoom_in|zoom_out|split|unsplit|goto_buffer)\b</code>
-</pre>
+[`events.LEXER_LOADED`][] will be emitted less frequently than before. For example, switching
+between buffers will no longer emit it. You may want to also connect lexer-specific event handlers
+to `events.BUFFER_AFTER_SWITCH` and `events.VIEW_AFTER_SWITCH` and check [`buffer.lexer_language`]
+from within them.
 
-"Replace" with
-
-    view\2\3
-
-It is not recommended to blindly "Replace All". Each change should be manually confirmed.
-
-[buffer]: api.html#buffer
-[Scintilla API]: https://scintilla.org/ScintillaDoc.html
-[Scintilla]: https://scintilla.org
-[view]: api.html#view
-
-##### Theme and Lexer Changes
-
-Themes and lexers have a new, optional API for defining and using colors and styles. Previously,
-all definitions and access to colors and styles was accomplished through `buffer.property`
-and `buffer.property_int`. Now it can be done via the `lexer.colors` and `lexer.styles`
-variables. For example:
-
-    -- Textadept 10
-    local property, property_int = buffer.property, buffer.property_int
-    property['color.blue'] = 0xFF0000
-    property['style.keyword'] = 'fore:$(color.blue),bold'
-    buffer.edge_colour = property_int['color.grey']
-
-    -- Textadept 11
-    local colors, styles = lexer.colors, lexer.styles
-    colors.blue = 0xFF0000
-    styles.keyword = {fore = colors.blue, bold = true}
-    view.edge_color = colors.grey
-
-Any additional settings passed `view:set_theme()` are available as global variables in the
-theme. Textadept's themes make use of `font` and `size` (the latter of which used to be
-`fontsize`) for easily configuring font and size per-user.
-
-Lexers can also utilize these new features. For example:
-
-    -- Textadept 10
-    lex:add_rule('custom_rule', token('custom', P('word')))
-    lex:add_style('custom', lexer.STYLE_KEYWORD .. 'italic')
-
-    -- Textadept 11
-    lex:add_rule('custom_rule', token('custom', P('word')))
-    lex:add_style('custom', lexer.styles.keyword .. {italic = true})
-
-Note that these features are optional. Themes and lexers setting property strings is still
-supported.
-
-##### Localization Changes
-
-GUI mnemonics in localization keys have been removed. For example, `_L['_New']` should be
-changed to `_L['New']`. Mnemonics can still be used in localization values; it's just the keys
-that have changed. See Textadept's *core/locale.conf* for examples.
+[convention]: api.html#migrating-legacy-lexers
+[`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
+[`buffer.lexer_language`]: api.html#buffer.lexer_language
 
 ##### Key Bindings Changes
 
-Key sequence modifiers have changed from their shortened form to a longer form that is more
-intuitive. `'c'` is now `'ctrl'`, `'a'` is now `'alt'`, `'m'` is now `'cmd'` on macOS and
-`'meta'` in the terminal version, and `'s'` is now `'shift'`. For example, `keys.cn = ...` is now
-`keys['ctrl+n'] = ...` and `keys['m<'] = ...` is now `keys['cmd+<'] = ...` or `keys['meta+<']
-= ...`.
+Textadept's [key bindings][] have been redesigned to be as consistent as possible between
+operating systems and platforms.
 
-The key binding for inserting a user-specified snippet from a dialog has changed from `Ctrl+K`
-(`⌥⇥` on macOS | `M-K` on the terminal) to `Ctrl+Shift+K` (`⌥⇧⇥` | `M-S-K`). `Ctrl+K`
-(`⌥⇥` | `M-K`) now autocompletes snippet names.
+[key bindings]: api.html#textadept.keys
 
-##### Session Changes
+##### Dialog Changes
 
-Textadept saves and loads session from Lua data files instead of structured text files. As a
-result, Textadept 11 cannot load session files from 10.x or before.
+Dialogs have been simplified in order to accommodate multiple platforms (currently Qt, GTK, and
+curses). In general, affirmative responses return input data rather than returning buttons and
+then input data, and negative responses return `nil`. For example, pressing `Enter` or clicking
+"Ok" in an input dialog returns the text entered rather than returning a button code (that
+needs to be interpreted) and text entered. Similarly, pressing `Escape` or clicking "Cancel"
+in an input dialog returns `nil` rather than returning a button code that needs to be interpreted.
 
-##### Miscellaneous Changes
-
-* *~/.textadept/?.lua* and *~/.textadept/?.{so,dll}* has been removed from `package.path` and
-  `package.cpath`, respectively. All modules should be placed in *~/.textadept/modules/*.
-* The command entry no longer recognizes a Lua 5.1-style '`=`' prefix for printing return
-  values. Printing return values has been the default for quite some time.
+Dialogs no longer accept a *string_output* option. Buttons are always returned as numbers and
+list selections are always returned as numeric indices.

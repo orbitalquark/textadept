@@ -161,6 +161,8 @@ end, 1)
 --   Whether or not Textadept is running on Linux.
 -- @field GTK (bool)
 --   Whether or not Textadept is running as a GTK GUI application.
+-- @field QT (bool)
+--   Whether or not Textadept is running as a Qt GUI application.
 -- @field CURSES (bool)
 --   Whether or not Textadept is running in a terminal.
 --   Curses feature incompatibilities are listed in the [Appendix][].

@@ -243,6 +243,7 @@ ORDER_PERFORMSORT buffer.ORDER_PERFORMSORT (number, Read-only)\n
 ORDER_PRESORTED buffer.ORDER_PRESORTED (number, Read-only)\n
 OSX _G.OSX (bool)\nWhether or not Textadept is running on macOS.
 PREPROCESSOR lexer.PREPROCESSOR (string)\nThe tag name for preprocessor elements.
+QT _G.QT (bool)\nWhether or not Textadept is running as a Qt GUI application.
 QUIT events.QUIT (string)\nEmitted when quitting Textadept.\nWhen connecting to this event, connect with an index of 1 if the handler needs to run\nbefore Textadept closes all open buffers. If a handler returns `true`, Textadept does not\nquit. It is not recommended to return `false` from a quit handler, as that may interfere\nwith Textadept's normal shutdown procedure.\nEmitted by `quit()`.
 REFERENCE lexer.REFERENCE (string)\nThe tag name for reference elements, typically in markup.
 REGEX lexer.REGEX (string)\nThe tag name for regex elements.

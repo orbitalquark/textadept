@@ -63,6 +63,11 @@ Whether or not Textadept is running on Linux.
 
 Whether or not Textadept is running on macOS.
 
+<a id="QT"></a>
+#### `QT` (bool)
+
+Whether or not Textadept is running as a Qt GUI application.
+
 <a id="WIN32"></a>
 #### `WIN32` (bool)
 
