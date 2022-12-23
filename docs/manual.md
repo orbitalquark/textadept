@@ -521,13 +521,11 @@ Windows and Linux, `⌘⇧F` on macOS, and `M-^F` in the terminal version. Invok
 prompts you for a directory to search in. The "Replace" entry has been substituted for a "Filter"
 entry that contains files and directories to include or exclude from the search.
 
-A filter consists of a comma-separated list of [Lua patterns](#regex-and-lua-pattern-syntax)
-that match filenames and directories to include or exclude. Patterns are inclusive by
-default. Exclusive patterns begin with a '!'. If no inclusive patterns are given, any filename
-is initially considered. As a convenience, file extensions can be specified literally instead
-of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/' also matches the Windows directory
-separator ('[/\\]' is not needed). The default filter excludes many common binary files and
-version control directories from searches.
+A filter consists of a comma-separated list of glob patterns that match filenames and directories
+to include or exclude. Patterns are inclusive by default. Exclusive patterns begin with a
+'!'. If no inclusive patterns are given, any filename is initially considered. As a convenience,
+'/' also matches the Windows directory separator ('[/\\]' is not needed). The default filter
+excludes many common binary files and version control directories from searches.
 
 **Tip:** Textadept keeps track of filters set per-directory. You can also set per-directory filters
 in Lua by modifying [`ui.find_in_files_filters`][]. For example, in your *~/.textadept/init.lua*:
@@ -1797,3 +1795,9 @@ in an input dialog returns `nil` rather than returning a button code that needs 
 
 Dialogs no longer accept a *string_output* option. Buttons are always returned as numbers and
 list selections are always returned as numeric indices.
+
+##### Filter Changes
+
+Filters for `lfs.walk()`, `io.quick_open()`, and `ui.find.find_in_files()` no longer use Lua
+patterns, but use typical shell glob patterns instead. This means special characters like '-'
+and '+' can be used literally and longer need to be escaped with '%'.

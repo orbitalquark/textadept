@@ -15,7 +15,7 @@ module('lfs')]]
 -- @see walk
 -- @class table
 -- @name default_filter
-lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!.exe','!.gif','!.gz','!.jar','!.jpeg','!.jpg','!.o','!.pdf','!.png','!.so','!.tar','!.tgz','!.tif','!.tiff','!.xz','!.zip',--[[Directories]]'!/%.bzr$','!/%.git$','!/%.hg$','!/%.svn$','!/_FOSSIL_$','!/node_modules$'}
+lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!.exe','!.gif','!.gz','!.jar','!.jpeg','!.jpg','!.o','!.pdf','!.png','!.so','!.tar','!.tgz','!.tif','!.tiff','!.xz','!.zip',--[[Directories]]'!/.bzr','!/.git','!/.hg','!/.svn','!/_FOSSIL_','!/node_modules'}
 -- LuaFormatter on
 
 -- Documentation is in `lfs.walk()`.
@@ -64,11 +64,10 @@ end
 -- Returns an iterator that iterates over all files and sub-directories (up to *n* levels deep)
 -- in directory *dir* and yields each file found.
 -- String or list *filter* determines which files to yield, with the default filter being
--- `lfs.default_filter`. A filter consists of Lua patterns that match file and directory paths
--- to include or exclude. Exclusive patterns begin with a '!'. If no inclusive patterns are
--- given, any path is initially considered. As a convenience, file extensions can be specified
--- literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/' also matches the
--- Windows directory separator ('[/\\]' is not needed).
+-- `lfs.default_filter`. A filter consists of glob patterns that match file and directory paths to
+-- include or exclude. Exclusive patterns begin with a '!'. If no inclusive patterns are given,
+-- any path is initially considered. As a convenience, '/' also matches the Windows directory
+-- separator ('[/\\]' is not needed).
 -- @param dir The directory path to iterate over.
 -- @param filter Optional filter for files and directories to include and exclude. The default
 --   value is `lfs.default_filter`.
@@ -90,7 +89,7 @@ function lfs.walk(dir, filter, n, include_dirs)
     consider_any = true, exts = setmetatable({}, {__index = function() return true end})
   }
   for _, patt in ipairs(type(filter) == 'table' and filter or {filter}) do
-    patt = patt:gsub('^(!?)%%?%.([^.]+)$', '%1%%.%2$') -- '.lua' to '%.lua$'
+    patt = patt:gsub('[.+%()-]', '%%%0'):gsub('%?', '.'):gsub('%*', '.-') .. '$'
     patt = patt:gsub('/([^\\])', '[/\\]%1') -- '/' to '[/\\]'
     local include = not patt:find('^!')
     local ext = patt:match('^!?%%.([^.]+)%$$')

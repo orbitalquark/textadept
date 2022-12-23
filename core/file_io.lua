@@ -371,13 +371,12 @@ io.quick_open_filters = {}
 -- of directory paths, using a list dialog.
 -- If *paths* is `nil`, uses the current project's root directory, which is obtained from
 -- `io.get_project_root()`.
--- String or list *filter* determines which files to show in the dialog, with the default
--- filter being `io.quick_open_filters[path]` (if it exists) or `lfs.default_filter`. A filter
--- consists of Lua patterns that match file and directory paths to include or exclude. Patterns
--- are inclusive by default. Exclusive patterns begin with a '!'. If no inclusive patterns are
--- given, any path is initially considered. As a convenience, file extensions can be specified
--- literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/' also matches the
--- Windows directory separator ('[/\\]' is not needed).
+-- String or list *filter* determines which files to show in the dialog, with the default filter
+-- being `io.quick_open_filters[path]` (if it exists) or `lfs.default_filter`. A filter consists
+-- of glob patterns that match file and directory paths to include or exclude. Patterns are
+-- inclusive by default. Exclusive patterns begin with a '!'. If no inclusive patterns are given,
+-- any path is initially considered. As a convenience, '/' also matches the Windows directory
+-- separator ('[/\\]' is not needed).
 -- The number of files in the list is capped at `quick_open_max`.
 -- If *filter* is `nil` and *paths* is ultimately a string, the filter from the
 -- `io.quick_open_filters` table is used. If that filter does not exist, `lfs.default_filter`

@@ -282,12 +282,11 @@ events.connect(events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wr
 -- text and option flags, respectively.
 -- A filter determines which files to search in, with the default filter being
 -- `ui.find.find_in_files_filters[dir]` (if it exists) or `lfs.default_filter`. A filter consists
--- of Lua patterns that match file and directory paths to include or exclude. Patterns are
--- inclusive by default. Exclusive patterns begin with a '!'. If no inclusive patterns are given,
--- any filename is initially considered. As a convenience, file extensions can be specified
--- literally instead of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/' also matches the
--- Windows directory separator ('[/\\]' is not needed). If *filter* is `nil`, the filter from
--- the `ui.find.find_in_files_filters` table for *dir* is used. If that filter does not exist,
+-- of glob patterns that match file and directory paths to include or exclude. Patterns are
+-- inclusive by default. Exclusive patterns begin with a '!'. If no inclusive patterns are
+-- given, any filename is initially considered. As a convenience, '/' also matches the Windows
+-- directory separator ('[/\\]' is not needed). If *filter* is `nil`, the filter from the
+-- `ui.find.find_in_files_filters` table for *dir* is used. If that filter does not exist,
 -- `lfs.default_filter` is used.
 -- @param dir Optional directory path to search. If `nil`, the user is prompted for one.
 -- @param filter Optional filter for files and directories to exclude. The default value is
