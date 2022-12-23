@@ -692,13 +692,11 @@ by setting [`io.quick_open_max`][]. For example, in your *~/.textadept/init.lua*
     io.quick_open_filters['/path/to/project'] = {'/include', '/src'}
     io.quick_open_max = 10000 -- support huge projects
 
-A filter consists of a comma-separated list of [Lua patterns](#regex-and-lua-pattern-syntax)
-that match filenames and directories to include or exclude. Patterns are inclusive by
-default. Exclusive patterns begin with a '!'. If no inclusive patterns are given, any filename
-is initially considered. As a convenience, file extensions can be specified literally instead
-of as a Lua pattern (e.g. '.lua' vs. '%.lua$'), and '/' also matches the Windows directory
-separator ('[/\\]' is not needed). The default filter excludes many common binary files and
-version control directories from searches.
+A filter consists of a comma-separated list of glob patterns that match filenames and directories
+to include or exclude. Patterns are inclusive by default. Exclusive patterns begin with a
+'!'. If no inclusive patterns are given, any filename is initially considered. As a convenience,
+'/' also matches the Windows directory separator ('[/\\]' is not needed). The default filter
+excludes many common binary files and version control directories from searches.
 
 You can mimic a more traditional approach to projects by saving and loading project-specific
 sessions via the "File > Save Session..." and "File > Load Session..." menu items, respectively. A
@@ -713,8 +711,8 @@ When Textadept opens a file, it automatically attempts to identify the programmi
 associated with that file and assigns a lexer to perform syntax highlighting of the file's
 contents. The identification process is as follows:
 
-1. The first line of the file is checked against any Lua patterns in
-   [`lexer.detect_patterns`][]. If there is a match, the lexer associated with that matching
+1. The first line of the file is checked against any [Lua patterns](#regex-and-lua-pattern-syntax)
+   in [`lexer.detect_patterns`][]. If there is a match, the lexer associated with that matching
    pattern is used.
 2. The file's extension is checked against any of the extensions in
    [`lexer.detect_extensions`][]. If there is a match, the lexer associated with that matching
