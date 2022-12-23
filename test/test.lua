@@ -3201,6 +3201,7 @@ function test_ui_find_replace_all_empty_matches()
   ui.find.regex = false
   buffer:close(true)
 end
+if OSX then expected_failure(test_ui_find_replace_all_empty_matches) end
 
 function test_ui_find_replace_regex_transforms()
   buffer.new()
@@ -3492,6 +3493,8 @@ function test_macro_record_play_save_load()
   assert_equal(#_BUFFERS, 1)
   assert(not buffer.modify, 'a macro was played')
 
+  local f = keys['ctrl+t']
+  keys['ctrl+t'] = textadept.editing.transpose_chars
   textadept.macros.record()
   events.emit(events.MENU_CLICKED, 1) -- File > New
   buffer:add_text('f')
@@ -3524,40 +3527,28 @@ function test_macro_record_play_save_load()
   assert_equal(buffer:get_text(), 'ra')
   buffer:close(true)
   os.remove(filename)
+  keys['ctrl+t'] = f -- restore
 
   assert_raises(function() textadept.macros.save(1) end, 'string/nil expected, got number')
   assert_raises(function() textadept.macros.load(1) end, 'string/nil expected, got number')
 end
 
 function test_macro_record_play_with_keys_only()
-  if keys.f9 ~= textadept.macros.record then
-    print('Note: not running since F9 does not toggle macro recording')
-    return
-  end
-  if OSX then return end -- 'end' key is not bound to buffer.line_end
   buffer.new()
   buffer.eol_mode = buffer.EOL_LF
   buffer:append_text('foo\nbar\nbaz\n')
-  events.emit(events.KEYPRESS, 0xFFC6) -- f9; start recording
+  events.emit(events.KEYPRESS, string.byte(','), false, OSX, not OSX) -- start recording
   events.emit(events.KEYPRESS, not CURSES and 0xFF57 or 305) -- end
   events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 13) -- \n
   buffer:new_line()
   events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
-  events.emit(events.KEYPRESS, 0xFFC6) -- f9; stop recording
+  events.emit(events.KEYPRESS, string.byte(','), false, OSX, not OSX) -- stop recording
   assert_equal(buffer:get_text(), 'foo\n\nbar\nbaz\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(3))
-  if not CURSES then
-    events.emit(events.KEYPRESS, 0xFFC6, true) -- sf9; play
-  else
-    events.emit(events.KEYPRESS, 0xFFC7) -- f10; play
-  end
+  events.emit(events.KEYPRESS, string.byte('.'), false, OSX, not OSX) -- play
   assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(5))
-  if not CURSES then
-    events.emit(events.KEYPRESS, 0xFFC6, true) -- sf9; play
-  else
-    events.emit(events.KEYPRESS, 0xFFC7) -- f10; play
-  end
+  events.emit(events.KEYPRESS, string.byte('.'), false, OSX, not OSX) --  play
   assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(7))
   buffer:close(true)
