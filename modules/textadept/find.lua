@@ -168,8 +168,8 @@ local function clear_highlighted_matches()
   buffer.indicator_current = M.INDIC_FIND
   buffer:indicator_clear_range(1, buffer.length)
 end
-events.connect(events.KEYPRESS, function(code)
-  if keys.KEYSYMS[code] ~= 'esc' or is_ff_buf(buffer) then return end
+events.connect(events.KEYPRESS, function(key)
+  if key ~= 'esc' or is_ff_buf(buffer) then return end
   clear_highlighted_matches()
 end, 1)
 
@@ -526,8 +526,8 @@ function M.goto_file_found(line_num, next)
     buffer:set_sel(buffer.current_pos + e, buffer.current_pos + s)
   end
 end
-events.connect(events.KEYPRESS, function(code)
-  if keys.KEYSYMS[code] ~= '\n' or not is_ff_buf(buffer) then return end
+events.connect(events.KEYPRESS, function(key)
+  if key ~= '\n' or not is_ff_buf(buffer) then return end
   M.goto_file_found(buffer:line_from_position(buffer.current_pos))
   return true
 end)

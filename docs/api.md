@@ -3939,20 +3939,6 @@ Emitted when releasing the mouse after clicking on text that has an indicator pr
 
 Emitted after Textadept finishes initializing.
 
-<a id="events.KEYPRESS"></a>
-#### `events.KEYPRESS` (string)
-
-Emitted when pressing a key.
-  If any handler returns `true`, the key is not inserted into the buffer.
-  Arguments:
-
-  * _`code`_: The numeric key code.
-  * _`shift`_: The "Shift" modifier key is held down.
-  * _`ctrl`_: The "Control" modifier key is held down.
-  * _`alt`_: The "Alt"/"Option" modifier key is held down.
-  * _`cmd`_: The "Command" modifier key on macOS is held down.
-  * _`caps_lock`_: The "Caps Lock" modifier is on (GTK only).
-
 <a id="events.LEXER_LOADED"></a>
 #### `events.LEXER_LOADED` (string)
 
@@ -4083,10 +4069,11 @@ Emitted when the user clicks on a buffer tab.
   * _`index`_: The numeric index of the clicked tab.
   * _`button`_: The mouse button number that was clicked, either `1` (left button), `2`
     (middle button), `3` (right button), `4` (wheel up), or `5` (wheel down).
-  * _`shift`_: The "Shift" modifier key is held down.
-  * _`ctrl`_: The "Control" modifier key is held down.
-  * _`alt`_: The "Alt"/"Option" modifier key is held down.
-  * _`cmd`_: The "Command" modifier key on macOS is held down.
+  * _`modifiers`_: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
+    `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
+    key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
+    `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
+    reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 
 <a id="events.TAB_CLOSE_CLICKED"></a>
 #### `events.TAB_CLOSE_CLICKED` (string)
@@ -4553,6 +4540,15 @@ key sequence. By default, the `Esc` key cancels a key chain, but you can redefin
 The key that clears the current key chain.
   It cannot be part of a key chain.
   The default value is `'esc'` for the `Esc` key.
+
+<a id="events.KEYPRESS"></a>
+#### `events.KEYPRESS` (string)
+
+Emitted when pressing a recognized key.
+  If any handler returns `true`, the key is not handled further (e.g. inserted into the buffer).
+  Arguments:
+
+  * _`key`_: The string representation of the [key sequence](#key-sequences).
 
 <a id="keys.mode"></a>
 #### `keys.mode` (string)
@@ -6628,12 +6624,12 @@ See also:
 #### `textadept.editing.typeover_chars`
 
 Table of characters to move over when typed.
-The ASCII values of characters are keys and are assigned `true` values. The default characters
-are ')', ']', '}', '&apos;', '&quot;', and '`'. For certain XML-like lexers, '>' is also included.
+The characters themselves are keys and are assigned `true` values. The default characters are
+')', ']', '}', '&apos;', '&quot;', and '`'. For certain XML-like lexers, '>' is also included.
 
 Usage:
 
-* `textadept.editing.typeover_chars[string.byte('*')] = true`
+* `textadept.editing.typeover_chars['*'] = true`
 
 ---
 <a id="textadept.history"></a>

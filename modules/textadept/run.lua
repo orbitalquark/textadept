@@ -437,9 +437,9 @@ function M.goto_error(line_num, next)
   if buffer.line_state[line_num] > 1 then return end -- non-error
   buffer.annotation_style[line] = buffer:style_of_name(lexer.ERROR)
 end
-events.connect(events.KEYPRESS, function(code)
+events.connect(events.KEYPRESS, function(key)
   local line_num = buffer:line_from_position(buffer.current_pos)
-  if keys.KEYSYMS[code] == '\n' and is_out_buf(buffer) and buffer.line_state[line_num] > 0 then
+  if key == '\n' and is_out_buf(buffer) and buffer.line_state[line_num] > 0 then
     M.goto_error(line_num)
     return true
   end

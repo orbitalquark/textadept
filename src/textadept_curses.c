@@ -1012,9 +1012,8 @@ int main(int argc, char **argv) {
       continue; // skip unknown types
     bool shift = key.modifiers & TERMKEY_KEYMOD_SHIFT, ctrl = key.modifiers & TERMKEY_KEYMOD_CTRL,
          alt = key.modifiers & TERMKEY_KEYMOD_ALT;
-    if (ch &&
-      !emit("keypress", LUA_TNUMBER, ch, LUA_TBOOLEAN, shift, LUA_TBOOLEAN, ctrl, LUA_TBOOLEAN, alt,
-        -1))
+    int modifiers = (shift ? SCMOD_SHIFT : 0) | (ctrl ? SCMOD_CTRL : 0) | (alt ? SCMOD_ALT : 0);
+    if (ch && !emit("key", LUA_TNUMBER, ch, LUA_TNUMBER, modifiers, -1))
       scintilla_send_key(view, ch, shift, ctrl, alt);
     else if (!ch && !scintilla_send_mouse(view, event, button, y, x, shift, ctrl, alt) &&
       !emit("mouse", LUA_TNUMBER, event, LUA_TNUMBER, button, LUA_TNUMBER, y, LUA_TNUMBER, x,

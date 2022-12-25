@@ -206,9 +206,11 @@ void set_size(int width, int height) { gtk_window_resize(GTK_WINDOW(window), wid
 // Signal for a Scintilla keypress.
 // Note: cannot use bool return value due to modern i686-w64-mingw32-gcc issue.
 static int keypress(GtkWidget *_, GdkEventKey *event, void *__) {
-  return emit("keypress", LUA_TNUMBER, event->keyval, LUA_TBOOLEAN, event->state & GDK_SHIFT_MASK,
-    LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN, event->state & GDK_MOD1_MASK,
-    LUA_TBOOLEAN, event->state & GDK_META_MASK, LUA_TBOOLEAN, event->state & GDK_LOCK_MASK, -1);
+  int modifiers = (event->state & GDK_SHIFT_MASK ? SCMOD_SHIFT : 0) |
+    (event->state & GDK_CONTROL_MASK ? SCMOD_CTRL : 0) |
+    (event->state & GDK_MOD1_MASK ? SCMOD_ALT : 0) |
+    (event->state & GDK_META_MASK ? SCMOD_META : 0);
+  return emit("key", LUA_TNUMBER, event->keyval, LUA_TNUMBER, modifiers, -1);
 }
 
 // Signal for a Scintilla mouse click.
@@ -320,9 +322,11 @@ static bool tab_clicked(GtkWidget *label, GdkEventButton *event, void *_) {
   for (int i = 0; i < gtk_notebook_get_n_pages(notebook); i++) {
     GtkWidget *page = gtk_notebook_get_nth_page(notebook, i);
     if (label != gtk_notebook_get_tab_label(notebook, page)) continue;
-    emit("tab_clicked", LUA_TNUMBER, i + 1, LUA_TNUMBER, event->button, LUA_TBOOLEAN,
-      event->state & GDK_SHIFT_MASK, LUA_TBOOLEAN, event->state & GDK_CONTROL_MASK, LUA_TBOOLEAN,
-      event->state & GDK_MOD1_MASK, LUA_TBOOLEAN, event->state & GDK_META_MASK, -1);
+    int modifiers = (event->state & GDK_SHIFT_MASK ? SCMOD_SHIFT : 0) |
+      (event->state & GDK_CONTROL_MASK ? SCMOD_CTRL : 0) |
+      (event->state & GDK_MOD1_MASK ? SCMOD_ALT : 0) |
+      (event->state & GDK_META_MASK ? SCMOD_META : 0);
+    emit("tab_clicked", LUA_TNUMBER, i + 1, LUA_TNUMBER, event->button, LUA_TNUMBER, modifiers, -1);
     if (event->button == 3) show_context_menu("tab_context_menu", event);
     break;
   }

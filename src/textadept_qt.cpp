@@ -86,17 +86,13 @@ protected:
       !SCI(command_entry)->hasFocus())
       return QApplication::sendEvent(ta, event);
 
-      // Allow Textadept the first chance at handling the keypress. Otherwise it is propagated to
-      // Scintilla.
-#if !__APPLE__
-    int ctrlModifier = Qt::ControlModifier, metaModifier = 0;
-#else
-    int ctrlModifier = Qt::MetaModifier, metaModifier = Qt::ControlModifier;
-#endif
-    return emit("keypress", LUA_TNUMBER, keyEvent->key(), LUA_TBOOLEAN,
-      keyEvent->modifiers() & Qt::ShiftModifier, LUA_TBOOLEAN, keyEvent->modifiers() & ctrlModifier,
-      LUA_TBOOLEAN, keyEvent->modifiers() & Qt::AltModifier, LUA_TBOOLEAN,
-      keyEvent->modifiers() & metaModifier, -1);
+    // Allow Textadept the first chance at handling the keypress. Otherwise it is propagated to
+    // Scintilla.
+    int modifiers = (keyEvent->modifiers() & Qt::ShiftModifier ? SCMOD_SHIFT : 0) |
+      (keyEvent->modifiers() & Qt::ControlModifier ? SCMOD_CTRL : 0) |
+      (keyEvent->modifiers() & Qt::AltModifier ? SCMOD_ALT : 0) |
+      (keyEvent->modifiers() & Qt::MetaModifier ? SCMOD_META : 0);
+    return emit("key", LUA_TNUMBER, keyEvent->key(), LUA_TNUMBER, modifiers, -1);
   }
 };
 
@@ -657,14 +653,10 @@ Textadept::Textadept(QWidget *parent) : QMainWindow{parent}, ui{new Ui::Textadep
   connect(ui->tabbar, &QTabBar::tabBarClicked, this, [](int index) {
     Qt::MouseButtons button = QApplication::mouseButtons();
     Qt::KeyboardModifiers mods = QApplication::keyboardModifiers();
-#if !__APPLE__
-    int ctrlModifier = Qt::ControlModifier, metaModifier = 0;
-#else
-        int ctrlModifier = Qt::MetaModifier, metaModifier = Qt::ControlModifier;
-#endif
-    emit("tab_clicked", LUA_TNUMBER, index + 1, LUA_TNUMBER, button, LUA_TBOOLEAN,
-      mods & Qt::ShiftModifier, LUA_TBOOLEAN, mods & ctrlModifier, LUA_TBOOLEAN,
-      mods & Qt::AltModifier, LUA_TBOOLEAN, mods & metaModifier, -1);
+    int modifiers = (mods & Qt::ShiftModifier ? SCMOD_SHIFT : 0) |
+      (mods & Qt::ControlModifier ? SCMOD_CTRL : 0) | (mods & Qt::AltModifier ? SCMOD_ALT : 0) |
+      (mods & Qt::MetaModifier ? SCMOD_META : 0);
+    emit("tab_clicked", LUA_TNUMBER, index + 1, LUA_TNUMBER, button, LUA_TNUMBER, modifiers, -1);
     if (button == Qt::RightButton) show_context_menu("tab_context_menu", nullptr);
   });
   connect(ui->tabbar, &QTabBar::currentChanged, this,

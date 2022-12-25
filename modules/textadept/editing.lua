@@ -90,13 +90,13 @@ for _, k, v in string.gmatch([[()[]{}''""``]], '((.)(.))') do M.auto_pairs[k:byt
 
 ---
 -- Table of characters to move over when typed.
--- The ASCII values of characters are keys and are assigned `true` values. The default characters
--- are ')', ']', '}', '&apos;', '&quot;', and '`'. For certain XML-like lexers, '>' is also included.
+-- The characters themselves are keys and are assigned `true` values. The default characters are
+-- ')', ']', '}', '&apos;', '&quot;', and '`'. For certain XML-like lexers, '>' is also included.
 -- @class table
 -- @name typeover_chars
--- @usage textadept.editing.typeover_chars[string.byte('*')] = true
+-- @usage textadept.editing.typeover_chars['*'] = true
 M.typeover_chars = {}
-for _, c in utf8.codes([[)]}'"`]]) do M.typeover_chars[c] = true end
+for c in string.gmatch([[)]}'"`]], '.') do M.typeover_chars[c] = true end
 
 -- Table of brace characters to highlight.
 -- The ASCII values of brace characters are keys and are assigned `true`.
@@ -136,7 +136,7 @@ M.api_files = setmetatable({}, {
 local function update_language_specific_features()
   local angles = buffer.property_int['scintillua.angle.braces'] ~= 0
   if M.auto_pairs then M.auto_pairs[string.byte('<')] = angles and '>' end
-  if M.typeover_chars then M.typeover_chars[string.byte('>')] = angles ~= nil end
+  if M.typeover_chars then M.typeover_chars['>'] = angles ~= nil end
   brace_matches = {} -- clear
   for _, c in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[c] = true end
 end
@@ -157,8 +157,8 @@ events.connect(events.CHAR_ADDED, function(code)
 end)
 
 -- Removes matched chars on backspace, taking multiple selections into account.
-events.connect(events.KEYPRESS, function(code)
-  if M.auto_pairs and keys.KEYSYMS[code] == '\b' and not ui.command_entry.active then
+events.connect(events.KEYPRESS, function(key)
+  if M.auto_pairs and key == '\b' and not ui.command_entry.active then
     buffer:begin_undo_action()
     for i = 1, buffer.selections do
       local pos = buffer.selection_n_caret[i]
@@ -188,8 +188,8 @@ local function clear_highlighted_words()
   buffer.indicator_current = M.INDIC_HIGHLIGHT
   buffer:indicator_clear_range(1, buffer.length)
 end
-events.connect(events.KEYPRESS, function(code)
-  if keys.KEYSYMS[code] == 'esc' then clear_highlighted_words() end
+events.connect(events.KEYPRESS, function(key)
+  if key == 'esc' then clear_highlighted_words() end
 end, 1)
 
 -- Highlight all instances of the current or selected word.
@@ -220,12 +220,12 @@ events.connect(events.UPDATE_UI, function(updated)
 end)
 
 -- Moves over typeover characters when typed, taking multiple selections into account.
-events.connect(events.KEYPRESS, function(code)
-  if M.typeover_chars and M.typeover_chars[code] and not ui.command_entry.active then
+events.connect(events.KEYPRESS, function(key)
+  if M.typeover_chars and M.typeover_chars[key] and not ui.command_entry.active then
     local handled = false
     for i = 1, buffer.selections do
       local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
-      if s ~= e or buffer.char_at[s] ~= code then goto continue end
+      if s ~= e or buffer.char_at[s] ~= string.byte(key) then goto continue end
       buffer.selection_n_start[i], buffer.selection_n_end[i] = s + 1, s + 1
       handled = true
       ::continue::
@@ -456,12 +456,10 @@ function M.enclose(left, right, select)
 end
 
 -- Enclose selected text in punctuation or auto-paired characters.
-events.connect(events.KEYPRESS, function(code, shift, ctrl, alt, cmd)
-  if M.auto_enclose and not buffer.selection_empty and code < 256 and not ctrl and not alt and
-    not cmd and not ui.command_entry.active then
-    local char = string.char(code)
-    if char:find('^%P') then return end -- not punctuation
-    M.enclose(char, M.auto_pairs[code] or char, true)
+events.connect(events.KEYPRESS, function(key)
+  if M.auto_enclose and not buffer.selection_empty and not ui.command_entry.active and
+    key:find('^%p$') then
+    M.enclose(key, M.auto_pairs[string.byte(key)] or key, true)
     return true -- prevent typing
   end
 end, 1)

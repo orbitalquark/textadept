@@ -59,6 +59,9 @@ Changes:
 * `ui.find.show_filenames_in_progressbar` is `false` by default now.
 * Filters for `lfs.walk()`, `io.quick_open()`, and `ui.find_in_files()` now use glob patterns
   instead of Lua patterns.
+* Changed `events.KEYPRESS` to only emit string key representations.
+* Changed `events.TAB_CLICKED` to use key modifier mask like other events.
+* Changed `textadept.editing.typeover_chars` to use string character keys instead of bytes.
 
 [Textadept 12.0 alpha  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.win.zip
 [Textadept 12.0 alpha  -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.macOS.zip

@@ -1648,6 +1648,9 @@ N/A | Added | [GTK](api.html#GTK), [QT](api.html#QT)
 [OSX][] | Changed | Always true on macOS, not just in the GUI version
 **buffer**||
 [tab_label][] | Changed | Write-only
+**events**||
+[KEYPRESS][] | Changed | Changed arguments
+[TAB_CLICKED][] | Changed | Changed arguments
 **io**||
 N/A | Added | [ensure_final_newline][]<sup>a</sup>
 [quick_open()][] | Changed | Removed *opts* parameter
@@ -1664,8 +1667,18 @@ N/A | Added | [set_word_list()][]
 N/A | Added | [number_()][] and friends
 [to_eol()][] | Changed | *prefix* parameter is optional
 fold\_line\_groups | Removed | N/A
-**view**||
-N/A | Added | [set_styles()][]
+**textadept.editing**||
+INDIC_BRACEMATCH | Removed | N/A<sup>b</sup>
+brace_matches | Removed | N/A<sup>c</sup>
+[typeover_chars][] | Changed | Keys are string characters, not byte values
+**textadept.file_types**| Removed | N/A
+extensions | Renamed | [lexer.detect_extensions][]
+patterns | Renamed | [lexer.detect_patterns][]
+select_lexer() | Replaced | `textadept.menu.menubar[L['Buffer']]`<br/>`[L['Select Lexer...']][2]`
+**textadept.run**||
+error_patterns | Removed | N/A
+set_arguments() | Removed | N/A<sup>d</sup>
+N/A | Added | [run_project()][], [run_project_commands][]
 **ui**||
 N/A | Added | [output()][]
 silent_print | Replaced | [print_silent()][], [output_silent()][]
@@ -1683,17 +1696,8 @@ progressbar() | Replaced | [progress()][]
 filteredlist() | Replaced | [list()][]
 dropdown(), standard_dropdown() | Removed | N/A
 textbox(), optionselect(), colorselect(), fontselect() | Removed | N/A
-**textadept.editing**||
-INDIC_BRACEMATCH | Removed | N/A<sup>b</sup>
-brace_matches | Removed | N/A<sup>c</sup>
-**textadept.file_types**| Removed | N/A
-extensions | Renamed | [lexer.detect_extensions][]
-patterns | Renamed | [lexer.detect_patterns][]
-select_lexer() | Replaced | `textadept.menu.menubar[L['Buffer']]`<br/>`[L['Select Lexer...']][2]`
-**textadept.run**||
-error_patterns | Removed | N/A
-set_arguments() | Removed | N/A<sup>d</sup>
-N/A | Added | [run_project()][], [run_project_commands][]
+**view**||
+N/A | Added | [set_styles()][]
 
 <sup>a</sup>No longer part of `textadept.editing.strip_trailing_spaces`<br/>
 <sup>b</sup>Use view.STYLE_BRACEBAD and view.STYLE_BRACELIGHT instead<br/>
@@ -1702,6 +1706,8 @@ N/A | Added | [run_project()][], [run_project_commands][]
 
 [OSX]: api.html#OSX
 [tab_label]: api.html#buffer.tab_label
+[KEYPRESS]: api.html#events.KEYPRESS
+[TAB_CLICKED]: api.html#events.TAB_CLICKED
 [ensure_final_newline]: api.html#io.ensure_final_newline
 [quick_open()]: api.html#io.quick_open
 [view.colors]: api.html#view.colors
@@ -1712,7 +1718,11 @@ N/A | Added | [run_project()][], [run_project_commands][]
 [set_word_list()]: api.html#lexer.set_word_list
 [number_()]: api.html#lexer.number_
 [to_eol()]: api.html#lexer.to_eol
-[set_styles()]: api.html#view.set_styles
+[typeover_chars]: api.html#textadept.editing.typeover_chars
+[lexer.detect_extensions]: api.html#lexer.detect_extensions
+[lexer.detect_patterns]: api.html#lexer.detect_patterns
+[run_project()]: api.html#textadept.run.run_project
+[run_project_commands]: api.html#textadept.run.run_project_commands
 [output()]: api.html#ui.output
 [print_silent()]: api.html#ui.print_silent
 [output_silent()]: api.html#ui.output_silent
@@ -1727,10 +1737,7 @@ N/A | Added | [run_project()][], [run_project_commands][]
 [save()]: api.html#ui.dialogs.save
 [progress()]: api.html#ui.dialogs.progress
 [list()]: api.html#ui.dialogs.list
-[lexer.detect_extensions]: api.html#lexer.detect_extensions
-[lexer.detect_patterns]: api.html#lexer.detect_patterns
-[run_project()]: api.html#textadept.run.run_project
-[run_project_commands]: api.html#textadept.run.run_project_commands
+[set_styles()]: api.html#view.set_styles
 
 ##### Theme Changes
 

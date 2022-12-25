@@ -25,17 +25,9 @@ end)
 -- Event handlers for recording macro-able events.
 local function event_recorder(event) return function(...) macro[#macro + 1] = {event, ...} end end
 local event_recorders = {
-  [events.KEYPRESS] = function(code, shift, control, alt, cmd)
-    -- Not every keypress should be recorded (e.g. toggling macro recording). Use very basic
-    -- key handling to try to identify key bindings to ignore.
-    local key = code < 256 and string.char(code) or keys.KEYSYMS[code]
-    if key then
-      if shift and code >= 32 and code < 256 then shift = false end
-      local key_seq = (control and 'ctrl+' or '') .. (alt and 'alt+' or '') ..
-        (cmd and OSX and 'cmd+' or '') .. (shift and 'shift+' or '') .. key
-      for i = 1, #ignore do if keys[key_seq] == ignore[i] then return end end
-    end
-    macro[#macro + 1] = {events.KEYPRESS, code, shift, control, alt, cmd}
+  [events.KEYPRESS] = function(key)
+    for i = 1, #ignore do if keys[key] == ignore[i] then return end end
+    macro[#macro + 1] = {events.KEYPRESS, key}
   end, -- LuaFormatter
   [events.MENU_CLICKED] = event_recorder(events.MENU_CLICKED),
   [events.CHAR_ADDED] = event_recorder(events.CHAR_ADDED),
@@ -70,7 +62,7 @@ function M.play()
   -- If this function is run as a key command, `keys.keychain` cannot be cleared until this
   -- function returns. Emit 'esc' to forcibly clear it so subsequent keypress events can be
   -- properly handled.
-  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- 'esc'
+  events.emit(events.KEYPRESS, 'esc')
   for _, event in ipairs(macro) do
     if event[1] == events.CHAR_ADDED then
       local f = buffer.selection_empty and buffer.add_text or buffer.replace_sel

@@ -770,20 +770,20 @@ function test_keys_keychain()
   local ctrl_a = keys['ctrl+a']
   local foo = false
   keys['ctrl+a'] = {a = function() foo = true end}
-  events.emit(events.KEYPRESS, string.byte('a'))
+  events.emit(events.KEYPRESS, 'a')
   assert(not foo, 'foo set outside keychain')
-  events.emit(events.KEYPRESS, string.byte('a'), false, true)
+  events.emit(events.KEYPRESS, 'ctrl+a')
   assert_equal(#keys.keychain, 1)
   assert_equal(keys.keychain[1], 'ctrl+a')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  events.emit(events.KEYPRESS, 'esc')
   assert_equal(#keys.keychain, 0, 'keychain not canceled')
-  events.emit(events.KEYPRESS, string.byte('a'), false, true)
-  events.emit(events.KEYPRESS, string.byte('b')) -- invalid sequence
+  events.emit(events.KEYPRESS, 'ctrl+a', false, true)
+  events.emit(events.KEYPRESS, 'b') -- invalid sequence
   assert_equal(#keys.keychain, 0, 'keychain still active')
-  events.emit(events.KEYPRESS, string.byte('a'))
+  events.emit(events.KEYPRESS, 'a')
   assert(not foo, 'foo set outside keychain')
-  events.emit(events.KEYPRESS, string.byte('a'), false, true)
-  events.emit(events.KEYPRESS, string.byte('a'))
+  events.emit(events.KEYPRESS, 'ctrl+a')
+  events.emit(events.KEYPRESS, 'a')
   assert(foo, 'foo not set')
   keys['ctrl+a'] = ctrl_a -- restore
 end
@@ -801,11 +801,11 @@ function test_keys_propagation()
     return false -- propagate
   end
   buffer:set_lexer('cpp')
-  events.emit(events.KEYPRESS, string.byte('a'))
+  events.emit(events.KEYPRESS, 'a')
   assert(not foo, 'foo set')
-  events.emit(events.KEYPRESS, string.byte('b'))
+  events.emit(events.KEYPRESS, 'b')
   assert(bar, 'bar set')
-  events.emit(events.KEYPRESS, string.byte('c'))
+  events.emit(events.KEYPRESS, 'c')
   assert(not baz, 'baz set') -- mode changed, so cannot propagate to keys.c
   assert_equal(keys.mode, 'test_mode')
   keys.mode = nil
@@ -825,17 +825,17 @@ function test_keys_modes()
     end
   }
   keys.cpp.a = function() keys.mode = 'test_mode' end
-  events.emit(events.KEYPRESS, string.byte('a'))
+  events.emit(events.KEYPRESS, 'a')
   assert(foo, 'foo not set')
   assert(not keys.mode, 'key mode entered')
   assert(not bar, 'bar set outside mode')
   foo = false
   buffer:set_lexer('cpp')
-  events.emit(events.KEYPRESS, string.byte('a'))
+  events.emit(events.KEYPRESS, 'a')
   assert_equal(keys.mode, 'test_mode')
   assert(not foo, 'foo set outside mode')
   assert(not bar, 'bar set outside mode')
-  events.emit(events.KEYPRESS, string.byte('a'))
+  events.emit(events.KEYPRESS, 'a')
   assert(bar, 'bar not set')
   assert(not keys.mode, 'key mode still active')
   assert(not foo, 'foo set') -- TODO: should this propagate?
@@ -1574,14 +1574,14 @@ function test_command_entry_run()
     assert(ui.command_entry.height > ui.command_entry:text_height(1), 'height < 2 lines')
   end
   ui.command_entry:set_text('foo')
-  events.emit(events.KEYPRESS, string.byte('\t'))
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\t')
+  events.emit(events.KEYPRESS, '\n')
   if not WIN32 then assert_equal(command_run, 'foo') end
   assert(tab_pressed, '\\t not registered')
   assert_equal(ui.command_entry.active, false)
 
   ui.command_entry.run('', function(text, arg) assert_equal(arg, 'arg') end, 'text', nil, 'arg')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
 
   assert_raises(function() ui.command_entry.run(1) end, 'string/nil expected, got number')
   assert_raises(function() ui.command_entry.run('', '') end, 'function/nil expected, got string')
@@ -1602,14 +1602,14 @@ function test_command_entry_run_persistent_label()
   ui.command_entry:delete_back() -- without a patch, Scintilla clears margin text
   assert_equal(ui.command_entry.length, 0)
   assert_equal(ui.command_entry.margin_text[1], 'label:')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  events.emit(events.KEYPRESS, 'esc')
 end
 
 local function run_lua_command(command)
   ui.command_entry.run()
   ui.command_entry:set_text(command)
   assert_equal(ui.command_entry.lexer_language, 'lua')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
 end
 
 function test_command_entry_run_lua()
@@ -1667,11 +1667,11 @@ end
 local function assert_lua_autocompletion(text, first_item)
   ui.command_entry:set_text(text)
   ui.command_entry:goto_pos(ui.command_entry.length + 1)
-  events.emit(events.KEYPRESS, string.byte('\t'))
+  events.emit(events.KEYPRESS, '\t')
   assert_equal(ui.command_entry:auto_c_active(), true)
   assert_equal(ui.command_entry.auto_c_current_text, first_item)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'down')
+  events.emit(events.KEYPRESS, 'up') -- up
   assert_equal(ui.command_entry:get_text(), text) -- no history cycling
   assert_equal(ui.command_entry:auto_c_active(), true)
   assert_equal(ui.command_entry.auto_c_current_text, first_item)
@@ -1711,50 +1711,50 @@ function test_command_entry_history()
   local one, two = function() end, function() end
 
   ui.command_entry.run('', one)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), '') -- no prior history
-  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  events.emit(events.KEYPRESS, 'down')
   assert_equal(ui.command_entry:get_text(), '') -- no further history
   ui.command_entry:add_text('foo')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
 
   ui.command_entry.run('', two)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), '') -- no prior history
-  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  events.emit(events.KEYPRESS, 'down')
   assert_equal(ui.command_entry:get_text(), '') -- no further history
   ui.command_entry:add_text('bar')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
 
   ui.command_entry.run('', one)
   assert_equal(ui.command_entry:get_text(), 'foo')
   assert_equal(ui.command_entry.selection_start, 1)
   assert_equal(ui.command_entry.selection_end, 4)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), 'foo') -- no prior history
-  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  events.emit(events.KEYPRESS, 'down')
   assert_equal(ui.command_entry:get_text(), 'foo') -- no further history
   ui.command_entry:set_text('baz')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
 
   ui.command_entry.run('', one)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), 'foo')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  events.emit(events.KEYPRESS, 'down')
   assert_equal(ui.command_entry:get_text(), 'baz')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up, 'foo'
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, 'up') -- 'foo'
+  events.emit(events.KEYPRESS, '\n')
 
   ui.command_entry.run('', one)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), 'baz')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), 'foo')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  events.emit(events.KEYPRESS, 'esc')
 
   ui.command_entry.run('', two)
   assert_equal(ui.command_entry:get_text(), 'bar')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  events.emit(events.KEYPRESS, 'esc')
 end
 
 function test_command_entry_history_append()
@@ -1762,32 +1762,32 @@ function test_command_entry_history_append()
 
   ui.command_entry.run('', f, keys)
   ui.command_entry:set_text('foo')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
 
   ui.command_entry.run('', f, keys)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), '') -- no prior history
-  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  events.emit(events.KEYPRESS, 'down')
   assert_equal(ui.command_entry:get_text(), '') -- no further history
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   ui.command_entry.append_history('bar')
 
   ui.command_entry.run('', f, keys)
   assert_equal(ui.command_entry:get_text(), 'bar')
   assert_equal(ui.command_entry.selection_start, 1)
   assert_equal(ui.command_entry.selection_end, 4)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), 'bar') -- no prior history
-  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  events.emit(events.KEYPRESS, 'down')
   assert_equal(ui.command_entry:get_text(), 'bar') -- no further history
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
 
   -- Verify no previous mode or history is needed for adding history.
   local f2 = function() end
   ui.command_entry.append_history(f2, 'baz')
   ui.command_entry.run('', f2, keys)
   assert_equal(ui.command_entry:get_text(), 'baz')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
 
   assert_raises(function() ui.command_entry.append_history(1) end, 'string expected, got number')
   assert_raises(function() ui.command_entry:append_history('text') end,
@@ -1804,28 +1804,28 @@ function test_command_entry_history_initial_text()
   assert_equal(ui.command_entry.selection_start, ui.command_entry.selection_end)
   assert_equal(ui.command_entry.current_pos, ui.command_entry.length + 1)
   ui.command_entry:set_text('foo')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
 
   ui.command_entry.run('', f, 'text', 'initial')
   assert_equal(ui.command_entry:get_text(), 'initial')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), 'foo')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), 'initial')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), 'initial') -- no prior history
-  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  events.emit(events.KEYPRESS, 'down')
   assert_equal(ui.command_entry:get_text(), 'foo')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  events.emit(events.KEYPRESS, 'down')
   assert_equal(ui.command_entry:get_text(), 'initial')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  events.emit(events.KEYPRESS, 'down')
   assert_equal(ui.command_entry:get_text(), 'initial') -- no further history
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
 
   ui.command_entry.run('', f, 'text', 'initial')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), 'foo') -- no duplicate 'initial'
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
 end
 
 function test_command_entry_mode_restore()
@@ -1833,7 +1833,7 @@ function test_command_entry_mode_restore()
   keys.mode = mode
   ui.command_entry.run()
   assert(keys.mode ~= mode)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   assert_equal(keys.mode, mode)
   keys.mode = nil
 end
@@ -1856,11 +1856,11 @@ function test_editing_auto_pair()
   buffer:add_text('foo(')
   events.emit(events.CHAR_ADDED, string.byte('('))
   assert_equal(buffer:get_text(), 'foo()')
-  events.emit(events.KEYPRESS, string.byte(')'))
+  events.emit(events.KEYPRESS, ')')
   assert_equal(buffer.current_pos, buffer.line_end_position[1])
   buffer:char_left()
   -- Note: cannot check for brace highlighting; indicator search does not work.
-  events.emit(events.KEYPRESS, not CURSES and 0xFF08 or 263) -- \b
+  events.emit(events.KEYPRESS, '\b')
   assert_equal(buffer:get_text(), 'foo')
   -- Multi-selection.
   buffer:set_text('foo(\nfoo(')
@@ -1876,7 +1876,7 @@ function test_editing_auto_pair()
   assert_equal(buffer.selection_n_start[2], buffer.selection_n_end[2])
   assert_equal(buffer.selection_n_start[2], pos2 + 1)
   -- TODO: typeover.
-  events.emit(events.KEYPRESS, not CURSES and 0xFF08 or 263) -- \b
+  events.emit(events.KEYPRESS, '\b')
   assert_equal(buffer:get_text(), 'foo\nfoo')
   -- Verify atomic undo for multi-select.
   buffer:undo() -- simulated backspace
@@ -2354,14 +2354,14 @@ function test_editing_auto_enclose()
   buffer:add_text('foo bar')
   buffer:word_left_extend()
   textadept.editing.auto_enclose = false
-  events.emit(events.KEYPRESS, string.byte('*')) -- simulate typing
+  events.emit(events.KEYPRESS, '*') -- simulate typing
   assert(buffer:get_text() ~= 'foo *bar*')
   textadept.editing.auto_enclose = true
-  events.emit(events.KEYPRESS, string.byte('*')) -- simulate typing
+  events.emit(events.KEYPRESS, '*') -- simulate typing
   assert_equal(buffer:get_text(), 'foo *bar*')
   buffer:undo()
   buffer:select_all()
-  events.emit(events.KEYPRESS, string.byte('(')) -- simulate typing
+  events.emit(events.KEYPRESS, '(') -- simulate typing
   assert_equal(buffer:get_text(), '(foo bar)')
   buffer:close(true)
   textadept.editing.auto_enclose = auto_enclose -- restore
@@ -2547,7 +2547,7 @@ function test_editing_highlight_word()
   textadept.editing.select_word()
   update()
   verify_foo()
-  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  events.emit(events.KEYPRESS, 'esc')
   local pos = buffer:indicator_end(textadept.editing.INDIC_HIGHLIGHT, 1)
   assert_equal(pos, 1) -- highlights cleared
   -- Verify turning off word highlighting.
@@ -3016,7 +3016,7 @@ function test_ui_find_find_in_files()
   assert_equal(buffer:line_from_position(buffer.current_pos), tonumber(line_num))
   assert_equal(buffer:get_sel_text(), 'foo')
   ui.goto_view(1) -- files found buffer
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   assert_equal(buffer.filename, filename)
   ui.goto_view(1) -- files found buffer
   events.emit(events.DOUBLE_CLICK, nil, buffer:line_from_position(buffer.current_pos))
@@ -3505,7 +3505,7 @@ function test_macro_record_play_save_load()
   events.emit(events.CHAR_ADDED, string.byte('a'))
   buffer:add_text('r')
   events.emit(events.CHAR_ADDED, string.byte('r'))
-  events.emit(events.KEYPRESS, string.byte('t'), false, true) -- transpose
+  events.emit(events.KEYPRESS, 'ctrl+t') -- transpose
   textadept.macros.play() -- should not do anything
   textadept.macros.save() -- should not do anything
   textadept.macros.load() -- should not do anything
@@ -3537,18 +3537,18 @@ function test_macro_record_play_with_keys_only()
   buffer.new()
   buffer.eol_mode = buffer.EOL_LF
   buffer:append_text('foo\nbar\nbaz\n')
-  events.emit(events.KEYPRESS, string.byte(','), false, OSX, not OSX) -- start recording
-  events.emit(events.KEYPRESS, not CURSES and 0xFF57 or 305) -- end
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 13) -- \n
+  events.emit(events.KEYPRESS, not OSX and 'alt+,' or 'ctrl+,') -- start recording
+  events.emit(events.KEYPRESS, 'end')
+  events.emit(events.KEYPRESS, '\n')
   buffer:new_line()
-  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
-  events.emit(events.KEYPRESS, string.byte(','), false, OSX, not OSX) -- stop recording
+  events.emit(events.KEYPRESS, 'down')
+  events.emit(events.KEYPRESS, not OSX and 'alt+,' or 'ctrl+,') -- stop recording
   assert_equal(buffer:get_text(), 'foo\n\nbar\nbaz\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(3))
-  events.emit(events.KEYPRESS, string.byte('.'), false, OSX, not OSX) -- play
+  events.emit(events.KEYPRESS, not OSX and 'alt+.' or 'ctrl+.') -- play
   assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(5))
-  events.emit(events.KEYPRESS, string.byte('.'), false, OSX, not OSX) --  play
+  events.emit(events.KEYPRESS, not OSX and 'alt+.' or 'ctrl+.') --  play
   assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(7))
   buffer:close(true)
@@ -3591,7 +3591,7 @@ function test_menu_menu_functions()
   if not (WIN32 and CURSES) then
     textadept.menu.menubar[_L['Edit']][_L['Filter Through']][2]()
     ui.command_entry:set_text('sort')
-    events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+    events.emit(events.KEYPRESS, '\n')
     assert_equal(buffer:get_text(), table.concat({'1', '2', '3', ''}, newline()))
   end
   buffer:set_text('foo')
@@ -3700,7 +3700,7 @@ function test_run_compile_run()
   textadept.run.compile(compile_file)
   assert_equal(ui.command_entry.active, true)
   assert(ui.command_entry:get_text():find('^luac'), 'incorrect compile command')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   assert_equal(#_BUFFERS, 2)
   assert_equal(buffer._type, _L['[Output Buffer]'])
   ui.update() -- process output
@@ -3718,7 +3718,7 @@ function test_run_compile_run()
   assert(buffer:get_sel_text():find("'end' expected"), 'compile error not selected')
   local markers = buffer:marker_get(buffer:line_from_position(buffer.current_pos))
   assert(markers & 1 << textadept.run.MARK_ERROR - 1 > 0)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   assert_equal(buffer.filename, compile_file)
   ui.goto_view(1) -- output buffer
   events.emit(events.DOUBLE_CLICK, nil, buffer:line_from_position(buffer.current_pos) + 1)
@@ -3726,7 +3726,7 @@ function test_run_compile_run()
   events.emit(events.DOUBLE_CLICK, nil, buffer:line_from_position(buffer.current_pos))
   assert_equal(buffer.filename, compile_file)
   textadept.run.compile() -- clears annotation
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   ui.update() -- process output
   view:goto_buffer(1)
   assert(not buffer.annotation_text[3]:find("'end' expected"), 'annotation visible')
@@ -3740,7 +3740,7 @@ function test_run_compile_run()
   textadept.run.run()
   assert_equal(ui.command_entry.active, true)
   assert(ui.command_entry:get_text():find('^lua'), 'incorrect run command')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   assert_equal(buffer._type, _L['[Output Buffer]'])
   ui.update() -- process output
   assert(buffer:get_text():find('attempt to call a nil value'), 'no run error')
@@ -3771,7 +3771,7 @@ function test_run_distinct_command_histories()
   io.open_file(run_file)
   textadept.run.run()
   local orig_run_command = ui.command_entry:get_text()
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   ui.update() -- process output
   assert(buffer:get_text():find('nil'), 'unexpected argument was passed to run command')
   if #_VIEWS > 1 then view:unsplit() end
@@ -3779,7 +3779,7 @@ function test_run_distinct_command_histories()
   textadept.run.run()
   ui.command_entry:append_text(' bar')
   local run_command = ui.command_entry:get_text()
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   ui.update() -- process output
   assert(buffer:get_text():find('bar'), 'argument not passed to run command')
   if QT then ui.update() end -- process exit
@@ -3787,11 +3787,11 @@ function test_run_distinct_command_histories()
   buffer:close() -- output buffer
   textadept.run.run()
   assert_equal(ui.command_entry:get_text(), run_command)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), orig_run_command)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF54 or 300) -- down
+  events.emit(events.KEYPRESS, 'down')
   assert_equal(ui.command_entry:get_text(), run_command)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  events.emit(events.KEYPRESS, 'esc')
   buffer:close()
 
   buffer.new()
@@ -3799,9 +3799,9 @@ function test_run_distinct_command_histories()
   textadept.run.run()
   run_command = ui.command_entry:get_text()
   assert(not run_command:find('bar'), 'argument persisted to another run command')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF52 or 301) -- up
+  events.emit(events.KEYPRESS, 'up')
   assert_equal(ui.command_entry:get_text(), run_command) -- no prior history
-  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  events.emit(events.KEYPRESS, 'esc')
   buffer:close()
 end
 
@@ -3812,7 +3812,7 @@ function test_run_no_command()
   if not OSX then assert_equal(ui.command_entry.active, true) end -- macOS has focus issues here
   assert_equal(ui.command_entry:get_text(), '')
   ui.command_entry:set_text(not WIN32 and 'cat %f' or 'type %f')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   ui.update() -- process output
   assert(buffer:get_text():find('bar'), 'did not run command')
   if QT then -- process exit
@@ -3825,7 +3825,7 @@ function test_run_no_command()
   textadept.run.run()
   assert(ui.command_entry:get_text():find(not WIN32 and '^cat' or '^type'),
     'previous command not saved')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  events.emit(events.KEYPRESS, 'esc')
   buffer:close()
 end
 
@@ -3839,7 +3839,7 @@ function test_run_build()
   textadept.run.build(_HOME)
   assert_equal(ui.command_entry.active, true)
   assert_equal(ui.command_entry:get_text(), build_command)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   if #_VIEWS > 1 then view:unsplit() end
   assert_equal(buffer._type, _L['[Output Buffer]'])
   sleep(0.1) -- ensure process is running
@@ -3869,7 +3869,7 @@ function test_run_build_no_command()
   textadept.run.build()
   assert_equal(ui.command_entry:get_text(), '')
   ui.command_entry:set_text(not WIN32 and 'ls' or 'dir')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   ui.update() -- process output
   assert(buffer:get_text():find('BuildFile'), 'did not run command')
   if QT then -- process exit
@@ -3882,12 +3882,12 @@ function test_run_build_no_command()
   textadept.run.build()
   assert(ui.command_entry:get_text():find(not WIN32 and '^ls' or '^dir'),
     'previous command not saved')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  events.emit(events.KEYPRESS, 'esc')
   textadept.run.build_commands[dir] = nil -- reset
   io.open(dir .. '/Makefile', 'w'):close()
   textadept.run.build()
   assert_equal(ui.command_entry:get_text(), 'make')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  events.emit(events.KEYPRESS, 'esc')
   buffer:close()
   removedir(dir)
 end
@@ -3901,7 +3901,7 @@ function test_run_test()
   textadept.run.test(_HOME)
   assert_equal(ui.command_entry.active, true)
   assert_equal(ui.command_entry:get_text(), test_command)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   if QT then -- process exit
     ui.update()
     sleep(0.1)
@@ -3928,14 +3928,14 @@ function test_run_run_project()
   textadept.run.run_project(nil, 'foo')
   if not OSX then assert_equal(ui.command_entry.active, true) end -- macOS has focus issues here
   assert_equal(ui.command_entry:get_text(), 'foo')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7) -- esc
+  events.emit(events.KEYPRESS, 'esc')
   buffer:close()
 
   local run_command = not WIN32 and 'ls' or 'dir'
   textadept.run.run_project_commands[_HOME] = run_command
   textadept.run.run_project(_HOME)
   assert_equal(ui.command_entry:get_text(), run_command)
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   ui.update() -- process output
   assert(buffer:get_text():find('README.md'), 'did not run project command')
   if QT then -- process exit
@@ -3967,7 +3967,7 @@ function test_run_commands_function()
     io.open_file(filename)
     textadept.run.run_commands.text = function() return cmd, '/tmp', {FOO = 'bar'} end
     textadept.run.run()
-    events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+    events.emit(events.KEYPRESS, '\n')
     assert_equal(#_BUFFERS, 3) -- including [Test Output]
     assert_equal(buffer._type, _L['[Output Buffer]'])
     sleep(0.1)
@@ -4902,9 +4902,7 @@ function test_debugger_ansi_c()
   -- strange errors will occur.
   local function run_and_wait(f, ...)
     f(...)
-    if ui.command_entry.active then
-      events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
-    end
+    if ui.command_entry.active then events.emit(events.KEYPRESS, '\n') end
     os.spawn('sleep 0.2'):wait()
     ui.update()
   end
@@ -5793,11 +5791,7 @@ function test_lua_repl()
   buffer:auto_c_cancel()
   buffer:del_line_left()
   buffer:add_text('buffer:get')
-  if not OSX then
-    events.emit(events.KEYPRESS, string.byte(' '), false, true) -- ctrl+space
-  else
-    events.emit(events.KEYPRESS, not CURSES and 0xFF1B or 7, false, false, true) -- alt+esc
-  end
+  events.emit(events.KEYPRESS, 'ctrl+ ')
   repl.complete_lua()
   assert(buffer:auto_c_active(), 'no autocompletions')
   assert_equal(buffer.auto_c_current_text, 'get_cur_line')
@@ -5813,11 +5807,7 @@ function test_lua_repl()
   -- Test history.
   repl.cycle_history_prev()
   assert_equal(buffer:get_line(buffer.line_count), '{1,2,3}')
-  if not CURSES then
-    events.emit(events.KEYPRESS, 0xFF52, false, true) -- ctrl+up
-  else
-    events.emit(events.KEYPRESS, string.byte('p'), false, true) -- ctrl+p
-  end
+  events.emit(events.KEYPRESS, not CURSES and 'ctrl+up' or 'ctrl+p')
   assert_equal(buffer:get_line(buffer.line_count - 1), '2+' .. newline())
   assert_equal(buffer:get_line(buffer.line_count), '3')
   repl.cycle_history_prev()
@@ -5829,11 +5819,7 @@ function test_lua_repl()
   repl.cycle_history_next()
   assert_equal(buffer:get_line(buffer.line_count - 1), '2+' .. newline())
   assert_equal(buffer:get_line(buffer.line_count), '3')
-  if not CURSES then
-    events.emit(events.KEYPRESS, 0xFF54, false, true) -- ctrl+down
-  else
-    events.emit(events.KEYPRESS, string.byte('n'), false, true) -- ctrl+n
-  end
+  events.emit(events.KEYPRESS, not CURSES and 'ctrl+down' or 'ctrl+n')
   assert_equal(buffer:get_line(buffer.line_count), '{1,2,3}')
   repl.cycle_history_next() -- nothing more
   assert_equal(buffer:get_line(buffer.line_count), '{1,2,3}')
@@ -5843,7 +5829,7 @@ function test_lua_repl()
   -- TODO: this fails if require('lua_repl') is not called from user init.lua
   reset()
   buffer:add_text('print("foo")')
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   assert_equal(buffer:get_line(buffer.line_count - 1), '--> foo' .. newline())
 
   -- Test long line result.
@@ -5871,14 +5857,14 @@ function test_open_file_mode()
   local open_file_mode = require('open_file_mode')
   open_file_mode()
   ui.command_entry:add_text(file(_HOME .. '/t'))
-  events.emit(events.KEYPRESS, string.byte('\t'))
+  events.emit(events.KEYPRESS, '\t')
   assert(ui.command_entry:auto_c_active(), 'no completions')
   ui.command_entry:line_end() -- highlight last completion
   assert_equal(ui.command_entry.auto_c_current_text, file('themes/'))
   ui.command_entry:auto_c_complete()
-  events.emit(events.KEYPRESS, string.byte('\t'))
+  events.emit(events.KEYPRESS, '\t')
   ui.command_entry:auto_c_complete()
-  events.emit(events.KEYPRESS, not CURSES and 0xFF0D or 343) -- \n
+  events.emit(events.KEYPRESS, '\n')
   assert_equal(buffer.filename, file(_HOME .. '/themes/dark.lua'))
   buffer:close()
 end
@@ -5996,7 +5982,7 @@ function test_ruby_toggle_block()
   assert_equal(buffer:get_text(), block)
 
   buffer:set_text('[1, 2, 3].collect do |i| p end')
-  events.emit(events.KEYPRESS, string.byte('{'), false, true) -- ctrl+{
+  events.emit(events.KEYPRESS, 'ctrl+{')
   assert_equal(buffer:get_text(), block)
 
   buffer:close(true)
