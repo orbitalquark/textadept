@@ -954,7 +954,7 @@ static void notified(SciObject *view, int _, SCNotification *n, void *__) {
       (n->modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)))
       emit("command_text_changed", -1);
     else if (n->nmhdr.code == SCN_FOCUSOUT) // TODO: do not emit if Esc triggered this
-      emit("keypress", LUA_TNUMBER, SCK_ESCAPE, -1);
+      emit("key", LUA_TNUMBER, SCK_ESCAPE, LUA_TNUMBER, 0, -1);
   } else if (view == focused_view || n->nmhdr.code == SCN_URIDROPPED) {
     if (view != focused_view) view_focused(view);
     emit_notification(n);
