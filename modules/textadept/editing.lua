@@ -78,15 +78,14 @@ M.comment_string = {}
 
 ---
 -- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
--- The ASCII values of opening characters are assigned to strings that contain complement
--- characters. The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;",
--- "&quot;&quot;", and "``". For certain XML-like lexers, "<>" is also auto-paired.
+-- The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;", "&quot;&quot;",
+-- and "``". For certain XML-like lexers, "<>" is also auto-paired.
 -- @class table
 -- @name auto_pairs
--- @usage textadept.editing.auto_pairs[string.byte('*')] = '*'
+-- @usage textadept.editing.auto_pairs['*'] = '*'
 -- @usage textadept.editing.auto_pairs = nil -- disable completely
 M.auto_pairs = {}
-for _, k, v in string.gmatch([[()[]{}''""``]], '((.)(.))') do M.auto_pairs[k:byte()] = v end
+for k, v in string.gmatch([[()[]{}''""``]], '(.)(.)') do M.auto_pairs[k] = v end
 
 ---
 -- Table of characters to move over when typed.
@@ -135,7 +134,7 @@ M.api_files = setmetatable({}, {
 -- Update auto_pairs, typeover_chars, brace_matches based on lexer.
 local function update_language_specific_features()
   local angles = buffer.property_int['scintillua.angle.braces'] ~= 0
-  if M.auto_pairs then M.auto_pairs[string.byte('<')] = angles and '>' end
+  if M.auto_pairs then M.auto_pairs['<'] = angles and '>' end
   if M.typeover_chars then M.typeover_chars['>'] = angles ~= nil end
   brace_matches = {} -- clear
   for _, c in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[c] = true end
@@ -146,12 +145,12 @@ events.connect(events.VIEW_AFTER_SWITCH, update_language_specific_features)
 
 -- Matches characters specified in auto_pairs, taking multiple selections into account.
 events.connect(events.CHAR_ADDED, function(code)
-  if not M.auto_pairs or not M.auto_pairs[code] then return end
+  if not M.auto_pairs or code < 32 or code > 256 or not M.auto_pairs[string.char(code)] then return end
   buffer:begin_undo_action()
   for i = 1, buffer.selections do
     local pos = buffer.selection_n_caret[i]
     buffer:set_target_range(pos, pos)
-    buffer:replace_target(M.auto_pairs[code])
+    buffer:replace_target(M.auto_pairs[string.char(code)])
   end
   buffer:end_undo_action()
 end)
@@ -162,10 +161,9 @@ events.connect(events.KEYPRESS, function(key)
     buffer:begin_undo_action()
     for i = 1, buffer.selections do
       local pos = buffer.selection_n_caret[i]
-      local complement = M.auto_pairs[buffer.char_at[pos - 1]]
-      if complement and buffer.char_at[pos] == string.byte(complement) then
-        buffer:delete_range(pos, 1)
-      end
+      local byte, next_byte = buffer.char_at[pos - 1], buffer.char_at[pos]
+      local complement = byte >= 32 and byte <= 256 and M.auto_pairs[string.char(byte)]
+      if complement and buffer.char_at[pos] == next_byte then buffer:delete_range(pos, 1) end
     end
     buffer:end_undo_action()
   end
@@ -459,7 +457,7 @@ end
 events.connect(events.KEYPRESS, function(key)
   if M.auto_enclose and not buffer.selection_empty and not ui.command_entry.active and
     key:find('^%p$') then
-    M.enclose(key, M.auto_pairs[string.byte(key)] or key, true)
+    M.enclose(key, M.auto_pairs[key] or key, true)
     return true -- prevent typing
   end
 end, 1)
@@ -483,8 +481,8 @@ function M.select_enclosed(left, right)
     s = buffer.selection_start
     while s >= 1 do
       local byte = buffer.char_at[s]
-      local match = M.auto_pairs[byte] or
-        (byte == string.byte('>') and M.auto_pairs[string.byte('<')] and '<') -- in-between > and <
+      local match = byte >= 32 and byte <= 256 and M.auto_pairs[string.char(byte)] or
+        (byte == string.byte('>') and M.auto_pairs['<'] and '<') -- in-between > and <
       if not match then goto continue end
       left, right = string.char(byte), match
       if buffer:brace_match(s, 0) >= buffer.selection_end - 1 then

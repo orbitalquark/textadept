@@ -6585,13 +6585,12 @@ See also:
 #### `textadept.editing.auto_pairs`
 
 Map of auto-paired characters like parentheses, brackets, braces, and quotes.
-The ASCII values of opening characters are assigned to strings that contain complement
-characters. The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;",
-"&quot;&quot;", and "``". For certain XML-like lexers, "<>" is also auto-paired.
+The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;", "&quot;&quot;",
+and "``". For certain XML-like lexers, "<>" is also auto-paired.
 
 Usage:
 
-* `textadept.editing.auto_pairs[string.byte('*')] = '*'`
+* `textadept.editing.auto_pairs['*'] = '*'`
 * `textadept.editing.auto_pairs = nil -- disable completely`
 
 <a id="textadept.editing.autocompleters"></a>

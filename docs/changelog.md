@@ -61,7 +61,8 @@ Changes:
   instead of Lua patterns.
 * Changed `events.KEYPRESS` to only emit string key representations.
 * Changed `events.TAB_CLICKED` to use key modifier mask like other events.
-* Changed `textadept.editing.typeover_chars` to use string character keys instead of bytes.
+* Changed `textadept.editing.auto_pairs` and `textadept.editing.typeover_chars` to use string
+  character keys instead of bytes.
 * Added [`textadept.run.INDIC_WARNING`][] and [`textadept.run.INDIC_ERROR`][] for underlining
   compile, run, build, and test warning and error messages.
 
