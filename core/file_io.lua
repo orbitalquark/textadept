@@ -115,7 +115,7 @@ function io.open_file(filenames, encodings)
       -- Try to detect character encoding and convert to UTF-8.
       local has_zeroes = text:sub(1, 65535):find('\0')
       for _, encoding in ipairs(io.encodings) do
-        if not has_zeroes or encoding:find('^UTF%-[13][62]') then
+        if not has_zeroes or encoding:find('^UTF') then
           local ok, conv = pcall(string.iconv, text, 'UTF-8', encoding)
           if ok then
             buffer.encoding, text = encoding, conv
