@@ -133,6 +133,8 @@ view.indic_alpha[ui.find.INDIC_FIND] = 0x80
 view.indic_fore[textadept.editing.INDIC_HIGHLIGHT] = colors.orange
 view.indic_alpha[textadept.editing.INDIC_HIGHLIGHT] = 0x80
 view.indic_fore[textadept.snippets.INDIC_PLACEHOLDER] = colors.black
+view.indic_fore[textadept.run.INDIC_WARNING] = colors.yellow
+view.indic_fore[textadept.run.INDIC_ERROR] = colors.red
 
 -- Call tips.
 view.call_tip_fore_hlt = colors.blue

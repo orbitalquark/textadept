@@ -131,6 +131,7 @@ INDIC_DASH	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_DIAGONAL	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_DOTBOX	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_DOTS	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_ERROR	_HOME/modules/textadept/run.lua	/^module('textadept.run')]]$/;"	F	class:textadept.run
 INDIC_FIND	_HOME/modules/textadept/find.lua	/^module('ui.find')]]$/;"	F	class:ui.find
 INDIC_FULLBOX	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_GRADIENT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
@@ -149,6 +150,7 @@ INDIC_STRAIGHTBOX	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_STRIKE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_TEXTFORE	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 INDIC_TT	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
+INDIC_WARNING	_HOME/modules/textadept/run.lua	/^module('textadept.run')]]$/;"	F	class:textadept.run
 INITIALIZED	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 ITALIC	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 IV_LOOKBOTH	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view

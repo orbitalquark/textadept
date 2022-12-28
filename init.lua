@@ -238,6 +238,8 @@ view.indic_style[ui.find.INDIC_FIND] = view.INDIC_ROUNDBOX
 view.indic_under[ui.find.INDIC_FIND] = not CURSES
 view.indic_style[textadept.editing.INDIC_HIGHLIGHT] = view.INDIC_ROUNDBOX
 view.indic_under[textadept.editing.INDIC_HIGHLIGHT] = not CURSES
+view.indic_style[textadept.run.INDIC_WARNING] = view.INDIC_SQUIGGLE
+view.indic_style[textadept.run.INDIC_ERROR] = view.INDIC_SQUIGGLE
 view.indic_style[textadept.snippets.INDIC_PLACEHOLDER] = not CURSES and view.INDIC_DOTBOX or
   view.INDIC_STRAIGHTBOX
 

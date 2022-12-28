@@ -62,6 +62,8 @@ Changes:
 * Changed `events.KEYPRESS` to only emit string key representations.
 * Changed `events.TAB_CLICKED` to use key modifier mask like other events.
 * Changed `textadept.editing.typeover_chars` to use string character keys instead of bytes.
+* Added [`textadept.run.INDIC_WARNING`][] and [`textadept.run.INDIC_ERROR`][] for underlining
+  compile, run, build, and test warning and error messages.
 
 [Textadept 12.0 alpha  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.win.zip
 [Textadept 12.0 alpha  -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.macOS.zip
@@ -70,6 +72,8 @@ Changes:
 [CMake-based build]: manual.html#compiling
 [`ui.buffer_list_zorder`]: api.html#ui.buffer_list_zorder
 [`ui.suspend()`]: api.html#ui.suspend
+[`textadept.run.INDIC_WARNING`]: api.html#textadept.run.INDIC_WARNING
+[`textadept.run.INDIC_ERROR`]: api.html#textadept.run.INDIC_ERROR
 
 ### 11.5 alpha 2 (01 Nov 2022)
 

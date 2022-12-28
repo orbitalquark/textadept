@@ -1679,6 +1679,7 @@ select_lexer() | Replaced | `textadept.menu.menubar[L['Buffer']]`<br/>`[L['Selec
 error_patterns | Removed | N/A
 set_arguments() | Removed | N/A<sup>d</sup>
 N/A | Added | [run_project()][], [run_project_commands][]
+N/A | Added | [INDIC_WARNING][], [INDIC_ERROR][]
 **ui**||
 N/A | Added | [output()][]
 silent_print | Replaced | [print_silent()][], [output_silent()][]
@@ -1723,6 +1724,8 @@ N/A | Added | [set_styles()][]
 [lexer.detect_patterns]: api.html#lexer.detect_patterns
 [run_project()]: api.html#textadept.run.run_project
 [run_project_commands]: api.html#textadept.run.run_project_commands
+[INDIC_WARNING]: api.html#textadept.run.INDIC_WARNING
+[INDIC_ERROR]: api.html#textadept.run.INDIC_ERROR
 [output()]: api.html#ui.output
 [print_silent()]: api.html#ui.print_silent
 [output_silent()]: api.html#ui.output_silent

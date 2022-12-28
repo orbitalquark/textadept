@@ -131,6 +131,7 @@ INDIC_DASH view.INDIC_DASH (number, Read-only)\n
 INDIC_DIAGONAL view.INDIC_DIAGONAL (number, Read-only)\n
 INDIC_DOTBOX view.INDIC_DOTBOX (number, Read-only)\n
 INDIC_DOTS view.INDIC_DOTS (number, Read-only)\n
+INDIC_ERROR textadept.run.INDIC_ERROR (number)\nThe run or compile error indicator number.
 INDIC_FIND ui.find.INDIC_FIND (number)\nThe find results highlight indicator number.
 INDIC_FULLBOX view.INDIC_FULLBOX (number, Read-only)\n
 INDIC_GRADIENT view.INDIC_GRADIENT (number, Read-only)\n
@@ -149,6 +150,7 @@ INDIC_STRAIGHTBOX view.INDIC_STRAIGHTBOX (number, Read-only)\n
 INDIC_STRIKE view.INDIC_STRIKE (number, Read-only)\n
 INDIC_TEXTFORE view.INDIC_TEXTFORE (number, Read-only)\n
 INDIC_TT view.INDIC_TT (number, Read-only)\n
+INDIC_WARNING textadept.run.INDIC_WARNING (number)\nThe run or compile warning indicator number.
 INITIALIZED events.INITIALIZED (string)\nEmitted after Textadept finishes initializing.
 ITALIC lexer.ITALIC (string)\nThe tag name for builtin italic elements, typically in markup.
 IV_LOOKBOTH view.IV_LOOKBOTH (number, Read-only)\n

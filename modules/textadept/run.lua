@@ -16,6 +16,10 @@ local M = {}
 --   The run or compile warning marker number.
 -- @field MARK_ERROR (number)
 --   The run or compile error marker number.
+-- @field INDIC_WARNING (number)
+--   The run or compile warning indicator number.
+-- @field INDIC_ERROR (number)
+--   The run or compile error indicator number.
 -- @field _G.events.COMPILE_OUTPUT (string)
 --   Emitted when executing a language's compile shell command.
 --   By default, compiler output is printed to the output buffer. In order to override this
@@ -48,8 +52,8 @@ module('textadept.run')]]
 
 M.run_in_background = false
 
-M.MARK_WARNING = _SCINTILLA.next_marker_number()
-M.MARK_ERROR = _SCINTILLA.next_marker_number()
+M.MARK_WARNING, M.MARK_ERROR = _SCINTILLA.next_marker_number(), _SCINTILLA.next_marker_number()
+M.INDIC_WARNING, M.INDIC_ERROR = _SCINTILLA.next_indic_number(), _SCINTILLA.next_indic_number()
 
 -- Events.
 local run_events = {'compile_output', 'run_output', 'build_output', 'test_output'}
@@ -77,6 +81,7 @@ local function get_output_buffer()
 end
 
 local line_state_marks = {M.MARK_ERROR, M.MARK_WARNING}
+local line_state_indics = {M.INDIC_ERROR, M.INDIC_WARNING}
 -- Prints output from a compile, run, build, or test shell command.
 -- Any filenames encoded in _CHARSET are left alone and may not display properly.
 -- All stdout and stderr from the command is printed silently.
@@ -89,7 +94,14 @@ local function print_output(...)
   if not buffer then buffer = get_output_buffer() end
   for i = last_line, buffer.line_count do
     local line_state = buffer.line_state[i]
-    if line_state > 0 then buffer:marker_add(i, line_state_marks[line_state]) end
+    if line_state > 0 then
+      buffer:marker_add(i, line_state_marks[line_state])
+      local s, e = buffer:position_from_line(i), buffer.line_end_position[i]
+      while s < e and buffer:name_of_style(buffer.style_at[s]) ~= 'message' do s = s + 1 end
+      while e > s and buffer:name_of_style(buffer.style_at[e]) ~= 'message' do e = e - 1 end
+      buffer.indicator_current = line_state_indics[line_state]
+      buffer:indicator_fill_range(s, e - s + 1)
+    end
   end
 end
 for _, event in ipairs(run_events) do events.connect(event, print_output) end
