@@ -6219,10 +6219,11 @@ Return:
 #### `spawn_proc:write`(*...*)
 
 Writes string input to the stdin of process *spawn_proc*.
-Note: On Linux, if more than 65536 bytes (64K) are to be written, it is possible those
-bytes need to be written in 65536-byte (64K) chunks, or the process may not receive all
-input. However, it is also possible that there is a limit on how many bytes can be written
-in a short period of time, perhaps 196608 bytes (192K).
+Note: On Linux when using the GTK or terminal version, if more than 65536 bytes (64K) are
+to be written, it is possible those bytes need to be written in 65536-byte (64K) chunks,
+or the process may not receive all input. However, it is also possible that there is a limit
+on how many bytes can be written in a short period of time, perhaps 196608 bytes (192K). The
+Qt version does not appear to have this limitation.
 
 Parameters:
 
@@ -7049,6 +7050,16 @@ tables for particular languages.
 The user may tweak `build_commands` and `test_commands` for particular projects.
 
 ### Fields defined by `textadept.run`
+
+<a id="textadept.run.INDIC_ERROR"></a>
+#### `textadept.run.INDIC_ERROR` (number)
+
+The run or compile error indicator number.
+
+<a id="textadept.run.INDIC_WARNING"></a>
+#### `textadept.run.INDIC_WARNING` (number)
+
+The run or compile warning indicator number.
 
 <a id="textadept.run.MARK_ERROR"></a>
 #### `textadept.run.MARK_ERROR` (number)

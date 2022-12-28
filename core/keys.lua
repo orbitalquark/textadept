@@ -109,8 +109,7 @@ local M = {}
 --   * _`key`_: The string representation of the [key sequence](#key-sequences).
 module('keys')]]
 
-local CTRL, ALT, CMD, SHIFT = 'ctrl+', 'alt+', 'cmd+', 'shift+'
-if CURSES then ALT = 'meta+' end
+local CTRL, ALT, CMD, SHIFT = 'ctrl+', not CURSES and 'alt+' or 'meta+', 'cmd+', 'shift+'
 M.CLEAR = 'esc'
 
 -- LuaFormatter off
