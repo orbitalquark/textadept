@@ -62,7 +62,7 @@ static bool window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
 // Generates a 'tab_clicked' event.
 static void tab_changed(GtkNotebook *_, GtkWidget *__, int tab_num, void *___) {
   current_tab = tab_num;
-  if (!tab_sync) emit("tab_clicked", LUA_TNUMBER, tab_num + 1, LUA_TNUMBER, 1, -1);
+  if (!tab_sync) emit("tab_clicked", LUA_TNUMBER, tab_num + 1, LUA_TNUMBER, 1, LUA_TNUMBER, 0, -1);
 }
 
 // Signal for reordering tabs.

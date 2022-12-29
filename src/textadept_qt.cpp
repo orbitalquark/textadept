@@ -650,17 +650,26 @@ protected:
 Textadept::Textadept(QWidget *parent) : QMainWindow{parent}, ui{new Ui::Textadept} {
   ui->setupUi(this);
 
-  connect(ui->tabbar, &QTabBar::tabBarClicked, this, [](int index) {
-    Qt::MouseButtons button = QApplication::mouseButtons();
+  auto modifiers = []() {
     Qt::KeyboardModifiers mods = QApplication::keyboardModifiers();
-    int modifiers = (mods & Qt::ShiftModifier ? SCMOD_SHIFT : 0) |
+    return (mods & Qt::ShiftModifier ? SCMOD_SHIFT : 0) |
       (mods & Qt::ControlModifier ? SCMOD_CTRL : 0) | (mods & Qt::AltModifier ? SCMOD_ALT : 0) |
       (mods & Qt::MetaModifier ? SCMOD_META : 0);
-    emit("tab_clicked", LUA_TNUMBER, index + 1, LUA_TNUMBER, button, LUA_TNUMBER, modifiers, -1);
+  };
+  connect(ui->tabbar, &QTabBar::tabBarClicked, this, [this, modifiers](int index) {
+    Qt::MouseButtons button = QApplication::mouseButtons();
+    // Qt emits tabBarClicked before updating the current tab for left button clicks.
+    // If the "tab_clicked" event were to be emitted here, it could update the current tab, and
+    // then Qt could do so again, but with the wrong tab index. Instead, only emit "tab_clicked"
+    // here under certain conditions, relying on currentChanged to do so otherwise.
+    if (button == Qt::LeftButton && index != ui->tabbar->currentIndex()) return;
+    emit("tab_clicked", LUA_TNUMBER, index + 1, LUA_TNUMBER, button, LUA_TNUMBER, modifiers(), -1);
     if (button == Qt::RightButton) show_context_menu("tab_context_menu", nullptr);
   });
-  connect(ui->tabbar, &QTabBar::currentChanged, this,
-    [](int index) { emit("tab_clicked", LUA_TNUMBER, index + 1, -1); });
+  connect(ui->tabbar, &QTabBar::currentChanged, this, [modifiers](int index) {
+    emit("tab_clicked", LUA_TNUMBER, index + 1, LUA_TNUMBER, Qt::LeftButton, LUA_TNUMBER,
+      modifiers(), -1);
+  });
   connect(ui->tabbar, &QTabBar::tabMoved, this,
     [](int from, int to) { move_buffer(from + 1, to + 1, false); });
   connect(ui->tabbar, &QTabBar::tabCloseRequested, this,
