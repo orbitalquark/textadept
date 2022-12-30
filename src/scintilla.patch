@@ -7,6 +7,7 @@ Scintilla changes:
 * Do not clear per-line-values when clearing the first line of a 1-line document.
 * Handle incoming XPM images as a single string on Qt.
 * Use Qt macros instead of keywords in header.
+* Enable Qt mouse wheel events even if scroll bars are hidden.
 
 diff -r 52d56f79dc0f gtk/ScintillaGTK.cxx
 --- a/gtk/ScintillaGTK.cxx	Fri Apr 09 15:11:26 2021 +1000
@@ -115,3 +116,24 @@ diff -r 123ae5de5bd2 qt/ScintillaEditBase/ScintillaEditBase.h
  	void horizontalScrolled(int value);
  	void verticalScrolled(int value);
  	void horizontalRangeChanged(int max, int page);
+diff -r 123ae5de5bd2 qt/ScintillaEditBase/ScintillaEditBase.cpp
+--- a/qt/ScintillaEditBase/ScintillaEditBase.cpp	Sat Aug 27 08:02:08 2022 +1000
++++ b/qt/ScintillaEditBase/ScintillaEditBase.cpp	Fri Dec 30 10:21:52 2022 -0500
+@@ -169,7 +169,7 @@
+ void ScintillaEditBase::wheelEvent(QWheelEvent *event)
+ {
+ 	if (isWheelEventHorizontal(event)) {
+-		if (horizontalScrollBarPolicy() == Qt::ScrollBarAlwaysOff)
++		if (horizontalScrollBarPolicy() == Qt::ScrollBarAlwaysOff && false)
+ 			event->ignore();
+ 		else
+ 			QAbstractScrollArea::wheelEvent(event);
+@@ -184,7 +184,7 @@
+ 			}
+ 		} else {
+ 			// Ignore wheel events when the scroll bars are disabled.
+-			if (verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff) {
++			if (verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff && false) {
+ 				event->ignore();
+ 			} else {
+ 				// Scroll
