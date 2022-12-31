@@ -9,6 +9,8 @@
 
 ### 12.0 alpha (01 Jan 2023)
 
+Please see the [migration guide][] for migrating from Textadept 11 to 12.
+
 Download:
 
 * [Textadept 12.0 alpha  -- Windows][]
@@ -67,6 +69,7 @@ Changes:
 * Added [`textadept.run.INDIC_WARNING`][] and [`textadept.run.INDIC_ERROR`][] for underlining
   compile, run, build, and test warning and error messages.
 
+[migration guide]: manual.html#migrating-from-textadept-11-to-12
 [Textadept 12.0 alpha  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.win.zip
 [Textadept 12.0 alpha  -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.macOS.zip
 [Textadept 12.0 alpha  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.linux.tgz
