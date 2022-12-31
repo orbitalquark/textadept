@@ -485,7 +485,7 @@ elseif(APPLE)
     install(CODE "execute_process(COMMAND macdeployqt ${CMAKE_INSTALL_PREFIX}/Textadept.app
       -executable=${ta_bin_dir}/textadept)")
   endif()
-  install(FILES scripts/osx/ta DESTINATION ${CMAKE_INSTALL_PREFIX})
+  install(PROGRAMS scripts/osx/ta DESTINATION ${CMAKE_INSTALL_PREFIX})
   install(CODE "execute_process(
     COMMAND ${CMAKE_COMMAND} -E tar cf ${CMAKE_BINARY_DIR}/textadept_${version}.zip --format=zip
       Textadept.app ta
