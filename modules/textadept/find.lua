@@ -344,7 +344,8 @@ function M.find_in_files(dir, filter)
     title = string.format('%s: %s', _L['Find in Files']:gsub('[_&]', ''), text),
     text = show_names and utf8_filenames[i], work = function()
       local f = io.open(filenames[i], 'rb')
-      buffer:set_text(f:read('a'))
+      buffer:target_whole_document()
+      buffer:replace_target(f:read('a'))
       f:close()
       local binary = nil -- determine lazily for performance reasons
       buffer:target_whole_document()

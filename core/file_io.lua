@@ -161,7 +161,8 @@ local function reload(buffer)
   local text = f:read('a')
   f:close()
   if buffer.encoding then text = text:iconv('UTF-8', buffer.encoding) end
-  buffer:set_text(text)
+  buffer:target_whole_document()
+  buffer:replace_target(text)
   buffer:set_save_point()
   buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
 end
@@ -176,7 +177,8 @@ local function set_encoding(buffer, encoding)
     if encoding then text = text:iconv(encoding, buffer.encoding) end
   end
   if encoding then text = text:iconv('UTF-8', encoding) end
-  buffer:set_text(text)
+  buffer:target_whole_document()
+  buffer:replace_target(text)
   buffer:goto_pos(pos)
   view.first_visible_line = first_visible_line
   buffer.encoding = encoding
@@ -436,6 +438,6 @@ end
 
 args.register('-', '-', 0, function()
   if buffer.filename or buffer._type then buffer.new() end
-  buffer:set_text(io.read('a'))
+  buffer:append_text(io.read('a'))
   buffer:set_save_point()
 end, 'Read stdin into a new buffer')
