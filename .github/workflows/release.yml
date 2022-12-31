@@ -34,9 +34,9 @@ jobs:
         with:
           version: '5.15.2'
         if: "!startsWith(matrix.os, 'ubuntu')"
-      - name: Install Qt (Linux)
+      - name: Install Qt and GTK (Linux)
         shell: bash
-        run: sudo apt-get install qtbase5-dev --no-install-recommends -y
+        run: sudo apt-get install qtbase5-dev libgtk-3-dev --no-install-recommends -y
         if: startsWith(matrix.os, 'ubuntu')
       - name: Build
         shell: bash

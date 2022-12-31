@@ -182,12 +182,13 @@ The following table lists Textadept's approximate download and installation size
 
 Platform | Download Size | Installed Size
 -|-|-
-Linux | 6 MB | 10 MB
+Linux | 7 MB | 23 MB
 Windows | 25 MB | 62 MB (7 MB without bundled Qt Runtime)
 macOS | 14 MB | 35 MB (13 MB without bundled Qt Runtime)
 
-**Note:** each platform package contains two executables, one for the GUI version of Textadept,
-and one for the terminal version.
+**Note:** the Windows and macOS platform packages each contain two executables: one for the
+GUI version of Textadept, and one for the terminal version. The Linux platform package contains
+three executables: one for Qt, one for GTK, and one for the terminal.
 
 [1]: https://github.com/orbitalquark/textadept/releases
 [2]: changelog.html
