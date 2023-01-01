@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2007-2022 Mitchell. See LICENSE.
+-- Copyright 2007-2023 Mitchell. See LICENSE.
 
 -- Generates Lua to C interface for Scintilla by parsing Scintilla.iface and turning it into
 -- a set of data tables. Whenever Textadept is to communicate with Scintilla using a given

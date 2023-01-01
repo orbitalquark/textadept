@@ -1,4 +1,4 @@
--- Copyright 2007-2022 Mitchell. See LICENSE.
+-- Copyright 2007-2023 Mitchell. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the string table.
 
 --- Extends Lua's `string` library to provide character set conversions.

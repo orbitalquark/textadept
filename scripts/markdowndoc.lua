@@ -1,4 +1,4 @@
--- Copyright 2007-2022 Mitchell. See LICENSE.
+-- Copyright 2007-2023 Mitchell. See LICENSE.
 
 -- Markdown doclet for Luadoc.
 -- @usage luadoc --doclet path/to/markdowndoc [file(s)] > api.md

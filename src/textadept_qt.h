@@ -1,4 +1,4 @@
-// Copyright 2022 Mitchell. See LICENSE.
+// Copyright 2022-2023 Mitchell. See LICENSE.
 // Qt platform for Textadept.
 
 #include "ui_textadept_qt.h"

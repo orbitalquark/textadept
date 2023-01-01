@@ -1,4 +1,4 @@
--- Copyright 2007-2022 Mitchell. See LICENSE.
+-- Copyright 2007-2023 Mitchell. See LICENSE.
 -- Abbreviated environment and commands from Jay Gould.
 
 local M = ui.command_entry

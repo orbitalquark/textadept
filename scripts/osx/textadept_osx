@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright 2007-2022 Mitchell. See LICENSE.
+# Copyright 2007-2023 Mitchell. See LICENSE.
 
 # Set environment variables of resources within Textadept.app.
 bundle=$(cd "$(dirname "$0")/../../" && pwd)

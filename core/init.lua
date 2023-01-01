@@ -1,7 +1,7 @@
--- Copyright 2007-2022 Mitchell. See LICENSE.
+-- Copyright 2007-2023 Mitchell. See LICENSE.
 
 _RELEASE = 'Textadept 12.0 alpha'
-_COPYRIGHT = 'Copyright © 2007-2022 Mitchell. See LICENSE.\n' ..
+_COPYRIGHT = 'Copyright © 2007-2023 Mitchell. See LICENSE.\n' ..
   'https://orbitalquark.github.io/textadept'
 
 package.path = string.format('%s/core/?.lua;%s', _HOME, package.path)

@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2007-2022 Mitchell. See LICENSE.
+-- Copyright 2007-2023 Mitchell. See LICENSE.
 
 -- Generates a C tags file for Lua's C API (lua.h and lauxlib.h) using ctags.
 

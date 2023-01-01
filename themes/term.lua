@@ -1,4 +1,4 @@
--- Copyright 2007-2022 Mitchell. See LICENSE.
+-- Copyright 2007-2023 Mitchell. See LICENSE.
 -- Terminal theme for Textadept.
 
 local view, colors, styles = view, view.colors, view.styles

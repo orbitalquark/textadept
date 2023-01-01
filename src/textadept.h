@@ -1,4 +1,4 @@
-// Copyright 2007-2022 Mitchell. See LICENSE.
+// Copyright 2007-2023 Mitchell. See LICENSE.
 // Interface between platforms and Textadept.
 // Platforms use this interface to communicate with Textadept.
 
