@@ -60,14 +60,8 @@ Since nearly every aspect of Textadept can be scripted using Lua, the editor's A
 documented. This [API documentation][] is also located in *docs/*. It serves as the ultimate
 resource when it comes to scripting the application.
 
-A more structured scripting resource is [Textadept Quick Reference][], which contains a wealth
-of knowledge on how to script and configure Textadept. It groups the editor's rich API into
-a series of tasks in a convenient and easy-to-use manner. This book serves as the perfect
-complement to Textadept's Manual and exhaustive API documentation.
-
 [user manual]: https://orbitalquark.github.io/textadept/manual.html
 [API documentation]: https://orbitalquark.github.io/textadept/api.html
-[Textadept Quick Reference]: https://orbitalquark.github.io/textadept/book.html
 
 ## Compile
 
@@ -126,11 +120,10 @@ For more information on compiling Textadept, please see the [manual][].
 
 ## Contribute
 
-Your [donation][] or purchase of the [book][] helps fund Textadept's continuous development.
+Your [donation][] helps fund Textadept's continuous development.
 
 Textadept is [open source][]. Feel free to discuss features, report bugs, and submit patches. You
 can also contact me personally (orbitalquark att triplequasar.com).
 
 [donation]: https://gum.co/textadept
-[book]: https://orbitalquark.github.io/textadept/book.html
 [open source]: https://github.com/orbitalquark/textadept

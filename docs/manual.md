@@ -1399,10 +1399,6 @@ Textadept's [Lua API][] is extensively documented and serves as the ultimate res
 comes to scripting the editor. The claim "Textadept gives you complete control over nearly the
 entire application using Lua" is not an exaggeration!
 
-If you are looking for a more structured scripting resource, [Textadept Quick Reference][]
-contains a wealth of knowledge on how to script and configure Textadept. It groups the editor's
-rich API into a series of tasks in a convenient and easy-to-use manner.
-
 [Lua 5.4]: https://www.lua.org/manual/5.4
 [`buffer`]: api.html#buffer
 [interactive dialog]: api.html#ui.dialogs
@@ -1410,7 +1406,6 @@ rich API into a series of tasks in a convenient and easy-to-use manner.
 [event]: api.html#events
 [spawn]: api.html#os.spawn
 [Lua API]: api.html
-[Textadept Quick Reference]: book.html
 
 #### Generate Autocompletion and Documentation Files
 

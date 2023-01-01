@@ -2,10 +2,9 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
-**Please [donate][] or purchase the [book][] to help fund continuous development.**
+**Please [donate][] to help fund continuous development.**
 
 [donate]: https://gum.co/textadept
-[book]: book.html
 
 ### 12.0 alpha (01 Jan 2023)
 

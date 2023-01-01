@@ -31,11 +31,15 @@
         margin: 0.5em;
         text-align: center;
       }
-      #main div.left-col, #main div.right-col { width: 500px; }
+      #main div.left-col, #main div.right-col, #main div.mid-col { width: 500px; }
       #main div.left-col { float: left; }
       #main div.right-col { float: right; }
+      #main div.mid-col {
+        margin-left: auto;
+        margin-right: auto;
+      }
       #main div.clear-col { clear: both; }
-      #main div.left-col h3, #main div.right-col h3 { text-align: center; }
+      #main div.left-col h3, #main div.right-col h3, #main div.mid-col h3 { text-align: center; }
       #main div.left-col .center, #main div.right-col .center { text-align: center; }
 
       @media screen and (max-width: 1000px) {
@@ -86,23 +90,22 @@
           <li><a href="api.html">API</a></li>
           <li><a href="https://github.com/orbitalquark/textadept/discussions">Support</a></li>
           <li><a href="https://github.com/orbitalquark/textadept/wiki">Wiki</a></li>
+          <li><a href="faq.html">FAQ</a></li>
         </ul>
 
-        <h2>Quick Reference</h2>
-        <p style="margin: 0.25em 0 0.25em 0.5em;">
-          <a href="book.html">
-            <img src="images/quickref_small.png" alt="Cover" style="border-width: 1px; margin-top: 0.25em;" />
-          </a>
-        </p>
+        <h2><a href="https://gum.co/textadept?wanted=true">Donate</a></h2>
+        <ul>
+          <li>
+            <a href="https://gum.co/textadept?wanted=true">
+              <img src="images/icon.png" alt="donate"/>
+            </a>
+          </li>
+        </ul>
       </div>
 
       <div id="main" style="margin-left: 0em;">
         <p style="text-align: center; margin-top: -0.75em;">
           <img src="images/textadept.gif" alt="Textadept Platforms" />
-        </p>
-        <p style="font-size: smaller; font-weight: bold;">
-          Please <a href="https://gum.co/textadept?wanted=true">donate</a> or purchase the <a
-          href="book.html">quick reference</a> to help fund continuous development.
         </p>
 
         <div class="head-col">
@@ -229,21 +232,7 @@
           </p>
         </div>
         <div class="clear-col"></div>
-        <div class="left-col">
-          <h3>Quick Reference</h3>
-          <p style="float: left; margin-top: 0;">
-            <a href="book.html">
-              <img src="images/quickref_small.png" alt="Cover2" style="border-width: 1px;" />
-            </a>
-          </p>
-          <p>
-            This reference contains a wealth of knowledge on how to script and configure
-            Textadept using Lua. It groups the editor&rsquo;s rich API into a series of tasks
-            in a convenient and easy-to-use manner. It serves as the perfect complement to
-            Textadept&rsquo;s Manual and API documentation.
-          </p>
-        </div>
-        <div class="right-col">
+        <div class="mid-col">
           <h3>Try It Yourself</h3>
           <p>
             Learn even more about Textadept by downloading and trying
@@ -254,7 +243,7 @@
             is 100% open source.
           </p>
           <p style="background-color: #009900; color: #ffffff; font-size: 1.5em;
-            margin: 0 auto 0 auto; padding: 0.25em; text-align: center; width: 6em;">
+            margin: 0 auto 1em auto; padding: 0.25em; text-align: center; width: 6em;">
             <a href="#download" style="color: inherit; display: block; text-decoration: none;">
               Download
             </a>
@@ -318,10 +307,7 @@
         </p>
 
         <hr style="clear: both;" />
-        <p style="text-align: center;">
-          <a href="faq.html">FAQ</a> &middot;
-          <a href="thanks.html">Credits</a>
-        </p>
+        <p style="text-align: center;"><a href="thanks.html">Credits</a></p>
 
         <hr style="clear: both;" />
         <div class="clear-col"></div>
