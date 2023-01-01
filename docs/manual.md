@@ -124,6 +124,11 @@ Here is a simple *~/.textadept/init.lua* for illustration:
     textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_CURRENT
     textadept.editing.comment_string.ansi_c = '/*|*/'
 
+    -- Create a key binding to the "Edit > Preferences" menu item.
+    if not OSX and not CURSES then
+      keys['ctrl+,'] = textadept.menu.menubar[_L['Edit']][_L['Preferences']][2]
+    end
+
     -- Load an external module and bind a key to it.
     local ctags = require('ctags')
     keys.f12 = ctags.goto_tag
