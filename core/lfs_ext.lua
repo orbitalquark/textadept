@@ -89,10 +89,10 @@ function lfs.walk(dir, filter, n, include_dirs)
     consider_any = true, exts = setmetatable({}, {__index = function() return true end})
   }
   for _, patt in ipairs(type(filter) == 'table' and filter or {filter}) do
-    patt = patt:gsub('[.+%()-]', '%%%0'):gsub('%?', '.'):gsub('%*', '.-') .. '$'
+    patt = patt:gsub('[.+%()-]', '%%%0'):gsub('%?', '.'):gsub('%*', '.-')
     patt = patt:gsub('/([^\\])', '[/\\]%1') -- '/' to '[/\\]'
     local include = not patt:find('^!')
-    local ext = patt:match('^!?%%.([^.]+)%$$')
+    local ext = patt:match('^!?%%.([^.]+)$')
     if ext then
       processed_filter.exts[ext] = include
       if include then setmetatable(processed_filter.exts, nil) end
