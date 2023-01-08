@@ -395,6 +395,7 @@ static int open_save_dialog(DialogOptions *opts, lua_State *L, bool open) {
         QFileDialog::Directory);
   else
     dialog.setFileMode(QFileDialog::AnyFile), dialog.setAcceptMode(QFileDialog::AcceptSave);
+  if (dialog.fileMode() == QFileDialog::Directory && opts->dir) opts->file = opts->dir; // for Linux
   if (opts->dir) dialog.setDirectory(opts->dir);
   if (opts->file) dialog.selectFile(opts->file);
   if (!dialog.exec()) return 0;
