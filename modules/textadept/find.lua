@@ -307,6 +307,9 @@ function M.find_in_files(dir, filter)
     end
     filter = M.find_in_files_filters[dir] or lfs.default_filter
   end
+  orig_focus() -- attempt to hide
+  ui.update() -- register widget focus/visibility changes
+  if ui.find.active then orig_focus() end -- hide
 
   if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
   ui.print_to(_L['[Files Found Buffer]'],
