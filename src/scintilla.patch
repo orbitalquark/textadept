@@ -6,6 +6,8 @@ Scintilla changes:
 * Use Qt macros instead of keywords in header.
 * Enable Qt mouse wheel events even if scroll bars are hidden. Similar patch submitted upstream.
 * Update scroll position after VerticalCentreCaret(). Patch submitted upstream.
+* Cache ac.Active() status when inserting a character to avoid immediate completion if SCN_CHARADDED
+  triggered autocompletion and that char is a fill-up char. Patch submitted upstream.
 
 diff -r 22b6bbb36280 src/XPM.cxx
 --- a/src/XPM.cxx	Sat Sep 05 07:55:08 2020 +1000
@@ -110,3 +112,21 @@ diff -r 123ae5de5bd2 src/Editor.cxx
  	}
  }
  
+diff -r 123ae5de5bd2 src/ScintillaBase.cxx
+--- a/src/ScintillaBase.cxx	Sat Aug 27 08:02:08 2022 +1000
++++ b/src/ScintillaBase.cxx	Fri Jan 13 08:38:46 2023 -0500
+@@ -78,11 +78,12 @@
+ }
+ 
+ void ScintillaBase::InsertCharacter(std::string_view sv, CharacterSource charSource) {
+-	const bool isFillUp = ac.Active() && ac.IsFillUpChar(sv[0]);
++	const bool acActive = ac.Active();
++	const bool isFillUp = acActive && ac.IsFillUpChar(sv[0]);
+ 	if (!isFillUp) {
+ 		Editor::InsertCharacter(sv, charSource);
+ 	}
+-	if (ac.Active()) {
++	if (acActive) {
+ 		AutoCompleteCharacterAdded(sv[0]);
+ 		// For fill ups add the character after the autocompletion has
+ 		// triggered so containers see the key so can display a calltip.
