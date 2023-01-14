@@ -139,7 +139,11 @@ local function update_language_specific_features()
   brace_matches = {} -- clear
   for _, c in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[c] = true end
 end
-events.connect(events.LEXER_LOADED, update_language_specific_features)
+events.connect(events.LEXER_LOADED, function()
+  update_language_specific_features()
+  local word_chars = buffer.property['scintillua.word.chars']
+  if word_chars ~= '' then buffer.word_chars = word_chars end
+end)
 events.connect(events.BUFFER_AFTER_SWITCH, update_language_specific_features)
 events.connect(events.VIEW_AFTER_SWITCH, update_language_specific_features)
 
