@@ -1,21 +1,5 @@
-# Binaries.
-src/*.o
-src/*.tar.gz
-src/*.tgz
-src/*.zip
-/textadept
-/textadept-curses
+# Build.
+build/
 
 # Lexers.
 lexers/
-
-# Dependencies.
-src/cdk/
-src/lexilla/
-src/Scintillua.*
-src/lua/
-src/scintilla/
-src/termkey/
-src/gtkosx/
-src/gtkwin/
-src/Textadept.app/
