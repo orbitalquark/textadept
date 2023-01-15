@@ -416,7 +416,7 @@ local bindings = {
   -- TODO: textadept.snippets.select
   [textadept.snippets.insert] = {'\t', '\t', '\t'},
   [textadept.snippets.previous] = {'shift+\t', 'shift+\t', 'shift+\t'},
-  [textadept.snippets.cancel_current] = {'esc', 'esc', 'esc'},
+  [textadept.snippets.cancel] = {'esc', 'esc', 'esc'},
   -- TODO: m('Tools/Snippets/Complete Trigger Word')
   -- Other.
   [m('Tools/Complete Symbol')] = {'ctrl+ ', {'cmd+ ', 'ctrl+ '}, 'ctrl+ '},

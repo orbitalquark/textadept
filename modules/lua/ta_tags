@@ -428,7 +428,7 @@ call_tip_use_style	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 can_redo	_HOME/core/.buffer.luadoc	/^function can_redo(buffer) end$/;"	f	class:buffer
 can_undo	_HOME/core/.buffer.luadoc	/^function can_undo(buffer) end$/;"	f	class:buffer
 cancel	_HOME/core/.buffer.luadoc	/^function cancel(buffer) end$/;"	f	class:buffer
-cancel_current	_HOME/modules/textadept/snippets.lua	/^function M.cancel_current()$/;"	f	class:textadept.snippets
+cancel	_HOME/modules/textadept/snippets.lua	/^function M.cancel()$/;"	f	class:textadept.snippets
 caret_line_frame	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 caret_line_highlight_subline	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 caret_line_layer	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
@@ -926,8 +926,8 @@ show_lines	_HOME/core/.view.luadoc	/^function show_lines(view, start_line, end_l
 size	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 size	_HOME/core/ui.lua	/^local size$/;"	t	class:ui
 snippet	_HOME/modules/textadept/snippets.lua	/^module('textadept.snippets')]=]$/;"	F	class:textadept.editing.autocompleters
-snippets	_HOME/modules/textadept/snippets.lua	/^_G.snippets = snippets$/;"	t	
 snippets	_HOME/modules/textadept/snippets.lua	/^module('textadept.snippets')]=]$/;"	m	class:textadept
+snippets	_HOME/modules/textadept/snippets.lua	/^snippets = {}$/;"	t	
 space	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 spawn	_HOME/core/.os.luadoc	/^local spawn$/;"	f	class:os
 split	_HOME/core/.view.luadoc	/^function split(view, vertical) end$/;"	f	class:view

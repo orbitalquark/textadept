@@ -7307,8 +7307,8 @@ Autocompleter function for snippet trigger words.
 
 ### Functions defined by `textadept.snippets`
 
-<a id="textadept.snippets.cancel_current"></a>
-#### `textadept.snippets.cancel_current`()
+<a id="textadept.snippets.cancel"></a>
+#### `textadept.snippets.cancel`()
 
 Cancels the active snippet, removing all inserted text.
 Returns `false` if no snippet is active.

@@ -429,7 +429,7 @@ call_tip_use_style view.call_tip_use_style (number)\nThe pixel width of tab char
 can_redo buffer.can_redo(buffer)\nReturns whether or not there is an action to be redone.\n@param buffer A buffer.\n@return bool
 can_undo buffer.can_undo(buffer)\nReturns whether or not there is an action to be undone.\n@param buffer A buffer.\n@return bool
 cancel buffer.cancel(buffer)\nCancels the active selection mode, autocompletion or user list, call tip, etc.\n@param buffer A buffer.
-cancel_current textadept.snippets.cancel_current()\nCancels the active snippet, removing all inserted text.\nReturns `false` if no snippet is active.\n@return `false` if no snippet is active; `nil` otherwise.
+cancel textadept.snippets.cancel()\nCancels the active snippet, removing all inserted text.\nReturns `false` if no snippet is active.\n@return `false` if no snippet is active; `nil` otherwise.
 caret_line_frame view.caret_line_frame (number)\nThe caret line's frame width in pixels.\nWhen non-zero, the line that contains the caret is framed instead of colored in. The\n`view.caret_line_back` and `view.caret_line_back_alpha` properties apply to the frame.\nThe default value is `0`.
 caret_line_highlight_subline view.caret_line_highlight_subline (boolean)\nColor the background of the subline that contains the caret a different color, rather than\nthe whole line.\nThe defalt value is `false`.
 caret_line_layer view.caret_line_layer (number)\nThe caret line layer mode.\n\n* `view.LAYER_BASE`\n  Draw the caret line opaquely on the background.\n* `view.LAYER_UNDER_TEXT`\n  Draw the caret line translucently under text.\n* `view.LAYER_OVER_TEXT`\n  Draw the caret line translucently over text.\n\nThe default value is `view.LAYER_BASE`.

@@ -119,12 +119,12 @@ M.paths = {}
 local INDIC_SNIPPET = _SCINTILLA.next_indic_number()
 local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.next_indic_number()
 
+---
 -- Map of snippet triggers with their snippet text or functions that return such text, with
 -- language-specific snippets tables assigned to a lexer name key.
 -- @class table
--- @name snippets
--- @see _G.snippets
-local snippets = {}
+-- @name _G.snippets
+snippets = {}
 for _, name in ipairs(lexer.names()) do snippets[name] = {} end
 
 -- Finds the snippet assigned to the trigger word behind the caret and returns the trigger word
@@ -584,8 +584,8 @@ end
 -- Cancels the active snippet, removing all inserted text.
 -- Returns `false` if no snippet is active.
 -- @return `false` if no snippet is active; `nil` otherwise.
--- @name cancel_current
-function M.cancel_current()
+-- @name cancel
+function M.cancel()
   if #stack == 0 then return false end
   stack[#stack]:finish(true)
 end
@@ -630,12 +630,5 @@ textadept.editing.autocompleters.snippet = function()
   for name in pairs(snippets) do list[#list + 1] = name .. sep .. xpm end
   return #trigger, list
 end
-
----
--- Map of snippet triggers with their snippet text or functions that return such text, with
--- language-specific snippets tables assigned to a lexer name key.
--- @class table
--- @name _G.snippets
-_G.snippets = snippets
 
 return M
