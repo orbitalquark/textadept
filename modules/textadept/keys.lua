@@ -60,7 +60,6 @@ local M = {}
 -- Ctrl+M | ⌘M | M-M | Match brace
 -- Ctrl+Enter | ⌘↩ | ^Enter | Complete word
 -- Ctrl+/ | ⌘/ | ^/<br/>M-/ | Toggle block comment
--- None | ^T | None | Transpose characters
 -- Ctrl+J | ⌘J | M-J | Join lines
 -- Ctrl+&#124; | ⌘&#124; | ^&#124;<br/>^\ | Filter text through
 -- Ctrl+Shift+M | ⌘⇧M | M-^M | Select between delimiters
@@ -264,7 +263,7 @@ module('textadept.keys')]]
 --
 -- Unassigned keys:
 -- cmd: AEGhHiIJNQtY_(){;:'"<.>
--- ctrl: cCDgGHiIjJKLmMoOqQrRsSTuUvVwWxXyYzZ-_=+)]}\|;:/\n
+-- ctrl: cCDgGHiIjJKLmMoOqQrRsStTuUvVwWxXyYzZ-_=+)]}\|;:/\n
 -- ctrl+cmd: aAbBcCDFHiIjJlLmMnNoOpPqQrRsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
 --
 -- Curses key bindings.
@@ -340,7 +339,6 @@ local bindings = {
   [m('Edit/Match Brace')] = {'ctrl+m', 'cmd+m', 'meta+m'},
   [m('Edit/Complete Word')] = {'ctrl+\n', 'cmd+\n', {'ctrl+j', 'ctrl+\n'}},
   [textadept.editing.toggle_comment] = {'ctrl+/', 'cmd+/', {'ctrl+_', 'ctrl+@', 'meta+/'}},
-  [textadept.editing.transpose_chars] = {nil, 'ctrl+t', nil},
   [textadept.editing.join_lines] = {'ctrl+j', 'cmd+j', 'meta+j'},
   [m('Edit/Filter Through')] = {'ctrl+|', 'cmd+|', {'ctrl+\\', 'ctrl+|'}},
   -- Select.

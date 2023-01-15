@@ -401,22 +401,6 @@ args.register('-l', '--line', 1, function(line) M.goto_line(tonumber(line) or li
   'Go to line')
 
 ---
--- Transposes characters intelligently.
--- If the caret is at the end of a line, transposes the two characters before the caret. Otherwise,
--- the characters to the left and right are.
--- @name transpose_chars
-function M.transpose_chars()
-  local pos = buffer.current_pos
-  local line_end = buffer.line_end_position[buffer:line_from_position(pos)]
-  if pos == line_end then pos = buffer:position_before(pos) end
-  local pos1, pos2 = buffer:position_before(pos), buffer:position_after(pos)
-  local ch1, ch2 = buffer:text_range(pos1, pos), buffer:text_range(pos, pos2)
-  buffer:set_target_range(pos1, pos2)
-  buffer:replace_target(ch2 .. ch1)
-  buffer:goto_pos(pos2)
-end
-
----
 -- Joins the currently selected lines or the current line with the line below it.
 -- As long as any part of a line is selected, the entire line is eligible for joining.
 -- @name join_lines

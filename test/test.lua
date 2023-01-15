@@ -2276,31 +2276,6 @@ function test_editing_goto_line_interactive()
   buffer:close()
 end
 
-function test_editing_transpose_chars()
-  buffer.new()
-  buffer:add_text('foobar')
-  textadept.editing.transpose_chars()
-  assert_equal(buffer:get_text(), 'foobra')
-  buffer:char_left()
-  textadept.editing.transpose_chars()
-  assert_equal(buffer:get_text(), 'foobar')
-  buffer:clear_all()
-  buffer:add_text('⌘⇧⌥')
-  textadept.editing.transpose_chars()
-  assert_equal(buffer:get_text(), '⌘⌥⇧')
-  buffer:char_left()
-  textadept.editing.transpose_chars()
-  assert_equal(buffer:get_text(), '⌘⇧⌥')
-  buffer:clear_all()
-  textadept.editing.transpose_chars()
-  assert_equal(buffer:get_text(), '')
-  buffer:add_text('a')
-  textadept.editing.transpose_chars()
-  assert_equal(buffer:get_text(), 'a')
-  -- TODO: multiple selection?
-  buffer:close(true)
-end
-
 function test_editing_join_lines()
   buffer.new()
   buffer:append_text('foo\nbar\n  baz\nquux\n')
@@ -3493,8 +3468,6 @@ function test_macro_record_play_save_load()
   assert_equal(#_BUFFERS, 1)
   assert(not buffer.modify, 'a macro was played')
 
-  local f = keys['ctrl+t']
-  keys['ctrl+t'] = textadept.editing.transpose_chars
   textadept.macros.record()
   events.emit(events.MENU_CLICKED, 1) -- File > New
   buffer:add_text('f')
@@ -3505,17 +3478,17 @@ function test_macro_record_play_save_load()
   events.emit(events.CHAR_ADDED, string.byte('a'))
   buffer:add_text('r')
   events.emit(events.CHAR_ADDED, string.byte('r'))
-  events.emit(events.KEYPRESS, 'ctrl+t') -- transpose
+  events.emit(events.KEYPRESS, not OSX and 'alt+"' or 'ctrl+"') -- enclose in ""
   textadept.macros.play() -- should not do anything
   textadept.macros.save() -- should not do anything
   textadept.macros.load() -- should not do anything
   textadept.macros.record() -- stop
   assert_equal(#_BUFFERS, 2)
-  assert_equal(buffer:get_text(), 'ra')
+  assert_equal(buffer:get_text(), '"ar"')
   buffer:close(true)
   textadept.macros.play()
   assert_equal(#_BUFFERS, 2)
-  assert_equal(buffer:get_text(), 'ra')
+  assert_equal(buffer:get_text(), '"ar"')
   buffer:close(true)
   local filename = os.tmpname()
   textadept.macros.save(filename)
@@ -3524,10 +3497,9 @@ function test_macro_record_play_save_load()
   textadept.macros.load(filename)
   textadept.macros.play()
   assert_equal(#_BUFFERS, 2)
-  assert_equal(buffer:get_text(), 'ra')
+  assert_equal(buffer:get_text(), '"ar"')
   buffer:close(true)
   os.remove(filename)
-  keys['ctrl+t'] = f -- restore
 
   assert_raises(function() textadept.macros.save(1) end, 'string/nil expected, got number')
   assert_raises(function() textadept.macros.load(1) end, 'string/nil expected, got number')

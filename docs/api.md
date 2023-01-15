@@ -6381,13 +6381,6 @@ See also:
 
 * [`textadept.editing.comment_string`](#textadept.editing.comment_string)
 
-<a id="textadept.editing.transpose_chars"></a>
-#### `textadept.editing.transpose_chars`()
-
-Transposes characters intelligently.
-If the caret is at the end of a line, transposes the two characters before the caret. Otherwise,
-the characters to the left and right are.
-
 
 ### Tables defined by `textadept.editing`
 
@@ -6591,7 +6584,6 @@ Ctrl+A | ⌘A | ^A | Select all
 Ctrl+M | ⌘M | M-M | Match brace
 Ctrl+Enter | ⌘↩ | ^Enter | Complete word
 Ctrl+/ | ⌘/ | ^/<br/>M-/ | Toggle block comment
-None | ^T | None | Transpose characters
 Ctrl+J | ⌘J | M-J | Join lines
 Ctrl+&#124; | ⌘&#124; | ^&#124;<br/>^\ | Filter text through
 Ctrl+Shift+M | ⌘⇧M | M-^M | Select between delimiters

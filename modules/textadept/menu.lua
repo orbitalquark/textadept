@@ -97,7 +97,6 @@ local default_menubar = {
     end},
     {_L['Complete Word'], function() textadept.editing.autocomplete('word') end},
     {_L['Toggle Block Comment'], textadept.editing.toggle_comment},
-    {_L['Transpose Characters'], textadept.editing.transpose_chars},
     {_L['Join Lines'], textadept.editing.join_lines},
     {_L['Filter Through'], function()
       ui.command_entry.run(_L['Shell command:'], textadept.editing.filter_through, 'bash')
