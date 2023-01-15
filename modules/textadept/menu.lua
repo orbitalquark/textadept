@@ -267,7 +267,8 @@ local default_menubar = {
     end},
     SEPARATOR,
     {_L['Select Lexer...'], function()
-      local i = ui.dialogs.list{title = _L['Select Lexer'], items = lexer.names()}
+      local lexers = lexer.names()
+      local i = ui.dialogs.list{title = _L['Select Lexer'], items = lexers}
       if i then buffer:set_lexer(lexers[i]) end
     end}
   },
