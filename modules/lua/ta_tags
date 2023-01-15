@@ -336,9 +336,6 @@ _G	_HOME/core/init.lua	/^module('_G')]]$/;"	m
 _HOME	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
 _L	_HOME/core/locale.lua	/^module('_L')]]$/;"	m	
 _LEXERPATH	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
-_M	_HOME/core/._M.luadoc	/^module('_M')$/;"	m	
-_M.ansi_c	_HOME/modules/ansi_c/init.lua	/^module('_M.ansi_c')]]$/;"	m	
-_M.lua	_HOME/modules/lua/init.lua	/^module('_M.lua')]]$/;"	m	
 _RELEASE	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
 _SCINTILLA	_HOME/core/iface.lua	/^module('_SCINTILLA')]]$/;"	m	
 _USERHOME	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
@@ -363,7 +360,6 @@ annotation_lines	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 annotation_style	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 annotation_text	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 annotation_visible	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
-ansi_c	_HOME/modules/ansi_c/init.lua	/^module('_M.ansi_c')]]$/;"	m	class:_M
 any	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 api_files	_HOME/modules/textadept/editing.lua	/^M.api_files = setmetatable({}, {$/;"	t	class:textadept.editing
 append_history	_HOME/modules/textadept/command_entry.lua	/^function M.append_history(f, text)$/;"	f	class:ui.command_entry
@@ -400,8 +396,6 @@ auto_indent	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$
 auto_pairs	_HOME/modules/textadept/editing.lua	/^M.auto_pairs = {}$/;"	t	class:textadept.editing
 autocomplete	_HOME/modules/textadept/editing.lua	/^function M.autocomplete(name)$/;"	f	class:textadept.editing
 autocomplete_all_words	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	F	class:textadept.editing
-autocomplete_snippets	_HOME/modules/ansi_c/init.lua	/^module('_M.ansi_c')]]$/;"	F	class:_M.ansi_c
-autocomplete_snippets	_HOME/modules/lua/init.lua	/^module('_M.lua')]]$/;"	F	class:_M.lua
 autocompleters	_HOME/modules/textadept/editing.lua	/^M.autocompleters = {}$/;"	t	class:textadept.editing
 back	_HOME/modules/textadept/history.lua	/^function M.back()$/;"	f	class:textadept.history
 back_space_un_indents	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
@@ -539,7 +533,6 @@ eol_annotation_visible	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 eol_mode	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 events	_HOME/core/events.lua	/^module('events')]]$/;"	m	
 events	_HOME/core/iface.lua	/^M.events = {[2000]={"style_needed","position"},[2001]={"char_added","ch","character_source"},[2002]={"save_point_reached"},[2003]={"save_point_left"},[2004]={"modify_attempt_ro"},[2005]={"key","ch","modifiers"},[2006]={"double_click","position","line","modifiers"},[2007]={"update_ui","updated"},[2008]={"modified","position","modification_type","text","length","lines_added","line","fold_level_now","fold_level_prev","token","annotation_lines_added"},[2009]={"macro_record","message","w_param","l_param"},[2010]={"margin_click","margin","position","modifiers"},[2011]={"need_shown","position","length"},[2013]={"painted"},[2014]={"user_list_selection","list_type","text","position","ch","list_completion_method"},[2015]={"uri_dropped","text"},[2016]={"dwell_start","position","x","y"},[2017]={"dwell_end","position","x","y"},[2018]={"zoom"},[2019]={"hot_spot_click","position","modifiers"},[2020]={"hot_spot_double_click","position","modifiers"},[2021]={"call_tip_click","position"},[2022]={"auto_c_selection","text","position","ch","list_completion_method"},[2023]={"indicator_click","position","modifiers"},[2024]={"indicator_release","position","modifiers"},[2025]={"auto_c_cancelled"},[2026]={"auto_c_char_deleted"},[2027]={"hot_spot_release_click","position","modifiers"},[2028]={"focus_in"},[2029]={"focus_out"},[2030]={"auto_c_completed","text","position","ch","list_completion_method"},[2031]={"margin_right_click","margin","position","modifiers"},[2032]={"auto_c_selection_change","list_type","text","position"},}$/;"	t	class:_SCINTILLA
-expr_types	_HOME/modules/lua/init.lua	/^M.expr_types = {['^[\'"]'] = 'string', ['^io%.p?open%s*%b()%s*$'] = 'file'}$/;"	t	class:_M.lua
 extra_ascent	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 extra_descent	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 filename	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
@@ -691,7 +684,6 @@ load	_HOME/modules/textadept/macros.lua	/^function M.load(filename)$/;"	f	class:
 load	_HOME/modules/textadept/session.lua	/^function M.load(filename)$/;"	f	class:textadept.session
 lower	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 lower_case	_HOME/core/.buffer.luadoc	/^function lower_case(buffer) end$/;"	f	class:buffer
-lua	_HOME/modules/lua/init.lua	/^module('_M.lua')]]$/;"	m	class:_M
 macros	_HOME/modules/textadept/macros.lua	/^module('textadept.macros')]]$/;"	m	class:textadept
 main_selection	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 margin_back_n	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
@@ -979,8 +971,6 @@ tab_width	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 tabs	_HOME/core/ui.lua	/^module('ui')]]$/;"	F	class:ui
 tag	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 tag	_HOME/lexers/lexer.lua	/^function M.tag(lexer, name, patt)$/;"	f	class:lexer
-tags	_HOME/modules/ansi_c/init.lua	/^M.tags = {$/;"	t	class:_M.ansi_c
-tags	_HOME/modules/lua/init.lua	/^M.tags = {$/;"	t	class:_M.lua
 target_end	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 target_end_virtual_space	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 target_from_selection	_HOME/core/.buffer.luadoc	/^function target_from_selection(buffer) end$/;"	f	class:buffer

@@ -1085,10 +1085,9 @@ control structures, API calls, and more.
 ![Snippet Expanded](images/snippet2.png)
 
 A snippet has a trigger word associated with snippet text in the [`snippets`][]
-table. Language-specific snippets are in a subtable assigned to their language's lexer name, and
-are often supplied by [language][] [modules](#modules). Snippets may also be the contents of files
-in a snippet directory, with file names being the trigger word. The [snippets documentation][]
-describes snippets and their contents in more detail.
+table. Language-specific snippets are in a subtable assigned to their language's lexer
+name. Snippets may also be the contents of files in a snippet directory, with file names being the
+trigger word. The [snippets documentation][] describes snippets and their contents in more detail.
 
 The following key bindings apply for snippets:
 
@@ -1112,7 +1111,6 @@ The following key bindings apply for snippets:
 * Cancel the current snippet via `Esc`.
 
 [`snippets`]: api.html#_G.snippets
-[language]: api.html#_M
 [snippets documentation]: api.html#textadept.snippets
 
 #### Code Folding
@@ -1134,17 +1132,15 @@ the "View > Toggle Virtual Space" menu item.
 
 Key bindings are simply commands (Lua functions) assigned to key sequences in the [`keys`][]
 table. Key sequences are composed of an ordered combination of modifier keys followed by either
-the key's inserted character or, if no such character exists, the string representation of
-the key according to [`keys.KEYSYMS`][]. Language-specific keys are in a subtable assigned to
-their language's lexer name, and are often supplied by [language][] [modules](#modules). Key
-sequences can also be assigned tables of key bindings to create key chains (e.g. Emacs `C-x`
-prefix). Key bindings can be grouped into modes such that while a mode is active, Textadept
-ignores all key bindings outside that mode until the mode is unset (e.g. Vim-style modal
-editing). The [keys documentation][] describes all of this in more detail.
+the key's inserted character or, if no such character exists, the string representation of the
+key according to [`keys.KEYSYMS`][]. Language-specific keys are in a subtable assigned to their
+language's lexer name. Key sequences can also be assigned tables of key bindings to create
+key chains (e.g. Emacs `C-x` prefix). Key bindings can be grouped into modes such that while
+a mode is active, Textadept ignores all key bindings outside that mode until the mode is unset
+(e.g. Vim-style modal editing). The [keys documentation][] describes all of this in more detail.
 
 [`keys`]: api.html#keys
 [`keys.KEYSYMS`]: api.html#keys.KEYSYMS
-[language]: api.html#_M
 [keys documentation]: api.html#keys
 
 ---
@@ -1247,13 +1243,11 @@ Textadept will only load modules it is explicitly told to load (e.g. from your
     local ctags = require('ctags')
     ctags.f12 = ctags.goto_tag
 
-    events.connect(events.LEXER_LOADED, function(name)
-      if name == 'lua' then require('lua.extras') end
-    end)
+You can automatically load a "language module" (if it exists) after opening a file of that type:
 
-The only exception to this auto-loading prohibition is modules that have the same name as a
-lexer language. These so-called "[language modules][]" will be automatically loaded when an
-appropriate source file is opened, or when the module's associated lexer is loaded for a buffer.
+    events.connect(events.LEXER_LOADED, function(name)
+      if package.searchpath(name, package.path) then require(name) end
+    end)
 
 **Note:** lexer language names are typically the names of lexer files in your
 *~/.textadept/lexers/* directory and Textadept's *lexers/* directory.
@@ -1269,12 +1263,11 @@ for developing modules and some things to keep in mind:
   globally. (This is standard Lua practice.) That way, the construct `local foo = require('foo')`
   behaves as expected.
 * Modules should not define global variables, as all modules share the same Lua state.
-* Only [language modules][] should be named after lexer languages.
+* Modules should only be named after lexer languages if they provide language-specific
+  functionality.
 * Modules must not call any functions that create buffers and views (e.g. `ui.print()`,
   `io.open_file()`, and `buffer.new()`) at file-level scope. Buffers and views can only be
   created within functions assigned to keys, associated with menu items, or connected to events.
-* Additional documentation on creating language modules can be found in the the [language
-  modules][] documentation.
 
 **Tip:** you do not need to have a language module in order to have language-specific editing
 features. You can simply put language-specific features inside an [`events.LEXER_LOADED`][]
@@ -1285,7 +1278,6 @@ event handler. For example, in your *~/.textadept/init.lua*:
       if name == 'python' then buffer.tab_width, buffer.use_tabs = 4, false end
     end)
 
-[language modules]: api.html#_M
 [`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
 
 ---
@@ -1425,7 +1417,8 @@ example, in your *~/.textadept/init.lua*:
     local loaded_tags = false
     events.connect(events.LEXER_LOADED, function(name)
       if name ~= 'lua' or loaded_tags then return end
-      _M.lua.tags[#_M.lua.tags + 1] = '/path/to/tags'
+      local lua = require('lua')
+      lua.tags[#lua.tags + 1] = '/path/to/tags'
       loaded_tags = true
     end)
     table.insert(textadept.editing.api_files.lua, '/path/to/api')
@@ -1599,7 +1592,7 @@ Textadept's directory structure is organized as follows:
   application to run. They provide Textadept's Lua to C interface, event framework, file and
   lexer interactions, and localization.
 * *lexers/*: Houses the lexer modules that analyze source code for syntax highlighting.
-* *modules/*: Contains modules for editing text and source code, as well as language modules.
+* *modules/*: Contains modules for editing text and source code.
 * *themes/*: Contains built-in themes that customize the look and feel of Textadept.
 * *iconengines/*, *imageformats/*, *platforms/*, *styles/*, and *translations/*: Qt support
   directories and only appear in the Windows package.
@@ -1647,13 +1640,14 @@ Old API | Change | New API
 **_G**||
 N/A | Added | [GTK](api.html#GTK), [QT](api.html#QT)
 [OSX][] | Changed | Always true on macOS, not just in the GUI version
+**_M**| Removed | N/A<sup>[a](#language-module-changes)</sup>
 **buffer**||
 [tab_label][] | Changed | Write-only
 **events**||
 [KEYPRESS][] | Changed | Changed arguments
 [TAB_CLICKED][] | Changed | Changed arguments
 **io**||
-N/A | Added | [ensure_final_newline][]<sup>a</sup>
+N/A | Added | [ensure_final_newline][]<sup>b</sup>
 [quick_open()][] | Changed | Removed *opts* parameter
 **lexer**||
 lexer.colors | Renamed | [view.colors][]
@@ -1669,8 +1663,8 @@ N/A | Added | [number_()][] and friends
 [to_eol()][] | Changed | *prefix* parameter is optional
 fold\_line\_groups | Removed | N/A
 **textadept.editing**||
-INDIC_BRACEMATCH | Removed | N/A<sup>b</sup>
-brace_matches | Removed | N/A<sup>c</sup>
+INDIC_BRACEMATCH | Removed | N/A<sup>c</sup>
+brace_matches | Removed | N/A<sup>d</sup>
 [auto_pairs][] | Changed | Keys are string characters, not byte values
 [typeover_chars][] | Changed | Keys are string characters, not byte values
 **textadept.file_types**| Removed | N/A
@@ -1679,7 +1673,7 @@ patterns | Renamed | [lexer.detect_patterns][]
 select_lexer() | Replaced | `textadept.menu.menubar[L['Buffer']]`<br/>`[L['Select Lexer...']][2]`
 **textadept.run**||
 error_patterns | Removed | N/A
-set_arguments() | Removed | N/A<sup>d</sup>
+set_arguments() | Removed | N/A<sup>e</sup>
 N/A | Added | [run_project()][], [run_project_commands][]
 N/A | Added | [INDIC_WARNING][], [INDIC_ERROR][]
 **ui**||
@@ -1702,10 +1696,10 @@ textbox(), optionselect(), colorselect(), fontselect() | Removed | N/A
 **view**||
 N/A | Added | [set_styles()][]
 
-<sup>a</sup>No longer part of `textadept.editing.strip_trailing_spaces`<br/>
-<sup>b</sup>Use view.STYLE_BRACEBAD and view.STYLE_BRACELIGHT instead<br/>
-<sup>c</sup>Angles as brace characters is auto-detected now<br/>
-<sup>d</sup>See below how compile and run commands have changed<br/>
+<sup>b</sup>No longer part of `textadept.editing.strip_trailing_spaces`<br/>
+<sup>c</sup>Use view.STYLE_BRACEBAD and view.STYLE_BRACELIGHT instead<br/>
+<sup>d</sup>Angles as brace characters is auto-detected now<br/>
+<sup>e</sup>See below how compile and run commands have changed<br/>
 
 [OSX]: api.html#OSX
 [tab_label]: api.html#buffer.tab_label
@@ -1812,3 +1806,24 @@ list selections are always returned as numeric indices.
 Filters for `lfs.walk()`, `io.quick_open()`, and `ui.find.find_in_files()` no longer use Lua
 patterns, but use typical shell glob patterns instead. This means special characters like '-'
 and '+' can be used literally and longer need to be escaped with '%'.
+
+###### Language Module Changes
+
+Textadept no longer automatically loads language modules. They need to be manually loaded like
+other modules. You can either do this directly on startup from your *~/.textadept/init.lua*,
+or lazy load them from an `events.LEXER_LOADED` event handler in your *~/.textadept/init.lua*:
+
+    require('lua') -- load language module on startup
+
+    -- Lazy-load language modules as files are opened.
+    events.connect(events.LEXER_LOADED, function(name)
+      if package.searchpath(name, package.path) then require(name) end
+    end)
+
+If you prefer old behavior that loads all language modules into a global `_M` table, then you
+can do this:
+
+    _M = {}
+    events.connect(events.LEXER_LOADED, function(name)
+      if package.searchpath(name, package.path) then _M[name] = require(name) end
+    end)

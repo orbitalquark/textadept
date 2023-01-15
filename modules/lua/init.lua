@@ -2,15 +2,6 @@
 
 local M = {}
 
---[[ This comment is for LuaDoc.
----
--- The lua module.
--- It provides utilities for editing Lua code.
--- @field autocomplete_snippets (boolean)
---   Whether or not to include snippets in autocompletion lists.
---   The default value is `false`.
-module('_M.lua')]]
-
 -- Autocompletion and documentation.
 
 -- Returns a function that, when called from a Textadept Lua file, the Lua command entry, or
@@ -26,7 +17,6 @@ local function ta_api(filename)
   end
 end
 
----
 -- List of "fake" ctags files (or functions that return such files) to use for autocompletion.
 -- The kind 'm' is recognized as a module, 'f' as a function, 't' as a table and 'F' as a module
 -- or table field.
@@ -39,7 +29,6 @@ M.tags = {
   ta_api(_HOME .. '/modules/lua/ta_tags')
 }
 
----
 -- Map of expression patterns to their types.
 -- Used for type-hinting when showing autocompletions for variables. Expressions are expected
 -- to match after the '=' sign of a statement.

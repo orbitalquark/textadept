@@ -2,9 +2,6 @@
 
 1. [_G](#_G)
 1. [_L](#_L)
-1. [_M](#_M)
-1. [_M.ansi_c](#_M.ansi_c)
-1. [_M.lua](#_M.lua)
 1. [_SCINTILLA](#_SCINTILLA)
 1. [args](#args)
 1. [assert](#assert)
@@ -222,180 +219,6 @@ Map of all messages used by Textadept to their localized form.
 If the localized version of a given message does not exist, the non-localized message is
 returned. Use `rawget()` to check if a localization exists.
 Note: the terminal version ignores any "_" or "&" mnemonics the GUI version would use.
-
----
-<a id="_M"></a>
-## The `_M` Module
----
-
-A table of loaded Textadept language modules.
-
-Language modules are a special kind of module that Textadept automatically loads when editing
-source code in a particular programming language. The only thing "special" about them is they
-are named after a lexer. Otherwise they are plain Lua modules. The *~/.textadept/modules/*
-directory houses language modules (along with other modules).
-
-A language module is designed to provide extra functionality for a single programming
-language. Some examples of what language modules can do:
-
-  * Specify block comment syntax for lines of code
-  * Define compile and run commands for source files
-  * Set language-specific editor properties like indentation rules
-  * Specify code autocompletion routines
-  * Declare snippets
-  * Define commands and key bindings for them
-  * Add to the top-level menu or right-click editor context menu
-
-Examples of these features are described in the sections below.
-
-### Block Comment
-
-Many languages have different syntaxes for single line comments and multi-line comments in
-source code. Textadept's block comment feature only uses one of those syntaxes for a given
-language. If you prefer the other syntax, or if Textadept does not support block comments
-for a particular language, modify the [`textadept.editing.comment_string`](#textadept.editing.comment_string) table. For example:
-
-    textadept.editing.comment_string.ansi_c = '/*|*/' -- change from //
-
-### Compile and Run
-
-Textadept knows most of the commands that compile and/or run code in source files. However,
-it does not know all of them, and the ones that it does know may not be completely accurate
-in all cases. Compile and run commands are read from the [`textadept.run.compile_commands`](#textadept.run.compile_commands)
-and [`textadept.run.run_commands`](#textadept.run.run_commands) tables using the appropriate lexer name key, and thus
-can be defined or modified. For Lua, it would look like:
-
-    textadept.run.compile_commands.lua = 'luac "%f"'
-    textadept.run.run_commands.lua = 'lua "%f"'
-
-Double-clicking on compile or runtime errors jumps to the error's location. If Textadept
-does not recognize your language's errors properly, add a grammar [rule](#rules) to the
-*lexers/output.lua* lexer.
-
-### Buffer Properties
-
-By default, Textadept uses 2 spaces for indentation. Some languages have different indentation
-guidelines, however. As described in the manual, use `events.LEXER_LOADED` to change this
-and any other language-specific editor properties. For example:
-
-    events.connect(events.LEXER_LOADED, function(name)
-      if name ~= 'python' then return end
-      buffer.tab_width = 4
-      buffer.use_tabs = false
-      view.view_ws = view.WS_VISIBLEALWAYS
-    end)
-
-### Autocompletion and Documentation
-
-Textadept has the capability to autocomplete symbols for programming
-languages and display API documentation. In order for these to work for a
-given language, an [autocompleter](#textadept.editing.autocompleters) and [API
-file(s)](#textadept.editing.api_files) must exist. All of Textadept's included language
-modules have examples of autocompleters and API documentation, as well as most of its
-officially supported language modules.
-
-### Snippets
-
-[Snippets](#textadept.snippets) for common language constructs are useful. Some snippets
-for common Lua control structures look like this:
-
-    snippets.lua = {
-      f = "function %1(name)(%2(args))\n\t%0\nend",
-      ['for'] = "for i = %1(1), %2(10)%3(, -1) do\n\t%0\nend",
-      fori = "for %1(i), %2(val) in ipairs(%3(table)) do\n\t%0\nend",
-      forp = "for %1(k), %2(v) in pairs(%3(table)) do\n\t%0\nend",
-    }
-
-### Commands
-
-Additional editing features for the language can be useful. For example, a C++ module might
-have a feature to add a ';' to the end of the current line and insert a new line. This command
-could be bound to the `Shift+Enter` (`⇧↩` on macOS | `S-Enter` in the terminal version)
-key for easy access:
-
-    keys.cpp['shift+\n'] = function()
-      buffer:line_end()
-      buffer:add_text(';')
-      buffer:new_line()
-    end
-
-### Menus
-
-It may be useful to add language-specific menu options to the top-level menu and/or right-click
-context menu in order to access module features without using key bindings. For example:
-
-    local lua_menu = {
-      title = 'Lua',
-      {'Item 1', function() ... end},
-      {'Item 2', function() ... end}
-    }
-    local tools = textadept.menu.menubar[_L['Tools']]
-    tools[#tools + 1] = lua_menu
-    textadept.menu.context_menu[#textadept.menu.context_menu + 1] = lua_menu
-
----
-<a id="_M.ansi_c"></a>
-## The `_M.ansi_c` Module
----
-
-The ansi_c module.
-It provides utilities for editing C code.
-
-### Fields defined by `_M.ansi_c`
-
-<a id="_M.ansi_c.autocomplete_snippets"></a>
-#### `_M.ansi_c.autocomplete_snippets` (boolean)
-
-Whether or not to include snippets in autocompletion lists.
-  The default value is `true`.
-
-
-### Tables defined by `_M.ansi_c`
-
-<a id="_M.ansi_c.tags"></a>
-#### `_M.ansi_c.tags`
-
-List of ctags files to use for autocompletion in addition to the current project's top-level
-*tags* file or the current directory's *tags* file.
-
----
-<a id="_M.lua"></a>
-## The `_M.lua` Module
----
-
-The lua module.
-It provides utilities for editing Lua code.
-
-### Fields defined by `_M.lua`
-
-<a id="_M.lua.autocomplete_snippets"></a>
-#### `_M.lua.autocomplete_snippets` (boolean)
-
-Whether or not to include snippets in autocompletion lists.
-  The default value is `false`.
-
-
-### Tables defined by `_M.lua`
-
-<a id="_M.lua.expr_types"></a>
-#### `_M.lua.expr_types`
-
-Map of expression patterns to their types.
-Used for type-hinting when showing autocompletions for variables. Expressions are expected
-to match after the '=' sign of a statement.
-
-Usage:
-
-* `_M.lua.expr_types['^spawn%b()%s*$'] = 'proc'`
-
-<a id="_M.lua.tags"></a>
-#### `_M.lua.tags`
-
-List of "fake" ctags files (or functions that return such files) to use for autocompletion.
-The kind 'm' is recognized as a module, 'f' as a function, 't' as a table and 'F' as a module
-or table field.
-The *modules/lua/tadoc.lua* script can generate *tags* and [*api*](#textadept.editing.api_files)
-files for Lua modules via LuaDoc.
 
 ---
 <a id="_SCINTILLA"></a>
@@ -3206,8 +3029,7 @@ Usage:
 <a id="buffer.set_lexer"></a>
 #### `buffer.set_lexer`(*buffer, name*)
 
-Associates string lexer name *name* or the auto-detected lexer name with the buffer and then
-loads the appropriate language module if that module exists.
+Associates string lexer name *name* or the auto-detected lexer name with the buffer.
 
 Parameters:
 
@@ -3943,8 +3765,8 @@ Emitted after Textadept finishes initializing.
 #### `events.LEXER_LOADED` (string)
 
 Emitted after loading a language lexer.
-  This is useful for overriding a language module's key bindings or other properties since
-  the module is not loaded when Textadept starts.
+  This is useful for automatically loading language modules as source files are opened,
+  or setting up language-specific editing features for source files.
   Arguments:
 
   * _`name`_: The language lexer's name.
@@ -4456,8 +4278,8 @@ in the current key mode to have priority. If no key mode is active, language-spe
 bindings have priority, followed by the ones in the global table. This means if there are
 two commands with the same key sequence, Textadept runs the language-specific one. However,
 if the command returns the boolean value `false`, Textadept also runs the lower-priority
-command. (This is useful for language modules to override commands like autocompletion,
-but fall back to word autocompletion if the first command fails.)
+command. (This is useful for overriding commands like autocompletion with language-specific
+completion, but fall back to word autocompletion if the first command fails.)
 
 ### Key Sequences
 

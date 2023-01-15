@@ -16,6 +16,7 @@ for name, f in pairs(io) do if name:find('^_') then buffer[name:sub(2)], io[name
 textadept = require('textadept')
 
 -- Legacy.
+_M = {} -- language modules table
 ui._print = ui.print_to
 -- LuaFormatter off
 local type_map={msgbox='message',ok_msgbox='message',yesno_msgbox='message',inputbox='input',standard_inputbox='input',secure_inputbox='input',secure_standard_inputbox='input',fileselect='open',filesave='save',progressbar='progress',filteredlist='list'}

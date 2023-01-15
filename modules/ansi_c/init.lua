@@ -2,18 +2,8 @@
 
 local M = {}
 
---[[ This comment is for LuaDoc.
----
--- The ansi_c module.
--- It provides utilities for editing C code.
--- @field autocomplete_snippets (boolean)
---   Whether or not to include snippets in autocompletion lists.
---   The default value is `true`.
-module('_M.ansi_c')]]
-
 -- Autocompletion and documentation.
 
----
 -- List of ctags files to use for autocompletion in addition to the current project's top-level
 -- *tags* file or the current directory's *tags* file.
 -- @class table

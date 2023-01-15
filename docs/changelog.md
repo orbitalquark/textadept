@@ -2239,7 +2239,7 @@ Changes:
 
 [spawn processes]: api.html#os.spawn
 [Snapopen]: manual.html#quick-open
-[building projects]: api.html#_M.Build.a.Project
+[building projects]: api.html#textadept.run.build
 [LuaJIT]: https://luajit.org
 [Scintilla]: https://scintilla.org
 
@@ -2770,7 +2770,7 @@ Changes:
 * Added [`event.FIND_WRAPPED`][] event.
 * Removed `_M.textadept.run.execute()`.
 * Updated documentation and documentation formatting.
-* Added [Python module][].
+* Added Python module.
 * Rewrote Makefile lexer.
 * Scintilla: improved performance when performing multiple searches.
 * Updated to [Scintilla][] 3.2.3.
@@ -2778,7 +2778,6 @@ Changes:
 
 [5 to 6 migration guide]: manual.html#textadept-5-to-6
 [`event.FIND_WRAPPED`]: api.html#events.FIND_WRAPPED
-[Python module]: api.html#_M.python
 [Scintilla]: https://scintilla.org
 [LuaJIT]: https://luajit.org
 
@@ -3050,14 +3049,13 @@ Bugfixes:
 Changes:
 
 * Changed `locale.localize()` to global [`_L`][] table and removed `locale` module.
-* Renamed `_m` to [`_M`][].
+* Renamed `_m` to `_M`.
 * Do not clear registered images when autocompleting with Adeptsense.
 * Renamed editing module's `current_word()` to [`select_word()`][].
 * Updated [manual][].
 * Updated D lexer.
 
 [`_L`]: api.html#_L
-[`_M`]: api.html#_M
 [manual]: manual.html
 [`select_word()`]: api.html#textadept.editing.select_word
 
@@ -3141,7 +3139,7 @@ Changes:
   + [`view:goto_buffer()`][] and [`gui.goto_view()`][] arguments make sense now.
     (May require changes to custom key bindings.)
 * Directory is remembered in file chooser dialog after open or save as.
-* Added language-specific [context menu][] support.
+* Added language-specific context menu support.
 * Use [LuaCoco][] patch for Lua 5.1.4.
 * Use lexer at the caret for key bindings and snippets.
 * Added `selected` and `monospaced-font` options for dropdown and textbox dialogs, respectively.
@@ -3153,7 +3151,6 @@ Changes:
 [`view.buffer`]: api.html#view.buffer
 [`view:goto_buffer()`]: api.html#view.goto_buffer
 [`gui.goto_view()`]: api.html#ui.goto_view
-[context menu]: api.html#_M.Context.Menu
 [LuaCoco]: https://coco.luajit.org/
 [Scintilla]: https://scintilla.org
 
@@ -3402,13 +3399,10 @@ Changes:
 * Language modules condensed into single `init.lua` file.
 * Added `sense.syntax.word_chars` to Adeptsense.
 * Included libpng12 build for 64-bit Debian-based Linux distros (Ubuntu).
-* Added [CSS][], [HTML][], Java, and [Ruby][] modules with Adeptsenses.
+* Added CSS, HTML, Java, and Ruby modules with Adeptsenses.
 * Updated BibTeX lexer.
 
 [Scintilla]: https://scintilla.org
-[CSS]: api.html#_M.css
-[HTML]: api.html#_M.html
-[Ruby]: api.html#_M.ruby
 
 ### 3.7 beta (01 Feb 2011)
 
@@ -3672,7 +3666,7 @@ Changes:
 * `_m.textadept.editing.enclosure` is now an accessible table.
 * Updated D, Java, and LaTeX lexers.
 
-[Compile and run]: api.html#_M.Compile.and.Run
+[Compile and run]: api.html#textadept.run
 [Block comment]: api.html#textadept.editing.comment_string
 
 ### 2.2 beta (01 Apr 2010)

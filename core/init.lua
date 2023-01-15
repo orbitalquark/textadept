@@ -18,7 +18,6 @@ lexer = require('lexer')
 require('lfs_ext')
 require('ui')
 keys = require('keys')
-_M = {} -- language modules table
 
 -- pdcurses compatibility.
 if CURSES and WIN32 then

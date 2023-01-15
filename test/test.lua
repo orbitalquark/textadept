@@ -3612,6 +3612,7 @@ function test_menu_menu_functions()
   end
   buffer:clear_all()
   buffer:set_lexer('lua')
+  require('lua') -- load language module
   buffer:add_text('string.')
   textadept.menu.menubar[_L['Tools']][_L['Complete Symbol']][2]()
   assert(buffer:auto_c_active(), 'no autocompletions')
@@ -4385,6 +4386,7 @@ end
 function test_lua_autocomplete()
   buffer.new()
   buffer:set_lexer('lua')
+  require('lua') -- load language module
 
   buffer:add_text('raw')
   textadept.editing.autocomplete('lua')
@@ -4426,20 +4428,21 @@ function test_lua_autocomplete()
 
   local choose_single = buffer.auto_c_choose_single
   buffer.auto_c_choose_single = true
-  local autocomplete_snippets = _M.lua.autocomplete_snippets
-  _M.lua.autocomplete_snippets = false
+  local lua = require('lua')
+  local autocomplete_snippets = lua.autocomplete_snippets
+  lua.autocomplete_snippets = false
   buffer:add_text('for')
   textadept.editing.autocomplete('lua')
   assert(not buffer:auto_c_active(), 'autocompletions available')
   assert(buffer:get_cur_line(), 'format')
   buffer:home_extend()
   buffer:replace_sel('for')
-  _M.lua.autocomplete_snippets = true
+  lua.autocomplete_snippets = true
   textadept.editing.autocomplete('lua')
   assert(buffer:auto_c_active(), 'no autocompletions')
   buffer:auto_c_cancel()
   buffer:clear_all()
-  _M.lua.autocomplete_snippets = autocomplete_snippets -- restore
+  lua.autocomplete_snippets = autocomplete_snippets -- restore
   buffer.auto_c_choose_single = choose_single
 
   buffer:close(true)
@@ -4448,6 +4451,7 @@ end
 function test_ansi_c_autocomplete()
   buffer.new()
   buffer:set_lexer('ansi_c')
+  require('ansi_c') -- load language module
 
   buffer:add_text('str')
   textadept.editing.autocomplete('ansi_c')
@@ -4463,17 +4467,18 @@ function test_ansi_c_autocomplete()
   buffer:auto_c_cancel()
   buffer:clear_all()
 
-  local autocomplete_snippets = _M.ansi_c.autocomplete_snippets
-  _M.ansi_c.autocomplete_snippets = false
+  local ansi_c = require('ansi_c')
+  local autocomplete_snippets = ansi_c.autocomplete_snippets
+  ansi_c.autocomplete_snippets = false
   buffer:add_text('for')
   textadept.editing.autocomplete('ansi_c')
   assert(not buffer:auto_c_active(), 'autocompletions available')
-  _M.ansi_c.autocomplete_snippets = true
+  ansi_c.autocomplete_snippets = true
   textadept.editing.autocomplete('ansi_c')
   assert(buffer:auto_c_active(), 'no autocompletions')
   buffer:auto_c_cancel()
   buffer:clear_all()
-  _M.ansi_c.autocomplete_snippets = autocomplete_snippets -- restore
+  ansi_c.autocomplete_snippets = autocomplete_snippets -- restore
 
   -- TODO: typeref and rescan
 
@@ -4732,6 +4737,7 @@ expected_failure(test_view_fold_properties)
 function test_css_autocomplete()
   buffer.new()
   buffer:set_lexer('css')
+  require('css') -- load language module
 
   buffer:add_text('h')
   textadept.editing.autocomplete('css')
@@ -5533,6 +5539,7 @@ function test_go_autocomplete()
 
   buffer.new()
   buffer:set_lexer('go')
+  require('go') -- load language module
 
   -- LuaFormatter off
   buffer:add_text(table.concat({
@@ -5571,6 +5578,7 @@ end
 function test_html_autocomplete()
   buffer.new()
   buffer:set_lexer('html')
+  require('html') -- load language module
 
   buffer:add_text('<h')
   textadept.editing.autocomplete('html')
@@ -5878,6 +5886,7 @@ end
 function test_python_autocomplete()
   buffer.new()
   buffer:set_lexer('python')
+  require('python') -- load language module
 
   -- LuaFormatter off
   buffer:add_text(table.concat({
@@ -5904,6 +5913,7 @@ end
 function test_python_autoindent()
   buffer.new()
   buffer:set_lexer('python')
+  require('python') -- load language module
 
   buffer:add_text('if foo:')
   buffer:new_line()
@@ -5920,6 +5930,7 @@ end
 function test_ruby_autocomplete()
   buffer.new()
   buffer:set_lexer('ruby')
+  local ruby = require('ruby') -- load language module
 
   -- LuaFormatter off
   buffer:add_text(table.concat({
@@ -5950,7 +5961,7 @@ function test_ruby_autocomplete()
 
   buffer:clear_all()
   buffer:add_text('if foo')
-  _M.ruby.try_to_autocomplete_end()
+  ruby.try_to_autocomplete_end()
   assert_equal(buffer:line_from_position(buffer.current_pos), 2)
   assert_equal(buffer.line_indentation[2], 2)
   -- LuaFormatter off
@@ -5967,10 +5978,11 @@ end
 function test_ruby_toggle_block()
   buffer.new()
   buffer:set_lexer('ruby')
+  local ruby = require('ruby') -- load language module
 
   local block = '[1, 2, 3].collect { |i| p }'
   buffer:set_text(block)
-  _M.ruby.toggle_block()
+  ruby.toggle_block()
   -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
     '[1, 2, 3].collect do |i|',
@@ -5979,12 +5991,12 @@ function test_ruby_toggle_block()
   }, newline()))
   -- LuaFormatter on
   assert_equal(buffer.current_pos, 1)
-  _M.ruby.toggle_block()
+  ruby.toggle_block()
   assert_equal(buffer:get_text(), block)
   assert_equal(buffer.current_pos, 1)
-  _M.ruby.toggle_block()
+  ruby.toggle_block()
   buffer:line_down()
-  _M.ruby.toggle_block() -- should work inside block too
+  ruby.toggle_block() -- should work inside block too
   assert_equal(buffer:get_text(), block)
 
   buffer:set_text('[1, 2, 3].collect do |i| p end')

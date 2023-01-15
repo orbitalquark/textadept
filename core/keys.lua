@@ -18,8 +18,8 @@ local M = {}
 -- bindings have priority, followed by the ones in the global table. This means if there are
 -- two commands with the same key sequence, Textadept runs the language-specific one. However,
 -- if the command returns the boolean value `false`, Textadept also runs the lower-priority
--- command. (This is useful for language modules to override commands like autocompletion,
--- but fall back to word autocompletion if the first command fails.)
+-- command. (This is useful for overriding commands like autocompletion with language-specific
+-- completion, but fall back to word autocompletion if the first command fails.)
 --
 -- ### Key Sequences
 --

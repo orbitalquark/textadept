@@ -55,10 +55,7 @@ local function set_lexer(buffer, name)
   local last_line = view.first_visible_line + view.lines_on_screen
   buffer:colorize(1, buffer:position_from_line(last_line + 1))
 
-  -- Load language-specific module and emit events.
-  if package.searchpath(name, package.path) then _M[name] = require(name) end
   if buffer ~= ui.command_entry then events.emit(events.LEXER_LOADED, name) end
-
   events.emit(events.UPDATE_UI, 1) -- for updating statusbar
 end
 

@@ -72,7 +72,7 @@ in the command entry, or the wrong command shows up. How can I tell Textadept wh
 The LuaDoc describes [compile and run commands][] and you can configure them in your
 [preferences][].
 
-[compile and run commands]: api.html#_M.Compile.and.Run
+[compile and run commands]: api.html#textadept.run
 [preferences]: manual.html#textadept
 
 - - -
