@@ -30,6 +30,9 @@ local M = {}
 --   Whether or not to auto-enclose selected text when typing a punctuation character, taking
 --   [`textadept.editing.auto_pairs`]() into account.
 --   The default value is `false`.
+-- @field typeover_auto_paired (bool)
+--   Whether or not to type over an auto-paired complement character.
+--   The default value is `true`.
 -- @field INDIC_HIGHLIGHT (number)
 --   The word highlight indicator number.
 module('textadept.editing')]]
@@ -40,6 +43,7 @@ M.autocomplete_all_words = false
 M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
 M.highlight_words = M.HIGHLIGHT_NONE
 M.auto_enclose = false
+M.typeover_auto_paired = true
 M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 -- LuaFormatter off
@@ -87,16 +91,6 @@ M.comment_string = {}
 M.auto_pairs = {}
 for k, v in string.gmatch([[()[]{}''""``]], '(.)(.)') do M.auto_pairs[k] = v end
 
----
--- Table of characters to move over when typed.
--- The characters themselves are keys and are assigned `true` values. The default characters are
--- ')', ']', '}', '&apos;', '&quot;', and '`'. For certain XML-like lexers, '>' is also included.
--- @class table
--- @name typeover_chars
--- @usage textadept.editing.typeover_chars['*'] = true
-M.typeover_chars = {}
-for c in string.gmatch([[)]}'"`]], '.') do M.typeover_chars[c] = true end
-
 -- Table of brace characters to highlight.
 -- The ASCII values of brace characters are keys and are assigned `true`.
 -- Recognized characters are '(', ')', '[', ']', '{', '}', '<', and '>'. This table is updated
@@ -131,11 +125,10 @@ M.api_files = setmetatable({}, {
   end
 })
 
--- Update auto_pairs, typeover_chars, brace_matches based on lexer.
+-- Update auto_pairs and brace_matches based on lexer.
 local function update_language_specific_features()
   local angles = buffer.property_int['scintillua.angle.braces'] ~= 0
   if M.auto_pairs then M.auto_pairs['<'] = angles and '>' end
-  if M.typeover_chars then M.typeover_chars['>'] = angles ~= nil end
   brace_matches = {} -- clear
   for _, c in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[c] = true end
 end
@@ -221,9 +214,10 @@ events.connect(events.UPDATE_UI, function(updated)
   end
 end)
 
--- Moves over typeover characters when typed, taking multiple selections into account.
+-- Moves over auto-paired complement characters when typed, taking multiple selections into
+-- account.
 events.connect(events.KEYPRESS, function(key)
-  if M.typeover_chars and M.typeover_chars[key] and not ui.command_entry.active then
+  if M.typeover_auto_paired and M.auto_pairs and M.auto_pairs[key] and not ui.command_entry.active then
     local handled = false
     for i = 1, buffer.selections do
       local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]

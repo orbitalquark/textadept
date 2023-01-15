@@ -6216,6 +6216,12 @@ The word highlight mode.
 Strip trailing whitespace before saving files. (Does not apply to binary files.)
   The default value is `false`.
 
+<a id="textadept.editing.typeover_auto_paired"></a>
+#### `textadept.editing.typeover_auto_paired` (bool)
+
+Whether or not to type over an auto-paired complement character.
+  The default value is `true`.
+
 
 ### Functions defined by `textadept.editing`
 
@@ -6449,17 +6455,6 @@ language, the lexer-supplied string is used, if available.
 See also:
 
 * [`textadept.editing.toggle_comment`](#textadept.editing.toggle_comment)
-
-<a id="textadept.editing.typeover_chars"></a>
-#### `textadept.editing.typeover_chars`
-
-Table of characters to move over when typed.
-The characters themselves are keys and are assigned `true` values. The default characters are
-')', ']', '}', '&apos;', '&quot;', and '`'. For certain XML-like lexers, '>' is also included.
-
-Usage:
-
-* `textadept.editing.typeover_chars['*'] = true`
 
 ---
 <a id="textadept.history"></a>

@@ -862,18 +862,19 @@ opening brace characters you type, deletes that complement if you press `Backspa
 moves over the complement if you type it (as opposed to inserting it again). Textadept also
 exhibits this behavior for single and double quote characters ('&apos;' and '&quot;'). You
 can configure or disable this behavior by modifying [`textadept.editing.auto_pairs`][] and
-[`textadept.editing.typeover_chars`][]. For example, in your *~/.textadept/init.lua*:
+[`textadept.editing.typeover_auto_paired`][]. For example, in your *~/.textadept/init.lua*:
 
     -- Auto-pair and typeover '*' (Markdown emphasis/strong).
     textadept.editing.auto_pairs['*'] = '*'
-    textadept.editing.typeover_chars['*'] = true
+
+    -- Disable only typeover.
+    textadept.editing.typeover_auto_paired = false
 
     -- Disable auto-pair and typeover.
     textadept.editing.auto_pairs = nil
-    textadept.editing.typeover_chars = nil
 
 [`textadept.editing.auto_pairs`]: api.html#textadept.editing.auto_pairs
-[`textadept.editing.typeover_chars`]: api.html#textadept.editing.typeover_chars
+[`textadept.editing.typeover_auto_paired`]: api.html#textadept.editing.typeover_auto_paired
 
 #### Word Highlight
 
@@ -1667,7 +1668,7 @@ fold\_line\_groups | Removed | N/A
 INDIC_BRACEMATCH | Removed | N/A<sup>c</sup>
 brace_matches | Removed | N/A<sup>d</sup>
 [auto_pairs][] | Changed | Keys are string characters, not byte values
-[typeover_chars][] | Changed | Keys are string characters, not byte values
+typeover_chars | Changed | [typeover_auto_paired][]
 **textadept.file_types**| Removed | N/A
 extensions | Renamed | [lexer.detect_extensions][]
 patterns | Renamed | [lexer.detect_patterns][]
@@ -1718,7 +1719,7 @@ N/A | Added | [set_styles()][]
 [number_()]: api.html#lexer.number_
 [to_eol()]: api.html#lexer.to_eol
 [auto_pairs]: api.html#textadept.editing.auto_pairs
-[typeover_chars]: api.html#textadept.editing.typeover_chars
+[typeover_auto_paired]: api.html#textadept.editing.typeover_auto_paired
 [lexer.detect_extensions]: api.html#lexer.detect_extensions
 [lexer.detect_patterns]: api.html#lexer.detect_patterns
 [run_project()]: api.html#textadept.run.run_project

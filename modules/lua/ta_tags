@@ -1003,7 +1003,7 @@ toggle_caret_sticky	_HOME/core/.buffer.luadoc	/^function toggle_caret_sticky(buf
 toggle_comment	_HOME/modules/textadept/editing.lua	/^function M.toggle_comment()$/;"	f	class:textadept.editing
 toggle_fold	_HOME/core/.view.luadoc	/^function toggle_fold(view, line) end$/;"	f	class:view
 toggle_fold_show_text	_HOME/core/.view.luadoc	/^function toggle_fold_show_text(view, line, text) end$/;"	f	class:view
-typeover_chars	_HOME/modules/textadept/editing.lua	/^M.typeover_chars = {}$/;"	t	class:textadept.editing
+typeover_auto_paired	_HOME/modules/textadept/editing.lua	/^module('textadept.editing')]]$/;"	F	class:textadept.editing
 ui	_HOME/core/ui.lua	/^module('ui')]]$/;"	m	
 ui.command_entry	_HOME/modules/textadept/command_entry.lua	/^module('ui.command_entry')]]$/;"	m	
 ui.dialogs	_HOME/core/.ui.dialogs.luadoc	/^module('ui.dialogs')$/;"	m	

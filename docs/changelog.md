@@ -2705,7 +2705,7 @@ Changes:
 
 [`buffer.caret_line_visible_always`]: api.html#buffer.caret_line_visible_always
 [Scintilla]: https://scintilla.org
-[typeover characters]: api.html#textadept.editing.typeover_chars
+[typeover characters]: api.html#textadept.editing.typeover_auto_paired
 
 ### 6.2 (01 Jan 2013)
 
