@@ -268,19 +268,7 @@ local default_menubar = {
     end},
     SEPARATOR,
     {_L['Select Lexer...'], function()
-      local lexers = {}
-      for dir in _LEXERPATH:gmatch('[^;]+') do
-        if lfs.attributes(dir, 'mode') ~= 'directory' then goto continue end
-        for file in lfs.dir(dir) do
-          local name = file:match('^(.+)%.lua$')
-          if name and name ~= 'lexer' and not lexers[name] then
-            lexers[#lexers + 1], lexers[name] = name, true
-          end
-        end
-        ::continue::
-      end
-      table.sort(lexers)
-      local i = ui.dialogs.list{title = _L['Select Lexer'], items = lexers}
+      local i = ui.dialogs.list{title = _L['Select Lexer'], items = lexer.names()}
       if i then buffer:set_lexer(lexers[i]) end
     end}
   },

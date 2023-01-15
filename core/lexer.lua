@@ -5,8 +5,9 @@ _LEXERPATH = string.format('%s/lexers;%s/lexers', _USERHOME, _HOME)
 local lexer = dofile(_HOME .. '/lexers/lexer.lua')
 
 local M = {}
--- Import detect* and tag names.
+-- Import names(), detect*(), and tag names.
 for k, v in pairs(lexer) do if k:find('^detect') or k:find('^%u') then M[k] = v end end
+M.names = function(path) return lexer.names(path or _LEXERPATH) end
 
 -- Events.
 events.LEXER_LOADED = 'lexer_loaded'

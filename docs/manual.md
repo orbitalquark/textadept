@@ -1650,9 +1650,10 @@ N/A | Added | [GTK](api.html#GTK), [QT](api.html#QT)
 N/A | Added | [ensure_final_newline][]<sup>b</sup>
 [quick_open()][] | Changed | Removed *opts* parameter
 **lexer**||
-lexer.colors | Renamed | [view.colors][]
-lexer.styles | Renamed | [view.styles][]
-lexer.fold\* | Renamed | view.fold\*
+N/A | Added | [names()][]
+colors | Renamed | [view.colors][]
+styles | Renamed | [view.styles][]
+fold\* | Renamed | view.fold\*
 token() | Renamed | [tag()][], and made into an instance method
 property_expanded | Removed | N/A
 starts_line() | Changed | Added *allow_indent* parameter
@@ -1707,6 +1708,7 @@ N/A | Added | [set_styles()][]
 [TAB_CLICKED]: api.html#events.TAB_CLICKED
 [ensure_final_newline]: api.html#io.ensure_final_newline
 [quick_open()]: api.html#io.quick_open
+[names()]: api.html#lexer.names
 [view.colors]: api.html#view.colors
 [view.styles]: api.html#view.styles
 [tag()]: api.html#lexer.tag

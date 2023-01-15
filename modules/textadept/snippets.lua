@@ -119,14 +119,13 @@ M.paths = {}
 local INDIC_SNIPPET = _SCINTILLA.next_indic_number()
 local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.next_indic_number()
 
--- LuaFormatter off
 -- Map of snippet triggers with their snippet text or functions that return such text, with
 -- language-specific snippets tables assigned to a lexer name key.
 -- @class table
 -- @name snippets
 -- @see _G.snippets
-local snippets = {actionscript={},ada={},apdl={},ansi_c={},antlr={},apl={},applescript={},asp={},autoit={},awk={},b_lang={},bash={},batch={},bibtex={},boo={},chuck={},clojure={},cmake={},coffeescript={},context={},cpp={},crystal={},csharp={},css={},cuda={},desktop={},django={},dmd={},dockerfile={},dot={},eiffel={},elixir={},elm={},erlang={},fantom={},faust={},fennel={},fish={},forth={},fortran={},fsharp={},fstab={},gap={},gettext={},gherkin={},gleam={},glsl={},gnuplot={},go={},groovy={},gtkrc={},hare={},haskell={},html={},icon={},idl={},inform={},ini={},Io={},java={},javascript={},jq={},json={},jsp={},julia={},latex={},ledger={},less={},lilypond={},lisp={},logtalk={},lua={},makefile={},matlab={},meson={},moonscript={},myrddin={},nemerle={},networkd={},nim={},nsis={},objective_c={},pascal={},perl={},php={},pico8={},pike={},pkgbuild={},pony={},prolog={},props={},protobuf={},ps={},pure={},python={},rails={},rc={},reason={},rebol={},rest={},rexx={},rhtml={},routeros={},rstats={},ruby={},rust={},sass={},scala={},scheme={},smalltalk={},sml={},snobol4={},spin={},sql={},systemd={},tcl={},tex={},text={},toml={},typescript={},vala={},vb={},vbscript={},verilog={},vhdl={},wsf={},xml={},xs={},xtend={},yaml={},zig={}}
--- LuaFormatter on
+local snippets = {}
+for _, name in ipairs(lexer.names()) do snippets[name] = {} end
 
 -- Finds the snippet assigned to the trigger word behind the caret and returns the trigger word
 -- and snippet text.

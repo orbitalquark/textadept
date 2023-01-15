@@ -753,6 +753,7 @@ multiple_select_add_next	_HOME/core/.buffer.luadoc	/^function multiple_select_ad
 multiple_selection	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 name_of_style	_HOME/core/.buffer.luadoc	/^function name_of_style(buffer, style) end$/;"	f	class:buffer
 named_styles	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
+names	_HOME/lexers/lexer.lua	/^function M.names(path)$/;"	f	class:lexer
 new	_HOME/core/.buffer.luadoc	/^function new() end$/;"	f	class:buffer
 new	_HOME/lexers/lexer.lua	/^function M.new(name, opts)$/;"	f	class:lexer
 new_line	_HOME/core/.buffer.luadoc	/^function new_line(buffer) end$/;"	f	class:buffer

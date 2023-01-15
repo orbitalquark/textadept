@@ -6,8 +6,7 @@
 
 # Generate API documentation using LuaDoc.
 cd ../scripts
-lua_src="../core ../modules/ansi_c ../modules/lua ../modules/textadept \
-  ../build/_deps/scintillua-src/lexers/lexer.lua"
+lua_src="../core ../modules/ansi_c ../modules/lua ../modules/textadept ../lexers/lexer.lua"
 luadoc --doclet markdowndoc $lua_src > ../docs/api.md
 
 # Generate HTML from Markdown (docs/*.html from docs/*.md)
