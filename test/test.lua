@@ -3723,7 +3723,7 @@ function test_run_compile_run()
   textadept.run.goto_error(false)
   assert_equal(buffer.filename, run_file)
   assert_equal(buffer:line_from_position(buffer.current_pos), 2)
-  textadept.run.goto_error(nil, false)
+  textadept.run.goto_error(false)
   assert_equal(buffer.filename, run_file)
   assert_equal(buffer:line_from_position(buffer.current_pos), 1)
   ui.goto_view(1)
@@ -3742,6 +3742,7 @@ function test_run_compile_run()
 
   assert_raises(function() textadept.run.compile({}) end, 'string/nil expected, got table')
   assert_raises(function() textadept.run.run({}) end, 'string/nil expected, got table')
+  assert_raises(function() textadept.run.goto_error() end, 'boolean/number expected')
 end
 
 function test_run_distinct_command_histories()

@@ -376,17 +376,15 @@ local function get_tagged_text(line_num, tag)
 end
 
 ---
--- Jumps to the source of the recognized compile/run warning or error on line number *line_num*
--- in the output buffer.
--- If *line_num* is `nil`, jumps to the next or previous warning or error, depending on boolean
--- *next*. Displays an annotation with the warning or error message if possible.
--- @param line_num Optional line number in the output buffer that contains the compile/run
---   warning or error to go to. This parameter may be omitted completely.
--- @param next Optional flag indicating whether to go to the next recognized warning/error or
---   the previous one. Only applicable when *line_num* is `nil`.
+-- Jumps to the source of the next or previous recognized compile/run warning or error in
+-- the output buffer, or the warning/error on a given line number, depending on the value
+-- of *location*.
+-- Displays an annotation with the warning or error message if possible.
+-- @param location When `true`, jumps to the next recognized warning/error. When `false`,
+--   jumps to the previous one. When a line number, jumps to it.
 -- @name goto_error
-function M.goto_error(line_num, next)
-  if type(line_num) == 'boolean' then line_num, next = nil, line_num end
+function M.goto_error(location)
+  local line_num = type(assert_type(location, 'boolean/number', 1)) == 'number' and location
   local output_view, output_buffer = get_output_view(), get_output_buffer()
   if not output_view and not output_buffer then return end
   if output_view then
@@ -396,8 +394,8 @@ function M.goto_error(line_num, next)
   end
 
   -- If no line number was given, find the next warning or error marker.
-  if not assert_type(line_num, 'number/nil', 1) and next ~= nil then
-    local f = next and buffer.marker_next or buffer.marker_previous
+  if not line_num then
+    local f, next = location and buffer.marker_next or buffer.marker_previous, location
     line_num = buffer:line_from_position(buffer.current_pos)
     local WARN_BIT, ERROR_BIT = 1 << M.MARK_WARNING - 1, 1 << M.MARK_ERROR - 1
     local wrapped = false

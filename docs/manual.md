@@ -1792,6 +1792,8 @@ operating systems and platforms.
 
 [key bindings]: api.html#textadept.keys
 
+As a result, macros recorded in Textadept 11 will likely not be compatible in Textadept 12.
+
 ##### Dialog Changes
 
 Dialogs have been simplified in order to accommodate multiple platforms (currently Qt, GTK, and

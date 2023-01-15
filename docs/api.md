@@ -6981,19 +6981,17 @@ See also:
 * [`events`](#events)
 
 <a id="textadept.run.goto_error"></a>
-#### `textadept.run.goto_error`(*line\_num, next*)
+#### `textadept.run.goto_error`(*next\_or\_line\_num*)
 
-Jumps to the source of the recognized compile/run warning or error on line number *line_num*
-in the output buffer.
-If *line_num* is `nil`, jumps to the next or previous warning or error, depending on boolean
-*next*. Displays an annotation with the warning or error message if possible.
+Jumps to the source of the next or previous recognized compile/run warning or error in
+the output buffer, or the warning/error on a given line number, depending on the value of
+*next_or_line_num*.
+Displays an annotation with the warning or error message if possible.
 
 Parameters:
 
-* *`line_num`*: Optional line number in the output buffer that contains the compile/run
-  warning or error to go to. This parameter may be omitted completely.
-* *`next`*: Optional flag indicating whether to go to the next recognized warning/error or
-  the previous one. Only applicable when *line_num* is `nil`.
+* *`next_or_line_num`*: When `true`, jumps to the next recognized warning/error. When `false`,
+  jumps to the previous one. When a line number, jumps to it.
 
 <a id="textadept.run.run"></a>
 #### `textadept.run.run`(*filename*)
