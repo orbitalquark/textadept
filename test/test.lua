@@ -2998,7 +2998,7 @@ function test_ui_find_find_in_files()
   assert_equal(buffer.filename, filename)
   buffer:close()
   ui.goto_view(1) -- files found buffer
-  ui.find.goto_file_found(nil, false) -- wraps around
+  ui.find.goto_file_found(false) -- wraps around
   assert(buffer.filename and buffer.filename ~= filename, 'opened the same file')
   buffer:close()
   ui.goto_view(1) -- files found buffer
@@ -3007,6 +3007,7 @@ function test_ui_find_find_in_files()
   buffer:close()
 
   assert_raises(function() ui.find.find_in_files('', 1) end, 'string/table/nil expected, got number')
+  assert_raises(function() ui.find.goto_file_found() end, 'boolean/number expected')
 end
 
 function test_ui_find_find_in_files_interactive()

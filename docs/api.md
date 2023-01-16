@@ -6981,16 +6981,16 @@ See also:
 * [`events`](#events)
 
 <a id="textadept.run.goto_error"></a>
-#### `textadept.run.goto_error`(*next\_or\_line\_num*)
+#### `textadept.run.goto_error`(*location*)
 
 Jumps to the source of the next or previous recognized compile/run warning or error in
-the output buffer, or the warning/error on a given line number, depending on the value of
-*next_or_line_num*.
+the output buffer, or the warning/error on a given line number, depending on the value
+of *location*.
 Displays an annotation with the warning or error message if possible.
 
 Parameters:
 
-* *`next_or_line_num`*: When `true`, jumps to the next recognized warning/error. When `false`,
+* *`location`*: When `true`, jumps to the next recognized warning/error. When `false`,
   jumps to the previous one. When a line number, jumps to it.
 
 <a id="textadept.run.run"></a>
@@ -8165,18 +8165,15 @@ Parameters:
 * *`options`*: Optional table of `ui.find` field options to initially set.
 
 <a id="ui.find.goto_file_found"></a>
-#### `ui.find.goto_file_found`(*line\_num, next*)
+#### `ui.find.goto_file_found`(*location*)
 
-Jumps to the source of the find in files search result on line number *line_num* in the buffer
-titled "Files Found" or, if *line_num* is `nil`, jumps to the next or previous search result,
-depending on boolean *next*.
+Jumps to the source of the next or previous find in files search result in the buffer titled
+"Files Found", or the result on a given line number, depending on the value of *location*.
 
 Parameters:
 
-* *`line_num`*: Optional line number in the files found buffer that contains the search
-  result to go to. This parameter may be omitted completely.
-* *`next`*: Optional flag indicating whether to go to the next search result or the previous
-  one. Only applicable when *line_num* is `nil`.
+* *`location`*: When `true`, jumps to the next search result. When `false`, jumps to the
+  previous one. When a line number, jumps to it.
 
 <a id="ui.find.replace"></a>
 #### `ui.find.replace`()

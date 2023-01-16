@@ -466,16 +466,13 @@ local function get_ff_buffer()
 end
 
 ---
--- Jumps to the source of the find in files search result on line number *line_num* in the buffer
--- titled "Files Found" or, if *line_num* is `nil`, jumps to the next or previous search result,
--- depending on boolean *next*.
--- @param line_num Optional line number in the files found buffer that contains the search
---   result to go to. This parameter may be omitted completely.
--- @param next Optional flag indicating whether to go to the next search result or the previous
---   one. Only applicable when *line_num* is `nil`.
+-- Jumps to the source of the next or previous find in files search result in the buffer titled
+-- "Files Found", or the result on a given line number, depending on the value of *location*.
+-- @param location When `true`, jumps to the next search result. When `false`, jumps to the
+--   previous one. When a line number, jumps to it.
 -- @name goto_file_found
-function M.goto_file_found(line_num, next)
-  if type(line_num) == 'boolean' then line_num, next = nil, line_num end
+function M.goto_file_found(location)
+  local line_num = type(assert_type(location, 'boolean/number', 1)) == 'number' and location
   local ff_view, ff_buffer = get_ff_view(), get_ff_buffer()
   if not ff_view and not ff_buffer then return end
   if ff_view then
@@ -485,10 +482,10 @@ function M.goto_file_found(line_num, next)
   end
 
   -- If no line number was given, find the next search result, wrapping as necessary.
-  if not assert_type(line_num, 'number/nil', 1) and next ~= nil then
+  if not line_num then
+    local f, next = location and buffer.search_next or buffer.search_prev, location
     buffer[next and 'line_end' or 'home'](buffer)
     buffer:search_anchor()
-    local f = next and buffer.search_next or buffer.search_prev
     local pos = f(buffer, buffer.FIND_REGEXP, '^.+:\\d+:.+$')
     if pos == -1 then
       buffer:goto_line(next and 1 or buffer.line_count)

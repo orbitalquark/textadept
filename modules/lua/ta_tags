@@ -579,9 +579,9 @@ get_sel_text	_HOME/core/.buffer.luadoc	/^function get_sel_text(buffer) end$/;"	f
 get_split_table	_HOME/core/ui.lua	/^local get_split_table$/;"	f	class:ui
 get_text	_HOME/core/.buffer.luadoc	/^function get_text(buffer) end$/;"	f	class:buffer
 goto_buffer	_HOME/core/.view.luadoc	/^function goto_buffer(view, buffer) end$/;"	f	class:view
-goto_error	_HOME/modules/textadept/run.lua	/^function M.goto_error(next_or_line_num)$/;"	f	class:textadept.run
+goto_error	_HOME/modules/textadept/run.lua	/^function M.goto_error(location)$/;"	f	class:textadept.run
 goto_file	_HOME/core/ui.lua	/^function ui.goto_file(filename, split, preferred_view, sloppy)$/;"	f	class:ui
-goto_file_found	_HOME/modules/textadept/find.lua	/^function M.goto_file_found(line_num, next)$/;"	f	class:ui.find
+goto_file_found	_HOME/modules/textadept/find.lua	/^function M.goto_file_found(location)$/;"	f	class:ui.find
 goto_line	_HOME/core/.buffer.luadoc	/^function goto_line(buffer, line) end$/;"	f	class:buffer
 goto_line	_HOME/modules/textadept/editing.lua	/^function M.goto_line(line)$/;"	f	class:textadept.editing
 goto_mark	_HOME/modules/textadept/bookmarks.lua	/^function M.goto_mark(next)$/;"	f	class:textadept.bookmarks
