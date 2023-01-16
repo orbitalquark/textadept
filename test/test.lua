@@ -4043,40 +4043,6 @@ function test_session_save_before_load()
   buffer:add_text(test_output_text)
 end
 
-function test_snippets_find_snippet()
-  snippets.foo = 'bar'
-  textadept.snippets.paths[1] = _HOME .. '/test/modules/textadept/snippets'
-
-  buffer.new()
-  buffer.eol_mode = buffer.EOL_LF
-  buffer:add_text('foo')
-  assert(textadept.snippets.insert() == nil, 'snippet not inserted')
-  assert_equal(buffer:get_text(), 'bar') -- from snippets
-  textadept.snippets.insert()
-  assert_equal(buffer:get_text(), 'baz\n') -- from bar file
-  buffer:delete_back()
-  textadept.snippets.insert()
-  assert_equal(buffer:get_text(), 'quux\n') -- from baz.txt file
-  buffer:delete_back()
-  assert(not textadept.snippets.insert(), 'snippet inserted')
-  assert_equal(buffer:get_text(), 'quux')
-  buffer:clear_all()
-  buffer:set_lexer('lua') -- prefer lexer-specific snippets
-  snippets.lua = {foo = 'baz'} -- overwrite language module
-  buffer:add_text('foo')
-  textadept.snippets.insert()
-  assert_equal(buffer:get_text(), 'baz') -- from snippets.lua
-  textadept.snippets.insert()
-  assert_equal(buffer:get_text(), 'bar\n') -- from lua.baz.lua file
-  buffer:delete_back()
-  textadept.snippets.insert()
-  assert_equal(buffer:get_text(), 'quux\n') -- from lua.bar file
-  buffer:close(true)
-
-  snippets.foo = nil
-  table.remove(textadept.snippets.paths, 1)
-end
-
 function test_snippets_no_expand_lexer_name()
   buffer.new()
   buffer:add_text('lua')

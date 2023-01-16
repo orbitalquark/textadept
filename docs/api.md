@@ -7362,17 +7362,6 @@ snippets.
 Map of snippet triggers with their snippet text or functions that return such text, with
 language-specific snippets tables assigned to a lexer name key.
 
-<a id="textadept.snippets.paths"></a>
-#### `textadept.snippets.paths`
-
-List of directory paths to look for snippet files in.
-Filenames are of the form *lexer.trigger.ext* or *trigger.ext* (*.ext* is an optional,
-arbitrary file extension). If the global `snippets` table does not contain a snippet for
-a given trigger, this table is consulted for a matching filename, and the contents of that
-file is inserted as a snippet.
-Note: If a directory has multiple snippets with the same trigger, the snippet chosen for
-insertion is not defined and may not be constant.
-
 ---
 <a id="ui"></a>
 ## The `ui` Module

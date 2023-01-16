@@ -786,7 +786,6 @@ para_up	_HOME/core/.buffer.luadoc	/^function para_up(buffer) end$/;"	f	class:buf
 para_up_extend	_HOME/core/.buffer.luadoc	/^function para_up_extend(buffer) end$/;"	f	class:buffer
 paste	_HOME/core/.buffer.luadoc	/^function paste(buffer) end$/;"	f	class:buffer
 paste_reindent	_HOME/modules/textadept/editing.lua	/^function M.paste_reindent()$/;"	f	class:textadept.editing
-paths	_HOME/modules/textadept/snippets.lua	/^M.paths = {}$/;"	t	class:textadept.snippets
 play	_HOME/modules/textadept/macros.lua	/^function M.play()$/;"	f	class:textadept.macros
 popup_menu	_HOME/core/ui.lua	/^local popup_menu$/;"	f	class:ui
 position_after	_HOME/core/.buffer.luadoc	/^function position_after(buffer, pos) end$/;"	f	class:buffer

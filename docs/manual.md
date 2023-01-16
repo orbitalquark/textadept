@@ -1680,6 +1680,7 @@ N/A | Added | [run_project()][], [run_project_commands][]
 N/A | Added | [INDIC_WARNING][], [INDIC_ERROR][]
 **textadept.snippets** ||
 cancel_current | Renamed | cancel
+paths | Removed | N/A
 **ui**||
 N/A | Added | [output()][]
 silent_print | Replaced | [print_silent()][], [output_silent()][]
