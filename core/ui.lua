@@ -23,12 +23,12 @@ local ui = ui
 --   The text displayed in the buffer statusbar.
 -- @field maximized (bool)
 --   Whether or not Textadept's window is maximized.
+--   This field is always `false` in the terminal version.
 -- @field tabs (bool)
 --   Whether or not to display the tab bar when multiple buffers are open.
 --   The default value is `true`.
 --   A third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar, even if only
 --   one buffer is open.
---   The default value is `false`, and focuses buffers when messages are printed to them.
 -- @field buffer_list_zorder (bool)
 --   Whether or not to list buffers by their z-order (most recently viewed to least recently
 --   viewed) in the switcher dialog.
@@ -504,12 +504,13 @@ local goto_view
 -- `textadept.menu.context_menu`, or `textadept.menu.tab_context_menu` tables.
 -- Emits a `MENU_CLICKED` event when a menu item is selected.
 -- @param menu_table A table defining the menu. It is an ordered list of tables with a string
---   menu item, integer menu ID, and optional GDK keycode and modifier mask. The latter
---   two are used to display key shortcuts in the menu. '_' characters are treated as a menu
---   mnemonics. If the menu item is empty, a menu separator item is created. Submenus are just
---   nested menu-structure tables. Their title text is defined with a `title` key.
--- @usage ui.menu{ {'_New', 1}, {'_Open', 2}, {''}, {'_Quit', 4} }
--- @usage ui.menu{ {'_New', 1, string.byte('n'), 4} } -- 'Ctrl+N'
+--   menu item, integer menu ID, and optional keycode and modifier mask. The latter two are
+--   used to display key shortcuts in the menu. '&' characters are treated as a menu mnemonics
+--   in Qt ('_' is the equivalent in GTK). If the menu item is empty, a menu separator item is
+--   created. Submenus are just nested menu-structure tables. Their title text is defined with a
+--   `title` key.
+-- @usage ui.menu{{'_New', 1}, {'_Open', 2}, {''}, {'&Quit', 4}}
+-- @usage ui.menu{{'_New', 1, string.byte('n'), view.MOD_CTRL}} -- 'Ctrl+N'
 -- @see events.MENU_CLICKED
 -- @see textadept.menu.menubar
 -- @see textadept.menu.context_menu

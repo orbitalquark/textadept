@@ -1739,8 +1739,7 @@ function set_encoding(buffer, encoding) end
 function get_lexer(buffer, current) end
 
 ---
--- Associates string lexer name *name* or the auto-detected lexer name with the buffer and then
--- loads the appropriate language module if that module exists.
+-- Associates string lexer name *name* or the auto-detected lexer name with the buffer.
 -- @param buffer A buffer.
 -- @param name Optional string lexer name to set. If `nil`, attempts to auto-detect the
 --   buffer's lexer.

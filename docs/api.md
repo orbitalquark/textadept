@@ -138,12 +138,9 @@ See also:
 #### `reset`()
 
 Resets the Lua State by reloading all initialization scripts.
-Language modules for opened files are NOT reloaded. Re-opening the files that use them will
-reload those modules instead.
-This function is useful for modifying user scripts (such as *~/.textadept/init.lua* and
-*~/.textadept/modules/textadept/keys.lua*) on the fly without having to restart Textadept. `arg`
-is set to `nil` when reinitializing the Lua State. Any scripts that need to differentiate
-between startup and reset can test `arg`.
+This function is useful for modifying user scripts (such as *~/.textadept/init.lua*) on the
+fly without having to restart Textadept. `arg` is set to `nil` when reinitializing the Lua
+State. Any scripts that need to differentiate between startup and reset can test `arg`.
 
 <a id="timeout"></a>
 #### `timeout`(*interval, f, ...*)
@@ -7405,6 +7402,7 @@ The buffer's context menu, a [`ui.menu()`](#ui.menu).
 #### `ui.maximized` (bool)
 
 Whether or not Textadept's window is maximized.
+  This field is always `false` in the terminal version.
 
 <a id="ui.statusbar_text"></a>
 #### `ui.statusbar_text` (string, Write-only)
@@ -7425,7 +7423,6 @@ Whether or not to display the tab bar when multiple buffers are open.
   The default value is `true`.
   A third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar, even if only
   one buffer is open.
-  The default value is `false`, and focuses buffers when messages are printed to them.
 
 <a id="ui.title"></a>
 #### `ui.title` (string, Write-only)
@@ -7498,15 +7495,16 @@ Emits a `MENU_CLICKED` event when a menu item is selected.
 Parameters:
 
 * *`menu_table`*: A table defining the menu. It is an ordered list of tables with a string
-  menu item, integer menu ID, and optional GDK keycode and modifier mask. The latter
-  two are used to display key shortcuts in the menu. '_' characters are treated as a menu
-  mnemonics. If the menu item is empty, a menu separator item is created. Submenus are just
-  nested menu-structure tables. Their title text is defined with a `title` key.
+  menu item, integer menu ID, and optional keycode and modifier mask. The latter two are
+  used to display key shortcuts in the menu. '&' characters are treated as a menu mnemonics
+  in Qt ('_' is the equivalent in GTK). If the menu item is empty, a menu separator item is
+  created. Submenus are just nested menu-structure tables. Their title text is defined with a
+  `title` key.
 
 Usage:
 
-* `ui.menu{ {'_New', 1}, {'_Open', 2}, {''}, {'_Quit', 4} }`
-* `ui.menu{ {'_New', 1, string.byte('n'), 4} } -- 'Ctrl+N'`
+* `ui.menu{{'_New', 1}, {'_Open', 2}, {''}, {'&Quit', 4}}`
+* `ui.menu{{'_New', 1, string.byte('n'), view.MOD_CTRL}} -- 'Ctrl+N'`
 
 See also:
 

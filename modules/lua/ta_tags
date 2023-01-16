@@ -245,6 +245,7 @@ ORDER_PERFORMSORT	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffe
 ORDER_PRESORTED	_HOME/core/.buffer.luadoc	/^module('buffer')$/;"	F	class:buffer
 OSX	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
 PREPROCESSOR	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
+QT	_HOME/core/init.lua	/^module('_G')]]$/;"	F	
 QUIT	_HOME/core/events.lua	/^module('events')]]$/;"	F	class:events
 REFERENCE	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 REGEX	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
@@ -481,7 +482,7 @@ cursor	_HOME/core/.view.luadoc	/^module('view')$/;"	F	class:view
 cut	_HOME/core/.buffer.luadoc	/^function cut(buffer) end$/;"	f	class:buffer
 dec_num	_HOME/lexers/lexer.lua	/^module('lexer')]=]$/;"	F	class:lexer
 dec_num_	_HOME/lexers/lexer.lua	/^function M.dec_num_(c) return M.digit * (P(c)^-1 * M.digit)^0 end$/;"	f	class:lexer
-default_filter	_HOME/core/lfs_ext.lua	/^lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!.exe','!.gif','!.gz','!.jar','!.jpeg','!.jpg','!.o','!.pdf','!.png','!.so','!.tar','!.tgz','!.tif','!.tiff','!.xz','!.zip',--[[Directories]]'!/%.bzr$','!/%.git$','!/%.hg$','!/%.svn$','!/_FOSSIL_$','!/node_modules$'}$/;"	t	class:lfs
+default_filter	_HOME/core/lfs_ext.lua	/^lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!.exe','!.gif','!.gz','!.jar','!.jpeg','!.jpg','!.o','!.pdf','!.png','!.so','!.tar','!.tgz','!.tif','!.tiff','!.xz','!.zip',--[[Directories]]'!/.bzr','!/.git','!/.hg','!/.svn','!/_FOSSIL_','!/node_modules'}$/;"	t	class:lfs
 del_line_left	_HOME/core/.buffer.luadoc	/^function del_line_left(buffer) end$/;"	f	class:buffer
 del_line_right	_HOME/core/.buffer.luadoc	/^function del_line_right(buffer) end$/;"	f	class:buffer
 del_word_left	_HOME/core/.buffer.luadoc	/^function del_word_left(buffer) end$/;"	f	class:buffer

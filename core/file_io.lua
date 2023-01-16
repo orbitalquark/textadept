@@ -39,9 +39,7 @@
 module('io')]]
 
 -- Events.
--- LuaFormatter off
-local file_io_events = {'file_opened','file_before_save','file_after_save','file_changed'}
--- LuaFormatter on
+local file_io_events = {'file_opened', 'file_before_save', 'file_after_save', 'file_changed'}
 for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 
 io.ensure_final_newline = not WIN32
