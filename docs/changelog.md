@@ -6,9 +6,45 @@
 
 [donate]: https://gum.co/textadept
 
-### 12.0 alpha (01 Jan 2023)
+### 12.0 alpha 2 (01 Mar 2023)
 
 Please see the [migration guide][] for migrating from Textadept 11 to 12.
+
+Download:
+
+* [Textadept 12.0 alpha 2 -- Windows][]
+* [Textadept 12.0 alpha 2 -- macOS 10.13+][]
+* [Textadept 12.0 alpha 2 -- Linux][]
+* [Textadept 12.0 alpha 2 -- Modules][]
+
+Bugfixes:
+
+* Fixed auto-pair removal bug when backspacing over an auto-paired character.
+* Fixed directory filters that contain directories to include.
+* Qt version: ensure the given directory is selected in Linux's directory selection dialog.
+* Scintilla: fixed scroll position update after `view:vertical_center_caret()`.
+* Scintilla: prevent autocompletion of lists created during `events.CHAR_ADDED`.
+
+Changes:
+
+* Language modules are no longer auto-loaded when their files are opened.
+* Hide the Find & Replace pane after an "In Files" search.
+* Allow lexers to dictate what constitutes a word character.
+* Added [`lexer.names()`][].
+* Removed `textadept.editing.transpose_chars()`.
+* Replaced `textadept.editing.typeover_chars` with [`typeover_auto_paired`][].
+* Renamed `textadept.snippets.cancel_current()` to `cancel()`.
+* Removed `textadept.snippets.path`.
+
+[migration guide]: manual.html#migrating-from-textadept-11-to-12
+[Textadept 12.0 alpha 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_2/textadept_12.0_alpha_2.win.zip
+[Textadept 12.0 alpha 2 -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_2/textadept_12.0_alpha_2.macOS.zip
+[Textadept 12.0 alpha 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_2/textadept_12.0_alpha_2.linux.tgz
+[Textadept 12.0 alpha 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_2/textadept_12.0_alpha_2.modules.zip
+[`lexer.names()`]: api.html#lexer.names
+[`typeover_auto_paired`]: api.html#textadept.editing.typeover_auto_paired
+
+### 12.0 alpha (01 Jan 2023)
 
 Download:
 
@@ -68,7 +104,6 @@ Changes:
 * Added [`textadept.run.INDIC_WARNING`][] and [`textadept.run.INDIC_ERROR`][] for underlining
   compile, run, build, and test warning and error messages.
 
-[migration guide]: manual.html#migrating-from-textadept-11-to-12
 [Textadept 12.0 alpha  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.win.zip
 [Textadept 12.0 alpha  -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.macOS.zip
 [Textadept 12.0 alpha  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.linux.tgz
