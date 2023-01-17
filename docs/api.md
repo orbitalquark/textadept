@@ -3622,6 +3622,10 @@ Emitted right before switching to another buffer.
 
 Emitted after deleting a buffer.
   Emitted by [`buffer.delete()`](#buffer.delete).
+  Arguments:
+
+  * _`buffer`_: Simple representation of the deleted buffer. Buffer operations cannot be
+    performed on it, but fields like `filename` can be read.
 
 <a id="events.BUFFER_NEW"></a>
 #### `events.BUFFER_NEW` (string)

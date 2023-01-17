@@ -35,6 +35,7 @@ Changes:
 * Replaced `textadept.editing.typeover_chars` with [`typeover_auto_paired`][].
 * Renamed `textadept.snippets.cancel_current()` to `cancel()`.
 * Removed `textadept.snippets.path`.
+* Added buffer representation argment to `events.BUFFER_DELETED`.
 
 [migration guide]: manual.html#migrating-from-textadept-11-to-12
 [Textadept 12.0 alpha 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_2/textadept_12.0_alpha_2.win.zip

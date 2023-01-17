@@ -1001,6 +1001,7 @@ static void new_buffer(sptr_t doc) {
 // The document must have been previously added with `add_doc()`.
 // It is removed from any other views showing it first. Therefore, ensure the length of 'buffers'
 // is more than one unless quitting the application.
+// Generates a 'buffer_deleted' event.
 static void remove_doc(sptr_t doc) {
   lua_getfield(lua, LUA_REGISTRYINDEX, VIEWS);
   for (size_t i = 1; i <= lua_rawlen(lua, -1); lua_pop(lua, 1), i++) {
@@ -1015,13 +1016,15 @@ static void remove_doc(sptr_t doc) {
       lua_pushnil(lua), lua_rawset(lua, -3);
       lua_pushlightuserdata(lua, (sptr_t *)doc), lua_pushnil(lua), lua_rawset(lua, -3);
       lua_getglobal(lua, "table"), lua_getfield(lua, -1, "remove"), lua_replace(lua, -2),
-        lua_pushvalue(lua, -2), lua_pushinteger(lua, i), lua_call(lua, 2, 0);
+        lua_pushvalue(lua, -2), lua_pushinteger(lua, i), lua_call(lua, 2, !closing ? 1 : 0);
+      if (!closing) lua_pushnil(lua), lua_setmetatable(lua, -2), lua_insert(lua, -2); // for event
       for (size_t i = 1; i <= lua_rawlen(lua, -1); i++)
         lua_rawgeti(lua, -1, i), lua_pushinteger(lua, i), lua_rawset(lua, -3); // t[buf] = i
       remove_tab(i - 1), show_tabs(tabs && (tabs > 1 || lua_rawlen(lua, -1) > 1));
       break;
     }
   lua_pop(lua, 1); // buffers
+  if (!closing) emit("buffer_deleted", LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
 }
 
 // Removes the given Scintilla document from the current Scintilla view.
@@ -1037,7 +1040,7 @@ static int delete_buffer_lua(lua_State *L) {
   sptr_t doc = SS(view, SCI_GETDOCPOINTER, 0, 0);
   if (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawlen(L, -1) == 1) new_buffer(0);
   if (view == focused_view) goto_doc(L, focused_view, -1, true);
-  delete_buffer(doc), emit("buffer_deleted", -1);
+  delete_buffer(doc);
   if (view == focused_view) emit("buffer_after_switch", -1);
   return 0;
 }

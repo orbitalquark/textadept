@@ -1494,6 +1494,18 @@ function test_buffer_style_of_name()
   assert(buffer:style_of_name(lexer.STRING) ~= view.STYLE_DEFAULT, 'style not in use')
 end
 
+function test_buffer_deleted()
+  local filename = file(_HOME .. '/core/init.lua')
+  io.open_file(filename)
+  local function f(buffer)
+    assert_equal(buffer.filename, filename)
+    assert_raises(function() buffer:text_range(1, 2) end, 'nil value')
+  end
+  events.connect(events.BUFFER_DELETED, f)
+  buffer:close()
+  events.disconnect(events.BUFFER_DELETED, f)
+end
+
 function test_bookmarks()
   local function has_bookmark(line)
     return buffer:marker_get(line) & 1 << textadept.bookmarks.MARK_BOOKMARK - 1 > 0

@@ -76,6 +76,10 @@ local M = {}
 -- @field BUFFER_DELETED (string)
 --   Emitted after deleting a buffer.
 --   Emitted by [`buffer.delete()`]().
+--   Arguments:
+--
+--   * _`buffer`_: Simple representation of the deleted buffer. Buffer operations cannot be
+--     performed on it, but fields like `filename` can be read.
 -- @field BUFFER_NEW (string)
 --   Emitted after creating a new buffer.
 --   The new buffer is `buffer`.
