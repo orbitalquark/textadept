@@ -99,6 +99,12 @@ for k, v in string.gmatch([[()[]{}''""``]], '(.)(.)') do M.auto_pairs[k] = v end
 -- @name brace_matches
 local brace_matches = {}
 
+-- Table of auto-paired characters to move over when typed.
+-- The ASCII values of typeover characters are keys and are assigned `true`.
+-- @class table
+-- @name typeover_chars
+local typeover_chars = {}
+
 ---
 -- Map of autocompleter names to autocompletion functions.
 -- Names are typically lexer names and autocompletion functions typically autocomplete symbols.
@@ -125,12 +131,13 @@ M.api_files = setmetatable({}, {
   end
 })
 
--- Update auto_pairs and brace_matches based on lexer.
+-- Update auto_pairs, brace_matches, and typeover_chars based on lexer.
 local function update_language_specific_features()
   local angles = buffer.property_int['scintillua.angle.braces'] ~= 0
-  if M.auto_pairs then M.auto_pairs['<'] = angles and '>' end
-  brace_matches = {} -- clear
+  if M.auto_pairs then M.auto_pairs['<'] = angles and '>' or nil end
+  brace_matches, typeover_chars = {}, {} -- clear
   for _, c in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[c] = true end
+  if M.auto_pairs then for _, c in pairs(M.auto_pairs) do typeover_chars[string.byte(c)] = true end end
 end
 events.connect(events.LEXER_LOADED, function()
   update_language_specific_features()
@@ -217,7 +224,7 @@ end)
 -- Moves over auto-paired complement characters when typed, taking multiple selections into
 -- account.
 events.connect(events.KEYPRESS, function(key)
-  if M.typeover_auto_paired and M.auto_pairs and M.auto_pairs[key] and not ui.command_entry.active then
+  if M.typeover_auto_paired and typeover_chars[string.byte(key)] and not ui.command_entry.active then
     local handled = false
     for i = 1, buffer.selections do
       local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
