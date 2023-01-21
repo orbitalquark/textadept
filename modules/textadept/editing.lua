@@ -1,22 +1,29 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local M = {}
-
---[[ This comment is for LuaDoc.
 ---
 -- Editing features for Textadept.
--- @field auto_indent (bool)
---   Match the previous line's indentation level after inserting a new line.
---   The default value is `true`.
--- @field strip_trailing_spaces (bool)
---   Strip trailing whitespace before saving files. (Does not apply to binary files.)
---   The default value is `false`.
--- @field autocomplete_all_words (bool)
---   Autocomplete the current word using words from all open buffers.
---   If `true`, performance may be slow when many buffers are open.
---   The default value is `false`.
--- @field highlight_words (number)
---   The word highlight mode.
+-- @module textadept.editing
+local M = {}
+
+---
+-- Match the previous line's indentation level after inserting a new line.
+-- The default value is `true`.
+M.auto_indent = true
+
+---
+-- Strip trailing whitespace before saving files. (Does not apply to binary files.)
+-- The default value is `false`.
+M.strip_trailing_spaces = false
+
+---
+-- Autocomplete the current word using words from all open buffers.
+-- If `true`, performance may be slow when many buffers are open.
+-- The default value is `false`.
+M.autocomplete_all_words = false
+
+M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
+---
+-- The word highlight mode.
 --
 --   * `textadept.editing.HIGHLIGHT_CURRENT`
 --     Automatically highlight all instances of the current word.
@@ -25,25 +32,20 @@ local M = {}
 --   * `textadept.editing.HIGHLIGHT_NONE`
 --     Do not automatically highlight words.
 --
---   The default value is `textadept.editing.HIGHLIGHT_NONE`.
--- @field auto_enclose (bool)
---   Whether or not to auto-enclose selected text when typing a punctuation character, taking
---   [`textadept.editing.auto_pairs`]() into account.
---   The default value is `false`.
--- @field typeover_auto_paired (bool)
---   Whether or not to type over an auto-paired complement character.
---   The default value is `true`.
--- @field INDIC_HIGHLIGHT (number)
---   The word highlight indicator number.
-module('textadept.editing')]]
-
-M.auto_indent = true
-M.strip_trailing_spaces = false
-M.autocomplete_all_words = false
-M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
+-- The default value is `textadept.editing.HIGHLIGHT_NONE`.
 M.highlight_words = M.HIGHLIGHT_NONE
+
+---
+-- Whether or not to auto-enclose selected text when typing a punctuation character, taking
+-- [`textadept.editing.auto_pairs`]() into account.
+-- The default value is `false`.
 M.auto_enclose = false
+---
+-- Whether or not to type over an auto-paired complement character.
+-- The default value is `true`.
 M.typeover_auto_paired = true
+
+--- The word highlight indicator number.
 M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 
 -- LuaFormatter off
@@ -57,8 +59,6 @@ M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
 -- @field VARIABLE The image number for variables.
 -- @field STRUCT The image number for structures.
 -- @field TYPEDEF The image number for type definitions.
--- @class table
--- @name XPM_IMAGES
 M.XPM_IMAGES = {not CURSES and '/* XPM */static char *class[] = {/* columns rows colors chars-per-pixel */"16 16 10 1 ","  c #000000",". c #001CD0","X c #008080","o c #0080E8","O c #00C0C0","+ c #24D0FC","@ c #00FFFF","# c #A4E8FC","$ c #C0FFFF","% c None",/* pixels */"%%%%%  %%%%%%%%%","%%%% ##  %%%%%%%","%%% ###++ %%%%%%","%% +++++.   %%%%","%% oo++.. $$  %%","%% ooo.. $$$@@ %","%% ooo. @@@@@X %","%%%   . OO@@XX %","%%% ##  OOOXXX %","%% ###++ OOXX %%","% +++++.  OX %%%","% oo++.. %  %%%%","% ooo... %%%%%%%","% ooo.. %%%%%%%%","%%  o. %%%%%%%%%","%%%%  %%%%%%%%%%"};' or '*',not CURSES and '/* XPM */static char *namespace[] = {/* columns rows colors chars-per-pixel */"16 16 7 1 ","  c #000000",". c #1D1D1D","X c #393939","o c #555555","O c #A8A8A8","+ c #AAAAAA","@ c None",/* pixels */"@@@@@@@@@@@@@@@@","@@@@+@@@@@@@@@@@","@@@.o@@@@@@@@@@@","@@@ +@@@@@@@@@@@","@@@ +@@@@@@@@@@@","@@+.@@@@@@@+@@@@","@@+ @@@@@@@o.@@@","@@@ +@@@@@@+ @@@","@@@ +@@@@@@+ @@@","@@@.X@@@@@@@.+@@","@@@@+@@@@@@@ @@@","@@@@@@@@@@@+ @@@","@@@@@@@@@@@+ @@@","@@@@@@@@@@@X.@@@","@@@@@@@@@@@+@@@@","@@@@@@@@@@@@@@@@"};' or '@',not CURSES and '/* XPM */static char *method[] = {/* columns rows colors chars-per-pixel */"16 16 5 1 ","  c #000000",". c #E0BC38","X c #F0DC5C","o c #FCFC80","O c None",/* pixels */"OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOO  OOOO","OOOOOOOOO oo  OO","OOOOOOOO ooooo O","OOOOOOO ooooo. O","OOOO  O XXoo.. O","OOO oo  XXX... O","OO ooooo XX.. OO","O ooooo.  X. OOO","O XXoo.. O  OOOO","O XXX... OOOOOOO","O XXX.. OOOOOOOO","OO  X. OOOOOOOOO","OOOO  OOOOOOOOOO"};' or '+',not CURSES and '/* XPM */static char *signal[] = {/* columns rows colors chars-per-pixel */"16 16 6 1 ","  c #000000",". c #FF0000","X c #E0BC38","o c #F0DC5C","O c #FCFC80","+ c None",/* pixels */"++++++++++++++++","++++++++++++++++","++++++++++++++++","++++++++++  ++++","+++++++++ OO  ++","++++++++ OOOOO +","+++++++ OOOOOX +","++++  + ooOOXX +","+++ OO  oooXXX +","++ OOOOO ooXX ++","+ OOOOOX  oX +++","+ ooOOXX +  ++++","+ oooXXX +++++++","+ oooXX +++++..+","++  oX ++++++..+","++++  ++++++++++"};' or '~',not CURSES and '/* XPM */static char *slot[] = {/* columns rows colors chars-per-pixel */"16 16 5 1 ","  c #000000",". c #E0BC38","X c #F0DC5C","o c #FCFC80","O c None",/* pixels */"OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOO  OOOO","OOOOOOOOO oo  OO","OOOOOOOO ooooo O","OOOOOOO ooooo. O","OOOO  O XXoo.. O","OOO oo  XXX... O","OO ooooo XX.. OO","O ooooo.  X. OOO","O XXoo.. O  OOOO","O XXX... OOOOOOO","O XXX.. OOOOO   ","OO  X. OOOOOO O ","OOOO  OOOOOOO   "};' or '-',not CURSES and '/* XPM */static char *variable[] = {/* columns rows colors chars-per-pixel */"16 16 5 1 ","  c #000000",". c #8C748C","X c #9C94A4","o c #ACB4C0","O c None",/* pixels */"OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOO  OOOOO","OOOOOOOO oo  OOO","OOOOOOO ooooo OO","OOOOOO ooooo. OO","OOOOOO XXoo.. OO","OOOOOO XXX... OO","OOOOOO XXX.. OOO","OOOOOOO  X. OOOO","OOOOOOOOO  OOOOO","OOOOOOOOOOOOOOOO"};' or '.',not CURSES and '/* XPM */static char *struct[] = {/* columns rows colors chars-per-pixel */"16 16 14 1 ","  c #000000",". c #008000","X c #00C000","o c #00FF00","O c #808000","+ c #C0C000","@ c #FFFF00","# c #008080","$ c #00C0C0","% c #00FFFF","& c #C0FFC0","* c #FFFFC0","= c #C0FFFF","- c None",/* pixels */"-----  ---------","---- &&  -------","--- &&&oo ------","-- ooooo.   ----","-- XXoo.. ==  --","-- XXX.. ===%% -","-- XXX. %%%%%# -","---   . $$%%## -","--- **  $$$### -","-- ***@@ $$## --","- @@@@@O  $# ---","- ++@@OO -  ----","- +++OOO -------","- +++OO --------","--  +O ---------","----  ----------"};' or '}',not CURSES and '/* XPM */static char *typedef[] = {/* columns rows colors chars-per-pixel */"16 16 10 1 ","  c #000000",". c #404040","X c #6D6D6D","o c #777777","O c #949494","+ c #ACACAC","@ c #BBBBBB","# c #DBDBDB","$ c #EEEEEE","% c None",/* pixels */"%%%%%  %%%%%%%%%","%%%% ##  %%%%%%%","%%% ###++ %%%%%%","%% +++++.   %%%%","%% oo++.. $$  %%","%% ooo.. $$$@@ %","%% ooo. @@@@@X %","%%%   . OO@@XX %","%%% ##  OOOXXX %","%% ###++ OOXX %%","% +++++.  OX %%%","% oo++.. %  %%%%","% ooo... %%%%%%%","% ooo.. %%%%%%%%","%%  o. %%%%%%%%%","%%%%  %%%%%%%%%%"};' or ':',CLASS=1,NAMESPACE=2,METHOD=3,SIGNAL=4,SLOT=5,VARIABLE=6,STRUCT=7,TYPEDEF=8}
 -- LuaFormatter on
 events.connect(events.VIEW_NEW, function()
@@ -75,8 +75,6 @@ for _ = 1, #M.XPM_IMAGES do _SCINTILLA.next_image_type() end -- sync
 -- Keys are lexer names and values are either the language's line comment prefixes or block
 -- comment delimiters separated by a '|' character. If no comment string exists for a given
 -- language, the lexer-supplied string is used, if available.
--- @class table
--- @name comment_string
 -- @see toggle_comment
 M.comment_string = {}
 
@@ -84,25 +82,21 @@ M.comment_string = {}
 -- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
 -- The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;", "&quot;&quot;",
 -- and "``". For certain XML-like lexers, "<>" is also auto-paired.
--- @class table
--- @name auto_pairs
 -- @usage textadept.editing.auto_pairs['*'] = '*'
 -- @usage textadept.editing.auto_pairs = nil -- disable completely
 M.auto_pairs = {}
 for k, v in string.gmatch([[()[]{}''""``]], '(.)(.)') do M.auto_pairs[k] = v end
 
+---
 -- Table of brace characters to highlight.
 -- The ASCII values of brace characters are keys and are assigned `true`.
 -- Recognized characters are '(', ')', '[', ']', '{', '}', '<', and '>'. This table is updated
 -- based on a lexer's "scintillua.angle.braces" property.
--- @class table
--- @name brace_matches
 local brace_matches = {}
 
+---
 -- Table of auto-paired characters to move over when typed.
 -- The ASCII values of typeover characters are keys and are assigned `true`.
--- @class table
--- @name typeover_chars
 local typeover_chars = {}
 
 ---
@@ -111,8 +105,6 @@ local typeover_chars = {}
 -- Autocompletion functions must return two values: the number of characters behind the caret
 -- that are used as the prefix of the entity to be autocompleted, and a list of completions to
 -- be shown. Autocompletion lists are sorted automatically.
--- @class table
--- @name autocompleters
 -- @see autocomplete
 M.autocompleters = {}
 
@@ -121,9 +113,8 @@ M.autocompleters = {}
 -- File tables contain API file paths or functions that return such paths. Each line in an
 -- API file consists of a symbol name (not a fully qualified symbol name), a space character,
 -- and that symbol's documentation. "\n" represents a newline character.
--- @class table
--- @name api_files
 -- @see show_documentation
+-- @table api_files
 M.api_files = setmetatable({}, {
   __index = function(t, k)
     t[k] = {}
@@ -291,7 +282,6 @@ end)
 ---
 -- Pastes the text from the clipboard, taking into account the buffer's indentation settings
 -- and the indentation of the current and preceding lines.
--- @name paste_reindent
 function M.paste_reindent()
   -- Normalize EOLs and strip leading indentation from clipboard text.
   local text = ui.clipboard_text
@@ -343,7 +333,6 @@ end
 -- As long as any part of a line is selected, the entire line is eligible for
 -- commenting/uncommenting.
 -- @see comment_string
--- @name toggle_comment
 function M.toggle_comment()
   local lang = buffer:get_lexer(true)
   local comment = M.comment_string[lang] or buffer.property['scintillua.comment.' .. lang]
@@ -388,8 +377,7 @@ end
 ---
 -- Moves the caret to the beginning of line number *line* or the user-specified line, ensuring
 -- *line* is visible.
--- @param line Optional line number to go to. If `nil`, the user is prompted for one.
--- @name goto_line
+-- @param[opt] line Optional line number to go to. If `nil`, the user is prompted for one.
 function M.goto_line(line)
   if not assert_type(line, 'number/nil', 1) then
     line = tonumber(ui.dialogs.input{title = _L['Go to line number:']} or nil)
@@ -404,7 +392,6 @@ args.register('-l', '--line', 1, function(line) M.goto_line(tonumber(line) or li
 ---
 -- Joins the currently selected lines or the current line with the line below it.
 -- As long as any part of a line is selected, the entire line is eligible for joining.
--- @name join_lines
 function M.join_lines()
   buffer:target_from_selection()
   buffer:line_end()
@@ -420,9 +407,8 @@ end
 -- multiple selections into account.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
--- @param select Optional flag that indicates whether or not to keep enclosed text selected. The
---   default value is `false`.
--- @name enclose
+-- @param[opt] select Optional flag that indicates whether or not to keep enclosed text
+--   selected. The default value is `false`.
 function M.enclose(left, right, select)
   assert_type(left, 'string', 1)
   assert_type(right, 'string', 2)
@@ -456,10 +442,9 @@ end, 1)
 -- If that range is already selected, toggles between selecting *left* and *right* as well.
 -- If *left* and *right* are not provided, they are assumed to be one of the delimiter pairs
 -- specified in `auto_pairs` and are inferred from the current position or selection.
--- @param left Optional left part of the enclosure.
--- @param right Optional right part of the enclosure.
+-- @param[opt] left Optional left part of the enclosure.
+-- @param[opt] right Optional right part of the enclosure.
 -- @see auto_pairs
--- @name select_enclosed
 function M.select_enclosed(left, right)
   local s, e, anchor, pos = -1, -1, buffer.anchor, buffer.current_pos
   if assert_type(left, 'string/nil', 1) and assert_type(right, 'string', 2) then
@@ -500,7 +485,6 @@ end
 -- @param all Whether or not to select all occurrences of the current word. The default value is
 --   `false`.
 -- @see buffer.word_chars
--- @name select_word
 function M.select_word(all)
   buffer:target_whole_document()
   buffer.search_flags = buffer.FIND_MATCHCASE
@@ -511,9 +495,7 @@ function M.select_word(all)
   buffer['multiple_select_add_' .. (not all and 'next' or 'each')](buffer)
 end
 
----
--- Selects the current line.
--- @name select_line
+--- Selects the current line.
 function M.select_line()
   buffer:home()
   buffer:line_end_extend()
@@ -522,7 +504,6 @@ end
 ---
 -- Selects the current paragraph.
 -- Paragraphs are surrounded by one or more blank lines.
--- @name select_paragraph
 function M.select_paragraph()
   buffer:line_down()
   buffer:para_up()
@@ -534,7 +515,6 @@ end
 -- If `buffer.use_tabs` is `true`, `buffer.tab_width` indenting spaces are converted to tabs.
 -- Otherwise, all indenting tabs are converted to `buffer.tab_width` spaces.
 -- @see buffer.use_tabs
--- @name convert_indentation
 function M.convert_indentation()
   buffer:begin_undo_action()
   for line = 1, buffer.line_count do
@@ -577,7 +557,6 @@ end
 -- [`spawn_proc:write()`](#spawn_proc:write).
 -- @param command The Linux, macOS, or Windows shell command to filter text through. May
 --   contain pipes.
--- @name filter_through
 function M.filter_through(command)
   assert_type(command, 'string', 1)
   assert(not (WIN32 and CURSES), 'not implemented in this environment')
@@ -649,7 +628,6 @@ end
 -- *name*, and returns `true` if completions were found.
 -- @param name The name of an autocompleter function in the `autocompleters` table to use for
 --   providing autocompletions.
--- @name autocomplete
 -- @see autocompleters
 function M.autocomplete(name)
   if not M.autocompleters[assert_type(name, 'string', 1)] then return end
@@ -695,11 +673,10 @@ local api_docs
 -- Documentation is read from API files in the `api_files` table.
 -- If a call tip is already shown, cycles to the next one if it exists.
 -- Symbols are determined by using `buffer.word_chars`.
--- @param pos Optional position of the symbol to show documentation for. If omitted, the caret
---   position is used.
--- @param ignore_case Optional flag that indicates whether or not to search API files
+-- @param[opt] pos Optional position of the symbol to show documentation for. If omitted,
+--   the caret position is used.
+-- @param[opt] ignore_case Optional flag that indicates whether or not to search API files
 --   case-insensitively for symbols. The default value is `false`.
--- @name show_documentation
 -- @see api_files
 -- @see buffer.word_chars
 function M.show_documentation(pos, ignore_case)

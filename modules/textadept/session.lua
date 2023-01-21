@@ -1,34 +1,38 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local M = {}
-
---[[ This comment is for LuaDoc.
 ---
 -- Session support for Textadept.
--- @field save_on_quit (bool)
---   Save the session when quitting.
---   The default value is `true` unless the user passed the command line switch `-n` or
---   `--nosession` to Textadept.
--- @field _G.events.SESSION_SAVE (string)
---   Emitted when saving a session.
---   Arguments:
---
---   * `session`: Table of session data to save. All handlers will have access to this same
---     table, and Textadept's default handler reserves the use of some keys.
---     Note that functions, userdata, and circular table values cannot be saved. The latter
---     case is not recognized at all, so beware.
--- @field _G.events.SESSION_LOAD (string)
---   Emitted when loading a session.
---   Arguments:
---
---   * `session`: Table of session data to load. All handlers will have access to this same table.
-module('textadept.session')]]
+-- @module textadept.session
+local M = {}
 
+---
+-- Save the session when quitting.
+-- The default value is `true` unless the user passed the command line switch `-n` or `--nosession`
+-- to Textadept.
 M.save_on_quit = true
 
 -- Events.
 local session_events = {'session_save', 'session_load'}
 for _, v in ipairs(session_events) do events[v:upper()] = v end
+
+---
+-- Emitted when saving a session.
+-- Arguments:
+--
+--   * `session`: Table of session data to save. All handlers will have access to this same
+--     table, and Textadept's default handler reserves the use of some keys.
+--     Note that functions, userdata, and circular table values cannot be saved. The latter
+--     case is not recognized at all, so beware.
+-- @field _G.events.SESSION_SAVE
+
+---
+-- Emitted when loading a session.
+-- Arguments:
+--
+--   * `session`: Table of session data to load. All handlers will have access to this same table.
+-- @field _G.events.SESSION_LOAD
+
+-- This comment is needed for LDoc to process the previous field.
 
 local session_file = _USERHOME .. (not CURSES and '/session' or '/session_term')
 
@@ -36,11 +40,10 @@ local session_file = _USERHOME .. (not CURSES and '/session' or '/session_term')
 -- Loads session file *filename* or the user-selected session, returning `true` if a session
 -- file was opened and read.
 -- Textadept restores split views, opened buffers, cursor information, recent files, and bookmarks.
--- @param filename Optional absolute path to the session file to load. If `nil`, the user is
---   prompted for one.
+-- @param[opt] filename Optional absolute path to the session file to load. If `nil`, the user
+--   is prompted for one.
 -- @return `true` if the session file was opened and read; `nil` otherwise.
 -- @usage textadept.session.load(filename)
--- @name load
 function M.load(filename)
   local dir, name = session_file:match('^(.-[/\\]?)([^/\\]+)$')
   if not assert_type(filename, 'string/nil', 1) then
@@ -132,10 +135,9 @@ end
 -- Saves split views, opened buffers, cursor information, recent files, and bookmarks.
 -- Upon quitting, the current session is saved to *filename* again, unless
 -- `textadept.session.save_on_quit` is `false`.
--- @param filename Optional absolute path to the session file to save. If `nil`, the user is
---   prompted for one.
+-- @param filename[opt] Optional absolute path to the session file to save. If `nil`, the user
+--   is prompted for one.
 -- @usage textadept.session.save(filename)
--- @name save
 function M.save(filename)
   local dir, name = session_file:match('^(.-[/\\]?)([^/\\]+)$')
   if not assert_type(filename, 'string/nil', 1) then

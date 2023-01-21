@@ -1,9 +1,8 @@
 -- Copyright 2020-2023 Mitchell. See LICENSE.
 
---[[ This comment is for LuaDoc.
 ---
--- Extends `_G` with formatted assertions and function argument type checks.
-module('assert')]]
+-- Extends Lua's _G table to provide extra functions and fields for Textadept.
+-- @module _G
 
 ---
 -- Asserts that value *v* is not `false` or `nil` and returns *v*, or calls `error()` with
@@ -11,9 +10,10 @@ module('assert')]]
 -- If *message* is a format string, the remaining arguments are passed to `string.format()`
 -- and the resulting string becomes the error message.
 -- @param v Value to assert.
--- @param message Optional error message to show on error. The default value is "assertion failed!".
--- @param ... If *message* is a format string, these arguments are passed to `string.format()`.
--- @name _G.assert
+-- @param[opt] message Optional error message to show on error. The default value is "assertion
+--   failed!".
+-- @param[opt] ... If *message* is a format string, these arguments are passed to
+--   `string.format()`.
 function assert(v, message, ...)
   if v then return v end
   if type(message) == 'string' and message:find('%%') then message = string.format(message, ...) end
@@ -32,7 +32,6 @@ end
 --   be a number.
 -- @usage assert_type(filename, 'string/nil', 1)
 -- @usage assert_type(option.setting, 'number', 'setting') -- implicates key
--- @name _G.assert_type
 function assert_type(v, expected_type, narg)
   if type(v) == expected_type then return v end
   -- Note: do not use assert for performance reasons.

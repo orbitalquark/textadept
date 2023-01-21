@@ -1,11 +1,10 @@
 -- Copyright 2018-2023 Mitchell. See LICENSE.
 
---[[ This comment is for LuaDoc.
 ---
 -- A module for recording, playing, saving, and loading keyboard macros.
 -- Menu commands are also recorded.
 -- At this time, typing into multiple cursors during macro playback is not supported.
-module('textadept.macros')]]
+-- @module textadept.macros
 local M = {}
 
 local recording, macro
@@ -38,9 +37,7 @@ local event_recorders = {
   end
 }
 
----
--- Toggles between starting and stopping macro recording.
--- @name record
+--- Toggles between starting and stopping macro recording.
 function M.record()
   if not recording then
     macro = {}
@@ -56,7 +53,6 @@ end
 ---
 -- Plays a recorded or loaded macro.
 -- @see load
--- @name play
 function M.play()
   if recording or not macro then return end
   -- If this function is run as a key command, `keys.keychain` cannot be cleared until this
@@ -74,9 +70,8 @@ end
 
 ---
 -- Saves a recorded macro to file *filename* or the user-selected file.
--- @param filename Optional filename to save the recorded macro to. If `nil`, the user is
+-- @param[opt] filename Optional filename to save the recorded macro to. If `nil`, the user is
 --   prompted for one.
--- @name save
 function M.save(filename)
   if recording or not macro then return end
   if not assert_type(filename, 'string/nil', 1) then
@@ -97,8 +92,7 @@ end
 
 ---
 -- Loads a macro from file *filename* or the user-selected file.
--- @param filename Optional macro file to load. If `nil`, the user is prompted for one.
--- @name load
+-- @param[opt] filename Optional macro file to load. If `nil`, the user is prompted for one.
 function M.load(filename)
   if recording then return end
   if not assert_type(filename, 'string/nil', 1) then

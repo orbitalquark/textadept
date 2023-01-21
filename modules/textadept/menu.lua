@@ -1,15 +1,13 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 -- Contributions from Robert Gieseke.
 
-local M = {}
-
---[[ This comment is for LuaDoc.
 ---
 -- Defines the menus used by Textadept.
 -- Menus are simply tables of menu items and submenus and may be edited in place. A menu item
 -- itself is a table whose first element is a menu label and whose second element is a menu
 -- command to run. Submenus have `title` keys assigned to string text.
-module('textadept.menu')]]
+-- @module textadept.menu
+local M = {}
 
 local _L, SEPARATOR = _L, {''}
 
@@ -47,15 +45,16 @@ local function open_page(url)
 end
 
 -- LuaFormatter off
+
 ---
 -- The default main menubar.
 -- Individual menus, submenus, and menu items can be retrieved by name in addition to table
 -- index number.
--- @class table
--- @name menubar
 -- @usage textadept.menu.menubar[_L['File']][_L['New']]
 -- @usage textadept.menu.menubar[_L['File']][_L['New']][2] = function() .. end
-local default_menubar = {
+-- @table menubar
+local default_menubar = {} -- empty declaration to avoid LDoc processing
+default_menubar = {
   {
     title = _L['File'],
     {_L['New'], buffer.new},
@@ -319,10 +318,10 @@ local default_menubar = {
 ---
 -- The default right-click context menu.
 -- Submenus, and menu items can be retrieved by name in addition to table index number.
--- @class table
--- @name context_menu
 -- @usage textadept.menu.context_menu[#textadept.menu.context_menu + 1] = {...}
-local default_context_menu = {
+-- @table context_menu
+local default_context_menu = {} -- empty declaration to avoid LDoc processing
+default_context_menu = {
   {_L['Undo'], buffer.undo},
   {_L['Redo'], buffer.redo},
   SEPARATOR,
@@ -337,9 +336,9 @@ local default_context_menu = {
 ---
 -- The default tabbar context menu.
 -- Submenus, and menu items can be retrieved by name in addition to table index number.
--- @class table
--- @name tab_context_menu
-local default_tab_context_menu = {
+-- @table tab_context_menu
+local default_tab_context_menu = {} -- empty declaration to avoid LDoc processing
+default_tab_context_menu = {
   {_L['Close'], buffer.close},
   SEPARATOR,
   {_L['Save'], buffer.save},
@@ -347,6 +346,7 @@ local default_tab_context_menu = {
   SEPARATOR,
   {_L['Reload'], buffer.reload},
 }
+
 -- LuaFormatter on
 
 -- Table of proxy tables for menus.
@@ -469,10 +469,10 @@ proxies.menubar = proxy_menu(default_menubar, function() end)
 -- Menu items are tables containing menu text and either a function to call or a table containing a
 -- function with its parameters to call when an item is clicked. Menu items may also be sub-menus,
 -- ordered lists of menu items with an additional `title` key for the sub-menu's title text.
--- @param buffer_menu Optional menu table to create the buffer context menu from. If `nil`,
+-- @param[opt] buffer_menu Optional menu table to create the buffer context menu from. If `nil`,
 --   uses the default context menu.
--- @param tab_menu Optional menu table to create the tabbar context menu from. If `nil`, uses
---   the default tab context menu.
+-- @param[opt] tab_menu Optional menu table to create the tabbar context menu from. If `nil`,
+--   uses the default tab context menu.
 -- @see ui.context_menu
 -- @see ui.tab_context_menu
 -- @see ui.menu
@@ -503,9 +503,7 @@ events.connect(events.MENU_CLICKED, function(menu_id)
   assert_type(f, 'function', 'command')()
 end)
 
----
--- Prompts the user to select a menu command to run.
--- @name select_command
+--- Prompts the user to select a menu command to run.
 function M.select_command()
   local items = {}
   -- Builds the item tables for the list dialog.

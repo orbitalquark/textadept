@@ -1,16 +1,24 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-_LEXERPATH = string.format('%s/lexers;%s/lexers', _USERHOME, _HOME)
-
-local lexer = dofile(_HOME .. '/lexers/lexer.lua')
-
+--- @module lexer
 local M = {}
--- Import names(), detect*(), and tag names.
+
+--- A ';'-separated list of directory paths that contain lexers for syntax highlighting.
+_G._LEXERPATH = string.format('%s/lexers;%s/lexers', _USERHOME, _HOME)
+
+-- Import lexer.names(), lexer.detect*(), and tag names.
+local lexer = dofile(_HOME .. '/lexers/lexer.lua')
 for k, v in pairs(lexer) do if k:find('^detect') or k:find('^%u') then M[k] = v end end
 M.names = function(path) return lexer.names(path or _LEXERPATH) end
 
--- Events.
-events.LEXER_LOADED = 'lexer_loaded'
+---
+-- Emitted after loading a language lexer.
+-- This is useful for automatically loading language modules as source files are opened, or
+-- setting up language-specific editing features for source files.
+-- Arguments:
+--
+--   * _`name`_: The language lexer's name.
+_G.events.LEXER_LOADED = 'lexer_loaded'
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function get_lexer(buffer, current)

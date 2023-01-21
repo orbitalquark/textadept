@@ -1,8 +1,5 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local M = {}
-
---[=[ This comment is for LuaDoc.
 ---
 -- Snippets for Textadept.
 --
@@ -95,13 +92,10 @@ local M = {}
 -- ([`buffer.eol_mode`]()).
 --
 -- [`io.popen()`]: https://www.lua.org/manual/5.3/manual.html#pdf-io.popen
---
--- @field INDIC_PLACEHOLDER (number)
---   The snippet placeholder indicator number.
--- @field _G.textadept.editing.autocompleters.snippet (function)
---   Autocompleter function for snippet trigger words.
-module('textadept.snippets')]=]
+-- @module textadept.snippets
+local M = {}
 
+--- The snippet placeholder indicator number.
 M.INDIC_PLACEHOLDER = _SCINTILLA.next_indic_number()
 
 local INDIC_SNIPPET = _SCINTILLA.next_indic_number()
@@ -110,9 +104,7 @@ local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.next_indic_number()
 ---
 -- Map of snippet triggers with their snippet text or functions that return such text, with
 -- language-specific snippets tables assigned to a lexer name key.
--- @class table
--- @name _G.snippets
-snippets = {}
+_G.snippets = {}
 for _, name in ipairs(lexer.names()) do snippets[name] = {} end
 
 -- Finds the snippet assigned to the trigger word behind the caret and returns the trigger word
@@ -520,11 +512,10 @@ end
 -- Inserts snippet text *text* or the snippet assigned to the trigger word behind the caret.
 -- Otherwise, if a snippet is active, goes to the active snippet's next placeholder. Returns
 -- `false` if no action was taken.
--- @param text Optional snippet text to insert. If `nil`, attempts to insert a new snippet
+-- @param[opt] text Optional snippet text to insert. If `nil`, attempts to insert a new snippet
 --   based on the trigger, the word behind caret, and the current lexer.
 -- @return `false` if no action was taken; `nil` otherwise.
 -- @see buffer.word_chars
--- @name insert
 function M.insert(text)
   local trigger
   if not assert_type(text, 'string/nil', 1) then
@@ -542,7 +533,6 @@ end
 -- Jumps back to the previous snippet placeholder, reverting any changes from the current one.
 -- Returns `false` if no snippet is active.
 -- @return `false` if no snippet is active; `nil` otherwise.
--- @name previous
 function M.previous()
   if #stack == 0 then return false end
   stack[#stack]:previous()
@@ -552,7 +542,6 @@ end
 -- Cancels the active snippet, removing all inserted text.
 -- Returns `false` if no snippet is active.
 -- @return `false` if no snippet is active; `nil` otherwise.
--- @name cancel
 function M.cancel()
   if #stack == 0 then return false end
   stack[#stack]:finish(true)
@@ -561,7 +550,6 @@ end
 ---
 -- Prompts the user to select a snippet to insert from a list of global and language-specific
 -- snippets.
--- @name select
 function M.select()
   local all_snippets, items = {}, {}
   for trigger, snippet in pairs(select(2, find_snippet(true, true))) do
@@ -589,8 +577,10 @@ events.connect(events.VIEW_NEW, function()
   view.indic_style[INDIC_CURRENTPLACEHOLDER] = view.INDIC_HIDDEN
 end)
 
--- Returns for the word behind the caret a list of snippet trigger word completions.
+---
+-- Autocompleter function for snippet trigger words.
 -- @see textadept.editing.autocomplete
+-- @function _G.textadept.editing.autocompleters.snippet
 textadept.editing.autocompleters.snippet = function()
   local list, trigger, snippets = {}, find_snippet(true)
   local sep = string.char(buffer.auto_c_type_separator)

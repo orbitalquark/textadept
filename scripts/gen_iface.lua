@@ -183,21 +183,19 @@ local f = io.open('../core/iface.lua', 'wb')
 f:write([=[
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local M = {}
-
---[[ This comment is for LuaDoc.
 ---
 -- Scintilla constants, functions, and properties.
 -- Do not modify anything in this module. Doing so will have unpredictable consequences.
-module('_SCINTILLA')]]
+-- @module _SCINTILLA
+local M = {}
 
 ]=])
 f:write([[
 ---
 -- Map of Scintilla constant names to their numeric values.
--- @class table
--- @name constants
 -- @see _G.buffer
+-- @see _G.view
+M.constants = {} -- empty declaration to avoid LDoc processing
 M.constants = {]])
 f:write(table.concat(constants, ','))
 f:write('}\n\n')
@@ -215,8 +213,7 @@ f:write([[
 --   + `6`: Bitmask of Scintilla key modifiers and a key value.
 --   + `7`: String parameter.
 --   + `8`: String return value.
--- @class table
--- @name functions
+M.functions = {} -- empty declaration to avoid LDoc processing
 M.functions = {]])
 for _, func in ipairs(functions) do
   f:write(string.format('%s={%d,%d,%d,%d},', func, table.unpack(functions[func])))
@@ -229,18 +226,15 @@ f:write([[
 -- The wParam type will be non-zero if the property is indexable.
 -- Types are the same as in the `functions` table.
 -- @see functions
--- @class table
--- @name properties
+M.properties = {} -- empty declaration to avoid LDoc processing
 M.properties = {]])
 for _, property in ipairs(properties) do
   f:write(string.format('%s={%d,%d,%d,%d},', property, table.unpack(properties[property])))
 end
 f:write('}\n\n')
 f:write([[
----
--- Map of Scintilla event IDs to tables of event names and event parameters.
--- @class table
--- @name events
+--- Map of Scintilla event IDs to tables of event names and event parameters.
+M.events = {} -- empty declaration to avoid LDoc processing
 M.events = {]])
 for _, event in ipairs(events) do f:write(string.format('[%s]={%s},', event, events[event])) end
 f:write('}\n\n')
@@ -253,7 +247,6 @@ local marker_number, indic_number, list_type, image_type = 0, 0, 0, 0
 -- custom markers.
 -- @usage local marknum = _SCINTILLA.next_marker_number()
 -- @see view.marker_define
--- @name next_marker_number
 function M.next_marker_number()
   assert(marker_number < M.constants.MARKER_MAX, 'too many markers in use')
   marker_number = marker_number + 1
@@ -266,7 +259,6 @@ end
 -- other custom indicators.
 -- @usage local indic_num = _SCINTILLA.next_indic_number()
 -- @see view.indic_style
--- @name next_indic_number
 function M.next_indic_number()
   assert(indic_number < M.constants.INDICATOR_MAX, 'too many indicators in use')
   indic_number = indic_number + 1
@@ -279,7 +271,6 @@ end
 -- of other custom user lists.
 -- @usage local list_type = _SCINTILLA.next_user_list_type()
 -- @see buffer.user_list_show
--- @name next_user_list_type
 function M.next_user_list_type()
   list_type = list_type + 1
   return list_type
@@ -293,7 +284,6 @@ end
 -- @usage local image_type = _SCINTILLA.next_image_type()
 -- @see view.register_image
 -- @see view.register_rgba_image
--- @name next_image_type
 function M.next_image_type()
   image_type = image_type + 1
   return image_type

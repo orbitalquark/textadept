@@ -1,8 +1,5 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local M = {}
-
---[[ This comment is for LuaDoc.
 ---
 -- Defines key bindings for Textadept.
 -- This set of key bindings is pretty standard among other text editors, at least for basic
@@ -250,7 +247,8 @@ local M = {}
 -- †: If you prefer ^Z to suspend, you can bind it to [`ui.suspend()`]().
 --
 -- ‡: Windows terminal version only.
-module('textadept.keys')]]
+-- @module textadept.keys
+local M = {}
 
 -- Windows and Linux key bindings.
 --

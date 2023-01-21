@@ -1,8 +1,5 @@
 -- Copyright 2019-2023 Mitchell. See LICENSE.
 
-local M = {}
-
---[[ This comment is for LuaDoc.
 ---
 -- Records buffer positions within Textadept views over time and allows for navigating through
 -- that history.
@@ -11,21 +8,21 @@ local M = {}
 -- or deletion occurs, its location is recorded in the current view's location history. If the
 -- edit is close enough to the previous record, the previous record is amended. Each time a
 -- buffer switch occurs, the before and after locations are also recorded.
--- @field minimum_line_distance (number)
---   The minimum number of lines between distinct history records.
---   The default value is `3`.
--- @field maximum_history_size (number)
---   The maximum number of history records to keep per view.
---   The default value is `100`.
-module('textadept.history')]]
+-- @module textadept.history
+local M = {}
 
+---
+-- The minimum number of lines between distinct history records.
+-- The default value is `3`.
 M.minimum_line_distance = 3
+---
+-- The maximum number of history records to keep per view.
+-- The default value is `100`.
 M.maximum_history_size = 100
 
+---
 -- Map of views to their history records.
 -- Each record has a `pos` field that points to the current history position in the associated view.
--- @class table
--- @name view_history
 local view_history = setmetatable({}, {
   __index = function(t, view)
     t[view] = {pos = 0}
@@ -70,9 +67,7 @@ local function jump(record)
   jumping = false
 end
 
----
--- Navigates backwards through the current view's history.
--- @name back
+--- Navigates backwards through the current view's history.
 function M.back()
   local history = view_history[view]
   if #history == 0 then return end -- nothing to do
@@ -94,9 +89,7 @@ function M.back()
   jump(history[history.pos])
 end
 
----
--- Navigates forwards through the current view's history.
--- @name forward
+--- Navigates forwards through the current view's history.
 function M.forward()
   local history = view_history[view]
   if history.pos == #history then return end -- nothing to do
@@ -108,15 +101,14 @@ end
 
 ---
 -- Records the given location in the current view's history.
--- @param filename Optional string filename, buffer type, or identifier of the buffer to store. If
---   `nil`, uses the current buffer.
--- @param line Optional Integer line number to store. If `nil`, uses the current line.
--- @param column Optional integer column number on line *line* to store. If `nil`, uses the
---   current column.
--- @param soft Optional flag that indicates whether or not this record should be skipped when
---   navigating backward towards it, and updated when navigating away from it. The default
+-- @param[opt] filename Optional string filename, buffer type, or identifier of the buffer to
+--   store. If `nil`, uses the current buffer.
+-- @param[opt] line Optional Integer line number to store. If `nil`, uses the current line.
+-- @param[opt] column Optional integer column number on line *line* to store. If `nil`, uses
+--   the current column.
+-- @param[opt] soft Optional flag that indicates whether or not this record should be skipped
+--   when navigating backward towards it, and updated when navigating away from it. The default
 --   value is `false`.
--- @name record
 function M.record(filename, line, column, soft)
   if not assert_type(filename, 'string/nil', 1) then
     filename = buffer.filename or buffer._type or _L['Untitled']
@@ -151,9 +143,7 @@ events.connect(events.BUFFER_BEFORE_SWITCH, record_switch)
 events.connect(events.BUFFER_AFTER_SWITCH, record_switch)
 events.connect(events.FILE_OPENED, record_switch)
 
----
--- Clears all view history.
--- @name clear
+--- Clears all view history.
 function M.clear() for view in pairs(view_history) do view_history[view] = {pos = 0} end end
 
 return M

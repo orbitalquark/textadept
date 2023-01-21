@@ -1,14 +1,12 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local M = {}
-
---[[ This comment is for LuaDoc.
 ---
 -- Map of all messages used by Textadept to their localized form.
 -- If the localized version of a given message does not exist, the non-localized message is
 -- returned. Use `rawget()` to check if a localization exists.
 -- Note: the terminal version ignores any "_" or "&" mnemonics the GUI version would use.
-module('_L')]]
+-- @module _L
+local M = {}
 
 local f = io.open(_USERHOME .. '/locale.conf', 'rb')
 if not f then

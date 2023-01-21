@@ -1,120 +1,137 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local M = ui.find
-
---[[ This comment is for LuaDoc.
 ---
 -- Textadept's Find & Replace pane.
--- @field find_entry_text (string)
---   The text in the "Find" entry.
--- @field replace_entry_text (string)
---   The text in the "Replace" entry.
---   When searching for text in a directory of files, this is the current file and directory filter.
--- @field match_case (bool)
---   Match search text case sensitively.
---   The default value is `false`.
--- @field whole_word (bool)
---   Match search text only when it is surrounded by non-word characters in searches.
---   The default value is `false`.
--- @field regex (bool)
---   Interpret search text as a Regular Expression.
---   The default value is `false`.
--- @field in_files (bool)
---   Find search text in a directory of files.
---   The default value is `false`.
--- @field incremental (bool)
---   Find search text incrementally as it is typed.
---   The default value is `false`.
--- @field find_label_text (string, Write-only)
---   The text of the "Find" label.
---   This is primarily used for localization.
--- @field replace_label_text (string, Write-only)
---   The text of the "Replace" label.
---   This is primarily used for localization.
--- @field find_next_button_text (string, Write-only)
---   The text of the "Find Next" button.
---   This is primarily used for localization.
--- @field find_prev_button_text (string, Write-only)
---   The text of the "Find Prev" button.
---   This is primarily used for localization.
--- @field replace_button_text (string, Write-only)
---   The text of the "Replace" button.
---   This is primarily used for localization.
--- @field replace_all_button_text (string, Write-only)
---   The text of the "Replace All" button.
---   This is primarily used for localization.
--- @field match_case_label_text (string, Write-only)
---   The text of the "Match case" label.
---   This is primarily used for localization.
--- @field whole_word_label_text (string, Write-only)
---   The text of the "Whole word" label.
---   This is primarily used for localization.
--- @field regex_label_text (string, Write-only)
---   The text of the "Regex" label.
---   This is primarily used for localization.
--- @field in_files_label_text (string, Write-only)
---   The text of the "In files" label.
---   This is primarily used for localization.
--- @field entry_font (string, Write-only)
---   The font to use in the "Find" and "Replace" entries in "name size" format.
---   The default value is system-dependent.
--- @field active (boolean)
---   Whether or not the Find & Replace pane is active.
--- @field highlight_all_matches (boolean)
---   Whether or not to highlight all occurrences of found text in the current buffer.
---   The default value is `false`.
--- @field show_filenames_in_progressbar (boolean)
---   Whether to show filenames in the find in files search progressbar.
---   This can be useful for determining whether or not custom filters are working as expected.
---   Showing filenames can slow down searches on computers with really fast SSDs.
---   The default value is `false`.
--- @field INDIC_FIND (number)
---   The find results highlight indicator number.
--- @field _G.events.FIND_RESULT_FOUND (string)
---   Emitted when a result is found. It is selected and has been scrolled into view.
---   Arguments:
---
---   * _`find_text`_: The text originally searched for.
---   * _`wrapped`_: Whether or not the result found is after a text search wrapped.
--- @field _G.events.FIND_WRAPPED (string)
---   Emitted when a text search wraps (passes through the beginning of the buffer), either
---   from bottom to top (when searching for a next occurrence), or from top to bottom (when
---   searching for a previous occurrence).
---   This is useful for implementing a more visual or audible notice when a search wraps in
---   addition to the statusbar message.
-module('ui.find')]]
+-- @module ui.find
+local M = ui.find
 
-local _L = _L
-M.find_label_text, M.replace_label_text = _L['Find:']:gsub('&', ''), _L['Replace:']:gsub('&', '')
+---
+-- The text in the "Find" entry.
+-- @field find_entry_text
+
+---
+-- The text in the "Replace" entry.
+-- When searching for text in a directory of files, this is the current file and directory filter.
+-- @field replace_entry_text
+
+---
+-- Match search text case sensitively.
+-- The default value is `false`.
+-- @field match_case
+
+---
+-- Match search text only when it is surrounded by non-word characters in searches.
+-- The default value is `false`.
+-- @field whole_word
+
+---
+-- Interpret search text as a Regular Expression.
+-- The default value is `false`.
+-- @field regex
+
+---
+-- Find search text in a directory of files.
+-- The default value is `false`.
+-- @field in_files
+
+---
+-- Find search text incrementally as it is typed.
+-- The default value is `false`.
+-- @field incremental
+
+---
+-- The font to use in the "Find" and "Replace" entries in "name size" format. (Write-only)
+-- The default value is system-dependent.
+-- @field entry_font
+
+---
+-- Whether or not the Find & Replace pane is active.
+-- @field active
+
+---
+-- The text of the "Find" label. (Write-only)
+-- This is primarily used for localization.
+M.find_label_text = _L['Find:']:gsub('&', '')
+---
+-- The text of the "Replace" label. (Write-only)
+-- This is primarily used for localization.
+M.replace_label_text = _L['Replace:']:gsub('&', '')
+---
+-- The text of the "Find Next" button. (Write-only)
+-- This is primarily used for localization.
 M.find_next_button_text = not CURSES and _L['Find Next'] or _L['[Next]']
+---
+-- The text of the "Find Prev" button. (Write-only)
+-- This is primarily used for localization.
 M.find_prev_button_text = not CURSES and _L['Find Prev'] or _L['[Prev]']
+---
+-- The text of the "Replace" button. (Write-only)
+-- This is primarily used for localization.
 M.replace_button_text = not CURSES and _L['Replace'] or _L['[Replace]']
+---
+-- The text of the "Replace All" button. (Write-only)
+-- This is primarily used for localization.
 M.replace_all_button_text = not CURSES and _L['Replace All'] or _L['[All]']
+---
+-- The text of the "Match case" label. (Write-only)
+-- This is primarily used for localization.
 M.match_case_label_text = not CURSES and _L['Match case'] or _L['Case(F1)']
+---
+-- The text of the "Whole word" label. (Write-only)
+-- This is primarily used for localization.
 M.whole_word_label_text = not CURSES and _L['Whole word'] or _L['Word(F2)']
+---
+-- The text of the "Regex" label. (Write-only)
+-- This is primarily used for localization.
 M.regex_label_text = not CURSES and _L['Regex'] or _L['Regex(F3)']
+---
+-- The text of the "In files" label. (Write-only)
+-- This is primarily used for localization.
 M.in_files_label_text = not CURSES and _L['In files'] or _L['Files(F4)']
+---
+-- Whether or not to highlight all occurrences of found text in the current buffer.
+-- The default value is `false`.
 M.highlight_all_matches = false
+---
+-- Whether to show filenames in the find in files search progressbar.
+-- This can be useful for determining whether or not custom filters are working as expected.
+-- Showing filenames can slow down searches on computers with really fast SSDs.
+-- The default value is `false`.
 M.show_filenames_in_progressbar = false
 
+--- The find results highlight indicator number.
 M.INDIC_FIND = _SCINTILLA.next_indic_number()
 
 -- Events.
 local find_events = {'find_result_found', 'find_wrapped'}
 for _, v in ipairs(find_events) do events[v:upper()] = v end
 
--- When finding in files, note the current view since results are shown in a split view. Jumping
--- between results should be done in the original view.
-local preferred_view
+---
+-- Emitted when a result is found. It is selected and has been scrolled into view.
+-- Arguments:
+--
+--   * _`find_text`_: The text originally searched for.
+--   * _`wrapped`_: Whether or not the result found is after a text search wrapped.
+-- @field _G.events.FIND_RESULT_FOUND
+
+---
+-- Emitted when a text search wraps (passes through the beginning of the buffer), either from
+-- bottom to top (when searching for a next occurrence), or from top to bottom (when searching
+-- for a previous occurrence).
+-- This is useful for implementing a more visual or audible notice when a search wraps in
+-- addition to the statusbar message.
+-- @field _G.events.FIND_WRAPPED (string)
 
 ---
 -- Map of directory paths to filters used in `ui.find.find_in_files()`.
 -- This table is updated when the user manually specifies a filter in the "Filter" entry during
 -- an "In files" search.
--- @class table
--- @name find_in_files_filters
 -- @see find_in_files
 M.find_in_files_filters = {}
+
+-- When finding in files, note the current view since results are shown in a split view. Jumping
+-- between results should be done in the original view.
+local preferred_view
 
 -- Keep track of find text and found text so that "replace all" works as expected during a find
 -- session ("replace all" with selected text normally does "replace in selection"). Also track
@@ -131,8 +148,7 @@ end
 local orig_focus = M.focus
 ---
 -- Displays and focuses the Find & Replace Pane.
--- @param options Optional table of `ui.find` field options to initially set.
--- @name focus
+-- @param[opt] options Optional table of `ui.find` field options to initially set.
 function M.focus(options)
   local already_in_files = M.in_files
   if not assert_type(options, 'table/nil', 1) then options = {} end
@@ -288,11 +304,10 @@ events.connect(events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wr
 -- directory separator ('[/\\]' is not needed). If *filter* is `nil`, the filter from the
 -- `ui.find.find_in_files_filters` table for *dir* is used. If that filter does not exist,
 -- `lfs.default_filter` is used.
--- @param dir Optional directory path to search. If `nil`, the user is prompted for one.
--- @param filter Optional filter for files and directories to exclude. The default value is
+-- @param[opt] dir Optional directory path to search. If `nil`, the user is prompted for one.
+-- @param[opt] filter Optional filter for files and directories to exclude. The default value is
 --   `lfs.default_filter` unless a filter for *dir* is defined in `ui.find.find_in_files_filters`.
 -- @see find_in_files_filters
--- @name find_in_files
 function M.find_in_files(dir, filter)
   if not assert_type(dir, 'string/nil', 1) then
     dir = ui.dialogs.open{title = _L['Select Directory'], only_dirs = true, dir = ff_dir()}
@@ -393,13 +408,14 @@ local re_patt = lpeg.Cs(P{
   E = P('\\E') / '', esc = '\\' * C(1) / esc
 })
 -- Returns string *text* with the following sequences unescaped:
--- * "\uXXXX" sequences replaced with the equivalent UTF-8 character.
--- * "\d" sequences replaced with the text of capture number *d* from the regular expression
---   (or the entire match for *d* = 0).
--- * "\U" and "\L" sequences convert everything up to the next "\U", "\L", or "\E" to uppercase
---   and lowercase, respectively.
--- * "\u" and "\l" sequences convert the next character to uppercase and lowercase, respectively.
---   They may appear within "\U" and "\L" constructs.
+--
+--   * "\uXXXX" sequences replaced with the equivalent UTF-8 character.
+--   * "\d" sequences replaced with the text of capture number *d* from the regular expression
+--     (or the entire match for *d* = 0).
+--   * "\U" and "\L" sequences convert everything up to the next "\U", "\L", or "\E" to uppercase
+--     and lowercase, respectively.
+--   * "\u" and "\l" sequences convert the next character to uppercase and lowercase, respectively.
+--     They may appear within "\U" and "\L" constructs.
 -- @param text String text to unescape.
 -- @return unescaped text
 local function unescape(text)
@@ -470,7 +486,6 @@ end
 -- "Files Found", or the result on a given line number, depending on the value of *location*.
 -- @param location When `true`, jumps to the next search result. When `false`, jumps to the
 --   previous one. When a line number, jumps to it.
--- @name goto_file_found
 function M.goto_file_found(location)
   local line_num = type(assert_type(location, 'boolean/number', 1)) == 'number' and location
   local ff_view, ff_buffer = get_ff_view(), get_ff_buffer()
@@ -535,29 +550,20 @@ end)
 events.connect(events.DOUBLE_CLICK,
   function(_, line) if is_ff_buf(buffer) then M.goto_file_found(line) end end)
 
---[[ The functions below are Lua C functions.
+-- The functions below are Lua C functions.
 
 ---
 -- Mimics pressing the "Find Next" button.
--- @class function
--- @name find_next
-local find_next
+-- @function find_next
 
 ---
 -- Mimics pressing the "Find Prev" button.
--- @class function
--- @name find_prev
-local find_prev
+-- @function find_prev
 
 ---
 -- Mimics pressing the "Replace" button.
--- @class function
--- @name replace
-local replace
+-- @function replace
 
 ---
 -- Mimics pressing the "Replace All" button.
--- @class function
--- @name replace_all
-local replace_all
-]]
+-- @function replace_all

@@ -1,8 +1,5 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local M = {}
-
---[[ This comment is for LuaDoc.
 ---
 -- Manages key bindings in Textadept.
 --
@@ -93,26 +90,30 @@ local M = {}
 --       b = function2,
 --       c = {...}
 --     }
--- @field CLEAR (string)
---   The key that clears the current key chain.
---   It cannot be part of a key chain.
---   The default value is `'esc'` for the `Esc` key.
--- @field mode (string)
---   The current key mode.
---   When non-`nil`, all key bindings defined outside of `keys[mode]` are ignored.
---   The default value is `nil`.
--- @field _G.events.KEYPRESS (string)
---   Emitted when pressing a recognized key.
---   If any handler returns `true`, the key is not handled further (e.g. inserted into the buffer).
---   Arguments:
+-- @module keys
+local M = {}
+
+---
+-- The current key mode.
+-- When non-`nil`, all key bindings defined outside of `keys[mode]` are ignored.
+-- The default value is `nil`.
+-- @field mode
+
+---
+-- Emitted when pressing a recognized key.
+-- If any handler returns `true`, the key is not handled further (e.g. inserted into the buffer).
+-- Arguments:
 --
 --   * _`key`_: The string representation of the [key sequence](#key-sequences).
-module('keys')]]
+-- @field _G.events.KEYPRESS
 
 local CTRL, ALT, CMD, SHIFT = 'ctrl+', not CURSES and 'alt+' or 'meta+', 'cmd+', 'shift+'
+---
+-- The key that clears the current key chain.
+-- It cannot be part of a key chain.
+-- The default value is `'esc'` for the `Esc` key.
 M.CLEAR = 'esc'
 
--- LuaFormatter off
 ---
 -- Lookup table for string representations of key codes higher than 255.
 -- Key codes can be identified by temporarily uncommenting the `print()` statements in
@@ -121,8 +122,8 @@ M.CLEAR = 'esc'
 -- ins, and f1-f12.
 -- The GUI version also recognizes: menu, kpenter, kphome, kpend, kpleft, kpup, kpright, kpdown,
 -- kppgup, kppgdn, kpmul, kpadd, kpsub, kpdiv, kpdec, and kp0-kp9.
--- @class table
--- @name KEYSYMS
+M.KEYSYMS = {} -- empty declaration to avoid LDoc processing
+-- LuaFormatter off
 M.KEYSYMS = {--[[From Scintilla.h for CURSES]][7]='esc',[8]='\b',[9]='\t',[13]='\n',--[[From curses.h]][263]='\b',[343]='\n',--[[From Scintilla.h for CURSES]][300]='down',[301]='up',[302]='left',[303]='right',[304]='home',[305]='end',[306]='pgup',[307]='pgdn',[308]='del',[309]='ins',--[[From <gdk/gdkkeysyms.h>]][0xFE20]='\t'--[[backtab; will be 'shift'ed]],[0xFF08]='\b',[0xFF09]='\t',[0xFF0D]='\n',[0xFF1B]='esc',[0xFFFF]='del',[0xFF50]='home',[0xFF51]='left',[0xFF52]='up',[0xFF53]='right',[0xFF54]='down',[0xFF55]='pgup',[0xFF56]='pgdn',[0xFF57]='end',[0xFF63]='ins',[0xFF67]='menu',[0xFF8D]='kpenter',[0xFF95]='kphome',[0xFF9C]='kpend',[0xFF96]='kpleft',[0xFF97]='kpup',[0xFF98]='kpright',[0xFF99]='kpdown',[0xFF9A]='kppgup',[0xFF9B]='kppgdn',[0xFFAA]='kpmul',[0xFFAB]='kpadd',[0xFFAD]='kpsub',[0xFFAF]='kpdiv',[0xFFAE]='kpdec',[0xFFB0]='kp0',[0xFFB1]='kp1',[0xFFB2]='kp2',[0xFFB3]='kp3',[0xFFB4]='kp4',[0xFFB5]='kp5',[0xFFB6]='kp6',[0xFFB7]='kp7',[0xFFB8]='kp8',[0xFFB9]='kp9',[0xFFBE]='f1',[0xFFBF]='f2',[0xFFC0]='f3',[0xFFC1]='f4',[0xFFC2]='f5',[0xFFC3]='f6',[0xFFC4]='f7',[0xFFC5]='f8',[0xFFC6]='f9',[0xFFC7]='f10',[0xFFC8]='f11',[0xFFC9]='f12',--[[From Qt]][0x01000000]='esc',[0x01000001]='\t',[0x01000002]='\t'--[[backtab; will be 'shift'ed]],[0x01000003]='\b',[0x01000004]='\n',[0x01000005]='kpenter',[0x01000006]='ins',[0x01000007]='del',[0x01000010]='home',[0x01000011]='end',[0x01000012]='left',[0x01000013]='up',[0x01000014]='right',[0x01000015]='down',[0x01000016]='pgup',[0x01000017]='pgdn',[0x01000030]='f1',[0x01000031]='f2',[0x01000032]='f3',[0x01000033]='f4',[0x01000034]='f5',[0x01000035]='f6',[0x01000036]='f7',[0x01000037]='f8',[0x01000038]='f9',[0x01000039]='f10',[0x0100003a]='f11',[0x0100003b]='f12',[0x01000055]='menu'}
 -- LuaFormatter on
 
@@ -149,10 +150,8 @@ end)
 -- The current key sequence.
 local keychain = {}
 
----
--- The current chain of key sequences. (Read-only.)
--- @class table
--- @name keychain
+--- The current chain of key sequences. (Read-only.)
+-- @table keychain
 M.keychain = setmetatable({}, {
   __index = keychain, __newindex = function() error('read-only table') end,
   __len = function() return #keychain end
@@ -169,7 +168,7 @@ local INVALID, PROPAGATE, CHAIN, HALT = -1, 0, 1, 2
 local function key_error(errmsg) events.emit(events.ERROR, errmsg) end
 
 -- Runs a key command associated with the current keychain.
--- @param prefix Optional prefix name for mode/lexer-specific commands.
+-- @param[opt] prefix Optional prefix name for mode/lexer-specific commands.
 -- @return `INVALID`, `PROPAGATE`, `CHAIN`, or `HALT`.
 local function key_command(prefix)
   local key = not prefix and M or M[prefix]
@@ -213,12 +212,9 @@ events.connect(events.KEYPRESS, function(key)
   -- PROPAGATE otherwise.
 end)
 
---[[ This comment is for LuaDoc.
 ---
 -- Map of key bindings to commands, with language-specific key tables assigned to a lexer name key.
--- @class table
--- @name _G.keys
-local keys]]
+-- @table _G.keys
 
 for _, name in ipairs(lexer.names()) do M[name] = {} end
 

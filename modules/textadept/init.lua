@@ -1,13 +1,11 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local M = {}
-textadept = M -- forward declaration
-
---[[ This comment is for LuaDoc.
 ---
 -- The textadept module.
 -- It provides utilities for editing text in Textadept.
-module('textadept')]]
+-- @module textadept
+local M = {}
+textadept = M -- forward declaration
 
 local modules = {
   'bookmarks', 'command_entry', 'editing', 'find', 'history', 'macros', 'run', 'session',

@@ -1,44 +1,58 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local ui = ui
-
---[[ This comment is for LuaDoc.
 ---
 -- Utilities for interacting with Textadept's user interface.
--- @field title (string, Write-only)
---   The title text of Textadept's window.
--- @field context_menu (userdata)
---   The buffer's context menu, a [`ui.menu()`]().
---   This is a low-level field. You probably want to use the higher-level
---   [`textadept.menu.context_menu`]().
--- @field tab_context_menu (userdata)
---   The context menu for the buffer's tab, a [`ui.menu()`]().
---   This is a low-level field. You probably want to use the higher-level
---   [`textadept.menu.tab_context_menu`]().
--- @field clipboard_text (string)
---   The text on the clipboard.
--- @field statusbar_text (string, Write-only)
---   The text displayed in the statusbar.
--- @field buffer_statusbar_text (string, Write-only)
---   The text displayed in the buffer statusbar.
--- @field maximized (bool)
---   Whether or not Textadept's window is maximized.
---   This field is always `false` in the terminal version.
--- @field tabs (bool)
---   Whether or not to display the tab bar when multiple buffers are open.
---   The default value is `true`.
---   A third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar, even if only
---   one buffer is open.
--- @field buffer_list_zorder (bool)
---   Whether or not to list buffers by their z-order (most recently viewed to least recently
---   viewed) in the switcher dialog.
---   The default value is `true`.
--- @field SHOW_ALL_TABS (number)
---
-module('ui')]]
+-- @module ui
+local ui = ui
 
+---
+-- The title text of Textadept's window. (Write-only)
+-- @field title
+
+---
+-- The buffer's context menu, a [`ui.menu()`]().
+-- This is a low-level field. You probably want to use the higher-level
+-- [`textadept.menu.context_menu`]().
+-- @field context_menu
+
+---
+-- The context menu for the buffer's tab, a [`ui.menu()`]().
+-- This is a low-level field. You probably want to use the higher-level
+-- [`textadept.menu.tab_context_menu`]().
+-- @field tab_context_menu
+
+---
+-- The text on the clipboard.
+-- @field clipboard_text
+
+---
+-- The text displayed in the statusbar. (Write-only)
+-- @field statusbar_text
+
+---
+-- The text displayed in the buffer statusbar. (Write-only)
+-- @field buffer_statusbar_text
+
+---
+-- Whether or not Textadept's window is maximized.
+-- This field is always `false` in the terminal version.
+-- @field maximized
+
+---
+-- Whether or not to display the tab bar when multiple buffers are open.
+-- The default value is `true`.
+-- A third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar, even if only one
+-- buffer is open.
+-- @field tabs
+
+--- Option for `ui.tabs` that always shows the tab bar, even if only one buffer is open.
 ui.SHOW_ALL_TABS = 2 -- ui.tabs options must be greater than 1
 if CURSES then ui.tabs = false end -- not supported right now
+
+---
+-- Whether or not to list buffers by their z-order (most recently viewed to least recently
+-- viewed) in the switcher dialog.
+-- The default value is `true`.
 ui.buffer_list_zorder = true
 
 -- Helper functions for getting print views and buffers.
@@ -89,7 +103,6 @@ end
 --   They will be printed as tab-separated values.
 -- @usage ui.print_to(_L['[Message Buffer]'], message)
 -- @see print_silent_to
--- @name print_to
 function ui.print_to(type, ...) print_to(assert_type(type, 'string', 1), false, true, ...) end
 
 ---
@@ -100,7 +113,6 @@ function ui.print_to(type, ...) print_to(assert_type(type, 'string', 1), false, 
 -- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
 --   They will be printed as tab-separated values.
 -- @see print_to
--- @name print_silent_to
 function ui.print_silent_to(type, ...) print_to(assert_type(type, 'string', 1), true, true, ...) end
 
 ---
@@ -108,7 +120,6 @@ function ui.print_silent_to(type, ...) print_to(assert_type(type, 'string', 1), 
 -- Opens a new buffer if one has not already been opened for printing messages.
 -- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
 --   They will be printed as tab-separated values.
--- @name print
 function ui.print(...) ui.print_to(_L['[Message Buffer]'], ...) end
 
 ---
@@ -116,7 +127,6 @@ function ui.print(...) ui.print_to(_L['[Message Buffer]'], ...) end
 -- Otherwise, behaves like `ui.print()`.
 -- @param ... Message or values to print.
 -- @see print
--- @name print_silent
 function ui.print_silent(...) ui.print_silent_to(_L['[Message Buffer]'], ...) end
 
 -- Helper function for printing to the output buffer.
@@ -134,7 +144,6 @@ end
 -- attempts to understand the error messages and warnings produced by various tools.
 -- @param ... Output to print.
 -- @see output_silent
--- @name output
 function ui.output(...) output_to(false, ...) end
 
 ---
@@ -142,7 +151,6 @@ function ui.output(...) output_to(false, ...) end
 -- Otherwise, behaves like `ui.output()`.
 -- @param ... Output to print.
 -- @see output
--- @name output_silent
 function ui.output_silent(...) output_to(true, ...) end
 
 local buffers_zorder = {}
@@ -177,8 +185,7 @@ events.connect(events.RESET_AFTER, function(persist) buffers_zorder = persist.ui
 -- Buffers are listed in the order they were opened unless `ui.buffer_list_zorder` is `true`, in
 -- which case buffers are listed by their z-order (most recently viewed to least recently viewed).
 -- Buffers in the same project as the current buffer are shown with relative paths.
--- @see ui.buffer_list_zorder
--- @name switch_buffer
+-- @see buffer_list_zorder
 function ui.switch_buffer()
   local buffers = not ui.buffer_list_zorder and _BUFFERS or buffers_zorder
   local columns, utf8_list = {_L['Name'], _L['Filename']}, {}
@@ -206,16 +213,15 @@ end
 -- to match a buffer's `filename`. If the requested file was not found, it is opened in the
 -- desired view.
 -- @param filename The filename of the buffer to go to.
--- @param split Optional flag that indicates whether or not to open the buffer in a split view
---   if there is only one view. The default value is `false`.
--- @param preferred_view Optional view to open the desired buffer in if the buffer is not
+-- @param[opt] split Optional flag that indicates whether or not to open the buffer in a split
+--   view if there is only one view. The default value is `false`.
+-- @param[opt] preferred_view Optional view to open the desired buffer in if the buffer is not
 --   visible in any other view.
--- @param sloppy Optional flag that indicates whether or not to not match *filename* to
---   `buffer.filename` exactly. When `true`, matches *filename* to only the last part of
+-- @param[opt] sloppy Optional flag that indicates whether or not to not match *filename*
+--   to `buffer.filename` exactly. When `true`, matches *filename* to only the last part of
 --   `buffer.filename` This is useful for run and compile commands which output relative filenames
 --   and paths instead of full ones and it is likely that the file in question is already open.
 --   The default value is `false`.
--- @name goto_file
 function ui.goto_file(filename, split, preferred_view, sloppy)
   assert_type(filename, 'string', 1)
   local patt = string.format('%s%s$', not sloppy and '^' or '',
@@ -458,23 +464,19 @@ local function textbox(text) ui.dialogs.message{title = _L['Initialization Error
 events.connect(events.ERROR, textbox)
 events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, textbox) end)
 
---[[ The tables below were defined in C.
+-- The tables below were defined in C.
 
 ---
 -- A table of menus defining a menubar. (Write-only).
 -- This is a low-level field. You probably want to use the higher-level `textadept.menu.menubar`.
 -- @see textadept.menu.menubar
--- @class table
--- @name menubar
-local menubar
+-- @table menubar
 
 ---
 -- A table containing the width and height pixel values of Textadept's window.
--- @class table
--- @name size
-local size
+-- @table size
 
-The functions below are Lua C functions.
+-- The functions below are Lua C functions.
 
 ---
 -- Returns a split table that contains Textadept's current split view structure.
@@ -483,9 +485,7 @@ The functions below are Lua C functions.
 --   `vertical`, and `size`. `1` and `2` have values of either nested split view entries or
 --   the views themselves; `vertical` is a flag that indicates if the split is vertical or not;
 --   and `size` is the integer position of the split resizer.
--- @class function
--- @name get_split_table
-local get_split_table
+-- @function get_split_table
 
 ---
 -- Shifts to view *view* or the view *view* number of views relative to the current one.
@@ -494,9 +494,7 @@ local get_split_table
 -- @see _G._VIEWS
 -- @see events.VIEW_BEFORE_SWITCH
 -- @see events.VIEW_AFTER_SWITCH
--- @class function
--- @name goto_view
-local goto_view
+-- @function goto_view
 
 ---
 -- Low-level function for creating a menu from table *menu_table* and returning the userdata.
@@ -515,9 +513,7 @@ local goto_view
 -- @see textadept.menu.menubar
 -- @see textadept.menu.context_menu
 -- @see textadept.menu.tab_context_menu
--- @class function
--- @name menu
-local menu
+-- @function menu
 
 ---
 -- Displays a popup menu, typically the right-click context menu.
@@ -525,16 +521,12 @@ local menu
 -- @usage ui.popup_menu(ui.context_menu)
 -- @see ui.menu
 -- @see ui.context_menu
--- @class function
--- @name popup_menu
-local popup_menu
+-- @function popup_menu
 
 ---
 -- Processes pending UI events, including reading from spawned processes.
 -- This function is primarily used in unit tests.
--- @class function
--- @name update
-local update
+-- @function update
 
 ---
 -- Suspends Textadept.
@@ -544,7 +536,4 @@ local update
 -- @usage keys['ctrl+z'] = ui.suspend
 -- @see events.SUSPEND
 -- @see events.RESUME
--- @class function
--- @name suspend
-local suspend
-]]
+-- @function suspend

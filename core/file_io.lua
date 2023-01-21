@@ -1,54 +1,59 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
---[[ This comment is for LuaDoc.
 ---
--- Extends Lua's `io` library with Textadept functions for working with files.
--- @field ensure_final_newline (bool)
---   Whether or not to ensure there is a final newline when saving text files.
---   This has no effect on binary files.
---   The default value is `false` on Windows, and `true` on Linux and macOS.
--- @field quick_open_max (number)
---   The maximum number of files listed in the quick open dialog.
---   The default value is `1000`.
--- @field _G.events.FILE_OPENED (string)
---   Emitted after opening a file in a new buffer.
---   Emitted by [`io.open_file()`]().
---   Arguments:
---
---   * _`filename`_: The opened file's filename.
--- @field _G.events.FILE_BEFORE_SAVE (string)
---   Emitted right before saving a file to disk.
---   Emitted by [`buffer:save()`]().
---   Arguments:
---
---   * _`filename`_: The filename of the file being saved.
--- @field _G.events.FILE_AFTER_SAVE (string)
---   Emitted right after saving a file to disk.
---   Emitted by [`buffer:save()`]() and [`buffer:save_as()`]().
---   Arguments:
---
---   * _`filename`_: The filename of the file being saved.
---   * _`saved_as`_: Whether or not the file was saved under a different filename.
--- @field _G.events.FILE_CHANGED (string)
---   Emitted when Textadept detects that an open file was modified externally.
---   When connecting to this event, connect with an index of 1 in order to override the default
---   prompt to reload the file.
---   Arguments:
---
---   * _`filename`_: The filename externally modified.
-module('io')]]
+--- Extends Lua's `io` library with Textadept functions for working with files.
+-- @module io
 
--- Events.
+--- Events.
 local file_io_events = {'file_opened', 'file_before_save', 'file_after_save', 'file_changed'}
 for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 
-io.ensure_final_newline = not WIN32
-io.quick_open_max = 1000
+---
+-- Emitted after opening a file in a new buffer.
+-- Emitted by [`io.open_file()`]().
+-- Arguments:
+--
+--   * _`filename`_: The opened file's filename.
+-- @field _G.events.FILE_OPENED
 
 ---
--- List of recently opened files, the most recent being towards the top.
--- @class table
--- @name recent_files
+-- Emitted right before saving a file to disk.
+-- Emitted by [`buffer:save()`]().
+-- Arguments:
+--
+--   * _`filename`_: The filename of the file being saved.
+-- @field _G.events.FILE_BEFORE_SAVE
+
+---
+-- Emitted right after saving a file to disk.
+-- Emitted by [`buffer:save()`]() and [`buffer:save_as()`]().
+-- Arguments:
+--
+--   * _`filename`_: The filename of the file being saved.
+--   * _`saved_as`_: Whether or not the file was saved under a different filename.
+-- @field _G.events.FILE_AFTER_SAVE
+
+---
+-- Emitted when Textadept detects that an open file was modified externally.
+-- When connecting to this event, connect with an index of 1 in order to override the default
+-- prompt to reload the file.
+-- Arguments:
+--
+--   * _`filename`_: The filename externally modified.
+-- @field _G.events.FILE_CHANGED
+
+---
+-- Whether or not to ensure there is a final newline when saving text files.
+-- This has no effect on binary files.
+-- The default value is `false` on Windows, and `true` on Linux and macOS.
+io.ensure_final_newline = not WIN32
+
+---
+-- The maximum number of files listed in the quick open dialog.
+-- The default value is `1000`.
+io.quick_open_max = 1000
+
+--- List of recently opened files, the most recent being towards the top.
 io.recent_files = {}
 
 ---
@@ -65,19 +70,16 @@ io.recent_files = {}
 --
 -- [GNU iconv's encodings]: https://www.gnu.org/software/libiconv/
 -- @usage io.encodings[#io.encodings + 1] = 'UTF-32'
--- @class table
--- @name encodings
 io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}
 
 ---
 -- Opens *filenames*, a string filename or list of filenames, or the user-selected filename(s).
 -- Emits a `FILE_OPENED` event.
--- @param filenames Optional string filename or table of filenames to open. If `nil`, the user
---   is prompted with a fileselect dialog.
--- @param encodings Optional string encoding or table of encodings file contents are in (one
---   encoding per file). If `nil`, encoding auto-detection is attempted via `io.encodings`.
+-- @param[opt] filenames Optional string filename or table of filenames to open. If `nil`,
+--   the user is prompted with a fileselect dialog.
+-- @param[opt] encodings Optional string encoding or table of encodings file contents are in
+--   (one encoding per file). If `nil`, encoding auto-detection is attempted via `io.encodings`.
 -- @see _G.events
--- @name open_file
 function io.open_file(filenames, encodings)
   assert_type(encodings, 'string/table/nil', 2)
   if not assert_type(filenames, 'string/table/nil', 1) then
@@ -224,7 +226,6 @@ end
 --   value is `false`.
 -- @return `true` if all savable files were saved; `nil` otherwise.
 -- @see buffer.save
--- @name save_all_files
 function io.save_all_files(untitled)
   for _, buffer in ipairs(_BUFFERS) do
     if buffer.modify and (buffer.filename or untitled and not buffer._type) then
@@ -275,7 +276,6 @@ events.connect(events.RESUME, update_modified_file)
 -- No buffers are saved automatically. They must be saved manually.
 -- @return `true` if user did not cancel; `nil` otherwise.
 -- @see buffer.close
--- @name close_all_buffers
 function io.close_all_buffers()
   events.disconnect(events.BUFFER_AFTER_SWITCH, update_modified_file)
   while #_BUFFERS > 1 do if not buffer:close() then return nil end end
@@ -315,7 +315,6 @@ end)
 ---
 -- Prompts the user to select a recently opened file to be reopened.
 -- @see recent_files
--- @name open_recent_file
 function io.open_recent_file()
   local utf8_list, i = {}, 1
   while i <= #io.recent_files do
@@ -338,13 +337,12 @@ local vcs = {'.bzr', '.git', '.hg', '.svn', '_FOSSIL_'}
 -- Returns the root directory of the project that contains filesystem path *path*.
 -- In order to be recognized, projects must be under version control. Recognized VCSes are
 -- Bazaar, Fossil, Git, Mercurial, and SVN.
--- @param path Optional filesystem path to a project or a file contained within a project. The
+-- @param[opt] path Optional filesystem path to a project or a file contained within a project. The
 --   default value is the buffer's filename or the current working directory. This parameter
 --   may be omitted.
--- @param submodule Optional flag that indicates whether or not to return the root of the
+-- @param[opt] submodule Optional flag that indicates whether or not to return the root of the
 --   current submodule (if applicable). The default value is `false`.
 -- @return string root or nil
--- @name get_project_root
 function io.get_project_root(path, submodule)
   if type(path) == 'boolean' then path, submodule = nil, path end
   if not assert_type(path, 'string/nil', 1) then path = buffer.filename or lfs.currentdir() end
@@ -361,8 +359,6 @@ end
 
 ---
 -- Map of directory paths to filters used by `io.quick_open()`.
--- @class table
--- @name quick_open_filters
 -- @see quick_open
 io.quick_open_filters = {}
 
@@ -381,9 +377,9 @@ io.quick_open_filters = {}
 -- If *filter* is `nil` and *paths* is ultimately a string, the filter from the
 -- `io.quick_open_filters` table is used. If that filter does not exist, `lfs.default_filter`
 -- is used.
--- @param paths Optional string directory path or table of directory paths to search. The
+-- @param[opt] paths Optional string directory path or table of directory paths to search. The
 --   default value is the current project's root directory, if available.
--- @param filter Optional filter for files and directories to include and/or exclude. The
+-- @param[opt] filter Optional filter for files and directories to include and/or exclude. The
 --   default value is `lfs.default_filter` unless a filter for *paths* is defined in
 --   `io.quick_open_filters`.
 -- @usage io.quick_open(buffer.filename:match('^(.+)[/\\]')) -- list all files in the current
@@ -392,10 +388,9 @@ io.quick_open_filters = {}
 --   project
 -- @usage io.quick_open(io.get_current_project(), '!/build') -- list all files in the current
 --   project except those in the build directory
--- @see io.quick_open_filters
+-- @see quick_open_filters
 -- @see lfs.default_filter
 -- @see quick_open_max
--- @name quick_open
 function io.quick_open(paths, filter)
   if not assert_type(paths, 'string/table/nil', 1) then
     paths = io.get_project_root()

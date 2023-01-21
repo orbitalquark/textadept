@@ -1,23 +1,24 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 -- Abbreviated environment and commands from Jay Gould.
 
-local M = ui.command_entry
-
---[[ This comment is for LuaDoc.
 ---
 -- Textadept's Command Entry.
 -- It supports multiple modes that each have their own functionality (such as running Lua code
 -- and filtering text through shell commands) and history.
--- @field height (number)
---   The height in pixels of the command entry.
--- @field active (boolean)
---   Whether or not the command entry is active.
-module('ui.command_entry')]]
+-- @module ui.command_entry
+local M = ui.command_entry
 
+---
+-- The height in pixels of the command entry.
+-- @field height
+
+---
+-- Whether or not the command entry is active.
+-- @field active
+
+---
 -- Command history per mode.
 -- The current mode is in the `mode` field.
--- @class table
--- @name history
 local history = setmetatable({}, {
   __index = function(t, k)
     if type(k) ~= 'function' then return nil end
@@ -47,10 +48,9 @@ end
 -- recent mode.
 -- This should only be called if `ui.command_entry.run()` is called with a keys table that has a
 -- custom binding for the Enter key ('\n'). Otherwise, history is automatically appended as needed.
--- @param f Optional command entry mode to append history to. This is a function passed to
+-- @param[opt] f Optional command entry mode to append history to. This is a function passed to
 --   `ui.command_entry_run()`. If omitted, uses the current or most recent mode.
 -- @param text String text to append to history.
--- @name append_history
 function M.append_history(f, text)
   if not assert_type(text, 'string/nil', 2) then
     f, text = history.mode, assert_type(f, 'string', 1)
@@ -66,9 +66,8 @@ end
 -- This metatable may be used to add basic editing and movement keys to command entry modes. It
 -- is automatically added to command entry modes unless a metatable was previously set.
 -- @usage setmetatable(mode_keys, ui.command_entry.editing_keys)
--- @class table
--- @name editing_keys
-M.editing_keys = {__index = {}}
+M.editing_keys = {} -- empty declaration to avoid LDoc processing
+M.editing_keys.__index = {}
 
 -- Fill in default key bindings for Windows/Linux, macOS, Terminal.
 local bindings = {
@@ -96,9 +95,7 @@ for f, plat_keys in pairs(bindings) do
   if plat_keys[plat] then M.editing_keys.__index[plat_keys[plat]] = f end
 end
 
--- Environment for abbreviated Lua commands.
--- @class table
--- @name env
+--- Environment for abbreviated Lua commands.
 local env = setmetatable({}, {
   __index = function(_, k)
     if type(buffer[k]) == 'function' then
@@ -186,9 +183,7 @@ local function complete_lua()
   M:auto_c_show(#part - 1, table.concat(cmpls, string.char(M.auto_c_separator)))
 end
 
--- Mode for entering Lua commands.
--- @class table
--- @name lua_keys
+--- Mode for entering Lua commands.
 local lua_keys = {['\t'] = complete_lua}
 
 local prev_key_mode
@@ -205,18 +200,17 @@ local prev_key_mode
 -- @param label String label to display in front of input.
 -- @param f Function to call upon pressing `Enter` in the command entry, ending the mode.
 --   It should accept at a minimum the command entry text as an argument.
--- @param keys Optional table of key bindings to respond to. This is in addition to the
+-- @param[opt] keys Optional table of key bindings to respond to. This is in addition to the
 --   basic editing and movement keys defined in `ui.command_entry.editing_keys`. `Esc` and
 --   `Enter` are automatically defined to cancel and finish the command entry, respectively.
 --   This parameter may be omitted completely.
--- @param lang Optional string lexer name to use for command entry text. The default value is
---   `'text'`. This parameter may only be omitted if there are no more parameters.
--- @param initial_text Optional string of text to initially show in the command entry. The
+-- @param[opt] lang Optional string lexer name to use for command entry text. The default value
+--   is `'text'`. This parameter may only be omitted if there are no more parameters.
+-- @param[opt] initial_text Optional string of text to initially show in the command entry. The
 --   default value comes from the command history for *f*.
--- @param ... Optional additional arguments to pass to *f*.
+-- @param[opt] ... Optional additional arguments to pass to *f*.
 -- @see editing_keys
 -- @usage ui.command_entry.run('echo:', ui.print)
--- @name run
 function M.run(label, f, keys, lang, initial_text, ...)
   if _G.keys.mode == '_command_entry' then return end -- already in command entry
   local args = table.pack(...)
@@ -281,11 +275,8 @@ events.connect(events.INITIALIZED, function()
   M.call_tip_position = true
 end)
 
---[[ The function below is a Lua C function.
+-- The function below is a Lua C function.
 
 ---
 -- Opens the command entry.
--- @class function
--- @name focus
-local focus
-]]
+-- @function focus

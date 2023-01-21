@@ -1,8 +1,5 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local M = {}
-
---[[ This comment is for LuaDoc.
 ---
 -- Textadept's core event structure and handlers.
 --
@@ -23,84 +20,116 @@ local M = {}
 -- `nil`, Textadept will not call subsequent handlers. This is useful if you want to stop the
 -- propagation of an event like a keypress if your event handler handled it, or if you want to
 -- use the event framework to pass values.
---
--- @field APPLEEVENT_ODOC (string)
---   Emitted when macOS tells Textadept to open a file.
---   Arguments:
+-- @module events
+local M = {}
+
+---
+-- Emitted when macOS tells Textadept to open a file.
+-- Arguments:
 --
 --   * _`uri`_: The UTF-8-encoded URI to open.
--- @field AUTO_C_CHAR_DELETED (string)
---   Emitted after deleting a character while an autocompletion or user list is active.
--- @field AUTO_C_CANCELED (string)
---   Emitted when canceling an autocompletion or user list.
--- @field AUTO_C_COMPLETED (string)
---   Emitted after inserting an item from an autocompletion list into the buffer.
---   Arguments:
+-- @field APPLEEVENT_ODOC
+
+---
+-- Emitted after deleting a character while an autocompletion or user list is active.
+-- @field AUTO_C_CHAR_DELETED
+
+---
+-- Emitted when canceling an autocompletion or user list.
+-- @field AUTO_C_CANCELED
+
+---
+-- Emitted after inserting an item from an autocompletion list into the buffer.
+-- Arguments:
 --
 --   * _`text`_: The selection's text.
 --   * _`position`_: The autocompleted word's beginning position.
--- @field AUTO_C_SELECTION (string)
---   Emitted after selecting an item from an autocompletion list, but before inserting that
---   item into the buffer.
---   Automatic insertion can be canceled by calling [`buffer:auto_c_cancel()`]() before returning
---   from the event handler.
---   Arguments:
+-- @field AUTO_C_COMPLETED
+
+---
+-- Emitted after selecting an item from an autocompletion list, but before inserting that item
+-- into the buffer.
+-- Automatic insertion can be canceled by calling [`buffer:auto_c_cancel()`]() before returning
+-- from the event handler.
+-- Arguments:
 --
 --   * _`text`_: The selection's text.
 --   * _`position`_: The autocompleted word's beginning position.
--- @field AUTO_C_SELECTION_CHANGE (string)
---   Emitted as items are highlighted in an autocompletion or user list.
---   Arguments:
+-- @field AUTO_C_SELECTION
+
+---
+-- Emitted as items are highlighted in an autocompletion or user list.
+-- Arguments:
 --
 --   * _`id`_: Either the *id* from [`buffer.user_list_show()`]() or `0` for an autocompletion list.
 --   * _`text`_: The current selection's text.
 --   * _`position`_: The position the list was displayed at.
--- @field BUFFER_AFTER_SWITCH (string)
---   Emitted right after switching to another buffer.
---   The buffer being switched to is `buffer`.
---   Emitted by [`view.goto_buffer()`]().
--- @field BUFFER_BEFORE_REPLACE_TEXT (string)
---   Emitted before replacing the contents of the current buffer.
---   Note that it is not guaranteed that [`events.BUFFER_AFTER_REPLACE_TEXT`]() will be emitted
---   shortly after this event.
---   The buffer **must not** be modified during this event.
--- @field BUFFER_BEFORE_SWITCH (string)
---   Emitted right before switching to another buffer.
---   The buffer being switched from is `buffer`.
---   Emitted by [`view.goto_buffer()`]().
--- @field BUFFER_AFTER_REPLACE_TEXT (string)
---   Emitted after replacing the contents of the current buffer.
---   Note that it is not guaranteed that [`events.BUFFER_BEFORE_REPLACE_TEXT`]() was emitted
---   previously.
---   The buffer **must not** be modified during this event.
--- @field BUFFER_DELETED (string)
---   Emitted after deleting a buffer.
---   Emitted by [`buffer.delete()`]().
---   Arguments:
+-- @field AUTO_C_SELECTION_CHANGE
+
+---
+-- Emitted right after switching to another buffer.
+-- The buffer being switched to is `buffer`.
+-- Emitted by [`view.goto_buffer()`]().
+-- @field BUFFER_AFTER_SWITCH
+
+---
+-- Emitted before replacing the contents of the current buffer.
+-- Note that it is not guaranteed that [`events.BUFFER_AFTER_REPLACE_TEXT`]() will be emitted
+-- shortly after this event.
+-- The buffer **must not** be modified during this event.
+-- @field BUFFER_BEFORE_REPLACE_TEXT
+
+---
+-- Emitted right before switching to another buffer.
+-- The buffer being switched from is `buffer`.
+-- Emitted by [`view.goto_buffer()`]().
+-- @field BUFFER_BEFORE_SWITCH
+
+---
+-- Emitted after replacing the contents of the current buffer.
+-- Note that it is not guaranteed that [`events.BUFFER_BEFORE_REPLACE_TEXT`]() was emitted
+-- previously.
+-- The buffer **must not** be modified during this event.
+-- @field BUFFER_AFTER_REPLACE_TEXT
+
+---
+-- Emitted after deleting a buffer.
+-- Emitted by [`buffer.delete()`]().
+-- Arguments:
 --
 --   * _`buffer`_: Simple representation of the deleted buffer. Buffer operations cannot be
 --     performed on it, but fields like `filename` can be read.
--- @field BUFFER_NEW (string)
---   Emitted after creating a new buffer.
---   The new buffer is `buffer`.
---   Emitted on startup and by [`buffer.new()`]().
--- @field CALL_TIP_CLICK (string)
---   Emitted when clicking on a calltip.
---   Arguments:
+-- @field BUFFER_DELETED
+
+---
+-- Emitted after creating a new buffer.
+-- The new buffer is `buffer`.
+-- Emitted on startup and by [`buffer.new()`]().
+-- @field BUFFER_NEW
+
+---
+-- Emitted when clicking on a calltip.
+-- Arguments:
 --
 --   * _`position`_: `1` if the up arrow was clicked, 2 if the down arrow was clicked, and
 --     0 otherwise.
--- @field CHAR_ADDED (string)
---   Emitted after the user types a text character into the buffer.
---   Arguments:
+-- @field CALL_TIP_CLICK
+
+---
+-- Emitted after the user types a text character into the buffer.
+-- Arguments:
 --
 --   * _`code`_: The text character's character code.
--- @field COMMAND_TEXT_CHANGED (string)
---   Emitted when the text in the command entry changes.
---   `ui.command_entry:get_text()` returns the current text.
--- @field DOUBLE_CLICK (string)
---   Emitted after double-clicking the mouse button.
---   Arguments:
+-- @field CHAR_ADDED
+
+---
+-- Emitted when the text in the command entry changes.
+-- `ui.command_entry:get_text()` returns the current text.
+-- @field COMMAND_TEXT_CHANGED
+
+---
+-- Emitted after double-clicking the mouse button.
+-- Arguments:
 --
 --   * _`position`_: The position double-clicked.
 --   * _`line`_: The line number of the position double-clicked.
@@ -109,48 +138,64 @@ local M = {}
 --     key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
 --     `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
 --     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
--- @field CSI (string)
---   Emitted when the terminal version receives an unrecognized CSI sequence.
---   Arguments:
+-- @field DOUBLE_CLICK
+
+---
+-- Emitted when the terminal version receives an unrecognized CSI sequence.
+-- Arguments:
 --
 --   * _`cmd`_: The 24-bit CSI command value. The lowest byte contains the command byte. The
 --     second lowest byte contains the leading byte, if any (e.g. '?'). The third lowest byte
 --     contains the intermediate byte, if any (e.g. '$').
 --   * _`args`_: Table of numeric arguments of the CSI sequence.
--- @field DWELL_END (string)
---   Emitted after `DWELL_START` when the user moves the mouse, presses a key, or scrolls the view.
---   Arguments:
+-- @field CSI
+
+---
+-- Emitted after `DWELL_START` when the user moves the mouse, presses a key, or scrolls the view.
+-- Arguments:
 --
 --   * _`position`_: The position closest to *x* and *y*.
 --   * _`x`_: The x-coordinate of the mouse in the view.
 --   * _`y`_: The y-coordinate of the mouse in the view.
--- @field DWELL_START (string)
---   Emitted when the mouse is stationary for [`view.mouse_dwell_time`]() milliseconds.
---   Arguments:
+-- @field DWELL_END
+
+---
+-- Emitted when the mouse is stationary for [`view.mouse_dwell_time`]() milliseconds.
+-- Arguments:
 --
 --   * _`position`_: The position closest to *x* and *y*.
 --   * _`x`_: The x-coordinate of the mouse in the view.
 --   * _`y`_: The y-coordinate of the mouse in the view.
--- @field ERROR (string)
---   Emitted when an error occurs.
---   Arguments:
+-- @field DWELL_START
+
+---
+-- Emitted when an error occurs.
+-- Arguments:
 --
 --   * _`text`_: The error message text.
--- @field FIND (string)
---   Emitted to find text via the Find & Replace Pane.
---   Arguments:
+-- @field ERROR
+
+---
+-- Emitted to find text via the Find & Replace Pane.
+-- Arguments:
 --
 --   * _`text`_: The text to search for.
 --   * _`next`_: Whether or not to search forward.
--- @field FIND_TEXT_CHANGED (string)
---   Emitted when the text in the "Find" field of the Find & Replace Pane changes.
---   `ui.find.find_entry_text` contains the current text.
--- @field FOCUS (string)
---   Emitted when Textadept receives focus.
---   This event is never emitted when Textadept is running in the terminal.
--- @field INDICATOR_CLICK (string)
---   Emitted when clicking the mouse on text that has an indicator present.
---   Arguments:
+-- @field FIND
+
+---
+-- Emitted when the text in the "Find" field of the Find & Replace Pane changes.
+-- `ui.find.find_entry_text` contains the current text.
+-- @field FIND_TEXT_CHANGED
+
+---
+-- Emitted when Textadept receives focus.
+-- This event is never emitted when Textadept is running in the terminal.
+-- @field FOCUS
+
+---
+-- Emitted when clicking the mouse on text that has an indicator present.
+-- Arguments:
 --
 --   * _`position`_: The clicked text's position.
 --   * _`modifiers`_: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
@@ -158,9 +203,11 @@ local M = {}
 --     key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
 --     `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
 --     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
--- @field INDICATOR_RELEASE (string)
---   Emitted when releasing the mouse after clicking on text that has an indicator present.
---   Arguments:
+-- @field INDICATOR_CLICK
+
+---
+-- Emitted when releasing the mouse after clicking on text that has an indicator present.
+-- Arguments:
 --
 --   * _`position`_: The clicked text's position.
 --   * _`modifiers`_: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
@@ -168,18 +215,15 @@ local M = {}
 --     key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
 --     `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
 --     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
--- @field INITIALIZED (string)
---   Emitted after Textadept finishes initializing.
--- @field LEXER_LOADED (string)
---   Emitted after loading a language lexer.
---   This is useful for automatically loading language modules as source files are opened,
---   or setting up language-specific editing features for source files.
---   Arguments:
---
---   * _`name`_: The language lexer's name.
--- @field MARGIN_CLICK (string)
---   Emitted when clicking the mouse inside a sensitive margin.
---   Arguments:
+-- @field INDICATOR_RELEASE
+
+---
+-- Emitted after Textadept finishes initializing.
+-- @field INITIALIZED
+
+---
+-- Emitted when clicking the mouse inside a sensitive margin.
+-- Arguments:
 --
 --   * _`margin`_: The margin number clicked.
 --   * _`position`_: The beginning position of the clicked margin's line.
@@ -188,17 +232,21 @@ local M = {}
 --     key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
 --     `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
 --     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
--- @field MENU_CLICKED (string)
---   Emitted after selecting a menu item.
---   Arguments:
+-- @field MARGIN_CLICK
+
+---
+-- Emitted after selecting a menu item.
+-- Arguments:
 --
 --   * _`menu_id`_: The numeric ID of the menu item, which was defined in [`ui.menu()`]().
--- @field MOUSE (string)
---   Emitted by the terminal version for an unhandled mouse event.
---   A handler should return `true` if it handled the event. Otherwise Textadept will try again.
---   (This side effect for a `false` or `nil` return is useful for sending the original mouse
---   event to a different view that a handler has switched to.)
---   Arguments:
+-- @field MENU_CLICKED
+
+---
+-- Emitted by the terminal version for an unhandled mouse event.
+-- A handler should return `true` if it handled the event. Otherwise Textadept will try again.
+-- (This side effect for a `false` or `nil` return is useful for sending the original mouse
+-- event to a different view that a handler has switched to.)
+-- Arguments:
 --
 --   * _`event`_: The mouse event: `view.MOUSE_PRESS`, `view.MOUSE_DRAG`, or `view.MOUSE_RELEASE`.
 --   * _`button`_: The mouse button number.
@@ -207,54 +255,74 @@ local M = {}
 --   * _`shift`_: The "Shift" modifier key is held down.
 --   * _`ctrl`_: The "Control" modifier key is held down.
 --   * _`alt`_: The "Alt"/"Option" modifier key is held down.
--- @field QUIT (string)
---   Emitted when quitting Textadept.
---   When connecting to this event, connect with an index of 1 if the handler needs to run
---   before Textadept closes all open buffers. If a handler returns `true`, Textadept does not
---   quit. It is not recommended to return `false` from a quit handler, as that may interfere
---   with Textadept's normal shutdown procedure.
---   Emitted by [`quit()`]().
--- @field REPLACE (string)
---   Emitted to replace selected (found) text.
---   Arguments:
+-- @field MOUSE
+
+---
+-- Emitted when quitting Textadept.
+-- When connecting to this event, connect with an index of 1 if the handler needs to run before
+-- Textadept closes all open buffers. If a handler returns `true`, Textadept does not quit. It is
+-- not recommended to return `false` from a quit handler, as that may interfere with Textadept's
+-- normal shutdown procedure.
+-- Emitted by [`quit()`]().
+-- @field QUIT
+
+---
+-- Emitted to replace selected (found) text.
+-- Arguments:
 --
 --   * _`text`_: The replacement text.
--- @field REPLACE_ALL (string)
---   Emitted to replace all occurrences of found text.
---   Arguments:
+-- @field REPLACE
+
+---
+-- Emitted to replace all occurrences of found text.
+-- Arguments:
 --
 --   * _`find_text`_: The text to search for.
 --   * _`repl_text`_: The replacement text.
--- @field RESET_AFTER (string)
---   Emitted after resetting Textadept's Lua state.
---   Emitted by [`reset()`]().
---   Arguments:
+-- @field REPLACE_ALL
+
+---
+-- Emitted after resetting Textadept's Lua state.
+-- Emitted by [`reset()`]().
+-- Arguments:
 --
 --   * _`persist`_: Table of data persisted by `events.RESET_BEFORE`. All handlers will have
 --     access to this same table.
--- @field RESET_BEFORE (string)
---   Emitted before resetting Textadept's Lua state.
---   Emitted by [`reset()`]().
---   Arguments:
+-- @field RESET_AFTER
+
+---
+-- Emitted before resetting Textadept's Lua state.
+-- Emitted by [`reset()`]().
+-- Arguments:
 --
 --   * _`persist`_: Table to store persistent data in for use by `events.RESET_AFTER`. All
 --     handlers will have access to this same table.
--- @field RESUME (string)
---   Emitted when resuming Textadept from a suspended state.
---   This event is only emitted by the terminal version.
--- @field SAVE_POINT_LEFT (string)
---   Emitted after leaving a save point.
--- @field SAVE_POINT_REACHED (string)
---   Emitted after reaching a save point.
--- @field SUSPEND (string)
---   Emitted prior to suspending Textadept.
---   This event is only emitted by the terminal version.
--- @field TAB_CLICKED (string)
---   Emitted when the user clicks on a buffer tab.
---   When connecting to this event, connect with an index of 1 if the handler needs to run
---   before Textadept switches between buffers.
---   Note that Textadept always displays a context menu on right-click.
---   Arguments:
+-- @field RESET_BEFORE
+
+---
+-- Emitted when resuming Textadept from a suspended state.
+-- This event is only emitted by the terminal version.
+-- @field RESUME
+
+---
+-- Emitted after leaving a save point.
+-- @field SAVE_POINT_LEFT
+
+---
+-- Emitted after reaching a save point.
+-- @field SAVE_POINT_REACHED
+
+---
+-- Emitted prior to suspending Textadept.
+-- This event is only emitted by the terminal version.
+-- @field SUSPEND
+
+---
+-- Emitted when the user clicks on a buffer tab.
+-- When connecting to this event, connect with an index of 1 if the handler needs to run before
+-- Textadept switches between buffers.
+-- Note that Textadept always displays a context menu on right-click.
+-- Arguments:
 --
 --   * _`index`_: The numeric index of the clicked tab.
 --   * _`button`_: The mouse button number that was clicked, either `1` (left button), `2`
@@ -264,20 +332,26 @@ local M = {}
 --     key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
 --     `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
 --     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
--- @field TAB_CLOSE_CLICKED (string)
---   Emitted when the user clicks a buffer tab's close button.
---   When connecting to this event, connect with an index of 1 if the handler needs to run
---   before Textadept closes the buffer.
---   This event is only emitted in the Qt GUI version.
---   Arguments:
+-- @field TAB_CLICKED
+
+---
+-- Emitted when the user clicks a buffer tab's close button.
+-- When connecting to this event, connect with an index of 1 if the handler needs to run before
+-- Textadept closes the buffer.
+-- This event is only emitted in the Qt GUI version.
+-- Arguments:
 --
 --   * _`index`_: The numeric index of the clicked tab.
--- @field UNFOCUS (string)
---   Emitted when Textadept loses focus.
---   This event is never emitted when Textadept is running in the terminal.
--- @field UPDATE_UI (string)
---   Emitted after the view is visually updated.
---   Arguments:
+-- @field TAB_CLOSE_CLICKED
+
+---
+-- Emitted when Textadept loses focus.
+-- This event is never emitted when Textadept is running in the terminal.
+-- @field UNFOCUS
+
+---
+-- Emitted after the view is visually updated.
+-- Arguments:
 --
 --   * _`updated`_: A bitmask of changes since the last update.
 --
@@ -286,42 +360,53 @@ local M = {}
 --     + `buffer.UPDATE_SELECTION`
 --       Buffer selection has changed (including caret movement).
 --     + `view.UPDATE_V_SCROLL`
---       Buffer has scrolled vertically.
+--       View has scrolled vertically.
 --     + `view.UPDATE_H_SCROLL`
---       Buffer has scrolled horizontally.
--- @field URI_DROPPED (string)
---   Emitted after dragging and dropping a URI into a view.
---   Arguments:
+--       View has scrolled horizontally.
+-- @field UPDATE_UI
+
+---
+-- Emitted after dragging and dropping a URI into a view.
+-- Arguments:
 --
 --   * _`text`_: The UTF-8-encoded URI dropped.
--- @field USER_LIST_SELECTION (string)
---   Emitted after selecting an item in a user list.
---   Arguments:
+-- @field URI_DROPPED
+
+---
+-- Emitted after selecting an item in a user list.
+-- Arguments:
 --
 --   * _`id`_: The *id* from [`buffer.user_list_show()`]().
 --   * _`text`_: The selection's text.
 --   * _`position`_: The position the list was displayed at.
--- @field VIEW_NEW (string)
---   Emitted after creating a new view.
---   The new view is `view`.
---   Emitted on startup and by [`view.split()`]().
--- @field VIEW_BEFORE_SWITCH (string)
---   Emitted right before switching to another view.
---   The view being switched from is `view`.
---   Emitted by [`ui.goto_view()`]().
--- @field VIEW_AFTER_SWITCH (string)
---   Emitted right after switching to another view.
---   The view being switched to is `view`.
---   Emitted by [`ui.goto_view()`]().
--- @field ZOOM (string)
---   Emitted after changing [`view.zoom`]().
---   Emitted by [`view.zoom_in()`]() and [`view.zoom_out()`]().
-module('events')]]
+-- @field USER_LIST_SELECTION
 
+---
+-- Emitted after creating a new view.
+-- The new view is `view`.
+-- Emitted on startup and by [`view.split()`]().
+-- @field VIEW_NEW
+
+---
+-- Emitted right before switching to another view.
+-- The view being switched from is `view`.
+-- Emitted by [`ui.goto_view()`]().
+-- @field VIEW_BEFORE_SWITCH
+
+---
+-- Emitted right after switching to another view.
+-- The view being switched to is `view`.
+-- Emitted by [`ui.goto_view()`]().
+-- @field VIEW_AFTER_SWITCH
+
+---
+-- Emitted after changing [`view.zoom`]().
+-- Emitted by [`view.zoom_in()`]() and [`view.zoom_out()`]().
+-- @field ZOOM
+
+---
 -- Map of event names to tables of handler functions.
 -- Handler tables are auto-created as needed.
--- @class table
--- @name handlers
 local handlers = setmetatable({}, {
   __index = function(t, k)
     t[k] = {}
@@ -335,10 +420,9 @@ local handlers = setmetatable({}, {
 -- and does not need to have been previously defined.
 -- @param event The string event name.
 -- @param f The Lua function to connect to *event*.
--- @param index Optional index to insert the handler into.
+-- @param[opt] index Optional index to insert the handler into.
 -- @usage events.connect('my_event', function(msg) ui.print(msg) end)
 -- @see disconnect
--- @name connect
 function M.connect(event, f, index)
   assert_type(event, 'string', 1)
   assert_type(f, 'function', 2)
@@ -352,7 +436,6 @@ end
 -- @param event The string event name.
 -- @param f The Lua function connected to *event*.
 -- @see connect
--- @name disconnect
 function M.disconnect(event, f)
   assert_type(f, 'function', 2)
   for i = 1, #handlers[assert_type(event, 'string', 1)] do
@@ -371,11 +454,10 @@ local error_emitted = false
 -- ceases to call subsequent handlers. This is useful for stopping the propagation of an event
 -- like a keypress after it has been handled, or for passing back values from handlers.
 -- @param event The string event name.
--- @param ... Arguments passed to the handler.
+-- @param[opt] ... Arguments passed to the handler.
 -- @return `nil` unless any any handler explicitly returned a non-`nil` value; otherwise returns
 --   that value
 -- @usage events.emit('my_event', 'my message')
--- @name emit
 function M.emit(event, ...)
   local event_handlers = handlers[assert_type(event, 'string', 1)]
   local i = 1

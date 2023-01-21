@@ -1,11 +1,9 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
---[[ This comment is for LuaDoc.
 ---
 -- Extends the `lfs` library to find files in directories and determine absolute file paths.
-module('lfs')]]
+-- @module lfs
 
--- LuaFormatter off
 ---
 -- The filter table containing common binary file extensions and version control directories
 -- to exclude when iterating over files and directories using `walk`.
@@ -13,8 +11,8 @@ module('lfs')]]
 -- so, tar, tgz, tif, tiff, xz, and zip.
 -- Directories excluded: .bzr, .git, .hg, .svn, _FOSSIL_, and node_modules.
 -- @see walk
--- @class table
--- @name default_filter
+lfs.default_filter = {} -- empty declaration to avoid LDoc processing
+-- LuaFormatter off
 lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!.exe','!.gif','!.gz','!.jar','!.jpeg','!.jpg','!.o','!.pdf','!.png','!.so','!.tar','!.tgz','!.tif','!.tiff','!.xz','!.zip',--[[Directories]]'!/.bzr','!/.git','!/.hg','!/.svn','!/_FOSSIL_','!/node_modules'}
 -- LuaFormatter on
 
@@ -69,15 +67,14 @@ end
 -- any path is initially considered. As a convenience, '/' also matches the Windows directory
 -- separator ('[/\\]' is not needed).
 -- @param dir The directory path to iterate over.
--- @param filter Optional filter for files and directories to include and exclude. The default
---   value is `lfs.default_filter`.
--- @param n Optional maximum number of directory levels to descend into. The default value is
---   `nil`, which indicates no limit.
--- @param include_dirs Optional flag indicating whether or not to yield directory names too.
+-- @param[opt] filter Optional filter for files and directories to include and exclude. The
+--   default value is `lfs.default_filter`.
+-- @param[opt] n Optional maximum number of directory levels to descend into. The default value
+--   is `nil`, which indicates no limit.
+-- @param[opt] include_dirs Optional flag indicating whether or not to yield directory names too.
 --   Directory names are passed with a trailing '/' or '\', depending on the current platform.
 --   The default value is `false`.
--- @see filter
--- @name walk
+-- @see default_filter
 function lfs.walk(dir, filter, n, include_dirs)
   dir = assert_type(dir, 'string', 1):match('^(..-)[/\\]?$')
   if not assert_type(filter, 'string/table/nil', 2) then filter = lfs.default_filter end
@@ -110,9 +107,8 @@ end
 -- *prefix* or `lfs.currentdir()` is prepended to a relative filename. The returned path is
 -- not guaranteed to exist.
 -- @param filename The relative or absolute path to a file.
--- @param prefix Optional prefix path prepended to a relative filename.
+-- @param[opt] prefix Optional prefix path prepended to a relative filename.
 -- @return string absolute path
--- @name abspath
 function lfs.abspath(filename, prefix)
   assert_type(filename, 'string', 1)
   assert_type(prefix, 'string/nil', 2)

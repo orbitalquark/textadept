@@ -1,8 +1,9 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the ui.dialogs table.
 
---- Provides a set of interactive dialog prompts for user input.
-module('ui.dialogs')
+---
+-- Provides a set of interactive dialog prompts for user input.
+-- @module ui.dialogs
 
 ---
 -- Prompts the user with a generic message box dialog defined by dialog options table *options*,
@@ -22,7 +23,7 @@ module('ui.dialogs')
 -- @usage ui.dialogs.message{title = 'EOL Mode', text = 'Which EOL?',
 --   icon = 'dialog-question', button1 = 'CRLF', button2 = 'CR',
 --   button3 = 'LF'}
-function message(options) end
+-- @function message
 
 ---
 -- Prompts the user with an input dialog defined by dialog options table *options*, returning
@@ -38,7 +39,7 @@ function message(options) end
 --   * `return_button`: Also return the index of the selected button. The default value is `false`.
 -- @return input text[, selected button]
 -- @usage ui.dialogs.input{title = 'Go to line number:', text = '1'}
-function input(options) end
+-- @function input
 
 ---
 -- Prompts the user with a file open dialog defined by dialog options table *options*, returning
@@ -55,7 +56,7 @@ function input(options) end
 --   * `only_dirs`: Only allow the user to select directories. The default value is `false`.
 -- @return filename, list of filenames, or nil
 -- @usage ui.dialogs.open{title = 'Open File', dir = _HOME, multiple = true}
-function open(options) end
+-- @function open
 
 ---
 -- Prompts the user with a file save dialog defined by dialog options table *options*, returning
@@ -67,7 +68,7 @@ function open(options) end
 --   * `dir`: The initial filesystem directory to show.
 --   * `file`: The initially chosen filename. This option requires `dir` to be set.
 -- @return filename or nil
-function save(options) end
+-- @function save
 
 ---
 -- Displays a progress dialog, defined by dialog options table *options*, returning true if
@@ -83,7 +84,7 @@ function save(options) end
 -- @return nil if all work completed, or true if work was stopped
 -- @usage ui.dialogs.progress{
 --   work = function() if work() then return percent, status else return nil end end}
-function progress(options) end
+-- @function progress
 
 ---
 -- Prompts the user with a list item selection dialog defined by dialog options table *options*,
@@ -110,4 +111,4 @@ function progress(options) end
 --   * `return_button`: Also return the index of the selected button. The default value is `false`.
 -- @return selected item or list of selected items[, selected button]
 -- @usage ui.dialogs.list{title = 'Title', columns = {'Foo', 'Bar'}, items = {'a', 'b', 'c', 'd'}}
-function list(options) end
+-- @function list

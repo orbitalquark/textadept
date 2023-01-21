@@ -2,12 +2,12 @@
 # Copyright 2022-2023 Mitchell. See LICENSE.
 
 # Generates Textadept's documentation.
-# Requires LuaDoc and Discount.
+# Requires LDoc and Discount.
 
-# Generate API documentation using LuaDoc.
-cd ../scripts
-lua_src="../core ../modules/ansi_c ../modules/lua ../modules/textadept ../lexers/lexer.lua"
-luadoc --doclet markdowndoc $lua_src > ../docs/api.md
+# Generate API documentation using LDoc.
+ldoc -c ../.config.ld --filter scripts.markdowndoc.ldoc . > ../docs/api.md
+line=`grep -m1 -n '#' ../docs/api.md | cut -d: -f1` # strip any leading LDoc stdout
+sed -i -e "1,$(( $line - 1 ))d" ../docs/api.md
 
 # Generate HTML from Markdown (docs/*.html from docs/*.md)
 cd ../docs
@@ -16,6 +16,7 @@ for file in `ls *.md`; do
 done
 
 # Generate Lua tags and api documentation files using LuaDoc.
+lua_src="../core ../modules/textadept ../lexers/lexer.lua"
 cd ../modules
 luadoc -d lua --doclet lua.tadoc $lua_src --ta-home=`realpath ..`
 mv lua/tags lua/ta_tags

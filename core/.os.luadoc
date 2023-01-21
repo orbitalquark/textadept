@@ -1,8 +1,9 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the os table.
 
---- Extends Lua's `os` library to provide process spawning capabilities.
-module('os')
+---
+-- Extends Lua's `os` library to provide process spawning capabilities.
+-- @module os
 
 ---
 -- Spawns an interactive child process *cmd* in a separate thread, returning a handle to that
@@ -11,27 +12,29 @@ module('os')
 -- At the moment, only the Windows terminal version spawns processes in the same thread.
 -- @param cmd A command line string that contains the program's name followed by arguments to
 --   pass to it. `PATH` is searched for program names.
--- @param cwd Optional current working directory (cwd) for the child process. When omitted,
+-- @param[opt] cwd Optional current working directory (cwd) for the child process. When omitted,
 --   the parent's cwd is used.
--- @param env Optional map of environment variables for the child process. When omitted,
+-- @param[opt] env Optional map of environment variables for the child process. When omitted,
 --   Textadept's environment is used.
--- @param stdout_cb Optional Lua function that accepts a string parameter for a block of standard
---   output read from the child. Stdout is read asynchronously in 1KB or 0.5KB blocks (depending
---   on the platform), or however much data is available at the time.
+-- @param[opt] stdout_cb Optional Lua function that accepts a string parameter for a block of
+--   standard output read from the child. Stdout is read asynchronously in 1KB or 0.5KB blocks
+--   (depending on the platform), or however much data is available at the time.
 --   At the moment, only the Windows terminal version sends all output, whether it be stdout or
 --   stderr, to this callback after the process finishes.
--- @param stderr_cb Optional Lua function that accepts a string parameter for a block of
+-- @param[opt] stderr_cb Optional Lua function that accepts a string parameter for a block of
 --   standard error read from the child. Stderr is read asynchronously in 1KB or 0.5kB blocks
 --   (depending on the platform), or however much data is available at the time.
--- @param exit_cb Optional Lua function that is called when the child process finishes. The
+-- @param[opt] exit_cb Optional Lua function that is called when the child process finishes. The
 --   child's exit status is passed.
 -- @return proc or nil plus an error message on failure
 -- @usage os.spawn('lua ' .. buffer.filename, print)
 -- @usage proc = os.spawn('lua -e "print(io.read())"', print)
 --   proc:write('foo\n')
--- @class function
--- @name os.spawn
-local spawn
+-- @function spawn
+
+---
+-- A spawned process.
+-- @type spawn_proc
 
 ---
 -- Returns the status of process *spawn_proc*, which is either "running" or "terminated".
@@ -50,7 +53,7 @@ function spawn_proc:wait() end
 -- an error occurs while reading, returns `nil`, an error code, and an error message.
 -- Ensure any read operations read all stdout available, as the stdout callback function passed
 -- to `os.spawn()` will not be called until the stdout buffer is clear.
--- @param arg Optional argument similar to those in Lua's `io.read()`. The default value is
+-- @param[opt] arg Optional argument similar to those in Lua's `io.read()`. The default value is
 --   "l", which reads a line.
 -- @return string of bytes read
 function spawn_proc:read(arg) end
@@ -71,6 +74,6 @@ function spawn_proc:close() end
 
 ---
 -- Kills running process *spawn_proc*, or sends it Unix signal *signal*.
--- @param signal Optional Unix signal to send to *spawn_proc*. The default value is 9 (`SIGKILL`),
---   which kills the process.
+-- @param[opt] signal Optional Unix signal to send to *spawn_proc*. The default value is 9
+--   (`SIGKILL`), which kills the process.
 function spawn_proc:kill() end

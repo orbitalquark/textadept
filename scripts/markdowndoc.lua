@@ -1,17 +1,18 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
--- Markdown doclet for Luadoc.
+-- Markdown filter for LDoc and doclet for Luadoc.
+-- @usage ldoc --filter markdowndoc.ldoc [ldoc opts] > api.md
 -- @usage luadoc --doclet path/to/markdowndoc [file(s)] > api.md
 local M = {}
 
 local TOC = '1. [%s](%s)\n'
 local MODULE = '<a id="%s"></a>\n## The `%s` Module\n'
 local FIELD = '<a id="%s"></a>\n#### `%s` %s\n\n'
-local FUNCTION = '<a id="%s"></a>\n#### `%s`(*%s*)\n\n'
+local FUNCTION = '<a id="%s"></a>\n#### `%s`(%s)\n\n'
 local FUNCTION_NO_PARAMS = '<a id="%s"></a>\n#### `%s`()\n\n'
 local DESCRIPTION = '%s\n\n'
 local LIST_TITLE = '%s:\n\n'
-local PARAM = '* *`%s`*: %s\n'
+local PARAM = '* *%s*: %s\n'
 local USAGE = '* `%s`\n'
 local RETURN = '* %s\n'
 local SEE = '* [`%s`](#%s)\n'
@@ -67,8 +68,101 @@ end
 local function write_hashmap(f, fmt, hashmap)
   if not hashmap or #hashmap == 0 then return end
   f:write(string.format(LIST_TITLE, titles[fmt]))
-  for _, name in ipairs(hashmap) do f:write(string.format(fmt, name, hashmap[name] or '')) end
+  for _, name in ipairs(hashmap) do
+    local description = hashmap.map and hashmap.map[name] or hashmap[name] or ''
+    if fmt == PARAM then description = description:gsub('^%[opt%] ', '') end
+    f:write(string.format(fmt, name, description))
+  end
   f:write('\n')
+end
+
+-- Called by LDoc to process a doc object.
+-- @param doc The LDoc doc object.
+function M.ldoc(doc)
+  local f = io.stdout
+  f:write('## Textadept API Documentation\n\n')
+
+  table.sort(doc, function(a, b) return a.name < b.name end)
+
+  -- Create the table of contents.
+  for _, module in ipairs(doc) do f:write(string.format(TOC, module.name, '#' .. module.name)) end
+  f:write('\n')
+
+  -- Loop over modules, writing the Markdown document to stdout.
+  for _, module in ipairs(doc) do
+    local name = module.name
+
+    -- Write the header and description.
+    f:write(string.format(MODULE, name, name))
+    f:write('---\n\n')
+    write_description(f, module.summary .. module.description, name)
+
+    -- Write fields.
+    local fields = {}
+    for _, item in ipairs(module.items) do
+      if item.type == 'field' then fields[#fields + 1] = item end
+    end
+    table.sort(fields, function(a, b) return a.name < b.name end)
+    if #fields > 0 then
+      f:write('### Fields defined by `', name, '`\n\n')
+      for _, field in ipairs(fields) do
+        if not field.name:find('%.') and name ~= '_G' then
+          field.name = name .. '.' .. field.name -- absolute name
+        elseif field.name:find('^_G%.[^.]+%.[^.]+') then
+          field.name = field.name:gsub('^_G%.', '') -- strip _G required for LDoc
+        end
+        f:write(string.format(FIELD, field.name:gsub('^_G%.', ''), field.name, ''))
+        write_description(f, field.summary .. field.description)
+      end
+      f:write('\n')
+    end
+
+    -- Write functions.
+    local funcs = {}
+    for _, item in ipairs(module.items) do
+      if item.type == 'function' then funcs[#funcs + 1] = item end
+    end
+    table.sort(funcs, function(a, b) return a.name < b.name end)
+    if #funcs > 0 then
+      f:write('### Functions defined by `', name, '`\n\n')
+      for _, func in ipairs(funcs) do
+        if not func.name:find('[%.:]') and name ~= '_G' then
+          func.name = name .. '.' .. func.name -- absolute name
+        end
+        f:write(string.format(FUNCTION, func.name:gsub(':', '.'), func.name,
+          func.args:sub(2, -2):gsub('[%w_]+', '*%0*')))
+        write_description(f, func.summary .. func.description)
+        write_hashmap(f, PARAM, func.params)
+        write_list(f, USAGE, func.usage)
+        write_list(f, RETURN, func.ret)
+        write_list(f, SEE, func.tags.see, name)
+      end
+      f:write('\n')
+    end
+
+    -- Write tables.
+    local tables = {}
+    for _, item in ipairs(module.items) do
+      if item.type == 'table' then tables[#tables + 1] = item end
+    end
+    table.sort(tables, function(a, b) return a.name < b.name end)
+    if #tables > 0 then
+      f:write('### Tables defined by `', name, '`\n\n')
+      for _, tbl in ipairs(tables) do
+        if not tbl.name:find('%.') and (name ~= '_G' or tbl.name == 'buffer' or tbl.name == 'view') then
+          tbl.name = name .. '.' .. tbl.name -- absolute name
+        elseif tbl.name ~= '_G.keys' and tbl.name ~= '_G.snippets' then
+          tbl.name = tbl.name:gsub('^_G%.', '') -- strip _G required for Luadoc
+        end
+        f:write(string.format(TABLE, tbl.name:gsub('^_G%.', ''), tbl.name))
+        write_description(f, tbl.summary .. tbl.description)
+        write_hashmap(f, TFIELD, tbl.params)
+        write_list(f, USAGE, tbl.usage)
+        write_list(f, SEE, tbl.tags.see, name)
+      end
+    end
+    f:write('---\n')
+  end
 end
 
 -- Called by LuaDoc to process a doc object.

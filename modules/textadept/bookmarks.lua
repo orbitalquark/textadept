@@ -1,19 +1,14 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local M = {}
-
---[[ This comment is for LuaDoc.
 ---
 -- Bookmarks for Textadept.
--- @field MARK_BOOKMARK (number)
---   The bookmark mark number.
-module('textadept.bookmarks')]]
+-- @module textadept.bookmarks
+local M = {}
 
+--- The bookmark mark number.
 M.MARK_BOOKMARK = _SCINTILLA.next_marker_number()
 
----
--- Toggles a bookmark on the current line.
--- @name toggle
+--- Toggles a bookmark on the current line.
 function M.toggle()
   local line = buffer:line_from_position(buffer.current_pos)
   local has_mark = buffer:marker_get(line) & 1 << M.MARK_BOOKMARK - 1 > 0
@@ -21,12 +16,10 @@ function M.toggle()
   f(buffer, line, M.MARK_BOOKMARK)
 end
 
----
--- Clears all bookmarks in the current buffer.
--- @name clear
+--- Clears all bookmarks in the current buffer.
 function M.clear() buffer:marker_delete_all(M.MARK_BOOKMARK) end
 
--- Returns an iterator for all bookmarks in the given buffer.
+--- Returns an iterator for all bookmarks in the given buffer.
 local function bookmarks(buffer)
   return function(buffer, line)
     line = buffer:marker_next(line + 1, 1 << M.MARK_BOOKMARK - 1)
@@ -39,10 +32,9 @@ end
 -- *next* is given.
 -- If *next* is `true` or `false`, moves the caret to the beginning of the next or previously
 -- bookmarked line, respectively.
--- @param next Optional flag indicating whether to go to the next or previous bookmarked
+-- @param[opt] next Optional flag indicating whether to go to the next or previous bookmarked
 --   line relative to the current line. The default value is `nil`, prompting the user for a
 --   bookmarked line to go to.
--- @name goto_mark
 function M.goto_mark(next)
   if next ~= nil then
     local f = next and buffer.marker_next or buffer.marker_previous

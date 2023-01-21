@@ -13,16 +13,26 @@
 -- also exists in [`buffer`](), even if undocumented.
 -- Any view fields set on startup (e.g. in *~/.textadept/init.lua*) will be the default,
 -- initial values for all views.
--- @field additional_carets_blink (bool)
---   Allow additional carets to blink.
---   The default value is `true`.
--- @field additional_carets_visible (bool)
---   Display additional carets.
---   The default value is `true`.
--- @field all_lines_visible (bool, Read-only)
---   Whether or not all lines are visible.
--- @field annotation_visible (number)
---   The annotation visibility mode.
+-- @module view
+
+--- @type view
+
+---
+-- Allow additional carets to blink.
+-- The default value is `true`.
+-- @field additional_carets_blink
+
+---
+-- Display additional carets.
+-- The default value is `true`.
+-- @field additional_carets_visible
+
+---
+-- Whether or not all lines are visible. (Read-only)
+-- @field all_lines_visible
+
+---
+-- The annotation visibility mode.
 --
 --   * `view.ANNOTATION_HIDDEN`
 --     Annotations are invisible.
@@ -33,36 +43,70 @@
 --   * `view.ANNOTATION_INDENTED`
 --     Indent non-decorated annotations to match the annotated text.
 --
---   The default value is `view.ANNOTATION_HIDDEN`.
--- @field auto_c_max_height (number)
---   The maximum number of items per page to show in autocompletion and user lists.
---   The default value is `5`.
--- @field auto_c_max_width (number)
---   The maximum number of characters per item to show in autocompletion and user lists.
---   The default value is `0`, which automatically sizes the width to fit the longest item.
--- @field call_tip_fore_hlt (number, Write-only)
---   A call tip's highlighted text foreground color, in "0xBBGGRR" format.
--- @field call_tip_pos_start (number, Write-only)
---   The position at which backspacing beyond it hides a visible call tip.
--- @field call_tip_position (boolean)
---   Display a call tip above the current line instead of below it.
---   The default value is `false`.
--- @field call_tip_use_style (number)
---   The pixel width of tab characters in call tips.
---   When non-zero, also enables the use of style number `view.STYLE_CALLTIP` instead of
---   `view.STYLE_DEFAULT` for call tip styles.
---   The default value is `0`.
--- @field caret_line_frame (number)
---   The caret line's frame width in pixels.
---   When non-zero, the line that contains the caret is framed instead of colored in. The
---   `view.caret_line_back` and `view.caret_line_back_alpha` properties apply to the frame.
---   The default value is `0`.
--- @field caret_line_highlight_subline (boolean)
---   Color the background of the subline that contains the caret a different color, rather than
---   the whole line.
---   The defalt value is `false`.
--- @field caret_line_layer (number)
---   The caret line layer mode.
+-- The default value is `view.ANNOTATION_HIDDEN`.
+-- @field annotation_visible
+
+---
+-- Indent annotations to match the annotated text and outline them with a box.
+-- @field ANNOTATION_BOXED
+
+---
+-- Annotations are invisible.
+-- @field ANNOTATION_HIDDEN
+
+---
+-- Draw annotations left-justified with no decoration.
+-- @field ANNOTATION_STANDARD
+
+---
+-- Indent non-decorated annotations to match the annotated text.
+-- @field ANNOTATION_INDENTED
+
+---
+-- The maximum number of items per page to show in autocompletion and user lists.
+-- The default value is `5`.
+-- @field auto_c_max_height
+
+---
+-- The maximum number of characters per item to show in autocompletion and user lists.
+-- The default value is `0`, which automatically sizes the width to fit the longest item.
+-- @field auto_c_max_width
+
+---
+-- A call tip's highlighted text foreground color, in "0xBBGGRR" format. (Write-only)
+-- @field call_tip_fore_hlt
+
+---
+-- The position at which backspacing beyond it hides a visible call tip. (Write-only)
+-- @field call_tip_pos_start
+
+---
+-- Display a call tip above the current line instead of below it.
+-- The default value is `false`.
+-- @field call_tip_position
+
+---
+-- The pixel width of tab characters in call tips.
+-- When non-zero, also enables the use of style number `view.STYLE_CALLTIP` instead of
+-- `view.STYLE_DEFAULT` for call tip styles.
+-- The default value is `0`.
+-- @field call_tip_use_style
+
+---
+-- The caret line's frame width in pixels.
+-- When non-zero, the line that contains the caret is framed instead of colored in. The
+-- `view.caret_line_back` and `view.caret_line_back_alpha` properties apply to the frame.
+-- The default value is `0`.
+-- @field caret_line_frame
+
+---
+-- Color the background of the subline that contains the caret a different color, rather than
+-- the whole line.
+-- The defalt value is `false`.
+-- @field caret_line_highlight_subline
+
+---
+-- The caret line layer mode.
 --
 --   * `view.LAYER_BASE`
 --     Draw the caret line opaquely on the background.
@@ -71,19 +115,39 @@
 --   * `view.LAYER_OVER_TEXT`
 --     Draw the caret line translucently over text.
 --
---   The default value is `view.LAYER_BASE`.
--- @field caret_line_visible (bool)
---   Color the background of the line that contains the caret a different color.
---   The default value is `false`.
--- @field caret_line_visible_always (bool)
---   Always show the caret line, even when the view is not in focus.
---   The default value is `false`, showing the line only when the view is in focus.
--- @field caret_period (number)
---   The time between caret blinks in milliseconds.
---   A value of `0` stops blinking.
---   The default value is `500`.
--- @field caret_style (number)
---   The caret's visual style.
+-- The default value is `view.LAYER_BASE`.
+-- @field caret_line_layer
+
+---
+-- Draw opaquely on the background.
+-- @field LAYER_BASE
+
+---
+-- Draw translucently under text.
+-- @field LAYER_UNDER_TEXT
+
+---
+-- Draw translucently over text.
+-- @field LAYER_OVER_TEXT
+
+---
+-- Color the background of the line that contains the caret a different color.
+-- The default value is `false`.
+-- @field caret_line_visible
+
+---
+-- Always show the caret line, even when the view is not in focus.
+-- The default value is `false`, showing the line only when the view is in focus.
+-- @field caret_line_visible_always
+
+---
+-- The time between caret blinks in milliseconds.
+-- A value of `0` stops blinking.
+-- The default value is `500`.
+-- @field caret_period
+
+---
+-- The caret's visual style.
 --
 --   * `view.CARETSTYLE_INVISIBLE`
 --     No caret.
@@ -92,15 +156,31 @@
 --   * `view.CARETSTYLE_BLOCK`
 --     A block caret.
 --
---   Any block setting may be combined with `view.CARETSTYLE_BLOCK_AFTER` via bitwise OR (`|`)
---   in order to draw the caret after the end of a selection, as opposed to just inside it.
+-- Any block setting may be combined with `view.CARETSTYLE_BLOCK_AFTER` via bitwise OR (`|`)
+-- in order to draw the caret after the end of a selection, as opposed to just inside it.
 --
---   The default value is `view.CARETSTYLE_LINE`.
--- @field caret_width (number)
---   The line caret's pixel width in insert mode, between `0` and `20`.
---   The default value is `1`.
--- @field cursor (number)
---   The display cursor type.
+-- The default value is `view.CARETSTYLE_LINE`.
+-- @field caret_style
+
+---
+-- A block caret.
+-- @field CARETSTYLE_BLOCK
+
+---
+-- No caret.
+-- @field CARETSTYLE_INVISIBLE
+
+---
+-- A line caret.
+-- @field CARETSTYLE_LINE
+
+---
+-- The line caret's pixel width in insert mode, between `0` and `20`.
+-- The default value is `1`.
+-- @field caret_width
+
+---
+-- The display cursor type.
 --
 --   * `view.CURSORNORMAL`
 --     The text insert cursor.
@@ -111,14 +191,36 @@
 --   * `view.CURSORREVERSEARROW`
 --     The reversed arrow cursor.
 --
---   The default value is `view.CURSORNORMAL`.
--- @field edge_color (number)
---   The color, in "0xBBGGRR" format, of the single edge or background for long lines according
---   to `view.edge_mode`.
--- @field edge_column (number)
---   The column number to mark long lines at.
--- @field edge_mode (number)
---   The long line mark mode.
+-- The default value is `view.CURSORNORMAL`.
+-- @field cursor
+
+---
+-- The arrow cursor.
+-- @field CURSORARROW
+
+---
+-- The text insert cursor.
+-- @field CURSORNORMAL
+
+---
+-- The reversed arrow cursor.
+-- @field CURSORREVERSEARROW
+
+---
+-- The wait cursor.
+-- @field CURSORWAIT
+
+---
+-- The color, in "0xBBGGRR" format, of the single edge or background for long lines according to
+-- `view.edge_mode`.
+-- @field edge_color
+
+---
+-- The column number to mark long lines at.
+-- @field edge_column
+
+---
+-- The long line mark mode.
 --
 --   * `view.EDGE_NONE`
 --     Long lines are not marked.
@@ -131,17 +233,42 @@
 --   * `view.EDGE_MULTILINE`
 --     Draw vertical lines whose colors and columns are defined by calls to
 --     [`view:multi_edge_add_line()`]().
--- @field element_allows_translucent (table)
---   Table of flags for UI element identifiers that indicate whether or not an element supports
---   translucent colors.
---   See [`view.element_color`]() for element identifiers.
--- @field element_base_color (table, read-only)
---   Table of default colors on "0xAABBGGRR" format for UI element identifiers.
---   If the alpha byte is omitted, it is assumed to be `0xFF` (opaque).
---   See [`view.element_color`]() for element identifiers.
--- @field element_color (table)
---   Table of colors in "0xAABBGGRR" format for UI element identifiers.
---   If the alpha byte is omitted, it is assumed to be `0xFF` (opaque).
+-- @field edge_mode
+
+---
+-- Change the background color of text after column [`view.edge_column`]() to
+-- [`view.edge_color`]().
+-- @field EDGE_BACKGROUND
+
+---
+-- Draw a single vertical line whose color is [`view.edge_color`]() at column
+-- [`view.edge_column`]().
+-- @field EDGE_LINE
+
+---
+-- Draw vertical lines whose colors and columns are defined by calls to
+-- [`view:multi_edge_add_line()`]().
+-- @field EDGE_MULTILINE
+
+---
+-- Long lines are not marked.
+-- @field EDGE_NONE
+
+---
+-- Map of flags for UI element identifiers that indicate whether or not an element supports
+-- translucent colors.
+-- @see element_color
+-- @table element_allows_translucent
+
+---
+-- Map of default colors on "0xAABBGGRR" format for UI element identifiers. (Read-only)
+-- If the alpha byte is omitted, it is assumed to be `0xFF` (opaque).
+-- @see element_color
+-- @table element_base_color
+
+---
+-- Map of colors in "0xAABBGGRR" format for UI element identifiers.
+-- If the alpha byte is omitted, it is assumed to be `0xFF` (opaque).
 --
 --   * `view.ELEMENT_SELECTION_TEXT`
 --     The main selection's text color.
@@ -175,15 +302,83 @@
 --     The color of fold lines.
 --   * `view.ELEMENT_HIDDEN_LINE`
 --     The color of lines shown in place of hidden lines.
--- @field element_is_set (table)
---   Table of flags for UI element identifiers that indicate whether or not a color has been
---   manually set.
---   See [`view.element_color`]() for element identifiers.
--- @field end_at_last_line (bool)
---   Disable scrolling past the last line.
---   The default value is `true`.
--- @field eol_annotation_visible (number)
---   The EOL annotation visibility mode.
+-- @table element_color
+
+---
+-- The main selection's text color.
+-- @field ELEMENT_SELECTION_TEXT
+
+---
+-- The main selection's background color.
+-- @field ELEMENT_SELECTION_BACK
+
+---
+-- The text color of additional selections.
+-- @field ELEMENT_SELECTION_ADDITIONAL_TEXT
+
+---
+-- The background color of additional selections.
+-- @field ELEMENT_SELECTION_ADDITIONAL_BACK
+
+---
+-- The text color of selections when another window contains the primary selection.
+-- This is only available on Linux.
+-- @field ELEMENT_SELECTION_SECONDARY_TEXT
+
+---
+-- The background color of selections when another window contains the primary selection.
+-- This is only available on Linux.
+-- @field ELEMENT_SELECTION_SECONDARY_BACK
+
+---
+-- The text color of selections when another window has focus.
+-- @field ELEMENT_SELECTION_INACTIVE_TEXT
+
+---
+-- The background color of selections when another window has focus.
+-- @field ELEMENT_SELECTION_INACTIVE_BACK
+
+---
+-- The main selection's caret color.
+-- @field ELEMENT_CARET
+
+---
+-- The caret color of additional selections.
+-- @field ELEMENT_CARET_ADDITIONAL
+
+---
+-- The background color of the line that contains the caret.
+-- @field ELEMENT_CARET_LINE_BACK
+
+---
+-- The color of visible whitespace.
+-- @field ELEMENT_WHITE_SPACE
+
+---
+-- The background color of visible whitespace.
+-- @field ELEMENT_WHITE_SPACE_BACK
+
+---
+-- The color of fold lines.
+-- @field ELEMENT_FOLD_LINE
+
+---
+-- The color of lines shown in place of hidden lines.
+-- @field ELEMENT_HIDDEN_LINE
+
+---
+-- Map of flags for UI element identifiers that indicate whether or not a color has been
+-- manually set.
+-- @see element_color
+-- @table element_is_set
+
+---
+-- Disable scrolling past the last line.
+-- The default value is `true`.
+-- @field end_at_last_line
+
+---
+-- The EOL annotation visibility mode.
 --
 --   * `view.EOLANNOTATION_HIDDEN`
 --     EOL Annotations are invisible.
@@ -210,18 +405,39 @@
 --   * `view.EOLANNOTATION_ANGLES`
 --     Draw EOL annotations outline with angled ends.
 --
---   All annotations are drawn with the same shape. The default value is
---   `view.EOLANNOTATION_HIDDEN`.
--- @field extra_ascent (number)
---   The amount of pixel padding above lines.
---   The default value is `0`.
--- @field extra_descent (number)
---   The amount of pixel padding below lines.
---   The default is `0`.
--- @field first_visible_line (number)
---   The line number of the line at the top of the view.
--- @field fold_display_text_style (number)
---   The fold display text mode.
+-- All annotations are drawn with the same shape. The default value is
+-- `view.EOLANNOTATION_HIDDEN`.
+-- @field eol_annotation_visible
+
+--- @field EOLANNOTATION_HIDDEN
+--- @field EOLANNOTATION_STANDARD
+--- @field EOLANNOTATION_BOXED
+--- @field EOLANNOTATION_STADIUM
+--- @field EOLANNOTATION_FLAT_CIRCLE
+--- @field EOLANNOTATION_ANGLE_CIRCLE
+--- @field EOLANNOTATION_CIRCLE_FLAT
+--- @field EOLANNOTATION_FLATS
+--- @field EOLANNOTATION_ANGLE_FLAT
+--- @field EOLANNOTATION_CIRCLE_ANGLE
+--- @field EOLANNOTATION_FLAT_ANGLE
+--- @field EOLANNOTATION_ANGLES
+
+---
+-- The amount of pixel padding above lines.
+-- The default value is `0`.
+-- @field extra_ascent
+
+---
+-- The amount of pixel padding below lines.
+-- The default is `0`.
+-- @field extra_descent
+
+---
+-- The line number of the line at the top of the view.
+-- @field first_visible_line
+
+---
+-- The fold display text mode.
 --
 --   * `view.FOLDDISPLAYTEXT_HIDDEN`
 --     Fold display text is not shown.
@@ -230,14 +446,30 @@
 --   * `view.FOLDDISPLAYTEXT_BOXED`
 --     Fold display text is shown outlined with a box.
 --
---   The default value is `view.FOLDDISPLAYTEXT_HIDDEN`.
--- @field fold_expanded (table)
---   Table of flags per line number that indicate whether or not fold points are expanded for
---   those line numbers.
---   Setting expanded fold states does not toggle folds; it only updates fold margin markers. Use
---   [`view.toggle_fold()`]() instead.
--- @field fold_flags (number, Read-only)
---   Bit-mask of folding lines to draw in the buffer.
+-- The default value is `view.FOLDDISPLAYTEXT_HIDDEN`.
+-- @field fold_display_text_style
+
+---
+-- Fold display text is not shown.
+-- @field FOLDDISPLAYTEXT_HIDDEN
+
+---
+-- Fold display text is shown with no decoration.
+-- @field FOLDDISPLAYTEXT_STANDARD
+
+---
+-- Fold display text is shown outlined with a box.
+-- @field FOLDDISPLAYTEXT_BOXED
+
+---
+-- List of flags per line number that indicate whether or not fold points are expanded for
+-- those line numbers.
+-- Setting expanded fold states does not toggle folds; it only updates fold margin markers. Use
+-- [`view.toggle_fold()`]() instead.
+-- @table fold_expanded
+
+---
+-- Bit-mask of folding lines to draw in the buffer. (Read-only)
 --
 --   * `view.FOLDFLAG_NONE`
 --     Do not draw folding lines.
@@ -256,16 +488,36 @@
 --     Show line state in line margins.
 --     This option cannot be combined with `FOLDFLAG_LEVELNUMBERS`.
 --
---   The default value is `view.FOLDFLAG_NONE`.
--- @field h_scroll_bar (bool)
---   Display the horizontal scroll bar.
---   The default value is `true`.
--- @field highlight_guide (number)
---   The indentation guide column number to also highlight when highlighting matching braces,
---   or `0` to stop indentation guide highlighting.
--- @field idle_styling (number)
---   The idle styling mode.
---   This mode has no effect when `view.wrap_mode` is on.
+-- The default value is `view.FOLDFLAG_NONE`.
+-- @field fold_flags
+
+--- @field FOLDFLAG_NONE
+
+--- @field FOLDFLAG_LINEBEFORE_EXPANDED
+
+--- @field FOLDFLAG_LINEBEFORE_CONTRACTED
+
+--- @field FOLDFLAG_LINEAFTER_EXPANDED
+
+--- @field FOLDFLAG_LINEAFTER_CONTRACTED
+
+--- @field FOLDFLAG_LEVELNUMBERS
+
+--- @field FOLDFLAG_LINESTATE
+
+---
+-- Display the horizontal scroll bar.
+-- The default value is `true`.
+-- @field h_scroll_bar
+
+---
+-- The indentation guide column number to also highlight when highlighting matching braces, or
+-- `0` to stop indentation guide highlighting.
+-- @field highlight_guide
+
+---
+-- The idle styling mode.
+-- This mode has no effect when `view.wrap_mode` is on.
 --
 --   * `view.IDLESTYLING_NONE`
 --     Style all the currently visible text before displaying it.
@@ -278,10 +530,17 @@
 --     Style text both before and after the visible text in the background.
 --
 --   The default value is `view.IDLESTYLING_NONE`.
--- @field indentation_guides (number)
---   The indentation guide drawing mode.
---   Indentation guides are dotted vertical lines that appear within indentation whitespace at
---   each level of indentation.
+-- @field idle_styling
+
+--- @field IDLESTYLING_NONE
+--- @field IDLESTYLING_TOVISIBLE
+--- @field IDLESTYLING_AFTERVISIBLE
+--- @field IDLESTYLING_ALL
+
+---
+-- The indentation guide drawing mode.
+-- Indentation guides are dotted vertical lines that appear within indentation whitespace at
+-- each level of indentation.
 --
 --   * `view.IV_NONE`
 --     Does not draw any guides.
@@ -294,37 +553,68 @@
 --     Draw guides beyond the current line up to either the indentation level of the previous
 --     or next non-empty line, whichever is greater.
 --
---   The default value is `view.IV_NONE`.
--- @field indic_alpha (table)
---   Table of fill color alpha values, ranging from `0` (transparent) to `255` (opaque),
---   for indicator numbers from `1` to `32` whose styles are either `INDIC_ROUNDBOX`,
---   `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
---   The default values are `view.ALPHA_NOALPHA`, for no alpha.
--- @field indic_fore (table)
---   Table of foreground colors, in "0xBBGGRR" format, for indicator numbers from `1` to `32`.
---   Changing an indicator's foreground color resets that indicator's hover foreground color.
--- @field indic_hover_fore (table)
---   Table of hover foreground colors, in "0xBBGGRR" format, for indicator numbers from `1` to
---   `32`.
---   The default values are the respective indicator foreground colors.
--- @field indic_hover_style (table)
---   Table of hover styles for indicators numbers from `1` to `32`.
---   An indicator's hover style drawn when either the cursor hovers over that indicator or the
---   caret is within that indicator.
---   The default values are the respective indicator styles.
--- @field indic_outline_alpha (table)
---   Table of outline color alpha values, ranging from `0` (transparent) to `255` (opaque),
---   for indicator numbers from `1` to `32` whose styles are either `INDIC_ROUNDBOX`,
---   `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
---   The default values are `view.ALPHA_NOALPHA`, for no alpha.
--- @field indic_stroke_width (table)
---   Table of stroke widths in hundredths of a pixel for indicator numbers from `1` to `32`
---   whose styles are either `INDIC_PLAIN`, `INDIC_SQUIGGLE`, `INDIC_TT`, `INDIC_DIAGONAL`,
---   `INDIC_STRIKE`, `INDIC_BOX`, `INDIC_ROUNDBOX`, `INDIC_STRAIGHTBOX`, `INDIC_FULLBOX`,
---   `INDIC_DASH`, `INDIC_DOTS`,  or `INDIC_SQUIGGLELOW`.
---   The default values are `100`, or 1 pixel.
--- @field indic_style (table)
---   Table of styles for indicator numbers from `1` to `32`.
+-- The default value is `view.IV_NONE`.
+-- @field indentation_guides
+
+---
+-- Draw guides beyond the current line up to either the indentation level of the previous or
+-- next non-empty line, whichever is greater.
+-- @field IV_LOOKBOTH
+
+---
+-- Draw guides beyond the current line up to the next non-empty line's indentation level,
+-- but with an additional level if the previous non-empty line is a fold point.
+-- @field IV_LOOKFORWARD
+
+---
+-- Does not draw any guides.
+-- @field IV_NONE
+
+---
+-- Draw guides only within indentation whitespace.
+-- @field IV_REAL
+
+---
+-- List of fill color alpha values, ranging from `0` (transparent) to `255` (opaque),
+-- for indicator numbers from `1` to `32` whose styles are either `INDIC_ROUNDBOX`,
+-- `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
+-- The default values are `view.ALPHA_NOALPHA`, for no alpha.
+-- @table indic_alpha
+
+---
+-- List of foreground colors, in "0xBBGGRR" format, for indicator numbers from `1` to `32`.
+-- Changing an indicator's foreground color resets that indicator's hover foreground color.
+-- @table indic_fore
+
+---
+-- List of hover foreground colors, in "0xBBGGRR" format, for indicator numbers from `1` to `32`.
+-- The default values are the respective indicator foreground colors.
+-- @table indic_hover_fore
+
+---
+-- List of hover styles for indicators numbers from `1` to `32`.
+-- An indicator's hover style drawn when either the cursor hovers over that indicator or the
+-- caret is within that indicator.
+-- The default values are the respective indicator styles.
+-- @table indic_hover_style
+
+---
+-- List of outline color alpha values, ranging from `0` (transparent) to `255` (opaque),
+-- for indicator numbers from `1` to `32` whose styles are either `INDIC_ROUNDBOX`,
+-- `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
+-- The default values are `view.ALPHA_NOALPHA`, for no alpha.
+-- @table indic_outline_alpha
+
+---
+-- List of stroke widths in hundredths of a pixel for indicator numbers from `1` to `32`
+-- whose styles are either `INDIC_PLAIN`, `INDIC_SQUIGGLE`, `INDIC_TT`, `INDIC_DIAGONAL`,
+-- `INDIC_STRIKE`, `INDIC_BOX`, `INDIC_ROUNDBOX`, `INDIC_STRAIGHTBOX`, `INDIC_FULLBOX`,
+-- `INDIC_DASH`, `INDIC_DOTS`,  or `INDIC_SQUIGGLELOW`.
+-- The default values are `100`, or 1 pixel.
+-- @table indic_stroke_width
+
+---
+-- List of styles for indicator numbers from `1` to `32`.
 --
 --   * `view.INDIC_PLAIN`
 --     An underline.
@@ -383,45 +673,165 @@
 --   * `view.INDIC_POINT_TOP`
 --     A triangle above the start of the indicator range.
 --
---   Use [`_SCINTILLA.next_indic_number()`]() for custom indicators.
---   Changing an indicator's style resets that indicator's hover style.
--- @field indic_under (table)
---   Table of flags that indicate whether or not to draw indicators behind text instead of over
---   the top of it for indicator numbers from `1` to `32`.
---   The default values are `false`.
--- @field line_visible (table, Read-only)
---   Table of flags per line number that indicate whether or not lines are visible for those
---   line numbers.
--- @field lines_on_screen (number, Read-only)
---   The number of completely visible lines in the view.
---   It is possible to have a partial line visible at the bottom of the view.
--- @field margins (number)
---   The number of margins.
---   The default value is `5`.
--- @field margin_back_n (table)
---   Table of background colors, in "0xBBGGRR" format, of margin numbers from `1` to `view.margins`
---   (`5` by default).
---   Only affects margins of type `view.MARGIN_COLOR`.
--- @field margin_cursor_n (table)
---   Table of cursor types shown over margin numbers from `1` to `view.margins` (`5` by default).
+-- Use [`_SCINTILLA.next_indic_number()`]() for custom indicators.
+-- Changing an indicator's style resets that indicator's hover style.
+-- @table indic_style
+
+---
+-- A bounding box.
+-- @field INDIC_BOX
+
+---
+-- A 2-pixel thick underline at the bottom of the line inset by 1 pixel on on either side. Similar
+-- in appearance to the target in Asian language input composition.
+-- @field INDIC_COMPOSITIONTHICK
+
+---
+-- A 1-pixel thick underline just before the bottom of the line inset by 1 pixel on either
+-- side. Similar in appearance to the non-target ranges in Asian language input composition.
+-- @field INDIC_COMPOSITIONTHIN
+
+---
+-- A dashed underline.
+-- @field INDIC_DASH
+
+---
+-- An underline of diagonal hatches.
+-- @field INDIC_DIAGONAL
+
+---
+-- Similar to `INDIC_STRAIGHTBOX` but with a dotted outline.
+-- Translucency alternates between [`view.indic_alpha`]() and [`view.indic_outline_alpha`]()
+-- starting with the top-left pixel.
+-- @field INDIC_DOTBOX
+
+---
+-- A dotted underline.
+-- @field INDIC_DOTS
+
+---
+-- Similar to `INDIC_STRAIGHTBOX` but extends to the top of its line, potentially touching any
+-- similar indicators on the line above.
+-- @field INDIC_FULLBOX
+
+---
+-- A box with a vertical gradient from solid on top to transparent on bottom.
+-- @field INDIC_GRADIENT
+
+---
+-- A box with a centered gradient from solid in the middle to transparent on the top and bottom.
+-- @field INDIC_GRADIENTCENTER
+
+---
+-- Invisible.
+-- @field INDIC_HIDDEN
+
+---
+-- An underline.
+-- @field INDIC_PLAIN
+
+---
+-- A triangle below the start of the indicator range.
+-- @field INDIC_POINT
+
+---
+-- A triangle above the start of the indicator range.
+-- @field INDIC_POINT_TOP
+
+---
+-- A triangle below the center of the first character of the indicator range.
+-- @field INDIC_POINTCHARACTER
+
+---
+-- A translucent box with rounded corners around the text. Use [`view.indic_alpha`]() and
+-- [`view.indic_outline_alpha`]() to set the fill and outline transparency, respectively.
+-- Their default values are `30` and `50`.
+-- @field INDIC_ROUNDBOX
+
+---
+-- A squiggly underline 3 pixels in height.
+-- @field INDIC_SQUIGGLE
+
+---
+-- A squiggly underline 2 pixels in height.
+-- @field INDIC_SQUIGGLELOW
+
+---
+-- Identical to `INDIC_SQUIGGLE` but draws faster by using a pixmap instead of multiple line
+-- segments.
+-- @field INDIC_SQUIGGLEPIXMAP
+
+---
+-- Similar to `INDIC_ROUNDBOX` but with sharp corners.
+-- @field INDIC_STRAIGHTBOX
+
+---
+-- Strike out.
+-- @field INDIC_STRIKE
+
+---
+-- Changes the color of text to an indicator's foreground color.
+-- @field INDIC_TEXTFORE
+
+---
+-- An underline of small 'T' shapes.
+-- @field INDIC_TT
+
+---
+-- List of flags that indicate whether or not to draw indicators behind text instead of over
+-- the top of it for indicator numbers from `1` to `32`.
+-- The default values are `false`.
+-- @table indic_under
+
+---
+-- List of flags per line number that indicate whether or not lines are visible for those line
+-- numbers. (Read-only)
+-- @table line_visible
+
+---
+-- The number of completely visible lines in the view. (Read-only)
+-- It is possible to have a partial line visible at the bottom of the view.
+-- @field lines_on_screen
+
+---
+-- The number of margins.
+-- The default value is `5`.
+-- @field margins
+
+---
+-- List of background colors, in "0xBBGGRR" format, of margin numbers from `1` to `view.margins`
+-- (`5` by default).
+-- Only affects margins of type `view.MARGIN_COLOR`.
+-- @table margin_back_n
+
+---
+-- List of cursor types shown over margin numbers from `1` to `view.margins` (`5` by default).
 --
 --   * `view.CURSORARROW`
 --     Normal arrow cursor.
 --   * `view.CURSORREVERSEARROW`
 --     Reversed arrow cursor.
 --
---   The default values are `view.CURSORREVERSEARROW`.
--- @field margin_left (number)
---   The pixel size of the left margin of the buffer text.
---   The default value is `1`.
--- @field margin_mask_n (table)
---   Table of bit-masks of markers whose symbols marker symbol margins can display for margin
---   numbers from `1` to `view.margins` (`5` by default).
---   Bit-masks are 32-bit values whose bits correspond to the 32 available markers.
---   The default values are `0`, `view.MASK_FOLDERS`, `0`, `0`, and `0`, for a line margin and
---   logical marker margin.
--- @field margin_options (number)
---   A bit-mask of margin option settings.
+-- The default values are `view.CURSORREVERSEARROW`.
+-- @table margin_cursor_n
+
+---
+-- The pixel size of the left margin of the buffer text.
+-- The default value is `1`.
+-- @field margin_left
+
+---
+-- List of bit-masks of markers whose symbols marker symbol margins can display for margin
+-- numbers from `1` to `view.margins` (`5` by default).
+-- Bit-masks are 32-bit values whose bits correspond to the 32 available markers.
+-- The default values are `0`, `view.MASK_FOLDERS`, `0`, `0`, and `0`, for a line margin and
+-- logical marker margin.
+-- @table margin_mask_n
+
+--- @field MASK_FOLDERS
+
+---
+-- A bit-mask of margin option settings.
 --
 --   * `view.MARGINOPTION_NONE`
 --     None.
@@ -429,16 +839,29 @@
 --     Select only a wrapped line's sub-line (rather than the entire line) when the line number
 --     margin is clicked.
 --
---   The default value is `view.MARGINOPTION_NONE`.
--- @field margin_right (number)
---   The pixel size of the right margin of the buffer text.
---   The default value is `1`.
--- @field margin_sensitive_n (table)
---   Table of flags that indicate whether or not mouse clicks in margins emit `MARGIN_CLICK`
---   events for margin numbers from `1` to `view.margins` (`5` by default).
---   The default values are `false`.
--- @field margin_type_n (table)
---   Table of margin types for margin numbers from `1` to `view.margins` (`5` by default).
+-- The default value is `view.MARGINOPTION_NONE`.
+-- @field margin_options
+
+--- @field MARGINOPTION_NONE
+
+---
+-- Select only a wrapped line's sub-line (rather than the entire line) when the line number
+-- margin is clicked.
+-- @field MARGINOPTION_SUBLINESELECT
+
+---
+-- The pixel size of the right margin of the buffer text.
+-- The default value is `1`.
+-- @field margin_right
+
+---
+-- List of flags that indicate whether or not mouse clicks in margins emit `MARGIN_CLICK`
+-- events for margin numbers from `1` to `view.margins` (`5` by default).
+-- The default values are `false`.
+-- @table margin_sensitive_n
+
+---
+-- List of margin types for margin numbers from `1` to `view.margins` (`5` by default).
 --
 --   * `view.MARGIN_SYMBOL`
 --     A marker symbol margin.
@@ -455,31 +878,80 @@
 --   * `view.MARGIN_COLOR`
 --     A marker symbol margin whose background color is configurable.
 --
---   The default value for the first margin is `view.MARGIN_NUMBER`, followed by
---   `view.MARGIN_SYMBOL` for the rest.
--- @field margin_width_n (table)
---   Table of pixel margin widths for margin numbers from `1` to `view.margins` (`5` by default).
--- @field marker_alpha (table, Write-only)
---   Table of alpha values, ranging from `0` (transparent) to `255` (opaque), of markers drawn
---   in the text area (not the margin) for markers numbers from `1` to `32`.
---   The default values are `view.ALPHA_NOALPHA`, for no alpha.
--- @field marker_back (table, Write-only)
---   Table of background colors, in "0xBBGGRR" format, of marker numbers from `1` to `32`.
--- @field marker_back_translucent (table, Write-only)
---   Table of background colors, in "0xAABBGGRR" format, of marker numbers from `1` to `32`.
--- @field marker_back_selected (table, Write-only)
---   Table of background colors, in "0xBBGGRR" format, of markers whose folding blocks are
---   selected for marker numbers from `1` to `32`.
--- @field marker_back_selected_translucent (table, Write-only)
---   Table of background colors, in "0xAABBGGRR" format, of markers whose folding blocks are
---   selected for marker numbers from `1` to `32`.
--- @field marker_fore (table, Write-only)
---   Table of foreground colors, in "0xBBGGRR" format, of marker numbers from `1` to `32`.
--- @field marker_fore_translucent (table, Write-only)
---   Table of foreground colors, in "0xAABBGGRR" format, of marker numbers from `1` to `32`.
--- @field marker_layer (table)
---   Table of layer modes for drawing markers in the text area (not the margin) for marker
---   numbers from `1` to `32`.
+-- The default value for the first margin is `view.MARGIN_NUMBER`, followed by `view.MARGIN_SYMBOL`
+-- for the rest.
+-- @table margin_type_n
+
+---
+-- A marker symbol margin whose background color matches the default text background color.
+-- @field MARGIN_BACK
+
+---
+-- A marker symbol margin whose background color is configurable.
+-- @field MARGIN_COLOR
+
+---
+-- A marker symbol margin whose background color matches the default text foreground color.
+-- @field MARGIN_FORE
+
+---
+-- A line number margin.
+-- @field MARGIN_NUMBER
+
+---
+-- A right-justified text margin.
+-- @field MARGIN_RTEXT
+
+---
+-- A marker symbol margin.
+-- @field MARGIN_SYMBOL
+
+---
+-- A text margin.
+-- @field MARGIN_TEXT
+
+---
+-- List of pixel margin widths for margin numbers from `1` to `view.margins` (`5` by default).
+-- @table margin_width_n
+
+---
+-- List of alpha values, ranging from `0` (transparent) to `255` (opaque), of markers drawn in
+-- the text area (not the margin) for markers numbers from `1` to `32`. (Write-only)
+-- The default values are `view.ALPHA_NOALPHA`, for no alpha.
+-- @table marker_alpha
+
+---
+-- List of background colors, in "0xBBGGRR" format, of marker numbers from `1` to
+-- `32`. (Write-only)
+-- @table marker_back
+
+---
+-- List of background colors, in "0xAABBGGRR" format, of marker numbers from `1` to `32`.
+-- @table marker_back_translucent
+
+---
+-- List of background colors, in "0xBBGGRR" format, of markers whose folding blocks are selected
+-- for marker numbers from `1` to `32`. (Write-only)
+-- @table marker_back_selected
+
+---
+-- List of background colors, in "0xAABBGGRR" format, of markers whose folding blocks are
+-- selected for marker numbers from `1` to `32`. (Write-only)
+-- @table marker_back_selected_translucent
+
+---
+-- List of foreground colors, in "0xBBGGRR" format, of marker numbers from `1` to
+-- `32`. (Write-only)
+-- @table marker_fore
+
+---
+-- List of foreground colors, in "0xAABBGGRR" format, of marker numbers from `1` to
+-- `32`. (Write-only)
+-- @table marker_fore_translucent
+
+---
+-- Table of layer modes for drawing markers in the text area (not the margin) for marker
+-- numbers from `1` to `32`.
 --
 --   * `view.LAYER_BASE`
 --     Draw markers opaquely on the background.
@@ -488,27 +960,44 @@
 --   * `view.LAYER_OVER_TEXT`
 --     Draw markers translucently over text.
 --
---   The default values are `view.LAYER_BASE`.
--- @field marker_stroke_width (table, Write-only)
---   Table of stroke widths in hundredths of a pixel for marker numbers from `1` to `32`.
---   The default values are `100`, or 1 pixel.
--- @field mouse_dwell_time (number)
---   The number of milliseconds the mouse must idle before generating a `DWELL_START` event. A
---   time of `view.TIME_FOREVER` will never generate one.
--- @field mouse_selection_rectangular_switch (bool)
---   Whether or not pressing [`view.rectangular_selection_modifier`]() when selecting text
---   normally with the mouse turns on rectangular selection.
---   The default value is `false`.
--- @field multi_edge_column (table, Read-only)
---   Table of edge column positions per edge column number.
---   A position of `-1` means no edge column was found.
--- @field property (table)
---   Map of key-value string pairs used by lexers.
--- @field property_int (table, Read-only)
---   Map of key-value pairs used by lexers with values interpreted as numbers, or `0` if not found.
--- @field rectangular_selection_modifier (number)
---   The modifier key used in combination with a mouse drag in order to create a rectangular
---   selection.
+-- The default values are `view.LAYER_BASE`.
+-- @table marker_layer
+
+---
+-- List of stroke widths in hundredths of a pixel for marker numbers from `1` to `32`. (Write-only)
+-- The default values are `100`, or 1 pixel.
+-- @table marker_stroke_width
+
+---
+-- The number of milliseconds the mouse must idle before generating a `DWELL_START` event. A
+-- time of `view.TIME_FOREVER` will never generate one.
+-- @field mouse_dwell_time
+
+--- @field TIME_FOREVER
+
+---
+-- Whether or not pressing [`view.rectangular_selection_modifier`]() when selecting text normally
+-- with the mouse turns on rectangular selection.
+-- The default value is `false`.
+-- @field mouse_selection_rectangular_switch
+
+---
+-- List of edge column positions per edge column number. (Read-only)
+-- A position of `-1` means no edge column was found.
+-- @table multi_edge_column
+
+---
+-- Map of key-value string pairs used by lexers.
+-- @table property
+
+---
+-- Map of key-value pairs used by lexers with values interpreted as numbers, or `0` if not
+-- found. (Read-only)
+-- @table property_int
+
+---
+-- The modifier key used in combination with a mouse drag in order to create a rectangular
+-- selection.
 --
 --   * `view.MOD_CTRL`
 --     The "Control" modifier key.
@@ -518,15 +1007,39 @@
 --     The "Super" modifier key, usually defined as the left "Windows" or
 --     "Command" key.
 --
---   The default value is `view.MOD_CTRL`.
--- @field representation (table)
---   The alternative string representations of characters.
---   Representations are displayed in the same way control characters are. Use the empty
---   string for the '\0' character when assigning its representation. Characters are strings,
---   not numeric codes, and can be multi-byte characters.
---   Call [`view.clear_representation()`]() to remove a representation.
--- @field representation_appearance (table)
---   Map of characters to their string representation's appearance.
+-- The default value is `view.MOD_CTRL`.
+-- @field rectangular_selection_modifier
+
+---
+-- The "Alt" modifier key.
+-- @field MOD_ALT
+
+---
+-- The "Control" modifier key on Windows and Linux, and the "Command" modifier key on macOS.
+-- @field MOD_CTRL
+
+---
+-- The "Control" modifier key on macOS.
+-- @field MOD_META
+
+---
+-- The "Shift" modifier key.
+-- @field MOD_SHIFT
+
+---
+-- The "Super" modifier key, usually defined as the left "Windows" or "Command" key.
+-- @field MOD_SUPER
+
+---
+-- Map of alternative string representations of characters.
+-- Representations are displayed in the same way control characters are. Use the empty string
+-- for the '\0' character when assigning its representation. Characters are strings, not numeric
+-- codes, and can be multi-byte characters.
+-- Call [`view.clear_representation()`]() to remove a representation.
+-- @table representation
+
+---
+-- Map of characters to their string representation's appearance.
 --
 --   * `view.REPRESENTATION_PLAIN`
 --     Draw the representation with no decoration.
@@ -535,39 +1048,69 @@
 --   * `view.REPRESENTATION_COLOR`
 --     Draw the representation using the color set in [`view.representation_color`]().
 --
---   The default values are `view.REPRESENTATION_BLOB`.
--- @field representation_color (table)
---   Map of characters to their string representation's color in "0xBBGGRR" format.
--- @field rgba_image_height (number)
---   The height of the RGBA image to be defined using [`view.marker_define_rgba_image()`]().
--- @field rgba_image_scale (number)
---   The scale factor in percent of the RGBA image to be defined using
---   [`view.marker_define_rgba_image()`]().
---   This is useful on macOS with a retina display where each display unit is 2 pixels: use a
---   factor of `200` so that each image pixel is displayed using a screen pixel.
---   The default scale, `100`, will stretch each image pixel to cover 4 screen pixels on a
---   retina display.
--- @field rgba_image_width (number)
---   The width of the RGBA image to be defined using [`view.marker_define_rgba_image()`]() and
---   [`view.register_rgba_image()`]().
--- @field scroll_width (number)
---   The horizontal scrolling pixel width.
---   For performance, the view does not measure the display width of the buffer to determine
---   the properties of the horizontal scroll bar, but uses an assumed width instead. To ensure
---   the width of the currently visible lines can be scrolled use [`view.scroll_width_tracking`]().
---   The default value is `2000`.
--- @field scroll_width_tracking (bool)
---   Continuously update the horizontal scrolling width to match the maximum width of a displayed
---   line beyond [`view.scroll_width`]().
---   The default value is `false`.
--- @field sel_alpha (number)
---   The selection's alpha value, ranging from `0` (transparent) to `255` (opaque).
---   The default value is `view.ALPHA_NOALPHA`, for no alpha.
--- @field sel_eol_filled (bool)
---   Extend the selection to the view's right margin.
---   The default value is `false`.
--- @field selection_layer (number)
---   The layer mode for drawing selections.
+-- The default values are `view.REPRESENTATION_BLOB`.
+-- @table representation_appearance
+
+---
+-- Draw the representation with no decoration.
+-- @field REPRESENTATION_PLAIN
+
+---
+-- Draw the representation within a rounded rectangle and an inverted color.
+-- @field REPRESENTATION_BLOB
+
+---
+-- Draw the representation using the color set in [`view.representation_color`]().
+-- @field REPRESENTATION_COLOR
+
+---
+-- Map of characters to their string representation's color in "0xBBGGRR" format.
+-- @table representation_color
+
+---
+-- The height of the RGBA image to be defined using [`view.marker_define_rgba_image()`]().
+-- @field rgba_image_height
+
+---
+-- The scale factor in percent of the RGBA image to be defined using
+-- [`view.marker_define_rgba_image()`]().
+-- This is useful on macOS with a retina display where each display unit is 2 pixels: use a
+-- factor of `200` so that each image pixel is displayed using a screen pixel.
+-- The default scale, `100`, will stretch each image pixel to cover 4 screen pixels on a
+-- retina display.
+-- @field rgba_image_scale
+
+---
+-- The width of the RGBA image to be defined using [`view.marker_define_rgba_image()`]() and
+-- [`view.register_rgba_image()`]().
+-- @field rgba_image_width
+
+---
+-- The horizontal scrolling pixel width.
+-- For performance, the view does not measure the display width of the buffer to determine
+-- the properties of the horizontal scroll bar, but uses an assumed width instead. To ensure
+-- the width of the currently visible lines can be scrolled use [`view.scroll_width_tracking`]().
+-- The default value is `2000`.
+-- @field scroll_width
+
+---
+-- Continuously update the horizontal scrolling width to match the maximum width of a displayed
+-- line beyond [`view.scroll_width`]().
+-- The default value is `false`.
+-- @field scroll_width_tracking
+
+---
+-- The selection's alpha value, ranging from `0` (transparent) to `255` (opaque).
+-- The default value is `view.ALPHA_NOALPHA`, for no alpha.
+-- @field sel_alpha
+
+---
+-- Extend the selection to the view's right margin.
+-- The default value is `false`.
+-- @field sel_eol_filled
+
+---
+-- The layer mode for drawing selections.
 --
 --   * `view.LAYER_BASE`
 --     Draw selections opaquely on the background.
@@ -576,16 +1119,24 @@
 --   * `view.LAYER_OVER_TEXT`
 --     Draw selections translucently over text.
 --
---   The default value is `view.LAYER_BASE`.
--- @field size (number)
---   The split resizer's pixel position if the view is a split one.
--- @field style_back (table)
---   Table of background colors, in "0xBBGGRR" format, of text for style numbers from `1` to `256`.
--- @field style_bold (table)
---   Table of flags that indicate whether or not text is bold for style numbers from `1` to `256`.
---   The default values are `false`.
--- @field style_case (table)
---   Table of letter case modes of text for style numbers from `1` to `256`.
+-- The default value is `view.LAYER_BASE`.
+-- @field selection_layer
+
+---
+-- The split resizer's pixel position if the view is a split one.
+-- @field size
+
+---
+-- List of background colors, in "0xBBGGRR" format, of text for style numbers from `1` to `256`.
+-- @table style_back
+
+---
+-- List of flags that indicate whether or not text is bold for style numbers from `1` to `256`.
+-- The default values are `false`.
+-- @table style_bold
+
+---
+-- List of letter case modes of text for style numbers from `1` to `256`.
 --
 --   * `view.CASE_MIXED`
 --     Display text in normally.
@@ -596,52 +1147,98 @@
 --   * `view.CASE_CAMEL`
 --     Display text in camel case.
 --
---   The default values are `view.CASE_MIXED`.
--- @field style_changeable (table)
---   Table of flags that indicate whether or not text is changeable for style numbers from `1`
---   to `256`.
---   The default values are `true`.
---   Read-only styles do not allow the caret into the range of text.
--- @field style_eol_filled (table)
---   Table of flags that indicate whether or not the background colors of styles whose characters
---   occur last on lines extend all the way to the view's right margin for style numbers from
---   `1` to `256`.
---   The default values are `false`.
--- @field style_font (table)
---   Table of string font names of text for style numbers from `1` to `256`.
--- @field style_fore (table)
---   Table of foreground colors, in "0xBBGGRR" format, of text for style numbers from `1` to `256`.
--- @field style_italic (table)
---   Table of flags that indicate whether or not text is italic for style numbers from `1` to
---   `256`.
---   The default values are `false`.
--- @field style_size (table)
---   Table of font sizes of text for style numbers from `1` to `256`.
--- @field style_underline (table)
---   Table of flags that indicate whether or not text is underlined for style numbers from `1`
---   to `256`.
---   The default values are `false`.
--- @field style_visible (table)
---   Table of flags that indicate whether or not text is visible for style numbers from `1` to
---   `256`.
---   The default values are `true`.
--- @field tab_draw_mode (number)
---   The draw mode of visible tabs.
+-- The default values are `view.CASE_MIXED`.
+-- @table style_case
+
+---
+-- Display text in camel case.
+-- @field CASE_CAMEL
+
+---
+-- Display text in lower case.
+-- @field CASE_LOWER
+
+---
+-- Display text normally.
+-- @field CASE_MIXED
+
+---
+-- Display text in upper case.
+-- @field CASE_UPPER
+
+---
+-- List of flags that indicate whether or not text is changeable for style numbers from `1` to
+-- `256`.
+-- The default values are `true`.
+-- Read-only styles do not allow the caret into the range of text.
+-- @table style_changeable
+
+---
+-- List of flags that indicate whether or not the background colors of styles whose characters
+-- occur last on lines extend all the way to the view's right margin for style numbers from
+-- `1` to `256`.
+-- The default values are `false`.
+-- @table style_eol_filled
+
+---
+-- List of string font names of text for style numbers from `1` to `256`.
+-- @table style_font
+
+---
+-- List of foreground colors, in "0xBBGGRR" format, of text for style numbers from `1` to `256`.
+-- @table style_fore
+
+---
+-- List of flags that indicate whether or not text is italic for style numbers from `1` to `256`.
+-- The default values are `false`.
+-- @table style_italic
+
+---
+-- List of font sizes of text for style numbers from `1` to `256`.
+-- @table style_size
+
+---
+-- List of flags that indicate whether or not text is underlined for style numbers from `1` to
+-- `256`.
+-- The default values are `false`.
+-- @table style_underline
+
+---
+-- List of flags that indicate whether or not text is visible for style numbers from `1` to `256`.
+-- The default values are `true`.
+-- @table style_visible
+
+---
+-- The draw mode of visible tabs.
 --
 --   * `view.TD_LONGARROW`
 --     An arrow that stretches until the tabstop.
 --   * `view.TD_STRIKEOUT`
 --     A horizontal line that stretches until the tabstop.
 --
---   The default value is `view.TD_LONGARROW`.
--- @field v_scroll_bar (bool)
---   Display the vertical scroll bar.
---   The default value is `true`.
--- @field view_eol (bool)
---   Display end of line characters.
---   The default value is `false`.
--- @field view_ws (number)
---   The whitespace visibility mode.
+-- The default value is `view.TD_LONGARROW`.
+-- @field tab_draw_mode
+
+---
+-- An arrow that stretches until the tabstop.
+-- @field TD_LONGARROW
+
+---
+-- A horizontal line that stretches until the tabstop.
+-- @field TD_STRIKEOUT
+
+---
+-- Display the vertical scroll bar.
+-- The default value is `true`.
+-- @field v_scroll_bar
+
+---
+-- Display end of line characters.
+-- The default value is `false`.
+-- @field view_eol
+
+---
+-- The whitespace visibility mode.
 --
 --   * `view.WS_INVISIBLE`
 --     Whitespace is invisible.
@@ -652,12 +1249,32 @@
 --   * `view.WS_VISIBLEONLYININDENT`
 --     Display only indentation spaces and tabs as dots and arrows.
 --
---   The default value is `view.WS_INVISIBLE`.
--- @field whitespace_size (number)
---   The pixel size of the dots that represent space characters when whitespace is visible.
---   The default value is `1`.
--- @field wrap_indent_mode (number)
---   The wrapped line indent mode.
+-- The default value is `view.WS_INVISIBLE`.
+-- @field view_ws
+
+---
+-- Whitespace is invisible.
+-- @field WS_INVISIBLE
+
+---
+-- Display only non-indentation spaces and tabs as dots and arrows.
+-- @field WS_VISIBLEAFTERINDENT
+
+---
+-- Display all space characters as dots and tab characters as arrows.
+-- @field WS_VISIBLEALWAYS
+
+---
+-- Display only indentation spaces and tabs as dots and arrows.
+-- @field WS_VISIBLEONLYININDENT
+
+---
+-- The pixel size of the dots that represent space characters when whitespace is visible.
+-- The default value is `1`.
+-- @field whitespace_size
+
+---
+-- The wrapped line indent mode.
 --
 --   * `view.WRAPINDENT_FIXED`
 --     Indent wrapped lines by [`view.wrap_start_indent`]().
@@ -668,9 +1285,27 @@
 --   * `view.WRAPINDENT_DEEPINDENT`
 --     Indent wrapped lines two more levels than the level of the first line.
 --
---   The default value is `view.WRAPINDENT_FIXED`.
--- @field wrap_mode (number)
---   Long line wrap mode.
+-- The default value is `view.WRAPINDENT_FIXED`.
+-- @field wrap_indent_mode
+
+---
+-- Indent wrapped lines two more levels than the level of the first line.
+-- @field WRAPINDENT_DEEPINDENT
+
+---
+-- Indent wrapped lines by [`view.wrap_start_indent`]().
+-- @field WRAPINDENT_FIXED
+
+---
+-- Indent wrapped lines one more level than the level of the first line.
+-- @field WRAPINDENT_INDENT
+
+---
+-- Indent wrapped lines the same amount as the first line.
+-- @field WRAPINDENT_SAME
+
+---
+-- Long line wrap mode.
 --
 --   * `view.WRAP_NONE`
 --     Long lines are not wrapped.
@@ -681,13 +1316,33 @@
 --   * `view.WRAP_WHITESPACE`
 --     Wrap long lines at word boundaries (ignoring style boundaries).
 --
---   The default value is `view.WRAP_NONE`.
--- @field wrap_start_indent (number)
---   The number of spaces of indentation to display wrapped lines with if
---   [`view.wrap_indent_mode`]() is `view.WRAPINDENT_FIXED`.
---   The default value is `0`.
--- @field wrap_visual_flags (number)
---   The wrapped line visual flag display mode.
+-- The default value is `view.WRAP_NONE`.
+-- @field wrap_mode
+
+---
+-- Wrap long lines at character boundaries.
+-- @field WRAP_CHAR
+
+---
+-- Long lines are not wrapped.
+-- @field WRAP_NONE
+
+---
+-- Wrap long lines at word boundaries (ignoring style boundaries).
+-- @field WRAP_WHITESPACE
+
+---
+-- Wrap long lines at word (and style) boundaries.
+-- @field WRAP_WORD
+
+---
+-- The number of spaces of indentation to display wrapped lines with if [`view.wrap_indent_mode`]()
+-- is `view.WRAPINDENT_FIXED`.
+-- The default value is `0`.
+-- @field wrap_start_indent
+
+---
+-- The wrapped line visual flag display mode.
 --
 --   * `view.WRAPVISUALFLAG_NONE`
 --     No visual flags.
@@ -698,9 +1353,27 @@
 --   * `view.WRAPVISUALFLAG_MARGIN`
 --     Show a visual flag in the sub-line's line number margin.
 --
---   The default value is `view.WRAPVISUALFLAG_NONE`.
--- @field wrap_visual_flags_location (number)
---   The wrapped line visual flag location.
+-- The default value is `view.WRAPVISUALFLAG_NONE`.
+-- @field wrap_visual_flags
+
+---
+-- Show a visual flag at the end of a wrapped line.
+-- @field WRAPVISUALFLAG_END
+
+---
+-- Show a visual flag in the sub-line's line number margin.
+-- @field WRAPVISUALFLAG_MARGIN
+
+---
+-- No visual flags.
+-- @field WRAPVISUALFLAG_NONE
+
+---
+-- Show a visual flag at the beginning of a sub-line.
+-- @field WRAPVISUALFLAG_START
+
+---
+-- The wrapped line visual flag location.
 --
 --   * `view.WRAPVISUALFLAGLOC_DEFAULT`
 --     Draw a visual flag near the view's right margin.
@@ -709,572 +1382,339 @@
 --   * `view.WRAPVISUALFLAGLOC_START_BY_TEXT`
 --     Draw a visual flag near text at the beginning of a subline.
 --
---   The default value is `view.WRAPVISUALFLAGLOC_DEFAULT`.
--- @field x_offset (number)
---   The horizontal scroll pixel position.
---   A value of `0` is the normal position with the first text column visible at the left of
---   the view.
--- @field zoom (number)
---   The number of points to add to the size of all fonts.
---   Negative values are allowed, down to `-10`.
---   The default value is `0`.
--- @field ANNOTATION_BOXED (number, Read-only)
---
--- @field ANNOTATION_HIDDEN (number, Read-only)
---
--- @field ANNOTATION_STANDARD (number, Read-only)
---
--- @field ANNOTATION_INDENTED (number, Read-only)
---
--- @field CARETSTYLE_BLOCK (number, Read-only)
---
--- @field CARETSTYLE_INVISIBLE (number, Read-only)
---
--- @field CARETSTYLE_LINE (number, Read-only)
---
--- @field CARET_EVEN (number, Read-only)
---
--- @field CARET_JUMPS (number, Read-only)
---
--- @field CARET_SLOP (number, Read-only)
---
--- @field CARET_STRICT (number, Read-only)
---
--- @field EDGE_BACKGROUND (number, Read-only)
---
--- @field EDGE_LINE (number, Read-only)
---
--- @field EDGE_MULTILINE (number, Read-only)
---
--- @field EDGE_NONE (number, Read-only)
---
--- @field ELEMENT_SELECTION_TEXT (number, Read-only)
---
--- @field ELEMENT_SELECTION_BACK (number, Read-only)
---
--- @field ELEMENT_SELECTION_ADDITIONAL_TEXT (number, Read-only)
---
--- @field ELEMENT_SELECTION_ADDITIONAL_BACK (number, Read-only)
---
--- @field ELEMENT_SELECTION_SECONDARY_TEXT (number, Read-only)
---
--- @field ELEMENT_SELECTION_SECONDARY_BACK (number, Read-only)
---
--- @field ELEMENT_SELECTION_INACTIVE_TEXT (number, Read-only)
---
--- @field ELEMENT_SELECTION_INACTIVE_BACK (number, Read-only)
---
--- @field ELEMENT_CARET (number, Read-only)
---
--- @field ELEMENT_CARET_ADDITIONAL (number, Read-only)
---
--- @field ELEMENT_CARET_LINE_BACK (number, Read-only)
---
--- @field ELEMENT_WHITE_SPACE (number, Read-only)
---
--- @field ELEMENT_WHITE_SPACE_BACK (number, Read-only)
---
--- @field FOLDACTION_CONTRACT (number, Read-only)
---
--- @field FOLDACTION_CONTRACT_EVERY_LEVEL (number, Read-only)
---
--- @field FOLDACTION_EXPAND (number, Read-only)
---
--- @field FOLDACTION_TOGGLE (number, Read-only)
---
--- @field FOLDDISPLAYTEXT_HIDDEN (number, Read-only)
---
--- @field FOLDDISPLAYTEXT_STANDARD (number, Read-only)
---
--- @field FOLDDISPLAYTEXT_BOXED (number, Read-only)
---
--- @field INDIC_BOX (number, Read-only)
---
--- @field INDIC_COMPOSITIONTHICK (number, Read-only)
---
--- @field INDIC_COMPOSITIONTHIN (number, Read-only)
---
--- @field INDIC_DASH (number, Read-only)
---
--- @field INDIC_DIAGONAL (number, Read-only)
---
--- @field INDIC_DOTBOX (number, Read-only)
---
--- @field INDIC_DOTS (number, Read-only)
---
--- @field INDIC_FULLBOX (number, Read-only)
---
--- @field INDIC_GRADIENT (number, Read-only)
---
--- @field INDIC_GRADIENTCENTER (number, Read-only)
---
--- @field INDIC_HIDDEN (number, Read-only)
---
--- @field INDIC_PLAIN (number, Read-only)
---
--- @field INDIC_POINT (number, Read-only)
---
--- @field INDIC_POINTCHARACTER (number, Read-only)
---
--- @field INDIC_ROUNDBOX (number, Read-only)
---
--- @field INDIC_SQUIGGLE (number, Read-only)
---
--- @field INDIC_SQUIGGLELOW (number, Read-only)
---
--- @field INDIC_SQUIGGLEPIXMAP (number, Read-only)
---
--- @field INDIC_STRAIGHTBOX (number, Read-only)
---
--- @field INDIC_STRIKE (number, Read-only)
---
--- @field INDIC_TEXTFORE (number, Read-only)
---
--- @field INDIC_TT (number, Read-only)
---
--- @field MOD_ALT (number, Read-only)
---
--- @field MOD_CTRL (number, Read-only)
---
--- @field MOD_META (number, Read-only)
---
--- @field MOD_SHIFT (number, Read-only)
---
--- @field MOD_SUPER (number, Read-only)
---
--- @field MOUSE_DRAG (number, Read-only)
---
--- @field MOUSE_PRESS (number, Read-only)
---
--- @field MOUSE_RELEASE (number, Read-only)
---
--- @field WS_INVISIBLE (number, Read-only)
---
--- @field WS_VISIBLEAFTERINDENT (number, Read-only)
---
--- @field WS_VISIBLEALWAYS (number, Read-only)
---
--- @field WS_VISIBLEONLYININDENT (number, Read-only)
---
--- @field ALPHA_NOALPHA (number, Read-only)
---
--- @field ALPHA_OPAQUE (number, Read-only)
---
--- @field ALPHA_TRANSPARENT (number, Read-only)
---
--- @field CASE_CAMEL (number, Read-only)
---
--- @field CASE_LOWER (number, Read-only)
---
--- @field CASE_MIXED (number, Read-only)
---
--- @field CASE_UPPER (number, Read-only)
---
--- @field CURSORARROW (number, Read-only)
---
--- @field CURSORNORMAL (number, Read-only)
---
--- @field CURSORREVERSEARROW (number, Read-only)
---
--- @field CURSORWAIT (number, Read-only)
---
--- @field FOLDFLAG_LEVELNUMBERS (number, Read-only)
---
--- @field FOLDFLAG_LINEAFTER_CONTRACTED (number, Read-only)
---
--- @field FOLDFLAG_LINEAFTER_EXPANDED (number, Read-only)
---
--- @field FOLDFLAG_LINEBEFORE_CONTRACTED (number, Read-only)
---
--- @field FOLDFLAG_LINEBEFORE_EXPANDED (number, Read-only)
---
--- @field FOLDFLAG_LINESTATE (number, Read-only)
---
--- @field IV_LOOKBOTH (number, Read-only)
---
--- @field IV_LOOKFORWARD (number, Read-only)
---
--- @field IV_NONE (number, Read-only)
---
--- @field IV_REAL (number, Read-only)
---
--- @field MARGINOPTION_NONE (number, Read-only)
---
--- @field MARGINOPTION_SUBLINESELECT (number, Read-only)
---
--- @field MARGIN_BACK (number, Read-only)
---
--- @field MARGIN_COLOR (number, Read-only)
---
--- @field MARGIN_FORE (number, Read-only)
---
--- @field MARGIN_NUMBER (number, Read-only)
---
--- @field MARGIN_RTEXT (number, Read-only)
---
--- @field MARGIN_SYMBOL (number, Read-only)
---
--- @field MARGIN_TEXT (number, Read-only)
---
--- @field MARK_ARROW (number, Read-only)
---
--- @field MARK_ARROWDOWN (number, Read-only)
---
--- @field MARK_ARROWS (number, Read-only)
---
--- @field MARK_BACKGROUND (number, Read-only)
---
--- @field MARK_BAR (number, Read-only)
---
--- @field MARK_BOOKMARK (number, Read-only)
---
--- @field MARK_BOXMINUS (number, Read-only)
---
--- @field MARK_BOXMINUSCONNECTED (number, Read-only)
---
--- @field MARK_BOXPLUS (number, Read-only)
---
--- @field MARK_BOXPLUSCONNECTED (number, Read-only)
---
--- @field MARK_CHARACTER (number, Read-only)
---
--- @field MARK_CIRCLE (number, Read-only)
---
--- @field MARK_CIRCLEMINUS (number, Read-only)
---
--- @field MARK_CIRCLEMINUSCONNECTED (number, Read-only)
---
--- @field MARK_CIRCLEPLUS (number, Read-only)
---
--- @field MARK_CIRCLEPLUSCONNECTED (number, Read-only)
---
--- @field MARK_DOTDOTDOT (number, Read-only)
---
--- @field MARK_EMPTY (number, Read-only)
---
--- @field MARK_FULLRECT (number, Read-only)
---
--- @field MARK_LCORNER (number, Read-only)
---
--- @field MARK_LCORNERCURVE (number, Read-only)
---
--- @field MARK_LEFTRECT (number, Read-only)
---
--- @field MARK_MINUS (number, Read-only)
---
--- @field MARK_PIXMAP (number, Read-only)
---
--- @field MARK_PLUS (number, Read-only)
---
--- @field MARK_RGBAIMAGE (number, Read-only)
---
--- @field MARK_ROUNDRECT (number, Read-only)
---
--- @field MARK_SHORTARROW (number, Read-only)
---
--- @field MARK_SMALLRECT (number, Read-only)
---
--- @field MARK_TCORNER (number, Read-only)
---
--- @field MARK_TCORNERCURVE (number, Read-only)
---
--- @field MARK_UNDERLINE (number, Read-only)
---
--- @field MARK_VERTICALBOOKMARK (number, Read-only)
---
--- @field MARK_VLINE (number, Read-only)
---
--- @field MASK_FOLDERS (number, Read-only)
---
--- @field TD_LONGARROW (number, Read-only)
---
--- @field TD_STRIKEOUT (number, Read-only)
---
--- @field TIME_FOREVER (number, Read-only)
---
--- @field WRAPINDENT_DEEPINDENT (number, Read-only)
---
--- @field WRAPINDENT_FIXED (number, Read-only)
---
--- @field WRAPINDENT_INDENT (number, Read-only)
---
--- @field WRAPINDENT_SAME (number, Read-only)
---
--- @field WRAPVISUALFLAGLOC_DEFAULT (number, Read-only)
---
--- @field WRAPVISUALFLAGLOC_END_BY_TEXT (number, Read-only)
---
--- @field WRAPVISUALFLAGLOC_START_BY_TEXT (number, Read-only)
---
--- @field WRAPVISUALFLAG_END (number, Read-only)
---
--- @field WRAPVISUALFLAG_MARGIN (number, Read-only)
---
--- @field WRAPVISUALFLAG_NONE (number, Read-only)
---
--- @field WRAPVISUALFLAG_START (number, Read-only)
---
--- @field WRAP_CHAR (number, Read-only)
---
--- @field WRAP_NONE (number, Read-only)
---
--- @field WRAP_WHITESPACE (number, Read-only)
---
--- @field WRAP_WORD (number, Read-only)
---
--- @field STYLE_BRACEBAD (number, Read-only)
---
--- @field STYLE_BRACELIGHT (number, Read-only)
---
--- @field STYLE_CALLTIP (number, Read-only)
---
--- @field STYLE_CONTROLCHAR (number, Read-only)
---
--- @field STYLE_DEFAULT (number, Read-only)
---
--- @field STYLE_FOLDDISPLAYTEXT (number, Read-only)
---
--- @field STYLE_INDENTGUIDE (number, Read-only)
---
--- @field STYLE_LINENUMBER (number, Read-only)
---
--- @field STYLE_MAX (number, Read-only)
---
--- @field UPDATE_H_SCROLL (number, Read-only)
---
--- @field UPDATE_NONE (number, Read-only)
---
--- @field UPDATE_V_SCROLL (number, Read-only)
---
--- @field VISIBLE_SLOP (number, Read-only)
---
--- @field VISIBLE_STRICT (number, Read-only)
---
--- @field folding (boolean)
---   Whether or not folding is enabled for the lexers that support it.
---   This option is disabled by default.
---   This is an alias for `view.property['fold'] = '1|0'`.
--- @field fold_on_zero_sum_lines (boolean)
---   Whether or not to mark as a fold point lines that contain both an ending and starting fold
---   point. For example, `} else {` would be marked as a fold point.
---   This option is disabled by default. This is an alias for
---   `view.property['fold.scintillua.on.zero.sum.lines'] = '1|0'`.
--- @field fold_compact (boolean)
---   Whether or not blank lines after an ending fold point are included in that
---   fold.
---   This option is disabled by default.
---   This is an alias for `view.property['fold.scintillua.compact'] = '1|0'`.
--- @field fold_by_indentation (boolean)
---   Whether or not to fold based on indentation level if a lexer does not have
---   a folder.
---   Some lexers automatically enable this option. It is disabled by default.
---   This is an alias for `view.property['fold.scintillua.by.indentation'] = '1|0'`.
-module('view')
+-- The default value is `view.WRAPVISUALFLAGLOC_DEFAULT`.
+-- @field wrap_visual_flags_location
+
+---
+-- Draw a visual flag near the view's right margin.
+-- @field WRAPVISUALFLAGLOC_DEFAULT
+
+---
+-- Draw a visual flag near text at the end of a wrapped line.
+-- @field WRAPVISUALFLAGLOC_END_BY_TEXT
+
+---
+-- Draw a visual flag near text at the beginning of a subline.
+-- @field WRAPVISUALFLAGLOC_START_BY_TEXT
+
+---
+-- The horizontal scroll pixel position.
+-- A value of `0` is the normal position with the first text column visible at the left of
+-- the view.
+-- @field x_offset
+
+---
+-- The number of points to add to the size of all fonts.
+-- Negative values are allowed, down to `-10`.
+-- The default value is `0`.
+-- @field zoom
+
+--- @field MOUSE_DRAG
+
+--- @field MOUSE_PRESS
+
+--- @field MOUSE_RELEASE
+
+--- @field ALPHA_NOALPHA
+
+--- @field ALPHA_OPAQUE
+
+--- @field ALPHA_TRANSPARENT
+
+---
+-- View has scrolled horizontally.
+-- @field UPDATE_H_SCROLL
+
+--- @field UPDATE_NONE
+
+---
+-- View has scrolled vertically.
+-- @field UPDATE_V_SCROLL
+
+---
+-- Whether or not folding is enabled for the lexers that support it.
+-- This option is disabled by default.
+-- This is an alias for `view.property['fold'] = '1|0'`.
+-- @field folding
+
+---
+-- Whether or not to mark as a fold point lines that contain both an ending and starting fold
+-- point. For example, `} else {` would be marked as a fold point.
+-- This option is disabled by default. This is an alias for
+-- `view.property['fold.scintillua.on.zero.sum.lines'] = '1|0'`.
+-- @field fold_on_zero_sum_lines
+
+---
+-- Whether or not blank lines after an ending fold point are included in that fold.
+-- This option is disabled by default.
+-- This is an alias for `view.property['fold.scintillua.compact'] = '1|0'`.
+-- @field fold_compact
+
+---
+-- Whether or not to fold based on indentation level if a lexer does not have a folder.
+-- Some lexers automatically enable this option. It is disabled by default.
+-- This is an alias for `view.property['fold.scintillua.by.indentation'] = '1|0'`.
+-- @field fold_by_indentation
 
 ---
 -- The [buffer](#buffer) the view currently contains. (Read-only)
--- @class table
--- @name buffer
-local buffer
+-- @table buffer
 
 ---
 -- Highlights the character at position *pos* as an unmatched brace character using the
 -- `'style.bracebad'` style.
 -- Removes highlighting when *pos* is `-1`.
--- @param view A view.
 -- @param pos The position in *view*'s buffer to highlight, or `-1` to remove the highlight.
-function brace_bad_light(view, pos) end
+-- @function brace_bad_light
 
 ---
 -- Highlights unmatched brace characters with indicator number *indicator*, in the range of
 -- `1` to `32`, instead of the `view.STYLE_BRACEBAD` style if *use_indicator* is `true`.
--- @param view A view.
 -- @param use_indicator Whether or not to use an indicator.
 -- @param indicator The indicator number to use.
-function brace_bad_light_indicator(view, use_indicator, indicator) end
+-- @function brace_bad_light_indicator
 
 ---
 -- Highlights the characters at positions *pos1* and *pos2* as matching braces using the
 -- `'style.bracelight'` style.
 -- If indent guides are enabled, locates the column with `buffer.column` and sets
 -- `view.highlight_guide` in order to highlight the indent guide.
--- @param view A view.
 -- @param pos1 The first position in *view*'s buffer to highlight.
 -- @param pos2 The second position in *view*'s buffer to highlight.
-function brace_highlight(view, pos1, pos2) end
+-- @function brace_highlight
 
 ---
 -- Highlights matching brace characters with indicator number *indicator*, in the range of `1`
 -- to `32`, instead of the `view.STYLE_BRACELIGHT` style if *use_indicator* is `true`.
--- @param view A view.
 -- @param use_indicator Whether or not to use an indicator.
 -- @param indicator The indicator number to use.
-function brace_highlight_indicator(view, use_indicator, indicator) end
+-- @function brace_highlight_indicator
+
+--- @field STYLE_BRACEBAD
+
+--- @field STYLE_BRACELIGHT
 
 ---
 -- Returns whether or not a call tip is visible.
--- @param view A view.
 -- @return bool
-function call_tip_active(view) end
+-- @function call_tip_active
 
 ---
 -- Removes the displayed call tip from view.
--- @param view A view.
-function call_tip_cancel(view) end
+-- @function call_tip_cancel
 
 ---
 -- Returns a call tip's display position.
--- @param view A view.
 -- @return number
-function call_tip_pos_start(view) end
+-- @function call_tip_pos_start
 
 ---
 -- Highlights a call tip's text between positions *start_pos* to *end_pos* with the color
 -- `view.call_tip_fore_hlt`.
--- @param view A view.
 -- @param start_pos The start position in a call tip text to highlight.
 -- @param end_pos The end position in a call tip text to highlight.
-function call_tip_set_hlt(view, start_pos, end_pos) end
+-- @function call_tip_set_hlt
 
 ---
 -- Displays a call tip at position *pos* with string *text* as the call tip's contents.
 -- Any "\001" or "\002" bytes in *text* are replaced by clickable up or down arrow visuals,
 -- respectively. These may be used to indicate that a symbol has more than one call tip,
 -- for example.
--- @param view A view.
 -- @param pos The position in *view*'s buffer to show a call tip at.
 -- @param text The call tip text to show.
-function call_tip_show(view, pos, text) end
+-- @function call_tip_show
 
 ---
 -- Clears all images registered using `view.register_image()` and `view.register_rgba_image()`.
--- @param view A view.
-function clear_registered_images(view) end
+-- @function clear_registered_images
 
 ---
 -- Removes the alternate string representation for character *char* (which may be a multi-byte
 -- character).
--- @param view A view.
 -- @param char The string character in `buffer.representations` to remove the alternate string
 --   representation for.
-function clear_representation(view, char) end
+-- @function clear_representation
 
 ---
 -- Removes all alternate string representations of characters.
--- @param view A view.
-function clear_all_representations(view) end
+-- @function clear_all_representations
 
 ---
 -- Returns the line number of the next contracted fold point starting from line number *line*,
 -- or `-1` if none exists.
--- @param view A view.
 -- @param line The line number in *view* to start at.
 -- @return number
-function contracted_fold_next(view, line) end
+-- @function contracted_fold_next
 
 ---
 -- Returns the actual line number of displayed line number *display_line*, taking wrapped,
 -- annotated, and hidden lines into account.
 -- If *display_line* is less than or equal to `1`, returns `1`. If *display_line* is greater
 -- than the number of displayed lines, returns `buffer.line_count`.
--- @param view A view.
 -- @param display_line The display line number to use.
 -- @return number
-function doc_line_from_visible(view, display_line) end
+-- @function doc_line_from_visible
 
 ---
 -- Ensures line number *line* is visible by expanding any fold points hiding it.
--- @param view A view.
 -- @param line The line number in *view* to ensure visible.
-function ensure_visible(view, line) end
+-- @function ensure_visible
 
 ---
 -- Ensures line number *line* is visible by expanding any fold points hiding it based on the
 -- vertical caret policy previously defined in `view.set_visible_policy()`.
--- @param view A view.
 -- @param line The line number in *view* to ensure visible.
-function ensure_visible_enforce_policy(view, line) end
+-- @function ensure_visible_enforce_policy
 
 ---
 -- Contracts, expands, or toggles all fold points, depending on *action*.
 -- When toggling, the state of the first fold point determines whether to expand or contract.
--- @param view A view.
 -- @param action The fold action to perform. Valid values are:
+--
 --   * `view.FOLDACTION_CONTRACT`
 --   * `view.FOLDACTION_EXPAND`
 --   * `view.FOLDACTION_TOGGLE`
 --   * `view.FOLDACTION_CONTRACT_EVERY_LEVEL`
-function fold_all(view, action) end
+-- @function fold_all
+
+--- @field FOLDACTION_CONTRACT
+
+--- @field FOLDACTION_CONTRACT_EVERY_LEVEL
+
+--- @field FOLDACTION_EXPAND
+
+--- @field FOLDACTION_TOGGLE
 
 ---
 -- Contracts, expands, or toggles the fold point on line number *line*, as well as all of its
 -- children, depending on *action*.
--- @param view A view.
 -- @param line The line number in *view* to set the fold states for.
 -- @param action The fold action to perform. Valid values are:
+--
 --   * `view.FOLDACTION_CONTRACT`
 --   * `view.FOLDACTION_EXPAND`
 --   * `view.FOLDACTION_TOGGLE`
-function fold_children(view, line, action) end
+-- @function fold_children
 
 ---
 -- Contracts, expands, or toggles the fold point on line number *line*, depending on *action*.
--- @param view A view.
 -- @param line The line number in *view* to set the fold state for.
 -- @param action The fold action to perform. Valid values are:
+--
 --   * `view.FOLDACTION_CONTRACT`
 --   * `view.FOLDACTION_EXPAND`
 --   * `view.FOLDACTION_TOGGLE`
-function fold_line(view, line, action) end
+-- @function fold_line
 
 ---
 -- Returns the default fold display text.
--- @param view A view.
-function get_default_fold_display_text(view) end
+-- @function get_default_fold_display_text
 
 ---
 -- Hides the range of lines between line numbers *start_line* to *end_line*.
 -- This has no effect on fold levels or fold flags.
--- @param view A view.
 -- @param start_line The start line of the range of lines in *view* to hide.
 -- @param end_line The end line of the range of lines in *view* to hide.
-function hide_lines(view, start_line, end_line) end
+-- @function hide_lines
 
 ---
 -- Scrolls the buffer right *columns* columns and down *lines* lines.
 -- Negative values are allowed.
--- @param view A view.
 -- @param columns The number of columns to scroll horizontally.
 -- @param lines The number of lines to scroll vertically.
-function line_scroll(view, columns, lines) end
+-- @function line_scroll
 
 ---
 -- Scrolls the buffer down one line, keeping the caret visible.
--- @param view A view.
-function line_scroll_down(view) end
+-- @function line_scroll_down
 
 ---
 -- Scrolls the buffer up one line, keeping the caret visible.
--- @param view A view.
-function line_scroll_up(view) end
+-- @function line_scroll_up
 
 ---
 -- Assigns marker symbol *symbol* to marker number *marker*, in the range of `1` to `32`.
 -- *symbol* is shown in marker symbol margins next to lines marked with *marker*.
--- @param view A view.
 -- @param marker The marker number in the range of `1` to `32` to set *symbol* for.
--- @param symbol The marker symbol: `buffer.MARK_*`.
+-- @param symbol The marker symbol: `view.MARK_*`.
 -- @see _SCINTILLA.next_marker_number
-function marker_define(view, marker, symbol) end
+-- @function marker_define
+
+--- @field MARK_ARROW
+
+--- @field MARK_ARROWDOWN
+
+--- @field MARK_ARROWS
+
+--- @field MARK_BACKGROUND
+
+--- @field MARK_BAR
+
+--- @field MARK_BOOKMARK
+
+--- @field MARK_BOXMINUS
+
+--- @field MARK_BOXMINUSCONNECTED
+
+--- @field MARK_BOXPLUS
+
+--- @field MARK_BOXPLUSCONNECTED
+
+--- @field MARK_CHARACTER
+
+--- @field MARK_CIRCLE
+
+--- @field MARK_CIRCLEMINUS
+
+--- @field MARK_CIRCLEMINUSCONNECTED
+
+--- @field MARK_CIRCLEPLUS
+
+--- @field MARK_CIRCLEPLUSCONNECTED
+
+--- @field MARK_DOTDOTDOT
+
+--- @field MARK_EMPTY
+
+--- @field MARK_FULLRECT
+
+--- @field MARK_LCORNER
+
+--- @field MARK_LCORNERCURVE
+
+--- @field MARK_LEFTRECT
+
+--- @field MARK_MINUS
+
+--- @field MARK_PIXMAP
+
+--- @field MARK_PLUS
+
+--- @field MARK_RGBAIMAGE
+
+--- @field MARK_ROUNDRECT
+
+--- @field MARK_SHORTARROW
+
+--- @field MARK_SMALLRECT
+
+--- @field MARK_TCORNER
+
+--- @field MARK_TCORNERCURVE
+
+--- @field MARK_UNDERLINE
+
+--- @field MARK_VERTICALBOOKMARK
+
+--- @field MARK_VLINE
 
 ---
 -- Associates marker number *marker*, in the range of `1` to `32`, with XPM image *pixmap*.
 -- The `view.MARK_PIXMAP` marker symbol must be assigned to *marker*. *pixmap* is shown in
 -- marker symbol margins next to lines marked with *marker*.
--- @param view A view.
 -- @param marker The marker number in the range of `1` to `32` to define pixmap *pixmap* for.
 -- @param pixmap The string pixmap data.
-function marker_define_pixmap(view, marker, pixmap) end
+-- @function marker_define_pixmap
 
 ---
 -- Associates marker number *marker*, in the range of `1` to `32`, with RGBA image *pixels*.
@@ -1283,7 +1723,6 @@ function marker_define_pixmap(view, marker, pixmap) end
 -- and alpha) defining the image line by line starting at the top-left pixel.
 -- The `view.MARK_RGBAIMAGE` marker symbol must be assigned to *marker*. *pixels* is shown in
 -- symbol margins next to lines marked with *marker*.
--- @param view A view.
 -- @param marker The marker number in the range of `1` to `32` to define RGBA data *pixels* for.
 -- @param pixels The string sequence of 4 byte pixel values starting with the pixels for the
 --   top line, with the leftmost pixel first, then continuing with the pixels for subsequent
@@ -1291,235 +1730,218 @@ function marker_define_pixmap(view, marker, pixmap) end
 --   order, a red byte, a green byte, a blue byte and an alpha byte. The color bytes are not
 --   premultiplied by the alpha value. That is, a fully red pixel that is 25% opaque will be
 --   `[FF, 00, 00, 3F]`.
-function marker_define_rgba_image(view, marker, pixels) end
+-- @function marker_define_rgba_image
 
 ---
 -- Highlights the margin fold markers for the current fold block if *enabled* is `true`.
--- @param view A view.
 -- @param enabled Whether or not to enable highlight.
-function marker_enable_highlight(view, enabled) end
+-- @function marker_enable_highlight
 
 ---
 -- Returns the symbol assigned to marker number *marker*, in the range of `1` to `32`, used in
 -- `view.marker_define()`,
 -- `view.marker_define_pixmap()`, or `view.marker_define_rgba_image()`.
--- @param view A view.
 -- @param marker The marker number in the range of `1` to `32` to get the symbol of.
 -- @return number
-function marker_symbol_defined(view, marker) end
+-- @function marker_symbol_defined
 
 ---
 -- Adds a new vertical line at column number *column* with color *color*, in "0xBBGGRR" format.
--- @param view A view.
 -- @param column The column number to add a vertical line at.
 -- @param color The color in "0xBBGGRR" format.
-function multi_edge_add_line(view, column, color) end
+-- @function multi_edge_add_line
 
 ---
 -- Clears all vertical lines created by `view:multi_edge_add_line()`.
--- @param view A view.
-function multi_edge_clear_all(view) end
+-- @function multi_edge_clear_all
 
 ---
 -- Registers XPM image *xpm_data* to type number *type* for use in autocompletion and user lists.
--- @param view A view.
 -- @param type Integer type to register the image with.
 -- @param xpm_data The XPM data as described in `view.marker_define_pixmap()`.
-function register_image(view, type, xpm_data) end
+-- @function register_image
 
 ---
 -- Registers RGBA image *pixels* to type number *type* for use in autocompletion and user lists.
 -- The dimensions for *pixels* (`view.rgba_image_width` and `view.rgba_image_height`) must
 -- have already been defined. *pixels* is a sequence of 4 byte pixel values (red, blue, green,
 -- and alpha) defining the image line by line starting at the top-left pixel.
--- @param view A view.
 -- @param type Integer type to register the image with.
 -- @param pixels The RGBA data as described in `view.marker_define_rgba_image()`.
-function register_rgba_image(view, type, pixels) end
+-- @function register_rgba_image
 
 ---
 -- Resets the color of UI element *element* to its default color.
 -- @param element One of the UI elements specified in [`view.element_color`]().
 -- @see element_color
-function reset_element_color(view, element) end
+-- @function reset_element_color
 
 ---
 -- Scrolls the caret into view based on the policies previously defined in
 -- `view.set_x_caret_policy()` and `view.set_y_caret_policy()`.
--- @param view A view.
 -- @see set_x_caret_policy
 -- @see set_y_caret_policy
-function scroll_caret(view) end
+-- @function scroll_caret
 
 ---
 -- Scrolls to the end of the buffer without moving the caret.
--- @param view A view.
-function scroll_to_end(view) end
+-- @function scroll_to_end
 
 ---
 -- Scrolls to the beginning of the buffer without moving the caret.
--- @param view A view.
-function scroll_to_start(view) end
+-- @function scroll_to_start
 
 ---
 -- Scrolls into view the range of text between positions *primary_pos* and *secondary_pos*,
 -- with priority given to *primary_pos*.
 -- Similar to `view.scroll_caret()`, but with *primary_pos* instead of `buffer.current_pos`.
 -- This is useful for scrolling search results into view.
--- @param view A view.
 -- @param secondary_pos The secondary range position to scroll into view.
 -- @param primary_pos The primary range position to scroll into view.
-function scroll_range(view, secondary_pos, primary_pos) end
+-- @function scroll_range
 
 ---
 -- Sets the default fold display text to string *text*.
--- @param view A view.
 -- @param text The text to display by default next to folded lines.
 -- @see toggle_fold_show_text
-function set_default_fold_display_text(view, text) end
+-- @function set_default_fold_display_text
 
 ---
 -- Overrides the fold margin's default color with color *color*, in "0xBBGGRR" format, if
 -- *use_setting* is `true`.
--- @param view A view.
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
-function set_fold_margin_color(view, use_setting, color) end
+-- @function set_fold_margin_color
 
 ---
 -- Overrides the fold margin's default highlight color with color *color*, in "0xBBGGRR" format,
 -- if *use_setting* is `true`.
--- @param view A view.
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
-function set_fold_margin_hi_color(view, use_setting, color) end
+-- @function set_fold_margin_hi_color
 
 ---
 -- Defines scrolling policy bit-mask *policy* as the policy for keeping the caret *y* number
 -- of lines away from the vertical margins as `view.ensure_visible_enforce_policy()` redisplays
 -- hidden or folded lines.
 -- It is similar in operation to `view.set_y_caret_policy()`.
--- @param view A view.
 -- @param policy The combination of `view.VISIBLE_SLOP` and `view.VISIBLE_STRICT` policy flags
 --   to set.
 -- @param y The number of lines from the vertical margins to keep the caret.
-function set_visible_policy(view, policy, y) end
+-- @function set_visible_policy
+
+--- @field VISIBLE_SLOP
+
+--- @field VISIBLE_STRICT
 
 ---
 -- Overrides the background color of whitespace with color *color*, in "0xBBGGRR" format,
 -- if *use_setting* is `true`.
--- @param view A view.
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
-function set_whitespace_back(view, use_setting, color) end
+-- @function set_whitespace_back
 
 ---
 -- Overrides the foreground color of whitespace with color *color*, in "0xBBGGRR" format,
 -- if *use_setting* is `true`.
 -- @param use_setting Whether or not to use *color*.
 -- @param color The color in "0xBBGGRR" format.
-function set_whitespace_fore(view, use_setting, color) end
+-- @function set_whitespace_fore
 
 ---
 -- Defines scrolling policy bit-mask *policy* as the policy for keeping the caret *x* number
 -- of pixels away from the horizontal margins.
--- @param view A view.
 -- @param policy The combination of `view.CARET_SLOP`, `view.CARET_STRICT`, `view.CARET_EVEN`,
 --   and `view.CARET_JUMPS` policy flags to set.
 -- @param x The number of pixels from the horizontal margins to keep the caret.
-function set_x_caret_policy(view, policy, x) end
+-- @function set_x_caret_policy
+
+--- @field CARET_EVEN
+
+--- @field CARET_JUMPS
+
+--- @field CARET_SLOP
+
+--- @field CARET_STRICT
 
 ---
 -- Defines scrolling policy bit-mask *policy* as the policy for keeping the caret *y* number
 -- of lines away from the vertical margins.
--- @param view A view.
 -- @param policy The combination of `view.CARET_SLOP`, `view.CARET_STRICT`, `view.CARET_EVEN`,
 --   and `view.CARET_JUMPS` policy flags to set.
 -- @param y The number of lines from the vertical margins to keep the caret.
-function set_y_caret_policy(view, policy, y) end
+-- @function set_y_caret_policy
 
 ---
 -- Shows the range of lines between line numbers *start_line* to *end_line*.
 -- This has no effect on fold levels or fold flags and the first line cannot be hidden.
--- @param view A view.
 -- @param start_line The start line of the range of lines in *view* to show.
 -- @param end_line The end line of the range of lines in *view* to show.
-function show_lines(view, start_line, end_line) end
+-- @function show_lines
 
 ---
 -- Reverts all styles to having the same properties as `view.STYLE_DEFAULT`.
--- @param view A view.
-function style_clear_all(view) end
+-- @function style_clear_all
 
 ---
 -- Resets `view.STYLE_DEFAULT` to its initial state.
--- @param view A view.
-function style_reset_default(view) end
+-- @function style_reset_default
 
 ---
 -- Returns the pixel height of line number *line*.
--- @param view A view.
 -- @param line The line number in *view* to get the pixel height of.
 -- @return number
-function text_height(view, line) end
+-- @function text_height
 
 ---
 -- Returns the pixel width string *text* would have when styled with style number *style_num*,
 -- in the range of `1` to `256`.
--- @param view A view.
 -- @param style_num The style number between `1` and `256` to use.
 -- @param text The text to measure the width of.
 -- @return number
-function text_width(view, style_num, text) end
+-- @function text_width
 
 ---
 -- Toggles the fold point on line number *line* between expanded (where all of its child lines
 -- are displayed) and contracted (where all of its child lines are hidden).
--- @param view A view.
 -- @param line The line number in *view* to toggle the fold on.
 -- @see set_default_fold_display_text
-function toggle_fold(view, line) end
+-- @function toggle_fold
 
 ---
 -- Toggles a fold point on line number *line* between expanded (where all of its child lines are
 -- displayed) and contracted (where all of its child lines are hidden), and shows string *text*
 -- next to that line.
 -- *text* is drawn with style number `view.STYLE_FOLDDISPLAYTEXT`.
--- @param view A view.
 -- @param line The line number in *view* to toggle the fold on and display *text* after.
 -- @param text The text to display after the line.
-function toggle_fold_show_text(view, line, text) end
+-- @function toggle_fold_show_text
 
 ---
 -- Centers current line in the view.
--- @param view A view.
-function vertical_center_caret(view) end
+-- @function vertical_center_caret
 
 ---
 -- Returns the displayed line number of actual line number *line*, taking wrapped, annotated,
 -- and hidden lines into account, or `-1` if *line* is outside the range of lines in the buffer.
 -- Lines can occupy more than one display line if they wrap.
--- @param view A view.
 -- @param line The line number in *view* to use.
 -- @return number
-function visible_from_doc_line(view, line) end
+-- @function visible_from_doc_line
 
 ---
 -- Returns the number of wrapped lines needed to fully display line number *line*.
--- @param view A view.
 -- @param line The line number in *view* to use.
 -- @return number
-function wrap_count(view, line) end
+-- @function wrap_count
 
 ---
 -- Increases the size of all fonts by one point, up to 20.
--- @param view A view.
-function zoom_in(view) end
+-- @function zoom_in
 
 ---
 -- Decreases the size of all fonts by one point, down to -10.
--- @param view A view.
-function zoom_out(view) end
+-- @function zoom_out
 
 -- External functions.
 
@@ -1529,17 +1951,17 @@ function zoom_out(view) end
 -- If *vertical* is `false`, splits the view vertically into left and right views.
 -- Emits a `VIEW_NEW` event.
 -- @param view The view to split.
--- @param vertical Optional flag indicating whether or not to split the view vertically. The
+-- @param[opt] vertical Optional flag indicating whether or not to split the view vertically. The
 --   default value is `false`, for horizontal.
 -- @return old view and new view.
 -- @see events.VIEW_NEW
-function split(view, vertical) end
+-- @function split
 
 ---
 -- Unsplits the view if possible, returning `true` on success.
 -- @param view The view to unsplit.
 -- @return boolean if the view was unsplit or not.
-function unsplit(view) end
+-- @function unsplit
 
 ---
 -- Switches to buffer *buffer* or the buffer *buffer* number of buffers relative to the
@@ -1550,7 +1972,7 @@ function unsplit(view) end
 -- @see _G._BUFFERS
 -- @see events.BUFFER_BEFORE_SWITCH
 -- @see events.BUFFER_AFTER_SWITCH
-function goto_buffer(view, buffer) end
+-- @function goto_buffer
 
 ---
 -- Map of color name strings to color values in `0xBBGGRR` format.
@@ -1564,9 +1986,7 @@ function goto_buffer(view, buffer) end
 -- (0x008080), blue (0x800000), magenta (0x800080), cyan (0x808000), white (0xC0C0C0), light black
 -- (0x404040), light red (0x0000FF), light green (0x00FF00), light yellow (0x00FFFF), light blue
 -- (0xFF0000), light magenta (0xFF00FF), light cyan (0xFFFF00), and light white (0xFFFFFF).
--- @class table
--- @name colors
-local colors
+-- @table colors
 
 ---
 -- Map of style names to style definition tables.
@@ -1574,61 +1994,71 @@ local colors
 --
 -- Style names consist of the following default names as well as the tag names defined by lexers.
 --
--- * [`view.STYLE_DEFAULT`](): The default style all others are based on.
--- * [`view.STYLE_LINENUMBER`](): The line number margin style.
--- * [`view.STYLE_CONTROLCHAR`](): The style of control character blocks.
--- * [`view.STYLE_INDENTGUIDE`](): The style of indentation guides.
--- * [`view.STYLE_CALLTIP`](): The style of call tip text. Only the `font`, `size`, `fore`,
---   and `back` style definition fields are supported.
--- * [`view.STYLE_FOLDDISPLAYTEXT`](): The style of text displayed next to folded lines.
--- * [`lexer.ATTRIBUTE`](), [`lexer.BOLD`](), [`lexer.CLASS`](), [`lexer.CODE`](),
---   [`lexer.COMMENT`](), [`lexer.CONSTANT`](), [`lexer.CONSTANT_BUILTIN`](),
---   [`lexer.EMBEDDED`](), [`lexer.ERROR`](), [`lexer.FUNCTION`](), [`lexer.FUNCTION_BUILTIN`](),
---   [`lexer.FUNCTION_METHOD`](), [`lexer.IDENTIFIER`](), [`lexer.ITALIC`](), [`lexer.KEYWORD`](),
---   [`lexer.LABEL`](), [`lexer.LINK`](), [`lexer.NUMBER`](), [`lexer.OPERATOR`](),
---   [`lexer.PREPROCESSOR`](), [`lexer.REFERENCE`](), [`lexer.REGEX`](), [`lexer.STRING`](),
---   [`lexer.TAG`](), [`lexer.TITLE`](), [`lexer.TYPE`](), [`lexer.UNDERLINE`](),
---   [`lexer.VARIABLE`](), [`lexer.VARIABLE_BUILTIN`](): Some tag names used by lexers. Some
---   lexers may define more tag names, so this list is not exhaustive.
+--   * [`view.STYLE_DEFAULT`](): The default style all others are based on.
+--   * [`view.STYLE_LINENUMBER`](): The line number margin style.
+--   * [`view.STYLE_CONTROLCHAR`](): The style of control character blocks.
+--   * [`view.STYLE_INDENTGUIDE`](): The style of indentation guides.
+--   * [`view.STYLE_CALLTIP`](): The style of call tip text. Only the `font`, `size`, `fore`,
+--     and `back` style definition fields are supported.
+--   * [`view.STYLE_FOLDDISPLAYTEXT`](): The style of text displayed next to folded lines.
+--   * [`lexer.ATTRIBUTE`](), [`lexer.BOLD`](), [`lexer.CLASS`](), [`lexer.CODE`](),
+--     [`lexer.COMMENT`](), [`lexer.CONSTANT`](), [`lexer.CONSTANT_BUILTIN`](),
+--     [`lexer.EMBEDDED`](), [`lexer.ERROR`](), [`lexer.FUNCTION`](), [`lexer.FUNCTION_BUILTIN`](),
+--     [`lexer.FUNCTION_METHOD`](), [`lexer.IDENTIFIER`](), [`lexer.ITALIC`](),
+--     [`lexer.KEYWORD`](), [`lexer.LABEL`](), [`lexer.LINK`](), [`lexer.NUMBER`](),
+--     [`lexer.OPERATOR`](), [`lexer.PREPROCESSOR`](), [`lexer.REFERENCE`](), [`lexer.REGEX`](),
+--     [`lexer.STRING`](), [`lexer.TAG`](), [`lexer.TITLE`](), [`lexer.TYPE`](),
+--     [`lexer.UNDERLINE`](), [`lexer.VARIABLE`](), [`lexer.VARIABLE_BUILTIN`](): Some tag
+--     names used by lexers. Some lexers may define more tag names, so this list is not exhaustive.
 --
 -- Style definition tables may contain the following fields:
 --
--- * `font`: String font name.
--- * `size`: Integer font size.
--- * `bold`: Whether or not the font face is bold. The default value is `false`.
--- * `weight`: Integer weight or boldness of a font, between 1 and 999.
--- * `italic`: Whether or not the font face is italic. The default value is `false`.
--- * `underline`: Whether or not the font face is underlined. The default value is `false`.
--- * `fore`: Font face foreground color in "0xBBGGRR" format.
--- * `back`: Font face background color in "0xBBGGRR" format.
--- * `eol_filled`: Whether or not the background color extends to the end of the line. The
---   default value is `false`.
--- * `case`: Font case: `view.CASE_UPPER` for upper, `view.CASE_LOWER` for lower, and
---   `view.CASE_MIXED` for normal, mixed case. The default value is `view.CASE_MIXED`.
--- * `visible`: Whether or not the text is visible. The default value is `true`.
--- * `changeable`: Whether the text is changeable instead of read-only. The default value is
---   `true`.
--- @name styles
--- @class table
-local styles
+--   * `font`: String font name.
+--   * `size`: Integer font size.
+--   * `bold`: Whether or not the font face is bold. The default value is `false`.
+--   * `weight`: Integer weight or boldness of a font, between 1 and 999.
+--   * `italic`: Whether or not the font face is italic. The default value is `false`.
+--   * `underline`: Whether or not the font face is underlined. The default value is `false`.
+--   * `fore`: Font face foreground color in "0xBBGGRR" format.
+--   * `back`: Font face background color in "0xBBGGRR" format.
+--   * `eol_filled`: Whether or not the background color extends to the end of the line. The
+--     default value is `false`.
+--   * `case`: Font case: `view.CASE_UPPER` for upper, `view.CASE_LOWER` for lower, and
+--     `view.CASE_MIXED` for normal, mixed case. The default value is `view.CASE_MIXED`.
+--   * `visible`: Whether or not the text is visible. The default value is `true`.
+--   * `changeable`: Whether the text is changeable instead of read-only. The default value is
+--     `true`.
+-- @table styles
+
+--- @field STYLE_CALLTIP
+
+--- @field STYLE_CONTROLCHAR
+
+--- @field STYLE_DEFAULT
+
+--- @field STYLE_FOLDDISPLAYTEXT
+
+--- @field STYLE_INDENTGUIDE
+
+--- @field STYLE_LINENUMBER
+
+--- @field STYLE_MAX
 
 ---
 -- Applies defined styles to the view.
 -- This should be called any time a style in `styles` changes.
--- @param view A view.
 -- @see styles
-function set_styles(view)
+-- @function set_styles
 
 ---
 -- Sets the view's color theme to be string *name*, with the contents of table *env* available
 -- as global variables.
 -- User themes override Textadept's default themes when they have the same name. If *name*
 -- contains slashes, it is assumed to be an absolute path to a theme instead of a theme name.
--- @param view A view.
 -- @param name The name or absolute path of a theme to set.
--- @param env Optional table of global variables themes can utilize to override default settings
---   such as font and size.
+-- @param[opt] env Optional table of global variables themes can utilize to override default
+--   settings such as font and size.
 -- @usage view:set_theme('light', {font = 'Monospace', size = 12})
 -- @see styles
 -- @see colors
-function set_theme(view, name, env) end
+-- @function set_theme

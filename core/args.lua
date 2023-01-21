@@ -1,19 +1,14 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
-local M = {}
-
---[[ This comment is for LuaDoc.
 ---
 -- Processes command line arguments for Textadept.
--- @field _G.events.ARG_NONE (string)
---   Emitted when no command line arguments are passed to Textadept on startup.
-module('args')]]
+-- @module args
+local M = {}
 
-events.ARG_NONE = 'arg_none'
+--- Emitted when no command line arguments are passed to Textadept on startup.
+_G.events.ARG_NONE = 'arg_none'
 
--- Map of registered command line options.
--- @class table
--- @name options
+--- Map of registered command line options.
 local options = {}
 
 ---
@@ -25,7 +20,6 @@ local options = {}
 -- @param narg The number of expected parameters for the option.
 -- @param f The Lua function to run when the option is set. It is passed *narg* string arguments.
 -- @param description The string description of the option for command line help.
--- @name register
 function M.register(short, long, narg, f, description)
   local option = {
     narg = assert_type(narg, 'number', 3), f = assert_type(f, 'function', 4),
@@ -35,11 +29,12 @@ function M.register(short, long, narg, f, description)
   options[assert_type(long, 'string', 2)] = option
 end
 
+---
 -- Processes command line argument table *arg*, handling options previously defined using
 -- `args.register()` and treating unrecognized arguments as filenames to open.
 -- Emits an `ARG_NONE` event when no arguments are present unless *no_emit_arg_none* is `true`.
 -- @param arg Argument table.
--- @param no_emit_arg_none When `true`, do not emit `ARG_NONE` when no arguments are present.
+-- @param[opt] no_emit_arg_none When `true`, do not emit `ARG_NONE` when no arguments are present.
 --   The default value is `false`.
 -- @see register
 -- @see _G.events
@@ -97,7 +92,13 @@ end
 
 -- Set `_G._USERHOME`.
 -- This needs to be set as soon as possible since the processing of arguments is positional.
-_USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE') .. '/.textadept'
+
+---
+-- The path to the user's *~/.textadept/* directory, where all preferences and user-data is stored.
+-- On Windows machines *~/* is the value of the "USERHOME" environment variable (typically
+-- *C:\Users\username\\* or *C:\Documents and Settings\username\\*). On Linux and macOS machines
+-- *~/* is the value of "$HOME" (typically */home/username/* and */Users/username/* respectively).
+_G._USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE') .. '/.textadept'
 for i, option in ipairs(arg) do
   if (option == '-u' or option == '--userhome') and arg[i + 1] then
     _USERHOME = arg[i + 1]
