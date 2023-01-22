@@ -27,6 +27,43 @@ M.INDIC_ERROR = _SCINTILLA.next_indic_number()
 local run_events = {'compile_output', 'run_output', 'build_output', 'test_output'}
 for _, event in ipairs(run_events) do events[event:upper()] = event end
 
+---
+-- Emitted when executing a language's compile shell command.
+-- By default, compiler output is printed to the output buffer. In order to override this
+-- behavior, connect to the event with an index of `1` and return `true`.
+-- Arguments:
+--
+--   * `output`: A line of string output from the command.
+-- @field _G.events.COMPILE_OUTPUT
+
+---
+-- Emitted when executing a language's or project's run shell command.
+-- By default, output is printed to the output buffer. In order to override this behavior,
+-- connect to the event with an index of `1` and return `true`.
+-- Arguments:
+--
+--   * `output`: A line of string output from the command.
+-- @field _G.events.RUN_OUTPUT
+
+---
+-- Emitted when executing a project's build shell command.
+-- By default, output is printed to the output buffer. In order to override this behavior,
+-- connect to the event with an index of `1` and return `true`.
+-- Arguments:
+--
+--   * `output`: A line of string output from the command.
+-- @field _G.events.BUILD_OUTPUT
+
+---
+-- Emitted when executing a project's shell command for running tests.
+-- By default, output is printed to the output buffer. In order to override this behavior,
+-- connect to the event with an index of `1` and return `true`.
+-- Arguments:
+--
+--   * `output`: A line of string output from the command.
+-- @field _G.events.TEST_OUTPUT
+
+---
 -- Table of currently running spawned processes.
 -- Each entry is a table that contains 'proc' and 'command' fields that describe the process.
 local procs = {}
