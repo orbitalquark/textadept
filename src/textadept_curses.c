@@ -411,6 +411,12 @@ struct Process {
 static inline struct Process *PROCESS(struct Process *proc) { return proc; }
 
 #if !_WIN32
+// Pushes the list of spawned processes onto the stack.
+void lua_getspawnedprocesses(lua_State *L) {
+  if (!lua_getfield(L, LUA_REGISTRYINDEX, "spawn_procs"))
+    lua_newtable(L), lua_pushvalue(L, -1), lua_setfield(L, LUA_REGISTRYINDEX, "spawn_procs");
+}
+
 // Creates and returns an `fd_set` for all spawned processes that can be used with `select()`
 // and `read_fds()` to wait for input or output.
 // The caller is expected to free the returned pointer.
@@ -418,8 +424,7 @@ fd_set *new_fds(int *nfds) {
   *nfds = 0;
   fd_set *fds = malloc(sizeof(fd_set));
   FD_ZERO(fds); // TODO: is calloc enough?
-  if (!lua_getfield(lua, LUA_REGISTRYINDEX, "spawn_procs"))
-    lua_newtable(lua), lua_pushvalue(lua, -1), lua_setfield(lua, LUA_REGISTRYINDEX, "spawn_procs");
+  lua_getspawnedprocesses(lua);
   for (lua_pushnil(lua); lua_next(lua, -2); lua_pop(lua, 1)) {
     struct Process *proc = lua_touserdata(lua, -2);
     // Note: need to read from pipes so they do not get clogged, even if monitoring is not
@@ -429,7 +434,7 @@ fd_set *new_fds(int *nfds) {
     FD_SET(proc->fstderr, fds); // note: this is a do/while macro on OSX
     *nfds = fmax(*nfds, proc->fstderr + 1);
   }
-  return (lua_pop(lua, 1), fds); // spawn_procs
+  return (lua_pop(lua, 1), fds); // spawned processes
 }
 
 // Signal that a process has output to read.
@@ -447,13 +452,13 @@ static void read_proc(struct Process *proc, bool is_stdout) {
 // Cleans up after the process finished executing and returned the given status code.
 static void process_finished(struct Process *proc, int status) {
   // Stop tracking and monitoring this proc.
-  lua_getfield(lua, LUA_REGISTRYINDEX, "spawn_procs");
+  lua_getspawnedprocesses(lua);
   for (lua_pushnil(lua); lua_next(lua, -2); lua_pop(lua, 1))
     if (((struct Process *)lua_touserdata(lua, -2))->pid == proc->pid) {
       lua_pushnil(lua), lua_replace(lua, -2), lua_settable(lua, -3); // t[proc] = nil
       break;
     }
-  lua_pop(lua, 1); // spawn_procs
+  lua_pop(lua, 1); // spawned processes
   proc->pid = 0, close(proc->fstdin), close(proc->fstdout), close(proc->fstderr);
   process_exited(proc, proc->exit_status = status);
 }
@@ -462,7 +467,7 @@ static void process_finished(struct Process *proc, int status) {
 // Also monitors child processes for completion and cleans up after them.
 int read_fds(fd_set *fds) {
   int n = 0;
-  lua_getfield(lua, LUA_REGISTRYINDEX, "spawn_procs");
+  lua_getspawnedprocesses(lua);
   for (lua_pushnil(lua); lua_next(lua, -2); lua_pop(lua, 1)) {
     struct Process *proc = lua_touserdata(lua, -2);
     // Read output if any is available.
@@ -475,7 +480,7 @@ int read_fds(fd_set *fds) {
       lua_pushnil(lua), lua_replace(lua, -3); // key no longer exists
     }
   }
-  return (lua_pop(lua, 1), n); // spawn_procs
+  return (lua_pop(lua, 1), n); // spawned processes
 }
 #endif
 
@@ -815,8 +820,8 @@ bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *
     struct Process *p = proc;
     p->pid = pid, p->fstdin = pstdin[1], p->fstdout = pstdout[0], p->fstderr = pstderr[0],
     p->monitor_stdout = monitor_stdout, p->monitor_stderr = monitor_stderr;
-    lua_checkstack(L, 3), lua_getfield(L, LUA_REGISTRYINDEX, "spawn_procs"),
-      lua_pushvalue(L, index), lua_pushboolean(L, 1), lua_settable(L, -3); // t[proc] = true
+    lua_checkstack(L, 3), lua_getspawnedprocesses(lua), lua_pushvalue(L, index),
+      lua_pushboolean(L, 1), lua_settable(L, -3); // t[proc] = true
     return true;
   }
   // Child process: redirect stdin, stdout, and stderr, chdir, and exec.
