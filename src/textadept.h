@@ -18,6 +18,9 @@ extern FindOption *match_case, *whole_word, *regex, *in_files;
 // be occasionally needed.
 extern lua_State *lua;
 
+// Textadept's exit status. Platforms should return it from their main() functions.
+extern int exit_status;
+
 /**
  * Initializes Textadept.
  * Initializes Lua, asks the Platform to create the main application window, and runs Lua

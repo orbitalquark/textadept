@@ -733,7 +733,7 @@ public:
     return QApplication::event(event);
   }
 
-  int exec() { return inited ? QApplication::exec() : 1; }
+  int exec() { return inited ? QApplication::exec() : exit_status; }
 
 private:
   bool inited;

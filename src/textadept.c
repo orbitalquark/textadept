@@ -29,6 +29,7 @@ SciObject *focused_view, *command_entry;
 FindButton *find_next, *find_prev, *replace, *replace_all;
 FindOption *match_case, *whole_word, *regex, *in_files;
 lua_State *lua;
+int exit_status;
 
 static char *os;
 static SciObject *dummy_view; // for working with documents not shown in an existing view
@@ -838,6 +839,19 @@ static bool init_lua(int argc, char **argv) {
   luaL_requiref(L, "lpeg", luaopen_lpeg, 1), lua_pop(L, 1);
   luaL_requiref(L, "lfs", luaopen_lfs, 1), lua_pop(L, 1);
 
+  // Check for invoking Textadept as a Lua interpreter.
+  for (int i = 0; i < argc; i++)
+    if ((strcmp("-L", argv[i]) == 0 || strcmp("--lua", argv[i]) == 0) && i + 1 < argc) {
+      int n = i + 1; // shift all elements of arg down by n
+      lua_getglobal(L, "table"), lua_getfield(L, -1, "move");
+      lua_getfield(L, LUA_REGISTRYINDEX, ARG), lua_pushinteger(L, 0),
+        lua_pushinteger(L, luaL_len(L, -2) + n), lua_pushinteger(L, -n);
+      lua_call(L, 4, 1), lua_setglobal(L, "arg"); // arg = table.move(arg, 0, #len + n, -n)
+      bool ok = luaL_dofile(L, argv[i + 1]) == LUA_OK;
+      if (!ok) fprintf(stderr, "%s\n", lua_tostring(L, -1));
+      return (lua_close(L), lua = NULL, exit_status = ok ? 0 : 1, false);
+    }
+
   lua_newtable(L);
   lua_newtable(L);
   lua_pushcfunction(L, click_find_next), lua_setfield(L, -2, "find_next");
@@ -890,13 +904,14 @@ static bool init_lua(int argc, char **argv) {
   lua_pushboolean(L, true), lua_setglobal(L, get_platform());
   lua_pushstring(L, get_charset()), lua_setglobal(L, "_CHARSET");
 
-  if (lua = L, !run_file("core/init.lua")) return (lua_close(L), lua = NULL, false);
+  if (lua = L, !run_file("core/init.lua"))
+    return (lua_close(L), lua = NULL, exit_status = 1, false);
   lua_getglobal(L, "_SCINTILLA");
   lua_getfield(L, -1, "constants"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_constants");
   lua_getfield(L, -1, "functions"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_functions");
   lua_getfield(L, -1, "properties"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_properties");
   lua_pop(L, 1); // _SCINTILLA
-  return true;
+  return (exit_status = 0, true);
 }
 
 // Synchronizes the tabbar after switching between Scintilla views or documents.
@@ -1245,7 +1260,7 @@ bool init_textadept(int argc, char **argv) {
   if (getenv("TEXTADEPT_HOME")) strcpy(textadept_home, getenv("TEXTADEPT_HOME"));
 
   setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
-  if (!init_lua(argc, argv)) return (close_textadept(), false);
+  if (!init_lua(argc, argv)) return (close_textadept(), false); // exit_status has been set
   command_entry = new_scintilla(notified), add_doc(0), dummy_view = new_scintilla(NULL);
   initing = true, new_window(create_first_view), run_file("init.lua"), initing = false;
   emit("buffer_new", -1), emit("view_new", -1); // first ones

@@ -263,6 +263,7 @@ Option | Arguments | Description
 `-f`, `--force` | 0 | Forces unique instance<sup>a</sup>
 `-h`, `--help` | 0 | Shows this<sup>b</sup>
 `-l`, `--line` | 1 | Jumps to a line in the previously opened file
+`-L`, `--lua` | 1 | Runs the given file as a Lua script and exits
 `-n`, `--nosession` | 0 | No state saving/restoring functionality
 `-p`, `--preserve` | 0 | Preserve ^Q and ^S flow control sequences<sup>c</sup>
 `-s`, `--session` | 1 | Loads the given session on startup
@@ -285,6 +286,14 @@ You can add your own command line arguments using [`args.register()`][]. For exa
     end, "Read-only mode")
 
 [`args.register()`]: api.html#args.register
+
+**Note:** the `-L` and `--lua` option allows Textadept to function as a standalone Lua
+interpreter.  All other command line options listed above or registered have no effect, but
+they will be available to the script via the global `arg` table. Textadept defines `arg` as it
+is described in the Lua manual: the script name goes at index 0, the first argument after the
+script name goes to 1, and so on; arguments before the script name (i.e. the Textadept binary
+and the `-L` or `--lua` option) go to negative indices. Textadept does not emulate Lua's command
+line options or its default `package.path` and `package.cpath` settings.
 
 Textadept can also open files and projects using the command line. For example:
 

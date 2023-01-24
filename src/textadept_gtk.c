@@ -901,7 +901,7 @@ int main(int argc, char **argv) {
   if (g_application_register(app, NULL, NULL) && g_application_get_is_remote(app) && !force)
     return (g_application_run(app, argc, argv), g_object_unref(app), 0);
 
-  if (!init_textadept(argc, argv)) return (g_object_unref(app), 1);
+  if (!init_textadept(argc, argv)) return (g_object_unref(app), exit_status);
   gtk_main();
 
   return (g_object_unref(app), 0); // close_textadept() was called before gtk_main_quit()
