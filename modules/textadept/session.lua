@@ -19,7 +19,7 @@ for _, v in ipairs(session_events) do events[v:upper()] = v end
 -- Emitted when saving a session.
 -- Arguments:
 --
---   * `session`: Table of session data to save. All handlers will have access to this same
+--   - *session*: Table of session data to save. All handlers will have access to this same
 --     table, and Textadept's default handler reserves the use of some keys.
 --     Note that functions, userdata, and circular table values cannot be saved. The latter
 --     case is not recognized at all, so beware.
@@ -29,7 +29,7 @@ for _, v in ipairs(session_events) do events[v:upper()] = v end
 -- Emitted when loading a session.
 -- Arguments:
 --
---   * `session`: Table of session data to load. All handlers will have access to this same table.
+--   - *session*: Table of session data to load. All handlers will have access to this same table.
 -- @field _G.events.SESSION_LOAD
 
 -- This comment is needed for LDoc to process the previous field.

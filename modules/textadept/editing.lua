@@ -25,11 +25,11 @@ M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
 ---
 -- The word highlight mode.
 --
---   * `textadept.editing.HIGHLIGHT_CURRENT`
+--   - `textadept.editing.HIGHLIGHT_CURRENT`
 --     Automatically highlight all instances of the current word.
---   * `textadept.editing.HIGHLIGHT_SELECTED`
+--   - `textadept.editing.HIGHLIGHT_SELECTED`
 --     Automatically highlight all instances of the selected word.
---   * `textadept.editing.HIGHLIGHT_NONE`
+--   - `textadept.editing.HIGHLIGHT_NONE`
 --     Do not automatically highlight words.
 --
 -- The default value is `textadept.editing.HIGHLIGHT_NONE`.

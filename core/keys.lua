@@ -104,7 +104,7 @@ local M = {}
 -- If any handler returns `true`, the key is not handled further (e.g. inserted into the buffer).
 -- Arguments:
 --
---   * _`key`_: The string representation of the [key sequence](#key-sequences).
+--   - *key*: The string representation of the [key sequence](#key-sequences).
 -- @field _G.events.KEYPRESS
 
 local CTRL, ALT, CMD, SHIFT = 'ctrl+', not CURSES and 'alt+' or 'meta+', 'cmd+', 'shift+'

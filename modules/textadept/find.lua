@@ -110,8 +110,8 @@ for _, v in ipairs(find_events) do events[v:upper()] = v end
 -- Emitted when a result is found. It is selected and has been scrolled into view.
 -- Arguments:
 --
---   * _`find_text`_: The text originally searched for.
---   * _`wrapped`_: Whether or not the result found is after a text search wrapped.
+--   - *find_text*: The text originally searched for.
+--   - *wrapped*: Whether or not the result found is after a text search wrapped.
 -- @field _G.events.FIND_RESULT_FOUND
 
 ---
@@ -409,12 +409,12 @@ local re_patt = lpeg.Cs(P{
 })
 -- Returns string *text* with the following sequences unescaped:
 --
---   * "\uXXXX" sequences replaced with the equivalent UTF-8 character.
---   * "\d" sequences replaced with the text of capture number *d* from the regular expression
+--   - "\uXXXX" sequences replaced with the equivalent UTF-8 character.
+--   - "\d" sequences replaced with the text of capture number *d* from the regular expression
 --     (or the entire match for *d* = 0).
---   * "\U" and "\L" sequences convert everything up to the next "\U", "\L", or "\E" to uppercase
+--   - "\U" and "\L" sequences convert everything up to the next "\U", "\L", or "\E" to uppercase
 --     and lowercase, respectively.
---   * "\u" and "\l" sequences convert the next character to uppercase and lowercase, respectively.
+--   - "\u" and "\l" sequences convert the next character to uppercase and lowercase, respectively.
 --     They may appear within "\U" and "\L" constructs.
 -- @param text String text to unescape.
 -- @return unescaped text

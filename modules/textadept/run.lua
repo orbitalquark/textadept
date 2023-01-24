@@ -33,7 +33,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 -- behavior, connect to the event with an index of `1` and return `true`.
 -- Arguments:
 --
---   * `output`: A line of string output from the command.
+--   - *output*: A line of string output from the command.
 -- @field _G.events.COMPILE_OUTPUT
 
 ---
@@ -42,7 +42,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 -- connect to the event with an index of `1` and return `true`.
 -- Arguments:
 --
---   * `output`: A line of string output from the command.
+--   - *output*: A line of string output from the command.
 -- @field _G.events.RUN_OUTPUT
 
 ---
@@ -51,7 +51,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 -- connect to the event with an index of `1` and return `true`.
 -- Arguments:
 --
---   * `output`: A line of string output from the command.
+--   - *output*: A line of string output from the command.
 -- @field _G.events.BUILD_OUTPUT
 
 ---
@@ -60,7 +60,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 -- connect to the event with an index of `1` and return `true`.
 -- Arguments:
 --
---   * `output`: A line of string output from the command.
+--   - *output*: A line of string output from the command.
 -- @field _G.events.TEST_OUTPUT
 
 ---
@@ -174,15 +174,15 @@ end
 -- command line strings or functions that return such strings.
 -- Command line strings may have the following macros:
 --
---   + `%f`: The file's name, including its extension.
---   + `%e`: The file's name, excluding its extension.
---   + `%d`: The file's directory path.
---   + `%p`: The file's full path.
+--   - `%f`: The file's name, including its extension.
+--   - `%e`: The file's name, excluding its extension.
+--   - `%d`: The file's directory path.
+--   - `%p`: The file's full path.
 --
 -- Functions may also return a working directory and process environment table to operate in. By
 -- default, the working directory is the current file's parent directory and the environment
 -- is Textadept's environment.
-M.compile_commands = {}  -- empty declaration to avoid LDoc processing
+M.compile_commands = {} -- empty declaration to avoid LDoc processing
 -- LuaFormatter off
 M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc -o "%e" "%f"',antlr='antlr4 "%f"',g='antlr3 "%f"',applescript='osacompile "%f" -o "%e.scpt"',asm='nasm "%f"'--[[ && ld "%e.o" -o "%e"']],boo='booc "%f"',caml='ocamlc -o "%e" "%f"',csharp=WIN32 and 'csc "%f"' or 'mcs "%f"',coffeescript='coffee -c "%f"',context='context --nonstopmode "%f"',cpp='g++ -o "%e" "%f"',cuda=WIN32 and 'nvcc -o "%e.exe" "%f"' or 'nvcc -o "%e" "%f"',dmd='dmd "%f"',dot='dot -Tps "%f" -o "%e.ps"',eiffel='se c "%f"',elixir='elixirc "%f"',erlang='erl -compile "%e"',faust='faust -o "%e.cpp" "%f"',fsharp=WIN32 and 'fsc.exe "%f"' or 'mono fsc.exe "%f"',fortran='gfortran -o "%e" "%f"',gap='gac -o "%e" "%f"',go='go build "%f"',groovy='groovyc "%f"',hare='hare build -o "%e" "%f"',haskell=WIN32 and 'ghc -o "%e.exe" "%f"' or 'ghc -o "%e" "%f"',inform=function() return 'inform -c "'..buffer.filename:match('^(.+%.inform[/\\])Source')..'"' end,java='javac "%f"',ltx='pdflatex -file-line-error -halt-on-error "%f"',less='lessc --no-color "%f" "%e.css"',lilypond='lilypond "%f"',lisp='clisp -c "%f"',litcoffee='coffee -c "%f"',lua='luac -o "%e.luac" "%f"',moon='moonc "%f"',markdown='markdown "%f" > "%e.html"',myr='mbld -b "%e" "%f"',nemerle='ncc "%f" -out:"%e.exe"',nim='nim c "%f"',nsis='MakeNSIS "%f"',objective_c='gcc -o "%e" "%f"',pascal='fpc "%f"',perl='perl -c "%f"',php='php -l "%f"',pony='ponyc "%f"',prolog='gplc --no-top-level "%f"',python='python -m py_compile "%f"',ruby='ruby -c "%f"',rust='rustc "%f"',sass='sass "%f" "%e.css"',scala='scalac "%f"',sml='mlton "%f"',tex='pdflatex -file-line-error -halt-on-error "%f"',typescript='tsc "%f"',vala='valac "%f"',vb=WIN32 and 'vbc "%f"' or 'vbnc "%f"',zig='zig build-exe "%f"'}
 -- LuaFormatter on
@@ -207,15 +207,15 @@ end
 -- line strings or functions that return strings.
 -- Command line strings may have the following macros:
 --
---   + `%f`: The file's name, including its extension.
---   + `%e`: The file's name, excluding its extension.
---   + `%d`: The file's directory path.
---   + `%p`: The file's full path.
+--   - `%f`: The file's name, including its extension.
+--   - `%e`: The file's name, excluding its extension.
+--   - `%d`: The file's directory path.
+--   - `%p`: The file's full path.
 --
 -- Functions may also return a working directory and process environment table to operate in. By
 -- default, the working directory is the current file's parent directory and the environment
 -- is Textadept's environment.
-M.run_commands = {}  -- empty declaration to avoid LDoc processing
+M.run_commands = {} -- empty declaration to avoid LDoc processing
 -- LuaFormatter off
 M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "file://%e.swf"' or 'xdg-open "%e.swf"',ada=WIN32 and '"%e"' or '"./%e"',ansi_c=WIN32 and '"%e"' or '"./%e"',applescript='osascript "%f"',asm='"./%e"',awk='awk -f "%f"',batch='"%f"',boo='booi "%f"',caml='ocamlrun "%e"',csharp=WIN32 and '"%e"' or 'mono "%e.exe"',chuck='chuck "%f"',clojure='clj -M "%f"',cmake='cmake -P "%f"',coffeescript='coffee "%f"',context=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',cpp=WIN32 and '"%e"' or '"./%e"',crystal='crystal "%f"',cuda=WIN32 and '"%e"' or '"./%e"',dart='dart "%f"',dmd=WIN32 and '"%e"' or '"./%e"',eiffel="./a.out",elixir='elixir "%f"',fsharp=WIN32 and '"%e"' or 'mono "%e.exe"',fantom='fan "%f"',fennel='fennel "%f"',forth='gforth "%f" -e bye',fortran=WIN32 and '"%e"' or '"./%e"',gnuplot='gnuplot "%f"',go='go run "%f"',groovy='groovy "%f"',hare='hare run "%f"',haskell=WIN32 and '"%e"' or '"./%e"',html=WIN32 and 'start "" "%f"' or OSX and 'open "file://%f"' or 'xdg-open "%f"',icon='icont "%e" -x',idl='idl -batch "%f"',Io='io "%f"',java='java "%e"',javascript='node "%f"',jq='jq -f "%f"',julia='julia "%f"',ltx=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',less='lessc --no-color "%f"',lilypond=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',lisp='clisp "%f"',litcoffee='coffee "%f"',lua='lua -e "io.stdout:setvbuf(\'no\')" "%f"',makefile=WIN32 and 'nmake -f "%f"' or 'make -f "%f"',markdown='markdown "%f"',moon='moon "%f"',myr=WIN32 and '"%e"' or '"./%e"',nemerle=WIN32 and '"%e"' or 'mono "%e.exe"',nim='nim c -r "%f"',objective_c=WIN32 and '"%e"' or '"./%e"',pascal=WIN32 and '"%e"' or '"./%e"',perl='perl "%f"',php='php "%f"',pike='pike "%f"',pkgbuild='makepkg -p "%f"',pony=WIN32 and '"%e"' or '"./%e"',prolog=WIN32 and '"%e"' or '"./%e"',pure='pure "%f"',python=function() return buffer:get_line(1):find('^#!.-python3') and 'python3 -u "%f"' or 'python -u "%f"' end,rstats=WIN32 and 'Rterm -f "%f"' or 'R -f "%f"',rebol='REBOL "%f"',rexx=WIN32 and 'rexx "%f"' or 'regina "%f"',ruby='ruby "%f"',rust=WIN32 and '"%e"' or '"./%e"',sass='sass "%f"',scala='scala "%e"',bash='bash "%f"',csh='tcsh "%f"',ksh='ksh "%f"',mksh='mksh "%f"',sh='sh "%f"',zsh='zsh "%f"',rc='rc "%f"',smalltalk='gst "%f"',sml=WIN32 and '"%e"' or '"./%e"',snobol4='snobol4 -b "%f"',tcl='tclsh "%f"',tex=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',vala=WIN32 and '"%e"' or '"./%e"',vb=WIN32 and '"%e"' or 'mono "%e.exe"',xs='xs "%f"',zig=WIN32 and '"%e"' or '"./%e"'}
 -- LuaFormatter on
@@ -241,7 +241,7 @@ end
 -- Functions may also return a working directory and process environment table to operate
 -- in. By default, the working directory is the project's root directory and the environment
 -- is Textadept's environment.
-M.build_commands = {}  -- empty declaration to avoid LDoc processing
+M.build_commands = {} -- empty declaration to avoid LDoc processing
 -- LuaFormatter off
 M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='docker build .',--[[Make]]Makefile='make',GNUmakefile='make',makefile='make',--[[Meson]]['meson.build']='meson compile',--[[Maven]]['pom.xml']='mvn',--[[Ruby]]Rakefile='rake'}
 -- LuaFormatter on

@@ -56,9 +56,9 @@
 -- The behavior mode for a case insensitive autocompletion or user list when
 -- [`buffer.auto_c_ignore_case`]() is `true`.
 --
---   * `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`
+--   - `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`
 --     Prefer to select case-sensitive matches.
---   * `buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE`
+--   - `buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE`
 --     No preference.
 --
 --   The default value is `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`.
@@ -105,9 +105,9 @@
 ---
 -- The multiple selection autocomplete mode.
 --
---   * `buffer.MULTIAUTOC_ONCE`
+--   - `buffer.MULTIAUTOC_ONCE`
 --     Autocomplete into only the main selection.
---   * `buffer.MULTIAUTOC_EACH`
+--   - `buffer.MULTIAUTOC_EACH`
 --     Autocomplete into all selections.
 --
 --   The default value is `buffer.MULTIAUTOC_ONCE`.
@@ -124,11 +124,11 @@
 ---
 -- The order setting for autocompletion and user lists.
 --
---   * `buffer.ORDER_PRESORTED`
+--   - `buffer.ORDER_PRESORTED`
 --     Lists passed to [`buffer.auto_c_show()`]() are in sorted, alphabetical order.
---   * `buffer.ORDER_PERFORMSORT`
+--   - `buffer.ORDER_PERFORMSORT`
 --     Sort autocompletion lists passed to [`buffer.auto_c_show()`]().
---   * `buffer.ORDER_CUSTOM`
+--   - `buffer.ORDER_CUSTOM`
 --     Lists passed to [`buffer.auto_c_show()`]() are already in a custom order.
 --
 --   The default value is `buffer.ORDER_PRESORTED`.
@@ -167,12 +167,12 @@
 ---
 -- The caret's preferred horizontal position when moving between lines.
 --
---   * `buffer.CARETSTICKY_OFF`
+--   - `buffer.CARETSTICKY_OFF`
 --     Use the same position the caret had on the previous line.
---   * `buffer.CARETSTICKY_ON`
+--   - `buffer.CARETSTICKY_ON`
 --     Use the last position the caret was moved to via the mouse, left/right arrow keys,
 --     home/end keys, etc. Typing text does not affect the position.
---   * `buffer.CARETSTICKY_WHITESPACE`
+--   - `buffer.CARETSTICKY_WHITESPACE`
 --     Use the position the caret had on the previous line, but prior to any inserted indentation.
 --
 --   The default value is `buffer.CARETSTICKY_OFF`.
@@ -215,11 +215,11 @@
 -- Changing the current mode does not convert any of the buffer's existing end of line
 -- characters. Use [`buffer.convert_eols()`]() to do so.
 --
---   * `buffer.EOL_CRLF`
+--   - `buffer.EOL_CRLF`
 --     Carriage return with line feed ("\r\n").
---   * `buffer.EOL_CR`
+--   - `buffer.EOL_CR`
 --     Carriage return ("\r").
---   * `buffer.EOL_LF`
+--   - `buffer.EOL_LF`
 --     Line feed ("\n").
 --
 --   The default value is `buffer.EOL_CRLF` on Windows platforms, `buffer.EOL_LF` otherwise.
@@ -245,11 +245,11 @@
 -- List of fold level bit-masks per line number.
 -- Fold level masks comprise of an integer level combined with any of the following bit flags:
 --
---   * `buffer.FOLDLEVELBASE`
+--   - `buffer.FOLDLEVELBASE`
 --     The initial fold level.
---   * `buffer.FOLDLEVELWHITEFLAG`
+--   - `buffer.FOLDLEVELWHITEFLAG`
 --     The line is blank.
---   * `buffer.FOLDLEVELHEADERFLAG`
+--   - `buffer.FOLDLEVELHEADERFLAG`
 --     The line is a header, or fold point.
 -- @table fold_level
 
@@ -337,9 +337,9 @@
 ---
 -- The multiple selection paste mode.
 --
---   * `buffer.MULTIPASTE_ONCE`
+--   - `buffer.MULTIPASTE_ONCE`
 --     Paste into only the main selection.
---   * `buffer.MULTIPASTE_EACH`
+--   - `buffer.MULTIPASTE_EACH`
 --     Paste into all selections.
 --
 --   The default value is `buffer.MULTIPASTE_ONCE`.
@@ -393,13 +393,13 @@
 ---
 -- The bit-mask of search flags used by [`buffer.search_in_target()`]().
 --
---   * `buffer.FIND_WHOLEWORD`
+--   - `buffer.FIND_WHOLEWORD`
 --     Match search text only when it is surrounded by non-word characters.
---   * `buffer.FIND_MATCHCASE`
+--   - `buffer.FIND_MATCHCASE`
 --     Match search text case sensitively.
---   * `buffer.FIND_WORDSTART`
+--   - `buffer.FIND_WORDSTART`
 --     Match search text only when the previous character is a non-word character.
---   * `buffer.FIND_REGEXP`
+--   - `buffer.FIND_REGEXP`
 --     Interpret search text as a regular expression.
 --
 --   The default value is `0`.
@@ -437,13 +437,13 @@
 ---
 -- The selection mode.
 --
---   * `buffer.SEL_STREAM`
+--   - `buffer.SEL_STREAM`
 --     Character selection.
---   * `buffer.SEL_RECTANGLE`
+--   - `buffer.SEL_RECTANGLE`
 --     Rectangular selection.
---   * `buffer.SEL_LINES`
+--   - `buffer.SEL_LINES`
 --     Line selection.
---   * `buffer.SEL_THIN`
+--   - `buffer.SEL_THIN`
 --     Thin rectangular selection. This is the mode after a rectangular selection has been
 --     typed into and ensures that no characters are selected.
 --
@@ -575,13 +575,13 @@
 ---
 -- The virtual space mode.
 --
---   * `buffer.VS_NONE`
+--   - `buffer.VS_NONE`
 --     Disable virtual space.
---   * `buffer.VS_RECTANGULARSELECTION`
+--   - `buffer.VS_RECTANGULARSELECTION`
 --     Enable virtual space only for rectangular selections.
---   * `buffer.VS_USERACCESSIBLE`
+--   - `buffer.VS_USERACCESSIBLE`
 --     Enable virtual space.
---   * `buffer.VS_NOWRAPLINESTART`
+--   - `buffer.VS_NOWRAPLINESTART`
 --     Prevent the caret from wrapping to the previous line via `buffer:char_left()` and
 --     `buffer:char_left_extend()`. This option is not restricted to virtual space and should
 --     be added to any of the above options.
@@ -796,9 +796,9 @@
 ---
 -- Converts all end of line characters to those in end of line mode *mode*.
 -- @param mode The end of line mode to convert to. Valid values are:
---   * `buffer.EOL_CRLF`
---   * `buffer.EOL_CR`
---   * `buffer.EOL_LF`
+--   - `buffer.EOL_CRLF`
+--   - `buffer.EOL_CR`
+--   - `buffer.EOL_LF`
 -- @function convert_eols
 
 ---
@@ -1762,185 +1762,186 @@
 -- @function set_lexer
 
 -- Unused Fields.
---   * accessibility
---   * annotation_style_offset
---   * annotation_styles
---   * automatic_fold
---   * buffered_draw
---   * call_tip_back
---   * call_tip_fore
---   * change_history
---   * character_category_optimization
---   * character_pointer
---   * code_page
---   * command_events
---   * control_char_symbol
---   * direct_function
---   * direct_pointer
---   * direct_status_function
---   * distance_to_secondary_styles
---   * doc_pointer
---   * eol_annotation_style_offset
---   * focus
---   * font_quality
---   * gap_position
---   * hotspot_active_underline
---   * hotspot_single_line
---   * identifier
---   * identifiers
---   * ime_interaction
---   * indic_flags
---   * indicator_value
---   * key_words
---   * layout_cache
---   * lexer
---   * line_character_index
---   * line_end_types_active
---   * line_end_types_allowed
---   * line_end_types_supported
---   * line_state
---   * margin_style_offset
---   * margin_styles
---   * max_line_state
---   * mod_event_mask
---   * mouse_down_captures
---   * paste_convert_endings
---   * phases_draw
---   * position_cache
---   * primary_style_from_style
---   * print_color_mode
---   * print_magnification
---   * print_wrap_mode
---   * selection_hidden
---   * status
---   * style_character_set
---   * style_check_monospaced
---   * style_from_sub_style
---   * style_hotspot
---   * style_index_at
---   * style_size_fractional
---   * style_weight
---   * sub_style_bases
---   * sub_styles_length
---   * sub_styles_start
---   * supports_feature
---   * tab_minimum_width
---   * technology
---   * two_phase_draw
---   * undo_collection
---   * INDICATOR_CONTAINER
---   * MOD_NORM
---   * CP_UTF8
---   * LASTSTEPINUNDOREDO
---   * MAX_MARGIN
---   * MODEVENTMASKALL
---   * MOD_BEFOREDELETE
---   * MOD_BEFOREINSERT
---   * MOD_CHANGEANNOTATION
---   * MOD_CHANGEFOLD
---   * MOD_CHANGEINDICATOR
---   * MOD_CHANGELINESTATE
---   * MOD_CHANGEMARGIN
---   * MOD_CHANGEMARKER
---   * MOD_CHANGESTYLE
---   * MOD_CONTAINER
---   * MOD_DELETETEXT
---   * MOD_INSERTCHECK
---   * MOD_INSERTTEXT
---   * MOD_LEXERSTATE
---   * MULTILINEUNDOREDO
---   * MULTISTEPUNDOREDO
---   * PERFORMED_REDO
---   * PERFORMED_UNDO
---   * PERFORMED_USER
---   * STARTACTION
---   * STYLE_LASTPREDEFINED
+--   - accessibility
+--   - annotation_style_offset
+--   - annotation_styles
+--   - automatic_fold
+--   - buffered_draw
+--   - call_tip_back
+--   - call_tip_fore
+--   - change_history
+--   - character_category_optimization
+--   - character_pointer
+--   - code_page
+--   - command_events
+--   - control_char_symbol
+--   - direct_function
+--   - direct_pointer
+--   - direct_status_function
+--   - distance_to_secondary_styles
+--   - doc_pointer
+--   - eol_annotation_style_offset
+--   - focus
+--   - font_quality
+--   - gap_position
+--   - hotspot_active_underline
+--   - hotspot_single_line
+--   - identifier
+--   - identifiers
+--   - ime_interaction
+--   - indic_flags
+--   - indicator_value
+--   - key_words
+--   - layout_cache
+--   - lexer
+--   - line_character_index
+--   - line_end_types_active
+--   - line_end_types_allowed
+--   - line_end_types_supported
+--   - line_state
+--   - margin_style_offset
+--   - margin_styles
+--   - max_line_state
+--   - mod_event_mask
+--   - mouse_down_captures
+--   - paste_convert_endings
+--   - phases_draw
+--   - position_cache
+--   - primary_style_from_style
+--   - print_color_mode
+--   - print_magnification
+--   - print_wrap_mode
+--   - selection_hidden
+--   - status
+--   - style_character_set
+--   - style_check_monospaced
+--   - style_from_sub_style
+--   - style_hotspot
+--   - style_index_at
+--   - style_size_fractional
+--   - style_weight
+--   - sub_style_bases
+--   - sub_styles_length
+--   - sub_styles_start
+--   - supports_feature
+--   - tab_minimum_width
+--   - technology
+--   - two_phase_draw
+--   - undo_collection
+--   - INDICATOR_CONTAINER
+--   - MOD_NORM
+--   - CP_UTF8
+--   - LASTSTEPINUNDOREDO
+--   - MAX_MARGIN
+--   - MODEVENTMASKALL
+--   - MOD_BEFOREDELETE
+--   - MOD_BEFOREINSERT
+--   - MOD_CHANGEANNOTATION
+--   - MOD_CHANGEFOLD
+--   - MOD_CHANGEINDICATOR
+--   - MOD_CHANGELINESTATE
+--   - MOD_CHANGEMARGIN
+--   - MOD_CHANGEMARKER
+--   - MOD_CHANGESTYLE
+--   - MOD_CONTAINER
+--   - MOD_DELETETEXT
+--   - MOD_INSERTCHECK
+--   - MOD_INSERTTEXT
+--   - MOD_LEXERSTATE
+--   - MULTILINEUNDOREDO
+--   - MULTISTEPUNDOREDO
+--   - PERFORMED_REDO
+--   - PERFORMED_UNDO
+--   - PERFORMED_USER
+--   - STARTACTION
+--   - STYLE_LASTPREDEFINED
 
 -- Unused Functions.
---   * add_ref_document
---   * add_styled_text
---   * add_tab_stop
---   * add_undo_action
---   * allocate
---   * allocate_lines
---   * allocate_extended_styles
---   * allocate_line_character_index
---   * allocate_sub_styles
---   * assign_cmd_key
---   * auto_c_set_options
---   * brace_match_next
---   * can_paste
---   * caret_fore
---   * caret_line_back
---   * caret_line_back_alpha
---   * caret_line_visible
---   * change_insertion
---   * change_lexer_state
---   * char_position_from_point
---   * char_position_from_point_close
---   * character_category_optimization
---   * clear_all_cmd_keys
---   * clear_cmd_key
---   * clear_selections
---   * clear_tab_stops
---   * copy_allow_line
---   * count_code_units
---   * create_document
---   * create_loader
---   * describe_key_word_sets
---   * describe_property
---   * description_of_style
---   * encoded_from_utf8
---   * expand_children
---   * find_indicator_flash
---   * find_indicator_hide
---   * find_indicator_show
---   * find_text
---   * find_text_full
---   * form_feed
---   * format_range
---   * format_range_full
---   * free_sub_styles
---   * get_font_locale
---   * get_hotspot_active_back
---   * get_hotspot_active_fore
---   * get_line_sel_end_position
---   * get_line_sel_start_position
---   * get_next_tab_stop
---   * get_range_pointer
---   * get_styled_text
---   * grab_focus
---   * hide_selection
---   * index_position_from_line
---   * indicator_value_at
---   * layout_threads
---   * line_from_index_position
---   * load_lexer_library
---   * mouse_wheel_captures
---   * null
---   * point_x_from_position
---   * point_y_from_position
---   * position_from_point
---   * position_from_point_close
---   * position_relative_code_units
---   * private_lexer_call
---   * property_expanded
---   * property_names
---   * property_type
---   * release_all_extended_styles
---   * release_document
---   * release_line_character_index
---   * sel_alpha
---   * set_font_locale
---   * set_hotspot_active_back
---   * set_hotspot_active_fore
---   * set_length_for_encode
---   * set_sel_back
---   * set_sel_fore
---   * set_styling_ex
---   * start_record
---   * stop_record
---   * tags_of_style
---   * target_as_utf8
---   * text_range_full
---   * use_pop_up
+--   - add_ref_document
+--   - add_styled_text
+--   - add_tab_stop
+--   - add_undo_action
+--   - allocate
+--   - allocate_lines
+--   - allocate_extended_styles
+--   - allocate_line_character_index
+--   - allocate_sub_styles
+--   - assign_cmd_key
+--   - auto_c_set_options
+--   - brace_match_next
+--   - can_paste
+--   - caret_fore
+--   - caret_line_back
+--   - caret_line_back_alpha
+--   - caret_line_visible
+--   - change_insertion
+--   - change_lexer_state
+--   - char_position_from_point
+--   - char_position_from_point_close
+--   - character_category_optimization
+--   - clear_all_cmd_keys
+--   - clear_cmd_key
+--   - clear_selections
+--   - clear_tab_stops
+--   - copy_allow_line
+--   - count_code_units
+--   - create_document
+--   - create_loader
+--   - describe_property
+--   - describe_key_word_sets
+--   - description_of_style
+--   - encoded_from_utf8
+--   - expand_children
+--   - find_indicator_flash
+--   - find_indicator_hide
+--   - find_indicator_show
+--   - find_text
+--   - find_text_full
+--   - form_feed
+--   - format_range
+--   - format_range_full
+--   - free_sub_styles
+--   - get_font_locale
+--   - get_hotspot_active_back
+--   - get_hotspot_active_fore
+--   - get_line_sel_end_position
+--   - get_line_sel_start_position
+--   - get_next_tab_stop
+--   - get_range_pointer
+--   - get_styled_text
+--   - grab_focus
+--   - hide_selection
+--   - index_position_from_line
+--   - indicator_value_at
+--   - layout_threads
+--   - line_from_index_position
+--   - load_lexer_library
+--   - mouse_wheel_captures
+--   - null
+--   - point_x_from_position
+--   - point_y_from_position
+--   - position_from_point
+--   - position_from_point_close
+--   - position_relative_code_units
+--   - private_lexer_call
+--   - property_expanded
+--   - property_names
+--   - property_type
+--   - release_all_extended_styles
+--   - release_document
+--   - release_line_character_index
+--   - sel_alpha
+--   - set_font_locale
+--   - set_hotspot_active_back
+--   - set_hotspot_active_fore
+--   - set_length_for_encode
+--   - set_sel_back
+--   - set_sel_fore
+--   - set_styling_ex
+--   - start_record
+--   - stop_record
+--   - style_invisible_representation
+--   - tags_of_style
+--   - target_as_utf8
+--   - text_range_full
+--   - use_pop_up

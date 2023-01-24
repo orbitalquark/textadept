@@ -11,14 +11,14 @@
 -- If the user canceled the dialog, returns `nil`.
 -- @param options Table of key-value option pairs for the message box.
 --
---   * `title`: The dialog's title text.
---   * `text`: The dialog's main message text.
---   * `icon`: The dialog's icon name, according to the Free Desktop Icon Naming
+--   - `title`: The dialog's title text.
+--   - `text`: The dialog's main message text.
+--   - `icon`: The dialog's icon name, according to the Free Desktop Icon Naming
 --     Specification. Examples are "dialog-error", "dialog-information", "dialog-question",
 --     and "dialog-warning". The dialog does not display an icon by default.
---   * `button1`: The right-most button's label. The default value is `_L['OK']`.
---   * `button2`: The middle button's label.
---   * `button3`: The left-most button's label. This option requires `button2` to be set.
+--   - `button1`: The right-most button's label. The default value is `_L['OK']`.
+--   - `button2`: The middle button's label.
+--   - `button3`: The left-most button's label. This option requires `button2` to be set.
 -- @return selected button
 -- @usage ui.dialogs.message{title = 'EOL Mode', text = 'Which EOL?',
 --   icon = 'dialog-question', button1 = 'CRLF', button2 = 'CR',
@@ -31,12 +31,12 @@
 -- If the user canceled the dialog, returns `nil`.
 -- @param options Table of key-value option pairs for the inputbox.
 --
---   * `title`: The dialog's title text.
---   * `text`: The dialog's initial input text.
---   * `button1`: The right-most button's label. The default value is `_L['OK']`.
---   * `button2`: The middle button's label. The default value is `_L['Cancel']`.
---   * `button3`: The left-most button's label. This option requires `button2` to be set.
---   * `return_button`: Also return the index of the selected button. The default value is `false`.
+--   - `title`: The dialog's title text.
+--   - `text`: The dialog's initial input text.
+--   - `button1`: The right-most button's label. The default value is `_L['OK']`.
+--   - `button2`: The middle button's label. The default value is `_L['Cancel']`.
+--   - `button3`: The left-most button's label. This option requires `button2` to be set.
+--   - `return_button`: Also return the index of the selected button. The default value is `false`.
 -- @return input text[, selected button]
 -- @usage ui.dialogs.input{title = 'Go to line number:', text = '1'}
 -- @function input
@@ -48,12 +48,12 @@
 -- the dialog, returns `nil`.
 -- @param options Table of key-value option pairs for the dialog.
 --
---   * `title`: The dialog's title text.
---   * `dir`: The initial filesystem directory to show.
---   * `file`: The initially selected filename. This option requires `dir` to be set.
---   * `multiple`: Allow the user to select multiple files. The default value is `false`.
+--   - `title`: The dialog's title text.
+--   - `dir`: The initial filesystem directory to show.
+--   - `file`: The initially selected filename. This option requires `dir` to be set.
+--   - `multiple`: Allow the user to select multiple files. The default value is `false`.
 --     The terminal version does not support this option.
---   * `only_dirs`: Only allow the user to select directories. The default value is `false`.
+--   - `only_dirs`: Only allow the user to select directories. The default value is `false`.
 -- @return filename, list of filenames, or nil
 -- @usage ui.dialogs.open{title = 'Open File', dir = _HOME, multiple = true}
 -- @function open
@@ -64,9 +64,9 @@
 -- If the user canceled the dialog, returns `nil`.
 -- @param options Table of key-value option pairs for the dialog.
 --
---   * `title`: The dialog's title text.
---   * `dir`: The initial filesystem directory to show.
---   * `file`: The initially chosen filename. This option requires `dir` to be set.
+--   - `title`: The dialog's title text.
+--   - `dir`: The initial filesystem directory to show.
+--   - `file`: The initially chosen filename. This option requires `dir` to be set.
 -- @return filename or nil
 -- @function save
 
@@ -75,9 +75,9 @@
 -- the user clicked the "Stop" button, or `nil` if the dialog finishes.
 -- @param options Table of key-value option pairs for the progressbar dialog.
 --
---   * `title`: The dialog's title text.
---   * `text`: The initial progressbar display text (GUI only).
---   * `work`: The function repeatedly called to do work and provide progress updates. The
+--   - `title`: The dialog's title text.
+--   - `text`: The initial progressbar display text (GUI only).
+--   - `work`: The function repeatedly called to do work and provide progress updates. The
 --     function is called without arguments and must return either `nil`, which indicates work
 --     is complete, or a progress percentage number in the range 0-100 and an optional string
 --     to display (GUI only). If progress is indeterminate, the percentage can be less than zero.
@@ -94,21 +94,21 @@
 -- Text typed into the dialog filters the list items. Spaces are treated as wildcards.
 -- @param options Table of key-value option pairs for the list dialog.
 --
---   * `title`: The dialog's title text.
---   * `text`: The dialog's initial input text.
---   * `columns`: The list of string column names for list rows. If this field is omitted,
+--   - `title`: The dialog's title text.
+--   - `text`: The dialog's initial input text.
+--   - `columns`: The list of string column names for list rows. If this field is omitted,
 --     a single column is used.
---   * `items`: The list of string items to show in the list. Each item is placed in the next
+--   - `items`: The list of string items to show in the list. Each item is placed in the next
 --     available column of the current row. If there is only one column, each item is on its
 --     own row.
---   * `button1`: The right-most button's label. The default value is `_L['OK']`.
---   * `button2`: The middle button's label. The default value is `_L['Cancel']`.
---   * `button3`: The left-most button's label. This option requires `button2` to be set.
---   * `multiple`: Allow the user to select multiple items. The default value is `false`.
+--   - `button1`: The right-most button's label. The default value is `_L['OK']`.
+--   - `button2`: The middle button's label. The default value is `_L['Cancel']`.
+--   - `button3`: The left-most button's label. This option requires `button2` to be set.
+--   - `multiple`: Allow the user to select multiple items. The default value is `false`.
 --     The terminal version does not support this option.
---   * `search_column`: The column number to filter the input text against. The default value is
+--   - `search_column`: The column number to filter the input text against. The default value is
 --     `1`.
---   * `return_button`: Also return the index of the selected button. The default value is `false`.
+--   - `return_button`: Also return the index of the selected button. The default value is `false`.
 -- @return selected item or list of selected items[, selected button]
 -- @usage ui.dialogs.list{title = 'Title', columns = {'Foo', 'Bar'}, items = {'a', 'b', 'c', 'd'}}
 -- @function list

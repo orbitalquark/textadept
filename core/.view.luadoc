@@ -34,13 +34,13 @@
 ---
 -- The annotation visibility mode.
 --
---   * `view.ANNOTATION_HIDDEN`
+--   - `view.ANNOTATION_HIDDEN`
 --     Annotations are invisible.
---   * `view.ANNOTATION_STANDARD`
+--   - `view.ANNOTATION_STANDARD`
 --     Draw annotations left-justified with no decoration.
---   * `view.ANNOTATION_BOXED`
+--   - `view.ANNOTATION_BOXED`
 --     Indent annotations to match the annotated text and outline them with a box.
---   * `view.ANNOTATION_INDENTED`
+--   - `view.ANNOTATION_INDENTED`
 --     Indent non-decorated annotations to match the annotated text.
 --
 -- The default value is `view.ANNOTATION_HIDDEN`.
@@ -108,11 +108,11 @@
 ---
 -- The caret line layer mode.
 --
---   * `view.LAYER_BASE`
+--   - `view.LAYER_BASE`
 --     Draw the caret line opaquely on the background.
---   * `view.LAYER_UNDER_TEXT`
+--   - `view.LAYER_UNDER_TEXT`
 --     Draw the caret line translucently under text.
---   * `view.LAYER_OVER_TEXT`
+--   - `view.LAYER_OVER_TEXT`
 --     Draw the caret line translucently over text.
 --
 -- The default value is `view.LAYER_BASE`.
@@ -149,11 +149,11 @@
 ---
 -- The caret's visual style.
 --
---   * `view.CARETSTYLE_INVISIBLE`
+--   - `view.CARETSTYLE_INVISIBLE`
 --     No caret.
---   * `view.CARETSTYLE_LINE`
+--   - `view.CARETSTYLE_LINE`
 --     A line caret.
---   * `view.CARETSTYLE_BLOCK`
+--   - `view.CARETSTYLE_BLOCK`
 --     A block caret.
 --
 -- Any block setting may be combined with `view.CARETSTYLE_BLOCK_AFTER` via bitwise OR (`|`)
@@ -182,13 +182,13 @@
 ---
 -- The display cursor type.
 --
---   * `view.CURSORNORMAL`
+--   - `view.CURSORNORMAL`
 --     The text insert cursor.
---   * `view.CURSORARROW`
+--   - `view.CURSORARROW`
 --     The arrow cursor.
---   * `view.CURSORWAIT`
+--   - `view.CURSORWAIT`
 --     The wait cursor.
---   * `view.CURSORREVERSEARROW`
+--   - `view.CURSORREVERSEARROW`
 --     The reversed arrow cursor.
 --
 -- The default value is `view.CURSORNORMAL`.
@@ -222,15 +222,15 @@
 ---
 -- The long line mark mode.
 --
---   * `view.EDGE_NONE`
+--   - `view.EDGE_NONE`
 --     Long lines are not marked.
---   * `view.EDGE_LINE`
+--   - `view.EDGE_LINE`
 --     Draw a single vertical line whose color is [`view.edge_color`]() at column
 --     [`view.edge_column`]().
---   * `view.EDGE_BACKGROUND`
+--   - `view.EDGE_BACKGROUND`
 --     Change the background color of text after column [`view.edge_column`]() to
 --     [`view.edge_color`]().
---   * `view.EDGE_MULTILINE`
+--   - `view.EDGE_MULTILINE`
 --     Draw vertical lines whose colors and columns are defined by calls to
 --     [`view:multi_edge_add_line()`]().
 -- @field edge_mode
@@ -270,37 +270,37 @@
 -- Map of colors in "0xAABBGGRR" format for UI element identifiers.
 -- If the alpha byte is omitted, it is assumed to be `0xFF` (opaque).
 --
---   * `view.ELEMENT_SELECTION_TEXT`
+--   - `view.ELEMENT_SELECTION_TEXT`
 --     The main selection's text color.
---   * `view.ELEMENT_SELECTION_BACK`
+--   - `view.ELEMENT_SELECTION_BACK`
 --     The main selection's background color.
---   * `view.ELEMENT_SELECTION_ADDITIONAL_TEXT`
+--   - `view.ELEMENT_SELECTION_ADDITIONAL_TEXT`
 --     The text color of additional selections.
---   * `view.ELEMENT_SELECTION_ADDITIONAL_BACK`
+--   - `view.ELEMENT_SELECTION_ADDITIONAL_BACK`
 --     The background color of additional selections.
---   * `view.ELEMENT_SELECTION_SECONDARY_TEXT`
+--   - `view.ELEMENT_SELECTION_SECONDARY_TEXT`
 --     The text color of selections when another window contains the primary selection.
 --     This is only available on Linux.
---   * `view.ELEMENT_SELECTION_SECONDARY_BACK`
+--   - `view.ELEMENT_SELECTION_SECONDARY_BACK`
 --     The background color of selections when another window contains the primary selection.
 --     This is only available on Linux.
---   * `view.ELEMENT_SELECTION_INACTIVE_TEXT`
+--   - `view.ELEMENT_SELECTION_INACTIVE_TEXT`
 --     The text color of selections when another window has focus.
---   * `view.ELEMENT_SELECTION_INACTIVE_BACK`
+--   - `view.ELEMENT_SELECTION_INACTIVE_BACK`
 --     The background color of selections when another window has focus.
---   * `view.ELEMENT_CARET`
+--   - `view.ELEMENT_CARET`
 --     The main selection's caret color.
---   * `view.ELEMENT_CARET_ADDITIONAL`
+--   - `view.ELEMENT_CARET_ADDITIONAL`
 --     The caret color of additional selections.
---   * `view.ELEMENT_CARET_LINE_BACK`
+--   - `view.ELEMENT_CARET_LINE_BACK`
 --     The background color of the line that contains the caret.
---   * `view.ELEMENT_WHITE_SPACE`
+--   - `view.ELEMENT_WHITE_SPACE`
 --     The color of visible whitespace.
---   * `view.ELEMENT_WHITE_SPACE_BACK`
+--   - `view.ELEMENT_WHITE_SPACE_BACK`
 --     The background color of visible whitespace.
---   * `view.ELEMENT_FOLD_LINE`
+--   - `view.ELEMENT_FOLD_LINE`
 --     The color of fold lines.
---   * `view.ELEMENT_HIDDEN_LINE`
+--   - `view.ELEMENT_HIDDEN_LINE`
 --     The color of lines shown in place of hidden lines.
 -- @table element_color
 
@@ -380,29 +380,29 @@
 ---
 -- The EOL annotation visibility mode.
 --
---   * `view.EOLANNOTATION_HIDDEN`
+--   - `view.EOLANNOTATION_HIDDEN`
 --     EOL Annotations are invisible.
---   * `view.EOLANNOTATION_STANDARD`
+--   - `view.EOLANNOTATION_STANDARD`
 --     Draw EOL annotations no decoration.
---   * `view.EOLANNOTATION_BOXED`
+--   - `view.EOLANNOTATION_BOXED`
 --     Draw EOL annotations outlined with a box.
---   * `view.EOLANNOTATION_STADIUM`
+--   - `view.EOLANNOTATION_STADIUM`
 --     Draw EOL annotations outline with curved ends.
---   * `view.EOLANNOTATION_FLAT_CIRCLE`
+--   - `view.EOLANNOTATION_FLAT_CIRCLE`
 --     Draw EOL annotations outline with a flat left end and curved right end.
---   * `view.EOLANNOTATION_ANGLE_CIRCLE`
+--   - `view.EOLANNOTATION_ANGLE_CIRCLE`
 --     Draw EOL annotations outline with an angled left end and curved right end.
---   * `view.EOLANNOTATION_CIRCLE_FLAT`
+--   - `view.EOLANNOTATION_CIRCLE_FLAT`
 --     Draw EOL annotations outline with a curved left end and flat right end.
---   * `view.EOLANNOTATION_FLATS`
+--   - `view.EOLANNOTATION_FLATS`
 --     Draw EOL annotations outline with a flat ends.
---   * `view.EOLANNOTATION_ANGLE_FLAT`
+--   - `view.EOLANNOTATION_ANGLE_FLAT`
 --     Draw EOL annotations outline with an angled left end and flat right end.
---   * `view.EOLANNOTATION_CIRCLE_ANGLE`
+--   - `view.EOLANNOTATION_CIRCLE_ANGLE`
 --     Draw EOL annotations outline with a curved left end and angled right end.
---   * `view.EOLANNOTATION_FLAT_ANGLE`
+--   - `view.EOLANNOTATION_FLAT_ANGLE`
 --     Draw EOL annotations outline with a flat left end and angled right end.
---   * `view.EOLANNOTATION_ANGLES`
+--   - `view.EOLANNOTATION_ANGLES`
 --     Draw EOL annotations outline with angled ends.
 --
 -- All annotations are drawn with the same shape. The default value is
@@ -439,11 +439,11 @@
 ---
 -- The fold display text mode.
 --
---   * `view.FOLDDISPLAYTEXT_HIDDEN`
+--   - `view.FOLDDISPLAYTEXT_HIDDEN`
 --     Fold display text is not shown.
---   * `view.FOLDDISPLAYTEXT_STANDARD`
+--   - `view.FOLDDISPLAYTEXT_STANDARD`
 --     Fold display text is shown with no decoration.
---   * `view.FOLDDISPLAYTEXT_BOXED`
+--   - `view.FOLDDISPLAYTEXT_BOXED`
 --     Fold display text is shown outlined with a box.
 --
 -- The default value is `view.FOLDDISPLAYTEXT_HIDDEN`.
@@ -471,20 +471,20 @@
 ---
 -- Bit-mask of folding lines to draw in the buffer. (Read-only)
 --
---   * `view.FOLDFLAG_NONE`
+--   - `view.FOLDFLAG_NONE`
 --     Do not draw folding lines.
---   * `view.FOLDFLAG_LINEBEFORE_EXPANDED`
+--   - `view.FOLDFLAG_LINEBEFORE_EXPANDED`
 --     Draw lines above expanded folds.
---   * `view.FOLDFLAG_LINEBEFORE_CONTRACTED`
+--   - `view.FOLDFLAG_LINEBEFORE_CONTRACTED`
 --     Draw lines above collapsed folds.
---   * `view.FOLDFLAG_LINEAFTER_EXPANDED`
+--   - `view.FOLDFLAG_LINEAFTER_EXPANDED`
 --     Draw lines below expanded folds.
---   * `view.FOLDFLAG_LINEAFTER_CONTRACTED`
+--   - `view.FOLDFLAG_LINEAFTER_CONTRACTED`
 --     Draw lines below collapsed folds.
---   * `view.FOLDFLAG_LEVELNUMBERS`
+--   - `view.FOLDFLAG_LEVELNUMBERS`
 --     Show hexadecimal fold levels in line margins.
 --     This option cannot be combined with `FOLDFLAG_LINESTATE`.
---   * `view.FOLDFLAG_LINESTATE`
+--   - `view.FOLDFLAG_LINESTATE`
 --     Show line state in line margins.
 --     This option cannot be combined with `FOLDFLAG_LEVELNUMBERS`.
 --
@@ -519,14 +519,14 @@
 -- The idle styling mode.
 -- This mode has no effect when `view.wrap_mode` is on.
 --
---   * `view.IDLESTYLING_NONE`
+--   - `view.IDLESTYLING_NONE`
 --     Style all the currently visible text before displaying it.
---   * `view.IDLESTYLING_TOVISIBLE`
+--   - `view.IDLESTYLING_TOVISIBLE`
 --     Style some text before displaying it and then style the rest incrementally in the
 --     background as an idle-time task.
---   * `view.IDLESTYLING_AFTERVISIBLE`
+--   - `view.IDLESTYLING_AFTERVISIBLE`
 --     Style text after the currently visible portion in the background.
---   * `view.IDLESTYLING_ALL`
+--   - `view.IDLESTYLING_ALL`
 --     Style text both before and after the visible text in the background.
 --
 --   The default value is `view.IDLESTYLING_NONE`.
@@ -542,14 +542,14 @@
 -- Indentation guides are dotted vertical lines that appear within indentation whitespace at
 -- each level of indentation.
 --
---   * `view.IV_NONE`
+--   - `view.IV_NONE`
 --     Does not draw any guides.
---   * `view.IV_REAL`
+--   - `view.IV_REAL`
 --     Draw guides only within indentation whitespace.
---   * `view.IV_LOOKFORWARD`
+--   - `view.IV_LOOKFORWARD`
 --     Draw guides beyond the current line up to the next non-empty line's indentation level,
 --     but with an additional level if the previous non-empty line is a fold point.
---   * `view.IV_LOOKBOTH`
+--   - `view.IV_LOOKBOTH`
 --     Draw guides beyond the current line up to either the indentation level of the previous
 --     or next non-empty line, whichever is greater.
 --
@@ -616,61 +616,61 @@
 ---
 -- List of styles for indicator numbers from `1` to `32`.
 --
---   * `view.INDIC_PLAIN`
+--   - `view.INDIC_PLAIN`
 --     An underline.
---   * `view.INDIC_SQUIGGLE`
+--   - `view.INDIC_SQUIGGLE`
 --     A squiggly underline 3 pixels in height.
---   * `view.INDIC_TT`
+--   - `view.INDIC_TT`
 --     An underline of small 'T' shapes.
---   * `view.INDIC_DIAGONAL`
+--   - `view.INDIC_DIAGONAL`
 --     An underline of diagonal hatches.
---   * `view.INDIC_STRIKE`
+--   - `view.INDIC_STRIKE`
 --     Strike out.
---   * `view.INDIC_HIDDEN`
+--   - `view.INDIC_HIDDEN`
 --     Invisible.
---   * `view.INDIC_BOX`
+--   - `view.INDIC_BOX`
 --     A bounding box.
---   * `view.INDIC_ROUNDBOX`
+--   - `view.INDIC_ROUNDBOX`
 --     A translucent box with rounded corners around the text. Use [`view.indic_alpha`]() and
 --     [`view.indic_outline_alpha`]() to set the fill and outline transparency, respectively.
 --     Their default values are `30` and `50`.
---   * `view.INDIC_STRAIGHTBOX`
+--   - `view.INDIC_STRAIGHTBOX`
 --     Similar to `INDIC_ROUNDBOX` but with sharp corners.
---   * `view.INDIC_DASH`
+--   - `view.INDIC_DASH`
 --     A dashed underline.
---   * `view.INDIC_DOTS`
+--   - `view.INDIC_DOTS`
 --     A dotted underline.
---   * `view.INDIC_SQUIGGLELOW`
+--   - `view.INDIC_SQUIGGLELOW`
 --     A squiggly underline 2 pixels in height.
---   * `view.INDIC_DOTBOX`
+--   - `view.INDIC_DOTBOX`
 --     Similar to `INDIC_STRAIGHTBOX` but with a dotted outline.
 --     Translucency alternates between [`view.indic_alpha`]() and [`view.indic_outline_alpha`]()
 --     starting with the top-left pixel.
---   * `view.INDIC_SQUIGGLEPIXMAP`
+--   - `view.INDIC_SQUIGGLEPIXMAP`
 --     Identical to `INDIC_SQUIGGLE` but draws faster by using a pixmap instead of multiple
 --     line segments.
---   * `view.INDIC_COMPOSITIONTHICK`
+--   - `view.INDIC_COMPOSITIONTHICK`
 --     A 2-pixel thick underline at the bottom of the line inset by 1 pixel on on either
 --     side. Similar in appearance to the target in Asian language input composition.
---   * `view.INDIC_COMPOSITIONTHIN`
+--   - `view.INDIC_COMPOSITIONTHIN`
 --     A 1-pixel thick underline just before the bottom of the line inset by 1 pixel on either
 --     side. Similar in appearance to the non-target ranges in Asian language input composition.
---   * `view.INDIC_FULLBOX`
+--   - `view.INDIC_FULLBOX`
 --     Similar to `INDIC_STRAIGHTBOX` but extends to the top of its line, potentially touching
 --     any similar indicators on the line above.
---   * `view.INDIC_TEXTFORE`
+--   - `view.INDIC_TEXTFORE`
 --     Changes the color of text to an indicator's foreground color.
---   * `view.INDIC_POINT`
+--   - `view.INDIC_POINT`
 --     A triangle below the start of the indicator range.
---   * `view.INDIC_POINTCHARACTER`
+--   - `view.INDIC_POINTCHARACTER`
 --     A triangle below the center of the first character of the indicator
 --     range.
---   * `view.INDIC_GRADIENT`
+--   - `view.INDIC_GRADIENT`
 --     A box with a vertical gradient from solid on top to transparent on bottom.
---   * `view.INDIC_GRADIENTCENTER`
+--   - `view.INDIC_GRADIENTCENTER`
 --     A box with a centered gradient from solid in the middle to transparent on the top
 --     and bottom.
---   * `view.INDIC_POINT_TOP`
+--   - `view.INDIC_POINT_TOP`
 --     A triangle above the start of the indicator range.
 --
 -- Use [`_SCINTILLA.next_indic_number()`]() for custom indicators.
@@ -807,9 +807,9 @@
 ---
 -- List of cursor types shown over margin numbers from `1` to `view.margins` (`5` by default).
 --
---   * `view.CURSORARROW`
+--   - `view.CURSORARROW`
 --     Normal arrow cursor.
---   * `view.CURSORREVERSEARROW`
+--   - `view.CURSORREVERSEARROW`
 --     Reversed arrow cursor.
 --
 -- The default values are `view.CURSORREVERSEARROW`.
@@ -833,9 +833,9 @@
 ---
 -- A bit-mask of margin option settings.
 --
---   * `view.MARGINOPTION_NONE`
+--   - `view.MARGINOPTION_NONE`
 --     None.
---   * `view.MARGINOPTION_SUBLINESELECT`
+--   - `view.MARGINOPTION_SUBLINESELECT`
 --     Select only a wrapped line's sub-line (rather than the entire line) when the line number
 --     margin is clicked.
 --
@@ -863,19 +863,19 @@
 ---
 -- List of margin types for margin numbers from `1` to `view.margins` (`5` by default).
 --
---   * `view.MARGIN_SYMBOL`
+--   - `view.MARGIN_SYMBOL`
 --     A marker symbol margin.
---   * `view.MARGIN_NUMBER`
+--   - `view.MARGIN_NUMBER`
 --     A line number margin.
---   * `view.MARGIN_BACK`
+--   - `view.MARGIN_BACK`
 --     A marker symbol margin whose background color matches the default text background color.
---   * `view.MARGIN_FORE`
+--   - `view.MARGIN_FORE`
 --     A marker symbol margin whose background color matches the default text foreground color.
---   * `view.MARGIN_TEXT`
+--   - `view.MARGIN_TEXT`
 --     A text margin.
---   * `view.MARGIN_RTEXT`
+--   - `view.MARGIN_RTEXT`
 --     A right-justified text margin.
---   * `view.MARGIN_COLOR`
+--   - `view.MARGIN_COLOR`
 --     A marker symbol margin whose background color is configurable.
 --
 -- The default value for the first margin is `view.MARGIN_NUMBER`, followed by `view.MARGIN_SYMBOL`
@@ -953,11 +953,11 @@
 -- Table of layer modes for drawing markers in the text area (not the margin) for marker
 -- numbers from `1` to `32`.
 --
---   * `view.LAYER_BASE`
+--   - `view.LAYER_BASE`
 --     Draw markers opaquely on the background.
---   * `view.LAYER_UNDER_TEXT`
+--   - `view.LAYER_UNDER_TEXT`
 --     Draw markers translucently under text.
---   * `view.LAYER_OVER_TEXT`
+--   - `view.LAYER_OVER_TEXT`
 --     Draw markers translucently over text.
 --
 -- The default values are `view.LAYER_BASE`.
@@ -999,11 +999,11 @@
 -- The modifier key used in combination with a mouse drag in order to create a rectangular
 -- selection.
 --
---   * `view.MOD_CTRL`
+--   - `view.MOD_CTRL`
 --     The "Control" modifier key.
---   * `view.MOD_ALT`
+--   - `view.MOD_ALT`
 --     The "Alt" modifier key.
---   * `view.MOD_SUPER`
+--   - `view.MOD_SUPER`
 --     The "Super" modifier key, usually defined as the left "Windows" or
 --     "Command" key.
 --
@@ -1041,11 +1041,11 @@
 ---
 -- Map of characters to their string representation's appearance.
 --
---   * `view.REPRESENTATION_PLAIN`
+--   - `view.REPRESENTATION_PLAIN`
 --     Draw the representation with no decoration.
---   * `view.REPRESENTATION_BLOB`
+--   - `view.REPRESENTATION_BLOB`
 --     Draw the representation within a rounded rectangle and an inverted color.
---   * `view.REPRESENTATION_COLOR`
+--   - `view.REPRESENTATION_COLOR`
 --     Draw the representation using the color set in [`view.representation_color`]().
 --
 -- The default values are `view.REPRESENTATION_BLOB`.
@@ -1112,11 +1112,11 @@
 ---
 -- The layer mode for drawing selections.
 --
---   * `view.LAYER_BASE`
+--   - `view.LAYER_BASE`
 --     Draw selections opaquely on the background.
---   * `view.LAYER_UNDER_TEXT`
+--   - `view.LAYER_UNDER_TEXT`
 --     Draw selections translucently under text.
---   * `view.LAYER_OVER_TEXT`
+--   - `view.LAYER_OVER_TEXT`
 --     Draw selections translucently over text.
 --
 -- The default value is `view.LAYER_BASE`.
@@ -1138,13 +1138,13 @@
 ---
 -- List of letter case modes of text for style numbers from `1` to `256`.
 --
---   * `view.CASE_MIXED`
+--   - `view.CASE_MIXED`
 --     Display text in normally.
---   * `view.CASE_UPPER`
+--   - `view.CASE_UPPER`
 --     Display text in upper case.
---   * `view.CASE_LOWER`
+--   - `view.CASE_LOWER`
 --     Display text in lower case.
---   * `view.CASE_CAMEL`
+--   - `view.CASE_CAMEL`
 --     Display text in camel case.
 --
 -- The default values are `view.CASE_MIXED`.
@@ -1211,9 +1211,9 @@
 ---
 -- The draw mode of visible tabs.
 --
---   * `view.TD_LONGARROW`
+--   - `view.TD_LONGARROW`
 --     An arrow that stretches until the tabstop.
---   * `view.TD_STRIKEOUT`
+--   - `view.TD_STRIKEOUT`
 --     A horizontal line that stretches until the tabstop.
 --
 -- The default value is `view.TD_LONGARROW`.
@@ -1240,13 +1240,13 @@
 ---
 -- The whitespace visibility mode.
 --
---   * `view.WS_INVISIBLE`
+--   - `view.WS_INVISIBLE`
 --     Whitespace is invisible.
---   * `view.WS_VISIBLEALWAYS`
+--   - `view.WS_VISIBLEALWAYS`
 --     Display all space characters as dots and tab characters as arrows.
---   * `view.WS_VISIBLEAFTERINDENT`
+--   - `view.WS_VISIBLEAFTERINDENT`
 --     Display only non-indentation spaces and tabs as dots and arrows.
---   * `view.WS_VISIBLEONLYININDENT`
+--   - `view.WS_VISIBLEONLYININDENT`
 --     Display only indentation spaces and tabs as dots and arrows.
 --
 -- The default value is `view.WS_INVISIBLE`.
@@ -1276,13 +1276,13 @@
 ---
 -- The wrapped line indent mode.
 --
---   * `view.WRAPINDENT_FIXED`
+--   - `view.WRAPINDENT_FIXED`
 --     Indent wrapped lines by [`view.wrap_start_indent`]().
---   * `view.WRAPINDENT_SAME`
+--   - `view.WRAPINDENT_SAME`
 --     Indent wrapped lines the same amount as the first line.
---   * `view.WRAPINDENT_INDENT`
+--   - `view.WRAPINDENT_INDENT`
 --     Indent wrapped lines one more level than the level of the first line.
---   * `view.WRAPINDENT_DEEPINDENT`
+--   - `view.WRAPINDENT_DEEPINDENT`
 --     Indent wrapped lines two more levels than the level of the first line.
 --
 -- The default value is `view.WRAPINDENT_FIXED`.
@@ -1307,13 +1307,13 @@
 ---
 -- Long line wrap mode.
 --
---   * `view.WRAP_NONE`
+--   - `view.WRAP_NONE`
 --     Long lines are not wrapped.
---   * `view.WRAP_WORD`
+--   - `view.WRAP_WORD`
 --     Wrap long lines at word (and style) boundaries.
---   * `view.WRAP_CHAR`
+--   - `view.WRAP_CHAR`
 --     Wrap long lines at character boundaries.
---   * `view.WRAP_WHITESPACE`
+--   - `view.WRAP_WHITESPACE`
 --     Wrap long lines at word boundaries (ignoring style boundaries).
 --
 -- The default value is `view.WRAP_NONE`.
@@ -1344,13 +1344,13 @@
 ---
 -- The wrapped line visual flag display mode.
 --
---   * `view.WRAPVISUALFLAG_NONE`
+--   - `view.WRAPVISUALFLAG_NONE`
 --     No visual flags.
---   * `view.WRAPVISUALFLAG_END`
+--   - `view.WRAPVISUALFLAG_END`
 --     Show a visual flag at the end of a wrapped line.
---   * `view.WRAPVISUALFLAG_START`
+--   - `view.WRAPVISUALFLAG_START`
 --     Show a visual flag at the beginning of a sub-line.
---   * `view.WRAPVISUALFLAG_MARGIN`
+--   - `view.WRAPVISUALFLAG_MARGIN`
 --     Show a visual flag in the sub-line's line number margin.
 --
 -- The default value is `view.WRAPVISUALFLAG_NONE`.
@@ -1375,11 +1375,11 @@
 ---
 -- The wrapped line visual flag location.
 --
---   * `view.WRAPVISUALFLAGLOC_DEFAULT`
+--   - `view.WRAPVISUALFLAGLOC_DEFAULT`
 --     Draw a visual flag near the view's right margin.
---   * `view.WRAPVISUALFLAGLOC_END_BY_TEXT`
+--   - `view.WRAPVISUALFLAGLOC_END_BY_TEXT`
 --     Draw a visual flag near text at the end of a wrapped line.
---   * `view.WRAPVISUALFLAGLOC_START_BY_TEXT`
+--   - `view.WRAPVISUALFLAGLOC_START_BY_TEXT`
 --     Draw a visual flag near text at the beginning of a subline.
 --
 -- The default value is `view.WRAPVISUALFLAGLOC_DEFAULT`.
@@ -1571,10 +1571,10 @@
 -- When toggling, the state of the first fold point determines whether to expand or contract.
 -- @param action The fold action to perform. Valid values are:
 --
---   * `view.FOLDACTION_CONTRACT`
---   * `view.FOLDACTION_EXPAND`
---   * `view.FOLDACTION_TOGGLE`
---   * `view.FOLDACTION_CONTRACT_EVERY_LEVEL`
+--   - `view.FOLDACTION_CONTRACT`
+--   - `view.FOLDACTION_EXPAND`
+--   - `view.FOLDACTION_TOGGLE`
+--   - `view.FOLDACTION_CONTRACT_EVERY_LEVEL`
 -- @function fold_all
 
 --- @field FOLDACTION_CONTRACT
@@ -1591,9 +1591,9 @@
 -- @param line The line number in *view* to set the fold states for.
 -- @param action The fold action to perform. Valid values are:
 --
---   * `view.FOLDACTION_CONTRACT`
---   * `view.FOLDACTION_EXPAND`
---   * `view.FOLDACTION_TOGGLE`
+--   - `view.FOLDACTION_CONTRACT`
+--   - `view.FOLDACTION_EXPAND`
+--   - `view.FOLDACTION_TOGGLE`
 -- @function fold_children
 
 ---
@@ -1601,9 +1601,9 @@
 -- @param line The line number in *view* to set the fold state for.
 -- @param action The fold action to perform. Valid values are:
 --
---   * `view.FOLDACTION_CONTRACT`
---   * `view.FOLDACTION_EXPAND`
---   * `view.FOLDACTION_TOGGLE`
+--   - `view.FOLDACTION_CONTRACT`
+--   - `view.FOLDACTION_EXPAND`
+--   - `view.FOLDACTION_TOGGLE`
 -- @function fold_line
 
 ---
@@ -1994,14 +1994,14 @@
 --
 -- Style names consist of the following default names as well as the tag names defined by lexers.
 --
---   * [`view.STYLE_DEFAULT`](): The default style all others are based on.
---   * [`view.STYLE_LINENUMBER`](): The line number margin style.
---   * [`view.STYLE_CONTROLCHAR`](): The style of control character blocks.
---   * [`view.STYLE_INDENTGUIDE`](): The style of indentation guides.
---   * [`view.STYLE_CALLTIP`](): The style of call tip text. Only the `font`, `size`, `fore`,
+--   - [`view.STYLE_DEFAULT`](): The default style all others are based on.
+--   - [`view.STYLE_LINENUMBER`](): The line number margin style.
+--   - [`view.STYLE_CONTROLCHAR`](): The style of control character blocks.
+--   - [`view.STYLE_INDENTGUIDE`](): The style of indentation guides.
+--   - [`view.STYLE_CALLTIP`](): The style of call tip text. Only the `font`, `size`, `fore`,
 --     and `back` style definition fields are supported.
---   * [`view.STYLE_FOLDDISPLAYTEXT`](): The style of text displayed next to folded lines.
---   * [`lexer.ATTRIBUTE`](), [`lexer.BOLD`](), [`lexer.CLASS`](), [`lexer.CODE`](),
+--   - [`view.STYLE_FOLDDISPLAYTEXT`](): The style of text displayed next to folded lines.
+--   - [`lexer.ATTRIBUTE`](), [`lexer.BOLD`](), [`lexer.CLASS`](), [`lexer.CODE`](),
 --     [`lexer.COMMENT`](), [`lexer.CONSTANT`](), [`lexer.CONSTANT_BUILTIN`](),
 --     [`lexer.EMBEDDED`](), [`lexer.ERROR`](), [`lexer.FUNCTION`](), [`lexer.FUNCTION_BUILTIN`](),
 --     [`lexer.FUNCTION_METHOD`](), [`lexer.IDENTIFIER`](), [`lexer.ITALIC`](),
@@ -2013,20 +2013,20 @@
 --
 -- Style definition tables may contain the following fields:
 --
---   * `font`: String font name.
---   * `size`: Integer font size.
---   * `bold`: Whether or not the font face is bold. The default value is `false`.
---   * `weight`: Integer weight or boldness of a font, between 1 and 999.
---   * `italic`: Whether or not the font face is italic. The default value is `false`.
---   * `underline`: Whether or not the font face is underlined. The default value is `false`.
---   * `fore`: Font face foreground color in "0xBBGGRR" format.
---   * `back`: Font face background color in "0xBBGGRR" format.
---   * `eol_filled`: Whether or not the background color extends to the end of the line. The
+--   - `font`: String font name.
+--   - `size`: Integer font size.
+--   - `bold`: Whether or not the font face is bold. The default value is `false`.
+--   - `weight`: Integer weight or boldness of a font, between 1 and 999.
+--   - `italic`: Whether or not the font face is italic. The default value is `false`.
+--   - `underline`: Whether or not the font face is underlined. The default value is `false`.
+--   - `fore`: Font face foreground color in "0xBBGGRR" format.
+--   - `back`: Font face background color in "0xBBGGRR" format.
+--   - `eol_filled`: Whether or not the background color extends to the end of the line. The
 --     default value is `false`.
---   * `case`: Font case: `view.CASE_UPPER` for upper, `view.CASE_LOWER` for lower, and
+--   - `case`: Font case: `view.CASE_UPPER` for upper, `view.CASE_LOWER` for lower, and
 --     `view.CASE_MIXED` for normal, mixed case. The default value is `view.CASE_MIXED`.
---   * `visible`: Whether or not the text is visible. The default value is `true`.
---   * `changeable`: Whether the text is changeable instead of read-only. The default value is
+--   - `visible`: Whether or not the text is visible. The default value is `true`.
+--   - `changeable`: Whether the text is changeable instead of read-only. The default value is
 --     `true`.
 -- @table styles
 

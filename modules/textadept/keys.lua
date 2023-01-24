@@ -16,14 +16,14 @@
 --
 -- In general, bindings for the terminal version are the same as for Windows/Linux except:
 --
---   * Most `Ctrl+Shift+`*`key`* combinations become `M-^`*`key`* since most terminals recognize
+--   - Most `Ctrl+Shift+`*`key`* combinations become `M-^`*`key`* since most terminals recognize
 --     few, if any, `Ctrl+Shift` key sequences.
---   * Most `Ctrl+`*`symbol`* combinations become `M-`*`symbol`* since most terminals recognize
+--   - Most `Ctrl+`*`symbol`* combinations become `M-`*`symbol`* since most terminals recognize
 --     only a few `Ctrl` combinations with symbol keys.
---   * All `Ctrl+Alt+`*`key`* combinations become `M-`*`key`* except for word part movement
+--   - All `Ctrl+Alt+`*`key`* combinations become `M-`*`key`* except for word part movement
 --     keys and those involving `PgDn` and `PgUp`. The former are not supported and the latter
 --     use both modifier keys.
---   * `Ctrl+J` and `Ctrl+M` become `M-J` and `M-M`, respectively, because control sequences
+--   - `Ctrl+J` and `Ctrl+M` become `M-J` and `M-M`, respectively, because control sequences
 --     involving the `J` and `M` keys are often interpreted as involving the Enter key.
 --
 -- ### Key Bindings
@@ -269,13 +269,13 @@ local M = {}
 -- Key bindings available depend on your implementation of curses.
 --
 -- For ncurses (Linux and macOS):
---   * The only Control keys recognized are 'ctrl+a'-'ctrl+z', 'ctrl+ ', 'ctrl+\\', 'ctrl+]',
+--   - The only Control keys recognized are 'ctrl+a'-'ctrl+z', 'ctrl+ ', 'ctrl+\\', 'ctrl+]',
 --     'ctrl+^', and 'ctrl+_'.
---   * Control+Shift and Control+Meta+Shift keys are not recognized.
---   * Modifiers for function keys F1-F12 are not recognized.
+--   - Control+Shift and Control+Meta+Shift keys are not recognized.
+--   - Modifiers for function keys F1-F12 are not recognized.
 -- For pdcurses (Windows):
---   * Many Control+Symbol keys are not recognized, but most Control+Shift+Symbol keys are.
---   * Ctrl+Meta+Symbol keys are not recognized.
+--   - Many Control+Symbol keys are not recognized, but most Control+Shift+Symbol keys are.
+--   - Ctrl+Meta+Symbol keys are not recognized.
 --
 -- Unassigned keys:
 -- ctrl: t

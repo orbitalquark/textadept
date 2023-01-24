@@ -13,7 +13,7 @@ for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 -- Emitted by [`io.open_file()`]().
 -- Arguments:
 --
---   * _`filename`_: The opened file's filename.
+--   - *filename*: The opened file's filename.
 -- @field _G.events.FILE_OPENED
 
 ---
@@ -21,7 +21,7 @@ for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 -- Emitted by [`buffer:save()`]().
 -- Arguments:
 --
---   * _`filename`_: The filename of the file being saved.
+--   - *filename*: The filename of the file being saved.
 -- @field _G.events.FILE_BEFORE_SAVE
 
 ---
@@ -29,8 +29,8 @@ for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 -- Emitted by [`buffer:save()`]() and [`buffer:save_as()`]().
 -- Arguments:
 --
---   * _`filename`_: The filename of the file being saved.
---   * _`saved_as`_: Whether or not the file was saved under a different filename.
+--   - *filename*: The filename of the file being saved.
+--   - *saved_as*: Whether or not the file was saved under a different filename.
 -- @field _G.events.FILE_AFTER_SAVE
 
 ---
@@ -39,7 +39,7 @@ for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 -- prompt to reload the file.
 -- Arguments:
 --
---   * _`filename`_: The filename externally modified.
+--   - *filename*: The filename externally modified.
 -- @field _G.events.FILE_CHANGED
 
 ---
@@ -61,11 +61,11 @@ io.recent_files = {}
 -- You should add to this list if you get a "Conversion failed" error when trying to open a file
 -- whose encoding is not recognized. Valid encodings are [GNU iconv's encodings][] and include:
 --
---   * European: ASCII, ISO-8859-{1,2,3,4,5,7,9,10,13,14,15,16}, KOI8-R,
+--   - European: ASCII, ISO-8859-{1,2,3,4,5,7,9,10,13,14,15,16}, KOI8-R,
 --     KOI8-U, KOI8-RU, CP{1250,1251,1252,1253,1254,1257}, CP{850,866,1131},
 --     Mac{Roman,CentralEurope,Iceland,Croatian,Romania}, Mac{Cyrillic,Ukraine,Greek,Turkish},
 --     Macintosh.
---   * Unicode: UTF-8, UCS-2, UCS-2BE, UCS-2LE, UCS-4, UCS-4BE, UCS-4LE, UTF-16, UTF-16BE,
+--   - Unicode: UTF-8, UCS-2, UCS-2BE, UCS-2LE, UCS-4, UCS-4BE, UCS-4LE, UTF-16, UTF-16BE,
 --     UTF-16LE, UTF-32, UTF-32BE, UTF-32LE, UTF-7, C99, JAVA.
 --
 -- [GNU iconv's encodings]: https://www.gnu.org/software/libiconv/
