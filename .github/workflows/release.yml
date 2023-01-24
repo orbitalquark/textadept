@@ -121,8 +121,7 @@ jobs:
         shell: bash
         run: |
           mkdir textadept-modules
-          modules="css ctags debugger export file_diff format go html lsp lua_repl open_file_mode \
-            python ruby spellcheck"
+          modules="ctags debugger export file_diff format lsp lua_repl open_file_mode spellcheck"
           for module in $modules; do
             gh_name="`echo -n $module | sed -e 's/_/-/g;'`"
             gh_prefix="https://github.com/orbitalquark/textadept-$gh_name"
