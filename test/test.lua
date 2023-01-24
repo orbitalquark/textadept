@@ -4335,106 +4335,11 @@ function test_snippets_nested_placeholders()
   snippets.foo = nil
 end
 
-function test_lua_autocomplete()
+function test_lexer_api()
   buffer.new()
   buffer:set_lexer('lua')
-  require('lua') -- load language module
-
-  buffer:add_text('raw')
-  textadept.editing.autocomplete('lua')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'rawequal')
-  buffer:auto_c_cancel()
-  buffer:clear_all()
-
-  buffer:add_text('string.')
-  textadept.editing.autocomplete('lua')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'byte')
-  buffer:auto_c_cancel()
-  buffer:clear_all()
-
-  buffer:add_text('s = "foo"\ns:')
-  textadept.editing.autocomplete('lua')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'byte')
-  buffer:auto_c_cancel()
-  buffer:clear_all()
-
-  buffer:add_text('f = io.open("path")\nf:')
-  textadept.editing.autocomplete('lua')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'close')
-  buffer:auto_c_cancel()
-  buffer:clear_all()
-
-  buffer:add_text('buffer:auto_c')
-  textadept.editing.autocomplete('lua')
-  assert(not buffer:auto_c_active(), 'autocompletions available')
-  buffer.filename = _HOME .. '/test/autocomplete_lua.lua'
-  textadept.editing.autocomplete('lua')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'auto_c_active')
-  buffer:auto_c_cancel()
-  buffer:clear_all()
-
-  local choose_single = buffer.auto_c_choose_single
-  buffer.auto_c_choose_single = true
-  local lua = require('lua')
-  local autocomplete_snippets = lua.autocomplete_snippets
-  lua.autocomplete_snippets = false
-  buffer:add_text('for')
-  textadept.editing.autocomplete('lua')
-  assert(not buffer:auto_c_active(), 'autocompletions available')
-  assert(buffer:get_cur_line(), 'format')
-  buffer:home_extend()
-  buffer:replace_sel('for')
-  lua.autocomplete_snippets = true
-  textadept.editing.autocomplete('lua')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  buffer:auto_c_cancel()
-  buffer:clear_all()
-  lua.autocomplete_snippets = autocomplete_snippets -- restore
-  buffer.auto_c_choose_single = choose_single
-
-  buffer:close(true)
-end
-
-function test_ansi_c_autocomplete()
-  buffer.new()
-  buffer:set_lexer('ansi_c')
-  require('ansi_c') -- load language module
-
-  buffer:add_text('str')
-  textadept.editing.autocomplete('ansi_c')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'strcat')
-  buffer:auto_c_cancel()
-  buffer:clear_all()
-
-  buffer:add_text('div_t d;\nd->')
-  textadept.editing.autocomplete('ansi_c')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'quot')
-  buffer:auto_c_cancel()
-  buffer:clear_all()
-
-  local ansi_c = require('ansi_c')
-  local autocomplete_snippets = ansi_c.autocomplete_snippets
-  ansi_c.autocomplete_snippets = false
-  buffer:add_text('for')
-  textadept.editing.autocomplete('ansi_c')
-  assert(not buffer:auto_c_active(), 'autocompletions available')
-  ansi_c.autocomplete_snippets = true
-  textadept.editing.autocomplete('ansi_c')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  buffer:auto_c_cancel()
-  buffer:clear_all()
-  ansi_c.autocomplete_snippets = autocomplete_snippets -- restore
-
-  -- TODO: typeref and rescan
-
-  buffer:close(true)
+  -- TODO:
+  buffer:close()
 end
 
 function test_ui_size()
@@ -4685,46 +4590,6 @@ end
 expected_failure(test_view_fold_properties)
 
 -- TODO: test init.lua's buffer settings
-
-function test_css_autocomplete()
-  buffer.new()
-  buffer:set_lexer('css')
-  require('css') -- load language module
-
-  buffer:add_text('h')
-  textadept.editing.autocomplete('css')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'h1')
-  buffer:auto_c_complete()
-  buffer:add_text(':')
-  textadept.editing.autocomplete('css')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'active')
-  buffer:auto_c_complete()
-  buffer:add_text(' {')
-  buffer:new_line()
-  buffer:add_text('font')
-  textadept.editing.autocomplete('css')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  buffer:line_down() -- highlight next completion
-  buffer:line_down() -- highlight next completion
-  assert_equal(buffer.auto_c_current_text, 'font-size')
-  buffer:auto_c_complete()
-  buffer:add_text(': s')
-  textadept.editing.autocomplete('css')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'small')
-  buffer:auto_c_cancel()
-
-  buffer:clear_all()
-  buffer:add_text('@media t')
-  textadept.editing.autocomplete('css')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'tty')
-  buffer:auto_c_cancel()
-
-  buffer:close(true)
-end
 
 function test_ctags()
   if WIN32 or OSX then return end -- TODO:
@@ -5474,84 +5339,6 @@ function test_format_paragraph()
   buffer:close(true)
 end
 
-local function assert_go_autocompletion(pos, first_item)
-  buffer:goto_pos(pos)
-  textadept.editing.autocomplete('go')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, first_item)
-  buffer:auto_c_cancel()
-end
-
-function test_go_autocomplete()
-  local current_dir = lfs.currentdir()
-  local dir = os.tmpname()
-  os.remove(dir)
-  lfs.mkdir(dir)
-  lfs.chdir(dir) -- avoid loading tags from _HOME
-
-  buffer.new()
-  buffer:set_lexer('go')
-  require('go') -- load language module
-
-  -- LuaFormatter off
-  buffer:add_text(table.concat({
-    'package main',
-    '',
-    'import (',
-    '  "str"',
-    '  "time"',
-    ')',
-    '',
-    'func foo(bar time.Time) {',
-    '  strconv.P',
-    '',
-    '  bar.P',
-    '',
-    '  baz := time.Now()',
-    '  baz.',
-    '',
-    '  var quux time.Time',
-    '  //var quux time.Location',
-    '  quux.S',
-    '}'
-  }, newline()))
-  -- LuaFormatter on
-  assert_go_autocompletion(buffer.line_end_position[4] - 1, 'strconv')
-  assert_go_autocompletion(buffer.line_end_position[9], 'ParseBool')
-  assert_go_autocompletion(buffer.line_end_position[11], 'Parse')
-  assert_go_autocompletion(buffer.line_end_position[14], 'Add')
-  assert_go_autocompletion(buffer.line_end_position[18], 'Second')
-
-  buffer:close(true)
-  lfs.chdir(current_dir) -- restore
-  removedir(dir)
-end
-
-function test_html_autocomplete()
-  buffer.new()
-  buffer:set_lexer('html')
-  require('html') -- load language module
-
-  buffer:add_text('<h')
-  textadept.editing.autocomplete('html')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'h1')
-  buffer:auto_c_cancel()
-  buffer:add_text('tml ')
-  textadept.editing.autocomplete('html')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  buffer:auto_c_cancel()
-  buffer:new_line()
-  buffer:add_text('x')
-  textadept.editing.autocomplete('html')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'xml:lang')
-  buffer:line_down() -- highlight next completion
-  buffer:auto_c_complete()
-
-  buffer:close(true)
-end
-
 function test_lsp_clangd()
   if WIN32 or OSX then return end -- TODO:
   local dir = os.tmpname()
@@ -5835,129 +5622,6 @@ function test_open_file_mode()
   buffer:close()
 end
 
-function test_python_autocomplete()
-  buffer.new()
-  buffer:set_lexer('python')
-  require('python') -- load language module
-
-  -- LuaFormatter off
-  buffer:add_text(table.concat({
-    'foo = "bar"',
-    'baz = open("quux")',
-    ''
-  }, newline()))
-  -- LuaFormatter on
-  buffer:add_text('foo.f')
-  textadept.editing.autocomplete('python')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'find')
-  buffer:auto_c_cancel()
-  buffer:del_line_left()
-  buffer:add_text('baz.c')
-  textadept.editing.autocomplete('python')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'close')
-  buffer:auto_c_cancel()
-
-  buffer:close(true)
-end
-
-function test_python_autoindent()
-  buffer.new()
-  buffer:set_lexer('python')
-  require('python') -- load language module
-
-  buffer:add_text('if foo:')
-  buffer:new_line()
-  assert_equal(buffer.line_indentation[2], 4)
-  buffer:add_text('else:')
-  events.emit(events.CHAR_ADDED, string.byte(':'))
-  assert_equal(buffer.line_indentation[2], 0)
-
-  buffer:close(true)
-end
-
--- TODO: REST module
-
-function test_ruby_autocomplete()
-  buffer.new()
-  buffer:set_lexer('ruby')
-  local ruby = require('ruby') -- load language module
-
-  -- LuaFormatter off
-  buffer:add_text(table.concat({
-    'foo = "bar"',
-    'baz = Array.new',
-    ''
-  }, newline()))
-  -- LuaFormatter on
-  buffer:add_text('foo.l')
-  textadept.editing.autocomplete('ruby')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'length')
-  buffer:auto_c_cancel()
-  buffer:del_line_left()
-  buffer:add_text('baz.c')
-  textadept.editing.autocomplete('ruby')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'clear')
-  buffer:auto_c_cancel()
-
-  buffer:del_line_left()
-  buffer:add_text('Kernel::p')
-  textadept.editing.autocomplete('ruby')
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  buffer:line_down() -- highlight next completion
-  assert_equal(buffer.auto_c_current_text, 'pp')
-  buffer:auto_c_cancel()
-
-  buffer:clear_all()
-  buffer:add_text('if foo')
-  ruby.try_to_autocomplete_end()
-  assert_equal(buffer:line_from_position(buffer.current_pos), 2)
-  assert_equal(buffer.line_indentation[2], 2)
-  -- LuaFormatter off
-  assert_equal(buffer:get_text(), table.concat({
-    'if foo',
-    '  ',
-    'end'
-  }, newline()))
-  -- LuaFormatter on
-
-  buffer:close(true)
-end
-
-function test_ruby_toggle_block()
-  buffer.new()
-  buffer:set_lexer('ruby')
-  local ruby = require('ruby') -- load language module
-
-  local block = '[1, 2, 3].collect { |i| p }'
-  buffer:set_text(block)
-  ruby.toggle_block()
-  -- LuaFormatter off
-  assert_equal(buffer:get_text(), table.concat({
-    '[1, 2, 3].collect do |i|',
-    '  p ',
-    'end'
-  }, newline()))
-  -- LuaFormatter on
-  assert_equal(buffer.current_pos, 1)
-  ruby.toggle_block()
-  assert_equal(buffer:get_text(), block)
-  assert_equal(buffer.current_pos, 1)
-  ruby.toggle_block()
-  buffer:line_down()
-  ruby.toggle_block() -- should work inside block too
-  assert_equal(buffer:get_text(), block)
-
-  buffer:set_text('[1, 2, 3].collect do |i| p end')
-  events.emit(events.KEYPRESS, 'ctrl+{')
-  assert_equal(buffer:get_text(), block)
-
-  buffer:close(true)
-end
-
 function test_spellcheck()
   local spellcheck = require('spellcheck')
   local SPELLING_ID = 1 -- not accessible
@@ -6054,8 +5718,6 @@ function test_spellcheck_load_interactive()
   textadept.menu.menubar[_L['Tools']][_L['Spelling']][_L['Load Dictionary...']][2]()
 end
 
--- TODO: YAML module
-
 -- Load buffer and view API from their respective LuaDoc files.
 local function load_buffer_view_props()
   local buffer_props, view_props = {}, {}
@@ -6096,6 +5758,7 @@ local function check_property_usage(filename, buffer_props, view_props)
       if id == 'format' and prop == 'line_length' then goto continue end
       if id == 'styles' and prop == 'tag' then goto continue end
       if (id == 'styles' or id == 'view') and prop == 'property' then goto continue end
+      if id == 'server' and prop == 'auto_c_fill_ups' then goto continue end
       if buffer_props[prop] then
         assert(id:find('^buffer%d?$') or id:find('buf$'),
           'line %d:%d: "%s" should be a buffer property', line_num, pos, prop)
@@ -6114,9 +5777,10 @@ end
 function test_buffer_view_usage()
   local buffer_props, view_props = load_buffer_view_props()
   local filter = {
-    '.lua', '.luadoc', '!/lexers', '!/modules/lsp/dkjson.lua', '!/modules/lua/lua.luadoc',
+    '.lua', '.luadoc', '!/lexers', '!/modules/lsp/doc', '!/modules/lsp/dkjson.lua',
+    '!/modules/lsp/ldoc', '!/modules/lsp/ldoc.lua', '!modules/lsp/pl',
     '!/modules/debugger/lua/mobdebug.lua', '!/modules/debugger/lua/socket.lua',
-    '!/modules/debugger/luasocket', '!/modules/yaml/lyaml', '!/scripts', '!/build'
+    '!/modules/debugger/luasocket', '!/scripts', '!/build'
   }
   for filename in lfs.walk(_HOME, filter) do
     check_property_usage(filename, buffer_props, view_props)
