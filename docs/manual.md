@@ -130,8 +130,8 @@ Here is a simple *~/.textadept/init.lua* for illustration:
     end
 
     -- Load an external module and bind a key to it.
-    local ctags = require('ctags')
-    keys.f12 = ctags.goto_tag
+    local lsp = require('lsp')
+    keys['ctrl+f12'] = lsp.goto_declaration
 
     -- Recognize .luadoc files as Lua code.
     lexer.detect_extensions.luadoc = 'lua'
@@ -214,7 +214,7 @@ the modules there (thus creating or merging the *modules/* directory).
 **Note:** Textadept generally does not auto-load [modules](#modules), so you will need to load
 at least some of those extra modules manually. For example, in your *~/.textadept/init.lua*:
 
-    require('ctags')
+    require('lsp')
     require('file_diff')
     require('spellcheck')
 
@@ -905,8 +905,9 @@ highlighting.
 
 #### Autocompletion and Documentation
 
-Textadept provides buffer-based word completion. It can also autocomplete symbols for programming
-languages and display documentation for functions and other symbols.
+Textadept provides built-in buffer-based word completion. With the help of the external [Language
+Server Protocol module][], Textadept can autocomplete programming language symbols, functions,
+class members, etc. and show documentation for them.
 
 You can show word completion candidates for partially-typed words via `Ctrl+Enter` on Windows
 and Linux, `⌘↩` on macOS, and `^Enter` in the terminal version. Continuing to type
@@ -919,29 +920,28 @@ from the current buffer. You can configure Textadept to look in all open buffers
 
 ![Word Completion](images/wordcompletion.png)
 
-For languages that support it, you can show symbol completion candidates at the current position
-via `Ctrl+Space` on Windows and Linux, `⌘Space` or `^Space` on macOS, and `^Space` in the
-terminal version.
+Textadept's framework for providing autocompletion relies on [autocompleter][] functions, which are
+often supplied by language [modules](#modules). You can use this framework to write your own
+autocompletion routines. The external LSP module does so in order to provide language-specific
+autocompletion. You can show completion candidates at the current position via `Ctrl+Space`
+on Windows and Linux, `⌘Space` or `^Space` on macOS, and `^Space` in the terminal version.
 
 ![Autocomplete Lua](images/adeptsense_lua.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
 ![Autocomplete Lua String](images/adeptsense_string.png)
 
-Also for languages that support it, you can show any known documentation for the current symbol
-via `Ctrl+?` on Windows and Linux, `⌘?` or `^?` on macOS, and `M-?` or `^?` in the terminal
-version. Textadept has built-in autocompletion and documentation support for Lua and C, including
-for its own Lua API.
+Also with the help of the LSP module, you can show any known documentation for the current
+symbol via `Ctrl+?` on Windows and Linux, `⌘?` or `^?` on macOS, and `M-?` or `^?` in the
+terminal version.
 
 ![Documentation](images/adeptsense_doc.png)
 
-Textadept's framework for providing symbol autocompletion and documentation relies on
-[autocompleter][] functions and [API files][], which are often supplied by [language][]
-[modules](#modules). You can use this framework to write your own autocompletion routines.
+The LSP module contains a simple Lua language server that provides basic autocompletion and
+documentation support for Lua and Textadept's Lua API.
 
+[Language Server Protocol module]: https://github.com/orbitalquark/textadept-lsp
 [`textadept.editing.autocomplete_all_words`]: api.html#textadept.editing.autocomplete_all_words
 [autocompleter]: api.html#textadept.editing.autocompleters
-[API files]: api.html#textadept.editing.api_files
-[language]: api.html#_M
 
 #### Text Selections
 
@@ -1250,8 +1250,8 @@ with Textadept.
 Textadept will only load modules it is explicitly told to load (e.g. from your
 *~/.textadept/init.lua*). For example, in your *~/.textadept/init.lua*:
 
-    local ctags = require('ctags')
-    ctags.f12 = ctags.goto_tag
+    local lsp = require('lsp')
+    lsp.server_commands.cpp = 'clangd'
 
 You can automatically load a "language module" (if it exists) after opening a file of that type:
 
@@ -1408,32 +1408,6 @@ entire application using Lua" is not an exaggeration!
 [event]: api.html#events
 [spawn]: api.html#os.spawn
 [Lua API]: api.html
-
-#### Generate Autocompletion and Documentation Files
-
-You can generate for use with Textadept [autocompletion and
-documentation](#autocompletion-and-documentation) files for your Lua modules. Simply run
-[LuaDoc][] with Textadept's *modules/lua/tadoc.lua* doclet. For example:
-
-    cd _HOME
-    luadoc -d [output_path] --doclet modules/lua/tadoc [/path/to/module(s)]
-
-where `_HOME` is the path where you installed Textadept and `output_path` is an arbitrary path
-to write the generated *tags* and *api* files to. (Note that LuaDoc does not like absolute paths
-to doclets, so running `luadoc` from `_HOME` is one way to get it to work.) You can then have
-Textadept load and use those autocompletion and documentation files when editing Lua code. For
-example, in your *~/.textadept/init.lua*:
-
-    local loaded_tags = false
-    events.connect(events.LEXER_LOADED, function(name)
-      if name ~= 'lua' or loaded_tags then return end
-      local lua = require('lua')
-      lua.tags[#lua.tags + 1] = '/path/to/tags'
-      loaded_tags = true
-    end)
-    table.insert(textadept.editing.api_files.lua, '/path/to/api')
-
-[LuaDoc]: https://keplerproject.github.com/luadoc
 
 ---
 ### Compiling
