@@ -23,7 +23,7 @@ local titles = {
   [TFIELD] = 'Fields'
 }
 
--- Writes a LuaDoc description to the given file.
+-- Writes an LDoc description to the given file.
 -- @param f The markdown file being written to.
 -- @param description The description.
 -- @param name The name of the module the description belongs to. Used for headers in module
@@ -34,13 +34,14 @@ local function write_description(f, description, name)
   description = description:gsub(self_link, function(link, id)
     return string.format('%s(#%s)', link, id:gsub(':', '.'))
   end)
+  description = description:gsub('\n ', '\n') -- strip leading spaces
   f:write(string.format(DESCRIPTION, description))
 end
 
--- Writes a LuaDoc list to the given file.
+-- Writes an LDoc list to the given file.
 -- @param f The markdown file being written to.
 -- @param fmt The format of a list item.
--- @param list The LuaDoc list.
+-- @param list The LDoc list.
 -- @param name The name of the module the list belongs to. Used for @see.
 local function write_list(f, fmt, list, name)
   if not list or #list == 0 then return end
@@ -61,10 +62,10 @@ local function write_list(f, fmt, list, name)
   f:write('\n')
 end
 
--- Writes a LuaDoc hashmap to the given file.
+-- Writes an LDoc hashmap to the given file.
 -- @param f The markdown file being written to.
 -- @param fmt The format of a hashmap item.
--- @param list The LuaDoc hashmap.
+-- @param list The LDoc hashmap.
 local function write_hashmap(f, fmt, hashmap)
   if not hashmap or #hashmap == 0 then return end
   f:write(string.format(LIST_TITLE, titles[fmt]))
@@ -152,7 +153,7 @@ function M.ldoc(doc)
         if not tbl.name:find('%.') and (name ~= '_G' or tbl.name == 'buffer' or tbl.name == 'view') then
           tbl.name = name .. '.' .. tbl.name -- absolute name
         elseif tbl.name ~= '_G.keys' and tbl.name ~= '_G.snippets' then
-          tbl.name = tbl.name:gsub('^_G%.', '') -- strip _G required for Luadoc
+          tbl.name = tbl.name:gsub('^_G%.', '') -- strip _G required for LDoc/LuaDoc
         end
         f:write(string.format(TABLE, tbl.name:gsub('^_G%.', ''), tbl.name))
         write_description(f, tbl.summary .. tbl.description)
@@ -200,7 +201,7 @@ function M.start(doc)
           if not field:find('%.') and name ~= '_G' then
             field = name .. '.' .. field -- absolute name
           else
-            field = field:gsub('^_G%.', '') -- strip _G required for Luadoc
+            field = field:gsub('^_G%.', '') -- strip _G required for LuaDoc
           end
           f:write(string.format(FIELD, field, field, type or ''))
           write_description(f, description or fields[field])
@@ -242,7 +243,7 @@ function M.start(doc)
         if not tname:find('%.') and (name ~= '_G' or tname == 'buffer' or tname == 'view') then
           tname = name .. '.' .. tname -- absolute name
         elseif tname ~= '_G.keys' and tname ~= '_G.snippets' then
-          tname = tname:gsub('^_G%.', '') -- strip _G required for Luadoc
+          tname = tname:gsub('^_G%.', '') -- strip _G required for LuaDoc
         end
         f:write(string.format(TABLE, tname, tname))
         write_description(f, tbl.description)
