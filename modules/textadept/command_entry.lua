@@ -221,7 +221,6 @@ function M.run(label, f, keys, lang, initial_text, ...)
   if not assert_type(label, 'string/nil', 1) then label = _L['Lua command:'] end
   if not assert_type(f, 'function/nil', 2) and not keys then
     f, keys, lang = run_lua, lua_keys, 'lua'
-    require('lua') -- ensure Textadept api file is available for showing documentation
   elseif type(assert_type(keys, 'table/string/nil', 3)) == 'string' then
     table.insert(args, 1, initial_text)
     initial_text, lang, keys = assert_type(lang, 'string/nil', 4), keys, {}
