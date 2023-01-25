@@ -60,7 +60,7 @@ local function get_print_view(type)
   for _, view in ipairs(_VIEWS) do if view.buffer._type == type then return view end end
 end
 local function get_print_buffer(type)
-  for _, buf in ipairs(_BUFFERS) do if buf._type == type then return buf end end
+  for _, buffer in ipairs(_BUFFERS) do if buffer._type == type then return buffer end end
 end
 
 -- Helper function for printing to buffers.
@@ -244,9 +244,9 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
     end
     if other_view then ui.goto_view(other_view) end
   end
-  for _, buf in ipairs(_BUFFERS) do
-    if (buf.filename or ''):find(patt) then
-      view:goto_buffer(buf)
+  for _, buffer in ipairs(_BUFFERS) do
+    if (buffer.filename or ''):find(patt) then
+      view:goto_buffer(buffer)
       return
     end
   end

@@ -93,9 +93,9 @@ function io.open_file(filenames, encodings)
   if type(encodings) ~= 'table' then encodings = {encodings} end
   for i = 1, #filenames do
     local filename = lfs.abspath((filenames[i]:gsub('^file://', '')))
-    for _, buf in ipairs(_BUFFERS) do
-      if filename == buf.filename then
-        view:goto_buffer(buf)
+    for _, buffer in ipairs(_BUFFERS) do
+      if filename == buffer.filename then
+        view:goto_buffer(buffer)
         goto continue
       end
     end

@@ -478,7 +478,7 @@ local function get_ff_view()
   for _, view in ipairs(_VIEWS) do if is_ff_buf(view.buffer) then return view end end
 end
 local function get_ff_buffer()
-  for _, buf in ipairs(_BUFFERS) do if is_ff_buf(buf) then return buf end end
+  for _, buffer in ipairs(_BUFFERS) do if is_ff_buf(buffer) then return buffer end end
 end
 
 ---

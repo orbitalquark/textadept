@@ -120,8 +120,6 @@
 -- Shift+Tab | ⇧⇥ | S-Tab | Previous snippet placeholder
 -- Esc | Esc | Esc | Cancel snippet
 -- None | None | None | Complete trigger word
--- Ctrl+Space | ⌘Space<br/> ^Space | ^Space | Complete symbol
--- Ctrl+? | ⌘?<br/>^? | M-?<br/>Ctrl+?<sup>‡</sup> | Show documentation
 -- None | None | None | Show style
 -- **Buffer**| | |
 -- Ctrl+Tab<br/>Ctrl+PgDn | ^⇥<br/>⌘⇟ | M-PgDn<br/> ^Tab^(‡) | Next buffer
@@ -246,7 +244,6 @@
 --
 -- †: If you prefer ^Z to suspend, you can bind it to [`ui.suspend()`]().
 --
--- ‡: Windows terminal version only.
 -- @module textadept.keys
 local M = {}
 
