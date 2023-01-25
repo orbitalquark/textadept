@@ -169,12 +169,12 @@
 -- Shift+Down | ⇧⇣<br/>^⇧N | S-Down | Line down extend selection
 -- Alt+Shift+Down | ^⇧⇣ | M-S-Down | Line down extend rect. selection
 -- Ctrl+Down | ⌥⇣ | ^Down | Paragraph down
--- Ctrl+Shift+Down | ⌥⇧⇣ | None | Paragraph down extend selection
+-- Ctrl+Shift+Down | ⌥⇧⇣ | S-^Down | Paragraph down extend selection
 -- Up | ⇡<br/> ^P | Up | Line up
 -- Shift+Up | ⇧⇡<br/>^⇧P | S-Up | Line up extend selection
 -- Alt+Shift+Up | ^⇧⇡ | M-S-Up | Line up extend rect. selection
 -- Ctrl+Up | ⌥⇡ | ^Up | Paragraph up
--- Ctrl+Shift+Up | ⌥⇧⇡ | None | Paragraph up extend selection
+-- Ctrl+Shift+Up | ⌥⇧⇡ | S-^Up | Paragraph up extend selection
 -- Left | ⇠<br/> ^B | Left | Char left
 -- Shift+Left | ⇧⇠<br/>^⇧B | S-Left | Char left extend selection
 -- Alt+Shift+Left | ^⇧⇠ | M-S-Left | Char left extend rect. selection
@@ -497,9 +497,9 @@ local bindings = {
   [buffer.word_part_left] = {'ctrl+alt+left', 'ctrl+alt+left', nil},
   [buffer.word_part_left_extend] = {'ctrl+alt+shift+left', 'ctrl+alt+shift+left', nil},
   [buffer.para_down] = {'ctrl+down', 'alt+down', 'ctrl+down'},
-  [buffer.para_down_extend] = {'ctrl+shift+down', 'alt+shift+down', nil},
+  [buffer.para_down_extend] = {'ctrl+shift+down', 'alt+shift+down', 'ctrl+shift+down'},
   [buffer.para_up] = {'ctrl+up', 'alt+up', 'ctrl+up'},
-  [buffer.para_up_extend] = {'ctrl+shift+up', 'alt+shift+up', nil},
+  [buffer.para_up_extend] = {'ctrl+shift+up', 'alt+shift+up', 'ctrl+shift+up'},
   -- Change rectangular selection modifier on macOS to ^.
   [buffer.line_down_rect_extend] = {nil, 'ctrl+shift+down', nil},
   [buffer.line_up_rect_extend] = {nil, 'ctrl+shift+up', nil},
