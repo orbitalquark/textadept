@@ -22,12 +22,28 @@ Bugfixes:
 * Fixed auto-pair removal bug when backspacing over an auto-paired character.
 * Fixed directory filters that contain directories to include.
 * Qt version: ensure the given directory is selected in Linux's directory selection dialog.
+* Terminal version: fixed spawning processes on Linux and macOS.
 * Scintilla: fixed scroll position update after `view:vertical_center_caret()`.
 * Scintilla: prevent autocompletion of lists created during `events.CHAR_ADDED`.
+* LSP: fixed diagnostic display.
+* LSP: silently print to LSP buffer when starting language servers.
+* LSP: properly handle incoming server requests.
+* LSP: fixed "Find References".
+* LSP: gracefully shut down language servers on quit too, not just reset.
+* LSP: improved startup and error notifications.
+* LSP: synchronize unsaved document changes when switching away from a buffer or view.
+* LSP: handle unexpected language server exit (i.e. crash).
+* LSP: fixed display of signature help when more than one option is present.
 
 Changes:
 
 * Language modules are no longer auto-loaded when their files are opened.
+* All language autocompletion and documentation has been delegated to the external LSP module.
+  - Deprecated C, CSS, Go, HTML, Lua, Python, and Ruby language modules.
+  - Textadept no longer generates or uses Lua tags and api documentation files.
+  - Deprecated the ctags module.
+  - Removed "Tools > Complete Symbol" and "Tools > Show Documentation" menu items.
+  - Removed `textadept.editing.show_documentation()`.
 * Hide the Find & Replace pane after an "In Files" search.
 * Allow lexers to dictate what constitutes a word character.
 * Added [`lexer.names()`][].
@@ -36,6 +52,17 @@ Changes:
 * Renamed `textadept.snippets.cancel_current()` to `cancel()`.
 * Removed `textadept.snippets.path`.
 * Added buffer representation argment to `events.BUFFER_DELETED`.
+* Switched documentation format to [LDoc][] from LuaDoc.
+* Added `-L` and `--lua` command line option for running Textadept as a standalone Lua interpreter.
+* LSP: updated to LSP 3.17.
+* LSP: implemented selection range.
+* LSP: support language-specific completion and signature help trigger characters.
+* LSP: support highlighting active parameters in signature help.
+* LSP: utilize existing "Tools > Complete Symbol" and "Tools > Show Documentation" menus and
+  key bindings.
+* LSP: show relative paths in "Go To ..." dialogs if possible.
+* LSP: send "textDocument/didClose" notifications.
+* LSP: added simple Lua language server and enable it by default for Lua files.
 
 [migration guide]: manual.html#migrating-from-textadept-11-to-12
 [Textadept 12.0 alpha 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_2/textadept_12.0_alpha_2.win.zip
@@ -44,6 +71,7 @@ Changes:
 [Textadept 12.0 alpha 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_2/textadept_12.0_alpha_2.modules.zip
 [`lexer.names()`]: api.html#lexer.names
 [`typeover_auto_paired`]: api.html#textadept.editing.typeover_auto_paired
+[LDoc]: https://stevedonovan.github.io/ldoc/
 
 ### 12.0 alpha (01 Jan 2023)
 
@@ -1166,7 +1194,7 @@ Bugfixes:
 
 Changes:
 
-* Added case-insensitive option to [`textadept.editing.show_documentation()`][].
+* Added case-insensitive option to `textadept.editing.show_documentation()`.
 * Updated the default window size and some default dialog sizes.
 * Updated Markdown lexer.
 * Improved C++ lexer to support single quotes in C++14 integer literals.
@@ -1175,7 +1203,6 @@ Changes:
   letters as word characters.
 * Updated to [Scintilla][] 3.10.6.
 
-[`textadept.editing.show_documentation()`]: api.html#textadept.editing.show_documentation
 [Scintilla]: https://scintilla.org
 
 ### 10.4 (01 May 2019)
@@ -1228,13 +1255,12 @@ Bugfixes:
 
 Changes:
 
-* Added optional position argument to [`textadept.editing.show_documentation()`][].
+* Added optional position argument to `textadept.editing.show_documentation()`.
 * `textadept.editing.highlight_word()` does not select the word by default anymore.
 * Changed [file filter][] format to be more flat and intuitive.
 * Added `-l` and `--line` command line options to go to a buffer line.
 * Updated to [PDCurses][] 3.6 for the Windows terminal version.
 
-[`textadept.editing.show_documentation()`]: api.html#textadept.editing.show_documentation
 [file filter]: api.html#io.quick_open
 [PDCurses]: https://pdcurses.sourceforge.io/
 
