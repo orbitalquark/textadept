@@ -210,8 +210,6 @@ default_menubar = {
       {_L['Complete Trigger Word'], function() textadept.editing.autocomplete('snippets') end}
     },
     SEPARATOR,
-    {_L['Complete Symbol'], function() textadept.editing.autocomplete(buffer:get_lexer(true)) end},
-    {_L['Show Documentation'], textadept.editing.show_documentation},
     {_L['Show Style'], function()
       local char = buffer:text_range(buffer.current_pos, buffer:position_after(buffer.current_pos))
       if char == '' then return end -- end of buffer

@@ -81,8 +81,6 @@ local bindings = {
   [function() M:select_all() end] = {'ctrl+a', 'cmd+a', 'ctrl+a'},
   [function() cycle_history(true) end] = {'up', 'up', 'up'},
   [cycle_history] = {'down', 'down', 'down'}, -- LuaFormatter
-  [require('textadept.editing').show_documentation] = {'ctrl+?', 'cmd+?', 'ctrl+?'},
-  [function() require('textadept.editing').show_documentation() end] = {nil, 'ctrl+?', 'meta+?'},
   -- Movement keys.
   [function() M:char_right() end] = {nil, 'ctrl+f', 'ctrl+f'},
   [function() M:char_left() end] = {nil, 'ctrl+b', 'ctrl+b'},

@@ -253,15 +253,15 @@ local M = {}
 -- Windows and Linux key bindings.
 --
 -- Unassigned keys:
--- ctrl: AEGhHiIJNQtY_(){;:'",<.>
+-- ctrl: AEGhHiIJNQtY_(){;:'",<.>?\s
 -- alt: -_=+)]}\|;:/?\s\n
 -- ctrl+alt: aAbBcCDFHiIjJlLmMnNoOpPqQrRsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
 --
 -- macOS key bindings.
 --
 -- Unassigned keys:
--- cmd: AEGhHiIJNQtY_(){;:'"<.>
--- ctrl: cCDgGHiIjJKLmMoOqQrRsStTuUvVwWxXyYzZ-_=+)]}\|;:/\n
+-- cmd: AEGhHiIJNQtY_(){;:'"<.>?\s
+-- ctrl: cCDgGHiIjJKLmMoOqQrRsStTuUvVwWxXyYzZ-_=+)]}\|;:/?\s\n
 -- ctrl+cmd: aAbBcCDFHiIjJlLmMnNoOpPqQrRsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
 --
 -- Curses key bindings.
@@ -278,8 +278,8 @@ local M = {}
 --   - Ctrl+Meta+Symbol keys are not recognized.
 --
 -- Unassigned keys:
--- ctrl: t
--- meta: aAbBcCDHiIjJlLMnNoOpPQrRUvVxXyYzZ);:\s
+-- ctrl: t\s
+-- meta: aAbBcCDHiIjJlLMnNoOpPQrRUvVxXyYzZ);:?\s
 -- ctrl+meta: aeghijnqy_]\^
 --
 -- Note: meta+[befhstv] may be used by Linux GUI terminals for menu access.
@@ -417,8 +417,6 @@ local bindings = {
   [textadept.snippets.cancel] = {'esc', 'esc', 'esc'},
   -- TODO: m('Tools/Snippets/Complete Trigger Word')
   -- Other.
-  [m('Tools/Complete Symbol')] = {'ctrl+ ', {'cmd+ ', 'ctrl+ '}, 'ctrl+ '},
-  [textadept.editing.show_documentation] = {'ctrl+?', {'cmd+?', 'ctrl+?'}, {'ctrl+?', 'meta+?'}},
   -- TODO: m('Tools/Show Style')
 
   -- Buffer.
