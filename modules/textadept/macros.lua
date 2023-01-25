@@ -27,11 +27,11 @@ local event_recorders = {
   [events.KEYPRESS] = function(key)
     for i = 1, #ignore do if keys[key] == ignore[i] then return end end
     macro[#macro + 1] = {events.KEYPRESS, key}
-  end, -- LuaFormatter
+  end, --
   [events.MENU_CLICKED] = event_recorder(events.MENU_CLICKED),
   [events.CHAR_ADDED] = event_recorder(events.CHAR_ADDED),
-  [events.FIND] = event_recorder(events.FIND), -- LuaFormatter
-  [events.REPLACE] = event_recorder(events.REPLACE), -- LuaFormatter
+  [events.FIND] = event_recorder(events.FIND), --
+  [events.REPLACE] = event_recorder(events.REPLACE), --
   [events.UPDATE_UI] = function()
     if #keys.keychain == 0 then ui.statusbar_text = _L['Macro recording'] end
   end

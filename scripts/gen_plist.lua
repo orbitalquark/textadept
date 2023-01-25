@@ -19,16 +19,18 @@ for type in types:gmatch('(.-)[%],}]+') do
   end
 end
 
--- LuaFormatter off
 -- Generate and write the XML.
-local xml = {[[
+local xml = {
+  [[
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
-	<key>CFBundleDocumentTypes</key>]]}
+	<key>CFBundleDocumentTypes</key>]]
+}
+
 xml[#xml + 1] = [[
 	<array>
 		<dict>
@@ -52,14 +54,12 @@ xml[#xml + 1] = [[
 				<string>com.apple.xml-property-list</string>
 				<string>com.netscape.javascript-source</string>
 				<string>com.sun.java-source</string>]]
--- LuaFormatter on
 for i = 1, #languages do
   lang, exts = languages[i], extensions[languages[i]]
   if #exts > 0 then
     xml[#xml + 1] = "\t\t\t\t<string>com.textadept." .. lang:gsub(' ', '-') .. "-source</string>"
   end
 end
--- LuaFormatter off
 xml[#xml + 1] = [[
 				<string>net.daringfireball.markdown</string>
 				<string>public.c-header</string>
@@ -103,7 +103,7 @@ xml[#xml + 1] = [[
 	</array>
 	<key>UTImportedTypeDeclarations</key>
 	<array>]]
--- LuaFormatter on
+
 for i = 1, #languages do
   lang, exts = languages[i], extensions[languages[i]]
   if #exts > 0 then
@@ -126,7 +126,7 @@ for i = 1, #languages do
     xml[#xml + 1] = "\t\t</dict>"
   end
 end
--- LuaFormatter off
+
 xml[#xml + 1] = [[
 	</array>
 	<key>CFBundleExecutable</key>
@@ -152,7 +152,7 @@ xml[#xml + 1] = [[
 </dict>
 </plist>
 ]]
--- LuaFormatter on
+
 f = io.open('../src/Info.plist', 'w')
 f:write(table.concat(xml, '\n'))
 f:close()

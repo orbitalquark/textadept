@@ -188,13 +188,11 @@ end
 function test_lexer_get_lexer()
   buffer.new()
   buffer:set_lexer('html')
-  -- LuaFormatter off
   buffer:set_text(table.concat({
-    '<html><head><style type="text/css">',
-    'h1 { color: red; }',
+    '<html><head><style type="text/css">', --
+    'h1 { color: red; }', --
     '</style></head></html>'
   }, newline()))
-  -- LuaFormatter on
   buffer:colorize(1, -1)
   buffer:goto_pos(buffer:position_from_line(2))
   assert_equal(buffer.lexer_language, 'html')
@@ -360,14 +358,12 @@ end
 function test_file_io_open_file_detect_encoding()
   io.recent_files = {} -- clear
   local recent_files = {}
-  -- LuaFormatter off
   local files = {
-    [file(_HOME .. '/test/file_io/utf8')] = 'UTF-8',
-    [file(_HOME .. '/test/file_io/cp1252')] = 'CP1252',
-    [file(_HOME .. '/test/file_io/utf16')] = 'UTF-16',
+    [file(_HOME .. '/test/file_io/utf8')] = 'UTF-8', --
+    [file(_HOME .. '/test/file_io/cp1252')] = 'CP1252', --
+    [file(_HOME .. '/test/file_io/utf16')] = 'UTF-16', --
     [file(_HOME .. '/test/file_io/binary')] = ''
   }
-  -- LuaFormatter on
   for filename, encoding in pairs(files) do
     print(string.format('Opening file %s', filename))
     io.open_file(filename)
@@ -396,12 +392,10 @@ function test_file_io_open_file_detect_encoding()
 end
 
 function test_file_io_open_file_detect_newlines()
-  -- LuaFormatter off
   local files = {
     [file(_HOME .. '/test/file_io/lf')] = buffer.EOL_LF,
     [file(_HOME .. '/test/file_io/crlf')] = buffer.EOL_CRLF
   }
-  -- LuaFormatter on
   for filename, mode in pairs(files) do
     io.open_file(filename)
     assert_equal(buffer.eol_mode, mode)
@@ -411,13 +405,11 @@ end
 
 function test_file_io_open_file_with_encoding()
   local num_buffers = #_BUFFERS
-  -- LuaFormatter off
   local files = {
-    file(_HOME .. '/test/file_io/utf8'),
-    file(_HOME .. '/test/file_io/cp1252'),
+    file(_HOME .. '/test/file_io/utf8'), --
+    file(_HOME .. '/test/file_io/cp1252'), --
     file(_HOME .. '/test/file_io/utf16')
   }
-  -- LuaFormatter on
   local encodings = {nil, 'CP1252', 'UTF-16'}
   io.open_file(files, encodings)
   assert_equal(#_BUFFERS, num_buffers + #files)
@@ -678,14 +670,12 @@ end
 function test_file_io_recent_files()
   io.recent_files = {} -- clear
   local recent_files = {}
-  -- LuaFormatter off
   local files = {
-    file(_HOME .. '/test/file_io/utf8'),
-    file(_HOME .. '/test/file_io/cp1252'),
-    file(_HOME .. '/test/file_io/utf16'),
+    file(_HOME .. '/test/file_io/utf8'), --
+    file(_HOME .. '/test/file_io/cp1252'), --
+    file(_HOME .. '/test/file_io/utf16'), --
     file(_HOME .. '/test/file_io/binary')
   }
-  -- LuaFormatter on
   for _, filename in ipairs(files) do
     io.open_file(filename)
     buffer:close()
@@ -1950,25 +1940,21 @@ function test_editing_strip_trailing_spaces()
   textadept.editing.strip_trailing_spaces = true
   buffer.new()
   buffer.eol_mode = buffer.EOL_LF
-  -- LuaFormatter off
   local text = table.concat({
-    'foo ',
-    '  bar\t\r',
-    'baz\t ',
+    'foo ', --
+    '  bar\t\r', --
+    'baz\t ', --
     ' \t '
   }, '\n')
-  -- LuaFormatter on
   buffer:set_text(text)
   buffer:goto_pos(buffer.line_end_position[2])
   events.emit(events.FILE_BEFORE_SAVE)
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    'foo',
-    '  bar\r',
-    'baz',
+    'foo', --
+    '  bar\r', --
+    'baz', --
     ''
   }, '\n'))
-  -- LuaFormatter on
   assert_equal(buffer.current_pos, buffer.line_end_position[2])
   buffer:undo()
   assert_equal(buffer:get_text(), text)
@@ -1980,157 +1966,135 @@ function test_editing_strip_trailing_spaces()
 end
 
 function test_editing_paste_reindent_tabs_to_tabs()
-  -- LuaFormatter off
   ui.clipboard_text = table.concat({
-    '\tfoo',
-    '',
-    '\t\tbar',
+    '\tfoo', --
+    '', --
+    '\t\tbar', --
     '\tbaz'
   }, newline())
-  -- LuaFormatter on
   buffer.new()
   buffer.use_tabs, buffer.eol_mode = true, buffer.EOL_CRLF
   buffer:add_text('quux\r\n')
   textadept.editing.paste_reindent()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    'quux',
-    'foo',
-    '',
-    '\tbar',
+    'quux', --
+    'foo', --
+    '', --
+    '\tbar', --
     'baz'
   }, '\r\n'))
-  -- LuaFormatter on
   buffer:clear_all()
   buffer:add_text('\t\tquux\r\n\r\n') -- no auto-indent
   assert_equal(buffer.line_indentation[2], 0)
   assert_equal(buffer.line_indentation[3], 0)
   textadept.editing.paste_reindent()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '\t\tquux',
-    '',
-    '\t\tfoo',
-    '\t\t',
-    '\t\t\tbar',
+    '\t\tquux', --
+    '', --
+    '\t\tfoo', --
+    '\t\t', --
+    '\t\t\tbar', --
     '\t\tbaz'
   }, '\r\n'))
-  -- LuaFormatter on
   buffer:clear_all()
   buffer:add_text('\t\tquux\r\n')
   assert_equal(buffer.line_indentation[2], 0)
   buffer:new_line() -- auto-indent
   assert_equal(buffer.line_indentation[3], 2 * buffer.tab_width)
   textadept.editing.paste_reindent()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '\t\tquux',
-    '',
-    '\t\tfoo',
-    '\t\t',
-    '\t\t\tbar',
+    '\t\tquux', --
+    '', --
+    '\t\tfoo', --
+    '\t\t', --
+    '\t\t\tbar', --
     '\t\tbaz'
   }, '\r\n'))
-  -- LuaFormatter on
   buffer:close(true)
 end
 expected_failure(test_editing_paste_reindent_tabs_to_tabs)
 
 function test_editing_paste_reindent_spaces_to_spaces()
-  -- LuaFormatter off
   ui.clipboard_text = table.concat({
-    '    foo',
-    '',
-    '        bar',
-    '            baz',
+    '    foo', --
+    '', --
+    '        bar', --
+    '            baz', --
     '    quux'
   }, newline())
-  -- LuaFormatter on
   buffer.new()
   buffer.use_tabs, buffer.tab_width = false, 2
   buffer:add_text('foobar\n')
   textadept.editing.paste_reindent()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    'foobar',
-    'foo',
-    '',
-    '  bar',
-    '    baz',
+    'foobar', --
+    'foo', --
+    '', --
+    '  bar', --
+    '    baz', --
     'quux'
   }, newline()))
-  -- LuaFormatter on
   buffer:clear_all()
   buffer:add_text('    foobar\n\n') -- no auto-indent
   assert_equal(buffer.line_indentation[2], 0)
   assert_equal(buffer.line_indentation[3], 0)
   textadept.editing.paste_reindent()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '    foobar',
-    '',
-    '    foo',
-    '    ',
-    '      bar',
-    '        baz',
+    '    foobar', --
+    '', --
+    '    foo', --
+    '    ', --
+    '      bar', --
+    '        baz', --
     '    quux'
   }, newline()))
-  -- LuaFormatter on
   buffer:clear_all()
   buffer:add_text('    foobar\n')
   assert_equal(buffer.line_indentation[2], 0)
   buffer:new_line() -- auto-indent
   assert_equal(buffer.line_indentation[3], 4)
   textadept.editing.paste_reindent()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '    foobar',
-    '',
-    '    foo',
-    '    ',
-    '      bar',
-    '        baz',
+    '    foobar', --
+    '', --
+    '    foo', --
+    '    ', --
+    '      bar', --
+    '        baz', --
     '    quux'
   }, newline()))
-  -- LuaFormatter on
   buffer:close(true)
 end
 expected_failure(test_editing_paste_reindent_spaces_to_spaces)
 
 function test_editing_paste_reindent_spaces_to_tabs()
-  -- LuaFormatter off
   ui.clipboard_text = table.concat({
-    '  foo',
-    '    bar',
+    '  foo', --
+    '    bar', --
     '  baz'
   }, newline())
-  -- LuaFormatter on
   buffer.new()
   buffer.use_tabs, buffer.tab_width = true, 4
   buffer:add_text('\tquux')
   buffer:new_line()
   textadept.editing.paste_reindent()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '\tquux',
-    '\tfoo',
-    '\t\tbar',
+    '\tquux', --
+    '\tfoo', --
+    '\t\tbar', --
     '\tbaz'
   }, newline()))
-  -- LuaFormatter on
   buffer:close(true)
 end
 
 function test_editing_paste_reindent_tabs_to_spaces()
-  -- LuaFormatter off
   ui.clipboard_text = table.concat({
-    '\tif foo and',
-    '\t   bar then',
-    '\t\tbaz()',
-    '\tend',
+    '\tif foo and', --
+    '\t   bar then', --
+    '\t\tbaz()', --
+    '\tend', --
     ''
   }, newline())
-  -- LuaFormatter on
   buffer.new()
   buffer.use_tabs, buffer.tab_width = false, 2
   buffer:set_lexer('lua')
@@ -2139,16 +2103,14 @@ function test_editing_paste_reindent_tabs_to_spaces()
   buffer:insert_text(-1, 'end')
   buffer:colorize(1, -1) -- first line should be a fold header
   textadept.editing.paste_reindent()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    'function quux()',
-    '  if foo and',
-    '     bar then',
-    '    baz()',
-    '  end',
+    'function quux()', --
+    '  if foo and', --
+    '     bar then', --
+    '    baz()', --
+    '  end', --
     'end'
   }, newline()))
-  -- LuaFormatter on
   buffer:close(true)
 end
 expected_failure(test_editing_paste_reindent_tabs_to_spaces)
@@ -2159,25 +2121,21 @@ function test_editing_toggle_comment_lines()
   textadept.editing.toggle_comment()
   assert_equal(buffer:get_text(), 'foo')
   buffer:set_lexer('lua')
-  -- LuaFormatter off
   local text = table.concat({
-    '',
-    'local foo = "bar"',
-    '  local baz = "quux"',
+    '', --
+    'local foo = "bar"', --
+    '  local baz = "quux"', --
     ''
   }, newline())
-  -- LuaFormatter on
   buffer:set_text(text)
   buffer:goto_pos(buffer:position_from_line(2))
   textadept.editing.toggle_comment()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '',
-    '--local foo = "bar"',
-    '  local baz = "quux"',
+    '', --
+    '--local foo = "bar"', --
+    '  local baz = "quux"', --
     ''
   }, newline()))
-  -- LuaFormatter on
   assert_equal(buffer.current_pos, buffer:position_from_line(2) + 2)
   textadept.editing.toggle_comment() -- uncomment
   assert_equal(buffer:get_line(2), 'local foo = "bar"' .. newline())
@@ -2185,51 +2143,41 @@ function test_editing_toggle_comment_lines()
   local offset = 5
   buffer:set_sel(buffer:position_from_line(2) + offset, buffer:position_from_line(4) - offset)
   textadept.editing.toggle_comment()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '',
-    '--local foo = "bar"',
-    '--  local baz = "quux"',
+    '', --
+    '--local foo = "bar"', --
+    '--  local baz = "quux"', --
     ''
   }, newline()))
-  -- LuaFormatter on
   assert_equal(buffer.selection_start, buffer:position_from_line(2) + offset + 2)
   assert_equal(buffer.selection_end, buffer:position_from_line(4) - offset)
   textadept.editing.toggle_comment() -- uncomment
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '',
-    'local foo = "bar"',
-    '  local baz = "quux"',
+    '', --
+    'local foo = "bar"', --
+    '  local baz = "quux"', --
     ''
   }, newline()))
-  -- LuaFormatter on
   assert_equal(buffer.selection_start, buffer:position_from_line(2) + offset)
   assert_equal(buffer.selection_end, buffer:position_from_line(4) - offset)
   buffer:undo() -- comment
   buffer:undo() -- uncomment
   assert_equal(buffer:get_text(), text) -- verify atomic undo
-  -- LuaFormatter off
   buffer:set_text(table.concat({
-    '--foo',
+    '--foo', --
     '  --foo'
   }, newline()))
-  -- LuaFormatter on
   buffer:select_all()
   textadept.editing.toggle_comment()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    'foo',
+    'foo', --
     '  foo'
   }, newline()))
-  -- LuaFormatter on
   textadept.editing.toggle_comment()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '--foo',
+    '--foo', --
     '--  foo'
   }, newline()))
-  -- LuaFormatter on
   buffer:close(true)
 end
 
@@ -2237,35 +2185,29 @@ function test_editing_toggle_comment()
   buffer.new()
   buffer:set_lexer('ansi_c')
   textadept.editing.comment_string.ansi_c = '/*|*/'
-  -- LuaFormatter off
   buffer:set_text(table.concat({
-    '',
-    '  const char *foo = "bar";',
-    'const char *baz = "quux";',
+    '', --
+    '  const char *foo = "bar";', --
+    'const char *baz = "quux";', --
     ''
   }, newline()))
-  -- LuaFormatter on
   buffer:set_sel(buffer:position_from_line(2), buffer:position_from_line(4))
   textadept.editing.toggle_comment()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '',
-    '  /*const char *foo = "bar";*/',
-    '/*const char *baz = "quux";*/',
+    '', --
+    '  /*const char *foo = "bar";*/', --
+    '/*const char *baz = "quux";*/', --
     ''
   }, newline()))
-  -- LuaFormatter on
   assert_equal(buffer.selection_start, buffer:position_from_line(2) + 2)
   assert_equal(buffer.selection_end, buffer:position_from_line(4))
   textadept.editing.toggle_comment() -- uncomment
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '',
-    '  const char *foo = "bar";',
-    'const char *baz = "quux";',
+    '', --
+    '  const char *foo = "bar";', --
+    'const char *baz = "quux";', --
     ''
   }, newline()))
-  -- LuaFormatter on
   assert_equal(buffer.selection_start, buffer:position_from_line(2))
   assert_equal(buffer.selection_end, buffer:position_from_line(4))
   buffer:close(true)
@@ -2406,16 +2348,14 @@ end
 
 function test_editing_select_word()
   buffer.new()
-  -- LuaFormatter off
   buffer:append_text(table.concat({
-    'foo',
-    'foobar',
-    'bar foo',
-    'baz foo bar',
-    'fooquux',
+    'foo', --
+    'foobar', --
+    'bar foo', --
+    'baz foo bar', --
+    'fooquux', --
     'foo'
   }, newline()))
-  -- LuaFormatter on
   textadept.editing.select_word()
   assert_equal(buffer:get_sel_text(), 'foo')
   textadept.editing.select_word()
@@ -2444,16 +2384,14 @@ end
 function test_editing_select_paragraph()
   buffer.new()
   buffer.eol_mode = buffer.EOL_LF
-  -- LuaFormatter off
   buffer:set_text(table.concat({
-    'foo',
-    '',
-    'bar',
-    'baz',
-    '',
+    'foo', --
+    '', --
+    'bar', --
+    'baz', --
+    '', --
     'quux'
   }, '\n'))
-  -- LuaFormatter on
   buffer:goto_pos(buffer:position_from_line(3))
   textadept.editing.select_paragraph()
   assert_equal(buffer:get_sel_text(), 'bar\nbaz\n\n')
@@ -2462,37 +2400,31 @@ end
 
 function test_editing_convert_indentation()
   buffer.new()
-  -- LuaFormatter off
   local text = table.concat({
-    '\tfoo',
-    '  bar',
-    '\t    baz',
+    '\tfoo', --
+    '  bar', --
+    '\t    baz', --
     '    \tquux'
   }, newline())
-  -- LuaFormatter on
   buffer:set_text(text)
   buffer.use_tabs, buffer.tab_width = true, 4
   textadept.editing.convert_indentation()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '\tfoo',
-    '  bar',
-    '\t\tbaz',
+    '\tfoo', --
+    '  bar', --
+    '\t\tbaz', --
     '\t\tquux'
   }, newline()))
-  -- LuaFormatter on
   buffer:undo()
   assert_equal(buffer:get_text(), text) -- verify atomic undo
   buffer.use_tabs, buffer.tab_width = false, 2
   textadept.editing.convert_indentation()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '  foo',
-    '  bar',
-    '      baz',
+    '  foo', --
+    '  bar', --
+    '      baz', --
     '      quux'
   }, newline()))
-  -- LuaFormatter on
   buffer:close(true)
 end
 
@@ -2512,25 +2444,21 @@ function test_editing_highlight_word()
   local highlight = textadept.editing.highlight_words
   textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_SELECTED
   buffer.new()
-  -- LuaFormatter off
   buffer:append_text(table.concat({
-    'foo',
-    'foobar',
-    'bar  foo',
-    'baz foo bar',
-    'fooquux',
+    'foo', --
+    'foobar', --
+    'bar  foo', --
+    'baz foo bar', --
+    'fooquux', --
     'foo'
   }, newline()))
-  -- LuaFormatter on
   local function verify_foo()
-    -- LuaFormatter off
     verify{
-      buffer:position_from_line(1),
-      buffer:position_from_line(3) + 5,
-      buffer:position_from_line(4) + 4,
+      buffer:position_from_line(1), --
+      buffer:position_from_line(3) + 5, --
+      buffer:position_from_line(4) + 4, --
       buffer:position_from_line(6)
     }
-    -- LuaFormatter on
   end
   textadept.editing.select_word()
   update()
@@ -2678,14 +2606,12 @@ function test_ui_find_find_text()
   local wrapped = false
   local handler = function() wrapped = true end
   buffer.new()
-  -- LuaFormatter off
   buffer:set_text(table.concat({
-    ' foo',
-    'foofoo',
-    'FOObar',
+    ' foo', --
+    'foofoo', --
+    'FOObar', --
     'foo bar baz'
   }, newline()))
-  -- LuaFormatter on
   ui.find.find_entry_text = 'foo'
   ui.find.find_next()
   assert_equal(buffer.selection_start, 1 + 1)
@@ -2737,39 +2663,33 @@ function test_ui_find_highlight_results()
   local highlight_all_matches = ui.find.highlight_all_matches
   ui.find.highlight_all_matches = true
   buffer.new()
-  -- LuaFormatter off
   buffer:append_text(table.concat({
-    'foo',
-    'foobar',
-    'bar foo',
-    'baz foo bar',
-    'fooquux',
+    'foo', --
+    'foobar', --
+    'bar foo', --
+    'baz foo bar', --
+    'fooquux', --
     'foo'
   }, newline()))
-  -- LuaFormatter on
   -- Normal search.
   ui.find.find_entry_text = 'foo'
   ui.find.find_next()
-  -- LuaFormatter off
   assert_indics{
-    buffer:position_from_line(1),
-    buffer:position_from_line(3) + 4,
-    buffer:position_from_line(4) + 4,
+    buffer:position_from_line(1), --
+    buffer:position_from_line(3) + 4, --
+    buffer:position_from_line(4) + 4, --
     buffer:position_from_line(6)
   }
-  -- LuaFormatter on
   -- Regex search.
   ui.find.find_entry_text = 'ba.'
   ui.find.regex = true
   ui.find.find_next()
-  -- LuaFormatter off
   assert_indics{
-    buffer:position_from_line(2) + 3,
-    buffer:position_from_line(3),
-    buffer:position_from_line(4),
-    buffer:position_from_line(4) + 8,
+    buffer:position_from_line(2) + 3, --
+    buffer:position_from_line(3), --
+    buffer:position_from_line(4), --
+    buffer:position_from_line(4) + 8
   }
-  -- LuaFormatter on
   ui.find.regex = false
   -- Do not highlight short searches (potential performance issue).
   ui.find.find_entry_text = 'f'
@@ -2789,14 +2709,12 @@ end
 
 function test_ui_find_incremental()
   buffer.new()
-  -- LuaFormatter off
   buffer:set_text(table.concat({
-    ' foo',
-    'foobar',
-    'FOObaz',
+    ' foo', --
+    'foobar', --
+    'FOObaz', --
     'FOOquux'
   }, newline()))
-  -- LuaFormatter on
   assert_equal(buffer.current_pos, 1)
   ui.find.incremental = true
   ui.find.find_entry_text = 'f' -- simulate 'f' keypress
@@ -2844,14 +2762,12 @@ function test_ui_find_incremental_highlight()
   local highlight_all_matches = ui.find.highlight_all_matches
   ui.find.highlight_all_matches = true
   buffer.new()
-  -- LuaFormatter off
   buffer:set_text(table.concat({
-    ' foo',
-    'foobar',
-    'FOObaz',
+    ' foo', --
+    'foobar', --
+    'FOObaz', --
     'FOOquux'
   }, newline()))
-  -- LuaFormatter on
   ui.find.incremental = true
   ui.find.find_entry_text = 'f' -- simulate 'f' keypress
   if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
@@ -2859,14 +2775,12 @@ function test_ui_find_incremental_highlight()
   assert_equal(pos, 1) -- too short
   ui.find.find_entry_text = 'fo' -- simulate 'o' keypress
   if CURSES then events.emit(events.FIND_TEXT_CHANGED) end -- simulate
-  -- LuaFormatter off
   local indics = {
-    buffer:position_from_line(1) + 1,
-    buffer:position_from_line(2),
-    buffer:position_from_line(3),
+    buffer:position_from_line(1) + 1, --
+    buffer:position_from_line(2), --
+    buffer:position_from_line(3), --
     buffer:position_from_line(4)
   }
-  -- LuaFormatter on
   local bit = 1 << ui.find.INDIC_FIND - 1
   for _, pos in ipairs(indics) do
     local mask = buffer:indicator_all_on_for(pos)
@@ -3088,14 +3002,12 @@ end
 function test_ui_find_replace_all()
   buffer.new()
   buffer.eol_mode = buffer.EOL_LF
-  -- LuaFormatter off
   local text = table.concat({
-    'foo',
-    'foobar',
-    'foobaz',
+    'foo', --
+    'foobar', --
+    'foobaz', --
     'foofoo'
   }, '\n')
-  -- LuaFormatter on
   buffer:set_text(text)
   ui.find.find_entry_text, ui.find.replace_entry_text = 'foo', 'bar'
   ui.find.replace_all()
@@ -3158,28 +3070,26 @@ function test_ui_find_replace_regex_transforms()
   buffer:set_text('foObaRbaz')
   ui.find.find_entry_text = 'f([oO]+)ba(..)'
   ui.find.regex = true
-  -- LuaFormatter off
   local replacements = {
-    ['f\\1ba\\2'] = 'foObaRbaz',
-    ['f\\u\\1ba\\l\\2'] = 'fOObarbaz',
-    ['f\\U\\1ba\\2'] = 'fOOBARBaz',
-    ['f\\U\\1ba\\l\\2'] = 'fOOBArBaz',
-    ['f\\U\\1\\Eba\\2'] = 'fOObaRbaz',
-    ['f\\L\\1ba\\2'] = 'foobarbaz',
-    ['f\\L\\1ba\\u\\2'] = 'foobaRbaz',
-    ['f\\L\\1ba\\U\\2'] = 'foobaRBaz',
-    ['f\\L\\1\\Eba\\2'] = 'foobaRbaz',
-    ['f\\L\\u\\1ba\\2'] = 'fOobarbaz',
-    ['f\\L\\u\\1ba\\U\\l\\2'] = 'fOobarBaz',
-    ['f\\L\\u\\1\\Eba\\2'] = 'fOobaRbaz',
-    ['f\\1ba\\U\\2'] = 'foObaRBaz',
-    ['f\\1ba\\L\\2'] = 'foObarbaz',
-    ['f\\1ba\\U\\l\\2'] = 'foObarBaz',
-    [''] = 'az',
-    ['\\0'] = 'foObaRbaz',
+    ['f\\1ba\\2'] = 'foObaRbaz', --
+    ['f\\u\\1ba\\l\\2'] = 'fOObarbaz', --
+    ['f\\U\\1ba\\2'] = 'fOOBARBaz', --
+    ['f\\U\\1ba\\l\\2'] = 'fOOBArBaz', --
+    ['f\\U\\1\\Eba\\2'] = 'fOObaRbaz', --
+    ['f\\L\\1ba\\2'] = 'foobarbaz', --
+    ['f\\L\\1ba\\u\\2'] = 'foobaRbaz', --
+    ['f\\L\\1ba\\U\\2'] = 'foobaRBaz', --
+    ['f\\L\\1\\Eba\\2'] = 'foobaRbaz', --
+    ['f\\L\\u\\1ba\\2'] = 'fOobarbaz', --
+    ['f\\L\\u\\1ba\\U\\l\\2'] = 'fOobarBaz', --
+    ['f\\L\\u\\1\\Eba\\2'] = 'fOobaRbaz', --
+    ['f\\1ba\\U\\2'] = 'foObaRBaz', --
+    ['f\\1ba\\L\\2'] = 'foObarbaz', --
+    ['f\\1ba\\U\\l\\2'] = 'foObarBaz', --
+    [''] = 'az', --
+    ['\\0'] = 'foObaRbaz', --
     ['\\r\\n\\t'] = '\r\n\taz'
   }
-  -- LuaFormatter on
   for regex, replacement in pairs(replacements) do
     ui.find.replace_entry_text = regex
     ui.find.find_next()
@@ -4020,14 +3930,12 @@ end
 
 function test_snippets_match_indentation()
   local snippet = '\t    foo'
-  -- LuaFormatter off
   local multiline_snippet = table.concat({
-    'foo',
-    '\tbar',
-    '\t    baz',
+    'foo', --
+    '\tbar', --
+    '\t    baz', --
     'quux'
   }, newline())
-  -- LuaFormatter on
   buffer.new()
 
   buffer.use_tabs, buffer.tab_width, buffer.eol_mode = true, 4, buffer.EOL_CRLF
@@ -4040,14 +3948,12 @@ function test_snippets_match_indentation()
   buffer:clear_all()
   buffer:add_text('\t')
   textadept.snippets.insert(multiline_snippet)
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '\tfoo',
-    '\t\tbar',
-    '\t\t\tbaz',
+    '\tfoo', --
+    '\t\tbar', --
+    '\t\t\tbaz', --
     '\tquux'
   }, '\r\n'))
-  -- LuaFormatter on
   buffer:clear_all()
 
   buffer.use_tabs, buffer.tab_width, buffer.eol_mode = false, 2, buffer.EOL_LF
@@ -4060,14 +3966,12 @@ function test_snippets_match_indentation()
   buffer:clear_all()
   buffer:add_text('  ')
   textadept.snippets.insert(multiline_snippet)
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    '  foo',
-    '    bar',
-    '        baz',
+    '  foo', --
+    '    bar', --
+    '        baz', --
     '  quux'
   }, '\n'))
-  -- LuaFormatter on
   buffer:close(true)
 
   assert_raises(function() textadept.snippets.insert(true) end, 'string/nil expected, got boolean')
@@ -4081,16 +3985,14 @@ function test_snippets_placeholders()
   local p = io.popen(date_cmd)
   local shell_date = p:read('l')
   p:close()
-  -- LuaFormatter off
   textadept.snippets.insert(table.concat({
-    '%0placeholder: %1(foo) %2(bar)',
-    'choice: %3{baz,quux}',
-    'mirror: %2%3',
-    'Lua: %<os.date()> %1<text:upper()>',
-    'Shell: %[' .. date_cmd .. '] %1[echo %]',
-    'escape: %%1 %4%( %4%{',
+    '%0placeholder: %1(foo) %2(bar)', --
+    'choice: %3{baz,quux}', --
+    'mirror: %2%3', --
+    'Lua: %<os.date()> %1<text:upper()>', --
+    'Shell: %[' .. date_cmd .. '] %1[echo %]', --
+    'escape: %%1 %4%( %4%{'
   }, '\n'))
-  -- LuaFormatter on
   assert_equal(buffer.selections, 1)
   assert_equal(buffer.selection_start, 1 + 14)
   assert_equal(buffer.selection_end, buffer.selection_start + 3)
@@ -4123,16 +4025,14 @@ function test_snippets_placeholders()
   textadept.snippets.insert()
   assert_equal(buffer.selection_start, buffer.selection_end) -- no default placeholder (escaped)
   textadept.snippets.insert()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), string.format(table.concat({
-    'placeholder: baz bar',
-    'choice: quux',
-    'mirror: barquux',
-    'Lua: %s BAZ',
-    'Shell: %s baz',
+    'placeholder: baz bar', --
+    'choice: quux', --
+    'mirror: barquux', --
+    'Lua: %s BAZ', --
+    'Shell: %s baz', --
     'escape: %%1 ( {'
   }, '\n'), lua_date, shell_date))
-  -- LuaFormatter on
   assert_equal(buffer.selection_start, 1)
   assert_equal(buffer.selection_start, 1)
   buffer:close(true)
@@ -4817,58 +4717,56 @@ function test_file_diff()
     end
   end
 
-  -- LuaFormatter off
   -- Verify line markers.
   verify(buffer1, {
-    [1] = diff.MARK_MODIFICATION,
-    [2] = diff.MARK_MODIFICATION,
-    [3] = diff.MARK_MODIFICATION,
-    [4] = diff.MARK_MODIFICATION,
-    [5] = diff.MARK_MODIFICATION,
-    [6] = diff.MARK_MODIFICATION,
-    [7] = diff.MARK_MODIFICATION,
-    [12] = diff.MARK_MODIFICATION,
-    [14] = diff.MARK_MODIFICATION,
-    [15] = diff.MARK_MODIFICATION,
+    [1] = diff.MARK_MODIFICATION, --
+    [2] = diff.MARK_MODIFICATION, --
+    [3] = diff.MARK_MODIFICATION, --
+    [4] = diff.MARK_MODIFICATION, --
+    [5] = diff.MARK_MODIFICATION, --
+    [6] = diff.MARK_MODIFICATION, --
+    [7] = diff.MARK_MODIFICATION, --
+    [12] = diff.MARK_MODIFICATION, --
+    [14] = diff.MARK_MODIFICATION, --
+    [15] = diff.MARK_MODIFICATION, --
     [16] = diff.MARK_DELETION
   }, {
-    ['is'] = diff.INDIC_DELETION,
-    ['line\n'] = diff.INDIC_DELETION,
-    ['    '] = diff.INDIC_DELETION,
-    ['+'] = diff.INDIC_DELETION,
-    ['pl'] = diff.INDIC_DELETION,
-    ['one'] = diff.INDIC_DELETION,
-    ['wo'] = diff.INDIC_DELETION,
-    ['three'] = diff.INDIC_DELETION,
+    ['is'] = diff.INDIC_DELETION, --
+    ['line\n'] = diff.INDIC_DELETION, --
+    ['    '] = diff.INDIC_DELETION, --
+    ['+'] = diff.INDIC_DELETION, --
+    ['pl'] = diff.INDIC_DELETION, --
+    ['one'] = diff.INDIC_DELETION, --
+    ['wo'] = diff.INDIC_DELETION, --
+    ['three'] = diff.INDIC_DELETION, --
     ['will'] = diff.INDIC_DELETION
   }, {[11] = ' \n'})
   verify(buffer2, {
-    [1] = diff.MARK_MODIFICATION,
-    [2] = diff.MARK_MODIFICATION,
-    [3] = diff.MARK_MODIFICATION,
-    [4] = diff.MARK_MODIFICATION,
-    [5] = diff.MARK_MODIFICATION,
-    [6] = diff.MARK_MODIFICATION,
-    [7] = diff.MARK_MODIFICATION,
-    [12] = diff.MARK_ADDITION,
-    [13] = diff.MARK_ADDITION,
-    [14] = diff.MARK_MODIFICATION,
-    [16] = diff.MARK_MODIFICATION,
+    [1] = diff.MARK_MODIFICATION, --
+    [2] = diff.MARK_MODIFICATION, --
+    [3] = diff.MARK_MODIFICATION, --
+    [4] = diff.MARK_MODIFICATION, --
+    [5] = diff.MARK_MODIFICATION, --
+    [6] = diff.MARK_MODIFICATION, --
+    [7] = diff.MARK_MODIFICATION, --
+    [12] = diff.MARK_ADDITION, --
+    [13] = diff.MARK_ADDITION, --
+    [14] = diff.MARK_MODIFICATION, --
+    [16] = diff.MARK_MODIFICATION, --
     [17] = diff.MARK_MODIFICATION
   }, {
-    ['at'] = diff.INDIC_ADDITION,
-    ['paragraph\n    '] = diff.INDIC_ADDITION,
-    ['-'] = diff.INDIC_ADDITION,
-    ['min'] = diff.INDIC_ADDITION,
-    ['two'] = diff.INDIC_ADDITION,
-    ['\t'] = diff.INDIC_ADDITION,
-    ['hree'] = diff.INDIC_ADDITION,
-    ['there are '] = diff.INDIC_ADDITION,
-    ['four'] = diff.INDIC_ADDITION,
-    ['have'] = diff.INDIC_ADDITION,
+    ['at'] = diff.INDIC_ADDITION, --
+    ['paragraph\n    '] = diff.INDIC_ADDITION, --
+    ['-'] = diff.INDIC_ADDITION, --
+    ['min'] = diff.INDIC_ADDITION, --
+    ['two'] = diff.INDIC_ADDITION, --
+    ['\t'] = diff.INDIC_ADDITION, --
+    ['hree'] = diff.INDIC_ADDITION, --
+    ['there are '] = diff.INDIC_ADDITION, --
+    ['four'] = diff.INDIC_ADDITION, --
+    ['have'] = diff.INDIC_ADDITION, --
     ['d'] = diff.INDIC_ADDITION
   }, {[17] = ' '})
-  -- LuaFormatter on
 
   -- Stop comparing, verify the buffers are restored to normal, and then start comparing again.
   textadept.menu.menubar[_L['Tools']][_L['Compare Files']][_L['Stop Comparing']][2]()
@@ -4925,25 +4823,23 @@ function test_file_diff()
   assert(buffer1:get_line(1):find('^that'), 'did not merge from right to left')
   local function verify_first_merge()
     for i = 1, 7 do assert_equal(buffer1:get_line(i), buffer2:get_line(i)) end
-    -- LuaFormatter off
     verify(buffer1, {
-      [12] = diff.MARK_MODIFICATION,
-      [14] = diff.MARK_MODIFICATION,
-      [15] = diff.MARK_MODIFICATION,
+      [12] = diff.MARK_MODIFICATION, --
+      [14] = diff.MARK_MODIFICATION, --
+      [15] = diff.MARK_MODIFICATION, --
       [16] = diff.MARK_DELETION
     }, {['three'] = diff.INDIC_DELETION, ['will'] = diff.INDIC_DELETION}, {[11] = ' \n'})
     verify(buffer2, {
-      [12] = diff.MARK_ADDITION,
-      [13] = diff.MARK_ADDITION,
-      [14] = diff.MARK_MODIFICATION,
-      [16] = diff.MARK_MODIFICATION,
+      [12] = diff.MARK_ADDITION, --
+      [13] = diff.MARK_ADDITION, --
+      [14] = diff.MARK_MODIFICATION, --
+      [16] = diff.MARK_MODIFICATION, --
       [17] = diff.MARK_MODIFICATION
     }, {
-      ['four'] = diff.INDIC_ADDITION,
-      ['have'] = diff.INDIC_ADDITION,
+      ['four'] = diff.INDIC_ADDITION, --
+      ['have'] = diff.INDIC_ADDITION, --
       ['d'] = diff.INDIC_ADDITION
     }, {[17] = ' '})
-    -- LuaFormatter on
   end
   verify_first_merge()
   -- Undo, merge left to right, and verify.
@@ -4964,46 +4860,42 @@ function test_file_diff()
   diff.merge(true)
   assert(buffer1:get_line(12):find('^%('), 'did not merge from right to left')
   for i = 12, 13 do assert_equal(buffer1:get_line(i), buffer2:get_line(i)) end
-  -- LuaFormatter off
   verify(buffer1, {
-    [14] = diff.MARK_MODIFICATION,
-    [16] = diff.MARK_MODIFICATION,
-    [17] = diff.MARK_MODIFICATION,
+    [14] = diff.MARK_MODIFICATION, --
+    [16] = diff.MARK_MODIFICATION, --
+    [17] = diff.MARK_MODIFICATION, --
     [18] = diff.MARK_DELETION
   }, {['three'] = diff.INDIC_DELETION, ['will'] = diff.INDIC_DELETION}, {})
   verify(buffer2, {
-    [14] = diff.MARK_MODIFICATION,
-    [16] = diff.MARK_MODIFICATION,
+    [14] = diff.MARK_MODIFICATION, --
+    [16] = diff.MARK_MODIFICATION, --
     [17] = diff.MARK_MODIFICATION
   }, {
-    ['four'] = diff.INDIC_ADDITION,
-    ['have'] = diff.INDIC_ADDITION,
+    ['four'] = diff.INDIC_ADDITION, --
+    ['have'] = diff.INDIC_ADDITION, --
     ['d'] = diff.INDIC_ADDITION
   }, {[17] = ' '})
-  -- LuaFormatter on
   -- Undo, merge left to right, and verify.
   buffer1:undo()
   buffer1:goto_line(11)
   assert_equal(buffer1:line_from_position(buffer1.current_pos), 11)
   diff.merge()
   assert(buffer2:get_line(12):find('^be changed'), 'did not merge from left to right')
-  -- LuaFormatter off
   verify(buffer1, {
-    [12] = diff.MARK_MODIFICATION,
-    [14] = diff.MARK_MODIFICATION,
-    [15] = diff.MARK_MODIFICATION,
+    [12] = diff.MARK_MODIFICATION, --
+    [14] = diff.MARK_MODIFICATION, --
+    [15] = diff.MARK_MODIFICATION, --
     [16] = diff.MARK_DELETION
   }, {['three'] = diff.INDIC_DELETION, ['will'] = diff.INDIC_DELETION}, {})
   verify(buffer2, {
-    [12] = diff.MARK_MODIFICATION,
-    [14] = diff.MARK_MODIFICATION,
+    [12] = diff.MARK_MODIFICATION, --
+    [14] = diff.MARK_MODIFICATION, --
     [15] = diff.MARK_MODIFICATION
   }, {
-    ['four'] = diff.INDIC_ADDITION,
-    ['have'] = diff.INDIC_ADDITION,
+    ['four'] = diff.INDIC_ADDITION, --
+    ['have'] = diff.INDIC_ADDITION, --
     ['d'] = diff.INDIC_ADDITION
   }, {[15] = ' '})
-  -- LuaFormatter on
 
   -- Already on next difference; merge third block from right to left, and verify.
   assert_equal(buffer1:line_from_position(buffer1.current_pos), 12)
@@ -5011,17 +4903,15 @@ function test_file_diff()
   assert(buffer1:get_line(12):find('into four'), 'did not merge from right to left')
   assert_equal(buffer1:get_line(12), buffer2:get_line(12))
   verify_third_merge = function()
-    -- LuaFormatter off
     verify(buffer1, {
-      [14] = diff.MARK_MODIFICATION,
-      [15] = diff.MARK_MODIFICATION,
+      [14] = diff.MARK_MODIFICATION, --
+      [15] = diff.MARK_MODIFICATION, --
       [16] = diff.MARK_DELETION
     }, {['will'] = diff.INDIC_DELETION}, {})
     verify(buffer2, {
-      [14] = diff.MARK_MODIFICATION,
+      [14] = diff.MARK_MODIFICATION, --
       [15] = diff.MARK_MODIFICATION
     }, {['have'] = diff.INDIC_ADDITION, ['d'] = diff.INDIC_ADDITION}, {[15] = ' '})
-    -- LuaFormatter on
   end
   verify_third_merge()
   -- Undo, merge left to right, and verify.
@@ -5117,52 +5007,46 @@ function test_format_paragraph()
   format.line_length = 20
 
   buffer.new()
-  -- LuaFormatter off
   local code = table.concat({
-    'local foo',
+    'local foo', --
     '-- This is a really long line comment that should be wrapped.',
-    '-- This is another really long line comment that should be wrapped.',
+    '-- This is another really long line comment that should be wrapped.', --
     'local bar'
   }, newline())
-  -- LuaFormatter on
   buffer:set_text(code)
   buffer:set_lexer('lua')
   format.paragraph() -- should do nothing on first line
   assert_equal(buffer:get_text(), code)
   buffer:goto_line(3)
   format.paragraph()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    'local foo',
-    '-- This is a',
-    '-- really long',
-    '-- line comment',
-    '-- that should',
-    '-- be wrapped.',
-    '-- This is another',
-    '-- really long',
-    '-- line comment',
-    '-- that should',
-    '-- be wrapped.',
+    'local foo', --
+    '-- This is a', --
+    '-- really long', --
+    '-- line comment', --
+    '-- that should', --
+    '-- be wrapped.', --
+    '-- This is another', --
+    '-- really long', --
+    '-- line comment', --
+    '-- that should', --
+    '-- be wrapped.', --
     'local bar'
   }, newline()))
-  -- LuaFormatter on
   buffer:undo()
   buffer:goto_line(2)
   buffer:line_down_extend()
   format.paragraph()
-  -- LuaFormatter off
   assert_equal(buffer:get_text(), table.concat({
-    'local foo',
-    '-- This is a',
-    '-- really long',
-    '-- line comment',
-    '-- that should',
-    '-- be wrapped.',
-    '-- This is another really long line comment that should be wrapped.',
+    'local foo', --
+    '-- This is a', --
+    '-- really long', --
+    '-- line comment', --
+    '-- that should', --
+    '-- be wrapped.', --
+    '-- This is another really long line comment that should be wrapped.', --
     'local bar'
   }, newline()))
-  -- LuaFormatter on
 
   format.line_length = line_length -- restore
   buffer:close(true)

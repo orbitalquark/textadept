@@ -197,10 +197,10 @@ function snippet.new(text, trigger)
   local C, Cp, Ct, Cg, Cc = lpeg.C, lpeg.Cp, lpeg.Ct, lpeg.Cg, lpeg.Cc
   local patt = P{
     V('plain_text') * V('placeholder') * Cp() + V('plain_text') * -1,
-    plain_text = C(((P(1) - '%' + '%' * S('({'))^1 + '%%')^0), -- LuaFormatter
+    plain_text = C(((P(1) - '%' + '%' * S('({'))^1 + '%%')^0), --
     placeholder = Ct('%' *
       (V('index')^-1 * (V('angles') + V('brackets') + V('braces')) * V('transform') + V('index') *
-        (V('parens') + V('simple')))), -- LuaFormatter
+        (V('parens') + V('simple')))), --
     index = Cg(R('09')^1 / tonumber, 'index'),
     parens = '(' * Cg((1 - S('()') + V('parens'))^0, 'default') * ')',
     simple = Cg(Cc(true), 'simple'), transform = Cg(Cc(true), 'transform'),

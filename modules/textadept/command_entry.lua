@@ -80,7 +80,7 @@ local bindings = {
   [function() M:paste() end] = {'ctrl+v', 'cmd+v', 'ctrl+v'},
   [function() M:select_all() end] = {'ctrl+a', 'cmd+a', 'ctrl+a'},
   [function() cycle_history(true) end] = {'up', 'up', 'up'},
-  [cycle_history] = {'down', 'down', 'down'}, -- LuaFormatter
+  [cycle_history] = {'down', 'down', 'down'},
   -- Movement keys.
   [function() M:char_right() end] = {nil, 'ctrl+f', 'ctrl+f'},
   [function() M:char_left() end] = {nil, 'ctrl+b', 'ctrl+b'},
@@ -102,7 +102,7 @@ local env = setmetatable({}, {
       return function(...) view[k](view, ...) end -- do not return a value
     end
     return buffer[k] or view[k] or ui[k] or _G[k] or textadept[k]
-  end, -- LuaFormatter
+  end, --
   __newindex = function(self, k, v)
     local ok, value = pcall(function() return buffer[k] end)
     if ok and value ~= nil or not ok and value:find('write-only property') then

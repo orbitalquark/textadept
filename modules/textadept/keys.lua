@@ -303,18 +303,17 @@ local function start_new_line(above)
   if above and line == 1 then buffer:line_up() end
 end
 
--- LuaFormatter off
 -- Bindings for Windows/Linux, macOS, Terminal.
 local bindings = {
   -- File.
-  [buffer.new] = {'ctrl+n', 'cmd+n', 'ctrl+n'},
+  [buffer.new] = {'ctrl+n', 'cmd+n', 'ctrl+n'}, --
   [io.open_file] = {'ctrl+o', 'cmd+o', 'ctrl+o'},
   -- TODO: io.open_recent_file
   -- TODO: buffer.reload
-  [buffer.save] = {'ctrl+s', 'cmd+s', {'ctrl+s', 'meta+s', 'meta+S'}},
+  [buffer.save] = {'ctrl+s', 'cmd+s', {'ctrl+s', 'meta+s', 'meta+S'}}, --
   [buffer.save_as] = {'ctrl+S', 'cmd+S', 'ctrl+meta+s'},
   -- TODO: io.save_all_files
-  [buffer.close] = {'ctrl+w', 'cmd+w', 'ctrl+w'},
+  [buffer.close] = {'ctrl+w', 'cmd+w', 'ctrl+w'}, --
   [io.close_all_buffers] = {'ctrl+W', 'cmd+W', 'ctrl+meta+w'},
   -- TODO: textadept.sessions.load
   -- TODO: textadept.sessions.save
@@ -323,8 +322,8 @@ local bindings = {
   -- Edit.
   [buffer.undo] = {'ctrl+z', 'cmd+z', 'ctrl+z'},
   [buffer.redo] = {{'ctrl+y', 'ctrl+Z'}, {'cmd+Z', 'cmd+y'}, {'ctrl+y', 'ctrl+meta+z'}},
-  [buffer.cut] = {'ctrl+x', 'cmd+x', 'ctrl+x'},
-  [buffer.copy] = {'ctrl+c', 'cmd+c', 'ctrl+c'},
+  [buffer.cut] = {'ctrl+x', 'cmd+x', 'ctrl+x'}, --
+  [buffer.copy] = {'ctrl+c', 'cmd+c', 'ctrl+c'}, --
   [buffer.paste] = {'ctrl+v', 'cmd+v', 'ctrl+v'},
   [textadept.editing.paste_reindent] = {'ctrl+V', 'cmd+V', 'ctrl+meta+v'},
   [buffer.selection_duplicate] = {'ctrl+D', 'cmd+D', 'ctrl+meta+d'},
@@ -337,9 +336,9 @@ local bindings = {
   [textadept.editing.join_lines] = {'ctrl+j', 'cmd+j', 'meta+j'},
   [m('Edit/Filter Through')] = {'ctrl+|', 'cmd+|', {'ctrl+\\', 'ctrl+|'}},
   -- Select.
-  [m('Edit/Select/Select between Matching Delimiters')] =
-    {'ctrl+M', 'cmd+M', {'ctrl+meta+m', 'meta+\n', 'ctrl+shift+\n'}},
-  [textadept.editing.select_word] = {'ctrl+d', 'cmd+d', 'ctrl+d'},
+  [m('Edit/Select/Select between Matching Delimiters')] = {
+    'ctrl+M', 'cmd+M', {'ctrl+meta+m', 'meta+\n', 'ctrl+shift+\n'}
+  }, [textadept.editing.select_word] = {'ctrl+d', 'cmd+d', 'ctrl+d'},
   [m('Edit/Select/Deselect Word')] = {'ctrl+alt+d', 'ctrl+cmd+d', 'meta+d'},
   [textadept.editing.select_line] = {'ctrl+l', 'cmd+l', 'ctrl+l'},
   [textadept.editing.select_paragraph] = {'ctrl+P', 'cmd+P', 'ctrl+meta+p'},
@@ -415,13 +414,14 @@ local bindings = {
   -- TODO: m('Tools/Snippets/Complete Trigger Word')
   -- Other.
   -- TODO: m('Tools/Show Style')
-
+  
   -- Buffer.
-  [m('Buffer/Next Buffer')] =
-    {{'ctrl+\t', 'ctrl+pgdn'}, {'ctrl+\t', 'cmd+pgdn'}, WIN32 and 'ctrl+\t' or 'meta+pgdn'},
-  [m('Buffer/Previous Buffer')] =
-    {{'ctrl+shift+\t', 'ctrl+pgup'}, {'ctrl+shift+\t', 'cmd+pgup'}, WIN32 and 'ctrl+shift+\t' or 'meta+pgup'},
-  [ui.switch_buffer] = {'ctrl+b', 'cmd+b', 'ctrl+b'},
+  [m('Buffer/Next Buffer')] = {
+    {'ctrl+\t', 'ctrl+pgdn'}, {'ctrl+\t', 'cmd+pgdn'}, WIN32 and 'ctrl+\t' or 'meta+pgdn'
+  }, [m('Buffer/Previous Buffer')] = {
+    {'ctrl+shift+\t', 'ctrl+pgup'}, {'ctrl+shift+\t', 'cmd+pgup'},
+    WIN32 and 'ctrl+shift+\t' or 'meta+pgup'
+  }, [ui.switch_buffer] = {'ctrl+b', 'cmd+b', 'ctrl+b'},
   -- Indentation.
   -- TODO: m('Buffer/Indentation/Tab width: 2')
   -- TODO: m('Buffer/Indentation/Tab width: 3')
@@ -442,22 +442,22 @@ local bindings = {
   [m('Buffer/Select Lexer...')] = {'ctrl+L', 'cmd+L', 'ctrl+meta+l'},
 
   -- View.
-  [m('View/Next View')] =
-    {'ctrl+alt+pgdn', 'ctrl+cmd+pgdn', WIN32 and 'meta+pgdn' or 'ctrl+meta+pgdn'},
-  [m('View/Previous View')] =
-    {'ctrl+alt+pgup', 'ctrl+cmd+pgup', WIN32 and 'meta+pgup' or 'ctrl+meta+pgup'},
-  [m('View/Split View Horizontal')] = {'ctrl+alt+_', 'ctrl+cmd+_', 'meta+_'},
+  [m('View/Next View')] = {
+    'ctrl+alt+pgdn', 'ctrl+cmd+pgdn', WIN32 and 'meta+pgdn' or 'ctrl+meta+pgdn'
+  }, [m('View/Previous View')] = {
+    'ctrl+alt+pgup', 'ctrl+cmd+pgup', WIN32 and 'meta+pgup' or 'ctrl+meta+pgup'
+  }, [m('View/Split View Horizontal')] = {'ctrl+alt+_', 'ctrl+cmd+_', 'meta+_'},
   [m('View/Split View Vertical')] = {'ctrl+alt+|', 'ctrl+cmd+|', 'meta+|'},
   [m('View/Unsplit View')] = {'ctrl+alt+w', 'ctrl+cmd+w', 'meta+w'},
-  [m('View/Unsplit All Views')] = {'ctrl+alt+W', 'ctrl+cmd+W', 'meta+W'},
-  [m('View/Grow View')] =
-    {{'ctrl+alt++', 'ctrl+alt+='}, {'ctrl+cmd++', 'ctrl+cmd+='}, {'meta++', 'meta+='}},
-  [m('View/Shrink View')] = {'ctrl+alt+-', 'ctrl+cmd+-', 'meta+-'},
+  [m('View/Unsplit All Views')] = {'ctrl+alt+W', 'ctrl+cmd+W', 'meta+W'}, --
+  [m('View/Grow View')] = {
+    {'ctrl+alt++', 'ctrl+alt+='}, {'ctrl+cmd++', 'ctrl+cmd+='}, {'meta++', 'meta+='}
+  }, [m('View/Shrink View')] = {'ctrl+alt+-', 'ctrl+cmd+-', 'meta+-'},
   [m('View/Toggle Current Fold')] = {'ctrl+}', 'cmd+}', 'meta+}'},
   -- TODO: m('View/Toggle Show Indent Guides')
   -- TODO: m('View/Toggle Virtual Space')
-  [view.zoom_in] = {'ctrl+=', 'cmd+=', nil},
-  [view.zoom_out] = {'ctrl+-', 'cmd+-', nil},
+  [view.zoom_in] = {'ctrl+=', 'cmd+=', nil}, --
+  [view.zoom_out] = {'ctrl+-', 'cmd+-', nil}, --
   [m('View/Reset Zoom')] = {'ctrl+0', 'cmd+0', nil},
 
   -- Help.
@@ -473,7 +473,7 @@ local bindings = {
   -- Unbound keys are handled by Scintilla, but when playing back a macro, this is not possible.
   -- Define some useful default key bindings so Scintilla does not have to handle them. Note
   -- that Scintilla still will handle some keys.
-
+  
   -- Built-in movement commands.
   [buffer.line_down] = {'down', {'down', 'ctrl+n'}, 'down'},
   [buffer.line_down_extend] = {'shift+down', {'shift+down', 'ctrl+N'}, 'shift+down'},
@@ -520,12 +520,11 @@ local bindings = {
   [function()
     buffer:line_end_extend()
     buffer[not buffer.selection_empty and 'cut' or 'clear'](buffer)
-  end] = {nil, 'ctrl+k', nil},
+  end] = {nil, 'ctrl+k', nil}, --
   [view.vertical_center_caret] = {nil, 'ctrl+l', nil},
   [function() buffer.selection_mode = 0 end] = {nil, nil, 'ctrl+^'},
-  [buffer.swap_main_anchor_caret] = {nil, nil, 'ctrl+]'},
+  [buffer.swap_main_anchor_caret] = {nil, nil, 'ctrl+]'}
 }
--- LuaFormatter on
 
 local keys, plat = keys, CURSES and 3 or OSX and 2 or 1
 for f, plat_keys in pairs(bindings) do

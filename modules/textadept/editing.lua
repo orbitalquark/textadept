@@ -573,14 +573,12 @@ function M.filter_through(command)
     end
     buffer:set_target_range(s, e)
   end
-  -- LuaFormatter off
   local commands = lpeg.match(lpeg.Ct(lpeg.P{
-    lpeg.C(lpeg.V('command')) * ('|' * lpeg.C(lpeg.V('command')))^0,
-    command = (1 - lpeg.S('"\'|') + lpeg.V('str'))^1,
+    lpeg.C(lpeg.V('command')) * ('|' * lpeg.C(lpeg.V('command')))^0, --
+    command = (1 - lpeg.S('"\'|') + lpeg.V('str'))^1, --
     str = '"' * (1 - lpeg.S('"\\') + lpeg.P('\\') * 1)^0 * lpeg.P('"')^-1 +
-      "'" * (1 - lpeg.S("'\\") + lpeg.P('\\') * 1)^0 * lpeg.P("'")^-1
+      ("'" * (1 - lpeg.S("'\\") + lpeg.P('\\') * 1)^0 * lpeg.P("'")^-1)
   }), command)
-  -- LuaFormatter on
   local inout = buffer.selections == 1 and buffer.target_text or {}
   if buffer.selections > 1 then
     -- Use selected text as input.
