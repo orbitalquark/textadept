@@ -886,19 +886,19 @@ static int process(GApplication *_, GApplicationCommandLine *line, void *__) {
 }
 
 // Runs Textadept.
-// On Windows, also creates a pipe and thread for communication with remote instances.
 int main(int argc, char **argv) {
-  gtk_init(&argc, &argv);
-
   bool force = false;
   for (int i = 0; i < argc; i++)
     if (strcmp("-f", argv[i]) == 0 || strcmp("--force", argv[i]) == 0) {
       force = true;
       break;
-    }
+    } else if (strcmp("-L", argv[i]) == 0 || strcmp("--lua", argv[i]) == 0)
+      return (init_textadept(argc, argv), exit_status);
+  gtk_init(&argc, &argv);
+
   GApplication *app = g_application_new("textadept.editor", G_APPLICATION_HANDLES_COMMAND_LINE);
   g_signal_connect(app, "command-line", G_CALLBACK(process), NULL);
-  if (g_application_register(app, NULL, NULL) && g_application_get_is_remote(app) && !force)
+  if (!force && g_application_register(app, NULL, NULL) && g_application_get_is_remote(app))
     return (g_application_run(app, argc, argv), g_object_unref(app), 0);
 
   if (!init_textadept(argc, argv)) return (g_object_unref(app), exit_status);
