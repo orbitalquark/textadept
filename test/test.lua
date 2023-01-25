@@ -1710,14 +1710,15 @@ end
 function test_command_entry_lua_documentation()
   ui.command_entry.run()
   ui.command_entry:set_text('print(') -- Lua api
-  textadept.editing.show_documentation()
+  -- textadept.editing.show_documentation() -- TODO: lsp.signature_help()
   assert(ui.command_entry:call_tip_active(), 'documentation not found')
   ui.command_entry:call_tip_cancel()
   ui.command_entry:set_text('current_pos') -- Textadept api
-  textadept.editing.show_documentation()
+  -- textadept.editing.show_documentation() -- TODO: lsp.hover()
   assert(ui.command_entry:call_tip_active(), 'documentation not found')
   ui.command_entry:focus() -- hide
 end
+expected_failure(test_command_entry_lua_documentation)
 
 function test_command_entry_history()
   local one, two = function() end, function() end
@@ -2673,45 +2674,6 @@ function test_editing_autocomplete_word()
   buffer:close(true)
 end
 
-function test_editing_show_documentation()
-  buffer.new()
-  textadept.editing.api_files['text'] = {
-    _HOME .. '/test/modules/textadept/editing/api',
-    function() return _HOME .. '/test/modules/textadept/editing/api2' end
-  }
-  buffer:add_text('foo')
-  textadept.editing.show_documentation()
-  assert(view:call_tip_active(), 'documentation not found')
-  view:call_tip_cancel()
-  buffer:add_text('2')
-  textadept.editing.show_documentation()
-  assert(view:call_tip_active(), 'documentation not found')
-  view:call_tip_cancel()
-  buffer:add_text('bar')
-  textadept.editing.show_documentation()
-  assert(not view:call_tip_active(), 'documentation found')
-  buffer:clear_all()
-  buffer:add_text('FOO')
-  textadept.editing.show_documentation(nil, true)
-  assert(view:call_tip_active(), 'documentation not found')
-  view:call_tip_cancel()
-  buffer:add_text('(')
-  textadept.editing.show_documentation(nil, true)
-  assert(view:call_tip_active(), 'documentation not found')
-  view:call_tip_cancel()
-  buffer:add_text('bar')
-  textadept.editing.show_documentation(nil, true)
-  assert(view:call_tip_active(), 'documentation not found')
-  events.emit(events.CALL_TIP_CLICK, 1)
-  textadept.editing.show_documentation(nil, true) -- cycle call tip
-  view:call_tip_cancel()
-  buffer:close(true)
-  textadept.editing.api_files['text'] = nil
-
-  assert_raises(function() textadept.editing.show_documentation(true) end,
-    'number/nil expected, got boolean')
-end
-
 function test_ui_find_find_text()
   local wrapped = false
   local handler = function() wrapped = true end
@@ -3596,14 +3558,7 @@ function test_menu_menu_functions()
     assert(not ui.find.in_files, 'finding in files')
   end
   buffer:clear_all()
-  buffer:set_lexer('lua')
-  require('lua') -- load language module
-  buffer:add_text('string.')
-  textadept.menu.menubar[_L['Tools']][_L['Complete Symbol']][2]()
-  assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'byte')
-  buffer:auto_c_cancel()
-  buffer:char_left()
+  buffer:insert_text(-1, '.')
   textadept.menu.menubar[_L['Tools']][_L['Show Style']][2]()
   assert(view:call_tip_active(), 'style not shown')
   view:call_tip_cancel()
@@ -3626,6 +3581,7 @@ function test_menu_menu_functions()
   view:unsplit()
   view.property['fold'] = '1' -- TODO: view.folding = true
   buffer:set_text('if foo then\n  bar\nend')
+  buffer:set_lexer('lua')
   buffer:colorize(1, -1)
   textadept.menu.menubar[_L['View']][_L['Toggle Current Fold']][2]()
   assert_equal(view.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
