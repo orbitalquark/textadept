@@ -84,12 +84,20 @@ local function print_to(buffer_type, silent, format, ...)
   elseif print_view and not silent then
     ui.goto_view(print_view)
   end
+  local prev_line_count = buffer.line_count
   local args = table.pack(...)
   for i = 1, args.n do args[i] = tostring(args[i]) end
   buffer:append_text(table.concat(args, format and '\t' or ''))
   if format then buffer:append_text('\n') end
   buffer:goto_pos(buffer.length + 1)
   buffer:set_save_point()
+  for _, view in ipairs(_VIEWS) do
+    -- Scroll all views showing this buffer (if any).
+    if view.buffer == buffer and view ~= _G.view then
+      view:goto_pos(buffer.length + 1)
+      buffer._folds = nil -- reset buffer state
+    end
+  end
   return buffer
 end
 

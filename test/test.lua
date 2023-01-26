@@ -1024,8 +1024,11 @@ function test_ui_print()
   ui.print_silent(7, 8, 9) -- should stay in first view
   assert(buffer._type ~= _L['[Message Buffer]'], 'switched to message buffer')
   assert_equal(_BUFFERS[#_BUFFERS]:get_text(), '1\t2\t3\n4\t5\t6\n7\t8\t9\n')
+  ui.print_silent(string.rep('\n', 100))
   ui.goto_view(1) -- second view
   assert_equal(buffer._type, _L['[Message Buffer]'])
+  assert(view.first_visible_line > 1, 'message view did not scroll')
+  buffer:undo() -- 100 \n
   view:goto_buffer(-1)
   assert(buffer._type ~= _L['[Message Buffer]'], 'message buffer still visible')
   ui.print()
