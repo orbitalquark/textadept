@@ -43,7 +43,7 @@ Changes:
   - Textadept no longer generates or uses Lua tags and api documentation files.
   - Deprecated the ctags module.
   - Removed "Tools > Complete Symbol" and "Tools > Show Documentation" menu items.
-  - Removed `textadept.editing.show_documentation()`.
+  - Removed `textadept.editing.api_files` and `textadept.editing.show_documentation()`.
 * Hide the Find & Replace pane after an "In Files" search.
 * Allow lexers to dictate what constitutes a word character.
 * Added [`lexer.names()`][].

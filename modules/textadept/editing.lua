@@ -108,20 +108,6 @@ local typeover_chars = {}
 -- @see autocomplete
 M.autocompleters = {}
 
----
--- Map of lexer names to API documentation file tables.
--- File tables contain API file paths or functions that return such paths. Each line in an
--- API file consists of a symbol name (not a fully qualified symbol name), a space character,
--- and that symbol's documentation. "\n" represents a newline character.
--- @see show_documentation
--- @table api_files
-M.api_files = setmetatable({}, {
-  __index = function(t, k)
-    t[k] = {}
-    return t[k]
-  end
-})
-
 -- Update auto_pairs, brace_matches, and typeover_chars based on lexer.
 local function update_language_specific_features()
   local angles = buffer.property_int['scintillua.angle.braces'] ~= 0

@@ -1652,6 +1652,8 @@ INDIC_BRACEMATCH | Removed | N/A<sup>c</sup>
 brace_matches | Removed | N/A<sup>d</sup>
 [auto_pairs][] | Changed | Keys are string characters, not byte values
 typeover_chars | Changed | [typeover_auto_paired][]
+api_files | Removed | N/A
+show_documentation | Removed | N/A
 **textadept.file_types**| Removed | N/A
 extensions | Renamed | [lexer.detect_extensions][]
 patterns | Renamed | [lexer.detect_patterns][]
