@@ -623,7 +623,7 @@ end
 
 ---
 -- Displays an autocompletion list provided by the autocompleter function associated with string
--- *name*, and returns `true` if completions were found.
+-- *name*, and returns `true` if completions were found and are shown.
 -- @param name The name of an autocompleter function in the `autocompleters` table to use for
 --   providing autocompletions.
 -- @see autocompleters
@@ -633,7 +633,7 @@ function M.autocomplete(name)
   if not len_entered or not list or #list == 0 then return end
   buffer.auto_c_order = buffer.ORDER_PERFORMSORT
   buffer:auto_c_show(len_entered, table.concat(list, string.char(buffer.auto_c_separator)))
-  return true
+  return buffer:auto_c_active() -- completions may not be valid
 end
 
 -- Returns for the word part behind the caret a list of whole word completions constructed from
