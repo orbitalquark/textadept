@@ -48,9 +48,9 @@ local marker_number, indic_number, list_type, image_type = 0, 0, 0, 0
 -- Returns a unique marker number for use with `view.marker_define()`.
 -- Use this function for custom markers in order to prevent clashes with identifiers of other
 -- custom markers.
--- @usage local marknum = _SCINTILLA.next_marker_number()
+-- @usage local marknum = _SCINTILLA.new_marker_number()
 -- @see view.marker_define
-function M.next_marker_number()
+function M.new_marker_number()
   assert(marker_number < M.constants.MARKER_MAX, 'too many markers in use')
   marker_number = marker_number + 1
   return marker_number
@@ -60,9 +60,9 @@ end
 -- Returns a unique indicator number for use with custom indicators.
 -- Use this function for custom indicators in order to prevent clashes with identifiers of
 -- other custom indicators.
--- @usage local indic_num = _SCINTILLA.next_indic_number()
+-- @usage local indic_num = _SCINTILLA.new_indic_number()
 -- @see view.indic_style
-function M.next_indic_number()
+function M.new_indic_number()
   assert(indic_number < M.constants.INDICATOR_MAX, 'too many indicators in use')
   indic_number = indic_number + 1
   return indic_number
@@ -72,9 +72,9 @@ end
 -- Returns a unique user list identier number for use with `buffer.user_list_show()`.
 -- Use this function for custom user lists in order to prevent clashes with list identifiers
 -- of other custom user lists.
--- @usage local list_type = _SCINTILLA.next_user_list_type()
+-- @usage local list_type = _SCINTILLA.new_user_list_type()
 -- @see buffer.user_list_show
-function M.next_user_list_type()
+function M.new_user_list_type()
   list_type = list_type + 1
   return list_type
 end
@@ -84,10 +84,10 @@ end
 -- `view.register_rgba_image()`.
 -- Use this function for custom image types in order to prevent clashes with identifiers of
 -- other custom image types.
--- @usage local image_type = _SCINTILLA.next_image_type()
+-- @usage local image_type = _SCINTILLA.new_image_type()
 -- @see view.register_image
 -- @see view.register_rgba_image
-function M.next_image_type()
+function M.new_image_type()
   image_type = image_type + 1
   return image_type
 end

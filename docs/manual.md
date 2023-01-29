@@ -1625,6 +1625,8 @@ Old API | Change | New API
 N/A | Added | [GTK](api.html#GTK), [QT](api.html#QT)
 [OSX][] | Changed | Always true on macOS, not just in the GUI version
 **_M**| Removed | N/A<sup>[a](#language-module-changes)</sup>
+**_SCINTILLA**||
+next_* | Renamed | [new_*][]
 **buffer**||
 [tab_label][] | Changed | Write-only
 **events**||
@@ -1692,6 +1694,7 @@ N/A | Added | [set_styles()][]
 <sup>e</sup>See below how compile and run commands have changed<br/>
 
 [OSX]: api.html#OSX
+[new_*]: api.html#_SCINTILLA.new_image_type
 [tab_label]: api.html#buffer.tab_label
 [KEYPRESS]: api.html#events.KEYPRESS
 [TAB_CLICKED]: api.html#events.TAB_CLICKED

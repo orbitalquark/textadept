@@ -15,13 +15,13 @@ local M = {}
 M.run_in_background = false
 
 --- The run or compile warning marker number.
-M.MARK_WARNING = _SCINTILLA.next_marker_number()
+M.MARK_WARNING = _SCINTILLA.new_marker_number()
 --- The run or compile error marker number.
-M.MARK_ERROR = _SCINTILLA.next_marker_number()
+M.MARK_ERROR = _SCINTILLA.new_marker_number()
 --- The run or compile warning indicator number.
-M.INDIC_WARNING = _SCINTILLA.next_indic_number()
+M.INDIC_WARNING = _SCINTILLA.new_indic_number()
 --- The run or compile error indicator number.
-M.INDIC_ERROR = _SCINTILLA.next_indic_number()
+M.INDIC_ERROR = _SCINTILLA.new_indic_number()
 
 -- Events.
 local run_events = {'compile_output', 'run_output', 'build_output', 'test_output'}

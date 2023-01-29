@@ -96,10 +96,10 @@
 local M = {}
 
 --- The snippet placeholder indicator number.
-M.INDIC_PLACEHOLDER = _SCINTILLA.next_indic_number()
+M.INDIC_PLACEHOLDER = _SCINTILLA.new_indic_number()
 
-local INDIC_SNIPPET = _SCINTILLA.next_indic_number()
-local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.next_indic_number()
+local INDIC_SNIPPET = _SCINTILLA.new_indic_number()
+local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.new_indic_number()
 
 ---
 -- Map of snippet triggers with their snippet text or functions that return such text, with

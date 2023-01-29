@@ -673,7 +673,7 @@
 --   - `view.INDIC_POINT_TOP`
 --     A triangle above the start of the indicator range.
 --
--- Use [`_SCINTILLA.next_indic_number()`]() for custom indicators.
+-- Use [`_SCINTILLA.new_indic_number()`]() for custom indicators.
 -- Changing an indicator's style resets that indicator's hover style.
 -- @table indic_style
 
@@ -1637,7 +1637,7 @@
 -- *symbol* is shown in marker symbol margins next to lines marked with *marker*.
 -- @param marker The marker number in the range of `1` to `32` to set *symbol* for.
 -- @param symbol The marker symbol: `view.MARK_*`.
--- @see _SCINTILLA.next_marker_number
+-- @see _SCINTILLA.new_marker_number
 -- @function marker_define
 
 --- @field MARK_ARROW

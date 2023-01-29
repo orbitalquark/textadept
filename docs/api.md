@@ -234,8 +234,8 @@ Do not modify anything in this module. Doing so will have unpredictable conseque
 
 ### Functions defined by `_SCINTILLA`
 
-<a id="_SCINTILLA.next_image_type"></a>
-#### `_SCINTILLA.next_image_type`()
+<a id="_SCINTILLA.new_image_type"></a>
+#### `_SCINTILLA.new_image_type`()
 
 Returns a unique image type identier number for use with `view.register_image()` and
 `view.register_rgba_image()`.
@@ -244,11 +244,11 @@ other custom image types.
 
 Usage:
 
-- `local image_type = _SCINTILLA.next_image_type()
+- `local image_type = _SCINTILLA.new_image_type()
 `
 
-<a id="_SCINTILLA.next_indic_number"></a>
-#### `_SCINTILLA.next_indic_number`()
+<a id="_SCINTILLA.new_indic_number"></a>
+#### `_SCINTILLA.new_indic_number`()
 
 Returns a unique indicator number for use with custom indicators.
 Use this function for custom indicators in order to prevent clashes with identifiers of
@@ -256,11 +256,11 @@ other custom indicators.
 
 Usage:
 
-- `local indic_num = _SCINTILLA.next_indic_number()
+- `local indic_num = _SCINTILLA.new_indic_number()
 `
 
-<a id="_SCINTILLA.next_marker_number"></a>
-#### `_SCINTILLA.next_marker_number`()
+<a id="_SCINTILLA.new_marker_number"></a>
+#### `_SCINTILLA.new_marker_number`()
 
 Returns a unique marker number for use with `view.marker_define()`.
 Use this function for custom markers in order to prevent clashes with identifiers of other
@@ -268,11 +268,11 @@ custom markers.
 
 Usage:
 
-- `local marknum = _SCINTILLA.next_marker_number()
+- `local marknum = _SCINTILLA.new_marker_number()
 `
 
-<a id="_SCINTILLA.next_user_list_type"></a>
-#### `_SCINTILLA.next_user_list_type`()
+<a id="_SCINTILLA.new_user_list_type"></a>
+#### `_SCINTILLA.new_user_list_type`()
 
 Returns a unique user list identier number for use with `buffer.user_list_show()`.
 Use this function for custom user lists in order to prevent clashes with list identifiers
@@ -280,7 +280,7 @@ of other custom user lists.
 
 Usage:
 
-- `local list_type = _SCINTILLA.next_user_list_type()
+- `local list_type = _SCINTILLA.new_user_list_type()
 `
 
 
@@ -9677,7 +9677,7 @@ List of styles for indicator numbers from `1` to `32`.
   - `view.INDIC_POINT_TOP`
     A triangle above the start of the indicator range.
 
-Use [`_SCINTILLA.next_indic_number()`](#_SCINTILLA.next_indic_number) for custom indicators.
+Use [`_SCINTILLA.new_indic_number()`](#_SCINTILLA.new_indic_number) for custom indicators.
 Changing an indicator's style resets that indicator's hover style.
 
 <a id="view.indic_under"></a>

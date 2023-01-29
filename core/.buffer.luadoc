@@ -1559,7 +1559,7 @@
 -- @param id The list identifier number greater than zero to use.
 -- @param items The sorted string of words to show, separated by `buffer.auto_c_separator`
 --   characters (initially spaces).
--- @see _SCINTILLA.next_user_list_type
+-- @see _SCINTILLA.new_user_list_type
 -- @see events.USER_LIST_SELECTION
 -- @function user_list_show
 

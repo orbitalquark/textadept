@@ -6,7 +6,7 @@
 local M = {}
 
 --- The bookmark mark number.
-M.MARK_BOOKMARK = _SCINTILLA.next_marker_number()
+M.MARK_BOOKMARK = _SCINTILLA.new_marker_number()
 
 --- Toggles a bookmark on the current line.
 function M.toggle()

@@ -46,7 +46,7 @@ M.auto_enclose = false
 M.typeover_auto_paired = true
 
 --- The word highlight indicator number.
-M.INDIC_HIGHLIGHT = _SCINTILLA.next_indic_number()
+M.INDIC_HIGHLIGHT = _SCINTILLA.new_indic_number()
 
 -- LuaFormatter off
 ---
@@ -67,7 +67,7 @@ events.connect(events.VIEW_NEW, function()
     if type(name) == 'string' then view:register_image(i, M.XPM_IMAGES[i]) end
   end
 end)
-for _ = 1, #M.XPM_IMAGES do _SCINTILLA.next_image_type() end -- sync
+for _ = 1, #M.XPM_IMAGES do _SCINTILLA.new_image_type() end -- sync
 
 ---
 -- Map of lexer names to line comment strings for programming languages, used by the
