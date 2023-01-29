@@ -204,13 +204,13 @@ Usage:
 
 Table of command line parameters passed to Textadept.
 
-<a id="buffer"></a>
-#### `_G.buffer`
+<a id="_G.buffer"></a>
+#### `buffer`
 
 The current [buffer](#buffer) in the [current view](#_G.view).
 
-<a id="view"></a>
-#### `_G.view`
+<a id="_G.view"></a>
+#### `view`
 
 The current [view](#view).
 

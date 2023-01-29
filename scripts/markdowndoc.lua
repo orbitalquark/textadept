@@ -150,12 +150,14 @@ function M.ldoc(doc)
     if #tables > 0 then
       f:write('### Tables defined by `', name, '`\n\n')
       for _, tbl in ipairs(tables) do
-        if not tbl.name:find('%.') and (name ~= '_G' or tbl.name == 'buffer' or tbl.name == 'view') then
+        if not tbl.name:find('%.') and name ~= '_G' then
           tbl.name = name .. '.' .. tbl.name -- absolute name
         elseif tbl.name ~= '_G.keys' and tbl.name ~= '_G.snippets' then
           tbl.name = tbl.name:gsub('^_G%.', '') -- strip _G required for LDoc/LuaDoc
         end
-        f:write(string.format(TABLE, tbl.name:gsub('^_G%.', ''), tbl.name))
+        local tbl_id = tbl.name ~= 'buffer' and tbl.name ~= 'view' and tbl.name:gsub('^_G.', '') or
+          ('_G.' .. tbl.name)
+        f:write(string.format(TABLE, tbl_id, tbl.name))
         write_description(f, tbl.summary .. tbl.description)
         write_hashmap(f, TFIELD, tbl.params)
         write_list(f, USAGE, tbl.usage)
