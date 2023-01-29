@@ -334,7 +334,10 @@ events.connect(events.BUFFER_BEFORE_REPLACE_TEXT, save_buffer_state)
 
 -- Restore buffer properties.
 local function restore_buffer_state()
-  if not buffer._folds then return end
+  if not buffer._folds then
+    if buffer._type == _L['[Output Buffer]'] then buffer:goto_line(buffer.line_count) end
+    return
+  end
   -- Restore fold state.
   for _, line in ipairs(buffer._folds) do view:toggle_fold(line) end
   -- Restore view state.

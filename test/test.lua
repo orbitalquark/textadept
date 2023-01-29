@@ -3860,7 +3860,8 @@ function test_run_run_in_background()
   assert_equal(buffer.filename, filename)
   assert_equal(#_VIEWS, 1)
   view:goto_buffer(1) -- [Output]
-  buffer:close() -- [Output]
+  assert_equal(buffer:line_from_position(buffer.current_pos), buffer.line_count) -- scrolled to bottom
+  buffer:close()
   buffer:close() -- filename
   textadept.run.run_in_background = run_in_background -- restore
 end
