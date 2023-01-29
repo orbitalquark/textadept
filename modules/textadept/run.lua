@@ -143,8 +143,10 @@ local function run_command(label, command, dir, event, commands, key, macros)
       events.emit(event, string.format('> cd %s\n', dir:gsub('[/\\]$', '')))
       events.emit(event, string.format('> %s\n', command:iconv('UTF-8', _CHARSET)))
       local args = {
-        command, dir, emit, emit,
-        function(status) events.emit(event, string.format('> exit status: %d\n', status)) end
+        command, dir, emit, emit, function(status)
+          events.emit(event, string.format('> exit status: %d\n', status))
+          ui.statusbar_text = status == 0 and _L['Command succeeded'] or _L['Command failed']
+        end
       }
       if env then table.insert(args, 3, env) end
       procs[#procs + 1] = {proc = assert(os.spawn(table.unpack(args))), command = args[1]}
