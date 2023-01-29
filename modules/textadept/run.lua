@@ -10,7 +10,6 @@ local M = {}
 
 ---
 -- Run shell commands silently in the background.
--- This only applies when the output buffer is open, though it does not have to be visible.
 -- The default value is `false`.
 M.run_in_background = false
 
@@ -90,11 +89,18 @@ local line_state_indics = {M.INDIC_ERROR, M.INDIC_WARNING}
 -- All stdout and stderr from the command is printed silently.
 -- @param ... Output to print.
 local function print_output(...)
-  local buffer = get_output_buffer()
+  local buffer, orig_buffer, orig_view, num_views = get_output_buffer(), buffer, view, #_VIEWS
   local last_line = buffer and buffer.line_count or 1
   local silent = M.run_in_background or not (...):find('^> ') or (...):find('^> exit')
   ui[silent and 'output_silent' or 'output'](...)
   if not buffer then buffer = get_output_buffer() end
+  if M.run_in_background and _G.buffer == buffer then
+    if #_VIEWS > num_views then
+      ui.goto_view(orig_view)
+      view:unsplit()
+    end
+    view:goto_buffer(orig_buffer)
+  end
   for i = last_line, buffer.line_count do
     local line_state = buffer.line_state[i]
     if line_state > 0 then

@@ -3849,7 +3849,21 @@ function test_run_commands_function()
   end
 end
 
--- TODO: test textadept.run.run_in_background
+function test_run_run_in_background()
+  local run_in_background = textadept.run.run_in_background
+  textadept.run.run_in_background = true
+  local filename = file(_HOME .. '/test/modules/textadept/run.lua')
+  io.open_file(filename)
+  textadept.run.run()
+  events.emit(events.KEYPRESS, '\n')
+  ui.update()
+  assert_equal(buffer.filename, filename)
+  assert_equal(#_VIEWS, 1)
+  view:goto_buffer(1) -- [Output]
+  buffer:close() -- [Output]
+  buffer:close() -- filename
+  textadept.run.run_in_background = run_in_background -- restore
+end
 
 function test_session_save()
   local handler = function(session)
