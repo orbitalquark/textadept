@@ -9,10 +9,6 @@
 local M = ui.command_entry
 
 ---
--- The height in pixels of the command entry.
--- @field height
-
----
 -- Whether or not the command entry is active.
 -- @field active
 
@@ -251,7 +247,6 @@ function M.run(label, f, keys, lang, initial_text, ...)
   M.margin_width_n[1], M.margin_text[1] = M:text_width(view.STYLE_LINENUMBER, label), label
   M.focus()
   M:set_lexer(lang or 'text')
-  M.height = M:text_height(1)
   _G.keys._command_entry, _G.keys.mode = keys, '_command_entry'
 end
 

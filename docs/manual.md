@@ -1676,6 +1676,7 @@ _print() | Renamed | [print_to()][]
 N/A | Added | [suspend()][]
 **ui.command_entry**||
 append_history() | Removed | N/A
+height | Removed | N/A
 [run()][] | Changed | Changed parameter list
 **ui.dialogs**||
 msgbox(), ok\_msgbox(), yesno\_msgbox() | Replaced | [message()][]

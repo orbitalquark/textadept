@@ -1572,12 +1572,6 @@ function test_command_entry_run()
   assert(ui.command_entry.margin_width_n[1] > 0, 'margin label is not visible')
   assert(ui.command_entry.margin_width_n[2] > 0, 'no space between margin label and command entry')
   assert_equal(ui.command_entry.lexer_language, 'text')
-  if not WIN32 and not OSX then -- there are odd synchronization issues here on Windows and macOS
-    assert(ui.command_entry.height == ui.command_entry:text_height(1), 'height ~= 1 line')
-    ui.command_entry.height = ui.command_entry:text_height(1) * 2
-    ui.update() -- redraw command entry
-    assert(ui.command_entry.height > ui.command_entry:text_height(1), 'height < 2 lines')
-  end
   ui.command_entry:set_text('foo')
   events.emit(events.KEYPRESS, '\t')
   events.emit(events.KEYPRESS, '\n')

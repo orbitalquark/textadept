@@ -175,7 +175,10 @@ static int find_newindex(lua_State *L) {
 }
 
 // `command_entry.focus()` Lua function.
-static int focus_command_entry_lua(lua_State *L) { return (focus_command_entry(), 0); }
+static int focus_command_entry_lua(lua_State *L) {
+  focus_command_entry(), set_command_entry_height(SS(command_entry, SCI_TEXTHEIGHT, 0, 0));
+  return 0;
+}
 
 // Returns whether or not the value on the Lua stack at the given index has a metatable with
 // the given name.
@@ -373,10 +376,7 @@ static int buffer_index(lua_State *L) {
   else if (strcmp(lua_tostring(L, 2), "active") == 0 &&
     lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
     lua_pushboolean(L, is_command_entry_active());
-  else if (strcmp(lua_tostring(L, 2), "height") == 0 &&
-    lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
-    lua_pushinteger(L, get_command_entry_height());
-  } else
+  else
     lua_settop(L, 2), lua_rawget(L, 1);
   return 1;
 }
@@ -405,11 +405,7 @@ static int buffer_newindex(lua_State *L) {
     lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) {
     lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_pushvalue(L, 1), lua_gettable(L, -2);
     set_tab_label(lua_tointeger(L, -1) - 1, luaL_checkstring(L, 3));
-  } else if (strcmp(lua_tostring(L, 2), "height") == 0 &&
-    lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
-    set_command_entry_height(
-      fmax(luaL_checkinteger(L, 3), SS(command_entry, SCI_TEXTHEIGHT, 0, 0)));
-  else
+  } else
     lua_settop(L, 3), lua_rawset(L, 1);
   return 0;
 }

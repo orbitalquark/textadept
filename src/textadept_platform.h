@@ -210,8 +210,6 @@ bool is_find_active();
 void focus_command_entry();
 /** Returns whether or not the command entry is active. */
 bool is_command_entry_active();
-/** Returns the height of the command entry. */
-int get_command_entry_height();
 /** Sets the height of the command entry. The command entry must be active. */
 void set_command_entry_height(int height);
 

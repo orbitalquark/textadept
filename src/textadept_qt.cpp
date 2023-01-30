@@ -254,7 +254,6 @@ void focus_command_entry() {
     SCI(focused_view)->setFocus(), SCI(command_entry)->hide();
 }
 bool is_command_entry_active() { return SCI(command_entry)->hasFocus(); }
-int get_command_entry_height() { return SCI(command_entry)->height(); }
 void set_command_entry_height(int height) {
   SCI(command_entry)->setMinimumHeight(height);
   qobject_cast<QSplitter *>(SCI(command_entry)->parent())->setSizes(QList<int>{ta->height()});
