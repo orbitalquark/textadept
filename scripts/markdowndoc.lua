@@ -85,6 +85,38 @@ function M.ldoc(doc)
 
   table.sort(doc, function(a, b) return a.name < b.name end)
 
+  -- Relocate '_G.' fields in modules to their target modules.
+  for _, module in ipairs(doc) do
+    local i = 1
+    while i <= #module.items do
+      local item, relocated = module.items[i], false
+      if item.name:find('^_G%.[^.]+') and module.name ~= '_G' then
+        local target_module = item.name:match('^_G.(.-)%.[^.]+$') or '_G'
+        for _, module2 in ipairs(doc) do
+          if module2.name == target_module then
+            item.name = item.name:gsub('^_G%.[^.]+%.', ''):gsub('^_G%.', '')
+            module2.items[#module2.items + 1] = item
+            table.remove(module.items, i)
+            relocated = true
+            break
+          elseif module2.name == target_module:match('^(.+)%.[^.]+$') then
+            local target_item = target_module:match('[^.]+$')
+            for _, item2 in ipairs(module2.items) do
+              if item2.name == target_item then
+                item2.params[#item2.params + 1] = item.name:match('[^.]+$')
+                item2.params.map[item.name:match('[^.]+$')] = item.summary .. item.description
+                table.remove(module.items, i)
+                relocated = true
+              end
+            end
+          end
+        end
+        if not relocated then print('[WARN] Could not find target module for ' .. item.name) end
+      end
+      if not relocated then i = i + 1 end
+    end
+  end
+
   -- Create the table of contents.
   for _, module in ipairs(doc) do f:write(string.format(TOC, module.name, '#' .. module.name)) end
   f:write('\n')
@@ -112,8 +144,12 @@ function M.ldoc(doc)
         elseif field.name:find('^_G%.[^.]+%.[^.]+') then
           field.name = field.name:gsub('^_G%.', '') -- strip _G required for LDoc
         end
-        f:write(string.format(FIELD, field.name:gsub('^_G%.', ''), field.name, ''))
-        write_description(f, field.summary .. field.description)
+        local is_buffer_view_constant = field.name:find('^buffer%.[A-Z_]+$') or
+          field.name:find('^view%.[A-Z_]+$')
+        if not is_buffer_view_constant then
+          f:write(string.format(FIELD, field.name:gsub('^_G%.', ''), field.name, ''))
+          write_description(f, field.summary .. field.description)
+        end
       end
       f:write('\n')
     end
@@ -152,11 +188,11 @@ function M.ldoc(doc)
       for _, tbl in ipairs(tables) do
         if not tbl.name:find('%.') and name ~= '_G' then
           tbl.name = name .. '.' .. tbl.name -- absolute name
-        elseif tbl.name ~= '_G.keys' and tbl.name ~= '_G.snippets' then
+        else
           tbl.name = tbl.name:gsub('^_G%.', '') -- strip _G required for LDoc/LuaDoc
         end
-        local tbl_id = tbl.name ~= 'buffer' and tbl.name ~= 'view' and tbl.name:gsub('^_G.', '') or
-          ('_G.' .. tbl.name)
+        local tbl_id = tbl.name ~= 'buffer' and tbl.name ~= 'view' and tbl.name ~= 'keys' and
+          tbl.name:gsub('^_G.', '') or ('_G.' .. tbl.name)
         f:write(string.format(TABLE, tbl_id, tbl.name))
         write_description(f, tbl.summary .. tbl.description)
         write_hashmap(f, TFIELD, tbl.params)
