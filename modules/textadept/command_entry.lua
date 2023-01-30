@@ -44,24 +44,6 @@ local function cycle_history(prev)
 end
 
 ---
--- Appends string *text* to the history for command entry mode *f* or the current or most
--- recent mode.
--- This should only be called if `ui.command_entry.run()` is called with a keys table that has a
--- custom binding for the Enter key ('\n'). Otherwise, history is automatically appended as needed.
--- @param[opt] f Optional command entry mode to append history to. This is a function passed to
---   `ui.command_entry_run()`. If omitted, uses the current or most recent mode.
--- @param text String text to append to history.
-function M.append_history(f, text)
-  if not assert_type(text, 'string/nil', 2) then
-    f, text = history.mode, assert_type(f, 'string', 1)
-    if not f then return end
-  end
-  local mode_history = history[assert_type(f, 'function', 1)]
-  if mode_history[#mode_history] == text then return end -- already exists
-  mode_history[#mode_history + 1], mode_history.pos = text, #mode_history + 1
-end
-
----
 -- A metatable with typical platform-specific key bindings for text entries.
 -- This metatable may be used to add basic editing and movement keys to command entry modes. It
 -- is automatically added to command entry modes unless a metatable was previously set.
@@ -186,6 +168,23 @@ local lua_keys = {['\t'] = complete_lua}
 
 local prev_key_mode
 
+-- Appends string *text* to the history for command entry mode *f* or the current or most
+-- recent mode.
+-- This should only be called if `ui.command_entry.run()` is called with a keys table that has a
+-- custom binding for the Enter key ('\n'). Otherwise, history is automatically appended as needed.
+-- @param[opt] f Optional command entry mode to append history to. This is a function passed to
+--   `ui.command_entry_run()`. If omitted, uses the current or most recent mode.
+-- @param text String text to append to history.
+local function append_history(f, text)
+  if not assert_type(text, 'string/nil', 2) then
+    f, text = history.mode, assert_type(f, 'string', 1)
+    if not f then return end
+  end
+  local mode_history = history[assert_type(f, 'function', 1)]
+  if mode_history[#mode_history] == text then return end -- already exists
+  mode_history[#mode_history + 1], mode_history.pos = text, #mode_history + 1
+end
+
 ---
 -- Opens the command entry with label *label* (and optionally with string *initial_text*),
 -- subjecting it to any key bindings defined in table *keys*, highlighting text with lexer
@@ -235,7 +234,7 @@ function M.run(label, f, keys, lang, initial_text, ...)
     keys['\n'] = function()
       if M:auto_c_active() then return false end -- allow Enter to autocomplete
       M.focus() -- hide
-      M.append_history(M:get_text())
+      append_history(M:get_text())
       if f then f(M:get_text(), table.unpack(args)) end
     end
   end
@@ -243,7 +242,7 @@ function M.run(label, f, keys, lang, initial_text, ...)
 
   -- Setup and open the command entry.
   history.mode = f
-  if initial_text then M.append_history(initial_text) end -- cycling will be incorrect otherwise
+  if initial_text then append_history(initial_text) end -- cycling will be incorrect otherwise
   local mode_history = history[history.mode]
   M:set_text(mode_history and mode_history[mode_history.pos] or '')
   M:select_all()

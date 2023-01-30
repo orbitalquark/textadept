@@ -1763,45 +1763,6 @@ function test_command_entry_history()
   events.emit(events.KEYPRESS, 'esc')
 end
 
-function test_command_entry_history_append()
-  local f, keys = function() end, {['\n'] = ui.command_entry.focus}
-
-  ui.command_entry.run('', f, keys)
-  ui.command_entry:set_text('foo')
-  events.emit(events.KEYPRESS, '\n')
-
-  ui.command_entry.run('', f, keys)
-  events.emit(events.KEYPRESS, 'up')
-  assert_equal(ui.command_entry:get_text(), '') -- no prior history
-  events.emit(events.KEYPRESS, 'down')
-  assert_equal(ui.command_entry:get_text(), '') -- no further history
-  events.emit(events.KEYPRESS, '\n')
-  ui.command_entry.append_history('bar')
-
-  ui.command_entry.run('', f, keys)
-  assert_equal(ui.command_entry:get_text(), 'bar')
-  assert_equal(ui.command_entry.selection_start, 1)
-  assert_equal(ui.command_entry.selection_end, 4)
-  events.emit(events.KEYPRESS, 'up')
-  assert_equal(ui.command_entry:get_text(), 'bar') -- no prior history
-  events.emit(events.KEYPRESS, 'down')
-  assert_equal(ui.command_entry:get_text(), 'bar') -- no further history
-  events.emit(events.KEYPRESS, '\n')
-
-  -- Verify no previous mode or history is needed for adding history.
-  local f2 = function() end
-  ui.command_entry.append_history(f2, 'baz')
-  ui.command_entry.run('', f2, keys)
-  assert_equal(ui.command_entry:get_text(), 'baz')
-  events.emit(events.KEYPRESS, '\n')
-
-  assert_raises(function() ui.command_entry.append_history(1) end, 'string expected, got number')
-  assert_raises(function() ui.command_entry:append_history('text') end,
-    'function expected, got table')
-  assert_raises(function() ui.command_entry.append_history(function() end, true) end,
-    'string/nil expected, got boolean')
-end
-
 function test_command_entry_history_initial_text()
   local f = function() end
 

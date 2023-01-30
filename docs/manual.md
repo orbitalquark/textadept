@@ -1675,6 +1675,7 @@ _print() | Renamed | [print_to()][]
 [switch_buffer()][] | Changed | Removed *zorder* parameter in favor of [buffer_list_zorder][]
 N/A | Added | [suspend()][]
 **ui.command_entry**||
+append_history() | Removed | N/A
 [run()][] | Changed | Changed parameter list
 **ui.dialogs**||
 msgbox(), ok\_msgbox(), yesno\_msgbox() | Replaced | [message()][]
