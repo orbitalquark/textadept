@@ -85,10 +85,23 @@ Textadept's copyright information.
 
 The path to Textadept's home, or installation, directory.
 
+<a id="_LEXERPATH"></a>
+#### `_LEXERPATH` 
+
+A ';'-separated list of directory paths that contain lexers for syntax highlighting.
+
 <a id="_RELEASE"></a>
 #### `_RELEASE` 
 
 The Textadept release version string.
+
+<a id="_USERHOME"></a>
+#### `_USERHOME` 
+
+The path to the user's *~/.textadept/* directory, where all preferences and user-data is stored.
+On Windows machines *~/* is the value of the "USERHOME" environment variable (typically
+*C:\Users\username\\* or *C:\Documents and Settings\username\\*). On Linux and macOS machines
+*~/* is the value of "$HOME" (typically */home/username/* and */Users/username/* respectively).
 
 
 ### Functions defined by `_G`
@@ -209,6 +222,18 @@ Table of command line parameters passed to Textadept.
 
 The current [buffer](#buffer) in the [current view](#_G.view).
 
+<a id="_G.keys"></a>
+#### `keys`
+
+Map of [key bindings](#keys) to commands, with language-specific key tables assigned to a
+lexer name key.
+
+<a id="snippets"></a>
+#### `snippets`
+
+Map of [snippet](#textadept.snippets) triggers with their snippet text or functions that
+return such text, with language-specific snippets tables assigned to a lexer name key.
+
 <a id="_G.view"></a>
 #### `view`
 
@@ -327,22 +352,6 @@ Types are the same as in the `functions` table.
 
 Processes command line arguments for Textadept.
 
-### Fields defined by `args`
-
-<a id="_USERHOME"></a>
-#### `_G._USERHOME` 
-
-The path to the user's *~/.textadept/* directory, where all preferences and user-data is stored.
-On Windows machines *~/* is the value of the "USERHOME" environment variable (typically
-*C:\Users\username\\* or *C:\Documents and Settings\username\\*). On Linux and macOS machines
-*~/* is the value of "$HOME" (typically */home/username/* and */Users/username/* respectively).
-
-<a id="events.ARG_NONE"></a>
-#### `events.ARG_NONE` 
-
-Emitted when no command line arguments are passed to Textadept on startup.
-
-
 ### Functions defined by `args`
 
 <a id="args.register"></a>
@@ -379,159 +388,6 @@ Any buffer fields set on startup (e.g. in *~/.textadept/init.lua*) will be the d
 initial values for all buffers.
 
 ### Fields defined by `buffer`
-
-<a id="buffer.CARETSTICKY_OFF"></a>
-#### `buffer.CARETSTICKY_OFF` 
-
-
-
-<a id="buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE"></a>
-#### `buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE` 
-
-No preference.
-
-<a id="buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE"></a>
-#### `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE` 
-
-Prefer to select case-sensitive matches.
-
-<a id="buffer.EOL_CR"></a>
-#### `buffer.EOL_CR` 
-
-Carriage return ("\r").
-
-<a id="buffer.EOL_CRLF"></a>
-#### `buffer.EOL_CRLF` 
-
-Carriage return with line feed ("\r\n").
-
-<a id="buffer.EOL_LF"></a>
-#### `buffer.EOL_LF` 
-
-Line feed ("\n").
-
-<a id="buffer.FIND_MATCHCASE"></a>
-#### `buffer.FIND_MATCHCASE` 
-
-Match search text case sensitively.
-
-<a id="buffer.FIND_REGEXP"></a>
-#### `buffer.FIND_REGEXP` 
-
-Interpret search text as a regular expression.
-
-<a id="buffer.FIND_WHOLEWORD"></a>
-#### `buffer.FIND_WHOLEWORD` 
-
-Match search text only when it is surrounded by non-word characters.
-
-<a id="buffer.FIND_WORDSTART"></a>
-#### `buffer.FIND_WORDSTART` 
-
-Match search text only when the previous character is a non-word character.
-
-<a id="buffer.FOLDLEVELBASE"></a>
-#### `buffer.FOLDLEVELBASE` 
-
-The initial fold level.
-
-<a id="buffer.FOLDLEVELHEADERFLAG"></a>
-#### `buffer.FOLDLEVELHEADERFLAG` 
-
-The line is a header, or fold point.
-
-<a id="buffer.FOLDLEVELNUMBERMASK"></a>
-#### `buffer.FOLDLEVELNUMBERMASK` 
-
-
-
-<a id="buffer.FOLDLEVELWHITEFLAG"></a>
-#### `buffer.FOLDLEVELWHITEFLAG` 
-
-The line is blank.
-
-<a id="buffer.INDICATOR_MAX"></a>
-#### `buffer.INDICATOR_MAX` 
-
-
-
-<a id="buffer.MULTIAUTOC_EACH"></a>
-#### `buffer.MULTIAUTOC_EACH` 
-
-Autocomplete into all selections.
-
-<a id="buffer.MULTIAUTOC_ONCE"></a>
-#### `buffer.MULTIAUTOC_ONCE` 
-
-Autocomplete into only the main selection.
-
-<a id="buffer.ORDER_CUSTOM"></a>
-#### `buffer.ORDER_CUSTOM` 
-
-Lists passed to [`buffer.auto_c_show()`](#buffer.auto_c_show) are already in a custom order.
-
-<a id="buffer.ORDER_PERFORMSORT"></a>
-#### `buffer.ORDER_PERFORMSORT` 
-
-Sort autocompletion lists passed to [`buffer.auto_c_show()`](#buffer.auto_c_show).
-
-<a id="buffer.ORDER_PRESORTED"></a>
-#### `buffer.ORDER_PRESORTED` 
-
-Lists passed to [`buffer.auto_c_show()`](#buffer.auto_c_show) are in sorted, alphabetical order.
-
-<a id="buffer.SEL_LINES"></a>
-#### `buffer.SEL_LINES` 
-
-Line selection.
-
-<a id="buffer.SEL_RECTANGLE"></a>
-#### `buffer.SEL_RECTANGLE` 
-
-Rectangular selection.
-
-<a id="buffer.SEL_STREAM"></a>
-#### `buffer.SEL_STREAM` 
-
-Character selection.
-
-<a id="buffer.SEL_THIN"></a>
-#### `buffer.SEL_THIN` 
-
-Thin rectangular selection. This is the mode after a rectangular selection has been typed
-into and ensures that no characters are selected.
-
-<a id="buffer.UPDATE_CONTENT"></a>
-#### `buffer.UPDATE_CONTENT` 
-
-Buffer contents, styling, or markers have changed.
-
-<a id="buffer.UPDATE_SELECTION"></a>
-#### `buffer.UPDATE_SELECTION` 
-
-Buffer selection has changed (including caret movement).
-
-<a id="buffer.VS_NONE"></a>
-#### `buffer.VS_NONE` 
-
-Disable virtual space.
-
-<a id="buffer.VS_NOWRAPLINESTART"></a>
-#### `buffer.VS_NOWRAPLINESTART` 
-
-Prevent the caret from wrapping to the previous line via `buffer:char_left()` and
-`buffer:char_left_extend()`. This option is not restricted to virtual space and should be
-added to any of the above options.
-
-<a id="buffer.VS_RECTANGULARSELECTION"></a>
-#### `buffer.VS_RECTANGULARSELECTION` 
-
-Enable virtual space only for rectangular selections.
-
-<a id="buffer.VS_USERACCESSIBLE"></a>
-#### `buffer.VS_USERACCESSIBLE` 
-
-Enable virtual space.
 
 <a id="buffer.additional_selection_typing"></a>
 #### `buffer.additional_selection_typing` 
@@ -2763,6 +2619,11 @@ Arguments:
 
   - *uri*: The UTF-8-encoded URI to open.
 
+<a id="events.ARG_NONE"></a>
+#### `events.ARG_NONE` 
+
+Emitted when no filename or directory command line arguments are passed to Textadept on startup.
+
 <a id="events.AUTO_C_CANCELED"></a>
 #### `events.AUTO_C_CANCELED` 
 
@@ -2851,14 +2712,24 @@ Emitted after creating a new buffer.
 The new buffer is `buffer`.
 Emitted on startup and by [`buffer.new()`](#buffer.new).
 
+<a id="events.BUILD_OUTPUT"></a>
+#### `events.BUILD_OUTPUT` 
+
+Emitted when executing a project's build shell command.
+By default, output is printed to the output buffer. In order to override this behavior,
+connect to the event with an index of `1` and return `true`.
+Arguments:
+
+  - *output*: A line of string output from the command.
+
 <a id="events.CALL_TIP_CLICK"></a>
 #### `events.CALL_TIP_CLICK` 
 
 Emitted when clicking on a calltip.
 Arguments:
 
-  - *position*: `1` if the up arrow was clicked, 2 if the down arrow was clicked, and
-    0 otherwise.
+  - *position*: `1` if the up arrow was clicked, `2` if the down arrow was clicked, and
+    `0` otherwise.
 
 <a id="events.CHAR_ADDED"></a>
 #### `events.CHAR_ADDED` 
@@ -2873,6 +2744,16 @@ Arguments:
 
 Emitted when the text in the command entry changes.
 `ui.command_entry:get_text()` returns the current text.
+
+<a id="events.COMPILE_OUTPUT"></a>
+#### `events.COMPILE_OUTPUT` 
+
+Emitted when executing a language's compile shell command.
+By default, compiler output is printed to the output buffer. In order to override this
+behavior, connect to the event with an index of `1` and return `true`.
+Arguments:
+
+  - *output*: A line of string output from the command.
 
 <a id="events.CSI"></a>
 #### `events.CSI` 
@@ -2927,6 +2808,44 @@ Arguments:
 
   - *text*: The error message text.
 
+<a id="events.FILE_AFTER_SAVE"></a>
+#### `events.FILE_AFTER_SAVE` 
+
+Emitted right after saving a file to disk.
+Emitted by [`buffer:save()`](#buffer.save) and [`buffer:save_as()`](#buffer.save_as).
+Arguments:
+
+  - *filename*: The filename of the file being saved.
+  - *saved_as*: Whether or not the file was saved under a different filename.
+
+<a id="events.FILE_BEFORE_SAVE"></a>
+#### `events.FILE_BEFORE_SAVE` 
+
+Emitted right before saving a file to disk.
+Emitted by [`buffer:save()`](#buffer.save).
+Arguments:
+
+  - *filename*: The filename of the file being saved.
+
+<a id="events.FILE_CHANGED"></a>
+#### `events.FILE_CHANGED` 
+
+Emitted when Textadept detects that an open file was modified externally.
+When connecting to this event, connect with an index of 1 in order to override the default
+prompt to reload the file.
+Arguments:
+
+  - *filename*: The filename externally modified.
+
+<a id="events.FILE_OPENED"></a>
+#### `events.FILE_OPENED` 
+
+Emitted after opening a file in a new buffer.
+Emitted by [`io.open_file()`](#io.open_file).
+Arguments:
+
+  - *filename*: The opened file's filename.
+
 <a id="events.FIND"></a>
 #### `events.FIND` 
 
@@ -2936,11 +2855,29 @@ Arguments:
   - *text*: The text to search for.
   - *next*: Whether or not to search forward.
 
+<a id="events.FIND_RESULT_FOUND"></a>
+#### `events.FIND_RESULT_FOUND` 
+
+Emitted when a result is found. It is selected and has been scrolled into view.
+Arguments:
+
+  - *find_text*: The text originally searched for.
+  - *wrapped*: Whether or not the result found is after a text search wrapped.
+
 <a id="events.FIND_TEXT_CHANGED"></a>
 #### `events.FIND_TEXT_CHANGED` 
 
 Emitted when the text in the "Find" field of the Find & Replace Pane changes.
 `ui.find.find_entry_text` contains the current text.
+
+<a id="events.FIND_WRAPPED"></a>
+#### `events.FIND_WRAPPED` 
+
+Emitted when a text search wraps (passes through the beginning of the buffer), either from
+bottom to top (when searching for a next occurrence), or from top to bottom (when searching
+for a previous occurrence).
+This is useful for implementing a more visual or audible notice when a search wraps in
+addition to the statusbar message.
 
 <a id="events.FOCUS"></a>
 #### `events.FOCUS` 
@@ -2978,6 +2915,25 @@ Arguments:
 #### `events.INITIALIZED` 
 
 Emitted after Textadept finishes initializing.
+
+<a id="events.KEYPRESS"></a>
+#### `events.KEYPRESS` 
+
+Emitted when pressing a recognized key.
+If any handler returns `true`, the key is not handled further (e.g. inserted into the buffer).
+Arguments:
+
+  - *key*: The string representation of the [key sequence](#key-sequences).
+
+<a id="events.LEXER_LOADED"></a>
+#### `events.LEXER_LOADED` 
+
+Emitted after loading a language lexer.
+This is useful for automatically loading language modules as source files are opened, or
+setting up language-specific editing features for source files.
+Arguments:
+
+  - *name*: The language lexer's name.
 
 <a id="events.MARGIN_CLICK"></a>
 #### `events.MARGIN_CLICK` 
@@ -3071,6 +3027,16 @@ Arguments:
 Emitted when resuming Textadept from a suspended state.
 This event is only emitted by the terminal version.
 
+<a id="events.RUN_OUTPUT"></a>
+#### `events.RUN_OUTPUT` 
+
+Emitted when executing a language's or project's run shell command.
+By default, output is printed to the output buffer. In order to override this behavior,
+connect to the event with an index of `1` and return `true`.
+Arguments:
+
+  - *output*: A line of string output from the command.
+
 <a id="events.SAVE_POINT_LEFT"></a>
 #### `events.SAVE_POINT_LEFT` 
 
@@ -3080,6 +3046,25 @@ Emitted after leaving a save point.
 #### `events.SAVE_POINT_REACHED` 
 
 Emitted after reaching a save point.
+
+<a id="events.SESSION_LOAD"></a>
+#### `events.SESSION_LOAD` 
+
+Emitted when loading a session.
+Arguments:
+
+  - *session*: Table of session data to load. All handlers will have access to this same table.
+
+<a id="events.SESSION_SAVE"></a>
+#### `events.SESSION_SAVE` 
+
+Emitted when saving a session.
+Arguments:
+
+  - *session*: Table of session data to save. All handlers will have access to this same
+    table, and Textadept's default handler reserves the use of some keys.
+    Note that functions, userdata, and circular table values cannot be saved. The latter
+    case is not recognized at all, so beware.
 
 <a id="events.SUSPEND"></a>
 #### `events.SUSPEND` 
@@ -3115,6 +3100,16 @@ This event is only emitted in the Qt GUI version.
 Arguments:
 
   - *index*: The numeric index of the clicked tab.
+
+<a id="events.TEST_OUTPUT"></a>
+#### `events.TEST_OUTPUT` 
+
+Emitted when executing a project's shell command for running tests.
+By default, output is printed to the output buffer. In order to override this behavior,
+connect to the event with an index of `1` and return `true`.
+Arguments:
+
+  - *output*: A line of string output from the command.
 
 <a id="events.UNFOCUS"></a>
 #### `events.UNFOCUS` 
@@ -3248,44 +3243,6 @@ Return:
 Extends Lua's `io` library with Textadept functions for working with files.
 
 ### Fields defined by `io`
-
-<a id="events.FILE_AFTER_SAVE"></a>
-#### `events.FILE_AFTER_SAVE` 
-
-Emitted right after saving a file to disk.
-Emitted by [`buffer:save()`](#buffer.save) and [`buffer:save_as()`](#buffer.save_as).
-Arguments:
-
-  - *filename*: The filename of the file being saved.
-  - *saved_as*: Whether or not the file was saved under a different filename.
-
-<a id="events.FILE_BEFORE_SAVE"></a>
-#### `events.FILE_BEFORE_SAVE` 
-
-Emitted right before saving a file to disk.
-Emitted by [`buffer:save()`](#buffer.save).
-Arguments:
-
-  - *filename*: The filename of the file being saved.
-
-<a id="events.FILE_CHANGED"></a>
-#### `events.FILE_CHANGED` 
-
-Emitted when Textadept detects that an open file was modified externally.
-When connecting to this event, connect with an index of 1 in order to override the default
-prompt to reload the file.
-Arguments:
-
-  - *filename*: The filename externally modified.
-
-<a id="events.FILE_OPENED"></a>
-#### `events.FILE_OPENED` 
-
-Emitted after opening a file in a new buffer.
-Emitted by [`io.open_file()`](#io.open_file).
-Arguments:
-
-  - *filename*: The opened file's filename.
 
 <a id="io.ensure_final_newline"></a>
 #### `io.ensure_final_newline` 
@@ -3554,15 +3511,6 @@ The key that clears the current key chain.
 It cannot be part of a key chain.
 The default value is `'esc'` for the `Esc` key.
 
-<a id="events.KEYPRESS"></a>
-#### `events.KEYPRESS` 
-
-Emitted when pressing a recognized key.
-If any handler returns `true`, the key is not handled further (e.g. inserted into the buffer).
-Arguments:
-
-  - *key*: The string representation of the [key sequence](#key-sequences).
-
 <a id="keys.mode"></a>
 #### `keys.mode` 
 
@@ -3583,11 +3531,6 @@ Recognized codes are: esc, \b, \t, \n, down, up, left, right, home, end, pgup, p
 ins, and f1-f12.
 The GUI version also recognizes: menu, kpenter, kphome, kpend, kpleft, kpup, kpright, kpdown,
 kppgup, kppgdn, kpmul, kpadd, kpsub, kpdiv, kpdec, and kp0-kp9.
-
-<a id="keys"></a>
-#### `_G.keys`
-
-Map of key bindings to commands, with language-specific key tables assigned to a lexer name key.
 
 <a id="keys.keychain"></a>
 #### `keys.keychain`
@@ -4445,21 +4388,6 @@ The tag name for variable elements.
 #### `lexer.VARIABLE_BUILTIN` 
 
 The tag name for builtin variable elements.
-
-<a id="_LEXERPATH"></a>
-#### `_G._LEXERPATH` 
-
-A ';'-separated list of directory paths that contain lexers for syntax highlighting.
-
-<a id="events.LEXER_LOADED"></a>
-#### `events.LEXER_LOADED` 
-
-Emitted after loading a language lexer.
-This is useful for automatically loading language modules as source files are opened, or
-setting up language-specific editing features for source files.
-Arguments:
-
-  - *name*: The language lexer's name.
 
 <a id="lexer.alnum"></a>
 #### `lexer.alnum` 
@@ -5424,7 +5352,7 @@ The default value is `true`.
 #### `textadept.editing.autocomplete`(*name*)
 
 Displays an autocompletion list provided by the autocompleter function associated with string
-*name*, and returns `true` if completions were found.
+*name*, and returns `true` if completions were found and are shown.
 
 Parameters:
 
@@ -5534,22 +5462,6 @@ Parameters:
 - *all*:  Whether or not to select all occurrences of the current word. The default value is
    `false`.
 
-<a id="textadept.editing.show_documentation"></a>
-#### `textadept.editing.show_documentation`([*pos*[, *ignore_case*]])
-
-Displays a call tip with documentation for the symbol under or directly behind position *pos*
-or the caret position.
-Documentation is read from API files in the `api_files` table.
-If a call tip is already shown, cycles to the next one if it exists.
-Symbols are determined by using `buffer.word_chars`.
-
-Parameters:
-
-- *pos*:  Optional position of the symbol to show documentation for. If omitted,
-   the caret position is used.
-- *ignore_case*:  Optional flag that indicates whether or not to search API files
-   case-insensitively for symbols. The default value is `false`.
-
 <a id="textadept.editing.toggle_comment"></a>
 #### `textadept.editing.toggle_comment`()
 
@@ -5559,14 +5471,6 @@ commenting/uncommenting.
 
 
 ### Tables defined by `textadept.editing`
-
-<a id="textadept.editing.api_files"></a>
-#### `textadept.editing.api_files`
-
-Map of lexer names to API documentation file tables.
-File tables contain API file paths or functions that return such paths. Each line in an
-API file consists of a symbol name (not a fully qualified symbol name), a space character,
-and that symbol's documentation. "\n" represents a newline character.
 
 <a id="textadept.editing.auto_pairs"></a>
 #### `textadept.editing.auto_pairs`
@@ -5590,6 +5494,13 @@ Names are typically lexer names and autocompletion functions typically autocompl
 Autocompletion functions must return two values: the number of characters behind the caret
 that are used as the prefix of the entity to be autocompleted, and a list of completions to
 be shown. Autocompletion lists are sorted automatically.
+
+Fields:
+
+- `word`: Returns for the word part behind the caret a list of whole word completions constructed from the
+ current buffer or all open buffers (depending on `textadept.editing.autocomplete_all_words`).
+ If `buffer.auto_c_ignore_case` is `true`, completions are not case-sensitive.
+- `snippet`: Autocompleter function for snippet trigger words.
 
 <a id="textadept.editing.comment_string"></a>
 #### `textadept.editing.comment_string`
@@ -5786,8 +5697,6 @@ Tab | ⇥ | Tab | Expand snippet or next placeholder
 Shift+Tab | ⇧⇥ | S-Tab | Previous snippet placeholder
 Esc | Esc | Esc | Cancel snippet
 None | None | None | Complete trigger word
-Ctrl+Space | ⌘Space<br/> ^Space | ^Space | Complete symbol
-Ctrl+? | ⌘?<br/>^? | M-?<br/>Ctrl+?<sup>‡</sup> | Show documentation
 None | None | None | Show style
 **Buffer**| | |
 Ctrl+Tab<br/>Ctrl+PgDn | ^⇥<br/>⌘⇟ | M-PgDn<br/> ^Tab^(‡) | Next buffer
@@ -5837,12 +5746,12 @@ Down | ⇣<br/> ^N | Down | Line down
 Shift+Down | ⇧⇣<br/>^⇧N | S-Down | Line down extend selection
 Alt+Shift+Down | ^⇧⇣ | M-S-Down | Line down extend rect. selection
 Ctrl+Down | ⌥⇣ | ^Down | Paragraph down
-Ctrl+Shift+Down | ⌥⇧⇣ | None | Paragraph down extend selection
+Ctrl+Shift+Down | ⌥⇧⇣ | S-^Down | Paragraph down extend selection
 Up | ⇡<br/> ^P | Up | Line up
 Shift+Up | ⇧⇡<br/>^⇧P | S-Up | Line up extend selection
 Alt+Shift+Up | ^⇧⇡ | M-S-Up | Line up extend rect. selection
 Ctrl+Up | ⌥⇡ | ^Up | Paragraph up
-Ctrl+Shift+Up | ⌥⇧⇡ | None | Paragraph up extend selection
+Ctrl+Shift+Up | ⌥⇧⇡ | S-^Up | Paragraph up extend selection
 Left | ⇠<br/> ^B | Left | Char left
 Shift+Left | ⇧⇠<br/>^⇧B | S-Left | Char left extend selection
 Alt+Shift+Left | ^⇧⇠ | M-S-Left | Char left extend rect. selection
@@ -5912,7 +5821,6 @@ terminal version, since ^S and ^Q are flow control sequences.
 
 †: If you prefer ^Z to suspend, you can bind it to [`ui.suspend()`](#ui.suspend).
 
-‡: Windows terminal version only.
 
 ---
 <a id="textadept.macros"></a>
@@ -6038,51 +5946,10 @@ The run or compile error marker number.
 
 The run or compile warning marker number.
 
-<a id="events.BUILD_OUTPUT"></a>
-#### `events.BUILD_OUTPUT` 
-
-Emitted when executing a project's build shell command.
-By default, output is printed to the output buffer. In order to override this behavior,
-connect to the event with an index of `1` and return `true`.
-Arguments:
-
-  - *output*: A line of string output from the command.
-
-<a id="events.COMPILE_OUTPUT"></a>
-#### `events.COMPILE_OUTPUT` 
-
-Emitted when executing a language's compile shell command.
-By default, compiler output is printed to the output buffer. In order to override this
-behavior, connect to the event with an index of `1` and return `true`.
-Arguments:
-
-  - *output*: A line of string output from the command.
-
-<a id="events.RUN_OUTPUT"></a>
-#### `events.RUN_OUTPUT` 
-
-Emitted when executing a language's or project's run shell command.
-By default, output is printed to the output buffer. In order to override this behavior,
-connect to the event with an index of `1` and return `true`.
-Arguments:
-
-  - *output*: A line of string output from the command.
-
-<a id="events.TEST_OUTPUT"></a>
-#### `events.TEST_OUTPUT` 
-
-Emitted when executing a project's shell command for running tests.
-By default, output is printed to the output buffer. In order to override this behavior,
-connect to the event with an index of `1` and return `true`.
-Arguments:
-
-  - *output*: A line of string output from the command.
-
 <a id="textadept.run.run_in_background"></a>
 #### `textadept.run.run_in_background` 
 
 Run shell commands silently in the background.
-This only applies when the output buffer is open, though it does not have to be visible.
 The default value is `false`.
 
 
@@ -6266,25 +6133,6 @@ Session support for Textadept.
 
 ### Fields defined by `textadept.session`
 
-<a id="events.SESSION_LOAD"></a>
-#### `events.SESSION_LOAD` 
-
-Emitted when loading a session.
-Arguments:
-
-  - *session*: Table of session data to load. All handlers will have access to this same table.
-
-<a id="events.SESSION_SAVE"></a>
-#### `events.SESSION_SAVE` 
-
-Emitted when saving a session.
-Arguments:
-
-  - *session*: Table of session data to save. All handlers will have access to this same
-    table, and Textadept's default handler reserves the use of some keys.
-    Note that functions, userdata, and circular table values cannot be saved. The latter
-    case is not recognized at all, so beware.
-
 <a id="textadept.session.save_on_quit"></a>
 #### `textadept.session.save_on_quit` 
 
@@ -6442,11 +6290,6 @@ The snippet placeholder indicator number.
 
 ### Functions defined by `textadept.snippets`
 
-<a id="_G.textadept.editing.autocompleters.snippet"></a>
-#### `_G.textadept.editing.autocompleters.snippet`()
-
-Autocompleter function for snippet trigger words.
-
 <a id="textadept.snippets.cancel"></a>
 #### `textadept.snippets.cancel`()
 
@@ -6489,14 +6332,6 @@ Return:
 Prompts the user to select a snippet to insert from a list of global and language-specific
 snippets.
 
-
-### Tables defined by `textadept.snippets`
-
-<a id="snippets"></a>
-#### `_G.snippets`
-
-Map of snippet triggers with their snippet text or functions that return such text, with
-language-specific snippets tables assigned to a lexer name key.
 
 ---
 <a id="ui"></a>
@@ -6785,27 +6620,8 @@ and filtering text through shell commands) and history.
 
 Whether or not the command entry is active.
 
-<a id="ui.command_entry.height"></a>
-#### `ui.command_entry.height` 
-
-The height in pixels of the command entry.
-
 
 ### Functions defined by `ui.command_entry`
-
-<a id="ui.command_entry.append_history"></a>
-#### `ui.command_entry.append_history`([*f*], *text*)
-
-Appends string *text* to the history for command entry mode *f* or the current or most
-recent mode.
-This should only be called if `ui.command_entry.run()` is called with a keys table that has a
-custom binding for the Enter key ('\n'). Otherwise, history is automatically appended as needed.
-
-Parameters:
-
-- *f*:  Optional command entry mode to append history to. This is a function passed to
-   `ui.command_entry_run()`. If omitted, uses the current or most recent mode.
-- *text*:  String text to append to history.
 
 <a id="ui.command_entry.focus"></a>
 #### `ui.command_entry.focus`()
@@ -7053,24 +6869,6 @@ Textadept's Find & Replace pane.
 
 The find results highlight indicator number.
 
-<a id="events.FIND_RESULT_FOUND"></a>
-#### `events.FIND_RESULT_FOUND` 
-
-Emitted when a result is found. It is selected and has been scrolled into view.
-Arguments:
-
-  - *find_text*: The text originally searched for.
-  - *wrapped*: Whether or not the result found is after a text search wrapped.
-
-<a id="events.FIND_WRAPPED"></a>
-#### `events.FIND_WRAPPED` 
-
-Emitted when a text search wraps (passes through the beginning of the buffer), either from
-bottom to top (when searching for a next occurrence), or from top to bottom (when searching
-for a previous occurrence).
-This is useful for implementing a more visual or audible notice when a search wraps in
-addition to the statusbar message.
-
 <a id="ui.find.active"></a>
 #### `ui.find.active` 
 
@@ -7291,912 +7089,6 @@ Any view fields set on startup (e.g. in *~/.textadept/init.lua*) will be the def
 initial values for all views.
 
 ### Fields defined by `view`
-
-<a id="view.ALPHA_NOALPHA"></a>
-#### `view.ALPHA_NOALPHA` 
-
-
-
-<a id="view.ALPHA_OPAQUE"></a>
-#### `view.ALPHA_OPAQUE` 
-
-
-
-<a id="view.ALPHA_TRANSPARENT"></a>
-#### `view.ALPHA_TRANSPARENT` 
-
-
-
-<a id="view.ANNOTATION_BOXED"></a>
-#### `view.ANNOTATION_BOXED` 
-
-Indent annotations to match the annotated text and outline them with a box.
-
-<a id="view.ANNOTATION_HIDDEN"></a>
-#### `view.ANNOTATION_HIDDEN` 
-
-Annotations are invisible.
-
-<a id="view.ANNOTATION_INDENTED"></a>
-#### `view.ANNOTATION_INDENTED` 
-
-Indent non-decorated annotations to match the annotated text.
-
-<a id="view.ANNOTATION_STANDARD"></a>
-#### `view.ANNOTATION_STANDARD` 
-
-Draw annotations left-justified with no decoration.
-
-<a id="view.CARETSTYLE_BLOCK"></a>
-#### `view.CARETSTYLE_BLOCK` 
-
-A block caret.
-
-<a id="view.CARETSTYLE_INVISIBLE"></a>
-#### `view.CARETSTYLE_INVISIBLE` 
-
-No caret.
-
-<a id="view.CARETSTYLE_LINE"></a>
-#### `view.CARETSTYLE_LINE` 
-
-A line caret.
-
-<a id="view.CARET_EVEN"></a>
-#### `view.CARET_EVEN` 
-
-
-
-<a id="view.CARET_JUMPS"></a>
-#### `view.CARET_JUMPS` 
-
-
-
-<a id="view.CARET_SLOP"></a>
-#### `view.CARET_SLOP` 
-
-
-
-<a id="view.CARET_STRICT"></a>
-#### `view.CARET_STRICT` 
-
-
-
-<a id="view.CASE_CAMEL"></a>
-#### `view.CASE_CAMEL` 
-
-Display text in camel case.
-
-<a id="view.CASE_LOWER"></a>
-#### `view.CASE_LOWER` 
-
-Display text in lower case.
-
-<a id="view.CASE_MIXED"></a>
-#### `view.CASE_MIXED` 
-
-Display text normally.
-
-<a id="view.CASE_UPPER"></a>
-#### `view.CASE_UPPER` 
-
-Display text in upper case.
-
-<a id="view.CURSORARROW"></a>
-#### `view.CURSORARROW` 
-
-The arrow cursor.
-
-<a id="view.CURSORNORMAL"></a>
-#### `view.CURSORNORMAL` 
-
-The text insert cursor.
-
-<a id="view.CURSORREVERSEARROW"></a>
-#### `view.CURSORREVERSEARROW` 
-
-The reversed arrow cursor.
-
-<a id="view.CURSORWAIT"></a>
-#### `view.CURSORWAIT` 
-
-The wait cursor.
-
-<a id="view.EDGE_BACKGROUND"></a>
-#### `view.EDGE_BACKGROUND` 
-
-Change the background color of text after column [`view.edge_column`](#view.edge_column) to
-[`view.edge_color`](#view.edge_color).
-
-<a id="view.EDGE_LINE"></a>
-#### `view.EDGE_LINE` 
-
-Draw a single vertical line whose color is [`view.edge_color`](#view.edge_color) at column
-[`view.edge_column`](#view.edge_column).
-
-<a id="view.EDGE_MULTILINE"></a>
-#### `view.EDGE_MULTILINE` 
-
-Draw vertical lines whose colors and columns are defined by calls to
-[`view:multi_edge_add_line()`](#view.multi_edge_add_line).
-
-<a id="view.EDGE_NONE"></a>
-#### `view.EDGE_NONE` 
-
-Long lines are not marked.
-
-<a id="view.ELEMENT_CARET"></a>
-#### `view.ELEMENT_CARET` 
-
-The main selection's caret color.
-
-<a id="view.ELEMENT_CARET_ADDITIONAL"></a>
-#### `view.ELEMENT_CARET_ADDITIONAL` 
-
-The caret color of additional selections.
-
-<a id="view.ELEMENT_CARET_LINE_BACK"></a>
-#### `view.ELEMENT_CARET_LINE_BACK` 
-
-The background color of the line that contains the caret.
-
-<a id="view.ELEMENT_FOLD_LINE"></a>
-#### `view.ELEMENT_FOLD_LINE` 
-
-The color of fold lines.
-
-<a id="view.ELEMENT_HIDDEN_LINE"></a>
-#### `view.ELEMENT_HIDDEN_LINE` 
-
-The color of lines shown in place of hidden lines.
-
-<a id="view.ELEMENT_SELECTION_ADDITIONAL_BACK"></a>
-#### `view.ELEMENT_SELECTION_ADDITIONAL_BACK` 
-
-The background color of additional selections.
-
-<a id="view.ELEMENT_SELECTION_ADDITIONAL_TEXT"></a>
-#### `view.ELEMENT_SELECTION_ADDITIONAL_TEXT` 
-
-The text color of additional selections.
-
-<a id="view.ELEMENT_SELECTION_BACK"></a>
-#### `view.ELEMENT_SELECTION_BACK` 
-
-The main selection's background color.
-
-<a id="view.ELEMENT_SELECTION_INACTIVE_BACK"></a>
-#### `view.ELEMENT_SELECTION_INACTIVE_BACK` 
-
-The background color of selections when another window has focus.
-
-<a id="view.ELEMENT_SELECTION_INACTIVE_TEXT"></a>
-#### `view.ELEMENT_SELECTION_INACTIVE_TEXT` 
-
-The text color of selections when another window has focus.
-
-<a id="view.ELEMENT_SELECTION_SECONDARY_BACK"></a>
-#### `view.ELEMENT_SELECTION_SECONDARY_BACK` 
-
-The background color of selections when another window contains the primary selection.
-This is only available on Linux.
-
-<a id="view.ELEMENT_SELECTION_SECONDARY_TEXT"></a>
-#### `view.ELEMENT_SELECTION_SECONDARY_TEXT` 
-
-The text color of selections when another window contains the primary selection.
-This is only available on Linux.
-
-<a id="view.ELEMENT_SELECTION_TEXT"></a>
-#### `view.ELEMENT_SELECTION_TEXT` 
-
-The main selection's text color.
-
-<a id="view.ELEMENT_WHITE_SPACE"></a>
-#### `view.ELEMENT_WHITE_SPACE` 
-
-The color of visible whitespace.
-
-<a id="view.ELEMENT_WHITE_SPACE_BACK"></a>
-#### `view.ELEMENT_WHITE_SPACE_BACK` 
-
-The background color of visible whitespace.
-
-<a id="view.EOLANNOTATION_HIDDEN"></a>
-#### `view.EOLANNOTATION_HIDDEN` 
-
-
-
-<a id="view.FOLDACTION_CONTRACT"></a>
-#### `view.FOLDACTION_CONTRACT` 
-
-
-
-<a id="view.FOLDACTION_CONTRACT_EVERY_LEVEL"></a>
-#### `view.FOLDACTION_CONTRACT_EVERY_LEVEL` 
-
-
-
-<a id="view.FOLDACTION_EXPAND"></a>
-#### `view.FOLDACTION_EXPAND` 
-
-
-
-<a id="view.FOLDACTION_TOGGLE"></a>
-#### `view.FOLDACTION_TOGGLE` 
-
-
-
-<a id="view.FOLDDISPLAYTEXT_BOXED"></a>
-#### `view.FOLDDISPLAYTEXT_BOXED` 
-
-Fold display text is shown outlined with a box.
-
-<a id="view.FOLDDISPLAYTEXT_HIDDEN"></a>
-#### `view.FOLDDISPLAYTEXT_HIDDEN` 
-
-Fold display text is not shown.
-
-<a id="view.FOLDDISPLAYTEXT_STANDARD"></a>
-#### `view.FOLDDISPLAYTEXT_STANDARD` 
-
-Fold display text is shown with no decoration.
-
-<a id="view.FOLDFLAG_LEVELNUMBERS"></a>
-#### `view.FOLDFLAG_LEVELNUMBERS` 
-
-
-
-<a id="view.FOLDFLAG_LINEAFTER_CONTRACTED"></a>
-#### `view.FOLDFLAG_LINEAFTER_CONTRACTED` 
-
-
-
-<a id="view.FOLDFLAG_LINEAFTER_EXPANDED"></a>
-#### `view.FOLDFLAG_LINEAFTER_EXPANDED` 
-
-
-
-<a id="view.FOLDFLAG_LINEBEFORE_CONTRACTED"></a>
-#### `view.FOLDFLAG_LINEBEFORE_CONTRACTED` 
-
-
-
-<a id="view.FOLDFLAG_LINEBEFORE_EXPANDED"></a>
-#### `view.FOLDFLAG_LINEBEFORE_EXPANDED` 
-
-
-
-<a id="view.FOLDFLAG_LINESTATE"></a>
-#### `view.FOLDFLAG_LINESTATE` 
-
-
-
-<a id="view.FOLDFLAG_NONE"></a>
-#### `view.FOLDFLAG_NONE` 
-
-
-
-<a id="view.IDLESTYLING_NONE"></a>
-#### `view.IDLESTYLING_NONE` 
-
-
-
-<a id="view.INDIC_BOX"></a>
-#### `view.INDIC_BOX` 
-
-A bounding box.
-
-<a id="view.INDIC_COMPOSITIONTHICK"></a>
-#### `view.INDIC_COMPOSITIONTHICK` 
-
-A 2-pixel thick underline at the bottom of the line inset by 1 pixel on on either side. Similar
-in appearance to the target in Asian language input composition.
-
-<a id="view.INDIC_COMPOSITIONTHIN"></a>
-#### `view.INDIC_COMPOSITIONTHIN` 
-
-A 1-pixel thick underline just before the bottom of the line inset by 1 pixel on either
-side. Similar in appearance to the non-target ranges in Asian language input composition.
-
-<a id="view.INDIC_DASH"></a>
-#### `view.INDIC_DASH` 
-
-A dashed underline.
-
-<a id="view.INDIC_DIAGONAL"></a>
-#### `view.INDIC_DIAGONAL` 
-
-An underline of diagonal hatches.
-
-<a id="view.INDIC_DOTBOX"></a>
-#### `view.INDIC_DOTBOX` 
-
-Similar to `INDIC_STRAIGHTBOX` but with a dotted outline.
-Translucency alternates between [`view.indic_alpha`](#view.indic_alpha) and [`view.indic_outline_alpha`](#view.indic_outline_alpha)
-starting with the top-left pixel.
-
-<a id="view.INDIC_DOTS"></a>
-#### `view.INDIC_DOTS` 
-
-A dotted underline.
-
-<a id="view.INDIC_FULLBOX"></a>
-#### `view.INDIC_FULLBOX` 
-
-Similar to `INDIC_STRAIGHTBOX` but extends to the top of its line, potentially touching any
-similar indicators on the line above.
-
-<a id="view.INDIC_GRADIENT"></a>
-#### `view.INDIC_GRADIENT` 
-
-A box with a vertical gradient from solid on top to transparent on bottom.
-
-<a id="view.INDIC_GRADIENTCENTER"></a>
-#### `view.INDIC_GRADIENTCENTER` 
-
-A box with a centered gradient from solid in the middle to transparent on the top and bottom.
-
-<a id="view.INDIC_HIDDEN"></a>
-#### `view.INDIC_HIDDEN` 
-
-Invisible.
-
-<a id="view.INDIC_PLAIN"></a>
-#### `view.INDIC_PLAIN` 
-
-An underline.
-
-<a id="view.INDIC_POINT"></a>
-#### `view.INDIC_POINT` 
-
-A triangle below the start of the indicator range.
-
-<a id="view.INDIC_POINTCHARACTER"></a>
-#### `view.INDIC_POINTCHARACTER` 
-
-A triangle below the center of the first character of the indicator range.
-
-<a id="view.INDIC_POINT_TOP"></a>
-#### `view.INDIC_POINT_TOP` 
-
-A triangle above the start of the indicator range.
-
-<a id="view.INDIC_ROUNDBOX"></a>
-#### `view.INDIC_ROUNDBOX` 
-
-A translucent box with rounded corners around the text. Use [`view.indic_alpha`](#view.indic_alpha) and
-[`view.indic_outline_alpha`](#view.indic_outline_alpha) to set the fill and outline transparency, respectively.
-Their default values are `30` and `50`.
-
-<a id="view.INDIC_SQUIGGLE"></a>
-#### `view.INDIC_SQUIGGLE` 
-
-A squiggly underline 3 pixels in height.
-
-<a id="view.INDIC_SQUIGGLELOW"></a>
-#### `view.INDIC_SQUIGGLELOW` 
-
-A squiggly underline 2 pixels in height.
-
-<a id="view.INDIC_SQUIGGLEPIXMAP"></a>
-#### `view.INDIC_SQUIGGLEPIXMAP` 
-
-Identical to `INDIC_SQUIGGLE` but draws faster by using a pixmap instead of multiple line
-segments.
-
-<a id="view.INDIC_STRAIGHTBOX"></a>
-#### `view.INDIC_STRAIGHTBOX` 
-
-Similar to `INDIC_ROUNDBOX` but with sharp corners.
-
-<a id="view.INDIC_STRIKE"></a>
-#### `view.INDIC_STRIKE` 
-
-Strike out.
-
-<a id="view.INDIC_TEXTFORE"></a>
-#### `view.INDIC_TEXTFORE` 
-
-Changes the color of text to an indicator's foreground color.
-
-<a id="view.INDIC_TT"></a>
-#### `view.INDIC_TT` 
-
-An underline of small 'T' shapes.
-
-<a id="view.IV_LOOKBOTH"></a>
-#### `view.IV_LOOKBOTH` 
-
-Draw guides beyond the current line up to either the indentation level of the previous or
-next non-empty line, whichever is greater.
-
-<a id="view.IV_LOOKFORWARD"></a>
-#### `view.IV_LOOKFORWARD` 
-
-Draw guides beyond the current line up to the next non-empty line's indentation level,
-but with an additional level if the previous non-empty line is a fold point.
-
-<a id="view.IV_NONE"></a>
-#### `view.IV_NONE` 
-
-Does not draw any guides.
-
-<a id="view.IV_REAL"></a>
-#### `view.IV_REAL` 
-
-Draw guides only within indentation whitespace.
-
-<a id="view.LAYER_BASE"></a>
-#### `view.LAYER_BASE` 
-
-Draw opaquely on the background.
-
-<a id="view.LAYER_OVER_TEXT"></a>
-#### `view.LAYER_OVER_TEXT` 
-
-Draw translucently over text.
-
-<a id="view.LAYER_UNDER_TEXT"></a>
-#### `view.LAYER_UNDER_TEXT` 
-
-Draw translucently under text.
-
-<a id="view.MARGINOPTION_NONE"></a>
-#### `view.MARGINOPTION_NONE` 
-
-
-
-<a id="view.MARGINOPTION_SUBLINESELECT"></a>
-#### `view.MARGINOPTION_SUBLINESELECT` 
-
-Select only a wrapped line's sub-line (rather than the entire line) when the line number
-margin is clicked.
-
-<a id="view.MARGIN_BACK"></a>
-#### `view.MARGIN_BACK` 
-
-A marker symbol margin whose background color matches the default text background color.
-
-<a id="view.MARGIN_COLOR"></a>
-#### `view.MARGIN_COLOR` 
-
-A marker symbol margin whose background color is configurable.
-
-<a id="view.MARGIN_FORE"></a>
-#### `view.MARGIN_FORE` 
-
-A marker symbol margin whose background color matches the default text foreground color.
-
-<a id="view.MARGIN_NUMBER"></a>
-#### `view.MARGIN_NUMBER` 
-
-A line number margin.
-
-<a id="view.MARGIN_RTEXT"></a>
-#### `view.MARGIN_RTEXT` 
-
-A right-justified text margin.
-
-<a id="view.MARGIN_SYMBOL"></a>
-#### `view.MARGIN_SYMBOL` 
-
-A marker symbol margin.
-
-<a id="view.MARGIN_TEXT"></a>
-#### `view.MARGIN_TEXT` 
-
-A text margin.
-
-<a id="view.MARK_ARROW"></a>
-#### `view.MARK_ARROW` 
-
-
-
-<a id="view.MARK_ARROWDOWN"></a>
-#### `view.MARK_ARROWDOWN` 
-
-
-
-<a id="view.MARK_ARROWS"></a>
-#### `view.MARK_ARROWS` 
-
-
-
-<a id="view.MARK_BACKGROUND"></a>
-#### `view.MARK_BACKGROUND` 
-
-
-
-<a id="view.MARK_BAR"></a>
-#### `view.MARK_BAR` 
-
-
-
-<a id="view.MARK_BOOKMARK"></a>
-#### `view.MARK_BOOKMARK` 
-
-
-
-<a id="view.MARK_BOXMINUS"></a>
-#### `view.MARK_BOXMINUS` 
-
-
-
-<a id="view.MARK_BOXMINUSCONNECTED"></a>
-#### `view.MARK_BOXMINUSCONNECTED` 
-
-
-
-<a id="view.MARK_BOXPLUS"></a>
-#### `view.MARK_BOXPLUS` 
-
-
-
-<a id="view.MARK_BOXPLUSCONNECTED"></a>
-#### `view.MARK_BOXPLUSCONNECTED` 
-
-
-
-<a id="view.MARK_CHARACTER"></a>
-#### `view.MARK_CHARACTER` 
-
-
-
-<a id="view.MARK_CIRCLE"></a>
-#### `view.MARK_CIRCLE` 
-
-
-
-<a id="view.MARK_CIRCLEMINUS"></a>
-#### `view.MARK_CIRCLEMINUS` 
-
-
-
-<a id="view.MARK_CIRCLEMINUSCONNECTED"></a>
-#### `view.MARK_CIRCLEMINUSCONNECTED` 
-
-
-
-<a id="view.MARK_CIRCLEPLUS"></a>
-#### `view.MARK_CIRCLEPLUS` 
-
-
-
-<a id="view.MARK_CIRCLEPLUSCONNECTED"></a>
-#### `view.MARK_CIRCLEPLUSCONNECTED` 
-
-
-
-<a id="view.MARK_DOTDOTDOT"></a>
-#### `view.MARK_DOTDOTDOT` 
-
-
-
-<a id="view.MARK_EMPTY"></a>
-#### `view.MARK_EMPTY` 
-
-
-
-<a id="view.MARK_FULLRECT"></a>
-#### `view.MARK_FULLRECT` 
-
-
-
-<a id="view.MARK_LCORNER"></a>
-#### `view.MARK_LCORNER` 
-
-
-
-<a id="view.MARK_LCORNERCURVE"></a>
-#### `view.MARK_LCORNERCURVE` 
-
-
-
-<a id="view.MARK_LEFTRECT"></a>
-#### `view.MARK_LEFTRECT` 
-
-
-
-<a id="view.MARK_MINUS"></a>
-#### `view.MARK_MINUS` 
-
-
-
-<a id="view.MARK_PIXMAP"></a>
-#### `view.MARK_PIXMAP` 
-
-
-
-<a id="view.MARK_PLUS"></a>
-#### `view.MARK_PLUS` 
-
-
-
-<a id="view.MARK_RGBAIMAGE"></a>
-#### `view.MARK_RGBAIMAGE` 
-
-
-
-<a id="view.MARK_ROUNDRECT"></a>
-#### `view.MARK_ROUNDRECT` 
-
-
-
-<a id="view.MARK_SHORTARROW"></a>
-#### `view.MARK_SHORTARROW` 
-
-
-
-<a id="view.MARK_SMALLRECT"></a>
-#### `view.MARK_SMALLRECT` 
-
-
-
-<a id="view.MARK_TCORNER"></a>
-#### `view.MARK_TCORNER` 
-
-
-
-<a id="view.MARK_TCORNERCURVE"></a>
-#### `view.MARK_TCORNERCURVE` 
-
-
-
-<a id="view.MARK_UNDERLINE"></a>
-#### `view.MARK_UNDERLINE` 
-
-
-
-<a id="view.MARK_VERTICALBOOKMARK"></a>
-#### `view.MARK_VERTICALBOOKMARK` 
-
-
-
-<a id="view.MARK_VLINE"></a>
-#### `view.MARK_VLINE` 
-
-
-
-<a id="view.MASK_FOLDERS"></a>
-#### `view.MASK_FOLDERS` 
-
-
-
-<a id="view.MOD_ALT"></a>
-#### `view.MOD_ALT` 
-
-The "Alt" modifier key.
-
-<a id="view.MOD_CTRL"></a>
-#### `view.MOD_CTRL` 
-
-The "Control" modifier key on Windows and Linux, and the "Command" modifier key on macOS.
-
-<a id="view.MOD_META"></a>
-#### `view.MOD_META` 
-
-The "Control" modifier key on macOS.
-
-<a id="view.MOD_SHIFT"></a>
-#### `view.MOD_SHIFT` 
-
-The "Shift" modifier key.
-
-<a id="view.MOD_SUPER"></a>
-#### `view.MOD_SUPER` 
-
-The "Super" modifier key, usually defined as the left "Windows" or "Command" key.
-
-<a id="view.MOUSE_DRAG"></a>
-#### `view.MOUSE_DRAG` 
-
-
-
-<a id="view.MOUSE_PRESS"></a>
-#### `view.MOUSE_PRESS` 
-
-
-
-<a id="view.MOUSE_RELEASE"></a>
-#### `view.MOUSE_RELEASE` 
-
-
-
-<a id="view.REPRESENTATION_BLOB"></a>
-#### `view.REPRESENTATION_BLOB` 
-
-Draw the representation within a rounded rectangle and an inverted color.
-
-<a id="view.REPRESENTATION_COLOR"></a>
-#### `view.REPRESENTATION_COLOR` 
-
-Draw the representation using the color set in [`view.representation_color`](#view.representation_color).
-
-<a id="view.REPRESENTATION_PLAIN"></a>
-#### `view.REPRESENTATION_PLAIN` 
-
-Draw the representation with no decoration.
-
-<a id="view.STYLE_BRACEBAD"></a>
-#### `view.STYLE_BRACEBAD` 
-
-
-
-<a id="view.STYLE_BRACELIGHT"></a>
-#### `view.STYLE_BRACELIGHT` 
-
-
-
-<a id="view.STYLE_CALLTIP"></a>
-#### `view.STYLE_CALLTIP` 
-
-
-
-<a id="view.STYLE_CONTROLCHAR"></a>
-#### `view.STYLE_CONTROLCHAR` 
-
-
-
-<a id="view.STYLE_DEFAULT"></a>
-#### `view.STYLE_DEFAULT` 
-
-
-
-<a id="view.STYLE_FOLDDISPLAYTEXT"></a>
-#### `view.STYLE_FOLDDISPLAYTEXT` 
-
-
-
-<a id="view.STYLE_INDENTGUIDE"></a>
-#### `view.STYLE_INDENTGUIDE` 
-
-
-
-<a id="view.STYLE_LINENUMBER"></a>
-#### `view.STYLE_LINENUMBER` 
-
-
-
-<a id="view.STYLE_MAX"></a>
-#### `view.STYLE_MAX` 
-
-
-
-<a id="view.TD_LONGARROW"></a>
-#### `view.TD_LONGARROW` 
-
-An arrow that stretches until the tabstop.
-
-<a id="view.TD_STRIKEOUT"></a>
-#### `view.TD_STRIKEOUT` 
-
-A horizontal line that stretches until the tabstop.
-
-<a id="view.TIME_FOREVER"></a>
-#### `view.TIME_FOREVER` 
-
-
-
-<a id="view.UPDATE_H_SCROLL"></a>
-#### `view.UPDATE_H_SCROLL` 
-
-View has scrolled horizontally.
-
-<a id="view.UPDATE_NONE"></a>
-#### `view.UPDATE_NONE` 
-
-
-
-<a id="view.UPDATE_V_SCROLL"></a>
-#### `view.UPDATE_V_SCROLL` 
-
-View has scrolled vertically.
-
-<a id="view.VISIBLE_SLOP"></a>
-#### `view.VISIBLE_SLOP` 
-
-
-
-<a id="view.VISIBLE_STRICT"></a>
-#### `view.VISIBLE_STRICT` 
-
-
-
-<a id="view.WRAPINDENT_DEEPINDENT"></a>
-#### `view.WRAPINDENT_DEEPINDENT` 
-
-Indent wrapped lines two more levels than the level of the first line.
-
-<a id="view.WRAPINDENT_FIXED"></a>
-#### `view.WRAPINDENT_FIXED` 
-
-Indent wrapped lines by [`view.wrap_start_indent`](#view.wrap_start_indent).
-
-<a id="view.WRAPINDENT_INDENT"></a>
-#### `view.WRAPINDENT_INDENT` 
-
-Indent wrapped lines one more level than the level of the first line.
-
-<a id="view.WRAPINDENT_SAME"></a>
-#### `view.WRAPINDENT_SAME` 
-
-Indent wrapped lines the same amount as the first line.
-
-<a id="view.WRAPVISUALFLAGLOC_DEFAULT"></a>
-#### `view.WRAPVISUALFLAGLOC_DEFAULT` 
-
-Draw a visual flag near the view's right margin.
-
-<a id="view.WRAPVISUALFLAGLOC_END_BY_TEXT"></a>
-#### `view.WRAPVISUALFLAGLOC_END_BY_TEXT` 
-
-Draw a visual flag near text at the end of a wrapped line.
-
-<a id="view.WRAPVISUALFLAGLOC_START_BY_TEXT"></a>
-#### `view.WRAPVISUALFLAGLOC_START_BY_TEXT` 
-
-Draw a visual flag near text at the beginning of a subline.
-
-<a id="view.WRAPVISUALFLAG_END"></a>
-#### `view.WRAPVISUALFLAG_END` 
-
-Show a visual flag at the end of a wrapped line.
-
-<a id="view.WRAPVISUALFLAG_MARGIN"></a>
-#### `view.WRAPVISUALFLAG_MARGIN` 
-
-Show a visual flag in the sub-line's line number margin.
-
-<a id="view.WRAPVISUALFLAG_NONE"></a>
-#### `view.WRAPVISUALFLAG_NONE` 
-
-No visual flags.
-
-<a id="view.WRAPVISUALFLAG_START"></a>
-#### `view.WRAPVISUALFLAG_START` 
-
-Show a visual flag at the beginning of a sub-line.
-
-<a id="view.WRAP_CHAR"></a>
-#### `view.WRAP_CHAR` 
-
-Wrap long lines at character boundaries.
-
-<a id="view.WRAP_NONE"></a>
-#### `view.WRAP_NONE` 
-
-Long lines are not wrapped.
-
-<a id="view.WRAP_WHITESPACE"></a>
-#### `view.WRAP_WHITESPACE` 
-
-Wrap long lines at word boundaries (ignoring style boundaries).
-
-<a id="view.WRAP_WORD"></a>
-#### `view.WRAP_WORD` 
-
-Wrap long lines at word (and style) boundaries.
-
-<a id="view.WS_INVISIBLE"></a>
-#### `view.WS_INVISIBLE` 
-
-Whitespace is invisible.
-
-<a id="view.WS_VISIBLEAFTERINDENT"></a>
-#### `view.WS_VISIBLEAFTERINDENT` 
-
-Display only non-indentation spaces and tabs as dots and arrows.
-
-<a id="view.WS_VISIBLEALWAYS"></a>
-#### `view.WS_VISIBLEALWAYS` 
-
-Display all space characters as dots and tab characters as arrows.
-
-<a id="view.WS_VISIBLEONLYININDENT"></a>
-#### `view.WS_VISIBLEONLYININDENT` 
-
-Display only indentation spaces and tabs as dots and arrows.
 
 <a id="view.additional_carets_blink"></a>
 #### `view.additional_carets_blink` 

@@ -213,7 +213,8 @@ events.connect(events.KEYPRESS, function(key)
 end)
 
 ---
--- Map of key bindings to commands, with language-specific key tables assigned to a lexer name key.
+-- Map of [key bindings](#keys) to commands, with language-specific key tables assigned to a
+-- lexer name key.
 -- @table _G.keys
 
 for _, name in ipairs(lexer.names()) do M[name] = {} end

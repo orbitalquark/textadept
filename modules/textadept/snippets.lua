@@ -102,8 +102,8 @@ local INDIC_SNIPPET = _SCINTILLA.new_indic_number()
 local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.new_indic_number()
 
 ---
--- Map of snippet triggers with their snippet text or functions that return such text, with
--- language-specific snippets tables assigned to a lexer name key.
+-- Map of [snippet](#textadept.snippets) triggers with their snippet text or functions that
+-- return such text, with language-specific snippets tables assigned to a lexer name key.
 _G.snippets = {}
 for _, name in ipairs(lexer.names()) do snippets[name] = {} end
 

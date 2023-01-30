@@ -622,11 +622,13 @@ function M.autocomplete(name)
   return buffer:auto_c_active() -- completions may not be valid
 end
 
--- Returns for the word part behind the caret a list of whole word completions constructed from
--- the current buffer or all open buffers (depending on `M.autocomplete_all_words`).
+---
+-- Returns for the word part behind the caret a list of whole word completions constructed from the
+-- current buffer or all open buffers (depending on `textadept.editing.autocomplete_all_words`).
 -- If `buffer.auto_c_ignore_case` is `true`, completions are not case-sensitive.
 -- @see buffer.word_chars
 -- @see autocomplete
+-- @function _G.textadept.editing.autocompleters.word
 M.autocompleters.word = function()
   local list, matches = {}, {}
   local s = buffer:word_start_position(buffer.current_pos, true)

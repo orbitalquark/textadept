@@ -111,8 +111,8 @@ local M = {}
 -- Emitted when clicking on a calltip.
 -- Arguments:
 --
---   - *position*: `1` if the up arrow was clicked, 2 if the down arrow was clicked, and
---     0 otherwise.
+--   - *position*: `1` if the up arrow was clicked, `2` if the down arrow was clicked, and
+--     `0` otherwise.
 -- @field CALL_TIP_CLICK
 
 ---
