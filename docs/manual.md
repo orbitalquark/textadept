@@ -444,7 +444,7 @@ a view brings up a configurable context menu that is defined by [`textadept.menu
 Split views can be dynamically resized by clicking and dragging on the splitter bar that
 separates them. The following key bindings apply for split views:
 
-a* Split a view horizontally into top and bottom views via `Ctrl+Alt+_` on Windows and Linux,
+* Split a view horizontally into top and bottom views via `Ctrl+Alt+_` on Windows and Linux,
   `^⌘_` on macOS, and `M-_` in the terminal version.
 * Split a view vertically into side-by-side views via `Ctrl+Alt+|` on Windows and Linux,
   `^⌘|` on macOS, and `M-|` in the terminal version.
