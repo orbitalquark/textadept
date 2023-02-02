@@ -21,8 +21,10 @@ Bugfixes:
 
 * Fixed auto-pair removal bug when backspacing over an auto-paired character.
 * Fixed directory filters that contain directories to include.
+* `textadept.editing.autocomplete()` should return `false` if no completions are displayed.
 * Qt version: ensure the given directory is selected in Linux's directory selection dialog.
 * Terminal version: fixed spawning processes on Linux and macOS.
+* Terminal version: synchronize paragraph up/down extend selection key binding with GUI version.
 * Scintilla: fixed scroll position update after `view:vertical_center_caret()`.
 * Scintilla: prevent autocompletion of lists created during `events.CHAR_ADDED`.
 * LSP: fixed diagnostic display.
@@ -54,15 +56,23 @@ Changes:
 * Added buffer representation argment to `events.BUFFER_DELETED`.
 * Switched documentation format to [LDoc][] from LuaDoc.
 * Added `-L` and `--lua` command line option for running Textadept as a standalone Lua interpreter.
+* Scroll all views showing print/output buffers when printed to.
+* Renamed `_SCINTILLA.next_*` to `_SCINTILLA.new_*`.
+* `textadept.run.run_in_background` applies even if the output buffer is not open.
+* Notify of compile/run/build/test/project command success or failure in statusbar.
+* Autoscroll to the bottom of compile/run/build/test/project output buffer if possible.
+* Removed `ui.command_entry.append_history()` and `ui.command_entry.height`.
+* Use Scintillua as a Lua library instead of as a Scintilla lexer.
+* Removed support for `buffer.property_int` (not `lexer.property_int`).
 * LSP: updated to LSP 3.17.
 * LSP: implemented selection range.
 * LSP: support language-specific completion and signature help trigger characters.
 * LSP: support highlighting active parameters in signature help.
-* LSP: utilize existing "Tools > Complete Symbol" and "Tools > Show Documentation" menus and
-  key bindings.
 * LSP: show relative paths in "Go To ..." dialogs if possible.
 * LSP: send "textDocument/didClose" notifications.
 * LSP: added simple Lua language server and enable it by default for Lua files.
+* LSP: stop logging to a buffer and added "Show Log" menu option instead.
+* LSP: allow for launching servers outside a project.
 
 [migration guide]: manual.html#migrating-from-textadept-11-to-12
 [Textadept 12.0 alpha 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_2/textadept_12.0_alpha_2.win.zip
@@ -788,7 +798,7 @@ Changes:
 
 * New [`textadept.history`][] module.
 * Updated German and Russian translations.
-* Added [`ui.command_entry.append_history()`][] for special command entry modes that need to
+* Added `ui.command_entry.append_history()` for special command entry modes that need to
   manually append history.
 * Implement `\U`, `\L`, `\u`, and `\l` case transformations in regex replacements.
 * Added [`textadept.run.set_arguments()`][].
@@ -805,7 +815,6 @@ Changes:
 [Textadept 11.0 beta 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.0_beta_2/textadept_11.0_beta_2.modules.zip
 [`textadept.history`]: api.html#textadept.history
 [`textadept.run.set_arguments()`]: api.html#textadept.run.set_arguments
-[`ui.command_entry.append_history()`]: api.html#ui.command_entry.append_history
 [CDK]: https://invisible-island.net/cdk/
 [LuaFileSystem]: https://github.com/keplerproject/luafilesystem
 
@@ -2136,7 +2145,7 @@ Changes:
 [terminal version incompatibilities]: manual.html#terminal-version-compatibility
 [`_G.LINUX`]: api.html#LINUX
 [Rectangular selections]: manual.html#rectangular-selection
-[`_SCINTILLA.next_image_type()`]: api.html#_SCINTILLA.next_image_type
+[`_SCINTILLA.next_image_type()`]: api.html#_SCINTILLA.new_image_type
 
 ### 7.7 (01 Oct 2014)
 
@@ -2224,8 +2233,7 @@ Changes:
 * Added reST and YAML lexers and official language modules for each.
 * Use `os.spawn()` for launching help.
 * Renamed `io.set_buffer_encoding()` to [`buffer:set_encoding()`][].
-* Removed Adeptsense in favor of [autocompleter functions][], but kept existing [api file
-  format][].
+* Removed Adeptsense in favor of [autocompleter functions][], but kept existing api file format.
 * Renamed `textadept.editing.autocomplete_word()` to
   [`textadept.editing.autocomplete`][]`('word')`.
 * New [`textadept.editing.AUTOCOMPLETE_ALL`][] field for autocompleting words from all open
@@ -2244,7 +2252,6 @@ Changes:
 
 [`buffer:set_encoding()`]: api.html#buffer.set_encoding
 [autocompleter functions]: api.html#textadept.editing.autocompleters
-[api file format]: api.html#textadept.editing.api_files
 [`textadept.editing.autocomplete`]: api.html#textadept.editing.autocomplete
 [`textadept.editing.AUTOCOMPLETE_ALL`]: api.html#textadept.editing.autocomplete_all_words
 [`textadept.menu.menubar`]: api.html#textadept.menu.menubar
