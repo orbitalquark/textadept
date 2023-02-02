@@ -3807,7 +3807,7 @@ end
 function test_run_run_in_background()
   local run_in_background = textadept.run.run_in_background
   textadept.run.run_in_background = true
-  local filename = file(_HOME .. '/test/modules/textadept/run.lua')
+  local filename = file(_HOME .. '/test/modules/textadept/run/run.lua')
   io.open_file(filename)
   textadept.run.run()
   events.emit(events.KEYPRESS, '\n')
