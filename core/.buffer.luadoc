@@ -1925,6 +1925,7 @@
 --   - position_relative_code_units
 --   - private_lexer_call
 --   - property_expanded
+--   - property_int
 --   - property_names
 --   - property_type
 --   - release_all_extended_styles

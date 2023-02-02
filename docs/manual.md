@@ -1629,6 +1629,7 @@ N/A | Added | [GTK](api.html#GTK), [QT](api.html#QT)
 next_* | Renamed | [new_*][]
 **buffer**||
 [tab_label][] | Changed | Write-only
+property_int | Removed | N/A
 **events**||
 [KEYPRESS][] | Changed | Changed arguments
 [TAB_CLICKED][] | Changed | Changed arguments
