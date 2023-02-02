@@ -100,7 +100,7 @@ events.connect(events.STYLE_NEEDED, function(pos, buffer)
   })
   rawset(lexer, 'fold_level', buffer.fold_level) -- override legacy compatibility
   lexer.line_from_position = function(pos) return line_from_position(buffer, s + pos - 1) end
-  lexer.line_state, buffer.indent_amount = buffer.line_state, buffer.line_indentation
+  lexer.line_state, lexer.indent_amount = buffer.line_state, buffer.line_indentation
 
   -- Invoke the lexer and style text from the returned table of tags.
   buffer:start_styling(s, 0)
