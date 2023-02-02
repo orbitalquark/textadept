@@ -333,7 +333,7 @@ end
 
 function test_locale_use_core()
   local L = load_locale(LOCALE_CONF)
-  local ta_dirs = {'core', 'modules/ansi_c', 'modules/lua', 'modules/textadept'}
+  local ta_dirs = {'core', 'modules/textadept'}
   for _, dir in ipairs(ta_dirs) do
     dir = _HOME .. '/' .. dir
     for filename in lfs.walk(dir, '.lua') do check_localizations(filename, L) end
@@ -5464,7 +5464,7 @@ function test_buffer_view_usage()
   local buffer_props, view_props = load_buffer_view_props()
   local filter = {
     '.lua', '.luadoc', '!/lexers', '!/modules/lsp/doc', '!/modules/lsp/dkjson.lua',
-    '!/modules/lsp/ldoc', '!/modules/lsp/ldoc.lua', '!modules/lsp/pl',
+    '!/modules/lsp/ldoc', '!/modules/lsp/ldoc.lua', '!modules/lsp/pl', '!modules/lsp/logging',
     '!/modules/debugger/lua/mobdebug.lua', '!/modules/debugger/lua/socket.lua',
     '!/modules/debugger/luasocket', '!/scripts', '!/build'
   }
