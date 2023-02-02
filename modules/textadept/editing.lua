@@ -110,7 +110,7 @@ M.autocompleters = {}
 
 -- Update auto_pairs, brace_matches, and typeover_chars based on lexer.
 local function update_language_specific_features()
-  local angles = buffer.property_int['scintillua.angle.braces'] ~= 0
+  local angles = buffer.property['scintillua.angle.braces'] ~= ''
   if M.auto_pairs then M.auto_pairs['<'] = angles and '>' or nil end
   brace_matches, typeover_chars = {}, {} -- clear
   for _, c in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[c] = true end

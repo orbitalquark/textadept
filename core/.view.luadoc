@@ -987,13 +987,8 @@
 -- @table multi_edge_column
 
 ---
--- Map of key-value string pairs used by lexers.
+-- Map of key-value string pairs populated by lexers.
 -- @table property
-
----
--- Map of key-value pairs used by lexers with values interpreted as numbers, or `0` if not
--- found. (Read-only)
--- @table property_int
 
 ---
 -- The modifier key used in combination with a mouse drag in order to create a rectangular
@@ -1434,26 +1429,22 @@
 ---
 -- Whether or not folding is enabled for the lexers that support it.
 -- This option is disabled by default.
--- This is an alias for `view.property['fold'] = '1|0'`.
 -- @field folding
 
 ---
 -- Whether or not to mark as a fold point lines that contain both an ending and starting fold
 -- point. For example, `} else {` would be marked as a fold point.
 -- This option is disabled by default. This is an alias for
--- `view.property['fold.scintillua.on.zero.sum.lines'] = '1|0'`.
 -- @field fold_on_zero_sum_lines
 
 ---
 -- Whether or not blank lines after an ending fold point are included in that fold.
 -- This option is disabled by default.
--- This is an alias for `view.property['fold.scintillua.compact'] = '1|0'`.
 -- @field fold_compact
 
 ---
 -- Whether or not to fold based on indentation level if a lexer does not have a folder.
 -- Some lexers automatically enable this option. It is disabled by default.
--- This is an alias for `view.property['fold.scintillua.by.indentation'] = '1|0'`.
 -- @field fold_by_indentation
 
 ---

@@ -360,7 +360,7 @@
 -- @field overtype
 
 ---
--- Map of key-value string pairs used by lexers.
+-- Map of key-value string pairs populated by lexers.
 -- @table property
 
 ---

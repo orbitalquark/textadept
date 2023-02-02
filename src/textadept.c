@@ -5,7 +5,6 @@
 // External dependency includes.
 #include "lualib.h" // for luaL_openlibs
 #include "lauxlib.h"
-#include "Scintillua.h"
 
 // Library includes.
 #include <errno.h>
@@ -253,14 +252,6 @@ static int call_scintilla(
   int params_needed = 2, nresults = 0;
   bool string_return = false;
   char *text = NULL;
-
-  // Create Scintillua lexer from incoming lexer name string.
-  if (msg == SCI_SETILEXER) {
-    lua_getglobal(L, "_LEXERPATH"), SetLibraryProperty("scintillua.lexers", lua_tostring(L, -1)),
-      lua_pop(L, 1);
-    lparam = (sptr_t)CreateLexer(luaL_checkstring(L, arg)), params_needed = 0;
-    if (!lparam) luaL_error(L, "error creating lexer: %s", GetCreateLexerError());
-  }
 
   // Set wParam and lParam appropriately for Scintilla based on wtype and ltype.
   if (wtype == SLEN && ltype == SSTRING) {
@@ -960,7 +951,11 @@ static void emit_notification(SCNotification *n) {
 
 // Signal for a Scintilla notification.
 static void notified(SciObject *view, int _, SCNotification *n, void *__) {
-  if (view == command_entry) {
+  if (n->nmhdr.code == SCN_STYLENEEDED) {
+    lua_pushdoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0));
+    emit("style_needed", LUA_TNUMBER, n->position + 1, LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX),
+      -1);
+  } else if (view == command_entry) {
     if (n->nmhdr.code == SCN_MODIFIED &&
       (n->modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)))
       emit("command_text_changed", -1);
@@ -1257,7 +1252,8 @@ bool init_textadept(int argc, char **argv) {
 
   setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
   if (!init_lua(argc, argv)) return (close_textadept(), false); // exit_status has been set
-  command_entry = new_scintilla(notified), add_doc(0), dummy_view = new_scintilla(NULL);
+  command_entry = new_scintilla(notified), add_doc(0), dummy_view = new_scintilla(notified);
+  SS(dummy_view, SCI_SETMODEVENTMASK, SC_MOD_NONE, 0);
   initing = true, new_window(create_first_view), run_file("init.lua"), initing = false;
   emit("buffer_new", -1), emit("view_new", -1); // first ones
   lua_pushdoc(lua, SS(command_entry, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");

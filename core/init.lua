@@ -60,15 +60,7 @@ local function text_range(buffer, start_pos, end_pos)
   return text
 end
 
--- Documentation is in core/.buffer.luadoc.
-local function style_of_name(buffer, style_name)
-  style_name = assert_type(style_name, 'string', 2):gsub('_', '.')
-  for i = 1, view.STYLE_MAX do if buffer:name_of_style(i) == style_name then return i end end
-  return view.STYLE_DEFAULT
-end
-
-events.connect(events.BUFFER_NEW,
-  function() buffer.text_range, buffer.style_of_name = text_range, style_of_name end)
+events.connect(events.BUFFER_NEW, function() buffer.text_range = text_range end, 1)
 
 -- A table of style properties that can be concatenated with other tables of properties.
 local style_object = {}

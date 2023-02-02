@@ -39,7 +39,7 @@ setmetatable(ui.dialogs, {
 textadept.file_types = {extensions = lexer.detect_extensions, patterns = lexer.detect_patterns}
 -- LuaFormatter off
 events.connect(events.VIEW_NEW, function() for _, k in ipairs{'colors', 'styles'} do rawset(lexer, k, view[k]) end end)
-setmetatable(lexer, {__newindex = function(_, k, v) if k:find('^fold') then view[k] = v end end})
+setmetatable(lexer, {__newindex = function(t, k, v) if k:find('^fold') then view[k] = v else rawset(t, k, v) end end})
 textadept.editing.INDIC_BRACEMATCH = _SCINTILLA.new_indic_number()
 textadept.editing.brace_matches, textadept.editing.api_files = {}, setmetatable({}, {__index = function(t, k) t[k] = {} return t[k] end })
 -- LuaFormatter on
@@ -93,7 +93,7 @@ events.connect(events.VIEW_NEW, function() view:set_theme(theme, env) end)
 -- `events.VIEW_NEW` event to update themes, colors, and styles.
 events.connect(events.RESET_AFTER, function()
   for _, buffer in ipairs(_BUFFERS) do
-    buffer.i_lexer = buffer._lexer or 'text'
+    buffer:set_lexer(buffer.lexer._name)
     buffer:colorize(1, 1) -- signal re-lexing is needed
   end
   for i = 1, #_VIEWS do

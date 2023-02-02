@@ -3447,7 +3447,7 @@ function test_menu_menu_functions()
   textadept.menu.menubar[_L['View']][_L['Shrink View']][2]()
   assert_equal(view.size, size)
   view:unsplit()
-  view.property['fold'] = '1' -- TODO: view.folding = true
+  view.folding = true -- view.property['fold'] = '1'
   buffer:set_text('if foo then\n  bar\nend')
   buffer:set_lexer('lua')
   buffer:colorize(1, -1)

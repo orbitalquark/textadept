@@ -217,15 +217,6 @@ target_sources(lexilla PRIVATE ${lex_src})
 target_include_directories(lexilla PUBLIC ${lex_dir}/lexlib PRIVATE ${lex_dir}/include)
 target_link_libraries(lexilla PRIVATE scintilla)
 
-# Scintillua.
-add_library(scintillua STATIC)
-set(scilua_dir ${scintillua_SOURCE_DIR})
-target_sources(scintillua PRIVATE ${scilua_dir}/Scintillua.cxx)
-target_include_directories(scintillua PUBLIC ${scilua_dir})
-target_compile_definitions(scintillua PRIVATE NO_DLL)
-target_compile_options(scintillua PRIVATE $<IF:$<NOT:$<BOOL:${WIN32}>>,-pedantic -Wall,/W4 /EHsc>)
-target_link_libraries(scintillua PRIVATE scintilla lexilla lua)
-
 # Lua.
 add_library(lua STATIC)
 set(lua_dir ${lua_SOURCE_DIR})
@@ -310,7 +301,7 @@ set(ta_compile_opts
   $<IF:$<NOT:$<BOOL:${WIN32}>>,-pedantic -Wall -Wextra -Wno-unused-parameter
     -Wno-missing-field-initializers,/W4>
   $<$<BOOL:${PROFILE}>:-pg -fprofile-arcs -ftest-coverage>)
-set(ta_link_libs scintilla scintillua lua lpeg lfs
+set(ta_link_libs scintilla lua lpeg lfs
   $<$<OR:$<BOOL:${WIN32}>,$<BOOL:${APPLE}>>:iconv>
   $<$<BOOL:${PROFILE}>:gcov>)
 
