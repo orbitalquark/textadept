@@ -88,6 +88,11 @@ end
 -- if necessary.
 events.connect(events.STYLE_NEEDED, function(pos, buffer)
   local s = buffer:position_from_line(buffer:line_from_position(buffer.end_styled))
+  if not rawget(buffer, 'lexer') then
+    buffer:start_styling(s, 0)
+    buffer:set_styling(pos - s, view.STYLE_DEFAULT)
+    return
+  end
   local style_at, ws = buffer.style_at, buffer._ws
   local init_style = s > 1 and style_at[s - 1] or view.STYLE_DEFAULT
   while s > 1 and style_at[s - 1] == init_style do s = s - 1 end
@@ -104,8 +109,7 @@ events.connect(events.STYLE_NEEDED, function(pos, buffer)
 
   -- Invoke the lexer and style text from the returned table of tags.
   buffer:start_styling(s, 0)
-  local ok, styles = xpcall(lexer.lex, debug.traceback, buffer.lexer, buffer:text_range(s, pos),
-    init_style)
+  local ok, styles = pcall(lexer.lex, buffer.lexer, buffer:text_range(s, pos), init_style)
   if not ok then
     buffer:set_styling(pos - s, view.STYLE_DEFAULT)
     events.emit(events.ERROR, styles)
