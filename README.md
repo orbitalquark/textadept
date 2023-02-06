@@ -17,15 +17,15 @@ terminal emulator.
 
 ## Features
 
-* Fast and minimalist.
-* Cross platform, and with a terminal version, too.
-* Self-contained executable -- no installation necessary.
-* Support for over 100 programming languages.
-* Unlimited split views.
-* Can be entirely keyboard driven.
-* Powerful snippets and key commands.
-* Code autocompletion and documentation lookup.
-* Remarkably extensible, with a heavily documented Application Programming Interface (API).
+- Fast and minimalist.
+- Cross platform, and with a terminal version, too.
+- Self-contained executable -- no installation necessary.
+- Support for over 100 programming languages.
+- Unlimited split views.
+- Can be entirely keyboard driven.
+- Powerful snippets and key commands.
+- Code autocompletion and documentation lookup.
+- Remarkably extensible, with a heavily documented Application Programming Interface (API).
 
 ![Textadept](https://orbitalquark.github.io/textadept/images/splitviews.png)
 
@@ -73,12 +73,12 @@ binaries into Textadept's root directory and run it from there.
 
 General Requirements:
 
-* [CMake][] 3.16+
-* A C and C++ compiler, such as:
+- [CMake][] 3.16+
+- A C and C++ compiler, such as:
   - [GNU C compiler][] (*gcc*) 7.1+
   - [Microsoft Visual Studio][] 2019+
   - [Clang][] 9+
-* A UI toolkit (at least one of the following):
+- A UI toolkit (at least one of the following):
   - [Qt][] 5 development libraries for the GUI version
   - [GTK][] 3 development libraries for the GUI version (GTK 2.24 is also supported)
   - [ncurses][](w) development libraries (wide character support) for the terminal version
@@ -99,12 +99,12 @@ For example:
 
 CMake boolean variables that affect the build:
 
-* `NIGHTLY`: Whether or not to build Textadept with bleeding-edge dependencies (i.e. the nightly
+- `NIGHTLY`: Whether or not to build Textadept with bleeding-edge dependencies (i.e. the nightly
    version). Defaults to off.
-* `QT`: Unless off, builds the Qt version of Textadept. The default is auto-detected.
-* `GTK3`: Unless off, builds the Gtk 3 version of Textadept. The default is auto-detected.
-* `GTK2`: Unless off, builds the Gtk 2 version of Textadept. The default is auto-detected.
-* `CURSES`: Unless off, builds the Curses (terminal) version of Textadept. The default is
+- `QT`: Unless off, builds the Qt version of Textadept. The default is auto-detected.
+- `GTK3`: Unless off, builds the Gtk 3 version of Textadept. The default is auto-detected.
+- `GTK2`: Unless off, builds the Gtk 2 version of Textadept. The default is auto-detected.
+- `CURSES`: Unless off, builds the Curses (terminal) version of Textadept. The default is
    auto-detected.
 
 For more information on compiling Textadept, please see the [manual][].

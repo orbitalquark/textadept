@@ -56,8 +56,8 @@ syntax of new programming languages are possible. The editor's potential appears
 
 This manual uses the following typographical conventions:
 
-* *Italic*: Used for filenames.
-* `Constant width`: Used for environment variables, command line arguments, shell code, key
+- *Italic*: Used for filenames.
+- `Constant width`: Used for environment variables, command line arguments, shell code, key
   bindings, and Lua code, including functions, tables, and variables.
 
 Key bindings use the following modifier key representations:
@@ -71,13 +71,13 @@ Shift | `Shift` | `⇧` | `S-`
 
 This manual uses the following terminology:
 
-* *buffer*: An object that contains editable text. Some other applications call this object a
+- *buffer*: An object that contains editable text. Some other applications call this object a
   document or file.
-* *view*: An object that displays a single buffer. Some other applications call this object
+- *view*: An object that displays a single buffer. Some other applications call this object
   a window.
-* *caret*: The visual that represents the text insertion point. It is usually a blinking line.
-* *module*: A package of Lua code that provides functionality for Textadept.
-* *lexer*: A Lua module that highlights the syntax of source code written in a particular
+- *caret*: The visual that represents the text insertion point. It is usually a blinking line.
+- *module*: A package of Lua code that provides functionality for Textadept.
+- *lexer*: A Lua module that highlights the syntax of source code written in a particular
   programming language. Textadept refers to a programming language by its lexer's name.
 
 Finally, this manual assumes you are familiar enough with the [Lua][] programming language that
@@ -453,19 +453,19 @@ a view brings up a configurable context menu that is defined by [`textadept.menu
 Split views can be dynamically resized by clicking and dragging on the splitter bar that
 separates them. The following key bindings apply for split views:
 
-* Split a view horizontally into top and bottom views via `Ctrl+Alt+_` on Windows and Linux,
+-  Split a view horizontally into top and bottom views via `Ctrl+Alt+_` on Windows and Linux,
   `^⌘_` on macOS, and `M-_` in the terminal version.
-* Split a view vertically into side-by-side views via `Ctrl+Alt+|` on Windows and Linux,
+-  Split a view vertically into side-by-side views via `Ctrl+Alt+|` on Windows and Linux,
   `^⌘|` on macOS, and `M-|` in the terminal version.
-* Cycle to the next split view via `Ctrl+Alt+PgDn` on Windows and Linux, `^⌘⇟` on macOS,
+-  Cycle to the next split view via `Ctrl+Alt+PgDn` on Windows and Linux, `^⌘⇟` on macOS,
   and `M-^PgDn` in the terminal version.
-* Cycle to the previous split view via `Ctrl+Alt+PgUp` on Windows and Linux, `^⌘⇞` on macOS,
+-  Cycle to the previous split view via `Ctrl+Alt+PgUp` on Windows and Linux, `^⌘⇞` on macOS,
   and `M-^PgUp` in the terminal version.
-* Grow or shrink a view via `Ctrl+Alt++` or `Ctrl+Alt+-`, respectively, on Windows and Linux;
+-  Grow or shrink a view via `Ctrl+Alt++` or `Ctrl+Alt+-`, respectively, on Windows and Linux;
   `^⌘+` or `^⌘-`, respectively, on macOS; and `M-+` or `M--` in the terminal version.
-* Unsplit the current view by removing its complement view(s) via `Ctrl+Alt+W` on Windows and
+-  Unsplit the current view by removing its complement view(s) via `Ctrl+Alt+W` on Windows and
   Linux, `^⌘W` on macOS, and `M-W` in the terminal version.
-* Unsplit the current view by removing all other views via `Ctrl+Alt+Shift+W` on Windows and
+-  Unsplit the current view by removing all other views via `Ctrl+Alt+Shift+W` on Windows and
   Linux, `^⌘⇧W` on macOS, and `M-S-W` in the terminal version.
 
 **Note:** depending on the split sequence, the order when cycling between views may not be linear.
@@ -495,9 +495,9 @@ can automatically highlight all instances of found text in the current buffer by
 
 While the pane is open in the GUI, the following key bindings apply:
 
-* Perform "Find Next" and "Find Prev" in the "Find" entry via `Enter` and `Shift+Enter`,
+- Perform "Find Next" and "Find Prev" in the "Find" entry via `Enter` and `Shift+Enter`,
   respectively.
-* Perform "Replace" and "Replace All" in the "Replace" entry via `Enter` and `Shift+Enter`,
+- Perform "Replace" and "Replace All" in the "Replace" entry via `Enter` and `Shift+Enter`,
   respectively. When the "Regex" find option is enabled,
 
   + `\`*`n`* in the "Replace" entry represents the *n*th captured matching region's text, and
@@ -507,22 +507,22 @@ While the pane is open in the GUI, the following key bindings apply:
   + `\u` and `\l` converts the next character to uppercase and lowercase, respectively. These
     may appear within `\U` and `\L` constructs.
 
-* For at least the English locale on Windows and Linux, toggle the find options using their
+- For at least the English locale on Windows and Linux, toggle the find options using their
   button mnemonics: `Alt+M`, `Alt+W`, `Alt+X`, `Alt+I`. macOS does not support mnemonics.
-* Cycle through find/replace history via `Up` and `Down` on Windows, Linux, and the terminal
+- Cycle through find/replace history via `Up` and `Down` on Windows, Linux, and the terminal
   version, and `⇡` and `⇣` on macOS.
-* Hide the pane via `Esc`.
+- Hide the pane via `Esc`.
 
 While the pane is open in the terminal version, the following key bindings apply:
 
-* Switch between "Find" and "Replace" entries via `Down` and `Up`.
-* Toggle between "Find Next" and "Find Prev" in the "Find" entry via `Tab`.
-* Toggle between "Replace" and "Replace All" in the "Replace" entry via `Tab`.
-* Perform the highlighted find/replace action via `Enter`.
-* Toggle the find options via `F1`, `F2`, `F3`, and `F4`.
-* Cycle through find/replace history via `^P` and `^N`.
-* Erase the contents of the focused entry via `^U`.
-* Hide the pane via `Esc`.
+- Switch between "Find" and "Replace" entries via `Down` and `Up`.
+- Toggle between "Find Next" and "Find Prev" in the "Find" entry via `Tab`.
+- Toggle between "Replace" and "Replace All" in the "Replace" entry via `Tab`.
+- Perform the highlighted find/replace action via `Enter`.
+- Toggle the find options via `F1`, `F2`, `F3`, and `F4`.
+- Cycle through find/replace history via `^P` and `^N`.
+- Erase the contents of the focused entry via `^U`.
+- Hide the pane via `Esc`.
 
 **Tip:** by default, "Replace All" replaces all text in the buffer. Selecting text and then
 performing "Replace All" replaces all text in that selection only.
@@ -595,9 +595,9 @@ so be careful.
 
 The following key bindings apply in the Lua command entry:
 
-* Show a documentation popup for the command under or behind the caret via `Ctrl+?` on Windows
+- Show a documentation popup for the command under or behind the caret via `Ctrl+?` on Windows
   and Linux, `⌘?` or `^?` on macOS, and `M-?` or `^?` in the terminal version.
-* Show completion candidates for Lua variables, tables, functions, and fields via `Tab` on
+- Show completion candidates for Lua variables, tables, functions, and fields via `Tab` on
   Windows, Linux, and the terminal version, and `⇥` on macOS. Use the arrow keys to make a
   selection and press `Enter` to insert it.
 
@@ -642,15 +642,15 @@ version of Textadept does not exhibit this limitation.
 The statusbar consists of two sections. The left section displays temporary status messages,
 while the right section shows buffer status information. Buffer status information includes:
 
-* The current line and column number.
-* The lexer language name.
-* The line ending mode, or EOL mode, which is either CRLF ("\r\n") or LF ('\n'). Line endings
+- The current line and column number.
+- The lexer language name.
+- The line ending mode, or EOL mode, which is either CRLF ("\r\n") or LF ('\n'). Line endings
   are the characters that separate lines.
-* The indentation settings, which are a combination of an indentation character (either a tab
+- The indentation settings, which are a combination of an indentation character (either a tab
   or a space) and an indentation size (a measure of how many space characters are in one level
   of indentation). If tabs are used for indentation, then the indentation size is the number
   of space characters to draw for each tab character.
-* The buffer's encoding. File and buffer encoding specifies how to interpret text bytes for
+- The buffer's encoding. File and buffer encoding specifies how to interpret text bytes for
   display.
 
 ![Document Statusbar](images/docstatusbar.png)
@@ -661,23 +661,23 @@ while the right section shows buffer status information. Buffer status informati
 
 Textadept allows you to open files using a variety of methods:
 
-* Open, using a standard file chooser dialog, one or more files in a single directory via
+- Open, using a standard file chooser dialog, one or more files in a single directory via
   `Ctrl+O` on Windows and Linux, `⌘O` on macOS, and `^O` in the terminal version.
-* Open, using a quick open dialog, one or more files in the current project or Textadept's
+- Open, using a quick open dialog, one or more files in the current project or Textadept's
   current working directory via `Ctrl+Shift+O` on Windows and Linux, `^⌘O` on macOS, and
   `M-^O` in the terminal version. Typing part of any filename filters the list, with spaces
   being wildcards. The arrow keys move the selection up and down. Holding down `Shift` while
   pressing the arrow keys selects multiple files, as does holding down `Ctrl` while clicking.
   Pressing `Enter` or selecting `OK` opens all selected files. Double-clicking on a single file
   opens it. (The terminal requires pressing `Enter`.)
-* Open, using a quick open dialog, one or more files in the directory of the currently opened
+- Open, using a quick open dialog, one or more files in the directory of the currently opened
   file via the "Tools > Quick Open > Quickly Open Current Directory" menu item.
-* Open a file by dragging it from a file manager and dropping it into one of Textadept's views.
-* Open a recently opened file from a list of recent files via the "File > Open Recent..." menu
+- Open a file by dragging it from a file manager and dropping it into one of Textadept's views.
+- Open a recently opened file from a list of recent files via the "File > Open Recent..." menu
   item.
-* Open, using a quick open dialog, one or more files in *~/.textadept/* via `Ctrl+Alt+U`
+- Open, using a quick open dialog, one or more files in *~/.textadept/* via `Ctrl+Alt+U`
   on Windows and Linux, `⌘⇧U` on macOS, and `M-U` in the terminal version.
-* Reopen the currently opened file, discarding any unsaved changes, via the "File > Reload"
+- Reopen the currently opened file, discarding any unsaved changes, via the "File > Reload"
   menu item. Textadept will prompt you to reload a file if the editor detects it has been
   modified externally.
 
@@ -839,9 +839,9 @@ Toggle Show Indent Guides" menu item.
 The GUI version of Textadept also allows you to temporarily increase or decrease the font size
 in the current view. The following key bindings apply for this feature:
 
-* Increase the view's font size via `Ctrl+=` on Windows and Linux, and `⌘=` on macOS.
-* Decrease the view's font size via `Ctrl+-` on Windows and Linux, and `⌘-` on macOS.
-* Reset the view's font size to its normal value via `Ctrl+0` on Windows and Linux, and `⌘0`
+- Increase the view's font size via `Ctrl+=` on Windows and Linux, and `⌘=` on macOS.
+- Decrease the view's font size via `Ctrl+-` on Windows and Linux, and `⌘-` on macOS.
+- Reset the view's font size to its normal value via `Ctrl+0` on Windows and Linux, and `⌘0`
   on macOS.
 
 ---
@@ -949,46 +949,46 @@ Textadept has three kinds of text selections: contiguous, multiple, and rectangu
 
 You can create contiguous selections as follows:
 
-* Make an arbitrary selection anchored at the caret by pressing the arrow keys, home/end, page
+- Make an arbitrary selection anchored at the caret by pressing the arrow keys, home/end, page
   up/down, etc. while holding down the `Shift` key, or by simply clicking and dragging the mouse.
-* The terminal version can also make an arbitrary selection by entering selection mode via `^^`
+- The terminal version can also make an arbitrary selection by entering selection mode via `^^`
   and using normal movement keys. This feature is available since some terminals do not recognize
   `Shift` with movement keys. While in selection mode, swap the start and end positions via
   `^]` in order to alter the selection from its opposite side. Exit selection mode by typing
   text, deleting text, performing an action that changes text, or by pressing `^^` again.
-* Select the current word via `Ctrl+D` on Windows and Linux, `⌘D` on macOS, and `^D` in the
+- Select the current word via `Ctrl+D` on Windows and Linux, `⌘D` on macOS, and `^D` in the
   terminal version. Repeated use of this action selects subsequent occurrences of that word as
   additional (multiple) selections. Undo the most recent multiple selection via `Ctrl+Alt+D`,
   `^⌘D`, or `M-D`.
-* Select the current line via `Ctrl+L` on Windows and Linux, `⌘L` on macOS, and `^L` in the
+- Select the current line via `Ctrl+L` on Windows and Linux, `⌘L` on macOS, and `^L` in the
   terminal version.
-* Double click to select a word, and triple-click to select a line.
-* Click and optionally drag within the line number margin to select whole lines.
-* Select the current paragraph via `Ctrl+Shift+P` on Windows and Linux, `⌘⇧P` on macOS,
+- Double click to select a word, and triple-click to select a line.
+- Click and optionally drag within the line number margin to select whole lines.
+- Select the current paragraph via `Ctrl+Shift+P` on Windows and Linux, `⌘⇧P` on macOS,
   and `M-^P` in the terminal version. Paragraphs are surrounded by one or more blank lines.
-* Select all buffer text via `Ctrl+A` on Windows and Linux, `⌘A` on macOS, and `^A` in the
+- Select all buffer text via `Ctrl+A` on Windows and Linux, `⌘A` on macOS, and `^A` in the
   terminal version.
-* Select text between matching delimiters (parentheses, brackets, braces, single quotes,
+- Select text between matching delimiters (parentheses, brackets, braces, single quotes,
   double-quotes, back quotes, and HTML/XML tag characters) via `Ctrl+Shift+M` on Windows and
   Linux, `⌘⇧M` on macOS, and `M-^M` in the terminal version. Repeated use of this action
   toggles the selection of the delimiters themselves.
 
 You can create multiple selections as follows:
 
-* Add another selection by holding down `Ctrl`, clicking, and optionally dragging the mouse
+- Add another selection by holding down `Ctrl`, clicking, and optionally dragging the mouse
   over a range of text.
-* Select as an additional selection the next occurrence of the current word via `Ctrl+D`
+- Select as an additional selection the next occurrence of the current word via `Ctrl+D`
   on Windows and Linux, `⌘D` on macOS, and `^D` in the terminal version.
 
 Textadept mirrors any typed or pasted text at each selection.
 
 You can create a rectangular selection as follows:
 
-* Press the arrow keys, home/end, or page up/down, while holding down `Alt+Shift` on Windows
+- Press the arrow keys, home/end, or page up/down, while holding down `Alt+Shift` on Windows
   and Linux, `^⇧` on macOS, and `M-S-` in the terminal version.
-* Click and drag the mouse while holding down the `Alt` key on Windows and Linux, and `⌥`
+- Click and drag the mouse while holding down the `Alt` key on Windows and Linux, and `⌥`
   on macOS.
-* Click and drag the mouse without holding down any modifiers (thus making a normal, multi-line
+- Click and drag the mouse without holding down any modifiers (thus making a normal, multi-line
   selection), press and hold down the `Alt` key on Windows and Linux, `⌥` on macOS, and `M-`
   in the terminal version, and then continue dragging the mouse. This feature is available
   because some window managers in Linux consume `Alt+Shift` + arrow keys and `Alt` + mouse drag.
@@ -1011,21 +1011,21 @@ after copying a block of text.
 
 Textadept can apply many different transformations to the current word, line, and selected text.
 
-* Enclose the current word or selected text within delimiters like parentheses, braces, brackets,
+- Enclose the current word or selected text within delimiters like parentheses, braces, brackets,
   single quotes, double quotes, or HTML/XML tags using the key bindings listed in the "Edit >
   Selection" submenu.
-* Convert the selected text or current word to upper or lower case via `Ctrl+Shift+U` or
+- Convert the selected text or current word to upper or lower case via `Ctrl+Shift+U` or
   `Ctrl+U`, respectively, on Windows and Linux; `⌘U` or `⌘⇧U`, respectively, on macOS;
   and `M-^U` or `M-U` in the terminal version.
-* Increase or decrease the indentation of the selected lines via `Tab` or `Shift+Tab`,
+- Increase or decrease the indentation of the selected lines via `Tab` or `Shift+Tab`,
   respectively, on Windows and Linux; `⇥` or `⇧⇥`, respectively on macOS; and `Tab` or
   `S-Tab` in the terminal version. You do not have to select whole lines; selecting any part
   of a line is sufficient.
-* Move the current or selected line(s) up or down via `Ctrl+Alt+Shift+Up` or
+- Move the current or selected line(s) up or down via `Ctrl+Alt+Shift+Up` or
   `Ctrl+Alt+Shift+Down`, respectively, on Windows and Linux; and `^⌘⇧⇡` or `^⌘⇧⇣`,
   respectively, on macOS. You do not have to select whole lines; selecting any part of a line
   is sufficient.
-* Comment out code on the current or selected line(s) via `Ctrl+/` on Windows and Linux, `⌘/`
+- Comment out code on the current or selected line(s) via `Ctrl+/` on Windows and Linux, `⌘/`
   on macOS, and `^?` or `M-/` in the terminal version. You do not have to select whole lines;
   selecting any part of a line is sufficient.
 
@@ -1058,15 +1058,15 @@ added to as buffer text is inserted and deleted. Bookmarks show up in the left-h
 after line numbers. Textadept allows you to bookmark lines and jump back to them later. The
 following key bindings apply for bookmarks:
 
-* Toggle a bookmark on the current line via `Ctrl+K` on Windows and Linux, `⌘K` on macOS,
+- Toggle a bookmark on the current line via `Ctrl+K` on Windows and Linux, `⌘K` on macOS,
   and `^K` in the terminal version.
-* Go to the next bookmarked line via `Ctrl+Alt+K` on Windows and Linux, `^⌘K` on macOS, and
+- Go to the next bookmarked line via `Ctrl+Alt+K` on Windows and Linux, `^⌘K` on macOS, and
   `M-K` in the terminal version.
-* Go to the previously bookmarked line via `Ctrl+Alt+Shift+K` on Windows and Linux, `^⌘⇧K`
+- Go to the previously bookmarked line via `Ctrl+Alt+Shift+K` on Windows and Linux, `^⌘⇧K`
   on macOS, and `M-S-K` in the terminal version.
-* Go to the bookmarked line selected from a list via `Ctrl+Shift+K` on Windows and Linux,
+- Go to the bookmarked line selected from a list via `Ctrl+Shift+K` on Windows and Linux,
   `⌘⇧K` on macOS, and `M-^K` in the terminal version.
-* Clear all bookmarks in the current buffer via the "Tools > Bookmarks > Clear Bookmarks"
+- Clear all bookmarks in the current buffer via the "Tools > Bookmarks > Clear Bookmarks"
   menu item.
 
 #### Macros
@@ -1074,9 +1074,9 @@ following key bindings apply for bookmarks:
 Macros allow you to quickly record a series of edits and play them back without having to write
 a custom Lua script. The following key bindings apply for macros:
 
-* Start and stop recording a macro via `Alt+,` on Windows and Linux, `^,` on macOS, and `M-,`
+- Start and stop recording a macro via `Alt+,` on Windows and Linux, `^,` on macOS, and `M-,`
   in the terminal version. The status bar will display when a macro starts and stops recording.
-* Play back the most recently recorded macro via `Alt+.` on Windows and Linux, `^.` on macOS,
+- Play back the most recently recorded macro via `Alt+.` on Windows and Linux, `^.` on macOS,
   and `M-.` in the terminal version.
 
 You can use the "Tools > Macros" menu to save the most recently recorded macro to a file,
@@ -1101,24 +1101,24 @@ trigger word. The [snippets documentation][] describes snippets and their conten
 
 The following key bindings apply for snippets:
 
-* Insert a snippet from a list of available snippets via the "Tools > Snippets > Insert
+- Insert a snippet from a list of available snippets via the "Tools > Snippets > Insert
   Snippet..." menu item. Typing part of a snippet trigger in the dialog filters the list, with
   spaces being wildcards. The arrow keys move the selection up and down. Pressing `Enter`,
   selecting `OK`, or double-clicking on a snippet inserts it into the current buffer. (The
   terminal requires pressing `Enter`.)
-* Show completion candidates for a partially-typed snippet trigger word via the "Tools > Snippets >
+- Show completion candidates for a partially-typed snippet trigger word via the "Tools > Snippets >
   Complete Trigger Word" menu item. Continuing to type changes the suggested completion. Use the
   arrow keys to navigate within the list and press `Enter` to insert the rest of the trigger word.
-* Insert a snippet based on the trigger word behind the caret via `Tab` on Windows, Linux,
+- Insert a snippet based on the trigger word behind the caret via `Tab` on Windows, Linux,
   and in the terminal version, and `⇥` on macOS. You can insert another snippet within an
   active snippet. A previously active snippet will pick up where it left off after a nested
   snippet finishes.
-* Navigate to the next placeholder in the current snippet via `Tab` on Windows, Linux, and in
+- Navigate to the next placeholder in the current snippet via `Tab` on Windows, Linux, and in
   the terminal version, and `⇥` on macOS.
-* Navigate to the previous placeholder in the current snippet via `Shift+Tab` on Windows and Linux,
+- Navigate to the previous placeholder in the current snippet via `Shift+Tab` on Windows and Linux,
   `⇧⇥` on macOS, and `S-Tab` in the terminal version. If there is no previous placeholder,
   the current snippet is canceled.
-* Cancel the current snippet via `Esc`.
+- Cancel the current snippet via `Esc`.
 
 [`snippets`]: api.html#_G.snippets
 [snippets documentation]: api.html#textadept.snippets
@@ -1167,23 +1167,23 @@ jumps to its source.
 The following key bindings apply for compiling and running source files, and for building
 projects and running tests and project commands:
 
-* Compile the current file via `Ctrl+Shift+C` on Windows and Linux, `⌘⇧C` on macOS, and
+- Compile the current file via `Ctrl+Shift+C` on Windows and Linux, `⌘⇧C` on macOS, and
   `M-^C` in the terminal version.
-* Run the current file via `Ctrl+R` on Windows and Linux, `⌘R` on macOS, and `^R` in the
+- Run the current file via `Ctrl+R` on Windows and Linux, `⌘R` on macOS, and `^R` in the
   terminal version.
-* Build the current project via `Ctrl+Shift+B` on Windows and Linux, `⌘⇧B` on macOS, and
+- Build the current project via `Ctrl+Shift+B` on Windows and Linux, `⌘⇧B` on macOS, and
   `M-^B` in the terminal version.
-* Run tests for the current project via `Ctrl+Shift+T` on Windows and Linux, `⌘⇧T` on macOS,
+- Run tests for the current project via `Ctrl+Shift+T` on Windows and Linux, `⌘⇧T` on macOS,
   and `M-^T` in the terminal version.
-* Run a command for the current project via `Ctrl+Shift+R` on Windows and Linux, `⌘⇧R`
+- Run a command for the current project via `Ctrl+Shift+R` on Windows and Linux, `⌘⇧R`
   on macOS, and `M-^R` in the terminal version.
-* Stop the currently running compile, run, build, or test process via `Ctrl+Shift+X` on Windows
+- Stop the currently running compile, run, build, or test process via `Ctrl+Shift+X` on Windows
   and Linux, `⌘⇧X` on macOS, and `M-^X` in the terminal version.
-* Go to the source of the next recognized warning or error via `Ctrl+Alt+E` on Windows and Linux,
+- Go to the source of the next recognized warning or error via `Ctrl+Alt+E` on Windows and Linux,
   `^⌘E` on macOS, and `M-E` in the terminal version.
-* Go to the source of the previously recognized warning or error via `Ctrl+Alt+Shift+E` on
+- Go to the source of the previously recognized warning or error via `Ctrl+Alt+Shift+E` on
   Windows and Linux, `^⌘⇧E` on macOS, and `M-S-E` in the terminal version.
-* Go to the source of the recognized warning or error on the current line via `Enter`.
+- Go to the source of the recognized warning or error on the current line via `Enter`.
 
 Prior to running a compile, run, build, or test command, Textadept will prompt you with either:
 
@@ -1269,13 +1269,13 @@ in a directory that contains an *init.lua* file (which is the module's entry poi
 of the module is its file name or directory name, respectively. Here are some basic guidelines
 for developing modules and some things to keep in mind:
 
-* Modules should return a table of functions and fields that are defined locally, rather than
+- Modules should return a table of functions and fields that are defined locally, rather than
   globally. (This is standard Lua practice.) That way, the construct `local foo = require('foo')`
   behaves as expected.
-* Modules should not define global variables, as all modules share the same Lua state.
-* Modules should only be named after lexer languages if they provide language-specific
+- Modules should not define global variables, as all modules share the same Lua state.
+- Modules should only be named after lexer languages if they provide language-specific
   functionality.
-* Modules must not call any functions that create buffers and views (e.g. `ui.print()`,
+- Modules must not call any functions that create buffers and views (e.g. `ui.print()`,
   `io.open_file()`, and `buffer.new()`) at file-level scope. Buffers and views can only be
   created within functions assigned to keys, associated with menu items, or connected to events.
 
@@ -1308,12 +1308,12 @@ and "term", respectively.
 
 A theme consists of a single Lua file, and is typically responsible for:
 
-* Defining the [colors][] and [text display settings][] (styles) used in syntax highlighting.
-* Assigning colors to various UI elements such as the caret, text selections, margin markers,
+- Defining the [colors][] and [text display settings][] (styles) used in syntax highlighting.
+- Assigning colors to various UI elements such as the caret, text selections, margin markers,
   and documentation popups.
-* Specifying what symbols to use for margin markers and how to display visual elements like
+- Specifying what symbols to use for margin markers and how to display visual elements like
   the brace match indicator and snippet placeholders.
-* Specifying the find & replace pane entry font name and size.
+- Specifying the find & replace pane entry font name and size.
 
 [colors]: api.html#view.colors
 [text display settings]: api.html#view.styles
@@ -1380,20 +1380,20 @@ Your *~/.textadept/init.lua* is the entry point to scripting Textadept. In this 
 up custom key bindings, menu items, and event handlers that will perform custom actions. Here
 are some ideas:
 
-* Define custom key bindings and menu items that manipulate buffer contents via the extensive
+- Define custom key bindings and menu items that manipulate buffer contents via the extensive
   [`buffer`][] API.
-* Extend Textadept's File menu with a menu item that prompts for a commit message using an
+- Extend Textadept's File menu with a menu item that prompts for a commit message using an
   [interactive dialog][], and then invokes a [project command][] that commits the current file
   to version control using the provided message.
-* Listen for the `events.FILE_SAVED` [event][] and [spawn][] an asynchronous process that runs
+- Listen for the `events.FILE_SAVED` [event][] and [spawn][] an asynchronous process that runs
   a syntax checker, linter, or formatter on a source file when it is saved.
-* Start searches with the word under the caret by substituting the "Search > Find" menu item
+- Start searches with the word under the caret by substituting the "Search > Find" menu item
   and key binding functions with a custom function that pre-populates `ui.find.find_entry_text`
   before calling `ui.find.focus()` to show the find & replace pane.
-* Auto-save files as you switch between buffers by listening for the `events.BUFFER_BEFORE_SWITCH`
+- Auto-save files as you switch between buffers by listening for the `events.BUFFER_BEFORE_SWITCH`
   event and calling `buffer:save()` for buffers that have a `buffer.filename`. In the GUI version,
   you can even auto-save on a timer via `timeout()`.
-* Overload Textadept's find & replace capabilities to use Lua patterns instead of regex by
+- Overload Textadept's find & replace capabilities to use Lua patterns instead of regex by
   reacting to `events.FIND` and `events.REPLACE` before Textadept can, and then determining
   whether or not the editor's default routines should handle those events.
 
@@ -1423,12 +1423,12 @@ binaries into Textadept's root directory and run it from there.
 
 Requirements:
 
-* [CMake][] 3.16+
-* A C and C++ compiler, such as:
+- [CMake][] 3.16+
+- A C and C++ compiler, such as:
   - [GNU C compiler][] (*gcc*) 7.1+
   - [Microsoft Visual Studio][] 2019+
   - [Clang][] 9+
-* A UI toolkit (at least one of the following):
+- A UI toolkit (at least one of the following):
   - [Qt][] 5 development libraries for the GUI version
   - [GTK][] 3 development libraries for the GUI version (GTK 2.24 is also supported)
   - [ncurses][](w) development libraries (wide character support) for the terminal version
@@ -1475,12 +1475,12 @@ should be in your `%PATH%` or `$PATH`, respectively.
 
 CMake boolean variables that affect the build:
 
-* `NIGHTLY`: Whether or not to build Textadept with bleeding-edge dependencies (i.e. the nightly
+- `NIGHTLY`: Whether or not to build Textadept with bleeding-edge dependencies (i.e. the nightly
    version). Defaults to off.
-* `QT`: Unless off, builds the Qt version of Textadept. The default is auto-detected.
-* `GTK3`: Unless off, builds the Gtk 3 version of Textadept. The default is auto-detected.
-* `GTK2`: Unless off, builds the Gtk 2 version of Textadept. The default is auto-detected.
-* `CURSES`: Unless off, builds the Curses (terminal) version of Textadept. The default is
+- `QT`: Unless off, builds the Qt version of Textadept. The default is auto-detected.
+- `GTK3`: Unless off, builds the Gtk 3 version of Textadept. The default is auto-detected.
+- `GTK2`: Unless off, builds the Gtk 2 version of Textadept. The default is auto-detected.
+- `CURSES`: Unless off, builds the Curses (terminal) version of Textadept. The default is
    auto-detected.
 
 ---
@@ -1531,9 +1531,9 @@ $ | $ | Matches the end of a line unless inside a set
 Textadept's regular expressions are based on the C++11 standard for ECMAScript. There are a
 number of references for this syntax on the internet, including:
 
-* [ECMAScript syntax C++ reference](https://www.cplusplus.com/reference/regex/ECMAScript/)
-* [Modified ECMAScript regular expression grammar](https://en.cppreference.com/w/cpp/regex/ecmascript)
-* [Regular Expressions (C++)](https://docs.microsoft.com/en-us/cpp/standard-library/regular-expressions-cpp)
+- [ECMAScript syntax C++ reference](https://www.cplusplus.com/reference/regex/ECMAScript/)
+- [Modified ECMAScript regular expression grammar](https://en.cppreference.com/w/cpp/regex/ecmascript)
+- [Regular Expressions (C++)](https://docs.microsoft.com/en-us/cpp/standard-library/regular-expressions-cpp)
 
 More information on Lua patterns can be found in the [Lua 5.4 Reference
 Manual](https://www.lua.org/manual/5.4/manual.html#6.4.1).
@@ -1543,27 +1543,27 @@ Manual](https://www.lua.org/manual/5.4/manual.html#6.4.1).
 Textadept's terminal version requires a font with good glyph support (like DejaVu Sans Mono or
 Liberation Mono), and lacks some GUI features due to the terminal's constraints:
 
-* No alpha values or transparency.
-* No images in autocompletion lists. Instead, autocompletion lists show the first character in
+- No alpha values or transparency.
+- No images in autocompletion lists. Instead, autocompletion lists show the first character in
   the string passed to [`buffer.register_image()`][].
-* No buffered or two-phase drawing.
-* Carets cannot have a period, line style, or width.
-* No drag and drop.
-* Edge lines may be obscured by text.
-* No extra line ascent or descent.
-* No fold lines above and below lines.
-* No hotspot underlines on mouse hover.
-* No indicators other than `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX`, although neither has
+- No buffered or two-phase drawing.
+- Carets cannot have a period, line style, or width.
+- No drag and drop.
+- Edge lines may be obscured by text.
+- No extra line ascent or descent.
+- No fold lines above and below lines.
+- No hotspot underlines on mouse hover.
+- No indicators other than `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX`, although neither has
   translucent drawing and `INDIC_ROUNDBOX` does not have rounded corners.
-* Some complex marker symbols are not drawn properly or at all.
-* No mouse cursor types.
-* Only up to 16 colors recognized, regardless of how many colors the terminal
+- Some complex marker symbols are not drawn properly or at all.
+- No mouse cursor types.
+- Only up to 16 colors recognized, regardless of how many colors the terminal
   supports. Unrecognized colors default to white.
-* Not all key sequences are recognized properly.
-* No style settings like font name, font size, or italics.
-* No X selection, primary or secondary, integration with the clipboard.
-* No zoom.
-* When using the mouse in the Windows console, Shift+Double-click extends selections and
+- Not all key sequences are recognized properly.
+- No style settings like font name, font size, or italics.
+- No X selection, primary or secondary, integration with the clipboard.
+- No zoom.
+- When using the mouse in the Windows console, Shift+Double-click extends selections and
   quadruple-clicking inside a selection collapses it.
 
 [`buffer.register_image()`]: api.html#buffer.register_image
@@ -1572,33 +1572,33 @@ Liberation Mono), and lacks some GUI features due to the terminal's constraints:
 
 Textadept's directory structure is organized as follows:
 
-* *core/*: Contains Textadept's core Lua modules. These modules are essential for the
+- *core/*: Contains Textadept's core Lua modules. These modules are essential for the
   application to run. They provide Textadept's Lua to C interface, event framework, file and
   lexer interactions, and localization.
-* *lexers/*: Houses the lexer modules that analyze source code for syntax highlighting.
-* *modules/*: Contains modules for editing text and source code.
-* *themes/*: Contains built-in themes that customize the look and feel of Textadept.
-* *iconengines/*, *imageformats/*, *platforms/*, *styles/*, and *translations/*: Qt support
+- *lexers/*: Houses the lexer modules that analyze source code for syntax highlighting.
+- *modules/*: Contains modules for editing text and source code.
+- *themes/*: Contains built-in themes that customize the look and feel of Textadept.
+- *iconengines/*, *imageformats/*, *platforms/*, *styles/*, and *translations/*: Qt support
   directories and only appear in the Windows package.
 
 #### Technologies
 
 Textadept is composed of the following technologies:
 
-* [Qt][]: cross-platform GUI toolkit
-* [GTK][]: cross-platform GUI toolkit
-* [ncurses][]: terminal UI library for Linux and macOS
-* [pdcurses][]: terminal UI library for Windows
-* [cdk][]: terminal UI widget toolkit
-* [libtermkey][]: terminal keyboard entry handling library
-* [Scintilla][]: core text editing component
-* [Lexilla][]: core syntax highlighting library for Scintilla
-* [Scinterm][]: curses (terminal) platform for Scintilla
-* [Scintillua][]: syntax highlighting for Scintilla using Lua lexers
-* [Lua][]: core scripting language
-* [LPeg][]: Lua pattern matching library for syntax highlighting
-* [LuaFileSystem][]: Lua library for accessing the host filesystem
-* [iconv][]: library for converting text to and from Unicode
+- [Qt][]: cross-platform GUI toolkit
+- [GTK][]: cross-platform GUI toolkit
+- [ncurses][]: terminal UI library for Linux and macOS
+- [pdcurses][]: terminal UI library for Windows
+- [cdk][]: terminal UI widget toolkit
+- [libtermkey][]: terminal keyboard entry handling library
+- [Scintilla][]: core text editing component
+- [Lexilla][]: core syntax highlighting library for Scintilla
+- [Scinterm][]: curses (terminal) platform for Scintilla
+- [Scintillua][]: syntax highlighting for Scintilla using Lua lexers
+- [Lua][]: core scripting language
+- [LPeg][]: Lua pattern matching library for syntax highlighting
+- [LuaFileSystem][]: Lua library for accessing the host filesystem
+- [iconv][]: library for converting text to and from Unicode
 
 [Qt]: https://www.qt.io
 [GTK]: https://www.gtk.org
@@ -1744,11 +1744,11 @@ a dark theme.
 
 Themes can be migrated from Textadept 11 to 12 in the following way:
 
-* Replace `lexer.colors` and `lexer.styles` with `view.colors` and `view.styles`.
-* Instead of using style names directly, use `view` and `lexer` constants. For example, change
+- Replace `lexer.colors` and `lexer.styles` with `view.colors` and `view.styles`.
+- Instead of using style names directly, use `view` and `lexer` constants. For example, change
   `styles.default = {...}` to `styles[view.STYLE_DEFAULT] = {...}` and `styles.comment = {...}`
   to `styles[lexer.COMMENT] = {...}`.
-* Lexer-specific style names do not have constants, so they can be used directly (e.g. CSS
+- Lexer-specific style names do not have constants, so they can be used directly (e.g. CSS
   `styles.property = {...}`).
 
 [styles]: api.html#view.styles
