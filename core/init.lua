@@ -99,7 +99,7 @@ local function set_styles(view)
   set_style(view, view.STYLE_DEFAULT)
   view:style_clear_all()
   local num_styles, num_predefined = buffer.named_styles, 8 -- DEFAULT to FOLDDISPLAYTEXT
-  for i = 1, math.min(num_styles - num_predefined, view.STYLE_DEFAULT - 1) do set_style(view, i) end
+  for i = 1, math.max(num_styles - num_predefined, view.STYLE_DEFAULT - 1) do set_style(view, i) end
   for i = view.STYLE_DEFAULT + 1, view.STYLE_FOLDDISPLAYTEXT do set_style(view, i) end
   for i = view.STYLE_FOLDDISPLAYTEXT + 1, num_styles do set_style(view, i) end
 end
