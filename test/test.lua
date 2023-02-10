@@ -46,8 +46,7 @@ local function file(filename) return not WIN32 and filename or filename:gsub('/'
 
 if WIN32 then
   local os_tmpname = os.tmpname
-  -- Overloads os.tmpname() to prefix names with the temporary directory and creates the file
-  -- too, just like in Linux.
+  -- Overloads os.tmpname() to create the file too, just like in Linux.
   function os.tmpname()
     local filename = os_tmpname()
     io.open(filename, 'wb'):close()
@@ -1697,11 +1696,12 @@ end
 function test_command_entry_lua_documentation()
   ui.command_entry.run()
   ui.command_entry:set_text('print(') -- Lua api
-  -- textadept.editing.show_documentation() -- TODO: lsp.signature_help()
+  require('lsp')
+  textadept.menu.menubar[_L['Tools']][_L['Language Server']][_L['Show Documentation']][2]()
   assert(ui.command_entry:call_tip_active(), 'documentation not found')
   ui.command_entry:call_tip_cancel()
   ui.command_entry:set_text('current_pos') -- Textadept api
-  -- textadept.editing.show_documentation() -- TODO: lsp.hover()
+  textadept.menu.menubar[_L['Tools']][_L['Language Server']][_L['Show Documentation']][2]()
   assert(ui.command_entry:call_tip_active(), 'documentation not found')
   ui.command_entry:focus() -- hide
 end
@@ -5038,31 +5038,33 @@ function test_lsp_clangd()
   lsp.log_rpc = true
 
   io.open_file(dir .. '/main.cpp')
-  sleep(0.5)
-  ui.update()
-  if #_BUFFERS < 3 then
-    -- LSP has not autostarted. This happens when the lsp module is loaded after init and was not
-    -- able to hook into events.LEXER_LOADED, events.FILE_OPENED, etc.
-    lsp.start()
-    sleep(0.5)
-    ui.update()
-  end
-  local lsp_buf = _BUFFERS[#_BUFFERS] -- LSP buffer opened
+  -- Ensure the language server starts. It normally autostarts, but this will not happen when
+  -- the lsp module is loaded after init and was not able to hook into events.LEXER_LOADED,
+  -- events.FILE_OPENED, etc.
+  lsp.start()
+  sleep(0.5) -- allow time to initialize
+  textadept.menu.menubar[_L['Tools']][_L['Language Server']][_L['Show Log']][2]()
+  local lsp_buf = _BUFFERS[#_BUFFERS]
   assert_equal(lsp_buf._type, '[LSP]')
   assert(lsp_buf:get_line(1):find('^Starting language server: clangd'), 'clangd did not start')
-  if #_VIEWS > 1 then view:unsplit() end
+  view:goto_buffer(-1)
 
   -- Test completions.
   buffer:goto_pos(buffer:find_column(1, 13)) -- #include "F
   sleep(0.5)
-  textadept.editing.autocomplete('lsp')
+  lsp.autocomplete()
   assert(buffer:auto_c_active(), 'no autocompletions')
-  assert_equal(buffer.auto_c_current_text, 'Foo.h"')
+  sleep(0.5)
+  lsp.autocomplete()
+  assert_equal(buffer.auto_c_current_text, 'Foo.h"') -- does not work the first time for some reason
   buffer:auto_c_cancel()
   buffer:goto_pos(buffer:find_column(6, 28)) -- foo.bar().
-  textadept.editing.autocomplete('lsp')
+  lsp.autocomplete()
   assert(buffer:auto_c_active(), 'no autocompletions')
   assert_equal(buffer.auto_c_current_text, 'append')
+  buffer:auto_c_cancel()
+  events.emit(events.CHAR_ADDED, string.byte('.'))
+  assert(buffer:auto_c_active(), 'no autocompletions after trigger character')
   buffer:auto_c_cancel()
 
   -- Test hover/dwell.
@@ -5075,8 +5077,11 @@ function test_lsp_clangd()
   buffer:goto_pos(buffer:find_column(5, 11)) -- Foo foo(
   lsp.signature_help()
   assert(view:call_tip_active(), 'call tip not active')
-  lsp.signature_help() -- cycle through signatures
+  textadept.menu.menubar[_L['Tools']][_L['Language Server']][_L['Show Documentation']][2]() -- cycle through signatures
   assert(view:call_tip_active(), 'call tip still not active')
+  view:call_tip_cancel()
+  events.emit(events.CHAR_ADDED, string.byte('('))
+  assert(view:call_tip_active(), 'call tip not active after trigger character')
   view:call_tip_cancel()
 
   -- Test goto definition.
@@ -5093,6 +5098,14 @@ function test_lsp_clangd()
   assert_equal(buffer.filename, file(dir .. '/main.cpp'))
   assert_equal(buffer:line_from_position(buffer.current_pos), 5)
   assert_equal(buffer:get_sel_text(), 'foo')
+
+  -- Test select.
+  buffer:goto_pos(buffer:find_column(6, 12)) -- %s
+  lsp.select()
+  assert_equal(buffer:get_sel_text(), '"%s\\n"')
+  lsp.select()
+  assert_equal(buffer.selection_start, buffer.line_indent_position[6])
+  assert_equal(buffer.selection_end, buffer.line_end_position[6] - 1) -- ends before ';'
 
   -- Test find references.
   buffer:goto_pos(buffer:find_column(6, 25)) -- foo.bar
@@ -5186,6 +5199,33 @@ function test_lsp_clangd_interactive()
 
   lsp.server_commands.cpp = nil -- reset
   removedir(dir)
+end
+
+function test_lsp_lua()
+  local lsp = require('lsp')
+  buffer.new()
+  buffer:set_lexer('lua')
+  -- Ensure the language server starts. It normally autostarts, but this will not happen when
+  -- the lsp module is loaded after init and was not able to hook into events.LEXER_LOADED,
+  -- events.FILE_OPENED, etc.
+  lsp.start()
+  sleep(0.5) -- allow time to initialize
+  buffer:add_text('s')
+  lsp.autocomplete()
+  assert(buffer:auto_c_active(), 'autocompletion not active')
+  assert_equal(buffer.auto_c_current_text, 'select')
+  buffer:line_end() -- scroll down to string
+  buffer:auto_c_complete()
+  buffer:add_text('.')
+  events.emit(events.CHAR_ADDED, string.byte('.'))
+  assert(buffer:auto_c_active(), 'autocompletion not active')
+  assert_equal(buffer.auto_c_current_text, 'byte')
+  buffer:auto_c_complete()
+  buffer:add_text('(')
+  events.emit(events.CHAR_ADDED, string.byte('('))
+  assert(view:call_tip_active(), 'call tip not active')
+  lsp.stop()
+  buffer:close(true)
 end
 
 function test_lua_repl()
