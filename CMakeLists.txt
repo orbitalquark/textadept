@@ -218,7 +218,7 @@ target_include_directories(lexilla PUBLIC ${lex_dir}/lexlib PRIVATE ${lex_dir}/i
 target_link_libraries(lexilla PRIVATE scintilla)
 
 # Scintillua.
-set(scilua_dir, ${scintillua_SOURCE_DIR})
+set(scilua_dir ${scintillua_SOURCE_DIR})
 
 # Lua.
 add_library(lua STATIC)
