@@ -961,7 +961,8 @@ int main(int argc, char **argv) {
     if (strcmp("-p", argv[i]) == 0 || strcmp("--preserve", argv[i]) == 0) {
       termkey_flags |= TERMKEY_FLAG_FLOWCONTROL;
       break;
-    }
+    } else if ((strcmp("-L", argv[i]) == 0 || strcmp("--lua", argv[i]) == 0) && i + 1 < argc)
+      return (init_textadept(argc, argv), exit_status); // avoid curses init
   ta_tk = termkey_new(0, termkey_flags);
   setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
   initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
