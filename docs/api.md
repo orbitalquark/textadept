@@ -2533,7 +2533,7 @@ List of text displayed in text margins per line number.
 <a id="buffer.property"></a>
 #### `buffer.property`
 
-Map of key-value string pairs used by lexers.
+Map of key-value string pairs populated by lexers.
 
 <a id="buffer.selection_n_anchor"></a>
 #### `buffer.selection_n_anchor`
@@ -6470,9 +6470,9 @@ Parameters:
 
 Usage:
 
-- `ui.menu{{'_New', 1}, {'_Open', 2}, {''}, {'&Quit', 4}}
+- `ui.menu{ {'_New', 1}, {'_Open', 2}, {''}, {'&Quit', 4} }
 `
-- `ui.menu{{'_New', 1, string.byte('n'), view.MOD_CTRL}} -- 'Ctrl+N'
+- `ui.menu{ {'_New', 1, string.byte('n'), view.MOD_CTRL} } -- 'Ctrl+N'
 `
 
 <a id="ui.output"></a>
@@ -7335,14 +7335,12 @@ The line number of the line at the top of the view.
 
 Whether or not to fold based on indentation level if a lexer does not have a folder.
 Some lexers automatically enable this option. It is disabled by default.
-This is an alias for `view.property['fold.scintillua.by.indentation'] = '1|0'`.
 
 <a id="view.fold_compact"></a>
 #### `view.fold_compact` 
 
 Whether or not blank lines after an ending fold point are included in that fold.
 This option is disabled by default.
-This is an alias for `view.property['fold.scintillua.compact'] = '1|0'`.
 
 <a id="view.fold_display_text_style"></a>
 #### `view.fold_display_text_style` 
@@ -7388,14 +7386,12 @@ The default value is `view.FOLDFLAG_NONE`.
 Whether or not to mark as a fold point lines that contain both an ending and starting fold
 point. For example, `} else {` would be marked as a fold point.
 This option is disabled by default. This is an alias for
-`view.property['fold.scintillua.on.zero.sum.lines'] = '1|0'`.
 
 <a id="view.folding"></a>
 #### `view.folding` 
 
 Whether or not folding is enabled for the lexers that support it.
 This option is disabled by default.
-This is an alias for `view.property['fold'] = '1|0'`.
 
 <a id="view.h_scroll_bar"></a>
 #### `view.h_scroll_bar` 
@@ -8720,13 +8716,7 @@ A position of `-1` means no edge column was found.
 <a id="view.property"></a>
 #### `view.property`
 
-Map of key-value string pairs used by lexers.
-
-<a id="view.property_int"></a>
-#### `view.property_int`
-
-Map of key-value pairs used by lexers with values interpreted as numbers, or `0` if not
-found. (Read-only)
+Map of key-value string pairs populated by lexers.
 
 <a id="view.representation"></a>
 #### `view.representation`
