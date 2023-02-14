@@ -128,11 +128,15 @@ local function highlight(buffer, start_pos, end_pos)
   for line, level in pairs(folds) do buffer.fold_level[line] = level end
 end
 
+local mutex
 -- Performs syntax highlighting as needed.
 events.connect(events.STYLE_NEEDED, function(end_pos, buffer)
+  if mutex then return end -- avoid recursion and stack overflow
   local start_pos = buffer:position_from_line(buffer:line_from_position(buffer.end_styled))
   local ok, errmsg
+  mutex = true
   if rawget(buffer, 'lexer') then ok, errmsg = pcall(highlight, buffer, start_pos, end_pos) end
+  mutex = nil
   if not ok then
     buffer:start_styling(start_pos, 0)
     buffer:set_styling(end_pos - start_pos, view.STYLE_DEFAULT)
