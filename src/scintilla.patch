@@ -126,7 +126,7 @@ diff -r 123ae5de5bd2 src/ScintillaBase.cxx
  		Editor::InsertCharacter(sv, charSource);
  	}
 -	if (ac.Active()) {
-+	if (acActive) {
++	if (acActive && ac.Active()) { // if it was and still is active
  		AutoCompleteCharacterAdded(sv[0]);
  		// For fill ups add the character after the autocompletion has
  		// triggered so containers see the key so can display a calltip.
