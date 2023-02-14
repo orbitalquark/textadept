@@ -22,6 +22,7 @@ Bugfixes:
 - Fixed auto-pair removal bug when backspacing over an auto-paired character.
 - Fixed directory filters that contain directories to include.
 - `textadept.editing.autocomplete()` should return `false` if no completions are displayed.
+- Fixed clearing of a previous buffer's state when switching between buffers after closing one.
 - Qt version: ensure the given directory is selected in Linux's directory selection dialog.
 - Terminal version: fixed spawning processes on Linux and macOS.
 - Terminal version: synchronize paragraph up/down extend selection key binding with GUI version.
