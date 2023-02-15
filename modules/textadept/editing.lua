@@ -609,7 +609,7 @@ end
 
 ---
 -- Displays an autocompletion list provided by the autocompleter function associated with string
--- *name*, and returns `true` if completions were found and are shown.
+-- *name*, and returns `true` if completions were found.
 -- @param name The name of an autocompleter function in the `autocompleters` table to use for
 --   providing autocompletions.
 -- @see autocompleters
@@ -617,9 +617,13 @@ function M.autocomplete(name)
   if not M.autocompleters[assert_type(name, 'string', 1)] then return end
   local len_entered, list = M.autocompleters[name]()
   if not len_entered or not list or #list == 0 then return end
+  local pos = buffer.current_pos
   buffer.auto_c_order = buffer.ORDER_PERFORMSORT
   buffer:auto_c_show(len_entered, table.concat(list, string.char(buffer.auto_c_separator)))
-  return buffer:auto_c_active() -- completions may not be valid
+  -- At this point, there is either (1) a list of completions shown, (2) a single completion was
+  -- automatically chosen, or (3) no completions are shown because none were valid (e.g. a language
+  -- server returned a "fuzzy" list of completions that Scintilla does not recognize as valid).
+  return buffer:auto_c_active() or buffer.auto_c_choose_single and buffer.current_pos ~= pos
 end
 
 ---

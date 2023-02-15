@@ -2533,10 +2533,10 @@ function test_editing_autocomplete_word()
   textadept.editing.autocomplete_all_words = false
   buffer.new()
   buffer:add_text('foo f')
-  textadept.editing.autocomplete('word')
+  assert(textadept.editing.autocomplete('word'), 'did not autocomplete')
   assert_equal(buffer:get_text(), 'foo foo')
   buffer:add_text('bar f')
-  textadept.editing.autocomplete('word')
+  assert(textadept.editing.autocomplete('word'), 'not attempting autocompletion')
   assert(buffer:auto_c_active(), 'autocomplete list not shown')
   buffer:auto_c_select('foob')
   buffer:auto_c_complete()
@@ -2544,7 +2544,7 @@ function test_editing_autocomplete_word()
   local ignore_case = buffer.auto_c_ignore_case
   buffer.auto_c_ignore_case = false
   buffer:add_text(' Bar b')
-  textadept.editing.autocomplete('word')
+  assert(not textadept.editing.autocomplete('word'), 'unexpectedly autocompleted')
   assert_equal(buffer:get_text(), 'foo foobar foobar Bar b')
   buffer.auto_c_ignore_case = true
   textadept.editing.autocomplete('word')
