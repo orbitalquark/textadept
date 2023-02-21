@@ -132,6 +132,7 @@ local mutex
 -- Performs syntax highlighting as needed.
 events.connect(events.STYLE_NEEDED, function(end_pos, buffer)
   if mutex then return end -- avoid recursion and stack overflow
+  if not buffer then return end -- printed initialization errors during startup can trigger this
   local start_pos = buffer:position_from_line(buffer:line_from_position(buffer.end_styled))
   local ok, errmsg
   mutex = true
