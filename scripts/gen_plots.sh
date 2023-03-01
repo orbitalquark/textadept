@@ -9,7 +9,7 @@ languages="`hg root`/docs/images/languages.png"
 
 # Clone a temporary repository and generate code count data for gnuplot to plot.
 tmp=/tmp/count
-hg clone `hg root` $tmp && pushd $tmp
+hg clone `hg root` $tmp && pushd $tmp || exit 1
 plotfile=gnuplot.dat
 for rev in `hg tags | awk "{print $2}" | cut -d: -f1 | tac`; do
   date=`hg log -r $rev | grep ^date | cut -d: -f2- | tr + - | cut -d- -f1`
