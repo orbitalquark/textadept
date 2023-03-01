@@ -5,7 +5,7 @@
 -- @module _G
 
 --- The Textadept release version string.
-_RELEASE = 'Textadept 12.0 nightly'
+_RELEASE = 'Textadept 12.0 alpha 2'
 --- Textadept's copyright information.
 _COPYRIGHT = 'Copyright © 2007-2023 Mitchell. See LICENSE.\n' ..
   'https://orbitalquark.github.io/textadept'
