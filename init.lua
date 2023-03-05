@@ -139,7 +139,7 @@ buffer.eol_mode = WIN32 and buffer.EOL_CRLF or buffer.EOL_LF
 -- view.view_eol = true
 
 -- Styling.
-if not CURSES then view.idle_styling = view.IDLESTYLING_TOVISIBLE end
+if not CURSES then view.idle_styling = view.IDLESTYLING_ALL end
 
 -- Caret and Selection Styles.
 -- view.sel_eol_filled = true
