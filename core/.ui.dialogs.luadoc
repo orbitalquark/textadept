@@ -16,9 +16,9 @@
 --   - `icon`: The dialog's icon name, according to the Free Desktop Icon Naming
 --     Specification. Examples are "dialog-error", "dialog-information", "dialog-question",
 --     and "dialog-warning". The dialog does not display an icon by default.
---   - `button1`: The right-most button's label. The default value is `_L['OK']`.
---   - `button2`: The middle button's label.
---   - `button3`: The left-most button's label. This option requires `button2` to be set.
+--   - `button1`: The primary (accept) button's label. The default value is `_L['OK']`.
+--   - `button2`: The secondary (reject) button's label.
+--   - `button3`: The tertiary button's label. This option requires `button2` to be set.
 -- @return selected button
 -- @usage ui.dialogs.message{title = 'EOL Mode', text = 'Which EOL?',
 --   icon = 'dialog-question', button1 = 'CRLF', button2 = 'CR',
@@ -33,9 +33,10 @@
 --
 --   - `title`: The dialog's title text.
 --   - `text`: The dialog's initial input text.
---   - `button1`: The right-most button's label. The default value is `_L['OK']`.
---   - `button2`: The middle button's label. The default value is `_L['Cancel']`.
---   - `button3`: The left-most button's label. This option requires `button2` to be set.
+--   - `button1`: The primary (accept) button's label. The default value is `_L['OK']`.
+--   - `button2`: The secondary (reject) button's label. The default value is `_L['Cancel']`.
+--   - `button3`: The tertiary button's label. This option requires `button2` to be set. It is
+--     not available on Qt.
 --   - `return_button`: Also return the index of the selected button. The default value is `false`.
 -- @return input text[, selected button]
 -- @usage ui.dialogs.input{title = 'Go to line number:', text = '1'}
@@ -101,9 +102,9 @@
 --   - `items`: The list of string items to show in the list. Each item is placed in the next
 --     available column of the current row. If there is only one column, each item is on its
 --     own row.
---   - `button1`: The right-most button's label. The default value is `_L['OK']`.
---   - `button2`: The middle button's label. The default value is `_L['Cancel']`.
---   - `button3`: The left-most button's label. This option requires `button2` to be set.
+--   - `button1`: The primary (accept) button's label. The default value is `_L['OK']`.
+--   - `button2`: The secondary (reject) button's label. The default value is `_L['Cancel']`.
+--   - `button3`: The tertiary button's label. This option requires `button2` to be set.
 --   - `multiple`: Allow the user to select multiple items. The default value is `false`.
 --     The terminal version does not support this option.
 --   - `search_column`: The column number to filter the input text against. The default value is
