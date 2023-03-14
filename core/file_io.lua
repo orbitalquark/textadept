@@ -326,8 +326,8 @@ function io.open_recent_file()
       table.remove(io.recent_files, i)
     end
   end
-  i = ui.dialogs.list{title = _L['Open File'], items = utf8_list}
-  if i then io.open_file(io.recent_files[i]) end
+  local selected = ui.dialogs.list{title = _L['Open File'], items = utf8_list, multiple = true}
+  if selected then for _, i in ipairs(selected) do io.open_file(io.recent_files[i]) end end
 end
 
 -- List of version control directories.
