@@ -127,3 +127,7 @@ can also contact me personally (orbitalquark att triplequasar.com).
 
 [donation]: https://gum.co/textadept
 [open source]: https://github.com/orbitalquark/textadept
+
+## Disclaimer
+
+I wrote Textadept for myself and decided to share it with you all. I don't need this feature, so I didn't implement it. I gave users that want it the option to implement it themselves. If this isn't your thing, then you may want to consider a more full-featured editor.
