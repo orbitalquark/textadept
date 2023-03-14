@@ -489,15 +489,17 @@ int list_dialog(DialogOptions opts, lua_State *L) {
   selection->select(filter.index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
   lineEdit->installEventFilter(new KeyForwarder{treeView, &dialog});
   auto buttonBox = new QDialogButtonBox;
-  int buttonClicked = 2; // cancel/reject by default
+  int buttonClicked = 1; // ok/accept by default
   if (opts.buttons[2])
     buttonBox->addButton(opts.buttons[2], static_cast<QDialogButtonBox::ButtonRole>(2));
   if (opts.buttons[1])
     buttonBox->addButton(opts.buttons[1], static_cast<QDialogButtonBox::ButtonRole>(1));
   buttonBox->addButton(opts.buttons[0], static_cast<QDialogButtonBox::ButtonRole>(0));
   QObject::connect(buttonBox, &QDialogButtonBox::clicked, buttonBox,
-    [buttonBox, &buttonClicked](
-      QAbstractButton *button) { buttonClicked = buttonBox->buttonRole(button) + 1; });
+    [buttonBox, &buttonClicked](QAbstractButton *button) {
+      buttonClicked = buttonBox->buttonRole(button) + 1;
+      if (buttonClicked == 3) Q_EMIT(buttonBox->accepted());
+    });
   QObject::connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
   QObject::connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
   vbox->addWidget(lineEdit), vbox->addWidget(treeView), vbox->addWidget(buttonBox);
@@ -512,7 +514,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
     lua_pushinteger(L, filter.mapToSource(selection->selectedRows(0)[i]).row() + 1),
       lua_rawseti(L, -2, i + 1);
   if (!opts.multiple) lua_rawgeti(L, -1, 1), lua_replace(L, -2); // single value
-  return !opts.return_button ? 1 : (lua_pushinteger(L, buttonClicked), 2);
+  return !opts.return_button ? 1 : (lua_pushinteger(L, ok ? buttonClicked : 2), 2);
 }
 
 // Contains information about an active process.
