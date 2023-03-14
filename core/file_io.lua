@@ -316,6 +316,7 @@ end)
 -- Prompts the user to select a recently opened file to be reopened.
 -- @see recent_files
 function io.open_recent_file()
+  if #io.recent_files == 0 then return end
   local utf8_list, i = {}, 1
   while i <= #io.recent_files do
     local filename = io.recent_files[i]
@@ -326,8 +327,13 @@ function io.open_recent_file()
       table.remove(io.recent_files, i)
     end
   end
-  local selected = ui.dialogs.list{title = _L['Open File'], items = utf8_list, multiple = true}
-  if selected then for _, i in ipairs(selected) do io.open_file(io.recent_files[i]) end end
+  local selected, button = ui.dialogs.list{
+    title = _L['Open File'], items = utf8_list, multiple = true, button3 = _L['Clear List'],
+    return_button = true
+  }
+  if button == 3 then io.recent_files = {} end
+  if not selected or button ~= 1 then return end
+  for _, i in ipairs(selected) do io.open_file(io.recent_files[i]) end
 end
 
 -- List of version control directories.
