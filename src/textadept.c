@@ -829,6 +829,9 @@ static bool init_lua(int argc, char **argv) {
   // Check for invoking Textadept as a Lua interpreter.
   for (int i = 0; i < argc; i++)
     if ((strcmp("-L", argv[i]) == 0 || strcmp("--lua", argv[i]) == 0) && i + 1 < argc) {
+#if _WIN32
+      if (AllocConsole()) ShowWindow(GetConsoleWindow(), SW_HIDE);
+#endif
       int n = i + 1; // shift all elements of arg down by n
       lua_getglobal(L, "table"), lua_getfield(L, -1, "move");
       lua_getfield(L, LUA_REGISTRYINDEX, ARG), lua_pushinteger(L, 0),
