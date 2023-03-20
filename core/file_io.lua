@@ -197,6 +197,7 @@ local function save(buffer)
   if buffer.encoding then text = text:iconv(buffer.encoding, 'UTF-8') end
   assert(io.open(buffer.filename, 'wb')):write(text):close()
   buffer:set_save_point()
+  if buffer ~= _G.buffer then events.emit(events.SAVE_POINT_REACHED, buffer) end -- update tab label
   buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
   if buffer._type then buffer._type = nil end
   events.emit(events.FILE_AFTER_SAVE, buffer.filename)

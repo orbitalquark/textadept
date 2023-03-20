@@ -186,6 +186,14 @@ events.connect(events.BUFFER_DELETED, update_zorder)
 events.connect(events.RESET_BEFORE, function(persist) persist.ui_zorder = buffers_zorder end)
 events.connect(events.RESET_AFTER, function(persist) buffers_zorder = persist.ui_zorder end)
 
+-- Returns the given buffer's UTF-8 filename and basename for display.
+-- If the buffer does not have a filename, returns its type or 'Untitled'.
+local function get_display_names(buffer)
+  local filename = buffer.filename or buffer._type or _L['Untitled']
+  if buffer.filename then filename = select(2, pcall(string.iconv, filename, 'UTF-8', _CHARSET)) end
+  return filename, buffer.filename and filename:match('[^/\\]+$') or filename
+end
+
 ---
 -- Prompts the user to select a buffer to switch to.
 -- Buffers are listed in the order they were opened unless `ui.buffer_list_zorder` is `true`, in
@@ -194,20 +202,15 @@ events.connect(events.RESET_AFTER, function(persist) buffers_zorder = persist.ui
 -- @see buffer_list_zorder
 function ui.switch_buffer()
   local buffers = not ui.buffer_list_zorder and _BUFFERS or buffers_zorder
-  local columns, utf8_list = {_L['Name'], _L['Filename']}, {}
+  local columns, items = {_L['Name'], _L['Filename']}, {}
   local root = io.get_project_root()
+  if root then root = select(2, pcall(string.iconv, root, 'UTF-8', _CHARSET)) end
   for i = (not ui.buffer_list_zorder or #_BUFFERS == 1) and 1 or 2, #buffers do
-    local buffer = buffers[i]
-    local filename = buffer.filename or buffer._type or _L['Untitled']
-    if buffer.filename then
-      if root and filename:find(root, 1, true) then filename = filename:sub(#root + 2) end
-      filename = filename:iconv('UTF-8', _CHARSET)
-    end
-    local basename = buffer.filename and filename:match('[^/\\]+$') or filename
-    utf8_list[#utf8_list + 1] = (buffer.modify and '*' or '') .. basename
-    utf8_list[#utf8_list + 1] = filename
+    local filename, basename = get_display_names(buffers[i])
+    if root and filename:find(root, 1, true) then filename = filename:sub(#root + 2) end
+    items[#items + 1], items[#items + 2] = (buffers[i].modify and '*' or '') .. basename, filename
   end
-  local i = ui.dialogs.list{title = _L['Switch Buffers'], columns = columns, items = utf8_list}
+  local i = ui.dialogs.list{title = _L['Switch Buffers'], columns = columns, items = items}
   if i then view:goto_buffer(buffers[not ui.buffer_list_zorder and i or i + 1]) end
 end
 
@@ -268,18 +271,23 @@ events.connect(events.TAB_CLICKED, function(index) view:goto_buffer(_BUFFERS[ind
 -- Closes a buffer when its tab close button is clicked.
 events.connect(events.TAB_CLOSE_CLICKED, function(index) _BUFFERS[index]:close() end)
 
--- Sets the title of the Textadept window to the buffer's filename.
+-- Sets the title of the Textadept window to the active buffer's filename and indicates whether
+-- the buffer is "clean" or "dirty".
 local function set_title()
-  local filename = buffer.filename or buffer._type or _L['Untitled']
-  if buffer.filename then filename = select(2, pcall(string.iconv, filename, 'UTF-8', _CHARSET)) end
-  local basename = buffer.filename and filename:match('[^/\\]+$') or filename
+  local filename, basename = get_display_names(buffer)
   ui.title = string.format('%s %s Textadept (%s)', basename, buffer.modify and '*' or '-', filename)
-  buffer.tab_label = basename .. (buffer.modify and '*' or '')
 end
-
--- Changes Textadept title to show the buffer as being "clean" or "dirty".
 events.connect(events.SAVE_POINT_REACHED, set_title)
 events.connect(events.SAVE_POINT_LEFT, set_title)
+
+-- Sets the buffer's tab label based on its saved status.
+local function set_tab_label(buffer)
+  if not buffer then buffer = _G.buffer end
+  buffer.tab_label = select(2, get_display_names(buffer)) .. (buffer.modify and '*' or '')
+end
+events.connect(events.BUFFER_NEW, set_tab_label)
+events.connect(events.SAVE_POINT_REACHED, set_tab_label)
+events.connect(events.SAVE_POINT_LEFT, set_tab_label)
 
 -- Open uri(s).
 events.connect(events.URI_DROPPED, function(utf8_uris)
@@ -387,19 +395,15 @@ events.connect(events.RESET_AFTER, function() ui.statusbar_text = _L['Lua reset'
 
 -- Prompts for confirmation if any buffers are modified.
 events.connect(events.QUIT, function()
-  local utf8_list = {}
+  local items = {}
   for _, buffer in ipairs(_BUFFERS) do
-    if not buffer.modify or buffer._type then goto continue end
-    local filename = buffer.filename or buffer._type or _L['Untitled']
-    if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
-    utf8_list[#utf8_list + 1] = filename
-    ::continue::
+    if buffer.modify and not buffer._type then items[#items + 1] = get_display_names(buffer) end
   end
-  if #utf8_list == 0 then return end
+  if #items == 0 then return end
   local button = ui.dialogs.message{
     title = _L['Quit without saving?'],
     text = string.format('%s\n • %s', _L['The following buffers are unsaved:'],
-      table.concat(utf8_list, '\n • ')), icon = 'dialog-question', button1 = _L['Save all'],
+      table.concat(items, '\n • ')), icon = 'dialog-question', button1 = _L['Save all'],
     button2 = _L['Cancel'], button3 = _L['Quit without saving']
   }
   if button == 1 then return not io.save_all_files(true) end
