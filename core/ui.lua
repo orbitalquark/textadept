@@ -70,14 +70,16 @@ end
 local function print_to(buffer_type, silent, format, ...)
   local print_view, buffer = get_print_view(buffer_type), get_print_buffer(buffer_type)
   if not buffer or not silent and not print_view then -- no buffer or buffer not visible
-    if #_VIEWS > 1 then
+    if not silent and #_VIEWS > 1 then
       ui.goto_view(1) -- go to another view to print to
-    elseif not ui.tabs then
+    elseif not silent and not ui.tabs then
       view:split() -- create a new view to print to
     end
     if not buffer then
+      local prev_buffer = _G.buffer
       buffer = _G.buffer.new()
       buffer._type = buffer_type
+      if silent then view:goto_buffer(prev_buffer) end
     else
       view:goto_buffer(buffer)
     end
@@ -100,7 +102,8 @@ local function print_to(buffer_type, silent, format, ...)
 end
 
 ---
--- Prints the given value(s) to the buffer of string type *type*, along with a trailing newline.
+-- Prints the given value(s) to the buffer of string type *type*, along with a trailing newline,
+-- and returns that buffer.
 -- Opens a new buffer for printing to if necessary. If the print buffer is already open in a
 -- view, the value(s) is printed to that view. Otherwise the view is split (unless `ui.tabs`
 -- is `true`) and the print buffer is displayed before being printed to.
@@ -108,18 +111,21 @@ end
 -- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
 --   They will be printed as tab-separated values.
 -- @usage ui.print_to(_L['[Message Buffer]'], message)
+-- @return print buffer
 -- @see print_silent_to
-function ui.print_to(type, ...) print_to(assert_type(type, 'string', 1), false, true, ...) end
+function ui.print_to(type, ...) return print_to(assert_type(type, 'string', 1), false, true, ...) end
 
 ---
--- Silently prints the given value(s) to the buffer of string type *type* if that buffer is
--- already open.
--- Otherwise, behaves like `ui.print_to()`.
+-- Silently prints the given value(s) to the buffer of string type *type*, and returns that buffer.
+-- Opens a new buffer for printing to if necessary.
 -- @param type String type of print buffer.
 -- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
 --   They will be printed as tab-separated values.
+-- @return print buffer
 -- @see print_to
-function ui.print_silent_to(type, ...) print_to(assert_type(type, 'string', 1), true, true, ...) end
+function ui.print_silent_to(type, ...)
+  return print_to(assert_type(type, 'string', 1), true, true, ...)
+end
 
 ---
 -- Prints the given value(s) to the message buffer, along with a trailing newline.
@@ -129,11 +135,11 @@ function ui.print_silent_to(type, ...) print_to(assert_type(type, 'string', 1), 
 function ui.print(...) ui.print_to(_L['[Message Buffer]'], ...) end
 
 ---
--- Silently prints the given value(s) to the message buffer if it is already open.
--- Otherwise, behaves like `ui.print()`.
+-- Silently prints the given value(s) to the message buffer, and returns that buffer.
 -- @param ... Message or values to print.
+-- @return print buffer
 -- @see print
-function ui.print_silent(...) ui.print_silent_to(_L['[Message Buffer]'], ...) end
+function ui.print_silent(...) return ui.print_silent_to(_L['[Message Buffer]'], ...) end
 
 -- Helper function for printing to the output buffer.
 -- @see ui.output
@@ -142,22 +148,25 @@ local function output_to(silent, ...)
   local buffer = print_to(_L['[Output Buffer]'], silent, false, ...)
   if buffer.lexer_language ~= 'output' then buffer:set_lexer('output') end
   buffer:colorize(buffer:position_from_line(buffer:line_from_position(buffer.end_styled)), -1)
+  return buffer
 end
 
 ---
--- Prints the given value(s) to the output buffer.
+-- Prints the given value(s) to the output buffer, and returns that buffer.
 -- Opens a new buffer if one has not already been opened for printing output. The output buffer
 -- attempts to understand the error messages and warnings produced by various tools.
 -- @param ... Output to print.
+-- @return output buffer
 -- @see output_silent
-function ui.output(...) output_to(false, ...) end
+function ui.output(...) return output_to(false, ...) end
 
 ---
--- Silently prints the given value(s) to the output buffer if it is already open.
--- Otherwise, behaves like `ui.output()`.
+-- Silently prints the given value(s) to the output buffer, and returns that buffer.
+-- Opens a new buffer for printing to if necessary.
 -- @param ... Output to print.
+-- @return output buffer
 -- @see output
-function ui.output_silent(...) output_to(true, ...) end
+function ui.output_silent(...) return output_to(true, ...) end
 
 local buffers_zorder = {}
 

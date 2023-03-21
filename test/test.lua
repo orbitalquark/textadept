@@ -1051,6 +1051,23 @@ function test_ui_print_to_other_view()
   view:unsplit()
 end
 
+function test_ui_print_silent()
+  buffer.new():set_text('foo')
+  view:split()
+  buffer.new():set_text('bar')
+  ui.goto_view(-1)
+  ui.print_silent('baz')
+  assert(view == _VIEWS[1], 'ui.print_silent() should not switch views')
+  assert_equal(_VIEWS[1].buffer:get_text(), 'foo')
+  assert_equal(_VIEWS[2].buffer:get_text(), 'bar')
+  assert_equal(_BUFFERS[#_BUFFERS]:get_text(), 'baz\n')
+  view:unsplit()
+  for i = 1, 3 do
+    view:goto_buffer(_BUFFERS[#_BUFFERS])
+    buffer:close(true)
+  end
+end
+
 function test_ui_output()
   ui.output('file.lua:1: message', '\n')
   assert_equal(buffer._type, _L['[Output Buffer]'])
