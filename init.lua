@@ -288,7 +288,7 @@ view.layout_threads = 1000 -- will be reduced to system specs
 buffer.accessibility = buffer.ACCESSIBILITY_DISABLED
 
 -- Notifications.
-if QT and WIN32 then buffer.mouse_dwell_time = 500 end -- only different here for some reason
+if QT and WIN32 then view.mouse_dwell_time = 500 end -- only different here for some reason
 
 -- Load user init file, which may also define default buffer settings.
 local user_init = _USERHOME .. '/init.lua'
