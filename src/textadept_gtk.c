@@ -401,6 +401,10 @@ void focus_command_entry() {
     gtk_widget_grab_focus(focused_view), gtk_widget_hide(command_entry);
 }
 bool is_command_entry_active() { return gtk_widget_has_focus(command_entry); }
+int get_command_entry_height() {
+  GtkAllocation allocation;
+  return (gtk_widget_get_allocation(command_entry, &allocation), allocation.height);
+}
 void set_command_entry_height(int height) {
   GtkWidget *paned = gtk_widget_get_parent(command_entry);
   GtkAllocation allocation;

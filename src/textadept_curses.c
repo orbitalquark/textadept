@@ -381,6 +381,8 @@ void focus_command_entry() {
 
 bool is_command_entry_active() { return command_entry_active; }
 
+int get_command_entry_height() { return getmaxy(scintilla_get_window(command_entry)); }
+
 void set_command_entry_height(int height) {
   WINDOW *win = scintilla_get_window(command_entry);
   wresize(win, height, COLS), mvwin(win, LINES - 1 - height, 0);
