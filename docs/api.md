@@ -5352,7 +5352,7 @@ The default value is `true`.
 #### `textadept.editing.autocomplete`(*name*)
 
 Displays an autocompletion list provided by the autocompleter function associated with string
-*name*, and returns `true` if completions were found and are shown.
+*name*, and returns `true` if completions were found.
 
 Parameters:
 
@@ -6478,7 +6478,7 @@ Usage:
 <a id="ui.output"></a>
 #### `ui.output`(...)
 
-Prints the given value(s) to the output buffer.
+Prints the given value(s) to the output buffer, and returns that buffer.
 Opens a new buffer if one has not already been opened for printing output. The output buffer
 attempts to understand the error messages and warnings produced by various tools.
 
@@ -6486,15 +6486,23 @@ Parameters:
 
 - *...*:  Output to print.
 
+Return:
+
+- output buffer
+
 <a id="ui.output_silent"></a>
 #### `ui.output_silent`(...)
 
-Silently prints the given value(s) to the output buffer if it is already open.
-Otherwise, behaves like `ui.output()`.
+Silently prints the given value(s) to the output buffer, and returns that buffer.
+Opens a new buffer for printing to if necessary.
 
 Parameters:
 
 - *...*:  Output to print.
+
+Return:
+
+- output buffer
 
 <a id="ui.popup_menu"></a>
 #### `ui.popup_menu`(*menu*)
@@ -6524,19 +6532,21 @@ Parameters:
 <a id="ui.print_silent"></a>
 #### `ui.print_silent`(...)
 
-Silently prints the given value(s) to the message buffer if it is already open.
-Otherwise, behaves like `ui.print()`.
+Silently prints the given value(s) to the message buffer, and returns that buffer.
 
 Parameters:
 
 - *...*:  Message or values to print.
 
+Return:
+
+- print buffer
+
 <a id="ui.print_silent_to"></a>
 #### `ui.print_silent_to`(*type*, ...)
 
-Silently prints the given value(s) to the buffer of string type *type* if that buffer is
-already open.
-Otherwise, behaves like `ui.print_to()`.
+Silently prints the given value(s) to the buffer of string type *type*, and returns that buffer.
+Opens a new buffer for printing to if necessary.
 
 Parameters:
 
@@ -6544,10 +6554,15 @@ Parameters:
 - *...*:  Message or values to print. Lua's `tostring()` function is called for each value.
    They will be printed as tab-separated values.
 
+Return:
+
+- print buffer
+
 <a id="ui.print_to"></a>
 #### `ui.print_to`(*type*, ...)
 
-Prints the given value(s) to the buffer of string type *type*, along with a trailing newline.
+Prints the given value(s) to the buffer of string type *type*, along with a trailing newline,
+and returns that buffer.
 Opens a new buffer for printing to if necessary. If the print buffer is already open in a
 view, the value(s) is printed to that view. Otherwise the view is split (unless `ui.tabs`
 is `true`) and the print buffer is displayed before being printed to.
@@ -6562,6 +6577,10 @@ Usage:
 
 - `ui.print_to(_L['[Message Buffer]'], message)
 `
+
+Return:
+
+- print buffer
 
 <a id="ui.suspend"></a>
 #### `ui.suspend`()
@@ -6619,6 +6638,11 @@ and filtering text through shell commands) and history.
 #### `ui.command_entry.active` 
 
 Whether or not the command entry is active.
+
+<a id="ui.command_entry.height"></a>
+#### `ui.command_entry.height` 
+
+The height in pixels of the command entry.
 
 
 ### Functions defined by `ui.command_entry`
@@ -6697,9 +6721,10 @@ Parameters:
 
    - `title`: The dialog's title text.
    - `text`: The dialog's initial input text.
-   - `button1`: The right-most button's label. The default value is `_L['OK']`.
-   - `button2`: The middle button's label. The default value is `_L['Cancel']`.
-   - `button3`: The left-most button's label. This option requires `button2` to be set.
+   - `button1`: The primary (accept) button's label. The default value is `_L['OK']`.
+   - `button2`: The secondary (reject) button's label. The default value is `_L['Cancel']`.
+   - `button3`: The tertiary button's label. This option requires `button2` to be set. It is
+     not available on Qt.
    - `return_button`: Also return the index of the selected button. The default value is `false`.
 
 Usage:
@@ -6731,9 +6756,9 @@ Parameters:
    - `items`: The list of string items to show in the list. Each item is placed in the next
      available column of the current row. If there is only one column, each item is on its
      own row.
-   - `button1`: The right-most button's label. The default value is `_L['OK']`.
-   - `button2`: The middle button's label. The default value is `_L['Cancel']`.
-   - `button3`: The left-most button's label. This option requires `button2` to be set.
+   - `button1`: The primary (accept) button's label. The default value is `_L['OK']`.
+   - `button2`: The secondary (reject) button's label. The default value is `_L['Cancel']`.
+   - `button3`: The tertiary button's label. This option requires `button2` to be set.
    - `multiple`: Allow the user to select multiple items. The default value is `false`.
      The terminal version does not support this option.
    - `search_column`: The column number to filter the input text against. The default value is
@@ -6765,9 +6790,9 @@ Parameters:
    - `icon`: The dialog's icon name, according to the Free Desktop Icon Naming
      Specification. Examples are "dialog-error", "dialog-information", "dialog-question",
      and "dialog-warning". The dialog does not display an icon by default.
-   - `button1`: The right-most button's label. The default value is `_L['OK']`.
-   - `button2`: The middle button's label.
-   - `button3`: The left-most button's label. This option requires `button2` to be set.
+   - `button1`: The primary (accept) button's label. The default value is `_L['OK']`.
+   - `button2`: The secondary (reject) button's label.
+   - `button3`: The tertiary button's label. This option requires `button2` to be set.
 
 Usage:
 
