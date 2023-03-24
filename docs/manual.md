@@ -681,6 +681,14 @@ Textadept allows you to open files using a variety of methods:
   menu item. Textadept will prompt you to reload a file if the editor detects it has been
   modified externally.
 
+**Windows Note:** Textadept cannot open files containing arbitrary characters in their filenames,
+even if Windows displays them properly. The editor can only open files whose names contain
+characters in the system's encoding (e.g. CP1252 for English and most European languages). This
+is because Textadept relies on Lua for reading and writing files, which in turn relies on
+Microsoft's C runtime library (MSVCRT), and MSVCRT uses single-byte character encodings
+(non-Unicode) for filenames. (Textadept has no problems working with a file's *contents*,
+which may be encoded in UTF-8, UTF-16, etc.)
+
 ![Quick Open](images/snapopen.png)
 
 When it comes to projects, Textadept's only concept of a project is a parent directory under

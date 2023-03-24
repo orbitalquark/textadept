@@ -55,10 +55,14 @@ log file. There are other tools for that case.
 - - -
 
 **Q:**
-When I open a file in a non-English language, I see a lot of strange characters.
+When I open a file in a non-English or non-European language, I see a lot of strange characters.
 
 **A:**
 Textadept was not able to detect the file's encoding correctly. You'll need to [help it][].
+
+On Windows, if you are seeing strange characters in the filename (including '?'), your file's
+name contains characters outside the system's encoding, and due to Microsoft's C runtime library
+limitations, Textadept cannot open files like those.
 
 [help it]: manual.html#encoding
 
@@ -70,7 +74,8 @@ in the command entry, or the wrong command shows up. How can I tell Textadept wh
 
 **A:**
 The LuaDoc describes [compile and run commands][] and you can configure them in your
-[preferences][].
+[preferences][]. Also, Textadept will remember any compile/run commands you manually enter for
+the current session.
 
 [compile and run commands]: api.html#textadept.run
 [preferences]: manual.html#textadept
