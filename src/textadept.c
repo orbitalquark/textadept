@@ -897,6 +897,7 @@ static bool init_lua(int argc, char **argv) {
   lua_pushboolean(L, true), lua_setglobal(L, os);
   lua_pushboolean(L, true), lua_setglobal(L, get_platform());
   lua_pushstring(L, get_charset()), lua_setglobal(L, "_CHARSET");
+  lua_pushstring(L, !is_dark_mode() ? "light" : "dark"), lua_setglobal(L, "_THEME");
 
   if (lua = L, !run_file("core/init.lua"))
     return (lua_close(L), lua = NULL, exit_status = 1, false);
@@ -1276,4 +1277,10 @@ void show_context_menu(const char *name, void *userdata) {
   if (lua_getglobal(lua, "ui") == LUA_TTABLE && lua_getfield(lua, -1, name) == LUA_TLIGHTUSERDATA)
     popup_menu(lua_touserdata(lua, -1), userdata);
   lua_settop(lua, n);
+}
+
+void mode_changed() {
+  const char *mode = !is_dark_mode() ? "light" : "dark";
+  lua_pushstring(lua, mode), lua_setglobal(lua, "_THEME");
+  emit("mode_changed", LUA_TSTRING, mode, -1);
 }

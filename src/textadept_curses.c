@@ -484,6 +484,10 @@ int read_fds(fd_set *fds) {
 }
 #endif
 
+char *get_clipboard_text(int *len) { return scintilla_get_clipboard(focused_view, len); }
+
+bool add_timeout(double interval, bool (*f)(int *), int *refs) { return false; }
+
 void update_ui() {
 #if !_WIN32
   struct timeval timeout = {0, 1e5}; // 0.1s
@@ -495,9 +499,7 @@ void update_ui() {
 #endif
 }
 
-char *get_clipboard_text(int *len) { return scintilla_get_clipboard(focused_view, len); }
-
-bool add_timeout(double interval, bool (*f)(int *), int *refs) { return false; }
+bool is_dark_mode() { return true; } // TODO:
 
 // Contains information about a generic dialog shell.
 // Widgets can be added to its 'screen' field.

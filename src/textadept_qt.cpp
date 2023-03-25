@@ -349,6 +349,12 @@ bool add_timeout(double interval, bool (*f)(int *), int *refs) {
 
 void update_ui() { QApplication::sendPostedEvents(), QApplication::processEvents(); }
 
+bool is_dark_mode() {
+  QPalette palette;
+  return palette.color(QPalette::WindowText).lightness() >
+    palette.color(QPalette::Window).lightness();
+}
+
 int message_dialog(DialogOptions opts, lua_State *L) {
   QMessageBox dialog{ta};
   if (opts.title) dialog.setText(opts.title);
@@ -719,7 +725,7 @@ public:
       else if (state == Qt::ApplicationActive)
         emit("focus", -1);
     });
-    // TODO: connect to QGuiApplication::paletteChanged for light/dark theme changes?
+    connect(this, &QGuiApplication::paletteChanged, this, mode_changed);
     connect(this, &QApplication::aboutToQuit, this, &close_textadept);
     // There is a bug in Qt where a tab scroll button could have focus at this time.
     if (!SCI(focused_view)->hasFocus()) SCI(focused_view)->setFocus();

@@ -89,6 +89,16 @@ end
 local theme, env
 rawset(view, 'set_theme', function(_, name, env_) theme, env = name, env_ end)
 events.connect(events.VIEW_NEW, function() view:set_theme(theme, env) end)
+-- Set the command entry theme after initialization and synchronize light/dark editor theme
+-- with light/dark GUI mode.
+events.connect(events.INITIALIZED, function()
+  ui.command_entry:set_theme(theme, env)
+  events.connect(events.MODE_CHANGED, function()
+    if type(theme) == 'string' then return end -- do not override a manually set theme
+    for _, view in ipairs(_VIEWS) do view:set_theme(theme) end -- env/nil
+    ui.command_entry:set_theme(theme) -- env/nil
+  end)
+end)
 -- On reset, cycle through buffers, resetting the lexers, and cycle through views, simulating
 -- `events.VIEW_NEW` event to update themes, colors, and styles.
 events.connect(events.RESET_AFTER, function()
@@ -106,7 +116,7 @@ end)
 
 local buffer, view = buffer, view
 
-view:set_theme(not CURSES and 'light' or 'term')
+if CURSES then view:set_theme('term') end
 
 -- Multiple Selection and Virtual Space.
 buffer.multiple_selection, buffer.additional_selection_typing = true, true

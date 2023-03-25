@@ -503,6 +503,14 @@ void update_ui() {
   while (gtk_events_pending()) gtk_main_iteration();
 }
 
+bool is_dark_mode() {
+  GtkStyleContext *context = gtk_style_context_new();
+  GdkRGBA fore, back;
+  gtk_style_context_lookup_color(context, "theme_fg_color", &fore);
+  gtk_style_context_lookup_color(context, "theme_bg_color", &back);
+  return (fore.red + fore.green + fore.blue) > (back.red + back.green + back.blue);
+}
+
 // Returns a new message dialog with the specified title, icon, and buttons.
 // This base dialog is not limited to showing messages. More widgets can be added to it.
 static GtkWidget *new_dialog(DialogOptions *opts) {
@@ -902,6 +910,8 @@ int main(int argc, char **argv) {
     return (g_application_run(app, argc, argv), g_object_unref(app), 0);
 
   if (!init_textadept(argc, argv)) return (g_object_unref(app), exit_status);
+  g_signal_connect(
+    gtk_settings_get_default(), "notify::gtk-theme-name", G_CALLBACK(mode_changed), NULL);
   gtk_main();
 
   return (g_object_unref(app), 0); // close_textadept() was called before gtk_main_quit()

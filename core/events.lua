@@ -242,6 +242,13 @@ local M = {}
 -- @field MENU_CLICKED
 
 ---
+-- Emitted by the GUI version when switching between light mode and dark mode.
+-- Arguments:
+--
+--   - *mode*: Either "light" or "dark".
+-- @field MODE_CHANGED
+
+---
 -- Emitted by the terminal version for an unhandled mouse event.
 -- A handler should return `true` if it handled the event. Otherwise Textadept will try again.
 -- (This side effect for a `false` or `nil` return is useful for sending the original mouse
@@ -489,7 +496,7 @@ end)
 -- Set event constants.
 for _, v in pairs(_SCINTILLA.events) do M[v[1]:upper()] = v[1] end
 -- LuaFormatter off
-local textadept_events = {'appleevent_odoc','buffer_after_replace_text','buffer_after_switch','buffer_before_replace_text','buffer_before_switch','buffer_deleted','buffer_new','csi','command_text_changed','error','find','find_text_changed','focus','initialized','keypress','menu_clicked','mouse','quit','replace','replace_all','reset_after','reset_before','resume','suspend', 'tab_clicked','tab_close_clicked','unfocus','view_after_switch','view_before_switch','view_new'}
+local textadept_events = {'appleevent_odoc','buffer_after_replace_text','buffer_after_switch','buffer_before_replace_text','buffer_before_switch','buffer_deleted','buffer_new','csi','command_text_changed','error','find','find_text_changed','focus','initialized','keypress','menu_clicked','mode_changed','mouse','quit','replace','replace_all','reset_after','reset_before','resume','suspend', 'tab_clicked','tab_close_clicked','unfocus','view_after_switch','view_before_switch','view_new'}
 -- LuaFormatter on
 for _, v in pairs(textadept_events) do M[v:upper()] = v end
 

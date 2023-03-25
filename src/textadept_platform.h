@@ -273,6 +273,9 @@ bool add_timeout(double interval, bool (*f)(int *), int *reference);
  */
 void update_ui();
 
+/** Returns whether or not dark mode is currently enabled on the platform. */
+bool is_dark_mode();
+
 /**
  * Asks the platform to show a message dialog using the given options.
  * If the user presses a button, the platform should push onto the Lua stack the index (starting

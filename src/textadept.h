@@ -72,6 +72,12 @@ void find_clicked(FindButton *button);
 void show_context_menu(const char *name, void *userdata);
 
 /**
+ * Notifies Textadept that there has been a change between light mode and dark mode.
+ * Textadept will call `is_dark_mode()` in order to determine which mode is enabled.
+ */
+void mode_changed();
+
+/**
  * Notifies Textadept that a spawned child process has produced the given stdout or stderr.
  * Textadept will call any functions listening for that output.
  */

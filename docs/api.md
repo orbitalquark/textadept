@@ -95,6 +95,12 @@ A ';'-separated list of directory paths that contain lexers for syntax highlight
 
 The Textadept release version string.
 
+<a id="_THEME"></a>
+#### `_THEME` 
+
+Textadept's current UI mode, either "light" or "dark".
+Manually changing this field has no effect.
+
 <a id="_USERHOME"></a>
 #### `_USERHOME` 
 
@@ -2956,6 +2962,14 @@ Emitted after selecting a menu item.
 Arguments:
 
   - *menu_id*: The numeric ID of the menu item, which was defined in [`ui.menu()`](#ui.menu).
+
+<a id="events.MODE_CHANGED"></a>
+#### `events.MODE_CHANGED` 
+
+Emitted by the GUI version when switching between light mode and dark mode.
+Arguments:
+
+  - *mode*: Either "light" or "dark".
 
 <a id="events.MOUSE"></a>
 #### `events.MOUSE` 
@@ -8171,7 +8185,7 @@ Applies defined styles to the view.
 This should be called any time a style in `styles` changes.
 
 <a id="view.set_theme"></a>
-#### `view:set_theme`(*name*[, *env*])
+#### `view:set_theme`([*name*[, *env*]])
 
 Sets the view's color theme to be string *name*, with the contents of table *env* available
 as global variables.
@@ -8180,13 +8194,17 @@ contains slashes, it is assumed to be an absolute path to a theme instead of a t
 
 Parameters:
 
-- *name*:  The name or absolute path of a theme to set.
+- *name*:  Optional string name or absolute path of a theme to set. The default value
+   is either 'light' or 'dark', depending on whether light mode or dark mode, respectively,
+   is enabled.
 - *env*:  Optional table of global variables themes can utilize to override default
    settings such as font and size.
 
 Usage:
 
-- `view:set_theme('light', {font = 'Monospace', size = 12})
+- `view:set_theme{font = 'Monospace', size = 12}
+`
+- `view:set_theme('my_theme', {font = 'Monospace', size = 12})
 `
 
 <a id="view.set_visible_policy"></a>

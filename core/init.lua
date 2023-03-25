@@ -106,6 +106,7 @@ end
 
 -- Documentation is in core/.view.luadoc.
 local function set_theme(view, name, env)
+  if not name or type(name) == 'table' then name, env = _THEME, name end
   if not assert_type(name, 'string', 2):find('[/\\]') then
     name = package.searchpath(name,
       string.format('%s/themes/?.lua;%s/themes/?.lua', _USERHOME, _HOME))
@@ -127,6 +128,7 @@ local styles_mt = {
 }
 
 events.connect(events.VIEW_NEW, function()
+  local view = buffer ~= ui.command_entry and view or ui.command_entry
   view.colors, view.styles = {}, setmetatable({}, styles_mt)
   view.set_styles, view.set_theme = set_styles, set_theme
 end, 1)
@@ -166,6 +168,11 @@ end, 1)
 --
 --   [Appendix]: manual.html#terminal-version-compatibility
 -- @field CURSES
+
+---
+-- Textadept's current UI mode, either "light" or "dark".
+-- Manually changing this field has no effect.
+-- @field _THEME
 
 -- The tables below were defined in C.
 

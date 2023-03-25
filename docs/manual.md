@@ -1302,9 +1302,9 @@ event handler. For example, in your *~/.textadept/init.lua*:
 ### Themes
 ---
 
-Themes customize Textadept's look and feel. The editor comes with three built-in themes:
-"light", "dark", and "term". The default theme for the GUI and terminal versions is "light"
-and "term", respectively.
+Themes customize Textadept's look and feel. The editor comes with three built-in themes: "light",
+"dark", and "term". The default theme for the GUI version is "light" if light mode is currently
+enabled, or "dark" if dark mode is enabled. The default theme for the terminal version is "term".
 
 <span style="display: block; clear: right;"></span>
 
@@ -1340,6 +1340,8 @@ on a per-language basis. For example, in your *~/.textadept/init.lua*:
 
     if not CURSES then
       view:set_theme('light', {font = 'Monospace', size = 12})
+      -- You can alternatively use the following to keep the default theme:
+      -- view:set_theme{font = 'Monospace', size = 12}
     end
 
     -- Color Java class names black instead of the default yellow.
