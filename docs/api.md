@@ -6645,6 +6645,8 @@ A table containing the width and height pixel values of Textadept's window.
 Textadept's Command Entry.
 It supports multiple modes that each have their own functionality (such as running Lua code
 and filtering text through shell commands) and history.
+In addition to the functions and fields listed below, the command entry also has the same
+functions and fields that [`buffer`](#buffer)s and [`view`](#view)s do.
 
 ### Fields defined by `ui.command_entry`
 

@@ -5,6 +5,8 @@
 -- Textadept's Command Entry.
 -- It supports multiple modes that each have their own functionality (such as running Lua code
 -- and filtering text through shell commands) and history.
+-- In addition to the functions and fields listed below, the command entry also has the same
+-- functions and fields that [`buffer`]()s and [`view`]()s do.
 -- @module ui.command_entry
 local M = ui.command_entry
 
