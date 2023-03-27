@@ -144,7 +144,8 @@ events.connect(events.KEYPRESS, function(key)
       local pos = buffer.selection_n_caret[i]
       local byte, next_byte = buffer.char_at[pos - 1], buffer.char_at[pos]
       local complement = byte >= 32 and byte <= 256 and M.auto_pairs[string.char(byte)]
-      if complement and string.char(next_byte) == complement then buffer:delete_range(pos, 1) end
+      local next_char = next_byte >= 32 and next_byte <= 256 and string.char(next_byte)
+      if complement and next_char == complement then buffer:delete_range(pos, 1) end
     end
     buffer:end_undo_action()
   end

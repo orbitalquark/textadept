@@ -1868,6 +1868,14 @@ function test_editing_auto_pair()
   assert_equal(buffer:get_text(), 'foo()\nfoo()')
   buffer:undo()
   assert_equal(buffer:get_text(), 'foo(\nfoo(')
+  -- Verify multi-byte characters do not cause issues.
+  buffer:set_text('(⌘⇧')
+  buffer:line_end()
+  buffer:goto_pos(buffer:position_relative(buffer.current_pos, -1))
+  events.emit(events.KEYPRESS, '\b') -- ⌘ does not have a complement
+  assert_equal(buffer:get_text(), '(⇧')
+  events.emit(events.KEYPRESS, '\b') -- ⇧ is not a complement
+  assert_equal(buffer:get_text(), '⇧')
   buffer:close(true)
 end
 
