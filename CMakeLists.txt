@@ -15,7 +15,7 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 # Scintilla.
 set(deps_dir ${CMAKE_BINARY_DIR}/_deps)
-set(scintilla_tgz scintilla530.tgz)
+set(scintilla_tgz scintilla534.tgz)
 set(scintilla_url file://${deps_dir}/${scintilla_tgz})
 if(NOT EXISTS ${deps_dir}/${scintilla_tgz})
   set(scintilla_url https://www.scintilla.org/${scintilla_tgz})

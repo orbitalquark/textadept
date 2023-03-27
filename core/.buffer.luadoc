@@ -1909,6 +1909,7 @@
 --   - get_next_tab_stop
 --   - get_range_pointer
 --   - get_styled_text
+--   - get_styled_text_full
 --   - grab_focus
 --   - hide_selection
 --   - index_position_from_line
@@ -1931,6 +1932,7 @@
 --   - release_all_extended_styles
 --   - release_document
 --   - release_line_character_index
+--   - replace_target_minimal
 --   - sel_alpha
 --   - set_font_locale
 --   - set_hotspot_active_back

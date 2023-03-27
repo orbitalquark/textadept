@@ -2,12 +2,7 @@ Scintilla changes:
 
 * Handle leading whitespace in XPM images in order to prevent crashes.
 * Do not clear per-line-values when clearing the first line of a 1-line document.
-* Handle incoming XPM images as a single string on Qt. Similar patch submitted upstream.
 * Use Qt macros instead of keywords in header.
-* Enable Qt mouse wheel events even if scroll bars are hidden. Similar patch submitted upstream.
-* Update scroll position after VerticalCentreCaret(). Patch submitted upstream.
-* Cache ac.Active() status when inserting a character to avoid immediate completion if SCN_CHARADDED
-  triggered autocompletion and that char is a fill-up char. Patch submitted upstream.
 
 diff -r 22b6bbb36280 src/XPM.cxx
 --- a/src/XPM.cxx	Sat Sep 05 07:55:08 2020 +1000
@@ -34,20 +29,6 @@ diff -r 123ae5de5bd2 src/CellBuffer.cxx
  		// If whole buffer is being deleted, faster to reinitialise lines data
  		// than to delete each line.
  		plv->Init();
-diff -r 123ae5de5bd2 qt/ScintillaEditBase/PlatQt.cpp
---- a/qt/ScintillaEditBase/PlatQt.cpp	Sat Aug 27 08:02:08 2022 +1000
-+++ b/qt/ScintillaEditBase/PlatQt.cpp	Tue Nov 22 00:11:05 2022 -0500
-@@ -1146,7 +1146,9 @@
- 
- void ListBoxImpl::RegisterImage(int type, const char *xpmData)
- {
--	RegisterQPixmapImage(type, QPixmap(reinterpret_cast<const char * const *>(xpmData)));
-+	QPixmap pixmap;
-+	if (pixmap.loadFromData(reinterpret_cast<const unsigned char*>(xpmData), static_cast<unsigned int>(strlen(xpmData))))
-+		RegisterQPixmapImage(type, pixmap);
- }
- 
- void ListBoxImpl::RegisterRGBAImage(int type, int width, int height, const unsigned char *pixelsImage)
 diff -r 123ae5de5bd2 qt/ScintillaEditBase/ScintillaEditBase.h
 --- a/qt/ScintillaEditBase/ScintillaEditBase.h	Sat Aug 27 08:02:08 2022 +1000
 +++ b/qt/ScintillaEditBase/ScintillaEditBase.h	Thu Nov 24 10:30:29 2022 -0500
@@ -80,53 +61,3 @@ diff -r 123ae5de5bd2 qt/ScintillaEditBase/ScintillaEditBase.h
  	void horizontalScrolled(int value);
  	void verticalScrolled(int value);
  	void horizontalRangeChanged(int max, int page);
-diff -r 123ae5de5bd2 qt/ScintillaEditBase/ScintillaEditBase.cpp
---- a/qt/ScintillaEditBase/ScintillaEditBase.cpp	Sat Aug 27 08:02:08 2022 +1000
-+++ b/qt/ScintillaEditBase/ScintillaEditBase.cpp	Fri Dec 30 10:21:52 2022 -0500
-@@ -169,7 +169,7 @@
- void ScintillaEditBase::wheelEvent(QWheelEvent *event)
- {
- 	if (isWheelEventHorizontal(event)) {
--		if (horizontalScrollBarPolicy() == Qt::ScrollBarAlwaysOff)
-+		if (horizontalScrollBarPolicy() == Qt::ScrollBarAlwaysOff && false)
- 			event->ignore();
- 		else
- 			QAbstractScrollArea::wheelEvent(event);
-@@ -184,7 +184,7 @@
- 			}
- 		} else {
- 			// Ignore wheel events when the scroll bars are disabled.
--			if (verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff) {
-+			if (verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOff && false) {
- 				event->ignore();
- 			} else {
- 				// Scroll
-diff -r 123ae5de5bd2 src/Editor.cxx
---- a/src/Editor.cxx	Sat Aug 27 08:02:08 2022 +1000
-+++ b/src/Editor.cxx	Sun Jan 08 09:48:02 2023 -0500
-@@ -1013,6 +1013,7 @@
- 	if (topLine != newTop) {
- 		SetTopLine(newTop > 0 ? newTop : 0);
- 		RedrawRect(GetClientRectangle());
-+		SetVerticalScrollPos();
- 	}
- }
- 
-diff -r 123ae5de5bd2 src/ScintillaBase.cxx
---- a/src/ScintillaBase.cxx	Sat Aug 27 08:02:08 2022 +1000
-+++ b/src/ScintillaBase.cxx	Fri Jan 13 08:38:46 2023 -0500
-@@ -78,11 +78,12 @@
- }
- 
- void ScintillaBase::InsertCharacter(std::string_view sv, CharacterSource charSource) {
--	const bool isFillUp = ac.Active() && ac.IsFillUpChar(sv[0]);
-+	const bool acActive = ac.Active();
-+	const bool isFillUp = acActive && ac.IsFillUpChar(sv[0]);
- 	if (!isFillUp) {
- 		Editor::InsertCharacter(sv, charSource);
- 	}
--	if (ac.Active()) {
-+	if (acActive && ac.Active()) { // if it was and still is active
- 		AutoCompleteCharacterAdded(sv[0]);
- 		// For fill ups add the character after the autocompletion has
- 		// triggered so containers see the key so can display a calltip.
