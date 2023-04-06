@@ -98,6 +98,18 @@ local M = {}
 --- The snippet placeholder indicator number.
 M.INDIC_PLACEHOLDER = _SCINTILLA.new_indic_number()
 
+---
+-- List of directory paths to look for snippet files in.
+-- Filenames are of the form *lexer.trigger.ext* or *trigger.ext* (*.ext* is an optional,
+-- arbitrary file extension). If the global `snippets` table does not contain a snippet for
+-- a given trigger, this table is consulted for a matching filename, and the contents of that
+-- file is inserted as a snippet.
+-- Note: If a directory has multiple snippets with the same trigger, the snippet chosen for
+-- insertion is not defined and may not be constant.
+-- @class table
+-- @name paths
+M.paths = {}
+
 local INDIC_SNIPPET = _SCINTILLA.new_indic_number()
 local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.new_indic_number()
 
@@ -136,6 +148,26 @@ local function find_snippet(grep, no_trigger)
       end
     end
     ::continue::
+  end
+  -- Search in snippet files.
+  for i = 1, #M.paths do
+    for basename in lfs.dir(M.paths[i]) do
+      -- Snippet files are either of the form "lexer.trigger.ext" or "trigger.ext". Prefer
+      -- "lexer."-prefixed snippets.
+      local p1, p2, p3 = basename:match('^([^.]+)%.?([^.]*)%.?([^.]*)$')
+      if not grep and (p1 == lang and p2 == trigger or p1 == trigger and p3 == '') or
+        (grep and
+          (p1 == lang and p2 and p2:find(name_patt) or p1 and p1:find(name_patt) and p3 == '')) then
+        local f = io.open(string.format('%s/%s', M.paths[i], basename))
+        local text = f:read('a')
+        f:close()
+        if not grep and p1 == lang then return trigger, text end
+        matching_snippets[p1 == lang and p2 or p1] = text
+      end
+    end
+    if not grep and next(matching_snippets) then
+      return trigger, select(2, next(matching_snippets)) -- non-preferred "trigger.ext" was found
+    end
   end
   if not grep then return nil, nil end
   return trigger, matching_snippets
