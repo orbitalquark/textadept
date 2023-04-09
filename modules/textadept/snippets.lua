@@ -1,7 +1,6 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Snippets for Textadept.
+--- Snippets for Textadept.
 --
 -- ### Overview
 --
@@ -98,8 +97,7 @@ local M = {}
 --- The snippet placeholder indicator number.
 M.INDIC_PLACEHOLDER = _SCINTILLA.new_indic_number()
 
----
--- List of directory paths to look for snippet files in.
+--- List of directory paths to look for snippet files in.
 -- Filenames are of the form *lexer.trigger.ext* or *trigger.ext* (*.ext* is an optional,
 -- arbitrary file extension). If the global `snippets` table does not contain a snippet for
 -- a given trigger, this table is consulted for a matching filename, and the contents of that
@@ -113,8 +111,7 @@ M.paths = {}
 local INDIC_SNIPPET = _SCINTILLA.new_indic_number()
 local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.new_indic_number()
 
----
--- Map of [snippet](#textadept.snippets) triggers with their snippet text or functions that
+--- Map of [snippet](#textadept.snippets) triggers with their snippet text or functions that
 -- return such text, with language-specific snippets tables assigned to a lexer name key.
 _G.snippets = {}
 for _, name in ipairs(lexer.names()) do snippets[name] = {} end
@@ -540,8 +537,7 @@ function snippet:update_transforms()
   end
 end
 
----
--- Inserts snippet text *text* or the snippet assigned to the trigger word behind the caret.
+--- Inserts snippet text *text* or the snippet assigned to the trigger word behind the caret.
 -- Otherwise, if a snippet is active, goes to the active snippet's next placeholder. Returns
 -- `false` if no action was taken.
 -- @param[opt] text Optional snippet text to insert. If `nil`, attempts to insert a new snippet
@@ -561,8 +557,7 @@ function M.insert(text)
   stack[#stack]:next()
 end
 
----
--- Jumps back to the previous snippet placeholder, reverting any changes from the current one.
+--- Jumps back to the previous snippet placeholder, reverting any changes from the current one.
 -- Returns `false` if no snippet is active.
 -- @return `false` if no snippet is active; `nil` otherwise.
 function M.previous()
@@ -570,8 +565,7 @@ function M.previous()
   stack[#stack]:previous()
 end
 
----
--- Cancels the active snippet, removing all inserted text.
+--- Cancels the active snippet, removing all inserted text.
 -- Returns `false` if no snippet is active.
 -- @return `false` if no snippet is active; `nil` otherwise.
 function M.cancel()
@@ -579,8 +573,7 @@ function M.cancel()
   stack[#stack]:finish(true)
 end
 
----
--- Prompts the user to select a snippet to insert from a list of global and language-specific
+--- Prompts the user to select a snippet to insert from a list of global and language-specific
 -- snippets.
 function M.select()
   local all_snippets, items = {}, {}
@@ -609,8 +602,7 @@ events.connect(events.VIEW_NEW, function()
   view.indic_style[INDIC_CURRENTPLACEHOLDER] = view.INDIC_HIDDEN
 end)
 
----
--- Autocompleter function for snippet trigger words.
+--- Autocompleter function for snippet trigger words.
 -- @see textadept.editing.autocomplete
 -- @function _G.textadept.editing.autocompleters.snippet
 textadept.editing.autocompleters.snippet = function()

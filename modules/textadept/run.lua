@@ -1,15 +1,13 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Compile and run source code files with Textadept.
+--- Compile and run source code files with Textadept.
 -- [Language modules](#compile-and-run) may tweak the `compile_commands`, and `run_commands`
 -- tables for particular languages.
 -- The user may tweak `build_commands` and `test_commands` for particular projects.
 -- @module textadept.run
 local M = {}
 
----
--- Run shell commands silently in the background.
+--- Run shell commands silently in the background.
 -- The default value is `false`.
 M.run_in_background = false
 
@@ -26,8 +24,7 @@ M.INDIC_ERROR = _SCINTILLA.new_indic_number()
 local run_events = {'compile_output', 'run_output', 'build_output', 'test_output'}
 for _, event in ipairs(run_events) do events[event:upper()] = event end
 
----
--- Emitted when executing a language's compile shell command.
+--- Emitted when executing a language's compile shell command.
 -- By default, compiler output is printed to the output buffer. In order to override this
 -- behavior, connect to the event with an index of `1` and return `true`.
 -- Arguments:
@@ -35,8 +32,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 --   - *output*: A line of string output from the command.
 -- @field _G.events.COMPILE_OUTPUT
 
----
--- Emitted when executing a language's or project's run shell command.
+--- Emitted when executing a language's or project's run shell command.
 -- By default, output is printed to the output buffer. In order to override this behavior,
 -- connect to the event with an index of `1` and return `true`.
 -- Arguments:
@@ -44,8 +40,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 --   - *output*: A line of string output from the command.
 -- @field _G.events.RUN_OUTPUT
 
----
--- Emitted when executing a project's build shell command.
+--- Emitted when executing a project's build shell command.
 -- By default, output is printed to the output buffer. In order to override this behavior,
 -- connect to the event with an index of `1` and return `true`.
 -- Arguments:
@@ -53,8 +48,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 --   - *output*: A line of string output from the command.
 -- @field _G.events.BUILD_OUTPUT
 
----
--- Emitted when executing a project's shell command for running tests.
+--- Emitted when executing a project's shell command for running tests.
 -- By default, output is printed to the output buffer. In order to override this behavior,
 -- connect to the event with an index of `1` and return `true`.
 -- Arguments:
@@ -62,8 +56,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 --   - *output*: A line of string output from the command.
 -- @field _G.events.TEST_OUTPUT
 
----
--- Table of currently running spawned processes.
+--- Table of currently running spawned processes.
 -- Each entry is a table that contains 'proc' and 'command' fields that describe the process.
 local procs = {}
 
@@ -169,8 +162,7 @@ local function compile_or_run(filename, commands)
   run_command(label, command, dirname, event, commands, filename, macros)
 end
 
----
--- Map of filenames, file extensions, and lexer names to their associated "compile" shell
+--- Map of filenames, file extensions, and lexer names to their associated "compile" shell
 -- command line strings or functions that return such strings.
 -- Command line strings may have the following macros:
 --
@@ -187,8 +179,7 @@ M.compile_commands = {} -- empty declaration to avoid LDoc processing
 M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc -o "%e" "%f"',antlr='antlr4 "%f"',g='antlr3 "%f"',applescript='osacompile "%f" -o "%e.scpt"',asm='nasm "%f"'--[[ && ld "%e.o" -o "%e"']],boo='booc "%f"',caml='ocamlc -o "%e" "%f"',csharp=WIN32 and 'csc "%f"' or 'mcs "%f"',coffeescript='coffee -c "%f"',context='context --nonstopmode "%f"',cpp='g++ -o "%e" "%f"',cuda=WIN32 and 'nvcc -o "%e.exe" "%f"' or 'nvcc -o "%e" "%f"',dmd='dmd "%f"',dot='dot -Tps "%f" -o "%e.ps"',eiffel='se c "%f"',elixir='elixirc "%f"',erlang='erl -compile "%e"',faust='faust -o "%e.cpp" "%f"',fsharp=WIN32 and 'fsc.exe "%f"' or 'mono fsc.exe "%f"',fortran='gfortran -o "%e" "%f"',gap='gac -o "%e" "%f"',go='go build "%f"',groovy='groovyc "%f"',hare='hare build -o "%e" "%f"',haskell=WIN32 and 'ghc -o "%e.exe" "%f"' or 'ghc -o "%e" "%f"',inform=function() return 'inform -c "'..buffer.filename:match('^(.+%.inform[/\\])Source')..'"' end,java='javac "%f"',ltx='pdflatex -file-line-error -halt-on-error "%f"',less='lessc --no-color "%f" "%e.css"',lilypond='lilypond "%f"',lisp='clisp -c "%f"',litcoffee='coffee -c "%f"',lua='luac -o "%e.luac" "%f"',moon='moonc "%f"',markdown='markdown "%f" > "%e.html"',myr='mbld -b "%e" "%f"',nemerle='ncc "%f" -out:"%e.exe"',nim='nim c "%f"',nsis='MakeNSIS "%f"',objective_c='gcc -o "%e" "%f"',pascal='fpc "%f"',perl='perl -c "%f"',php='php -l "%f"',pony='ponyc "%f"',prolog='gplc --no-top-level "%f"',python='python -m py_compile "%f"',ruby='ruby -c "%f"',rust='rustc "%f"',sass='sass "%f" "%e.css"',scala='scalac "%f"',sml='mlton "%f"',tex='pdflatex -file-line-error -halt-on-error "%f"',typescript='tsc "%f"',vala='valac "%f"',vb=WIN32 and 'vbc "%f"' or 'vbnc "%f"',zig='zig build-exe "%f"'}
 -- LuaFormatter on
 
----
--- Prompts the user with the command entry to compile file *filename* or the current file using
+--- Prompts the user with the command entry to compile file *filename* or the current file using
 -- an appropriate shell command from the `compile_commands` table.
 -- The shell command is determined from the file's filename, extension, or language, in that order.
 -- Emits `COMPILE_OUTPUT` events.
@@ -202,8 +193,7 @@ function M.compile(filename)
   end
 end
 
----
--- Map of filenames, file extensions, and lexer names to their associated "run" shell command
+--- Map of filenames, file extensions, and lexer names to their associated "run" shell command
 -- line strings or functions that return strings.
 -- Command line strings may have the following macros:
 --
@@ -220,8 +210,7 @@ M.run_commands = {} -- empty declaration to avoid LDoc processing
 M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "file://%e.swf"' or 'xdg-open "%e.swf"',ada=WIN32 and '"%e"' or '"./%e"',ansi_c=WIN32 and '"%e"' or '"./%e"',applescript='osascript "%f"',asm='"./%e"',awk='awk -f "%f"',batch='"%f"',boo='booi "%f"',caml='ocamlrun "%e"',csharp=WIN32 and '"%e"' or 'mono "%e.exe"',chuck='chuck "%f"',clojure='clj -M "%f"',cmake='cmake -P "%f"',coffeescript='coffee "%f"',context=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',cpp=WIN32 and '"%e"' or '"./%e"',crystal='crystal "%f"',cuda=WIN32 and '"%e"' or '"./%e"',dart='dart "%f"',dmd=WIN32 and '"%e"' or '"./%e"',eiffel="./a.out",elixir='elixir "%f"',fsharp=WIN32 and '"%e"' or 'mono "%e.exe"',fantom='fan "%f"',fennel='fennel "%f"',forth='gforth "%f" -e bye',fortran=WIN32 and '"%e"' or '"./%e"',gnuplot='gnuplot "%f"',go='go run "%f"',groovy='groovy "%f"',hare='hare run "%f"',haskell=WIN32 and '"%e"' or '"./%e"',html=WIN32 and 'start "" "%f"' or OSX and 'open "file://%f"' or 'xdg-open "%f"',icon='icont "%e" -x',idl='idl -batch "%f"',Io='io "%f"',java='java "%e"',javascript='node "%f"',jq='jq -f "%f"',julia='julia "%f"',ltx=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',less='lessc --no-color "%f"',lilypond=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',lisp='clisp "%f"',litcoffee='coffee "%f"',lua='lua -e "io.stdout:setvbuf(\'no\')" "%f"',makefile=WIN32 and 'nmake -f "%f"' or 'make -f "%f"',markdown='markdown "%f"',moon='moon "%f"',myr=WIN32 and '"%e"' or '"./%e"',nemerle=WIN32 and '"%e"' or 'mono "%e.exe"',nim='nim c -r "%f"',objective_c=WIN32 and '"%e"' or '"./%e"',pascal=WIN32 and '"%e"' or '"./%e"',perl='perl "%f"',php='php "%f"',pike='pike "%f"',pkgbuild='makepkg -p "%f"',pony=WIN32 and '"%e"' or '"./%e"',prolog=WIN32 and '"%e"' or '"./%e"',pure='pure "%f"',python=function() return buffer:get_line(1):find('^#!.-python3') and 'python3 -u "%f"' or 'python -u "%f"' end,rstats=WIN32 and 'Rterm -f "%f"' or 'R -f "%f"',rebol='REBOL "%f"',rexx=WIN32 and 'rexx "%f"' or 'regina "%f"',ruby='ruby "%f"',rust=WIN32 and '"%e"' or '"./%e"',sass='sass "%f"',scala='scala "%e"',bash='bash "%f"',csh='tcsh "%f"',ksh='ksh "%f"',mksh='mksh "%f"',sh='sh "%f"',zsh='zsh "%f"',rc='rc "%f"',smalltalk='gst "%f"',sml=WIN32 and '"%e"' or '"./%e"',snobol4='snobol4 -b "%f"',tcl='tclsh "%f"',tex=WIN32 and 'start "" "%e.pdf"' or OSX and 'open "%e.pdf"' or 'xdg-open "%e.pdf"',vala=WIN32 and '"%e"' or '"./%e"',vb=WIN32 and '"%e"' or 'mono "%e.exe"',xs='xs "%f"',zig=WIN32 and '"%e"' or '"./%e"'}
 -- LuaFormatter on
 
----
--- Prompts the user with the command entry to run file *filename* or the current file using an
+--- Prompts the user with the command entry to run file *filename* or the current file using an
 -- appropriate shell command from the `run_commands` table.
 -- The shell command is determined from the file's filename, extension, or language, in that order.
 -- Emits `RUN_OUTPUT` events.
@@ -235,8 +224,7 @@ function M.run(filename)
   end
 end
 
----
--- Map of project root paths and "makefiles" to their associated "build" shell command line
+--- Map of project root paths and "makefiles" to their associated "build" shell command line
 -- strings or functions that return such strings.
 -- Functions may also return a working directory and process environment table to operate
 -- in. By default, the working directory is the project's root directory and the environment
@@ -246,8 +234,7 @@ M.build_commands = {} -- empty declaration to avoid LDoc processing
 M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='docker build .',--[[Make]]Makefile='make',GNUmakefile='make',makefile='make',--[[Meson]]['meson.build']='meson compile',--[[Maven]]['pom.xml']='mvn',--[[Ruby]]Rakefile='rake'}
 -- LuaFormatter on
 
----
--- Prompts the user with the command entry to build the project whose root path is *dir* or
+--- Prompts the user with the command entry to build the project whose root path is *dir* or
 -- the current project using the shell command from the `build_commands` table.  The current
 -- project is determined by either the buffer's filename or the current working directory.
 -- Emits `BUILD_OUTPUT` events.
@@ -272,16 +259,14 @@ function M.build(dir)
   run_command(_L['Build command:'], cmd, dir, events.BUILD_OUTPUT, M.build_commands, dir)
 end
 
----
--- Map of project root paths to their associated "test" shell command line strings or functions
+--- Map of project root paths to their associated "test" shell command line strings or functions
 -- that return such strings.
 -- Functions may also return a working directory and process environment table to operate
 -- in. By default, the working directory is the project's root directory and the environment
 -- is Textadept's environment.
 M.test_commands = {}
 
----
--- Prompts the user with the command entry to run tests for the project whose root path is *dir*
+--- Prompts the user with the command entry to run tests for the project whose root path is *dir*
 -- or the current project using the shell command from the `test_commands` table.  The current
 -- project is determined by either the buffer's filename or the current working directory.
 -- Emits `TEST_OUTPUT` events.
@@ -299,17 +284,16 @@ function M.test(dir)
   run_command(_L['Test command:'], cmd, dir, events.TEST_OUTPUT, M.test_commands, dir)
 end
 
----
--- Map of project root paths to their associated "run" shell command line strings or functions
+--- Map of project root paths to their associated "run" shell command line strings or functions
 -- that return such strings.
 -- Functions may also return a working directory and process environment table to operate
 -- in. By default, the working directory is the project's root directory and the environment
 -- is Textadept's environment.
 M.run_project_commands = {}
 
----
--- Prompts the user with the command entry to run shell command *cmd* or the shell command from the
--- `run_project_commands` table for the project whose root path is *dir* or the current project.
+--- Prompts the user with the command entry to run shell command *cmd* or the shell command
+-- from the `run_project_commands` table for the project whose root path is *dir* or the
+-- current project.
 -- The current project is determined by either the buffer's filename or the current working
 -- directory.
 -- Emits `RUN_OUTPUT` events.
@@ -328,8 +312,7 @@ function M.run_project(dir, cmd)
   run_command(_L['Project run command:'], cmd, dir, events.RUN_OUTPUT, M.run_project_commands, dir)
 end
 
----
--- Stops the currently running process, if any.
+--- Stops the currently running process, if any.
 -- If there is more than one running process, the user is prompted to select the process to stop.
 -- Processes in the list are sorted from longest lived at the top to shortest lived on the bottom.
 function M.stop()
@@ -366,8 +349,7 @@ local function get_tagged_text(line_num, tag)
   end
 end
 
----
--- Jumps to the source of the next or previous recognized compile/run warning or error in
+--- Jumps to the source of the next or previous recognized compile/run warning or error in
 -- the output buffer, or the warning/error on a given line number, depending on the value
 -- of *location*.
 -- Displays an annotation with the warning or error message if possible.

@@ -1,8 +1,7 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 -- Abbreviated environment and commands from Jay Gould.
 
----
--- Textadept's Command Entry.
+--- Textadept's Command Entry.
 -- It supports multiple modes that each have their own functionality (such as running Lua code
 -- and filtering text through shell commands) and history.
 -- In addition to the functions and fields listed below, the command entry also has the same
@@ -10,16 +9,13 @@
 -- @module ui.command_entry
 local M = ui.command_entry
 
----
--- The height in pixels of the command entry.
+--- The height in pixels of the command entry.
 -- @field height
 
----
--- Whether or not the command entry is active.
+--- Whether or not the command entry is active.
 -- @field active
 
----
--- Command history per mode.
+--- Command history per mode.
 -- The current mode is in the `mode` field.
 local history = setmetatable({}, {
   __index = function(t, k)
@@ -45,8 +41,7 @@ local function cycle_history(prev)
   M:add_text(mode_history[mode_history.pos])
 end
 
----
--- A metatable with typical platform-specific key bindings for text entries.
+--- A metatable with typical platform-specific key bindings for text entries.
 -- This metatable may be used to add basic editing and movement keys to command entry modes. It
 -- is automatically added to command entry modes unless a metatable was previously set.
 -- @usage setmetatable(mode_keys, ui.command_entry.editing_keys)
@@ -187,8 +182,7 @@ local function append_history(f, text)
   mode_history[#mode_history + 1], mode_history.pos = text, #mode_history + 1
 end
 
----
--- Opens the command entry with label *label* (and optionally with string *initial_text*),
+--- Opens the command entry with label *label* (and optionally with string *initial_text*),
 -- subjecting it to any key bindings defined in table *keys*, highlighting text with lexer
 -- name *lang*, and then when the `Enter` key is pressed, closes the command entry and calls
 -- function *f* (if non-`nil`) with the command entry's text as an argument, along with any
@@ -275,6 +269,5 @@ end)
 
 -- The function below is a Lua C function.
 
----
--- Opens the command entry.
+--- Opens the command entry.
 -- @function focus

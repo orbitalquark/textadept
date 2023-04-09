@@ -1,7 +1,6 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Extends Lua's _G table to provide extra functions and fields for Textadept.
+--- Extends Lua's _G table to provide extra functions and fields for Textadept.
 -- @module _G
 
 --- The Textadept release version string.
@@ -133,82 +132,67 @@ events.connect(events.VIEW_NEW, function()
   view.set_styles, view.set_theme = set_styles, set_theme
 end, 1)
 
----
--- The path to Textadept's home, or installation, directory.
+--- The path to Textadept's home, or installation, directory.
 -- @field _HOME
 
----
--- The filesystem's character encoding.
+--- The filesystem's character encoding.
 -- This is used when [working with files](#io).
 -- @field _CHARSET
 
----
--- Whether or not Textadept is running on Windows.
+--- Whether or not Textadept is running on Windows.
 -- @field WIN32
 
----
--- Whether or not Textadept is running on macOS.
+--- Whether or not Textadept is running on macOS.
 -- @field OSX
 
----
--- Whether or not Textadept is running on Linux.
+--- Whether or not Textadept is running on Linux.
 -- @field LINUX
 
----
--- Whether or not Textadept is running as a GTK GUI application.
+--- Whether or not Textadept is running as a GTK GUI application.
 -- @field GTK
 
----
--- Whether or not Textadept is running as a Qt GUI application.
+--- Whether or not Textadept is running as a Qt GUI application.
 -- @field QT
 
----
--- Whether or not Textadept is running in a terminal.
+--- Whether or not Textadept is running in a terminal.
 -- Curses feature incompatibilities are listed in the [Appendix][].
 --
 --   [Appendix]: manual.html#terminal-version-compatibility
 -- @field CURSES
 
----
--- Textadept's current UI mode, either "light" or "dark".
+--- Textadept's current UI mode, either "light" or "dark".
 -- Manually changing this field has no effect.
 -- @field _THEME
 
 -- The tables below were defined in C.
 
----
--- Table of command line parameters passed to Textadept.
+--- Table of command line parameters passed to Textadept.
 -- @see args
 -- @table arg
 
----
--- Table of all open buffers in Textadept.
+--- Table of all open buffers in Textadept.
 -- Numeric keys have buffer values and buffer keys have their associated numeric keys.
 -- @usage _BUFFERS[n]      --> buffer at index n
 -- @usage _BUFFERS[buffer] --> index of buffer in _BUFFERS
 -- @see buffer
 -- @table _BUFFERS
 
----
--- Table of all views in Textadept.
+--- Table of all views in Textadept.
 -- Numeric keys have view values and view keys have their associated numeric keys.
 -- @usage _VIEWS[n]    --> view at index n
 -- @usage _VIEWS[view] --> index of view in _VIEWS
 -- @see view
 -- @table _VIEWS
 
----
--- The current [buffer](#buffer) in the [current view](#_G.view).
+--- The current [buffer](#buffer) in the [current view](#_G.view).
 -- @table buffer
 
----
--- The current [view](#view).
+--- The current [view](#view).
 -- @table view
 
 -- The functions below are Lua C functions.
 
----
--- Moves the buffer at index *from* to index *to* in the `_BUFFERS` table, shifting other buffers
+--- Moves the buffer at index *from* to index *to* in the `_BUFFERS` table, shifting other buffers
 -- as necessary.
 -- This changes the order buffers are displayed in in the tab bar and buffer browser.
 -- @param from Index of the buffer to move.
@@ -216,20 +200,17 @@ end, 1)
 -- @see _BUFFERS
 -- @function move_buffer
 
----
--- Emits a `QUIT` event, and unless any handler returns `false`, quits Textadept.
+--- Emits a `QUIT` event, and unless any handler returns `false`, quits Textadept.
 -- @see events.QUIT
 -- @function quit
 
----
--- Resets the Lua State by reloading all initialization scripts.
+--- Resets the Lua State by reloading all initialization scripts.
 -- This function is useful for modifying user scripts (such as *~/.textadept/init.lua*) on the
 -- fly without having to restart Textadept. `arg` is set to `nil` when reinitializing the Lua
 -- State. Any scripts that need to differentiate between startup and reset can test `arg`.
 -- @function reset
 
----
--- Calls function *f* with the given arguments after *interval* seconds.
+--- Calls function *f* with the given arguments after *interval* seconds.
 -- If *f* returns `true`, calls *f* repeatedly every *interval* seconds as long as *f* returns
 -- `true`. A `nil` or `false` return value stops repetition.
 -- @param interval The interval in seconds to call *f* after.

@@ -1,12 +1,10 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the string table.
 
----
--- Extends Lua's `string` library to provide character set conversions.
+--- Extends Lua's `string` library to provide character set conversions.
 -- @module string
 
----
--- Converts string *text* from encoding *old* to encoding *new* using GNU libiconv, returning
+--- Converts string *text* from encoding *old* to encoding *new* using GNU libiconv, returning
 -- the string result.
 -- Raises an error if the encoding conversion failed.
 -- Valid encodings are [GNU libiconv's encodings][] and include:

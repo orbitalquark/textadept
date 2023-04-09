@@ -1,7 +1,6 @@
 -- Copyright 2018-2023 Mitchell. See LICENSE.
 
----
--- A module for recording, playing, saving, and loading keyboard macros.
+--- A module for recording, playing, saving, and loading keyboard macros.
 -- Menu commands are also recorded.
 -- At this time, typing into multiple cursors during macro playback is not supported.
 -- @module textadept.macros
@@ -50,8 +49,7 @@ function M.record()
   recording = not recording
 end
 
----
--- Plays a recorded or loaded macro.
+--- Plays a recorded or loaded macro.
 -- @see load
 function M.play()
   if recording or not macro then return end
@@ -68,8 +66,7 @@ function M.play()
   end
 end
 
----
--- Saves a recorded macro to file *filename* or the user-selected file.
+--- Saves a recorded macro to file *filename* or the user-selected file.
 -- @param[opt] filename Optional filename to save the recorded macro to. If `nil`, the user is
 --   prompted for one.
 function M.save(filename)
@@ -90,8 +87,7 @@ function M.save(filename)
   f:write('}\n'):close()
 end
 
----
--- Loads a macro from file *filename* or the user-selected file.
+--- Loads a macro from file *filename* or the user-selected file.
 -- @param[opt] filename Optional macro file to load. If `nil`, the user is prompted for one.
 function M.load(filename)
   if recording then return end

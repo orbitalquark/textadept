@@ -26,8 +26,7 @@ typedef struct {
   int size;
 } PaneInfo;
 
-/**
- * Contains dialog options.
+/** Contains dialog options.
  * Each type of dialog will only use a subset of options, not all of them.
  * The `columns` and `items` fields are Lua stack indices of the tables that contain them. The
  * `search_column` is 1-based.
@@ -38,8 +37,7 @@ typedef struct {
   int columns, search_column, items;
 } DialogOptions;
 
-/**
- * Contains information about a spawned child process.
+/** Contains information about a spawned child process.
  * The platform is expected to implement this (i.e. via a struct).
  */
 typedef void Process;
@@ -49,8 +47,7 @@ const char *get_platform();
 /** Returns the character set used by the platform's filesystem. */
 const char *get_charset();
 
-/**
- * Asks the platform to create the Textadept window.
+/** Asks the platform to create the Textadept window.
  * The window contains a menubar, frame for Scintilla views, hidden find box, hidden command
  * entry, and two status bars: one for notifications and the other for buffer status.
  *
@@ -78,8 +75,7 @@ void get_size(int *width, int *height);
 /** Sets the width and height of the Textadept window to the given values. */
 void set_size(int width, int height);
 
-/**
- * Asks the platform to create and return a new Scintilla view that calls the given callback
+/** Asks the platform to create and return a new Scintilla view that calls the given callback
  * function with Scintilla notifications.
  * @param notified Scintilla notification function. It may be NULL. The int and void* parameters
  *   are unused and may be passed 0 and `NULL`, respectively. Only the view and notification
@@ -89,8 +85,7 @@ void set_size(int width, int height);
 SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, void *));
 /** Signals the platform to focus the given Scintilla view. */
 void focus_view(SciObject *view);
-/**
- * Asks the platform to send a message to the given Scintilla view.
+/** Asks the platform to send a message to the given Scintilla view.
  * @param view The Scintilla view to send a message to.
  * @param message Message ID.
  * @param wparam First message parameter.
@@ -98,15 +93,13 @@ void focus_view(SciObject *view);
  * @return Scintilla result
  */
 sptr_t SS(SciObject *view, int message, uptr_t wparam, sptr_t lparam);
-/**
- * Asks the platform to split the pane holding the given Scintilla view into two views.
+/** Asks the platform to split the pane holding the given Scintilla view into two views.
  * @param view The Scintilla view whose pane is to be split.
  * @param view2 The Scintilla view to add to the the newly split pane.
  * @param vertical Flag indicating whether to split the view vertically or horizontally.
  */
 void split_view(SciObject *view, SciObject *view2, bool vertical);
-/**
- * Asks the platform to unsplit the pane the given Scintilla view is in and keep the view.
+/** Asks the platform to unsplit the pane the given Scintilla view is in and keep the view.
  * All views in the other pane should be deleted using the given deleter function.
  * If the given view is not in a split pane, the platform should return `false` and do nothing.
  * @param view The Scintilla view to keep when unsplitting.
@@ -114,8 +107,7 @@ void split_view(SciObject *view, SciObject *view2, bool vertical);
  * @return true if the view was in a split pane, false otherwise
  */
 bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *));
-/**
- * Asks the platform to delete the given Scintilla view.
+/** Asks the platform to delete the given Scintilla view.
  * All the platform needs to do here is call Scintilla's platform-specific delete function. The
  * view has already been removed from any split panes (if any).
  */
@@ -123,13 +115,11 @@ void delete_scintilla(SciObject *view);
 
 /** Returns the top-most pane that contains Scintilla views. */
 Pane *get_top_pane();
-/**
- * Returns information about the given pane.
+/** Returns information about the given pane.
  * @see get_pane_info_from_view
  */
 PaneInfo get_pane_info(Pane *pane);
-/**
- * Returns information about the pane that contains the given Scintilla view.
+/** Returns information about the pane that contains the given Scintilla view.
  * @see get_pane_info
  */
 PaneInfo get_pane_info_from_view(SciObject *view);
@@ -138,8 +128,7 @@ void set_pane_size(Pane *pane, int size);
 
 /** Sets whether or not the Textadept window should show tabs for its buffers. */
 void show_tabs(bool show);
-/**
- * Asks the platform to add a tab to the end of its tab list.
+/** Asks the platform to add a tab to the end of its tab list.
  * The platform is not expected to attach anything to the tab, as Textadept does not create
  * one view per tab.
  */
@@ -150,8 +139,7 @@ void set_tab(int index); // 0-based
 void set_tab_label(int index, const char *text); // 0-based
 /** Asks the platform to move one of its buffer tabs. */
 void move_tab(int from, int to); // 0-based
-/**
- * Asks the platform to remove the tab at the given index.
+/** Asks the platform to remove the tab at the given index.
  * As Textadept does not have one view per tab, the platform is not expected to manage any
  * Scintilla views that might have been associated with that tab. It should simply delete the
  * tab and nothing else.
@@ -166,18 +154,15 @@ const char *get_repl_text();
 void set_find_text(const char *text);
 /** Sets the find & replace pane's replace entry text. */
 void set_repl_text(const char *text);
-/**
- * Asks the platform to add the given text to the find & replace pane's find history list.
+/** Asks the platform to add the given text to the find & replace pane's find history list.
  * The given text could be a duplicate. The platform is expected to handle them as it sees fit.
  */
 void add_to_find_history(const char *text);
-/**
- * Asks the platform to add the given text to the find & replace pane's replace history list.
+/** Asks the platform to add the given text to the find & replace pane's replace history list.
  * The given text could be a duplicate. The platform is expected to handle them as it sees fit.
  */
 void add_to_repl_history(const char *text);
-/**
- * Sets the font of the find & replace pane's find and replace entries based on the given
+/** Sets the font of the find & replace pane's find and replace entries based on the given
  * "name size" string (e.g. "Monospace 12").
  */
 void set_entry_font(const char *name);
@@ -193,8 +178,7 @@ void set_repl_label(const char *text);
 void set_button_label(FindButton *button, const char *text);
 /** Sets the given find & replace pane option's text to the given text. */
 void set_option_label(FindOption *option, const char *text);
-/**
- * Asks the platform to toggle the state of the find & replace pane.
+/** Asks the platform to toggle the state of the find & replace pane.
  * If it is hidden, the platform should show it and set focus to the find entry. If the pane
  * is visible but unfocused, the platform should refocus it. Otherwise, the platform should
  * hide the pane and refocus the focused view.
@@ -203,8 +187,7 @@ void focus_find();
 /** Returns whether or not the find & replace pane is active. */
 bool is_find_active();
 
-/**
- * Asks the platform to toggle the command entry between active and hidden.
+/** Asks the platform to toggle the command entry between active and hidden.
  * The command entry should never be unfocused and visible.
  */
 void focus_command_entry();
@@ -218,8 +201,7 @@ void set_command_entry_height(int height);
 /** Sets the content of statusbar number 0 or 1 to the given text. */
 void set_statusbar_text(int bar, const char *text);
 
-/**
- * Asks the platform to create and return a menu from the Lua table at the given valid index.
+/** Asks the platform to create and return a menu from the Lua table at the given valid index.
  *
  * A menu is an ordered list of length-4 sub-tables with a string menu item, integer menu ID,
  * optional keycode, and modifier mask. The latter two are used to display key shortcuts in
@@ -237,36 +219,31 @@ void set_statusbar_text(int bar, const char *text);
  * @see get_int_field
  */
 void *read_menu(lua_State *L, int index);
-/**
- * Asks the platform to display the given popup menu.
+/** Asks the platform to display the given popup menu.
  * @param menu The menu produced by `read_menu()` to display.
  * @param userdata Userdata for platform use (e.g. from `show_context_menu()`).
  * @see show_context_menu
  */
 void popup_menu(void *menu, void *userdata);
-/**
- * Asks the platform to read and set a menubar from the Lua table at the given valid index.
+/** Asks the platform to read and set a menubar from the Lua table at the given valid index.
  * This is a list of menu tables. Consult the documentation for `read_menu()` for the format
  * of individual menus.
  * @see read_menu
  */
 void set_menubar(lua_State *L, int index);
 
-/**
- * Asks the platform to return the text currently on its clipboard and store the length of that
+/** Asks the platform to return the text currently on its clipboard and store the length of that
  * text in the given integer.
  * The platform must return an allocated string -- Textadept will call free() on it.
  */
 char *get_clipboard_text(int *len);
 
-/**
- * Asks the platform to run the given function after the given number of seconds.
+/** Asks the platform to run the given function after the given number of seconds.
  * The platform should continue calling `f(reference)` for as long as it returns `true`.
  */
 bool add_timeout(double interval, bool (*f)(int *), int *reference);
 
-/**
- * Asks the platform to update the UI by painting views, processing any pending events in the
+/** Asks the platform to update the UI by painting views, processing any pending events in the
  * main event queue, etc.
  * This primarily called to perform asynchronous actions like polling for spawned process output
  * and invoking Lua callback functions to process it.
@@ -276,16 +253,14 @@ void update_ui();
 /** Returns whether or not dark mode is currently enabled on the platform. */
 bool is_dark_mode();
 
-/**
- * Asks the platform to show a message dialog using the given options.
+/** Asks the platform to show a message dialog using the given options.
  * If the user presses a button, the platform should push onto the Lua stack the index (starting
  * from 1) of the button pushed, and then return 1 (the number of results pushed). Otherwise
  * the platform should push nothing and return 0.
  */
 int message_dialog(DialogOptions opts, lua_State *L);
 
-/**
- * Asks the platform to show an input dialog using the given options.
+/** Asks the platform to show an input dialog using the given options.
  * If the user provides input, the platform should push onto the Lua stack the string input
  * text and then return 1 (the number of results pushed). If `opts.return_button` is `true`,
  * the platform should also push the index (starting from 1) of the button pushed (or 1 to
@@ -293,8 +268,7 @@ int message_dialog(DialogOptions opts, lua_State *L);
  */
 int input_dialog(DialogOptions opts, lua_State *L);
 
-/**
- * Asks the platform to show a file selection dialog using the given options.
+/** Asks the platform to show a file selection dialog using the given options.
  * If the user selected a file(s), the platform should push onto the Lua stack the string filename
  * or table of filenames selected, and then return 1 (the number of results pushed). Otherwise
  * the platform should push nothing and return 0.
@@ -305,8 +279,7 @@ int input_dialog(DialogOptions opts, lua_State *L);
  */
 int open_dialog(DialogOptions opts, lua_State *L);
 
-/**
- * Asks the platform to show a file save dialog using the given options.
+/** Asks the platform to show a file save dialog using the given options.
  * If the user selected a file, the platform should push onto the Lua stack the string filename
  * selected, and then return 1 (the number of results pushed). Otherwise the platform should
  * push nothing and return 0.
@@ -315,8 +288,7 @@ int open_dialog(DialogOptions opts, lua_State *L);
  */
 int save_dialog(DialogOptions opts, lua_State *L);
 
-/**
- * Asks the platform to show a progress dialog using the given options.
+/** Asks the platform to show a progress dialog using the given options.
  * The platform is expected to repeatedly call the given `work()` function for as long as it
  * returns `true`. The `update()` function given to `work()` will be called back with progress
  * made so the platform can update its progress bar.
@@ -324,8 +296,7 @@ int save_dialog(DialogOptions opts, lua_State *L);
 int progress_dialog(DialogOptions opts, lua_State *L,
   bool (*work)(void (*update)(double percent, const char *text, void *userdata), void *userdata));
 
-/**
- * Asks the platform to show a list dialog using the given options.
+/** Asks the platform to show a list dialog using the given options.
  * The list data may consist of multiple columns of data. The dialog should contain a text entry
  * that allows the user to filter the items shown based on the a given search column. Spaces
  * in the text entry should be treated as wildcards.
@@ -340,8 +311,7 @@ int progress_dialog(DialogOptions opts, lua_State *L,
  */
 int list_dialog(DialogOptions opts, lua_State *L);
 
-/**
- * Asks the platform to spawn a child process asynchronously and return whether or not it
+/** Asks the platform to spawn a child process asynchronously and return whether or not it
  * successfully spawned that process.
  * When the process exits, it needs to notify Textadept via `process_exited()`.
  * While the platform is allowed to push values to the given Lua state, it may not pop off any
@@ -380,8 +350,7 @@ bool is_process_running(Process *proc);
 /** Asks the platform to wait (blocking) until the given process finishes if it has not already. */
 void wait_process(Process *proc);
 
-/**
- * Asks the platform to read from the given process' stdout stream, return the data read,
+/** Asks the platform to read from the given process' stdout stream, return the data read,
  * and store the number of bytes read in the given pointer.
  * The platform should return NULL on EOF. If a read error occurs, it should return NULL and
  * store the error message and code in the given pointers.
@@ -397,14 +366,12 @@ void write_process_input(Process *proc, const char *s, size_t len);
 /** Asks the platform to close the given process' stdin (i.e. send it an EOF). */
 void close_process_input(Process *proc);
 
-/**
- * Asks the platform to kill the given process, optionally with the given signal.
+/** Asks the platform to kill the given process, optionally with the given signal.
  * Not all operating systems support signals, so the platform should use its discretion.
  */
 void kill_process(Process *proc, int signal);
 
-/**
- * Returns the exit status of the given process.
+/** Returns the exit status of the given process.
  * Textadept will only call this after the platform has indicated the process exited.
  */
 int get_process_exit_status(Process *proc);

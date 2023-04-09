@@ -1,45 +1,36 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Utilities for interacting with Textadept's user interface.
+--- Utilities for interacting with Textadept's user interface.
 -- @module ui
 local ui = ui
 
----
--- The title text of Textadept's window. (Write-only)
+--- The title text of Textadept's window. (Write-only)
 -- @field title
 
----
--- The buffer's context menu, a [`ui.menu()`]().
+--- The buffer's context menu, a [`ui.menu()`]().
 -- This is a low-level field. You probably want to use the higher-level
 -- [`textadept.menu.context_menu`]().
 -- @field context_menu
 
----
--- The context menu for the buffer's tab, a [`ui.menu()`]().
+--- The context menu for the buffer's tab, a [`ui.menu()`]().
 -- This is a low-level field. You probably want to use the higher-level
 -- [`textadept.menu.tab_context_menu`]().
 -- @field tab_context_menu
 
----
--- The text on the clipboard.
+--- The text on the clipboard.
 -- @field clipboard_text
 
----
--- The text displayed in the statusbar. (Write-only)
+--- The text displayed in the statusbar. (Write-only)
 -- @field statusbar_text
 
----
--- The text displayed in the buffer statusbar. (Write-only)
+--- The text displayed in the buffer statusbar. (Write-only)
 -- @field buffer_statusbar_text
 
----
--- Whether or not Textadept's window is maximized.
+--- Whether or not Textadept's window is maximized.
 -- This field is always `false` in the terminal version.
 -- @field maximized
 
----
--- Whether or not to display the tab bar when multiple buffers are open.
+--- Whether or not to display the tab bar when multiple buffers are open.
 -- The default value is `true`.
 -- A third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar, even if only one
 -- buffer is open.
@@ -49,8 +40,7 @@ local ui = ui
 ui.SHOW_ALL_TABS = 2 -- ui.tabs options must be greater than 1
 if CURSES then ui.tabs = false end -- not supported right now
 
----
--- Whether or not to list buffers by their z-order (most recently viewed to least recently
+--- Whether or not to list buffers by their z-order (most recently viewed to least recently
 -- viewed) in the switcher dialog.
 -- The default value is `true`.
 ui.buffer_list_zorder = true
@@ -101,8 +91,7 @@ local function print_to(buffer_type, silent, format, ...)
   return buffer
 end
 
----
--- Prints the given value(s) to the buffer of string type *type*, along with a trailing newline,
+--- Prints the given value(s) to the buffer of string type *type*, along with a trailing newline,
 -- and returns that buffer.
 -- Opens a new buffer for printing to if necessary. If the print buffer is already open in a
 -- view, the value(s) is printed to that view. Otherwise the view is split (unless `ui.tabs`
@@ -115,8 +104,8 @@ end
 -- @see print_silent_to
 function ui.print_to(type, ...) return print_to(assert_type(type, 'string', 1), false, true, ...) end
 
----
--- Silently prints the given value(s) to the buffer of string type *type*, and returns that buffer.
+--- Silently prints the given value(s) to the buffer of string type *type*, and returns that
+-- buffer.
 -- Opens a new buffer for printing to if necessary.
 -- @param type String type of print buffer.
 -- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
@@ -127,15 +116,13 @@ function ui.print_silent_to(type, ...)
   return print_to(assert_type(type, 'string', 1), true, true, ...)
 end
 
----
--- Prints the given value(s) to the message buffer, along with a trailing newline.
+--- Prints the given value(s) to the message buffer, along with a trailing newline.
 -- Opens a new buffer if one has not already been opened for printing messages.
 -- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
 --   They will be printed as tab-separated values.
 function ui.print(...) ui.print_to(_L['[Message Buffer]'], ...) end
 
----
--- Silently prints the given value(s) to the message buffer, and returns that buffer.
+--- Silently prints the given value(s) to the message buffer, and returns that buffer.
 -- @param ... Message or values to print.
 -- @return print buffer
 -- @see print
@@ -151,8 +138,7 @@ local function output_to(silent, ...)
   return buffer
 end
 
----
--- Prints the given value(s) to the output buffer, and returns that buffer.
+--- Prints the given value(s) to the output buffer, and returns that buffer.
 -- Opens a new buffer if one has not already been opened for printing output. The output buffer
 -- attempts to understand the error messages and warnings produced by various tools.
 -- @param ... Output to print.
@@ -160,8 +146,7 @@ end
 -- @see output_silent
 function ui.output(...) return output_to(false, ...) end
 
----
--- Silently prints the given value(s) to the output buffer, and returns that buffer.
+--- Silently prints the given value(s) to the output buffer, and returns that buffer.
 -- Opens a new buffer for printing to if necessary.
 -- @param ... Output to print.
 -- @return output buffer
@@ -203,8 +188,7 @@ local function get_display_names(buffer)
   return filename, buffer.filename and filename:match('[^/\\]+$') or filename
 end
 
----
--- Prompts the user to select a buffer to switch to.
+--- Prompts the user to select a buffer to switch to.
 -- Buffers are listed in the order they were opened unless `ui.buffer_list_zorder` is `true`, in
 -- which case buffers are listed by their z-order (most recently viewed to least recently viewed).
 -- Buffers in the same project as the current buffer are shown with relative paths.
@@ -223,8 +207,7 @@ function ui.switch_buffer()
   if i then view:goto_buffer(buffers[not ui.buffer_list_zorder and i or i + 1]) end
 end
 
----
--- Switches to the existing view whose buffer's filename is *filename*.
+--- Switches to the existing view whose buffer's filename is *filename*.
 -- If no view was found and *split* is `true`, splits the current view in order to show the
 -- requested file. If *split* is `false`, shifts to the next or *preferred_view* view in order
 -- to show the requested file. If *sloppy* is `true`, requires only the basename of *filename*
@@ -488,20 +471,17 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 
 -- The tables below were defined in C.
 
----
--- A table of menus defining a menubar. (Write-only).
+--- A table of menus defining a menubar. (Write-only).
 -- This is a low-level field. You probably want to use the higher-level `textadept.menu.menubar`.
 -- @see textadept.menu.menubar
 -- @table menubar
 
----
--- A table containing the width and height pixel values of Textadept's window.
+--- A table containing the width and height pixel values of Textadept's window.
 -- @table size
 
 -- The functions below are Lua C functions.
 
----
--- Returns a split table that contains Textadept's current split view structure.
+--- Returns a split table that contains Textadept's current split view structure.
 -- This is primarily used in session saving.
 -- @return table of split views. Each split view entry is a table with 4 fields: `1`, `2`,
 --   `vertical`, and `size`. `1` and `2` have values of either nested split view entries or
@@ -509,8 +489,7 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 --   and `size` is the integer position of the split resizer.
 -- @function get_split_table
 
----
--- Shifts to view *view* or the view *view* number of views relative to the current one.
+--- Shifts to view *view* or the view *view* number of views relative to the current one.
 -- Emits `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
 -- @param view A view or relative view number (typically 1 or -1).
 -- @see _G._VIEWS
@@ -518,8 +497,7 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 -- @see events.VIEW_AFTER_SWITCH
 -- @function goto_view
 
----
--- Low-level function for creating a menu from table *menu_table* and returning the userdata.
+--- Low-level function for creating a menu from table *menu_table* and returning the userdata.
 -- You probably want to use the higher-level `textadept.menu.menubar`,
 -- `textadept.menu.context_menu`, or `textadept.menu.tab_context_menu` tables.
 -- Emits a `MENU_CLICKED` event when a menu item is selected.
@@ -537,21 +515,18 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 -- @see textadept.menu.tab_context_menu
 -- @function menu
 
----
--- Displays a popup menu, typically the right-click context menu.
+--- Displays a popup menu, typically the right-click context menu.
 -- @param menu Menu to display.
 -- @usage ui.popup_menu(ui.context_menu)
 -- @see ui.menu
 -- @see ui.context_menu
 -- @function popup_menu
 
----
--- Processes pending UI events, including reading from spawned processes.
+--- Processes pending UI events, including reading from spawned processes.
 -- This function is primarily used in unit tests.
 -- @function update
 
----
--- Suspends Textadept.
+--- Suspends Textadept.
 -- This only works in the terminal version. By default, Textadept ignores ^Z suspend signals from
 -- the terminal.
 -- Emits `events.SUSPEND` and `events.RESUME` events.

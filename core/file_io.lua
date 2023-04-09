@@ -1,31 +1,27 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
 --- Extends Lua's `io` library with Textadept functions for working with files.
 -- @module io
 
---- Events.
+-- Events.
 local file_io_events = {'file_opened', 'file_before_save', 'file_after_save', 'file_changed'}
 for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 
----
--- Emitted after opening a file in a new buffer.
+--- Emitted after opening a file in a new buffer.
 -- Emitted by [`io.open_file()`]().
 -- Arguments:
 --
 --   - *filename*: The opened file's filename.
 -- @field _G.events.FILE_OPENED
 
----
--- Emitted right before saving a file to disk.
+--- Emitted right before saving a file to disk.
 -- Emitted by [`buffer:save()`]().
 -- Arguments:
 --
 --   - *filename*: The filename of the file being saved.
 -- @field _G.events.FILE_BEFORE_SAVE
 
----
--- Emitted right after saving a file to disk.
+--- Emitted right after saving a file to disk.
 -- Emitted by [`buffer:save()`]() and [`buffer:save_as()`]().
 -- Arguments:
 --
@@ -33,8 +29,7 @@ for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 --   - *saved_as*: Whether or not the file was saved under a different filename.
 -- @field _G.events.FILE_AFTER_SAVE
 
----
--- Emitted when Textadept detects that an open file was modified externally.
+--- Emitted when Textadept detects that an open file was modified externally.
 -- When connecting to this event, connect with an index of 1 in order to override the default
 -- prompt to reload the file.
 -- Arguments:
@@ -42,22 +37,19 @@ for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 --   - *filename*: The filename externally modified.
 -- @field _G.events.FILE_CHANGED
 
----
--- Whether or not to ensure there is a final newline when saving text files.
+--- Whether or not to ensure there is a final newline when saving text files.
 -- This has no effect on binary files.
 -- The default value is `false` on Windows, and `true` on Linux and macOS.
 io.ensure_final_newline = not WIN32
 
----
--- The maximum number of files listed in the quick open dialog.
+--- The maximum number of files listed in the quick open dialog.
 -- The default value is `1000`.
 io.quick_open_max = 1000
 
 --- List of recently opened files, the most recent being towards the top.
 io.recent_files = {}
 
----
--- List of encodings to attempt to decode files as.
+--- List of encodings to attempt to decode files as.
 -- You should add to this list if you get a "Conversion failed" error when trying to open a file
 -- whose encoding is not recognized. Valid encodings are [GNU iconv's encodings][] and include:
 --
@@ -72,8 +64,7 @@ io.recent_files = {}
 -- @usage io.encodings[#io.encodings + 1] = 'UTF-32'
 io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}
 
----
--- Opens *filenames*, a string filename or list of filenames, or the user-selected filename(s).
+--- Opens *filenames*, a string filename or list of filenames, or the user-selected filename(s).
 -- Emits a `FILE_OPENED` event.
 -- @param[opt] filenames Optional string filename or table of filenames to open. If `nil`,
 --   the user is prompted with a fileselect dialog.
@@ -219,8 +210,7 @@ local function save_as(buffer, filename)
   return true
 end
 
----
--- Saves all unsaved buffers to their respective files, prompting the user for filenames for
+--- Saves all unsaved buffers to their respective files, prompting the user for filenames for
 -- untitled buffers if *untitled* is `true`, and returns `true` on success.
 -- Print and output buffers are ignored.
 -- @param untitled Whether or not to prompt for filenames for untitled buffers. The default
@@ -271,8 +261,7 @@ events.connect(events.VIEW_AFTER_SWITCH, update_modified_file)
 events.connect(events.FOCUS, update_modified_file)
 events.connect(events.RESUME, update_modified_file)
 
----
--- Closes all open buffers, prompting the user to continue if there are unsaved buffers, and
+--- Closes all open buffers, prompting the user to continue if there are unsaved buffers, and
 -- returns `true` if the user did not cancel.
 -- No buffers are saved automatically. They must be saved manually.
 -- @return `true` if user did not cancel; `nil` otherwise.
@@ -313,8 +302,7 @@ events.connect(events.FILE_OPENED, function()
   if not (buf.filename or buf._type or buf.modify) then buf:close() end
 end)
 
----
--- Prompts the user to select a recently opened file to be reopened.
+--- Prompts the user to select a recently opened file to be reopened.
 -- @see recent_files
 function io.open_recent_file()
   if #io.recent_files == 0 then return end
@@ -340,8 +328,7 @@ end
 -- List of version control directories.
 local vcs = {'.bzr', '.git', '.hg', '.svn', '_FOSSIL_'}
 
----
--- Returns the root directory of the project that contains filesystem path *path*.
+--- Returns the root directory of the project that contains filesystem path *path*.
 -- In order to be recognized, projects must be under version control. Recognized VCSes are
 -- Bazaar, Fossil, Git, Mercurial, and SVN.
 -- @param[opt] path Optional filesystem path to a project or a file contained within a project. The
@@ -364,13 +351,11 @@ function io.get_project_root(path, submodule)
   return nil
 end
 
----
--- Map of directory paths to filters used by `io.quick_open()`.
+--- Map of directory paths to filters used by `io.quick_open()`.
 -- @see quick_open
 io.quick_open_filters = {}
 
----
--- Prompts the user to select files to be opened from *paths*, a string directory path or list
+--- Prompts the user to select files to be opened from *paths*, a string directory path or list
 -- of directory paths, using a list dialog.
 -- If *paths* is `nil`, uses the current project's root directory, which is obtained from
 -- `io.get_project_root()`.

@@ -1,11 +1,9 @@
 -- Copyright 2020-2023 Mitchell. See LICENSE.
 
----
--- Extends Lua's _G table to provide extra functions and fields for Textadept.
+--- Extends Lua's _G table to provide extra functions and fields for Textadept.
 -- @module _G
 
----
--- Asserts that value *v* is not `false` or `nil` and returns *v*, or calls `error()` with
+--- Asserts that value *v* is not `false` or `nil` and returns *v*, or calls `error()` with
 -- *message* as the error message, defaulting to "assertion failed!".
 -- If *message* is a format string, the remaining arguments are passed to `string.format()`
 -- and the resulting string becomes the error message.
@@ -20,8 +18,7 @@ function assert(v, message, ...)
   error(message or 'assertion failed!', 2)
 end
 
----
--- Asserts that value *v* has type string *expected_type* and returns *v*, or calls `error()`
+--- Asserts that value *v* has type string *expected_type* and returns *v*, or calls `error()`
 -- with an error message that implicates function argument number *narg*.
 -- This is intended to be used with API function arguments so users receive more helpful error
 -- messages.

@@ -1,8 +1,7 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 -- Contributions from Robert Gieseke.
 
----
--- Defines the menus used by Textadept.
+--- Defines the menus used by Textadept.
 -- Menus are simply tables of menu items and submenus and may be edited in place. A menu item
 -- itself is a table whose first element is a menu label and whose second element is a menu
 -- command to run. Submenus have `title` keys assigned to string text.
@@ -44,8 +43,7 @@ local function open_page(url)
   os.spawn(string.format('%s "%s"', cmd, not OSX and url or 'file://' .. url))
 end
 
----
--- The default main menubar.
+--- The default main menubar.
 -- Individual menus, submenus, and menu items can be retrieved by name in addition to table
 -- index number.
 -- @usage textadept.menu.menubar[_L['File']][_L['New']]
@@ -309,8 +307,7 @@ default_menubar = {
   }
 }
 
----
--- The default right-click context menu.
+--- The default right-click context menu.
 -- Submenus, and menu items can be retrieved by name in addition to table index number.
 -- @usage textadept.menu.context_menu[#textadept.menu.context_menu + 1] = {...}
 -- @table context_menu
@@ -327,8 +324,7 @@ default_context_menu = {
   {_L['Select All'], buffer.select_all}
 }
 
----
--- The default tabbar context menu.
+--- The default tabbar context menu.
 -- Submenus, and menu items can be retrieved by name in addition to table index number.
 -- @table tab_context_menu
 local default_tab_context_menu = {} -- empty declaration to avoid LDoc processing

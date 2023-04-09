@@ -21,8 +21,7 @@ extern lua_State *lua;
 // Textadept's exit status. Platforms should return it from their main() functions.
 extern int exit_status;
 
-/**
- * Initializes Textadept.
+/** Initializes Textadept.
  * Initializes Lua, asks the Platform to create the main application window, and runs Lua
  * startup scripts. Platforms should typically call this after their own initialization and
  * before starting the main event loop.
@@ -33,8 +32,7 @@ extern int exit_status;
  */
 bool init_textadept(int argc, char **argv);
 
-/**
- * Emits a Lua event.
+/** Emits a Lua event.
  * @param name The event name.
  * @param ... Arguments to pass with the event. Each pair of arguments should be a Lua type
  *   followed by the data value itself. For LUA_TLIGHTUSERDATA and LUA_TTABLE types, push the
@@ -44,8 +42,7 @@ bool init_textadept(int argc, char **argv);
  */
 bool emit(const char *name, ...);
 
-/**
- * Moves the buffer from the given index to another index in the 'buffers' registry table,
+/** Moves the buffer from the given index to another index in the 'buffers' registry table,
  * shifting other buffers as necessary.
  * @param from 1-based index of the buffer to move.
  * @param to 1-based index to move the buffer to.
@@ -54,15 +51,13 @@ bool emit(const char *name, ...);
  */
 void move_buffer(int from, int to, bool reorder_tabs);
 
-/**
- * Signal for a find & replace pane button click.
+/** Signal for a find & replace pane button click.
  * Emits 'find', 'replace', and/or 'replace_all' events depending on the button clicked.
  * @param button The button clicked.
  */
 void find_clicked(FindButton *button);
 
-/**
- * Requests to show a context menu.
+/** Requests to show a context menu.
  * Textadept will lookup that menu and call `popup_menu()` in turn.
  * @param name The name of the context menu, either "context_menu" or "tab_context_menu".
  * @param userdata Userdata to pass to `popup_menu()`.
@@ -71,26 +66,22 @@ void find_clicked(FindButton *button);
  */
 void show_context_menu(const char *name, void *userdata);
 
-/**
- * Notifies Textadept that there has been a change between light mode and dark mode.
+/** Notifies Textadept that there has been a change between light mode and dark mode.
  * Textadept will call `is_dark_mode()` in order to determine which mode is enabled.
  */
 void mode_changed();
 
-/**
- * Notifies Textadept that a spawned child process has produced the given stdout or stderr.
+/** Notifies Textadept that a spawned child process has produced the given stdout or stderr.
  * Textadept will call any functions listening for that output.
  */
 void process_output(Process *proc, const char *s, size_t len, bool is_stdout);
 
-/**
- * Notifies Textadept that a spawned child process has exited with the given exit code.
+/** Notifies Textadept that a spawned child process has exited with the given exit code.
  * Textadept will call an exit function (if it exists) for that process.
  */
 void process_exited(Process *proc, int code);
 
-/**
- * Closes Textadept.
+/** Closes Textadept.
  * Unsplits panes, closes buffers, deletes Scintilla views, and closes Lua. During this process,
  * Textadept may still call `SS()`, so platforms should take care to call this while Scintilla
  * is still available (perhaps just before exiting the main event loop).
@@ -98,8 +89,7 @@ void process_exited(Process *proc, int code);
  */
 void close_textadept();
 
-/**
- * Returns the value t[n] as an integer where t is the value at the given valid index.
+/** Returns the value t[n] as an integer where t is the value at the given valid index.
  * The access is raw; that is, it does not invoke metamethods.
  * This is a helper function for easily reading integers from lists.
  * @param L The Lua state.

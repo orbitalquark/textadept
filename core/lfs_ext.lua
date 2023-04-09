@@ -1,11 +1,9 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Extends the `lfs` library to find files in directories and determine absolute file paths.
+--- Extends the `lfs` library to find files in directories and determine absolute file paths.
 -- @module lfs
 
----
--- The filter table containing common binary file extensions and version control directories
+--- The filter table containing common binary file extensions and version control directories
 -- to exclude when iterating over files and directories using `walk`.
 -- Extensions excluded: a, bmp, bz2, class, dll, exe, gif, gz, jar, jpeg, jpg, o, pdf, png,
 -- so, tar, tgz, tif, tiff, xz, and zip.
@@ -58,8 +56,7 @@ local function walk(dir, filter, n, include_dirs, seen, level)
   end
 end
 
----
--- Returns an iterator that iterates over all files and sub-directories (up to *n* levels deep)
+--- Returns an iterator that iterates over all files and sub-directories (up to *n* levels deep)
 -- in directory *dir* and yields each file found.
 -- String or list *filter* determines which files to yield, with the default filter being
 -- `lfs.default_filter`. A filter consists of glob patterns that match file and directory paths to
@@ -102,8 +99,7 @@ function lfs.walk(dir, filter, n, include_dirs)
   return function() return select(2, coroutine.resume(co)) end
 end
 
----
--- Returns the absolute path to string *filename*.
+--- Returns the absolute path to string *filename*.
 -- *prefix* or `lfs.currentdir()` is prepended to a relative filename. The returned path is
 -- not guaranteed to exist.
 -- @param filename The relative or absolute path to a file.

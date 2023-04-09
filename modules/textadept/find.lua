@@ -1,99 +1,88 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Textadept's Find & Replace pane.
+--- Textadept's Find & Replace pane.
 -- @module ui.find
 local M = ui.find
 
----
--- The text in the "Find" entry.
+--- The text in the "Find" entry.
 -- @field find_entry_text
 
----
--- The text in the "Replace" entry.
+--- The text in the "Replace" entry.
 -- When searching for text in a directory of files, this is the current file and directory filter.
 -- @field replace_entry_text
 
----
--- Match search text case sensitively.
+--- Match search text case sensitively.
 -- The default value is `false`.
 -- @field match_case
 
----
--- Match search text only when it is surrounded by non-word characters in searches.
+--- Match search text only when it is surrounded by non-word characters in searches.
 -- The default value is `false`.
 -- @field whole_word
 
----
--- Interpret search text as a Regular Expression.
+--- Interpret search text as a Regular Expression.
 -- The default value is `false`.
 -- @field regex
 
----
--- Find search text in a directory of files.
+--- Find search text in a directory of files.
 -- The default value is `false`.
 -- @field in_files
 
----
--- Find search text incrementally as it is typed.
+--- Find search text incrementally as it is typed.
 -- The default value is `false`.
 -- @field incremental
 
----
--- The font to use in the "Find" and "Replace" entries in "name size" format. (Write-only)
+--- The font to use in the "Find" and "Replace" entries in "name size" format. (Write-only)
 -- The default value is system-dependent.
 -- @field entry_font
 
----
--- Whether or not the Find & Replace pane is active.
+--- Whether or not the Find & Replace pane is active.
 -- @field active
 
----
--- The text of the "Find" label. (Write-only)
+--- The text of the "Find" label. (Write-only)
 -- This is primarily used for localization.
 M.find_label_text = _L['Find:']:gsub('&', '')
----
--- The text of the "Replace" label. (Write-only)
+
+--- The text of the "Replace" label. (Write-only)
 -- This is primarily used for localization.
 M.replace_label_text = _L['Replace:']:gsub('&', '')
----
--- The text of the "Find Next" button. (Write-only)
+
+--- The text of the "Find Next" button. (Write-only)
 -- This is primarily used for localization.
 M.find_next_button_text = not CURSES and _L['Find Next'] or _L['[Next]']
----
--- The text of the "Find Prev" button. (Write-only)
+
+--- The text of the "Find Prev" button. (Write-only)
 -- This is primarily used for localization.
 M.find_prev_button_text = not CURSES and _L['Find Prev'] or _L['[Prev]']
----
--- The text of the "Replace" button. (Write-only)
+
+--- The text of the "Replace" button. (Write-only)
 -- This is primarily used for localization.
 M.replace_button_text = not CURSES and _L['Replace'] or _L['[Replace]']
----
--- The text of the "Replace All" button. (Write-only)
+
+--- The text of the "Replace All" button. (Write-only)
 -- This is primarily used for localization.
 M.replace_all_button_text = not CURSES and _L['Replace All'] or _L['[All]']
----
--- The text of the "Match case" label. (Write-only)
+
+--- The text of the "Match case" label. (Write-only)
 -- This is primarily used for localization.
 M.match_case_label_text = not CURSES and _L['Match case'] or _L['Case(F1)']
----
--- The text of the "Whole word" label. (Write-only)
+
+--- The text of the "Whole word" label. (Write-only)
 -- This is primarily used for localization.
 M.whole_word_label_text = not CURSES and _L['Whole word'] or _L['Word(F2)']
----
--- The text of the "Regex" label. (Write-only)
+
+--- The text of the "Regex" label. (Write-only)
 -- This is primarily used for localization.
 M.regex_label_text = not CURSES and _L['Regex'] or _L['Regex(F3)']
----
--- The text of the "In files" label. (Write-only)
+
+--- The text of the "In files" label. (Write-only)
 -- This is primarily used for localization.
 M.in_files_label_text = not CURSES and _L['In files'] or _L['Files(F4)']
----
--- Whether or not to highlight all occurrences of found text in the current buffer.
+
+--- Whether or not to highlight all occurrences of found text in the current buffer.
 -- The default value is `false`.
 M.highlight_all_matches = false
----
--- Whether to show filenames in the find in files search progressbar.
+
+--- Whether to show filenames in the find in files search progressbar.
 -- This can be useful for determining whether or not custom filters are working as expected.
 -- Showing filenames can slow down searches on computers with really fast SSDs.
 -- The default value is `false`.
@@ -106,24 +95,21 @@ M.INDIC_FIND = _SCINTILLA.new_indic_number()
 local find_events = {'find_result_found', 'find_wrapped'}
 for _, v in ipairs(find_events) do events[v:upper()] = v end
 
----
--- Emitted when a result is found. It is selected and has been scrolled into view.
+--- Emitted when a result is found. It is selected and has been scrolled into view.
 -- Arguments:
 --
 --   - *find_text*: The text originally searched for.
 --   - *wrapped*: Whether or not the result found is after a text search wrapped.
 -- @field _G.events.FIND_RESULT_FOUND
 
----
--- Emitted when a text search wraps (passes through the beginning of the buffer), either from
+--- Emitted when a text search wraps (passes through the beginning of the buffer), either from
 -- bottom to top (when searching for a next occurrence), or from top to bottom (when searching
 -- for a previous occurrence).
 -- This is useful for implementing a more visual or audible notice when a search wraps in
 -- addition to the statusbar message.
 -- @field _G.events.FIND_WRAPPED (string)
 
----
--- Map of directory paths to filters used in `ui.find.find_in_files()`.
+--- Map of directory paths to filters used in `ui.find.find_in_files()`.
 -- This table is updated when the user manually specifies a filter in the "Filter" entry during
 -- an "In files" search.
 -- @see find_in_files
@@ -146,8 +132,7 @@ local function ff_dir()
 end
 
 local orig_focus = M.focus
----
--- Displays and focuses the Find & Replace Pane.
+--- Displays and focuses the Find & Replace Pane.
 -- @param[opt] options Optional table of `ui.find` field options to initially set.
 function M.focus(options)
   local already_in_files = M.in_files
@@ -290,8 +275,7 @@ events.connect(events.FIND_RESULT_FOUND, function(text, wrapped)
 end)
 events.connect(events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wrapped'] end)
 
----
--- Searches directory *dir* or the user-specified directory for files that match search text
+--- Searches directory *dir* or the user-specified directory for files that match search text
 -- and search options (subject to optional filter *filter*), and prints the results to a buffer
 -- titled "Files Found", highlighting found text.
 -- Use the `find_entry_text`, `match_case`, `whole_word`, and `regex` fields to set the search
@@ -481,8 +465,7 @@ local function get_ff_buffer()
   for _, buffer in ipairs(_BUFFERS) do if is_ff_buf(buffer) then return buffer end end
 end
 
----
--- Jumps to the source of the next or previous find in files search result in the buffer titled
+--- Jumps to the source of the next or previous find in files search result in the buffer titled
 -- "Files Found", or the result on a given line number, depending on the value of *location*.
 -- @param location When `true`, jumps to the next search result. When `false`, jumps to the
 --   previous one. When a line number, jumps to it.
@@ -552,18 +535,14 @@ events.connect(events.DOUBLE_CLICK,
 
 -- The functions below are Lua C functions.
 
----
--- Mimics pressing the "Find Next" button.
+--- Mimics pressing the "Find Next" button.
 -- @function find_next
 
----
--- Mimics pressing the "Find Prev" button.
+--- Mimics pressing the "Find Prev" button.
 -- @function find_prev
 
----
--- Mimics pressing the "Replace" button.
+--- Mimics pressing the "Replace" button.
 -- @function replace
 
----
--- Mimics pressing the "Replace All" button.
+--- Mimics pressing the "Replace All" button.
 -- @function replace_all

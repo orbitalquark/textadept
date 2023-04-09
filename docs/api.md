@@ -933,8 +933,8 @@ Parameters:
 <a id="buffer.auto_c_stops"></a>
 #### `buffer:auto_c_stops`(*chars*)
 
-Allows the user to type any character in string set *chars* in order to cancel an autocompletion
-or user list.
+Allows the user to type any character in string set *chars* in order to cancel an
+autocompletion or user list.
 The default set is empty.
 
 Parameters:
@@ -1175,8 +1175,8 @@ Otherwise, deletes the selected text.
 <a id="buffer.delete_back_not_line"></a>
 #### `buffer:delete_back_not_line`()
 
-Deletes the character behind the caret unless either the caret is at the beginning of a line
-or text is selected.
+Deletes the character behind the caret unless either the caret is at the beginning of a
+line or text is selected.
 If text is selected, deletes it.
 
 <a id="buffer.delete_range"></a>
@@ -1207,7 +1207,8 @@ Moves the caret to the beginning of the buffer.
 <a id="buffer.document_start_extend"></a>
 #### `buffer:document_start_extend`()
 
-Moves the caret to the beginning of the buffer, extending the selected text to the new position.
+Moves the caret to the beginning of the buffer, extending the selected text to the new
+position.
 
 <a id="buffer.drop_selection_n"></a>
 #### `buffer:drop_selection_n`(*n*)
@@ -1241,8 +1242,8 @@ Clears EOL annotations from all lines.
 <a id="buffer.find_column"></a>
 #### `buffer:find_column`(*line*, *column*)
 
-Returns the position of column number *column* on line number *line* (taking tab and multi-byte
-characters into account), or the position at the end of line *line*.
+Returns the position of column number *column* on line number *line* (taking tab and
+multi-byte characters into account), or the position at the end of line *line*.
 
 Parameters:
 
@@ -1507,7 +1508,8 @@ new position.
 <a id="buffer.line_end_extend"></a>
 #### `buffer:line_end_extend`()
 
-Moves the caret to the end of the current line, extending the selected text to the new position.
+Moves the caret to the end of the current line, extending the selected text to the new
+position.
 
 <a id="buffer.line_end_rect_extend"></a>
 #### `buffer:line_end_rect_extend`()
@@ -1639,8 +1641,8 @@ Parameters:
 <a id="buffer.marker_delete"></a>
 #### `buffer:marker_delete`(*line*, *marker*)
 
-Deletes marker number *marker*, in the range of `1` to `32`, from line number *line*. If
-*marker* is `-1`, deletes all markers from *line*.
+Deletes marker number *marker*, in the range of `1` to `32`, from line number *line*.
+If *marker* is `-1`, deletes all markers from *line*.
 
 Parameters:
 
@@ -2003,7 +2005,8 @@ Return:
 <a id="buffer.save_as"></a>
 #### `buffer:save_as`([*filename*])
 
-Saves the buffer to file *filename* or the user-specified filename, returning `true` on success.
+Saves the buffer to file *filename* or the user-specified filename, returning `true`
+on success.
 Emits a `FILE_AFTER_SAVE` event.
 
 Parameters:
@@ -2544,7 +2547,8 @@ Map of key-value string pairs populated by lexers.
 <a id="buffer.selection_n_anchor"></a>
 #### `buffer.selection_n_anchor`
 
-List of positions at the beginning of existing selections numbered from `1`, the main selection.
+List of positions at the beginning of existing selections numbered from `1`, the main
+selection.
 
 <a id="buffer.selection_n_anchor_virtual_space"></a>
 #### `buffer.selection_n_anchor_virtual_space`
@@ -2577,7 +2581,8 @@ List of positions at the end of virtual space selected in existing selections nu
 <a id="buffer.selection_n_start"></a>
 #### `buffer.selection_n_start`
 
-List of positions at the beginning of existing selections numbered from `1`, the main selection.
+List of positions at the beginning of existing selections numbered from `1`, the main
+selection.
 
 <a id="buffer.selection_n_start_virtual_space"></a>
 #### `buffer.selection_n_start_virtual_space`
@@ -5511,8 +5516,9 @@ be shown. Autocompletion lists are sorted automatically.
 
 Fields:
 
-- `word`: Returns for the word part behind the caret a list of whole word completions constructed from the
- current buffer or all open buffers (depending on `textadept.editing.autocomplete_all_words`).
+- `word`: Returns for the word part behind the caret a list of whole word completions
+ constructed from the current buffer or all open buffers (depending on
+ `textadept.editing.autocomplete_all_words`).
  If `buffer.auto_c_ignore_case` is `true`, completions are not case-sensitive.
 - `snippet`: Autocompleter function for snippet trigger words.
 
@@ -6035,8 +6041,9 @@ See also:
 <a id="textadept.run.run_project"></a>
 #### `textadept.run.run_project`([*dir*[, *cmd*]])
 
-Prompts the user with the command entry to run shell command *cmd* or the shell command from the
-`run_project_commands` table for the project whose root path is *dir* or the current project.
+Prompts the user with the command entry to run shell command *cmd* or the shell command
+from the `run_project_commands` table for the project whose root path is *dir* or the
+current project.
 The current project is determined by either the buffer's filename or the current working
 directory.
 Emits `RUN_OUTPUT` events.
@@ -6347,6 +6354,8 @@ Prompts the user to select a snippet to insert from a list of global and languag
 snippets.
 
 
+### Tables defined by `textadept.snippets`
+
 <a id="textadept.snippets.paths"></a>
 #### `textadept.snippets.paths`
 
@@ -6570,7 +6579,8 @@ Return:
 <a id="ui.print_silent_to"></a>
 #### `ui.print_silent_to`(*type*, ...)
 
-Silently prints the given value(s) to the buffer of string type *type*, and returns that buffer.
+Silently prints the given value(s) to the buffer of string type *type*, and returns that
+buffer.
 Opens a new buffer for printing to if necessary.
 
 Parameters:
@@ -7535,14 +7545,14 @@ The default value is `5`.
 <a id="view.mouse_dwell_time"></a>
 #### `view.mouse_dwell_time` 
 
-The number of milliseconds the mouse must idle before generating a `DWELL_START` event. A
-time of `view.TIME_FOREVER` will never generate one.
+The number of milliseconds the mouse must idle before generating a `DWELL_START` event.
+A time of `view.TIME_FOREVER` will never generate one.
 
 <a id="view.mouse_selection_rectangular_switch"></a>
 #### `view.mouse_selection_rectangular_switch` 
 
-Whether or not pressing [`view.rectangular_selection_modifier`](#view.rectangular_selection_modifier) when selecting text normally
-with the mouse turns on rectangular selection.
+Whether or not pressing [`view.rectangular_selection_modifier`](#view.rectangular_selection_modifier) when selecting text
+normally with the mouse turns on rectangular selection.
 The default value is `false`.
 
 <a id="view.rectangular_selection_modifier"></a>
@@ -7710,8 +7720,8 @@ The default value is `view.WRAP_NONE`.
 <a id="view.wrap_start_indent"></a>
 #### `view.wrap_start_indent` 
 
-The number of spaces of indentation to display wrapped lines with if [`view.wrap_indent_mode`](#view.wrap_indent_mode)
-is `view.WRAPINDENT_FIXED`.
+The number of spaces of indentation to display wrapped lines with if
+[`view.wrap_indent_mode`](#view.wrap_indent_mode) is `view.WRAPINDENT_FIXED`.
 The default value is `0`.
 
 <a id="view.wrap_visual_flags"></a>

@@ -1,7 +1,6 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Processes command line arguments for Textadept.
+--- Processes command line arguments for Textadept.
 -- @module args
 local M = {}
 
@@ -11,8 +10,7 @@ _G.events.ARG_NONE = 'arg_none'
 --- Map of registered command line options.
 local options = {}
 
----
--- Registers a command line option with short and long versions *short* and *long*, respectively.
+--- Registers a command line option with short and long versions *short* and *long*, respectively.
 -- *narg* is the number of arguments the option accepts, *f* is the function called when the
 -- option is set, and *description* is the option's description when displaying help.
 -- @param short The string short version of the option.
@@ -30,7 +28,8 @@ function M.register(short, long, narg, f, description)
 end
 
 -- Processes command line argument table *arg*, handling options previously defined using
--- `args.register()` and treating unrecognized arguments as filenames to open.
+-- `args.register()` and treats unrecognized arguments as filenames to open or directories to
+-- change to.
 -- Emits an `ARG_NONE` event when no file or directory arguments are present unless
 -- *no_emit_arg_none* is `true`.
 -- @param arg Argument table.

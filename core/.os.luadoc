@@ -1,12 +1,10 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the os table.
 
----
--- Extends Lua's `os` library to provide process spawning capabilities.
+--- Extends Lua's `os` library to provide process spawning capabilities.
 -- @module os
 
----
--- Spawns an interactive child process *cmd* in a separate thread, returning a handle to that
+--- Spawns an interactive child process *cmd* in a separate thread, returning a handle to that
 -- process.
 -- On Windows, *cmd* is passed to `cmd.exe`: `%COMSPEC% /c [cmd]`.
 -- At the moment, only the Windows terminal version spawns processes in the same thread.
@@ -32,23 +30,19 @@
 --   proc:write('foo\n')
 -- @function spawn
 
----
--- A spawned process.
+--- A spawned process.
 -- @type spawn_proc
 
----
--- Returns the status of process *spawn_proc*, which is either "running" or "terminated".
+--- Returns the status of process *spawn_proc*, which is either "running" or "terminated".
 -- @return "running" or "terminated"
 function spawn_proc:status() end
 
----
--- Blocks until process *spawn_proc* finishes (if it has not already done so) and returns its
+--- Blocks until process *spawn_proc* finishes (if it has not already done so) and returns its
 -- status code.
 -- @return integer status code
 function spawn_proc:wait() end
 
----
--- Reads and returns stdout from process *spawn_proc*, according to string format or number *arg*.
+--- Reads and returns stdout from process *spawn_proc*, according to string format or number *arg*.
 -- Similar to Lua's `io.read()` and blocks for input. *spawn_proc* must still be running. If
 -- an error occurs while reading, returns `nil`, an error code, and an error message.
 -- Ensure any read operations read all stdout available, as the stdout callback function passed
@@ -58,8 +52,7 @@ function spawn_proc:wait() end
 -- @return string of bytes read
 function spawn_proc:read(arg) end
 
----
--- Writes string input to the stdin of process *spawn_proc*.
+--- Writes string input to the stdin of process *spawn_proc*.
 -- Note: On Linux when using the GTK or terminal version, if more than 65536 bytes (64K) are
 -- to be written, it is possible those bytes need to be written in 65536-byte (64K) chunks,
 -- or the process may not receive all input. However, it is also possible that there is a limit
@@ -68,12 +61,10 @@ function spawn_proc:read(arg) end
 -- @param ... Standard input for *spawn_proc*.
 function spawn_proc:write(...) end
 
----
--- Closes standard input for process *spawn_proc*, effectively sending an EOF (end of file) to it.
+--- Closes standard input for process *spawn_proc*, effectively sending an EOF (end of file) to it.
 function spawn_proc:close() end
 
----
--- Kills running process *spawn_proc*, or sends it Unix signal *signal*.
+--- Kills running process *spawn_proc*, or sends it Unix signal *signal*.
 -- @param[opt] signal Optional Unix signal to send to *spawn_proc*. The default value is 9
 --   (`SIGKILL`), which kills the process.
 function spawn_proc:kill() end

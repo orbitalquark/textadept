@@ -1,12 +1,10 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the ui.dialogs table.
 
----
--- Provides a set of interactive dialog prompts for user input.
+--- Provides a set of interactive dialog prompts for user input.
 -- @module ui.dialogs
 
----
--- Prompts the user with a generic message box dialog defined by dialog options table *options*,
+--- Prompts the user with a generic message box dialog defined by dialog options table *options*,
 -- returning the selected button's index.
 -- If the user canceled the dialog, returns `nil`.
 -- @param options Table of key-value option pairs for the message box.
@@ -25,8 +23,7 @@
 --   button3 = 'LF'}
 -- @function message
 
----
--- Prompts the user with an input dialog defined by dialog options table *options*, returning
+--- Prompts the user with an input dialog defined by dialog options table *options*, returning
 -- the user's input text.
 -- If the user canceled the dialog, returns `nil`.
 -- @param options Table of key-value option pairs for the inputbox.
@@ -42,8 +39,7 @@
 -- @usage ui.dialogs.input{title = 'Go to line number:', text = '1'}
 -- @function input
 
----
--- Prompts the user with a file open dialog defined by dialog options table *options*, returning
+--- Prompts the user with a file open dialog defined by dialog options table *options*, returning
 -- the string file selected.
 -- If *options*.`multiple` is `true`, returns the list of files selected. If the user canceled
 -- the dialog, returns `nil`.
@@ -59,8 +55,7 @@
 -- @usage ui.dialogs.open{title = 'Open File', dir = _HOME, multiple = true}
 -- @function open
 
----
--- Prompts the user with a file save dialog defined by dialog options table *options*, returning
+--- Prompts the user with a file save dialog defined by dialog options table *options*, returning
 -- the string file chosen.
 -- If the user canceled the dialog, returns `nil`.
 -- @param options Table of key-value option pairs for the dialog.
@@ -71,8 +66,7 @@
 -- @return filename or nil
 -- @function save
 
----
--- Displays a progress dialog, defined by dialog options table *options*, returning true if
+--- Displays a progress dialog, defined by dialog options table *options*, returning true if
 -- the user clicked the "Stop" button, or `nil` if the dialog finishes.
 -- @param options Table of key-value option pairs for the progressbar dialog.
 --
@@ -87,8 +81,7 @@
 --   work = function() if work() then return percent, status else return nil end end}
 -- @function progress
 
----
--- Prompts the user with a list item selection dialog defined by dialog options table *options*,
+--- Prompts the user with a list item selection dialog defined by dialog options table *options*,
 -- returning the integer index of the selected item or a table of indices of the selected items
 -- (depending on whether or not *options*.`multiple` is `true`).
 -- If the user canceled the dialog, returns `nil`.

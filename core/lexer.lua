@@ -10,8 +10,7 @@ M.property = setmetatable({}, {__index = function() return '' end}) -- avoid aut
 local names = M.names
 M.names = function(path) return names(path or _LEXERPATH) end
 
----
--- Emitted after loading a language lexer.
+--- Emitted after loading a language lexer.
 -- This is useful for automatically loading language modules as source files are opened, or
 -- setting up language-specific editing features for source files.
 -- Arguments:

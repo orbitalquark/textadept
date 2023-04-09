@@ -1,7 +1,6 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Bookmarks for Textadept.
+--- Bookmarks for Textadept.
 -- @module textadept.bookmarks
 local M = {}
 
@@ -27,8 +26,7 @@ local function bookmarks(buffer)
   end, buffer, 0
 end
 
----
--- Prompts the user to select a bookmarked line to move the caret to the beginning of unless
+--- Prompts the user to select a bookmarked line to move the caret to the beginning of unless
 -- *next* is given.
 -- If *next* is `true` or `false`, moves the caret to the beginning of the next or previously
 -- bookmarked line, respectively.

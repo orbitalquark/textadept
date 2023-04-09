@@ -1,7 +1,6 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Manages key bindings in Textadept.
+--- Manages key bindings in Textadept.
 --
 -- ### Overview
 --
@@ -93,14 +92,12 @@
 -- @module keys
 local M = {}
 
----
--- The current key mode.
+--- The current key mode.
 -- When non-`nil`, all key bindings defined outside of `keys[mode]` are ignored.
 -- The default value is `nil`.
 -- @field mode
 
----
--- Emitted when pressing a recognized key.
+--- Emitted when pressing a recognized key.
 -- If any handler returns `true`, the key is not handled further (e.g. inserted into the buffer).
 -- Arguments:
 --
@@ -108,14 +105,12 @@ local M = {}
 -- @field _G.events.KEYPRESS
 
 local CTRL, ALT, CMD, SHIFT = 'ctrl+', not CURSES and 'alt+' or 'meta+', 'cmd+', 'shift+'
----
--- The key that clears the current key chain.
+--- The key that clears the current key chain.
 -- It cannot be part of a key chain.
 -- The default value is `'esc'` for the `Esc` key.
 M.CLEAR = 'esc'
 
----
--- Lookup table for string representations of key codes higher than 255.
+--- Lookup table for string representations of key codes higher than 255.
 -- Key codes can be identified by temporarily uncommenting the `print()` statements in
 -- *core/keys.lua*.
 -- Recognized codes are: esc, \b, \t, \n, down, up, left, right, home, end, pgup, pgdn, del,
@@ -212,8 +207,7 @@ events.connect(events.KEYPRESS, function(key)
   -- PROPAGATE otherwise.
 end)
 
----
--- Map of [key bindings](#keys) to commands, with language-specific key tables assigned to a
+--- Map of [key bindings](#keys) to commands, with language-specific key tables assigned to a
 -- lexer name key.
 -- @table _G.keys
 

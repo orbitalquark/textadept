@@ -1,7 +1,6 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Defines key bindings for Textadept.
+--- Defines key bindings for Textadept.
 -- This set of key bindings is pretty standard among other text editors, at least for basic
 -- editing commands and movements.
 --

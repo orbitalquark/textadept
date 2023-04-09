@@ -1,7 +1,6 @@
 -- Copyright 2019-2023 Mitchell. See LICENSE.
 
----
--- Records buffer positions within Textadept views over time and allows for navigating through
+--- Records buffer positions within Textadept views over time and allows for navigating through
 -- that history.
 --
 -- This module listens for text edit events and buffer switch events. Each time an insertion
@@ -11,17 +10,15 @@
 -- @module textadept.history
 local M = {}
 
----
--- The minimum number of lines between distinct history records.
+--- The minimum number of lines between distinct history records.
 -- The default value is `3`.
 M.minimum_line_distance = 3
----
--- The maximum number of history records to keep per view.
+
+--- The maximum number of history records to keep per view.
 -- The default value is `100`.
 M.maximum_history_size = 100
 
----
--- Map of views to their history records.
+--- Map of views to their history records.
 -- Each record has a `pos` field that points to the current history position in the associated view.
 local view_history = setmetatable({}, {
   __index = function(t, view)
@@ -99,8 +96,7 @@ function M.forward()
   jump(history[history.pos])
 end
 
----
--- Records the given location in the current view's history.
+--- Records the given location in the current view's history.
 -- @param[opt] filename Optional string filename, buffer type, or identifier of the buffer to
 --   store. If `nil`, uses the current buffer.
 -- @param[opt] line Optional Integer line number to store. If `nil`, uses the current line.

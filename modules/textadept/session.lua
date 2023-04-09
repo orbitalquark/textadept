@@ -1,12 +1,10 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Session support for Textadept.
+--- Session support for Textadept.
 -- @module textadept.session
 local M = {}
 
----
--- Save the session when quitting.
+--- Save the session when quitting.
 -- The default value is `true` unless the user passed the command line switch `-n` or `--nosession`
 -- to Textadept.
 M.save_on_quit = true
@@ -15,8 +13,7 @@ M.save_on_quit = true
 local session_events = {'session_save', 'session_load'}
 for _, v in ipairs(session_events) do events[v:upper()] = v end
 
----
--- Emitted when saving a session.
+--- Emitted when saving a session.
 -- Arguments:
 --
 --   - *session*: Table of session data to save. All handlers will have access to this same
@@ -25,8 +22,7 @@ for _, v in ipairs(session_events) do events[v:upper()] = v end
 --     case is not recognized at all, so beware.
 -- @field _G.events.SESSION_SAVE
 
----
--- Emitted when loading a session.
+--- Emitted when loading a session.
 -- Arguments:
 --
 --   - *session*: Table of session data to load. All handlers will have access to this same table.
@@ -36,8 +32,7 @@ for _, v in ipairs(session_events) do events[v:upper()] = v end
 
 local session_file = _USERHOME .. (not CURSES and '/session' or '/session_term')
 
----
--- Loads session file *filename* or the user-selected session, returning `true` if a session
+--- Loads session file *filename* or the user-selected session, returning `true` if a session
 -- file was opened and read.
 -- Textadept restores split views, opened buffers, cursor information, recent files, and bookmarks.
 -- @param[opt] filename Optional absolute path to the session file to load. If `nil`, the user
@@ -130,8 +125,7 @@ local function _tostring(val)
   return type(val) == 'string' and string.format('%q', val) or tostring(val)
 end
 
----
--- Saves the session to file *filename* or the user-selected file.
+--- Saves the session to file *filename* or the user-selected file.
 -- Saves split views, opened buffers, cursor information, recent files, and bookmarks.
 -- Upon quitting, the current session is saved to *filename* again, unless
 -- `textadept.session.save_on_quit` is `false`.

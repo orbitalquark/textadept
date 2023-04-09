@@ -1,8 +1,7 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for Buffers.
 
----
--- A Textadept buffer object.
+--- A Textadept buffer object.
 -- Constants are documented in the fields they apply to.
 -- While you can work with individual buffer instances, it is really only useful to work with
 -- the global one.
@@ -17,43 +16,35 @@
 
 --- @type buffer
 
----
--- Type into multiple selections.
+--- Type into multiple selections.
 -- The default value is `false`.
 -- @field additional_selection_typing
 
----
--- The anchor's position.
+--- The anchor's position.
 -- @field anchor
 
----
--- List of the number of annotation text lines per line number. (Read-only)
+--- List of the number of annotation text lines per line number. (Read-only)
 -- @table annotation_lines
 
----
--- List of style numbers for annotation text per line number.
+--- List of style numbers for annotation text per line number.
 -- Only some style attributes are active in annotations: font, size/size_fractional, bold/weight,
 -- italics, fore, back, and character_set.
 -- @table annotation_style
 
----
--- List of annotation text per line number.
+--- List of annotation text per line number.
 -- @table annotation_text
 
----
--- Automatically cancel an autocompletion or user list when no entries match typed text.
+--- Automatically cancel an autocompletion or user list when no entries match typed text.
 -- The default value is `true`.
 -- @field auto_c_auto_hide
 
----
--- Cancel an autocompletion list when backspacing to a position before where autocompletion
+--- Cancel an autocompletion list when backspacing to a position before where autocompletion
 -- started (instead of before the word being completed).
 -- This option has no effect for a user list.
 -- The default value is `true`.
 -- @field auto_c_cancel_at_start
 
----
--- The behavior mode for a case insensitive autocompletion or user list when
+--- The behavior mode for a case insensitive autocompletion or user list when
 -- [`buffer.auto_c_ignore_case`]() is `true`.
 --
 --   - `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`
@@ -64,46 +55,37 @@
 --   The default value is `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`.
 -- @field auto_c_case_insensitive_behavior
 
----
--- No preference.
+--- No preference.
 -- @field CASEINSENSITIVEBEHAVIOR_IGNORECASE
 
----
--- Prefer to select case-sensitive matches.
+--- Prefer to select case-sensitive matches.
 -- @field CASEINSENSITIVEBEHAVIOR_RESPECTCASE
 
----
--- Automatically choose the item in a single-item autocompletion list.
+--- Automatically choose the item in a single-item autocompletion list.
 -- This option has no effect for a user list.
 -- The default value is `false`.
 -- @field auto_c_choose_single
 
----
--- The index of the currently selected item in an autocompletion or user list. (Read-only)
+--- The index of the currently selected item in an autocompletion or user list. (Read-only)
 -- @field auto_c_current
 
----
--- The text of the currently selected item in an autocompletion or user list. (Read-only)
+--- The text of the currently selected item in an autocompletion or user list. (Read-only)
 -- @field auto_c_current_text
 
----
--- Delete any word characters immediately to the right of autocompleted text.
+--- Delete any word characters immediately to the right of autocompleted text.
 -- The default value is `false`.
 -- @field auto_c_drop_rest_of_word
 
----
--- The set of characters that choose the currently selected item in an autocompletion or user
+--- The set of characters that choose the currently selected item in an autocompletion or user
 -- list when the user types one of them. (Write-only)
 -- The default value is `''`.
 -- @field auto_c_fill_ups
 
----
--- Ignore case when searching an autocompletion or user list for matches.
+--- Ignore case when searching an autocompletion or user list for matches.
 -- The default value is `false`.
 -- @field auto_c_ignore_case
 
----
--- The multiple selection autocomplete mode.
+--- The multiple selection autocomplete mode.
 --
 --   - `buffer.MULTIAUTOC_ONCE`
 --     Autocomplete into only the main selection.
@@ -113,16 +95,13 @@
 --   The default value is `buffer.MULTIAUTOC_ONCE`.
 -- @field auto_c_multi
 
----
--- Autocomplete into all selections.
+--- Autocomplete into all selections.
 -- @field MULTIAUTOC_EACH
 
----
--- Autocomplete into only the main selection.
+--- Autocomplete into only the main selection.
 -- @field MULTIAUTOC_ONCE
 
----
--- The order setting for autocompletion and user lists.
+--- The order setting for autocompletion and user lists.
 --
 --   - `buffer.ORDER_PRESORTED`
 --     Lists passed to [`buffer.auto_c_show()`]() are in sorted, alphabetical order.
@@ -134,38 +113,31 @@
 --   The default value is `buffer.ORDER_PRESORTED`.
 -- @field auto_c_order
 
----
--- Lists passed to [`buffer.auto_c_show()`]() are already in a custom order.
+--- Lists passed to [`buffer.auto_c_show()`]() are already in a custom order.
 -- @field ORDER_CUSTOM
 
----
--- Sort autocompletion lists passed to [`buffer.auto_c_show()`]().
+--- Sort autocompletion lists passed to [`buffer.auto_c_show()`]().
 -- @field ORDER_PERFORMSORT
 
----
--- Lists passed to [`buffer.auto_c_show()`]() are in sorted, alphabetical order.
+--- Lists passed to [`buffer.auto_c_show()`]() are in sorted, alphabetical order.
 -- @field ORDER_PRESORTED
 
----
--- The byte value of the character that separates autocompletion and user list list items.
+--- The byte value of the character that separates autocompletion and user list list items.
 -- The default value is `32` (' ').
 -- @field auto_c_separator
 
----
--- The character byte that separates autocompletion and user list items and their image types.
+--- The character byte that separates autocompletion and user list items and their image types.
 -- Autocompletion and user list items can display both an image and text. Register images and
 -- their types using [`view.register_image()`]() or [`view.register_rgba_image()`]() before
 -- appending image types to list items after type separator characters.
 -- The default value is 63 ('?').
 -- @field auto_c_type_separator
 
----
--- Un-indent text when backspacing within indentation.
+--- Un-indent text when backspacing within indentation.
 -- The default value is `false`.
 -- @field back_space_un_indents
 
----
--- The caret's preferred horizontal position when moving between lines.
+--- The caret's preferred horizontal position when moving between lines.
 --
 --   - `buffer.CARETSTICKY_OFF`
 --     Use the same position the caret had on the previous line.
@@ -178,40 +150,32 @@
 --   The default value is `buffer.CARETSTICKY_OFF`.
 -- @field caret_sticky
 
----
--- List of character bytes per position. (Read-only)
+--- List of character bytes per position. (Read-only)
 -- @table char_at
 
----
--- List of column numbers (taking tab widths into account) per position. (Read-only)
+--- List of column numbers (taking tab widths into account) per position. (Read-only)
 -- Multi-byte characters count as single characters.
 -- @table column
 
----
---  The caret's position.
+--- The caret's position.
 --  When set, does not scroll the caret into view.
 -- @field current_pos
 
----
--- The string encoding of the file, or `nil` for binary files.
+--- The string encoding of the file, or `nil` for binary files.
 -- @field encoding
 
----
--- The current styling position or the last correctly styled character's position. (Read-only)
+--- The current styling position or the last correctly styled character's position. (Read-only)
 -- @field end_styled
 
----
--- List of style numbers for EOL annotation text per line number.
+--- List of style numbers for EOL annotation text per line number.
 -- Only some style attributes are active in annotations: font, size/size_fractional, bold/weight,
 -- italics, fore, back, and character_set.
 -- @table eol_annotation_style
 
----
--- List of EOL annotation text per line number.
+--- List of EOL annotation text per line number.
 -- @table eol_annotation_text
 
----
--- The current end of line mode.
+--- The current end of line mode.
 -- Changing the current mode does not convert any of the buffer's existing end of line
 -- characters. Use [`buffer.convert_eols()`]() to do so.
 --
@@ -225,24 +189,19 @@
 --   The default value is `buffer.EOL_CRLF` on Windows platforms, `buffer.EOL_LF` otherwise.
 -- @field eol_mode
 
----
--- Carriage return ("\r").
+--- Carriage return ("\r").
 -- @field EOL_CR
 
----
--- Carriage return with line feed ("\r\n").
+--- Carriage return with line feed ("\r\n").
 -- @field EOL_CRLF
 
----
--- Line feed ("\n").
+--- Line feed ("\n").
 -- @field EOL_LF
 
----
--- The absolute file path associated with the buffer.
+--- The absolute file path associated with the buffer.
 -- @field filename
 
----
--- List of fold level bit-masks per line number.
+--- List of fold level bit-masks per line number.
 -- Fold level masks comprise of an integer level combined with any of the following bit flags:
 --
 --   - `buffer.FOLDLEVELBASE`
@@ -253,89 +212,71 @@
 --     The line is a header, or fold point.
 -- @table fold_level
 
----
---  The initial fold level.
+--- The initial fold level.
 -- @field FOLDLEVELBASE
 
----
--- The line is a header, or fold point.
+--- The line is a header, or fold point.
 -- @field FOLDLEVELHEADERFLAG
 
 --- @field FOLDLEVELNUMBERMASK
 
----
--- The line is blank.
+--- The line is blank.
 -- @field FOLDLEVELWHITEFLAG
 
----
--- List of fold point line numbers per child line number. (Read-only)
+--- List of fold point line numbers per child line number. (Read-only)
 -- A line number of `-1` means no line was found.
 -- @table fold_parent
 
----
--- The number of spaces in one level of indentation.
+--- The number of spaces in one level of indentation.
 -- The default value is `0`, which uses the value of [`buffer.tab_width`]().
 -- @field indent
 
----
--- The indicator number in the range of `1` to `32` used by [`buffer.indicator_fill_range()`]()
+--- The indicator number in the range of `1` to `32` used by [`buffer.indicator_fill_range()`]()
 -- and [`buffer.indicator_clear_range()`]().
 -- @field indicator_current
 
----
--- The number of bytes in the buffer. (Read-only)
+--- The number of bytes in the buffer. (Read-only)
 -- @field length
 
----
--- The buffer's lexer name. (Read-only)
+--- The buffer's lexer name. (Read-only)
 -- If the lexer is a multi-language lexer, [`buffer.get_lexer()`]() can obtain the lexer under
 -- the caret.
 -- @field lexer_language
 
----
--- The number of lines in the buffer. (Read-only)
+--- The number of lines in the buffer. (Read-only)
 -- There is always at least one.
 -- @field line_count
 
----
--- List of positions at the ends of lines, but before any end of line characters, per line
+--- List of positions at the ends of lines, but before any end of line characters, per line
 -- number. (Read-only)
 -- @table line_end_position
 
----
--- List of positions at the ends of indentation per line number. (Read-only)
+--- List of positions at the ends of indentation per line number. (Read-only)
 -- @table line_indent_position
 
----
--- List of column indentation amounts per line number.
+--- List of column indentation amounts per line number.
 -- @table line_indentation
 
----
--- The number of the main or most recent selection.
+--- The number of the main or most recent selection.
 -- Only an existing selection can be made main.
 -- @field main_selection
 
----
--- List of text displayed in text margins per line number.
+--- List of text displayed in text margins per line number.
 -- @table margin_text
 
----
--- List of style numbers in the text margin per line number.
+--- List of style numbers in the text margin per line number.
 -- Only some style attributes are active in text margins: font, size, bold, italics, fore,
 -- and back.
 -- @table margin_style
 
----
--- Whether or not the buffer has unsaved changes. (Read-only)
+--- Whether or not the buffer has unsaved changes. (Read-only)
 -- @field modify
 
----
--- Whether or not regular caret movement alters the selected text. (Read-only)
+--- Whether or not regular caret movement alters the selected text. (Read-only)
 -- [`buffer.selection_mode`]() dictates this property.
 -- @field move_extends_selection
 
----
--- The multiple selection paste mode.
+--- The multiple selection paste mode.
 --
 --   - `buffer.MULTIPASTE_ONCE`
 --     Paste into only the main selection.
@@ -345,53 +286,42 @@
 --   The default value is `buffer.MULTIPASTE_ONCE`.
 -- @field multi_paste
 
----
--- Enable multiple selection.
+--- Enable multiple selection.
 -- The default value is `false`.
 -- @field multiple_selection
 
----
--- The number of named lexer styles.
+--- The number of named lexer styles.
 -- @field named_styles
 
----
--- Enable overtype mode, where typed characters overwrite existing ones.
+--- Enable overtype mode, where typed characters overwrite existing ones.
 -- The default value is `false`.
 -- @field overtype
 
----
--- Map of key-value string pairs populated by lexers.
+--- Map of key-value string pairs populated by lexers.
 -- @table property
 
----
--- The string set of characters recognized as punctuation characters.
+--- The string set of characters recognized as punctuation characters.
 -- Set this only after setting [`buffer.word_chars`]().
 -- The default value is a string that contains all non-word and non-whitespace characters.
 -- @field punctuation_chars
 
----
--- Whether or not the buffer is read-only.
+--- Whether or not the buffer is read-only.
 -- The default value is `false`.
 -- @field read_only
 
----
--- The rectangular selection's anchor position.
+--- The rectangular selection's anchor position.
 -- @field rectangular_selection_anchor
 
----
--- The amount of virtual space for the rectangular selection's anchor.
+--- The amount of virtual space for the rectangular selection's anchor.
 -- @field rectangular_selection_anchor_virtual_space
 
----
--- The rectangular selection's caret position.
+--- The rectangular selection's caret position.
 -- @field rectangular_selection_caret
 
----
--- The amount of virtual space for the rectangular selection's caret.
+--- The amount of virtual space for the rectangular selection's caret.
 -- @field rectangular_selection_caret_virtual_space
 
----
--- The bit-mask of search flags used by [`buffer.search_in_target()`]().
+--- The bit-mask of search flags used by [`buffer.search_in_target()`]().
 --
 --   - `buffer.FIND_WHOLEWORD`
 --     Match search text only when it is surrounded by non-word characters.
@@ -405,37 +335,29 @@
 --   The default value is `0`.
 -- @field search_flags
 
----
--- Match search text only when it is surrounded by non-word characters.
+--- Match search text only when it is surrounded by non-word characters.
 -- @field FIND_WHOLEWORD
 
----
--- Match search text case sensitively.
+--- Match search text case sensitively.
 -- @field FIND_MATCHCASE
 
----
--- Match search text only when the previous character is a non-word character.
+--- Match search text only when the previous character is a non-word character.
 -- @field FIND_WORDSTART
 
----
--- Interpret search text as a regular expression.
+--- Interpret search text as a regular expression.
 -- @field FIND_REGEXP
 
----
--- Whether or not no text is selected. (Read-only)
+--- Whether or not no text is selected. (Read-only)
 -- @field selection_empty
 
----
--- The position of the end of the selected text.
+--- The position of the end of the selected text.
 -- When set, becomes the current position, but is not scrolled into view.
 -- @field selection_end
 
----
--- Whether or not the selection is a rectangular selection. (Read-only)
+--- Whether or not the selection is a rectangular selection. (Read-only)
 -- @field selection_is_rectangle
 
----
--- The selection mode.
+--- The selection mode.
 --
 --   - `buffer.SEL_STREAM`
 --     Character selection.
@@ -451,129 +373,104 @@
 --   same value or until [`buffer.cancel()`]() is called.
 -- @field selection_mode
 
----
--- Line selection.
+--- Line selection.
 -- @field SEL_LINES
 
----
--- Rectangular selection.
+--- Rectangular selection.
 -- @field SEL_RECTANGLE
 
----
--- Character selection.
+--- Character selection.
 -- @field SEL_STREAM
 
----
--- Thin rectangular selection. This is the mode after a rectangular selection has been typed
+--- Thin rectangular selection. This is the mode after a rectangular selection has been typed
 -- into and ensures that no characters are selected.
 -- @field SEL_THIN
 
----
--- List of positions at the beginning of existing selections numbered from `1`, the main selection.
+--- List of positions at the beginning of existing selections numbered from `1`, the main
+-- selection.
 -- @table selection_n_anchor
 
----
--- List of positions at the beginning of virtual space selected in existing selections numbered
+--- List of positions at the beginning of virtual space selected in existing selections numbered
 -- from `1`, the main selection.
 -- @table selection_n_anchor_virtual_space
 
----
--- List of positions at the end of existing selections numbered from `1`, the main selection.
+--- List of positions at the end of existing selections numbered from `1`, the main selection.
 -- @table selection_n_caret
 
----
--- List of positions at the end of virtual space selected in existing selections numbered from
+--- List of positions at the end of virtual space selected in existing selections numbered from
 -- `1`, the main selection.
 -- @table selection_n_caret_virtual_space
 
----
--- List of positions at the end of existing selections numbered from `1`, the main selection.
+--- List of positions at the end of existing selections numbered from `1`, the main selection.
 -- @table selection_n_end
 
----
--- List of positions at the beginning of existing selections numbered from `1`, the main selection.
+--- List of positions at the beginning of existing selections numbered from `1`, the main
+-- selection.
 -- @table selection_n_start
 
----
--- List of positions at the end of virtual space selected in existing selections numbered from
+--- List of positions at the end of virtual space selected in existing selections numbered from
 -- `1`, the main selection. (Read-only)
 -- @table selection_n_end_virtual_space
 
----
--- List of positions at the beginning of virtual space selected in existing selections numbered
+--- List of positions at the beginning of virtual space selected in existing selections numbered
 -- from `1`, the main selection. (Read-only)
 -- @table selection_n_start_virtual_space
 
----
--- The position of the beginning of the selected text.
+--- The position of the beginning of the selected text.
 -- When set, becomes the anchor, but is not scrolled into view.
 -- @field selection_start
 
----
--- The number of active selections. There is always at least one selection. (Read-only)
+--- The number of active selections. There is always at least one selection. (Read-only)
 -- @field selections
 
----
--- List of style numbers per position. (Read-only)
+--- List of style numbers per position. (Read-only)
 -- @table style_at
 
----
--- Indent text when tabbing within indentation.
+--- Indent text when tabbing within indentation.
 -- The default value is `false`.
 -- @field tab_indents
 
----
--- The buffer's tab label in the tab bar. (Write-only)
+--- The buffer's tab label in the tab bar. (Write-only)
 -- @field tab_label
 
----
--- The number of space characters represented by a tab character.
+--- The number of space characters represented by a tab character.
 -- The default value is `8`.
 -- @field tab_width
 
----
--- List of capture text for capture numbers from a regular expression search. (Read-only)
+--- List of capture text for capture numbers from a regular expression search. (Read-only)
 -- @field tag
 
----
--- The position of the end of the target range.
+--- The position of the end of the target range.
 -- This is also set by a successful [`buffer.search_in_target()`]().
 -- @field target_end
 
----
--- The position of the end of virtual space in the target range.
+--- The position of the end of virtual space in the target range.
 -- This is set to `1` when [`buffer.target_start`]() or [`buffer.target_end`]() is set, or when
 -- [`buffer.set_target_range()`]() is called.
 -- @field target_end_virtual_space
 
----
--- The position of the beginning of the target range.
+--- The position of the beginning of the target range.
 -- This is also set by a successful [`buffer.search_in_target()`]().
 -- @field target_start
 
----
--- The position of the beginning of virtual space in the target range.
+--- The position of the beginning of virtual space in the target range.
 -- This is set to `1` when [`buffer.target_start`]() or [`buffer.target_end`]() is set, or when
 -- [`buffer.set_target_range()`]() is called.
 -- @field target_start_virtual_space
 
----
--- The text in the target range. (Read-only)
+--- The text in the target range. (Read-only)
 -- @field target_text
 
----
--- The number of bytes in the buffer. (Read-only)
+--- The number of bytes in the buffer. (Read-only)
 -- @field text_length
 
----
--- Use tabs instead of spaces in indentation.
+--- Use tabs instead of spaces in indentation.
 -- Changing the current setting does not convert any of the buffer's existing indentation. Use
 -- [`textadept.editing.convert_indentation()`]() to do so.
 -- The default value is `true`.
 -- @field use_tabs
 
----
--- The virtual space mode.
+--- The virtual space mode.
 --
 --   - `buffer.VS_NONE`
 --     Disable virtual space.
@@ -590,32 +487,26 @@
 --   The default value is `buffer.VS_NONE`.
 -- @field virtual_space_options
 
----
--- Disable virtual space.
+--- Disable virtual space.
 -- @field VS_NONE
 
----
--- Enable virtual space only for rectangular selections.
+--- Enable virtual space only for rectangular selections.
 -- @field VS_RECTANGULARSELECTION
 
----
--- Enable virtual space.
+--- Enable virtual space.
 -- @field VS_USERACCESSIBLE
 
----
--- Prevent the caret from wrapping to the previous line via `buffer:char_left()` and
+--- Prevent the caret from wrapping to the previous line via `buffer:char_left()` and
 -- `buffer:char_left_extend()`. This option is not restricted to virtual space and should be
 -- added to any of the above options.
 -- @field VS_NOWRAPLINESTART
 
----
--- The string set of characters recognized as whitespace characters.
+--- The string set of characters recognized as whitespace characters.
 -- Set this only after setting [`buffer.word_chars`]().
 -- The default value is a string that contains all non-newline characters less than ASCII value 33.
 -- @field whitespace_chars
 
----
--- The string set of characters recognized as word characters.
+--- The string set of characters recognized as word characters.
 -- The default value is a string that contains alphanumeric characters, an underscore, and all
 -- characters greater than ASCII value 127.
 -- @field word_chars
@@ -631,16 +522,13 @@
 --- @field MARKNUM_FOLDERSUB
 --- @field MARKNUM_FOLDERTAIL
 
----
--- Buffer contents, styling, or markers have changed.
+--- Buffer contents, styling, or markers have changed.
 -- @field UPDATE_CONTENT
 
----
--- Buffer selection has changed (including caret movement).
+--- Buffer selection has changed (including caret movement).
 -- @field UPDATE_SELECTION
 
----
--- Selects the range of text between positions *start_pos* to *end_pos* as the main selection,
+--- Selects the range of text between positions *start_pos* to *end_pos* as the main selection,
 -- retaining all other selections as additional selections.
 -- Since an empty selection (i.e. the current position) still counts as a selection, use
 -- `buffer:set_selection()` first when setting a list of selections.
@@ -649,48 +537,39 @@
 -- @see set_selection
 -- @function add_selection
 
----
--- Adds string *text* to the buffer at the caret position and moves the caret to the end of
+--- Adds string *text* to the buffer at the caret position and moves the caret to the end of
 -- the added text without scrolling it into view.
 -- @param text The text to add.
 -- @function add_text
 
----
--- Clears annotations from all lines.
+--- Clears annotations from all lines.
 -- @function annotation_clear_all
 
----
--- Appends string *text* to the end of the buffer without modifying any existing selections or
+--- Appends string *text* to the end of the buffer without modifying any existing selections or
 -- scrolling the text into view.
 -- @param text The text to append.
 -- @function append_text
 
----
--- Returns whether or not an autocompletion or user list is visible.
+--- Returns whether or not an autocompletion or user list is visible.
 -- @return bool
 -- @function auto_c_active
 
----
--- Cancels the displayed autocompletion or user list.
+--- Cancels the displayed autocompletion or user list.
 -- @function auto_c_cancel
 
----
--- Completes the current word with the one selected in an autocompletion list.
+--- Completes the current word with the one selected in an autocompletion list.
 -- @function auto_c_complete
 
----
--- Returns the position where autocompletion started or where a user list was shown.
+--- Returns the position where autocompletion started or where a user list was shown.
 -- @return number
 -- @function auto_c_pos_start
 
----
--- Selects the first item that starts with string *prefix* in an autocompletion or user list,
+--- Selects the first item that starts with string *prefix* in an autocompletion or user list,
 -- using the case sensitivity setting `buffer.auto_c_ignore_case`.
 -- @param prefix The item in the list to select.
 -- @function auto_c_select
 
----
--- Displays an autocompletion list constructed from string *items* (whose items are delimited by
+--- Displays an autocompletion list constructed from string *items* (whose items are delimited by
 -- `buffer.auto_c_separator` characters) using *len_entered* number of characters behind the
 -- caret as the prefix of the word to be autocompleted.
 -- The sorted order of *items* (`buffer.auto_c_order`) must have already been defined.
@@ -701,25 +580,21 @@
 -- @see auto_c_order
 -- @function auto_c_show
 
----
--- Allows the user to type any character in string set *chars* in order to cancel an autocompletion
--- or user list.
+--- Allows the user to type any character in string set *chars* in order to cancel an
+-- autocompletion or user list.
 -- The default set is empty.
 -- @param chars The string of characters that cancel autocompletion. This string is empty
 --   by default.
 -- @function auto_c_stops
 
----
--- Un-indents the text on the selected lines.
+--- Un-indents the text on the selected lines.
 -- @function back_tab
 
----
--- Starts a sequence of actions to be undone or redone as a single action.
+--- Starts a sequence of actions to be undone or redone as a single action.
 -- May be nested.
 -- @function begin_undo_action
 
----
--- Returns the position of the matching brace for the brace character at position *pos*, taking
+--- Returns the position of the matching brace for the brace character at position *pos*, taking
 -- nested braces into account, or `-1`.
 -- The brace characters recognized are '(', ')', '[', ']', '{', '}', '<', and '>' and must have
 -- the same style.
@@ -728,64 +603,50 @@
 -- @return number
 -- @function brace_match
 
----
--- Returns whether or not there is an action to be redone.
+--- Returns whether or not there is an action to be redone.
 -- @return bool
 -- @function can_redo
 
----
--- Returns whether or not there is an action to be undone.
+--- Returns whether or not there is an action to be undone.
 -- @return bool
 -- @function can_undo
 
----
--- Cancels the active selection mode, autocompletion or user list, call tip, etc.
+--- Cancels the active selection mode, autocompletion or user list, call tip, etc.
 -- @function cancel
 
----
--- Moves the caret left one character.
+--- Moves the caret left one character.
 -- @function char_left
 
----
--- Moves the caret left one character, extending the selected text to the new position.
+--- Moves the caret left one character, extending the selected text to the new position.
 -- @function char_left_extend
 
----
--- Moves the caret left one character, extending the rectangular selection to the new position.
+--- Moves the caret left one character, extending the rectangular selection to the new position.
 -- @function char_left_rect_extend
 
----
--- Moves the caret right one character.
+--- Moves the caret right one character.
 -- @function char_right
 
----
--- Moves the caret right one character, extending the selected text to the new position.
+--- Moves the caret right one character, extending the selected text to the new position.
 -- @function char_right_extend
 
----
--- Moves the caret right one character, extending the rectangular selection to the new position.
+--- Moves the caret right one character, extending the rectangular selection to the new position.
 -- @function char_right_rect_extend
 
----
--- Identifies the current horizontal caret position as the caret's preferred horizontal position
+--- Identifies the current horizontal caret position as the caret's preferred horizontal position
 -- when moving between lines.
 -- @see caret_sticky
 -- @function choose_caret_x
 
----
--- Deletes the selected text or the character at the caret.
+--- Deletes the selected text or the character at the caret.
 -- @function clear
 
----
--- Deletes the buffer's text.
+--- Deletes the buffer's text.
 -- @function clear_all
 
----
--- Clears all styling and folding information.
+--- Clears all styling and folding information.
 -- @function clear_document_style
 
----
--- Instructs the lexer to style and mark fold points in the range of text between *start_pos*
+--- Instructs the lexer to style and mark fold points in the range of text between *start_pos*
 -- and *end_pos*.
 -- If *end_pos* is `-1`, styles and marks to the end of the buffer.
 -- @param start_pos The start position of the range of text in *buffer* to process.
@@ -793,371 +654,302 @@
 --   process from *start_pos* to the end of *buffer*.
 -- @function colorize
 
----
--- Converts all end of line characters to those in end of line mode *mode*.
+--- Converts all end of line characters to those in end of line mode *mode*.
 -- @param mode The end of line mode to convert to. Valid values are:
 --   - `buffer.EOL_CRLF`
 --   - `buffer.EOL_CR`
 --   - `buffer.EOL_LF`
 -- @function convert_eols
 
----
--- Copies the selected text to the clipboard.
+--- Copies the selected text to the clipboard.
 -- Multiple selections are copied in order with no delimiters. Rectangular selections are copied
 -- from top to bottom with end of line characters. Virtual space is not copied.
 -- @function copy
 
----
--- Copies to the clipboard the range of text between positions *start_pos* and *end_pos*.
+--- Copies to the clipboard the range of text between positions *start_pos* and *end_pos*.
 -- @param start_pos The start position of the range of text in *buffer* to copy.
 -- @param end_pos The end position of the range of text in *buffer* to copy.
 -- @function copy_range
 
----
--- Copies string *text* to the clipboard.
+--- Copies string *text* to the clipboard.
 -- @param text The text to copy.
 -- @function copy_text
 
----
--- Returns the number of whole characters (taking multi-byte characters into account) between
+--- Returns the number of whole characters (taking multi-byte characters into account) between
 -- positions *start_pos* and *end_pos*.
 -- @param start_pos The start position of the range of text in *buffer* to start counting at.
 -- @param end_pos The end position of the range of text in *buffer* to stop counting at.
 -- @return number
 -- @function count_characters
 
----
--- Cuts the selected text to the clipboard.
+--- Cuts the selected text to the clipboard.
 -- Multiple selections are copied in order with no delimiters. Rectangular selections are copied
 -- from top to bottom with end of line characters. Virtual space is not copied.
 -- @function cut
 
----
--- Deletes the range of text from the caret to the beginning of the current line.
+--- Deletes the range of text from the caret to the beginning of the current line.
 -- @function del_line_left
 
----
--- Deletes the range of text from the caret to the end of the current line.
+--- Deletes the range of text from the caret to the end of the current line.
 -- @function del_line_right
 
----
--- Deletes the word to the left of the caret, including any leading non-word characters.
+--- Deletes the word to the left of the caret, including any leading non-word characters.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function del_word_left
 
----
--- Deletes the word to the right of the caret, including any trailing non-word characters.
+--- Deletes the word to the right of the caret, including any trailing non-word characters.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function del_word_right
 
----
--- Deletes the word to the right of the caret, excluding any trailing non-word characters.
+--- Deletes the word to the right of the caret, excluding any trailing non-word characters.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function del_word_right_end
 
----
--- Deletes the character behind the caret if no text is selected.
+--- Deletes the character behind the caret if no text is selected.
 -- Otherwise, deletes the selected text.
 -- @function delete_back
 
----
--- Deletes the character behind the caret unless either the caret is at the beginning of a line
--- or text is selected.
+--- Deletes the character behind the caret unless either the caret is at the beginning of a
+-- line or text is selected.
 -- If text is selected, deletes it.
 -- @function delete_back_not_line
 
----
--- Deletes the range of text from position *pos* to *pos* + *length*.
+--- Deletes the range of text from position *pos* to *pos* + *length*.
 -- @param pos The start position of the range of text in *buffer* to delete.
 -- @param length The number of characters in the range of text to delete.
 -- @function delete_range
 
----
--- Moves the caret to the end of the buffer.
+--- Moves the caret to the end of the buffer.
 -- @function document_end
 
----
--- Moves the caret to the end of the buffer, extending the selected text to the new position.
+--- Moves the caret to the end of the buffer, extending the selected text to the new position.
 -- @function document_end_extend
 
----
--- Moves the caret to the beginning of the buffer.
+--- Moves the caret to the beginning of the buffer.
 -- @function document_start
 
----
--- Moves the caret to the beginning of the buffer, extending the selected text to the new position.
+--- Moves the caret to the beginning of the buffer, extending the selected text to the new
+-- position.
 -- @function document_start_extend
 
----
--- Drops existing selection number *n*.
+--- Drops existing selection number *n*.
 -- @param n The number of the existing selection.
 -- @function drop_selection_n
 
----
--- Toggles `buffer.overtype`.
+--- Toggles `buffer.overtype`.
 -- @function edit_toggle_overtype
 
----
--- Deletes the undo and redo history.
+--- Deletes the undo and redo history.
 -- @function empty_undo_buffer
 
----
--- Ends a sequence of actions to be undone or redone as a single action.
+--- Ends a sequence of actions to be undone or redone as a single action.
 -- @function end_undo_action
 
----
--- Clears EOL annotations from all lines.
+--- Clears EOL annotations from all lines.
 -- @function eol_annotation_clear_all
 
----
--- Returns the position of column number *column* on line number *line* (taking tab and multi-byte
--- characters into account), or the position at the end of line *line*.
+--- Returns the position of column number *column* on line number *line* (taking tab and
+-- multi-byte characters into account), or the position at the end of line *line*.
 -- @param line The line number in *buffer* to use.
 -- @param column The column number to use.
 -- @function find_column
 
----
--- Returns the current line's text and the caret's position on that line.
+--- Returns the current line's text and the caret's position on that line.
 -- @return string, number
 -- @function get_cur_line
 
----
--- Returns the line number of the last line after line number *line* whose fold level is greater
+--- Returns the line number of the last line after line number *line* whose fold level is greater
 -- than *level*.
 -- If *level* is `-1`, returns the level of *line*.
 -- @param line The line number in *buffer* of a header line.
 -- @param level The fold level, or `-1` for the level of *line*.
 -- @function get_last_child
 
----
--- Returns the text on line number *line*, including end of line characters.
+--- Returns the text on line number *line*, including end of line characters.
 -- @param line The line number in *buffer* to use.
 -- @return string, number
 -- @function get_line
 
----
--- Returns the selected text.
+--- Returns the selected text.
 -- Multiple selections are included in order with no delimiters. Rectangular selections are
 -- included from top to bottom with end of line characters. Virtual space is not included.
 -- @return string, number
 -- @function get_sel_text
 
----
--- Returns the buffer's text.
+--- Returns the buffer's text.
 -- @function get_text
 
----
--- Moves the caret to the beginning of line number *line* and scrolls it into view, event if
+--- Moves the caret to the beginning of line number *line* and scrolls it into view, event if
 -- *line* is hidden.
 -- @param line The line number in *buffer* to go to.
 -- @function goto_line
 
----
--- Moves the caret to position *pos* and scrolls it into view.
+--- Moves the caret to position *pos* and scrolls it into view.
 -- @param pos The position in *buffer* to go to.
 -- @function goto_pos
 
----
--- Moves the caret to the beginning of the current line.
+--- Moves the caret to the beginning of the current line.
 -- @function home
 
----
--- Moves the caret to the beginning of the current wrapped line.
+--- Moves the caret to the beginning of the current wrapped line.
 -- @function home_display
 
----
--- Moves the caret to the beginning of the current wrapped line, extending the selected text
+--- Moves the caret to the beginning of the current wrapped line, extending the selected text
 -- to the new position.
 -- @function home_display_extend
 
----
--- Moves the caret to the beginning of the current line, extending the selected text to the
+--- Moves the caret to the beginning of the current line, extending the selected text to the
 -- new position.
 -- @function home_extend
 
----
--- Moves the caret to the beginning of the current line, extending the rectangular selection
+--- Moves the caret to the beginning of the current line, extending the rectangular selection
 -- to the new position.
 -- @function home_rect_extend
 
----
--- Moves the caret to the beginning of the current wrapped line or, if already there, to the
+--- Moves the caret to the beginning of the current wrapped line or, if already there, to the
 -- beginning of the actual line.
 -- @function home_wrap
 
----
--- Like `buffer.home_wrap()`, but extends the selected text to the new position.
+--- Like `buffer.home_wrap()`, but extends the selected text to the new position.
 -- @function home_wrap_extend
 
----
--- Returns a bit-mask that represents which indicators are on at position *pos*.
+--- Returns a bit-mask that represents which indicators are on at position *pos*.
 -- The first bit is set if indicator 1 is on, the second bit for indicator 2, etc.
 -- @param pos The position in *buffer* to get indicators at.
 -- @return number
 -- @function indicator_all_on_for
 
----
--- Clears indicator number `buffer.indicator_current` over the range of text from position *pos*
+--- Clears indicator number `buffer.indicator_current` over the range of text from position *pos*
 -- to *pos* + *length*.
 -- @param pos The start position of the range of text in *buffer* to clear indicators over.
 -- @param length The number of characters in the range of text to clear indicators over.
 -- @function indicator_clear_range
 
----
--- Returns the next boundary position, starting from position *pos*, of indicator number
+--- Returns the next boundary position, starting from position *pos*, of indicator number
 -- *indicator*, in the range of `1` to `32`.
 -- Returns `1` if *indicator* was not found.
 -- @param indicator An indicator number in the range of `1` to `32`.
 -- @param pos The position in *buffer* of the indicator.
 -- @function indicator_end
 
----
--- Fills the range of text from position *pos* to *pos* + *length* with indicator number
+--- Fills the range of text from position *pos* to *pos* + *length* with indicator number
 -- `buffer.indicator_current`.
 -- @param pos The start position of the range of text in *buffer* to set indicators over.
 -- @param length The number of characters in the range of text to set indicators over.
 -- @function indicator_fill_range
 
----
--- Returns the previous boundary position, starting from position *pos*, of indicator number
+--- Returns the previous boundary position, starting from position *pos*, of indicator number
 -- *indicator*, in the range of `1` to `32`.
 -- Returns `1` if *indicator* was not found.
 -- @param indicator An indicator number in the range of `1` to `32`.
 -- @param pos The position in *buffer* of the indicator.
 -- @function indicator_start
 
----
--- Inserts string *text* at position *pos*, removing any selections.
+--- Inserts string *text* at position *pos*, removing any selections.
 -- If *pos* is `-1`, inserts *text* at the caret position.
 -- If the caret is after the *pos*, it is moved appropriately, but not scrolled into view.
 -- @param pos The position in *buffer* to insert text at, or `-1` for the current position.
 -- @param text The text to insert.
 -- @function insert_text
 
----
--- Returns whether or not the the positions *start_pos* and *end_pos* are at word boundaries.
+--- Returns whether or not the the positions *start_pos* and *end_pos* are at word boundaries.
 -- @param start_pos The start position of the range of text in *buffer* to check for a word
 --   boundary at.
 -- @param end_pos The end position of the range of text in *buffer* to check for a word
 --   boundary at.
 -- @function is_range_word
 
----
--- Copies the current line to the clipboard.
+--- Copies the current line to the clipboard.
 -- @function line_copy
 
----
--- Cuts the current line to the clipboard.
+--- Cuts the current line to the clipboard.
 -- @function line_cut
 
----
--- Deletes the current line.
+--- Deletes the current line.
 -- @function line_delete
 
----
--- Moves the caret down one line.
+--- Moves the caret down one line.
 -- @function line_down
 
----
--- Moves the caret down one line, extending the selected text to the new position.
+--- Moves the caret down one line, extending the selected text to the new position.
 -- @function line_down_extend
 
----
--- Moves the caret down one line, extending the rectangular selection to the new position.
+--- Moves the caret down one line, extending the rectangular selection to the new position.
 -- @function line_down_rect_extend
 
----
--- Duplicates the current line on a new line below.
+--- Duplicates the current line on a new line below.
 -- @function line_duplicate
 
----
--- Moves the caret to the end of the current line.
+--- Moves the caret to the end of the current line.
 -- @function line_end
 
----
--- Moves the caret to the end of the current wrapped line.
+--- Moves the caret to the end of the current wrapped line.
 -- @function line_end_display
 
----
--- Moves the caret to the end of the current wrapped line, extending the selected text to the
+--- Moves the caret to the end of the current wrapped line, extending the selected text to the
 -- new position.
 -- @function line_end_display_extend
 
----
--- Moves the caret to the end of the current line, extending the selected text to the new position.
+--- Moves the caret to the end of the current line, extending the selected text to the new
+-- position.
 -- @function line_end_extend
 
----
--- Moves the caret to the end of the current line, extending the rectangular selection to the
+--- Moves the caret to the end of the current line, extending the rectangular selection to the
 -- new position.
 -- @function line_end_rect_extend
 
----
--- Moves the caret to the end of the current wrapped line or, if already there, to the end of
+--- Moves the caret to the end of the current wrapped line or, if already there, to the end of
 -- the actual line.
 -- @function line_end_wrap
 
----
--- Like `buffer.line_end_wrap()`, but extends the selected text to the new position.
+--- Like `buffer.line_end_wrap()`, but extends the selected text to the new position.
 -- @function line_end_wrap_extend
 
----
--- Returns the line number of the line that contains position *pos*.
+--- Returns the line number of the line that contains position *pos*.
 -- Returns `1` if *pos* is less than 1 or `buffer.line_count` if *pos* is greater than
 -- `buffer.length + 1`.
 -- @param pos The position in *buffer* to get the line number of.
 -- @return number
 -- @function line_from_position
 
----
--- Returns the number of bytes on line number *line*, including end of line characters.
+--- Returns the number of bytes on line number *line*, including end of line characters.
 -- To get line length excluding end of line characters, use `buffer.line_end_position[line]
 -- - buffer.position_from_line(line)`.
 -- @param line The line number in *buffer* to get the length of.
 -- @return number
 -- @function line_length
 
----
--- Reverses the order of the selected lines.
+--- Reverses the order of the selected lines.
 -- @function line_reverse
 
----
--- Swaps the current line with the previous one.
+--- Swaps the current line with the previous one.
 -- @function line_transpose
 
----
--- Moves the caret up one line.
+--- Moves the caret up one line.
 -- @function line_up
 
----
--- Moves the caret up one line, extending the selected text to the new position.
+--- Moves the caret up one line, extending the selected text to the new position.
 -- @function line_up_extend
 
----
--- Moves the caret up one line, extending the rectangular selection to the new position.
+--- Moves the caret up one line, extending the rectangular selection to the new position.
 -- @function line_up_rect_extend
 
----
--- Joins the lines in the target range, inserting spaces between the words joined at line
+--- Joins the lines in the target range, inserting spaces between the words joined at line
 -- boundaries.
 -- @function lines_join
 
----
--- Splits the lines in the target range into lines *width* pixels wide.
+--- Splits the lines in the target range into lines *width* pixels wide.
 -- If *width* is `0`, splits the lines in the target range into lines as wide as the view.
 -- @param width The pixel width to split lines at. When `0`, uses the width of the view.
 -- @function lines_split
 
----
--- Converts the selected text to lower case letters.
+--- Converts the selected text to lower case letters.
 -- @function lower_case
 
----
--- Clears all text in text margins.
+--- Clears all text in text margins.
 -- @function margin_text_clear_all
 
----
--- Adds marker number *marker*, in the range of `1` to `32`, to line number *line*, returning
+--- Adds marker number *marker*, in the range of `1` to `32`, to line number *line*, returning
 -- the added marker's handle which can be used in `buffer.marker_delete_handle()` and
 -- `buffer.marker_line_from_handle()`, or `-1` if *line* is invalid.
 -- @param line The line number to add the marker on.
@@ -1165,8 +957,7 @@
 -- @return number
 -- @function marker_add
 
----
--- Adds the markers specified in marker bit-mask *marker_mask* to line number *line*.
+--- Adds the markers specified in marker bit-mask *marker_mask* to line number *line*.
 -- The first bit is set to add marker number 1, the second bit for marker number 2, and so on
 -- up to marker number 32.
 -- @param line The line number to add the markers on.
@@ -1174,49 +965,42 @@
 --   bit for marker 2 and so on.
 -- @function marker_add_set
 
----
--- Deletes marker number *marker*, in the range of `1` to `32`, from line number *line*. If
--- *marker* is `-1`, deletes all markers from *line*.
+--- Deletes marker number *marker*, in the range of `1` to `32`, from line number *line*.
+-- If *marker* is `-1`, deletes all markers from *line*.
 -- @param line The line number to delete the marker on.
 -- @param marker The marker number in the range of `1` to `32` to delete from *line*, or `-1`
 --   to delete all markers from the line.
 -- @function marker_delete
 
----
--- Deletes marker number *marker*, in the range of `1` to `32`, from any line that has it.
+--- Deletes marker number *marker*, in the range of `1` to `32`, from any line that has it.
 -- If *marker* is `-1`, deletes all markers from all lines.
 -- @param marker The marker number in the range of `1` to `32` to delete from all lines, or
 --   `-1` to delete all markers from all lines.
 -- @function marker_delete_all
 
----
--- Deletes the marker with handle *handle* returned by `buffer.marker_add()`.
+--- Deletes the marker with handle *handle* returned by `buffer.marker_add()`.
 -- @param handle The identifier of a marker returned by `buffer.marker_add()`.
 -- @function marker_delete_handle
 
----
--- Returns a bit-mask that represents the markers on line number *line*.
+--- Returns a bit-mask that represents the markers on line number *line*.
 -- The first bit is set if marker number 1 is present, the second bit for marker number 2,
 -- and so on.
 -- @param line The line number to get markers on.
 -- @return number
 -- @function marker_get
 
----
--- Returns the handle of the *n*th marker on line number *line*, or `-1` if no such marker exists.
+--- Returns the handle of the *n*th marker on line number *line*, or `-1` if no such marker exists.
 -- @param line The line number to get markers on.
 -- @param n The marker to get the handle of.
 -- @function marker_handle_from_line
 
----
--- Returns the line number of the line that contains the marker with handle *handle* (returned
+--- Returns the line number of the line that contains the marker with handle *handle* (returned
 -- `buffer.marker_add()`), or `-1` if the line was not found.
 -- @param handle The identifier of a marker returned by `buffer.marker_add()`.
 -- @return number
 -- @function marker_line_from_handle
 
----
--- Returns the first line number, starting at line number *line*, that contains all of the
+--- Returns the first line number, starting at line number *line*, that contains all of the
 -- markers represented by marker bit-mask *marker_mask*.
 -- Returns `-1` if no line was found.
 -- The first bit is set if marker 1 is set, the second bit for marker 2, etc., up to marker 32.
@@ -1226,14 +1010,12 @@
 -- @return number
 -- @function marker_next
 
----
--- Returns the number of the *n*th marker on line number *line*, or `-1` if no such marker exists.
+--- Returns the number of the *n*th marker on line number *line*, or `-1` if no such marker exists.
 -- @param line The line number to get markers on.
 -- @param n The marker to get the number of.
 -- @function marker_number_from_line
 
----
--- Returns the last line number, before or on line number *line*, that contains all of the
+--- Returns the last line number, before or on line number *line*, that contains all of the
 -- markers represented by marker bit-mask *marker_mask*.
 -- Returns `-1` if no line was found.
 -- The first bit is set if marker 1 is set, the second bit for marker 2, etc., up to marker 32.
@@ -1243,112 +1025,90 @@
 -- @return number
 -- @function marker_previous
 
----
--- Moves the caret into view if it is not already, removing any selections.
+--- Moves the caret into view if it is not already, removing any selections.
 -- @function move_caret_inside_view
 
----
--- Shifts the selected lines down one line.
+--- Shifts the selected lines down one line.
 -- @function move_selected_lines_down
 
----
--- Shifts the selected lines up one line.
+--- Shifts the selected lines up one line.
 -- @function move_selected_lines_up
 
----
--- Adds to the set of selections each occurrence of the main selection within the target range.
+--- Adds to the set of selections each occurrence of the main selection within the target range.
 -- If there is no selected text, the current word is used.
 -- @function multiple_select_add_each
 
----
--- Adds to the set of selections the next occurrence of the main selection within the target
+--- Adds to the set of selections the next occurrence of the main selection within the target
 -- range, makes that occurrence the new main selection, and scrolls it into view.
 -- If there is no selected text, the current word is used.
 -- @function multiple_select_add_next
 
----
--- Returns the name of style number *style*, which is between `1` and `256`.
+--- Returns the name of style number *style*, which is between `1` and `256`.
 -- Note that due to an implementation detail, the returned style uses '.' instead of '_'.
 -- When setting styles, the '_' form is preferred.
 -- @param style The style number between `1` and `256` to get the name of.
 -- @return string
 -- @function name_of_style
 
----
--- Types a new line at the caret position according to [`buffer.eol_mode`]().
+--- Types a new line at the caret position according to [`buffer.eol_mode`]().
 -- @function new_line
 
----
--- Moves the caret down one page.
+--- Moves the caret down one page.
 -- @function page_down
 
----
--- Moves the caret down one page, extending the selected text to the new position.
+--- Moves the caret down one page, extending the selected text to the new position.
 -- @function page_down_extend
 
----
--- Moves the caret down one page, extending the rectangular selection to the new position.
+--- Moves the caret down one page, extending the rectangular selection to the new position.
 -- @function page_down_rect_extend
 
----
--- Moves the caret up one page.
+--- Moves the caret up one page.
 -- @function page_up
 
----
--- Moves the caret up one page, extending the selected text to the new position.
+--- Moves the caret up one page, extending the selected text to the new position.
 -- @function page_up_extend
 
----
--- Moves the caret up one page, extending the rectangular selection to the new position.
+--- Moves the caret up one page, extending the rectangular selection to the new position.
 -- @function page_up_rect_extend
 
----
--- Moves the caret down one paragraph.
+--- Moves the caret down one paragraph.
 -- Paragraphs are surrounded by one or more blank lines.
 -- @function para_down
 
----
--- Moves the caret down one paragraph, extending the selected text to the new position.
+--- Moves the caret down one paragraph, extending the selected text to the new position.
 -- Paragraphs are surrounded by one or more blank lines.
 -- @function para_down_extend
 
----
--- Moves the caret up one paragraph.
+--- Moves the caret up one paragraph.
 -- Paragraphs are surrounded by one or more blank lines.
 -- @function para_up
 
----
--- Moves the caret up one paragraph, extending the selected text to the new position.
+--- Moves the caret up one paragraph, extending the selected text to the new position.
 -- Paragraphs are surrounded by one or more blank lines.
 -- @function para_up_extend
 
----
--- Pastes the clipboard's contents into the buffer, replacing any selected text according to
+--- Pastes the clipboard's contents into the buffer, replacing any selected text according to
 -- `buffer.multi_paste`.
 -- @function paste
 
----
--- Returns the position of the character after position *pos* (taking multi-byte characters
+--- Returns the position of the character after position *pos* (taking multi-byte characters
 -- into account), or `buffer.length + 1` if there is no character after *pos*.
 -- @param pos The position in *buffer* to get the position after from.
 -- @function position_after
 
----
--- Returns the position of the character before position *pos* (taking multi-byte characters
+--- Returns the position of the character before position *pos* (taking multi-byte characters
 -- into account), or `1` if there is no character before *pos*.
 -- @param pos The position in *buffer* to get the position before from.
 -- @return number
 -- @function position_before
 
----
--- Returns the position at the beginning of line number *line*.
+--- Returns the position at the beginning of line number *line*.
 -- Returns `-1` if *line* is greater than `buffer.line_count + 1`.
 -- @param line The line number in *buffer* to get the beginning position for.
 -- @return number
 -- @function position_from_line
 
----
--- Returns the position *n* characters before or after position *pos* (taking multi-byte
+--- Returns the position *n* characters before or after position *pos* (taking multi-byte
 -- characters into account).
 -- Returns `1` if the position is less than 1 or greater than `buffer.length + 1`.
 -- @param pos The position in *buffer* to get the relative position from.
@@ -1357,47 +1117,39 @@
 -- @return number
 -- @function position_relative
 
----
--- Redoes the next undone action.
+--- Redoes the next undone action.
 -- @function redo
 
----
--- Replaces the rectangular selection with string *text*.
+--- Replaces the rectangular selection with string *text*.
 -- @param text The text to replace the rectangular selection with.
 -- @function replace_rectangular
 
----
--- Replaces the selected text with string *text*, scrolling the caret into view.
+--- Replaces the selected text with string *text*, scrolling the caret into view.
 -- @param text The text to replace the selected text with.
 -- @function replace_sel
 
----
--- Replaces the text in the target range with string *text* sans modifying any selections or
+--- Replaces the text in the target range with string *text* sans modifying any selections or
 -- scrolling the view.
 -- Setting the target and calling this function with an empty string is another way to delete text.
 -- @param text The text to replace the target range with.
 -- @return number
 -- @function replace_target
 
----
--- Replaces the text in the target range with string *text* but first replaces any "\d" sequences
+--- Replaces the text in the target range with string *text* but first replaces any "\d" sequences
 -- with the text of capture number *d* from the regular expression (or the entire match for *d*
 -- = 0), and then returns the replacement text's length.
 -- @param text The text to replace the target range with.
 -- @return number
 -- @function replace_target_re
 
----
--- Designates the next additional selection to be the main selection.
+--- Designates the next additional selection to be the main selection.
 -- @function rotate_selection
 
----
--- Anchors the position that `buffer.search_next()` and `buffer.search_prev()` start at to the
+--- Anchors the position that `buffer.search_next()` and `buffer.search_prev()` start at to the
 -- beginning of the current selection or caret position.
 -- @function search_anchor
 
----
--- Searches for the first occurrence of string *text* in the target range bounded by
+--- Searches for the first occurrence of string *text* in the target range bounded by
 -- `buffer.target_start` and `buffer.target_end` using search flags `buffer.search_flags`
 -- and, if found, sets the new target range to that occurrence, returning its position or `-1`
 -- if *text* was not found.
@@ -1406,8 +1158,7 @@
 -- @see search_flags
 -- @function search_in_target
 
----
--- Searches for and selects the first occurrence of string *text* starting at the search
+--- Searches for and selects the first occurrence of string *text* starting at the search
 -- anchor using search flags *flags*, returning that occurrence's position or `-1` if *text*
 -- was not found.
 -- Selected text is not scrolled into view.
@@ -1417,8 +1168,7 @@
 -- @see search_flags
 -- @function search_next
 
----
--- Searches for and selects the last occurrence of string *text* before the search anchor using
+--- Searches for and selects the last occurrence of string *text* before the search anchor using
 -- search flags *flags*, returning that occurrence's position or `-1` if *text* was not found.
 -- @param flags The search flags to use. See `buffer.search_flags`.
 -- @param text The text to search for.
@@ -1426,36 +1176,30 @@
 -- @see search_flags
 -- @function search_prev
 
----
--- Selects all of the buffer's text without scrolling the view.
+--- Selects all of the buffer's text without scrolling the view.
 -- @function select_all
 
----
--- Duplicates the selected text to its right.
+--- Duplicates the selected text to its right.
 -- If multiple lines are selected, duplication starts at the end of the selection. If no text
 -- is selected, duplicates the current line on a new line below.
 -- @function selection_duplicate
 
----
--- Resets `buffer.word_chars`, `buffer.whitespace_chars`, and `buffer.punctuation_chars` to
+--- Resets `buffer.word_chars`, `buffer.whitespace_chars`, and `buffer.punctuation_chars` to
 -- their respective defaults.
 -- @see word_chars
 -- @see whitespace_chars
 -- @see punctuation_chars
 -- @function set_chars_default
 
----
--- Moves the caret to position *pos* without scrolling the view and removes any selections.
+--- Moves the caret to position *pos* without scrolling the view and removes any selections.
 -- @param buffer A buffer
 -- @param pos The position in *buffer* to move to.
 -- @function set_empty_selection
 
----
--- Indicates the buffer has no unsaved changes.
+--- Indicates the buffer has no unsaved changes.
 -- @function set_save_point
 
----
--- Selects the range of text between positions *start_pos* and *end_pos*, scrolling the selected
+--- Selects the range of text between positions *start_pos* and *end_pos*, scrolling the selected
 -- text into view.
 -- @param start_pos The start position of the range of text in *buffer* to select. If negative,
 --   it means the end of the buffer.
@@ -1463,35 +1207,30 @@
 --   it means remove any selection (i.e. set the `anchor` to the same position as `current_pos`).
 -- @function set_sel
 
----
--- Selects the range of text between positions *start_pos* to *end_pos*, removing all other
+--- Selects the range of text between positions *start_pos* to *end_pos*, removing all other
 -- selections.
 -- @param end_pos The caret position of the range of text to select in *buffer*.
 -- @param start_pos The anchor position of the range of text to select in *buffer*.
 -- @function set_selection
 
----
--- Assigns style number *style*, in the range from `1` to `256`, to the next *length* characters,
+--- Assigns style number *style*, in the range from `1` to `256`, to the next *length* characters,
 -- starting from the current styling position, and increments the styling position by *length*.
 -- [`buffer:start_styling`]() should be called before `buffer:set_styling()`.
 -- @param length The number of characters to style.
 -- @param style The style number to set.
 -- @function set_styling
 
----
--- Defines the target range's beginning and end positions as *start_pos* and *end_pos*,
+--- Defines the target range's beginning and end positions as *start_pos* and *end_pos*,
 -- respectively.
 -- @param start_pos The position of the beginning of the target range.
 -- @param end_pos The position of the end of the target range.
 -- @function set_target_range
 
----
--- Replaces the buffer's text with string *text*.
+--- Replaces the buffer's text with string *text*.
 -- @param text The text to set.
 -- @function set_text
 
----
--- Begins styling at position *position* with styling bit-mask *style_mask*.
+--- Begins styling at position *position* with styling bit-mask *style_mask*.
 -- *style_mask* specifies which style bits can be set with `buffer.set_styling()`.
 -- @param position The position in *buffer* to start styling at.
 -- @param unused Unused number. `0` can be safely used.
@@ -1499,42 +1238,33 @@
 -- @see set_styling
 -- @function start_styling
 
----
--- Moves the caret to the bottom of the page or, if already there, down one page.
+--- Moves the caret to the bottom of the page or, if already there, down one page.
 -- @function stuttered_page_down
 
----
--- Like `buffer.stuttered_page_down()`, but extends the selected text to the new position.
+--- Like `buffer.stuttered_page_down()`, but extends the selected text to the new position.
 -- @function stuttered_page_down_extend
 
----
--- Moves the caret to the top of the page or, if already there, up one page.
+--- Moves the caret to the top of the page or, if already there, up one page.
 -- @function stuttered_page_up
 
----
--- Like `buffer.stuttered_page_up()`, but extends the selected text to the new position.
+--- Like `buffer.stuttered_page_up()`, but extends the selected text to the new position.
 -- @function stuttered_page_up_extend
 
----
--- Swaps the main selection's beginning and end positions.
+--- Swaps the main selection's beginning and end positions.
 -- @function swap_main_anchor_caret
 
----
--- Indents the text on the selected lines or types a Tab character ("\t") at the caret position.
+--- Indents the text on the selected lines or types a Tab character ("\t") at the caret position.
 -- @function tab
 
----
--- Defines the target range's beginning and end positions as the beginning and end positions
+--- Defines the target range's beginning and end positions as the beginning and end positions
 -- of the main selection, respectively.
 -- @function target_from_selection
 
----
--- Defines the target range's beginning and end positions as the beginning and end positions
+--- Defines the target range's beginning and end positions as the beginning and end positions
 -- of the document, respectively.
 -- @function target_whole_document
 
----
--- Cycles between `buffer.caret_sticky` option settings `buffer.CARETSTICKY_ON` and
+--- Cycles between `buffer.caret_sticky` option settings `buffer.CARETSTICKY_ON` and
 -- `buffer.CARETSTICKY_OFF`.
 -- @see caret_sticky
 -- @function toggle_caret_sticky
@@ -1543,16 +1273,13 @@
 --- @field CARETSTICKY_ON
 --- @field CARETSTICKY_WHITESPACE
 
----
--- Undoes the most recent action.
+--- Undoes the most recent action.
 -- @function undo
 
----
--- Converts the selected text to upper case letters.
+--- Converts the selected text to upper case letters.
 -- @function upper_case
 
----
--- Displays a user list identified by list identifier number *id* and constructed from string
+--- Displays a user list identified by list identifier number *id* and constructed from string
 -- *items* (whose items are delimited by `buffer.auto_c_separator` characters).
 -- The sorted order of *items* (`buffer.auto_c_order`) must have already been defined. When the
 -- user selects an item, *id* is sent in a `USER_LIST_SELECTION` event along with the selection.
@@ -1563,39 +1290,31 @@
 -- @see events.USER_LIST_SELECTION
 -- @function user_list_show
 
----
--- Moves the caret to the first visible character on the current line or, if already there,
+--- Moves the caret to the first visible character on the current line or, if already there,
 -- to the beginning of the current line.
 -- @function vc_home
 
----
--- Moves the caret to the first visible character on the current wrapped line or, if already
+--- Moves the caret to the first visible character on the current wrapped line or, if already
 -- there, to the beginning of the current wrapped line.
 -- @function vc_home_display
 
----
--- Like `buffer.vc_home_display()`, but extends the selected text to the new position.
+--- Like `buffer.vc_home_display()`, but extends the selected text to the new position.
 -- @function vc_home_display_extend
 
----
--- Like `buffer.vc_home()`, but extends the selected text to the new position.
+--- Like `buffer.vc_home()`, but extends the selected text to the new position.
 -- @function vc_home_extend
 
----
--- Like `buffer.vc_home()`, but extends the rectangular selection to the new position.
+--- Like `buffer.vc_home()`, but extends the rectangular selection to the new position.
 -- @function vc_home_rect_extend
 
----
--- Moves the caret to the first visible character on the current wrapped line or, if already
+--- Moves the caret to the first visible character on the current wrapped line or, if already
 -- there, to the beginning of the actual line.
 -- @function vc_home_wrap
 
----
--- Like `buffer.vc_home_wrap()`, but extends the selected text to the new position.
+--- Like `buffer.vc_home_wrap()`, but extends the selected text to the new position.
 -- @function vc_home_wrap_extend
 
----
--- Returns the position of the end of the word at position *pos*.
+--- Returns the position of the end of the word at position *pos*.
 -- `buffer.word_chars` contains the set of characters that constitute words. If *pos* has a
 -- non-word character to its right and *only_word_chars* is `false`, returns the first word
 -- character's position.
@@ -1606,72 +1325,59 @@
 --   character. Searches are also terminated by the start or end of the buffer.
 -- @function word_end_position
 
----
--- Moves the caret left one word.
+--- Moves the caret left one word.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function word_left
 
----
--- Moves the caret left one word, positioning it at the end of the previous word.
+--- Moves the caret left one word, positioning it at the end of the previous word.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function word_left_end
 
----
--- Like `buffer.word_left_end()`, but extends the selected text to the new position.
+--- Like `buffer.word_left_end()`, but extends the selected text to the new position.
 -- @function word_left_end_extend
 
----
--- Moves the caret left one word, extending the selected text to the new position.
+--- Moves the caret left one word, extending the selected text to the new position.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function word_left_extend
 
----
--- Moves the caret to the previous part of the current word.
+--- Moves the caret to the previous part of the current word.
 -- Word parts are delimited by underscore characters or changes in capitalization.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function word_part_left
 
----
--- Moves the caret to the previous part of the current word, extending the selected text to
+--- Moves the caret to the previous part of the current word, extending the selected text to
 -- the new position.
 -- Word parts are delimited by underscore characters or changes in capitalization.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function word_part_left_extend
 
----
--- Moves the caret to the next part of the current word.
+--- Moves the caret to the next part of the current word.
 -- Word parts are delimited by underscore characters or changes in capitalization.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function word_part_right
 
----
--- Moves the caret to the next part of the current word, extending the selected text to the
+--- Moves the caret to the next part of the current word, extending the selected text to the
 -- new position.
 -- Word parts are delimited by underscore characters or changes in capitalization.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function word_part_right_extend
 
----
--- Moves the caret right one word.
+--- Moves the caret right one word.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function word_right
 
----
--- Moves the caret right one word, positioning it at the end of the current word.
+--- Moves the caret right one word, positioning it at the end of the current word.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function word_right_end
 
----
--- Like `buffer.word_right_end()`, but extends the selected text to the new position.
+--- Like `buffer.word_right_end()`, but extends the selected text to the new position.
 -- @function word_right_end_extend
 
----
--- Moves the caret right one word, extending the selected text to the new position.
+--- Moves the caret right one word, extending the selected text to the new position.
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function word_right_extend
 
----
--- Returns the position of the beginning of the word at position *pos*.
+--- Returns the position of the beginning of the word at position *pos*.
 -- `buffer.word_chars` contains the set of characters that constitute words. If *pos* has
 -- a non-word character to its left and *only_word_chars* is `false`, returns the last word
 -- character's position.
@@ -1684,69 +1390,60 @@
 
 -- External functions.
 
----
--- Deletes the buffer.
+--- Deletes the buffer.
 -- **Do not call this function.** Call `buffer:close()` instead. Emits a `BUFFER_DELETED` event.
 -- @see events.BUFFER_DELETED
 -- @function delete
 
----
--- Creates a new buffer, displays it in the current view, and returns it.
+--- Creates a new buffer, displays it in the current view, and returns it.
 -- Emits a `BUFFER_NEW` event.
 -- @return the new buffer.
 -- @see events.BUFFER_NEW
 -- @function new
 
----
--- Returns the range of text between positions *start_pos* and *end_pos*.
+--- Returns the range of text between positions *start_pos* and *end_pos*.
 -- @param start_pos The start position of the range of text to get in *buffer*.
 -- @param end_pos The end position of the range of text to get in *buffer*.
 -- @function text_range
 
----
--- Returns the style number associated with string *style_name*, or `view.STYLE_DEFAULT` if
+--- Returns the style number associated with string *style_name*, or `view.STYLE_DEFAULT` if
 -- *style_name* is not in use.
 -- @param style_name The style name to get the number of.
 -- @return style number, between `1` and `256`.
 -- @see name_of_style
 -- @function style_of_name
 
----
--- Reloads the buffer's file contents, discarding any changes.
+--- Reloads the buffer's file contents, discarding any changes.
 -- @function reload
 
----
--- Saves the buffer to its file, returning `true` on success.
+--- Saves the buffer to its file, returning `true` on success.
 -- If the buffer does not have a file, the user is prompted for one.
 -- Emits `FILE_BEFORE_SAVE` and `FILE_AFTER_SAVE` events.
 -- @return `true` if the file was saved; `nil` otherwise.
 -- @function save
 
----
--- Saves the buffer to file *filename* or the user-specified filename, returning `true` on success.
+--- Saves the buffer to file *filename* or the user-specified filename, returning `true`
+-- on success.
 -- Emits a `FILE_AFTER_SAVE` event.
 -- @param[opt] filename Optional new filepath to save the buffer to. If `nil`, the user is
 --   prompted for one.
 -- @return `true` if the file was saved; `nil` otherwise.
 -- @function save_as
 
----
--- Closes the buffer, prompting the user to continue if there are unsaved changes (unless *force*
+--- Closes the buffer, prompting the user to continue if there are unsaved changes (unless *force*
 -- is `true`), and returns `true` if the buffer was closed.
 -- @param[opt] force Optional flag that discards unsaved changes without prompting the user. The
 --   default value is `false`.
 -- @return `true` if the buffer was closed; `nil` otherwise.
 -- @function close
 
----
--- Converts the buffer's contents to encoding *encoding*.
+--- Converts the buffer's contents to encoding *encoding*.
 -- @param encoding The string encoding to set. Valid encodings are ones that GNU iconv accepts. If
 --   `nil`, assumes a binary encoding.
 -- @usage buffer:set_encoding('CP1252')
 -- @function set_encoding
 
----
--- Returns the buffer's lexer name.
+--- Returns the buffer's lexer name.
 -- If *current* is `true`, returns the name of the lexer under the caret in a multiple-language
 -- lexer.
 -- @param current Whether or not to get the lexer at the current caret position in multi-language
@@ -1754,8 +1451,7 @@
 -- @see lexer_language
 -- @function get_lexer
 
----
--- Associates string lexer name *name* or the auto-detected lexer name with the buffer.
+--- Associates string lexer name *name* or the auto-detected lexer name with the buffer.
 -- @param[opt] name Optional string lexer name to set. If `nil`, attempts to auto-detect the
 --   buffer's lexer.
 -- @usage buffer:set_lexer('lexer_name')

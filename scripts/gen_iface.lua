@@ -183,16 +183,14 @@ local f = io.open('../core/iface.lua', 'wb')
 f:write([=[
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Scintilla constants, functions, and properties.
+--- Scintilla constants, functions, and properties.
 -- Do not modify anything in this module. Doing so will have unpredictable consequences.
 -- @module _SCINTILLA
 local M = {}
 
 ]=])
 f:write([[
----
--- Map of Scintilla constant names to their numeric values.
+--- Map of Scintilla constant names to their numeric values.
 -- @see _G.buffer
 -- @see _G.view
 M.constants = {} -- empty declaration to avoid LDoc processing
@@ -200,8 +198,7 @@ M.constants = {]])
 f:write(table.concat(constants, ','))
 f:write('}\n\n')
 f:write([[
----
--- Map of Scintilla function names to tables containing their IDs, return types, wParam types,
+--- Map of Scintilla function names to tables containing their IDs, return types, wParam types,
 -- and lParam types. Types are as follows:
 --
 --   - `0`: Void.
@@ -220,8 +217,7 @@ for _, func in ipairs(functions) do
 end
 f:write('}\n\n')
 f:write([[
----
--- Map of Scintilla property names to table values containing their "get" function IDs, "set"
+--- Map of Scintilla property names to table values containing their "get" function IDs, "set"
 -- function IDs, return types, and wParam types.
 -- The wParam type will be non-zero if the property is indexable.
 -- Types are the same as in the `functions` table.
@@ -241,8 +237,7 @@ f:write('}\n\n')
 f:write([[
 local marker_number, indic_number, list_type, image_type = 0, 0, 0, 0
 
----
--- Returns a unique marker number for use with `view.marker_define()`.
+--- Returns a unique marker number for use with `view.marker_define()`.
 -- Use this function for custom markers in order to prevent clashes with identifiers of other
 -- custom markers.
 -- @usage local marknum = _SCINTILLA.new_marker_number()
@@ -253,8 +248,7 @@ function M.new_marker_number()
   return marker_number
 end
 
----
--- Returns a unique indicator number for use with custom indicators.
+--- Returns a unique indicator number for use with custom indicators.
 -- Use this function for custom indicators in order to prevent clashes with identifiers of
 -- other custom indicators.
 -- @usage local indic_num = _SCINTILLA.new_indic_number()
@@ -265,8 +259,7 @@ function M.new_indic_number()
   return indic_number
 end
 
----
--- Returns a unique user list identier number for use with `buffer.user_list_show()`.
+--- Returns a unique user list identier number for use with `buffer.user_list_show()`.
 -- Use this function for custom user lists in order to prevent clashes with list identifiers
 -- of other custom user lists.
 -- @usage local list_type = _SCINTILLA.new_user_list_type()
@@ -276,8 +269,7 @@ function M.new_user_list_type()
   return list_type
 end
 
----
--- Returns a unique image type identier number for use with `view.register_image()` and
+--- Returns a unique image type identier number for use with `view.register_image()` and
 -- `view.register_rgba_image()`.
 -- Use this function for custom image types in order to prevent clashes with identifiers of
 -- other custom image types.

@@ -1,7 +1,6 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- The textadept module.
+--- The textadept module.
 -- It provides utilities for editing text in Textadept.
 -- @module textadept
 local M = {}

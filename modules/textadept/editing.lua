@@ -1,29 +1,24 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
----
--- Editing features for Textadept.
+--- Editing features for Textadept.
 -- @module textadept.editing
 local M = {}
 
----
--- Match the previous line's indentation level after inserting a new line.
+--- Match the previous line's indentation level after inserting a new line.
 -- The default value is `true`.
 M.auto_indent = true
 
----
--- Strip trailing whitespace before saving files. (Does not apply to binary files.)
+--- Strip trailing whitespace before saving files. (Does not apply to binary files.)
 -- The default value is `false`.
 M.strip_trailing_spaces = false
 
----
--- Autocomplete the current word using words from all open buffers.
+--- Autocomplete the current word using words from all open buffers.
 -- If `true`, performance may be slow when many buffers are open.
 -- The default value is `false`.
 M.autocomplete_all_words = false
 
 M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
----
--- The word highlight mode.
+--- The word highlight mode.
 --
 --   - `textadept.editing.HIGHLIGHT_CURRENT`
 --     Automatically highlight all instances of the current word.
@@ -35,13 +30,12 @@ M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
 -- The default value is `textadept.editing.HIGHLIGHT_NONE`.
 M.highlight_words = M.HIGHLIGHT_NONE
 
----
--- Whether or not to auto-enclose selected text when typing a punctuation character, taking
+--- Whether or not to auto-enclose selected text when typing a punctuation character, taking
 -- [`textadept.editing.auto_pairs`]() into account.
 -- The default value is `false`.
 M.auto_enclose = false
----
--- Whether or not to type over an auto-paired complement character.
+
+--- Whether or not to type over an auto-paired complement character.
 -- The default value is `true`.
 M.typeover_auto_paired = true
 
@@ -49,8 +43,7 @@ M.typeover_auto_paired = true
 M.INDIC_HIGHLIGHT = _SCINTILLA.new_indic_number()
 
 -- LuaFormatter off
----
--- Map of image names to registered image numbers.
+--- Map of image names to registered image numbers.
 -- @field CLASS The image number for classes.
 -- @field NAMESPACE The image number for namespaces.
 -- @field METHOD The image number for methods.
@@ -69,8 +62,7 @@ events.connect(events.VIEW_NEW, function()
 end)
 for _ = 1, #M.XPM_IMAGES do _SCINTILLA.new_image_type() end -- sync
 
----
--- Map of lexer names to line comment strings for programming languages, used by the
+--- Map of lexer names to line comment strings for programming languages, used by the
 -- `toggle_comment()` function.
 -- Keys are lexer names and values are either the language's line comment prefixes or block
 -- comment delimiters separated by a '|' character. If no comment string exists for a given
@@ -78,8 +70,7 @@ for _ = 1, #M.XPM_IMAGES do _SCINTILLA.new_image_type() end -- sync
 -- @see toggle_comment
 M.comment_string = {}
 
----
--- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
+--- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
 -- The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;", "&quot;&quot;",
 -- and "``". For certain XML-like lexers, "<>" is also auto-paired.
 -- @usage textadept.editing.auto_pairs['*'] = '*'
@@ -87,20 +78,17 @@ M.comment_string = {}
 M.auto_pairs = {}
 for k, v in string.gmatch([[()[]{}''""``]], '(.)(.)') do M.auto_pairs[k] = v end
 
----
--- Table of brace characters to highlight.
+--- Table of brace characters to highlight.
 -- The ASCII values of brace characters are keys and are assigned `true`.
 -- Recognized characters are '(', ')', '[', ']', '{', '}', '<', and '>'. This table is updated
 -- based on a lexer's "scintillua.angle.braces" property.
 local brace_matches = {}
 
----
--- Table of auto-paired characters to move over when typed.
+--- Table of auto-paired characters to move over when typed.
 -- The ASCII values of typeover characters are keys and are assigned `true`.
 local typeover_chars = {}
 
----
--- Map of autocompleter names to autocompletion functions.
+--- Map of autocompleter names to autocompletion functions.
 -- Names are typically lexer names and autocompletion functions typically autocomplete symbols.
 -- Autocompletion functions must return two values: the number of characters behind the caret
 -- that are used as the prefix of the entity to be autocompleted, and a list of completions to
@@ -266,8 +254,7 @@ events.connect(events.FILE_BEFORE_SAVE, function()
   buffer:end_undo_action()
 end)
 
----
--- Pastes the text from the clipboard, taking into account the buffer's indentation settings
+--- Pastes the text from the clipboard, taking into account the buffer's indentation settings
 -- and the indentation of the current and preceding lines.
 function M.paste_reindent()
   -- Normalize EOLs and strip leading indentation from clipboard text.
@@ -315,8 +302,7 @@ function M.paste_reindent()
   buffer:end_undo_action()
 end
 
----
--- Comments or uncomments the selected lines based on the current language.
+--- Comments or uncomments the selected lines based on the current language.
 -- As long as any part of a line is selected, the entire line is eligible for
 -- commenting/uncommenting.
 -- @see comment_string
@@ -361,8 +347,7 @@ function M.toggle_comment()
   end
 end
 
----
--- Moves the caret to the beginning of line number *line* or the user-specified line, ensuring
+--- Moves the caret to the beginning of line number *line* or the user-specified line, ensuring
 -- *line* is visible.
 -- @param[opt] line Optional line number to go to. If `nil`, the user is prompted for one.
 function M.goto_line(line)
@@ -376,8 +361,7 @@ end
 args.register('-l', '--line', 1, function(line) M.goto_line(tonumber(line) or line) end,
   'Go to line')
 
----
--- Joins the currently selected lines or the current line with the line below it.
+--- Joins the currently selected lines or the current line with the line below it.
 -- As long as any part of a line is selected, the entire line is eligible for joining.
 function M.join_lines()
   buffer:target_from_selection()
@@ -389,8 +373,7 @@ function M.join_lines()
   buffer:lines_join()
 end
 
----
--- Encloses the selected text or the current word within strings *left* and *right*, taking
+--- Encloses the selected text or the current word within strings *left* and *right*, taking
 -- multiple selections into account.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
@@ -424,8 +407,7 @@ events.connect(events.KEYPRESS, function(key)
   end
 end, 1)
 
----
--- Selects the text between strings *left* and *right* that enclose the caret.
+--- Selects the text between strings *left* and *right* that enclose the caret.
 -- If that range is already selected, toggles between selecting *left* and *right* as well.
 -- If *left* and *right* are not provided, they are assumed to be one of the delimiter pairs
 -- specified in `auto_pairs` and are inferred from the current position or selection.
@@ -466,8 +448,7 @@ function M.select_enclosed(left, right)
   buffer:set_sel(s + #left, e)
 end
 
----
--- Selects the current word or, if *all* is `true`, all occurrences of the current word.
+--- Selects the current word or, if *all* is `true`, all occurrences of the current word.
 -- If a word is already selected, selects the next occurrence as a multiple selection.
 -- @param all Whether or not to select all occurrences of the current word. The default value is
 --   `false`.
@@ -488,8 +469,7 @@ function M.select_line()
   buffer:line_end_extend()
 end
 
----
--- Selects the current paragraph.
+--- Selects the current paragraph.
 -- Paragraphs are surrounded by one or more blank lines.
 function M.select_paragraph()
   buffer:line_down()
@@ -497,8 +477,7 @@ function M.select_paragraph()
   buffer:para_down_extend()
 end
 
----
--- Converts indentation between tabs and spaces according to `buffer.use_tabs`.
+--- Converts indentation between tabs and spaces according to `buffer.use_tabs`.
 -- If `buffer.use_tabs` is `true`, `buffer.tab_width` indenting spaces are converted to tabs.
 -- Otherwise, all indenting tabs are converted to `buffer.tab_width` spaces.
 -- @see buffer.use_tabs
@@ -524,8 +503,7 @@ function M.convert_indentation()
   buffer:end_undo_action()
 end
 
----
--- Passes the selected text or all buffer text to string shell command *command* as standard input
+--- Passes the selected text or all buffer text to string shell command *command* as standard input
 -- (stdin) and replaces the input text with the command's standard output (stdout). *command*
 -- may contain shell pipes ('|').
 -- Standard input is as follows:
@@ -608,8 +586,7 @@ function M.filter_through(command)
   end
 end
 
----
--- Displays an autocompletion list provided by the autocompleter function associated with string
+--- Displays an autocompletion list provided by the autocompleter function associated with string
 -- *name*, and returns `true` if completions were found.
 -- @param name The name of an autocompleter function in the `autocompleters` table to use for
 --   providing autocompletions.
@@ -627,9 +604,9 @@ function M.autocomplete(name)
   return buffer:auto_c_active() or buffer.auto_c_choose_single and buffer.current_pos ~= pos
 end
 
----
--- Returns for the word part behind the caret a list of whole word completions constructed from the
--- current buffer or all open buffers (depending on `textadept.editing.autocomplete_all_words`).
+--- Returns for the word part behind the caret a list of whole word completions
+-- constructed from the current buffer or all open buffers (depending on
+-- `textadept.editing.autocomplete_all_words`).
 -- If `buffer.auto_c_ignore_case` is `true`, completions are not case-sensitive.
 -- @see buffer.word_chars
 -- @see autocomplete
