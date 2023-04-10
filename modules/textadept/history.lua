@@ -20,6 +20,8 @@ M.maximum_history_size = 100
 
 --- Map of views to their history records.
 -- Each record has a `pos` field that points to the current history position in the associated view.
+-- @table view_history
+-- @local
 local view_history = setmetatable({}, {
   __index = function(t, view)
     t[view] = {pos = 0}
@@ -44,7 +46,7 @@ end)
 -- Do not record positions during buffer switches when jumping backwards or forwards.
 local jumping = false
 
--- Jumps to the given record in the current view's history.
+--- Jumps to the given record in the current view's history.
 -- @param record History record to jump to.
 local function jump(record)
   jumping = true
@@ -133,7 +135,7 @@ function M.record(filename, line, column, soft)
   history.pos = #history
 end
 
--- Softly record positions when switching between buffers.
+--- Softly record positions when switching between buffers.
 local function record_switch() if not jumping then M.record(nil, nil, nil, true) end end
 events.connect(events.BUFFER_BEFORE_SWITCH, record_switch)
 events.connect(events.BUFFER_AFTER_SWITCH, record_switch)

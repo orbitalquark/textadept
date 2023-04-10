@@ -107,11 +107,11 @@ function M.load(filename)
   session_file = filename
   return true
 end
--- Load session when no args are present.
+--- Load session when no args are present.
 local function load_default_session() if M.save_on_quit then M.load(session_file) end end
 events.connect(events.ARG_NONE, load_default_session)
 
--- Returns value *val* serialized as a string.
+--- Returns value *val* serialized as a string.
 -- This is a very simple implementation suitable for session saving only.
 -- Ignores function, userdata, and thread types, and does not handle circular tables.
 local function _tostring(val)

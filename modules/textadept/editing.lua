@@ -96,7 +96,7 @@ local typeover_chars = {}
 -- @see autocomplete
 M.autocompleters = {}
 
--- Update auto_pairs, brace_matches, and typeover_chars based on lexer.
+--- Update auto_pairs, brace_matches, and typeover_chars based on lexer.
 local function update_language_specific_features()
   local angles = buffer.property['scintillua.angle.braces'] ~= ''
   if M.auto_pairs then M.auto_pairs['<'] = angles and '>' or nil end
@@ -151,7 +151,7 @@ events.connect(events.UPDATE_UI, function(updated)
   end
 end)
 
--- Clears highlighted word indicators.
+--- Clears highlighted word indicators.
 local function clear_highlighted_words()
   buffer.indicator_current = M.INDIC_HIGHLIGHT
   buffer:indicator_clear_range(1, buffer.length)

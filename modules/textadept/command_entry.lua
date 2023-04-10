@@ -17,6 +17,8 @@ local M = ui.command_entry
 
 --- Command history per mode.
 -- The current mode is in the `mode` field.
+-- @table history
+-- @local
 local history = setmetatable({}, {
   __index = function(t, k)
     if type(k) ~= 'function' then return nil end
@@ -25,7 +27,7 @@ local history = setmetatable({}, {
   end
 })
 
--- Cycles through command history for the current mode.
+--- Cycles through command history for the current mode.
 -- @param prev Flag that indicates whether to cycle to the previous command or the next one.
 local function cycle_history(prev)
   if M:auto_c_active() then
@@ -48,7 +50,7 @@ end
 M.editing_keys = {} -- empty declaration to avoid LDoc processing
 M.editing_keys.__index = {}
 
--- Fill in default key bindings for Windows/Linux, macOS, Terminal.
+--- Fill in default key bindings for Windows/Linux, macOS, Terminal.
 local bindings = {
   -- Note: cannot use `M.cut`, `M.copy`, etc. since M is never considered the global buffer.
   [function() M:undo() end] = {'ctrl+z', 'cmd+z', 'ctrl+z'},
@@ -73,6 +75,8 @@ for f, plat_keys in pairs(bindings) do
 end
 
 --- Environment for abbreviated Lua commands.
+-- @table env
+-- @local
 local env = setmetatable({}, {
   __index = function(_, k)
     if type(buffer[k]) == 'function' then
@@ -96,7 +100,7 @@ local env = setmetatable({}, {
   end
 })
 
--- Executes string *code* as Lua code that is subject to an "abbreviated" environment.
+--- Executes string *code* as Lua code that is subject to an "abbreviated" environment.
 -- In this environment, the contents of the `buffer`, `view`, `ui`, and `textadept` tables are
 -- also considered as global functions and fields.
 -- Prints the results of expressions like in the Lua prompt. Also invokes bare functions as
@@ -122,7 +126,7 @@ local function run_lua(code)
 end
 args.register('-e', '--execute', 1, run_lua, 'Execute Lua code')
 
--- Shows a set of Lua code completions for the entry's text, subject to an "abbreviated"
+--- Shows a set of Lua code completions for the entry's text, subject to an "abbreviated"
 -- environment where the contents of the `buffer`, `view`, and `ui` tables are also considered
 -- as globals.
 local function complete_lua()
@@ -165,7 +169,7 @@ local lua_keys = {['\t'] = complete_lua}
 
 local prev_key_mode
 
--- Appends string *text* to the history for command entry mode *f* or the current or most
+--- Appends string *text* to the history for command entry mode *f* or the current or most
 -- recent mode.
 -- This should only be called if `ui.command_entry.run()` is called with a keys table that has a
 -- custom binding for the Enter key ('\n'). Otherwise, history is automatically appended as needed.

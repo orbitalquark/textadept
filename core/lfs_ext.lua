@@ -14,7 +14,11 @@ lfs.default_filter = {} -- empty declaration to avoid LDoc processing
 lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!.exe','!.gif','!.gz','!.jar','!.jpeg','!.jpg','!.o','!.pdf','!.png','!.so','!.tar','!.tgz','!.tif','!.tiff','!.xz','!.zip',--[[Directories]]'!/.bzr','!/.git','!/.hg','!/.svn','!/_FOSSIL_','!/node_modules'}
 -- LuaFormatter on
 
--- Documentation is in `lfs.walk()`.
+--- Documentation is in `lfs.walk()`.
+-- @param dir
+-- @param filter
+-- @param n
+-- @param include_dirs
 -- @param seen Utility table that holds directories seen. If there is a duplicate, stop walking
 --   down that path (it's probably a recursive symlink).
 -- @param level Utility value indicating the directory level this function is at.

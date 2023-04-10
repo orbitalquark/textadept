@@ -45,15 +45,16 @@ if CURSES then ui.tabs = false end -- not supported right now
 -- The default value is `true`.
 ui.buffer_list_zorder = true
 
--- Helper functions for getting print views and buffers.
+--- Helper function for getting the print view.
 local function get_print_view(type)
   for _, view in ipairs(_VIEWS) do if view.buffer._type == type then return view end end
 end
+--- Helper function for getting the print buffer.
 local function get_print_buffer(type)
   for _, buffer in ipairs(_BUFFERS) do if buffer._type == type then return buffer end end
 end
 
--- Helper function for printing to buffers.
+--- Helper function for printing to buffers.
 -- @see ui.print_to
 -- @see ui.print_silent_to
 -- @see output_to
@@ -128,7 +129,7 @@ function ui.print(...) ui.print_to(_L['[Message Buffer]'], ...) end
 -- @see print
 function ui.print_silent(...) return ui.print_silent_to(_L['[Message Buffer]'], ...) end
 
--- Helper function for printing to the output buffer.
+--- Helper function for printing to the output buffer.
 -- @see ui.output
 -- @see ui.output_silent
 local function output_to(silent, ...)
@@ -153,6 +154,7 @@ function ui.output(...) return output_to(false, ...) end
 -- @see output
 function ui.output_silent(...) return output_to(true, ...) end
 
+--- Buffer z-order list (most recently accessed buffer on top).
 local buffers_zorder = {}
 
 -- Adds new buffers to the z-order list.
@@ -160,7 +162,7 @@ events.connect(events.BUFFER_NEW, function()
   if buffer ~= ui.command_entry then table.insert(buffers_zorder, 1, buffer) end
 end)
 
--- Updates the z-order list.
+--- Updates the z-order list.
 local function update_zorder()
   local i = 1
   while i <= #buffers_zorder do
@@ -180,7 +182,7 @@ events.connect(events.BUFFER_DELETED, update_zorder)
 events.connect(events.RESET_BEFORE, function(persist) persist.ui_zorder = buffers_zorder end)
 events.connect(events.RESET_AFTER, function(persist) buffers_zorder = persist.ui_zorder end)
 
--- Returns the given buffer's UTF-8 filename and basename for display.
+--- Returns the given buffer's UTF-8 filename and basename for display.
 -- If the buffer does not have a filename, returns its type or 'Untitled'.
 local function get_display_names(buffer)
   local filename = buffer.filename or buffer._type or _L['Untitled']
@@ -263,7 +265,7 @@ events.connect(events.TAB_CLICKED, function(index) view:goto_buffer(_BUFFERS[ind
 -- Closes a buffer when its tab close button is clicked.
 events.connect(events.TAB_CLOSE_CLICKED, function(index) _BUFFERS[index]:close() end)
 
--- Sets the title of the Textadept window to the active buffer's filename and indicates whether
+--- Sets the title of the Textadept window to the active buffer's filename and indicates whether
 -- the buffer is "clean" or "dirty".
 local function set_title()
   local filename, basename = get_display_names(buffer)
@@ -272,7 +274,7 @@ end
 events.connect(events.SAVE_POINT_REACHED, set_title)
 events.connect(events.SAVE_POINT_LEFT, set_title)
 
--- Sets the buffer's tab label based on its saved status.
+--- Sets the buffer's tab label based on its saved status.
 local function set_tab_label(buffer)
   if not buffer then buffer = _G.buffer end
   buffer.tab_label = select(2, get_display_names(buffer)) .. (buffer.modify and '*' or '')
@@ -313,7 +315,7 @@ events.connect(events.UPDATE_UI, function(updated)
     tabs, encoding)
 end)
 
--- Save buffer properties.
+--- Save buffer properties.
 local function save_buffer_state()
   -- Save view state.
   buffer._anchor, buffer._current_pos = buffer.anchor, buffer.current_pos
@@ -330,7 +332,7 @@ end
 events.connect(events.BUFFER_BEFORE_SWITCH, save_buffer_state)
 events.connect(events.BUFFER_BEFORE_REPLACE_TEXT, save_buffer_state)
 
--- Restore buffer properties.
+--- Restore buffer properties.
 local function restore_buffer_state()
   if not buffer._folds then
     if buffer._type == _L['[Output Buffer]'] then buffer:goto_line(buffer.line_count) end
@@ -350,7 +352,7 @@ end
 events.connect(events.BUFFER_AFTER_SWITCH, restore_buffer_state)
 events.connect(events.BUFFER_AFTER_REPLACE_TEXT, restore_buffer_state)
 
--- Updates titlebar and statusbar.
+--- Updates titlebar and statusbar.
 local function update_bars()
   set_title()
   events.emit(events.UPDATE_UI, 3)
@@ -359,7 +361,7 @@ events.connect(events.BUFFER_NEW, update_bars)
 events.connect(events.BUFFER_AFTER_SWITCH, update_bars)
 events.connect(events.VIEW_AFTER_SWITCH, update_bars)
 
--- Save view state.
+--- Save view state.
 local function save_view_state()
   buffer._view_ws, buffer._wrap_mode = view.view_ws, view.wrap_mode
   buffer._margin_type_n, buffer._margin_width_n = {}, {}
@@ -371,7 +373,7 @@ end
 events.connect(events.BUFFER_BEFORE_SWITCH, save_view_state)
 events.connect(events.VIEW_BEFORE_SWITCH, save_view_state)
 
--- Restore view state.
+--- Restore view state.
 local function restore_view_state()
   if not buffer._margin_type_n then return end
   view.view_ws, view.wrap_mode = buffer._view_ws, buffer._wrap_mode
@@ -426,7 +428,7 @@ if CURSES then
     events.connect(events.QUIT, disable_mouse)
   end
 
-  -- Retrieves the view or split at the given terminal coordinates.
+  --- Retrieves the view or split at the given terminal coordinates.
   -- @param view View or split to test for coordinates within.
   -- @param y The y terminal coordinate.
   -- @param x The x terminal coordinate.
@@ -464,7 +466,8 @@ if CURSES then
   end)
 end
 
--- Show pre-initialization errors in a textbox. After that, leave error handling to the run module.
+--- Show pre-initialization errors in a textbox. After that, leave error handling to the
+-- run module.
 local function textbox(text) ui.dialogs.message{title = _L['Initialization Error'], text = text} end
 events.connect(events.ERROR, textbox)
 events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, textbox) end)

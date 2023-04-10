@@ -126,7 +126,7 @@ local preferred_view
 -- files" in order to restore it from filter text as necessary.
 local find_text, found_text, repl_text = nil, nil, ui.find.replace_entry_text
 
--- Returns a reasonable initial directory for use with Find in Files.
+--- Returns a reasonable initial directory for use with Find in Files.
 local function ff_dir()
   return io.get_project_root() or (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir()
 end
@@ -151,7 +151,7 @@ function M.focus(options)
   orig_focus()
 end
 
--- Returns a bit-mask of search flags to use in Scintilla search functions based on the checkboxes
+--- Returns a bit-mask of search flags to use in Scintilla search functions based on the checkboxes
 -- in the find box.
 -- The "Find in Files" flag is unused by Scintilla, but used by Textadept.
 -- @return search flag bit-mask
@@ -161,10 +161,10 @@ local function get_flags()
     (M.in_files and 1 << 31 or 0)
 end
 
--- Returns whether or not the given buffer is a files found buffer.
+--- Returns whether or not the given buffer is a files found buffer.
 local function is_ff_buf(buf) return buf._type == _L['[Files Found Buffer]'] end
 
--- Clears highlighted match indicators.
+--- Clears highlighted match indicators.
 local function clear_highlighted_matches()
   buffer.indicator_current = M.INDIC_FIND
   buffer:indicator_clear_range(1, buffer.length)
@@ -175,7 +175,7 @@ events.connect(events.KEYPRESS, function(key)
 end, 1)
 
 local incremental_orig_pos
--- Finds and selects text in the current buffer.
+--- Finds and selects text in the current buffer.
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
 -- @param flags Search flags. This is a bit-mask of 4 flags: `buffer.FIND_MATCHCASE`,
@@ -391,7 +391,7 @@ local re_patt = lpeg.Cs(P{
   L = P('\\L') / '' * (V('text') / lower + V('u') + V('l'))^0 * V('E')^-1, --
   E = P('\\E') / '', esc = '\\' * C(1) / esc
 })
--- Returns string *text* with the following sequences unescaped:
+--- Returns string *text* with the following sequences unescaped:
 --
 --   - "\uXXXX" sequences replaced with the equivalent UTF-8 character.
 --   - "\d" sequences replaced with the text of capture number *d* from the regular expression
@@ -457,10 +457,11 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
   ui.statusbar_text = string.format('%d %s', count, _L['replacement(s) made'])
 end)
 
--- Helper functions for getting the files found view and buffer.
+--- Helper function for getting the files found view.
 local function get_ff_view()
   for _, view in ipairs(_VIEWS) do if is_ff_buf(view.buffer) then return view end end
 end
+--- Helper function for getting the files found buffer.
 local function get_ff_buffer()
   for _, buffer in ipairs(_BUFFERS) do if is_ff_buf(buffer) then return buffer end end
 end

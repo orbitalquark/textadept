@@ -246,7 +246,7 @@ local function close(buffer, force)
   return true
 end
 
--- Detects if the current file has been externally modified and, if so, emits a `FILE_CHANGED`
+--- Detects if the current file has been externally modified and, if so, emits a `FILE_CHANGED`
 -- event.
 local function update_modified_file()
   if not buffer.filename then return end
@@ -325,7 +325,7 @@ function io.open_recent_file()
   for _, i in ipairs(selected) do io.open_file(io.recent_files[i]) end
 end
 
--- List of version control directories.
+--- List of version control directories.
 local vcs = {'.bzr', '.git', '.hg', '.svn', '_FOSSIL_'}
 
 --- Returns the root directory of the project that contains filesystem path *path*.

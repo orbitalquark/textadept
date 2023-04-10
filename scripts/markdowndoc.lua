@@ -1,8 +1,9 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
--- Markdown filter for LDoc and doclet for Luadoc.
+--- Markdown filter for LDoc and doclet for Luadoc.
 -- @usage ldoc --filter markdowndoc.ldoc [ldoc opts] > api.md
 -- @usage luadoc --doclet path/to/markdowndoc [file(s)] > api.md
+-- @module markdowndoc
 local M = {}
 
 local TOC = '1. [%s](%s)\n'
@@ -23,7 +24,7 @@ local titles = {
   [TFIELD] = 'Fields'
 }
 
--- Writes an LDoc description to the given file.
+--- Writes an LDoc description to the given file.
 -- @param f The markdown file being written to.
 -- @param description The description.
 -- @param name The name of the module the description belongs to. Used for headers in module
@@ -38,7 +39,7 @@ local function write_description(f, description, name)
   f:write(string.format(DESCRIPTION, description))
 end
 
--- Writes an LDoc list to the given file.
+--- Writes an LDoc list to the given file.
 -- @param f The markdown file being written to.
 -- @param fmt The format of a list item.
 -- @param list The LDoc list.
@@ -62,7 +63,7 @@ local function write_list(f, fmt, list, name)
   f:write('\n')
 end
 
--- Writes an LDoc hashmap to the given file.
+--- Writes an LDoc hashmap to the given file.
 -- @param f The markdown file being written to.
 -- @param fmt The format of a hashmap item.
 -- @param list The LDoc hashmap.
@@ -77,7 +78,7 @@ local function write_hashmap(f, fmt, hashmap)
   f:write('\n')
 end
 
--- Called by LDoc to process a doc object.
+--- Called by LDoc to process a doc object.
 -- @param doc The LDoc doc object.
 function M.ldoc(doc)
   local f = io.stdout
@@ -204,7 +205,7 @@ function M.ldoc(doc)
   end
 end
 
--- Called by LuaDoc to process a doc object.
+--- Called by LuaDoc to process a doc object.
 -- @param doc The LuaDoc doc object.
 function M.start(doc)
   local modules, files = doc.modules, doc.files

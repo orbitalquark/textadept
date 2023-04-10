@@ -27,7 +27,7 @@ function M.register(short, long, narg, f, description)
   options[assert_type(long, 'string', 2)] = option
 end
 
--- Processes command line argument table *arg*, handling options previously defined using
+--- Processes command line argument table *arg*, handling options previously defined using
 -- `args.register()` and treats unrecognized arguments as filenames to open or directories to
 -- change to.
 -- Emits an `ARG_NONE` event when no file or directory arguments are present unless

@@ -48,7 +48,7 @@ if CURSES and WIN32 then
   end
 end
 
--- Replacement for original `buffer:text_range()`, which has a C struct for an argument.
+--- Replacement for original `buffer:text_range()`, which has a C struct for an argument.
 -- Documentation is in core/.buffer.luadoc.
 local function text_range(buffer, start_pos, end_pos)
   local target_start, target_end = buffer.target_start, buffer.target_end
@@ -61,11 +61,11 @@ end
 
 events.connect(events.BUFFER_NEW, function() buffer.text_range = text_range end, 1)
 
--- A table of style properties that can be concatenated with other tables of properties.
+--- A table of style properties that can be concatenated with other tables of properties.
 local style_object = {}
 style_object.__index = style_object
 
--- Creates a new style object.
+--- Creates a new style object.
 -- @param props Table of style properties to use.
 local function style_obj(props)
   local style = {}
@@ -73,8 +73,9 @@ local function style_obj(props)
   return setmetatable(style, style_object)
 end
 
--- Returns a new style object with a set of merged properties.
+--- Returns a new style object with a set of merged properties.
 -- @param props Table of style properties to merge into this one.
+-- @local
 function style_object:__concat(props)
   local style = style_obj(self) -- copy
   for k, v in pairs(assert_type(props, 'table', 2)) do style[k] = v end
@@ -82,7 +83,7 @@ function style_object:__concat(props)
 end
 
 local map = {italics = 'italic', underlined = 'underline', eolfilled = 'eol_filled'} -- legacy
--- Looks up the style settings for a style number *style_num*, and applies them to view *view*.
+--- Looks up the style settings for a style number *style_num*, and applies them to view *view*.
 -- @param view A view.
 -- @param style_num Style number to set the style for.
 local function set_style(view, style_num)
@@ -118,7 +119,7 @@ local function set_theme(view, name, env)
   view:set_styles()
 end
 
--- Metatable for `view.styles`, whose documentation is in core/.view.luadoc.
+--- Metatable for `view.styles`, whose documentation is in core/.view.luadoc.
 local styles_mt = {
   __index = function(t, k) return k and t[k:match('^(.+)[_%.]')] or nil end,
   __newindex = function(t, k, v)

@@ -363,6 +363,8 @@ local M = {}
 
 --- Map of event names to tables of handler functions.
 -- Handler tables are auto-created as needed.
+-- @table handlers
+-- @local
 local handlers = setmetatable({}, {
   __index = function(t, k)
     t[k] = {}
@@ -450,7 +452,7 @@ for _, v in pairs(textadept_events) do M[v:upper()] = v end
 -- undocumented `events.MODIFIED`.
 local DELETE, INSERT, UNDOREDO = _SCINTILLA.constants.MOD_BEFOREDELETE,
   _SCINTILLA.constants.MOD_INSERTTEXT, _SCINTILLA.constants.MULTILINEUNDOREDO
--- Helper function for emitting `events.BUFFER_AFTER_REPLACE_TEXT` after a full-buffer undo/redo
+--- Helper function for emitting `events.BUFFER_AFTER_REPLACE_TEXT` after a full-buffer undo/redo
 -- operation, e.g. after reloading buffer contents and then performing an undo.
 local function emit_after_replace_text()
   events.disconnect(events.UPDATE_UI, emit_after_replace_text)

@@ -281,7 +281,7 @@ local M = {}
 -- Note: meta+[befhstv] may be used by Linux GUI terminals for menu access.
 
 local _L = _L
--- Returns the menu command associated with the '/'-separated string of menu labels.
+--- Returns the menu command associated with the '/'-separated string of menu labels.
 -- Labels are automatically localized.
 -- @param labels Path to the menu command.
 -- @usage m('Edit/Select/Select in XML Tag')
@@ -291,7 +291,7 @@ local function m(labels)
   return menu[2]
 end
 
--- Starts a new line below or above the current one.
+--- Starts a new line below or above the current one.
 -- @param above Whether or not to start a new line above the current one. The default value is
 --   `false.`
 local function start_new_line(above)
@@ -535,6 +535,7 @@ for f, plat_keys in pairs(bindings) do
   end
 end
 
+--- Shows the popup context menu.
 local function show_context_menu() ui.popup_menu(ui.context_menu) end
 keys.menu = show_context_menu
 if WIN32 or GTK then keys['shift+f10'] = show_context_menu end

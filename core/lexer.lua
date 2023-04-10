@@ -84,7 +84,7 @@ local function style_of_name(buffer, name)
   return lexer and lexer._TAGS[assert_type(name, 'string', 2):gsub('_', '.')] or view.STYLE_DEFAULT
 end
 
--- Performs syntax highlighting in buffer *buffer* from *start_pos* to *end_pos*.
+--- Performs syntax highlighting in buffer *buffer* from *start_pos* to *end_pos*.
 -- Start from the beginning of the current style so the lexer can match the tag.
 -- For multilang lexers, start at whitespace since embedded languages have whitespace.[lang]
 -- styles. This is so the lexer can start matching child languages instead of parent ones
@@ -152,7 +152,7 @@ events.connect(events.BUFFER_NEW, function()
   set_lexer(buffer, 'text')
 end)
 
--- Refreshes styles for the buffer's lexer.
+--- Refreshes styles for the buffer's lexer.
 local function refresh_styles() if view.set_styles then view:set_styles() end end
 events.connect(events.BUFFER_AFTER_SWITCH, refresh_styles)
 events.connect(events.VIEW_AFTER_SWITCH, refresh_styles)

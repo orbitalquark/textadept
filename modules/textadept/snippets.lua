@@ -104,8 +104,6 @@ M.INDIC_PLACEHOLDER = _SCINTILLA.new_indic_number()
 -- file is inserted as a snippet.
 -- Note: If a directory has multiple snippets with the same trigger, the snippet chosen for
 -- insertion is not defined and may not be constant.
--- @class table
--- @name paths
 M.paths = {}
 
 local INDIC_SNIPPET = _SCINTILLA.new_indic_number()
@@ -116,7 +114,7 @@ local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.new_indic_number()
 _G.snippets = {}
 for _, name in ipairs(lexer.names()) do snippets[name] = {} end
 
--- Finds the snippet assigned to the trigger word behind the caret and returns the trigger word
+--- Finds the snippet assigned to the trigger word behind the caret and returns the trigger word
 -- and snippet text.
 -- If *grep* is `true`, returns a table of snippets (trigger-text key-value pairs) that match
 -- the trigger word instead of snippet text. Snippets are searched for in the global snippets
@@ -170,7 +168,7 @@ local function find_snippet(grep, no_trigger)
   return trigger, matching_snippets
 end
 
--- A snippet object.
+--- A snippet object.
 -- @field trigger The word that triggered this snippet.
 -- @field original_sel_text The text originally selected when this snippet was inserted.
 -- @field start_pos This snippet's start position.
@@ -185,16 +183,15 @@ end
 --   placeholder index contains the state of the snippet with all placeholders of that index
 --   filled in (prior to moving to the next placeholder index). Snippet state consists of a
 --   `text` string field and a `placeholders` table field.
--- @class table
--- @name snippet
 local snippet = {}
 
--- The stack of currently running snippets.
+--- The stack of currently running snippets.
 local stack = {}
 
--- Inserts a new snippet and adds it to the snippet stack.
+--- Inserts a new snippet and adds it to the snippet stack.
 -- @param text The new snippet to insert.
 -- @param trigger The trigger text used to expand the snippet, if any.
+-- @local
 function snippet.new(text, trigger)
   local snip = setmetatable({
     trigger = trigger, original_sel_text = buffer:get_sel_text(),
@@ -237,7 +234,7 @@ function snippet.new(text, trigger)
     braces = '{' * Cg((1 - S('{}') + V('braces'))^0, 'choice') * '}',
     angles = '<' * -P('/') * Cg((1 - S('<>') + V('angles'))^0, 'lua_code') * '>'
   }
-  -- A snippet placeholder.
+  --- A snippet placeholder.
   -- Each placeholder is stored in a snippet snapshot.
   -- @field id This placeholder's unique ID. This field is used as an indicator's value for
   --   identification purposes.
@@ -254,8 +251,8 @@ function snippet.new(text, trigger)
   -- @field length This placeholder's initial length in its snapshot. This field will never
   --   update. Use `buffer:indicator_end()` in conjunction with `snippet:each_placeholder()`
   --   to determine a placeholder's current length.
-  -- @class table
-  -- @name placeholder
+  -- @table placeholder
+  -- @local
   local text_part, placeholder, e = patt:match(text)
   while placeholder do
     if placeholder.index then
@@ -268,13 +265,13 @@ function snippet.new(text, trigger)
     placeholder.position = #snapshot.text
     if placeholder.default then
       if placeholder.default:find('%%%d+') then
-        -- Parses out embedded placeholders, adding them to this snippet's snapshot.
+        --- Parses out embedded placeholders, adding them to this snippet's snapshot.
         -- @param s The placeholder string to parse.
         -- @param start_pos The absolute position in the snippet `s` starts from. All computed
         --   positions are anchored from here.
         -- @return plain text from `s` (i.e. no placeholder markup)
         local function process_placeholders(s, start_pos)
-          -- Processes a placeholder capture from LPeg.
+          --- Processes a placeholder capture from LPeg.
           -- @param position The position a the beginning of the placeholder.
           -- @param index The placeholder index.
           -- @param default The default placeholder text, if any.
@@ -325,7 +322,8 @@ function snippet.new(text, trigger)
   stack[#stack + 1] = snip
 end
 
--- Provides dynamic field values and methods for this snippet.
+--- Provides dynamic field values and methods for this snippet.
+-- @local
 function snippet:__index(k)
   if k == 'end_pos' then
     local end_pos = buffer:indicator_end(INDIC_SNIPPET, self.start_pos)
@@ -342,8 +340,9 @@ function snippet:__index(k)
   return getmetatable(self)[k]
 end
 
--- Inserts the current snapshot (based on `self.index`) of this snippet into the buffer and
+--- Inserts the current snapshot (based on `self.index`) of this snippet into the buffer and
 -- marks placeholders.
+-- @local
 function snippet:insert()
   buffer:set_target_range(self.start_pos, self.end_pos)
   buffer:replace_target(self.snapshots[self.index].text)
@@ -354,7 +353,8 @@ function snippet:insert()
   end
 end
 
--- Jumps to the next placeholder in this snippet and adds additional carets at mirrors.
+--- Jumps to the next placeholder in this snippet and adds additional carets at mirrors.
+-- @local
 function snippet:next()
   if buffer:auto_c_active() then buffer:auto_c_complete() end
   -- Take a snapshot of the current state in order to restore it later if necessary.
@@ -430,8 +430,9 @@ function snippet:next()
   if self.index == 0 then self:finish() end
 end
 
--- Jumps to the previous placeholder in this snippet and restores the state associated with
+--- Jumps to the previous placeholder in this snippet and restores the state associated with
 -- that placeholder.
+-- @local
 function snippet:previous()
   if self.index < 2 then
     self:finish(true)
@@ -442,10 +443,11 @@ function snippet:previous()
   self:next()
 end
 
--- Finishes or cancels this snippet depending on boolean *canceling*.
+--- Finishes or cancels this snippet depending on boolean *canceling*.
 -- The snippet cleans up after itself regardless.
 -- @param canceling Whether or not to cancel inserting this snippet. When `true`, the buffer
 --   is restored to its state prior to snippet expansion.
+-- @local
 function snippet:finish(canceling)
   local s, e = self.start_pos, self.end_pos
   if e ~= s then buffer:delete_range(e, 1) end -- clear initial padding space
@@ -459,12 +461,13 @@ function snippet:finish(canceling)
   stack[#stack] = nil
 end
 
--- Returns a generator that returns each placeholder's position and state for all placeholders
+--- Returns a generator that returns each placeholder's position and state for all placeholders
 -- in this snippet.
 -- DO NOT modify the buffer while this generator is running. Doing so will affect the generator's
 -- state and cause errors. Re-run the generator each time a buffer edit is made (e.g. via `goto`).
 -- @param index Optional placeholder index to constrain results to.
 -- @param type Optional placeholder type to constrain results to.
+-- @local
 function snippet:each_placeholder(index, type)
   local snapshot = self.snapshots[self.index > 0 and self.index - 1 or #self.snapshots]
   local i = self.start_pos
@@ -486,9 +489,10 @@ function snippet:each_placeholder(index, type)
   end
 end
 
--- Returns the result of executing Lua or Shell code, in placeholder table *placeholder*,
+--- Returns the result of executing Lua or Shell code, in placeholder table *placeholder*,
 -- in the context of this snippet.
 -- @param placeholder The placeholder that contains code to execute.
+-- @local
 function snippet:execute_code(placeholder)
   local s, e = self.placeholder_pos, buffer.selection_end
   if s > e then s, e = e, s end
@@ -507,7 +511,8 @@ function snippet:execute_code(placeholder)
   end
 end
 
--- Updates transforms in place based on the current placeholder's text.
+--- Updates transforms in place based on the current placeholder's text.
+-- @local
 function snippet:update_transforms()
   buffer.indicator_current = M.INDIC_PLACEHOLDER
   local processed = {}

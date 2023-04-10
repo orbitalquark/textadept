@@ -18,26 +18,30 @@ local menu_buffer_functions = {'undo','redo','cut','copy','paste','selection_dup
 for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 view.zoom_in, view.zoom_out = view.zoom_in, view.zoom_out
 
--- Commonly used functions in menu commands.
+--- Wrapper around `buffer:upper_case()` and `buffer:lower_case()`.
 local function change_case(upper)
   local select, pos = buffer.selection_empty, buffer.current_pos
   if select then textadept.editing.select_word() end
   buffer[upper and 'upper_case' or 'lower_case'](buffer)
   if select then buffer:goto_pos(pos) end
 end
+--- Wrapper around `buffer.tab_width`.
 local function set_indentation(i)
   buffer.tab_width = i
   events.emit(events.UPDATE_UI, 1) -- for updating statusbar
 end
+--- Wrapper around `buffer.eol_mode`.
 local function set_eol_mode(mode)
   buffer.eol_mode = mode
   buffer:convert_eols(mode)
   events.emit(events.UPDATE_UI, 1) -- for updating statusbar
 end
+--- Wrapper around `buffer:set_encoding()`.
 local function set_encoding(encoding)
   buffer:set_encoding(encoding)
   events.emit(events.UPDATE_UI, 1) -- for updating statusbar
 end
+--- Opens the given URL in the user's default web browser.
 local function open_page(url)
   local cmd = (WIN32 and 'start ""') or (OSX and 'open') or 'xdg-open'
   os.spawn(string.format('%s "%s"', cmd, not OSX and url or 'file://' .. url))
@@ -337,14 +341,14 @@ default_tab_context_menu = {
   {_L['Reload'], buffer.reload}
 }
 
--- Table of proxy tables for menus.
+--- Table of proxy tables for menus.
 local proxies = {}
 
 local key_shortcuts, menu_items, contextmenu_items
 
 local SHIFT, CTRL, ALT, META = view.MOD_SHIFT, view.MOD_CTRL, view.MOD_ALT, view.MOD_META
 local ignore = {[0xFE20] = true, [0x01000002] = true}
--- Returns for a key sequence the integer keycode and modifier mask used to create a menu
+--- Returns for a key sequence the integer keycode and modifier mask used to create a menu
 -- item accelerator.
 -- Keycodes are either ASCII bytes or codes from `keys.KEYSYMS`. Modifiers are a combination of
 -- `SCMOD_*` modifiers.
@@ -369,7 +373,7 @@ local function get_menu_key_seq(key_seq)
   return code, modifiers
 end
 
--- Creates a menu suitable for `ui.menu()` from the menu table format.
+--- Creates a menu suitable for `ui.menu()` from the menu table format.
 -- Also assigns key bindings.
 -- @param menu The menu to create a menu from.
 -- @param contextmenu Flag indicating whether or not the menu is a context menu. If so, menu_id
@@ -394,7 +398,7 @@ local function read_menu_table(menu, contextmenu)
   return ui_menu
 end
 
--- Returns a proxy table for menu table *menu* such that when a menu item is changed or added,
+--- Returns a proxy table for menu table *menu* such that when a menu item is changed or added,
 -- *update* is called to update the menu in the UI.
 -- @param menu The menu or table of menus to create a proxy for.
 -- @param update The function to call to update the menu in the UI when a menu item is changed
@@ -425,7 +429,7 @@ local function proxy_menu(menu, update, menubar)
   })
 end
 
--- Sets `ui.menubar` from menu table *menubar*.
+--- Sets `ui.menubar` from menu table *menubar*.
 -- Each menu is an ordered list of menu items and has a `title` key for the title text. Menu
 -- items are tables containing menu text and either a function to call or a table containing a
 -- function with its parameters to call when an item is clicked. Menu items may also be sub-menus,
@@ -452,7 +456,7 @@ events.connect(events.INITIALIZED, function() set_menubar(default_menubar) end)
 -- will create the first visible menubar and proper proxy.
 proxies.menubar = proxy_menu(default_menubar, function() end)
 
--- Sets `ui.context_menu` and `ui.tab_context_menu` from menu item lists *buffer_menu* and
+--- Sets `ui.context_menu` and `ui.tab_context_menu` from menu item lists *buffer_menu* and
 -- *tab_menu*, respectively.
 -- Menu items are tables containing menu text and either a function to call or a table containing a
 -- function with its parameters to call when an item is clicked. Menu items may also be sub-menus,

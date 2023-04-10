@@ -142,7 +142,7 @@ events.connect(events.KEY, function(code, modifiers)
       shift and SHIFT or '', key))
 end)
 
--- The current key sequence.
+--- The current key sequence.
 local keychain = {}
 
 --- The current chain of key sequences. (Read-only.)
@@ -152,17 +152,17 @@ M.keychain = setmetatable({}, {
   __len = function() return #keychain end
 })
 
--- Clears the current key sequence.
+--- Clears the current key sequence.
 local function clear_key_seq() for i = 1, #keychain do keychain[i] = nil end end
 
 -- Return codes for `key_command()`.
 local INVALID, PROPAGATE, CHAIN, HALT = -1, 0, 1, 2
 
--- Error handler for key commands that simply emits the error.
+--- Error handler for key commands that simply emits the error.
 -- This is needed so `key_command()` can return `HALT` instead of never returning due to the error.
 local function key_error(errmsg) events.emit(events.ERROR, errmsg) end
 
--- Runs a key command associated with the current keychain.
+--- Runs a key command associated with the current keychain.
 -- @param[opt] prefix Optional prefix name for mode/lexer-specific commands.
 -- @return `INVALID`, `PROPAGATE`, `CHAIN`, or `HALT`.
 local function key_command(prefix)

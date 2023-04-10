@@ -64,20 +64,21 @@ local procs = {}
 -- (which are displayed in a split view) in the original view.
 local preferred_view
 
--- Returns whether or not the given buffer is the output buffer.
+--- Returns whether or not the given buffer is the output buffer.
 local function is_out_buf(buf) return buf._type == _L['[Output Buffer]'] end
 
--- Helper functions for getting the output view and buffer.
+--- Helper function for getting the output view.
 local function get_output_view()
   for _, view in ipairs(_VIEWS) do if is_out_buf(view.buffer) then return view end end
 end
+--- Helper function for getting the output buffer.
 local function get_output_buffer()
   for _, buffer in ipairs(_BUFFERS) do if is_out_buf(buffer) then return buffer end end
 end
 
 local line_state_marks = {M.MARK_ERROR, M.MARK_WARNING}
 local line_state_indics = {M.INDIC_ERROR, M.INDIC_WARNING}
--- Prints output from a compile, run, build, or test shell command.
+--- Prints output from a compile, run, build, or test shell command.
 -- Any filenames encoded in _CHARSET are left alone and may not display properly.
 -- All stdout and stderr from the command is printed silently.
 -- @param ... Output to print.
@@ -101,8 +102,9 @@ end
 for _, event in ipairs(run_events) do events.connect(event, print_output) end
 events.connect(events.ERROR, function(errmsg) print_output(errmsg, '\n') end) -- mark Lua errors
 
-local command_entry_f = {} -- separate command entry run functions for distinct command histories
--- Prompts the user with the command entry to run command *command* in working directory *dir*,
+--- Separate command entry run functions for distinct command histories.
+local command_entry_f = {}
+--- Prompts the user with the command entry to run command *command* in working directory *dir*,
 -- emitting events of type *event* with any output received.
 -- @param label String label to display in the command entry.
 -- @param command String command to run, or a function returning such a string and optional
@@ -141,7 +143,7 @@ local function run_command(label, command, dir, event, commands, key, macros)
     commands, key, macros)
 end
 
--- Compiles or runs file *filename* based on a shell command in *commands*.
+--- Compiles or runs file *filename* based on a shell command in *commands*.
 -- @param filename The file to run.
 -- @param commands Either `compile_commands` or `run_commands`.
 local function compile_or_run(filename, commands)
@@ -334,7 +336,7 @@ events.connect(events.CHAR_ADDED, function(code)
   end
 end)
 
--- Returns text tagged with the given output lexer tag on the given line number.
+--- Returns text tagged with the given output lexer tag on the given line number.
 -- @param line_num Line number to get text from.
 -- @param tag String tag name, either 'filename', 'line', 'column', or 'message'.
 -- @return tagged text or nil if none was found
