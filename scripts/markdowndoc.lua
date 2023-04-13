@@ -6,7 +6,7 @@
 -- @module markdowndoc
 local M = {}
 
-local TOC = '1. [%s](%s)\n'
+local TOC = '1. [%s](#%s)\n'
 local MODULE = '<a id="%s"></a>\n## The `%s` Module\n'
 local FIELD = '<a id="%s"></a>\n#### `%s` %s\n\n'
 local FUNCTION = '<a id="%s"></a>\n#### `%s`(%s)\n\n'
@@ -17,7 +17,7 @@ local PARAM = '- *%s*: %s\n'
 local USAGE = '- `%s`\n'
 local RETURN = '- %s\n'
 local SEE = '- [`%s`](#%s)\n'
-local TABLE = '<a id="%s"></a>\n#### `%s`\n\n'
+local TABLE = '<a id="%s"></a>\n#### `%s` &lt;table&gt;\n\n'
 local TFIELD = '- `%s`: %s\n'
 local titles = {
   [PARAM] = 'Parameters', [USAGE] = 'Usage', [RETURN] = 'Return', [SEE] = 'See also',
@@ -37,6 +37,21 @@ local function write_description(f, description, name)
   end)
   description = description:gsub('\n ', '\n') -- strip leading spaces
   f:write(string.format(DESCRIPTION, description))
+end
+
+--- Writes an LDoc hashmap to the given file.
+-- @param f The markdown file being written to.
+-- @param fmt The format of a hashmap item.
+-- @param list The LDoc hashmap.
+local function write_hashmap(f, fmt, hashmap)
+  if not hashmap or #hashmap == 0 then return end
+  f:write(string.format(LIST_TITLE, titles[fmt]))
+  for _, name in ipairs(hashmap) do
+    local description = hashmap.map and hashmap.map[name] or hashmap[name] or ''
+    if fmt == PARAM then description = description:gsub('^%[opt%] ', '') end
+    f:write(string.format(fmt, name, description))
+  end
+  f:write('\n')
 end
 
 --- Writes an LDoc list to the given file.
@@ -63,19 +78,147 @@ local function write_list(f, fmt, list, name)
   f:write('\n')
 end
 
---- Writes an LDoc hashmap to the given file.
+--- Writes an LDoc item to the given file.
 -- @param f The markdown file being written to.
--- @param fmt The format of a hashmap item.
--- @param list The LDoc hashmap.
-local function write_hashmap(f, fmt, hashmap)
-  if not hashmap or #hashmap == 0 then return end
-  f:write(string.format(LIST_TITLE, titles[fmt]))
-  for _, name in ipairs(hashmap) do
-    local description = hashmap.map and hashmap.map[name] or hashmap[name] or ''
-    if fmt == PARAM then description = description:gsub('^%[opt%] ', '') end
-    f:write(string.format(fmt, name, description))
+-- @param item The LDoc item.
+-- @param module_name The LDoc item's module name.
+-- @function write
+local write
+
+--- Writes an LDoc field to the given file.
+-- @param f The markdown file being written to.
+-- @param field The LDoc field.
+-- @param module_name The LDoc field's module name.
+local function write_field(f, field, module_name)
+  if not field.name:find('%.') and module_name ~= '_G' then
+    field.name = module_name .. '.' .. field.name -- absolute name
+  elseif field.name:find('^_G%.[^.]+%.[^.]+') then
+    field.name = field.name:gsub('^_G%.', '') -- strip _G required for LDoc
+  end
+  local is_buffer_view_constant = field.name:find('^buffer%.[A-Z_]+$') or
+    field.name:find('^view%.[A-Z_]+$')
+  if not is_buffer_view_constant then
+    f:write(string.format(FIELD, field.name:gsub('^_G%.', ''), field.name, ''))
+    write_description(f, field.summary .. field.description)
+  end
+end
+
+--- Writes an LDoc function to the given file.
+-- @param f The markdown file being written to.
+-- @param function The LDoc function.
+-- @param module_name The LDoc function's module name.
+local function write_function(f, func, module_name)
+  if not func.name:find('[%.:]') and module_name ~= '_G' then
+    func.name = module_name .. '.' .. func.name -- absolute name
+  end
+  f:write(string.format(FUNCTION, func.name:gsub(':', '.'), func.name,
+    func.args:sub(2, -2):gsub('[%w_]+', '*%0*')))
+  write_description(f, func.summary .. func.description)
+  write_hashmap(f, PARAM, func.params)
+  write_list(f, USAGE, func.usage)
+  write_list(f, RETURN, func.ret)
+  write_list(f, SEE, func.tags.see, module_name)
+end
+
+--- Writes an LDoc table to the given file.
+-- @param f The markdown file being written to.
+-- @param table The LDoc table.
+-- @param module_name The LDoc table's module name.
+local function write_table(f, tbl, module_name)
+  if not tbl.name:find('%.') and module_name ~= '_G' then
+    tbl.name = module_name .. '.' .. tbl.name -- absolute name
+  else
+    tbl.name = tbl.name:gsub('^_G%.', '') -- strip _G required for LDoc/LuaDoc
+  end
+  local tbl_id = tbl.name ~= 'buffer' and tbl.name ~= 'view' and tbl.name ~= 'keys' and
+    tbl.name:gsub('^_G.', '') or ('_G.' .. tbl.name)
+  f:write(string.format(TABLE, tbl_id, tbl.name))
+  write_description(f, tbl.summary .. tbl.description)
+  write_hashmap(f, TFIELD, tbl.params)
+  write_list(f, USAGE, tbl.usage)
+  write_list(f, SEE, tbl.tags.see, module_name)
+end
+
+--- Writes an LDoc module to the given file.
+-- @param f The markdown file being written to.
+-- @param module The LDoc module.
+local function write_module(f, module)
+  local name = module.name
+
+  -- Write the header and description.
+  f:write(string.format(MODULE, name, name))
+  f:write('---\n\n')
+  write_description(f, module.summary .. module.description, name)
+
+  -- Write fields.
+  local fields = {}
+  for _, item in ipairs(module.items) do
+    if item.type == 'field' or item.type == 'table' then fields[#fields + 1] = item end
+  end
+  table.sort(fields, function(a, b) return a.name < b.name end)
+  if #fields > 0 then
+    f:write('### Fields defined by `', name, '`\n\n')
+    for _, field in ipairs(fields) do write(f, field, name) end
+    f:write('\n')
+  end
+
+  -- Write functions.
+  local funcs = {}
+  for _, item in ipairs(module.items) do
+    if item.type == 'function' then funcs[#funcs + 1] = item end
+  end
+  table.sort(funcs, function(a, b) return a.name < b.name end)
+  if #funcs > 0 then
+    f:write('### Functions defined by `', name, '`\n\n')
+    for _, func in ipairs(funcs) do write(f, func, name) end
+    f:write('\n')
+  end
+end
+
+--- Writes an LDoc section to the given file.
+-- @param f The markdown file being written to.
+-- @param section The LDoc section.
+local function write_section(f, section)
+  f:write('### ', section.display_name, '\n\n')
+  f:write(section.description, '\n')
+end
+
+--- Writes an LDoc class module to the given file.
+-- @param f The markdown file being written to.
+-- @param module The LDoc class module.
+local function write_classmod(f, module)
+  local name = module.name
+
+  -- Write the header and description.
+  f:write(string.format(MODULE, name, name))
+  f:write('---\n\n')
+  write_description(f, module.summary .. module.description, name)
+
+  -- Write the table of contents for the module's sections.
+  for _, item in ipairs(module.sections) do
+    local section = item.display_name
+    f:write(string.format(TOC, section, section:gsub(' ', '-'):lower()))
   end
   f:write('\n')
+
+  -- Write module items.
+  local section
+  for _, item in ipairs(module.items) do
+    if item.section ~= section then
+      section = item.section
+      write(f, module.sections.by_name[section:gsub('[ %p]', '_')])
+    end
+    write(f, item, name)
+  end
+end
+
+--- Map of LDoc item types to their writer functions.
+local writers = {
+  field = write_field, ['function'] = write_function, table = write_table, module = write_module,
+  section = write_section, classmod = write_classmod
+}
+write = function(f, item, module_name)
+  writers[item.type](f, item, module_name)
 end
 
 --- Called by LDoc to process a doc object.
@@ -119,88 +262,12 @@ function M.ldoc(doc)
   end
 
   -- Create the table of contents.
-  for _, module in ipairs(doc) do f:write(string.format(TOC, module.name, '#' .. module.name)) end
+  for _, module in ipairs(doc) do f:write(string.format(TOC, module.name, module.name)) end
   f:write('\n')
 
   -- Loop over modules, writing the Markdown document to stdout.
   for _, module in ipairs(doc) do
-    local name = module.name
-
-    -- Write the header and description.
-    f:write(string.format(MODULE, name, name))
-    f:write('---\n\n')
-    write_description(f, module.summary .. module.description, name)
-
-    -- Write fields.
-    local fields = {}
-    for _, item in ipairs(module.items) do
-      if item.type == 'field' then fields[#fields + 1] = item end
-    end
-    table.sort(fields, function(a, b) return a.name < b.name end)
-    if #fields > 0 then
-      f:write('### Fields defined by `', name, '`\n\n')
-      for _, field in ipairs(fields) do
-        if not field.name:find('%.') and name ~= '_G' then
-          field.name = name .. '.' .. field.name -- absolute name
-        elseif field.name:find('^_G%.[^.]+%.[^.]+') then
-          field.name = field.name:gsub('^_G%.', '') -- strip _G required for LDoc
-        end
-        local is_buffer_view_constant = field.name:find('^buffer%.[A-Z_]+$') or
-          field.name:find('^view%.[A-Z_]+$')
-        if not is_buffer_view_constant then
-          f:write(string.format(FIELD, field.name:gsub('^_G%.', ''), field.name, ''))
-          write_description(f, field.summary .. field.description)
-        end
-      end
-      f:write('\n')
-    end
-
-    -- Write functions.
-    local funcs = {}
-    for _, item in ipairs(module.items) do
-      if item.type == 'function' then funcs[#funcs + 1] = item end
-    end
-    table.sort(funcs, function(a, b) return a.name < b.name end)
-    if #funcs > 0 then
-      f:write('### Functions defined by `', name, '`\n\n')
-      for _, func in ipairs(funcs) do
-        if not func.name:find('[%.:]') and name ~= '_G' then
-          func.name = name .. '.' .. func.name -- absolute name
-        end
-        f:write(string.format(FUNCTION, func.name:gsub(':', '.'), func.name,
-          func.args:sub(2, -2):gsub('[%w_]+', '*%0*')))
-        write_description(f, func.summary .. func.description)
-        write_hashmap(f, PARAM, func.params)
-        write_list(f, USAGE, func.usage)
-        write_list(f, RETURN, func.ret)
-        write_list(f, SEE, func.tags.see, name)
-      end
-      f:write('\n')
-    end
-
-    -- Write tables.
-    local tables = {}
-    for _, item in ipairs(module.items) do
-      if item.type == 'table' then tables[#tables + 1] = item end
-    end
-    table.sort(tables, function(a, b) return a.name < b.name end)
-    if #tables > 0 then
-      f:write('### Tables defined by `', name, '`\n\n')
-      for _, tbl in ipairs(tables) do
-        if not tbl.name:find('%.') and name ~= '_G' then
-          tbl.name = name .. '.' .. tbl.name -- absolute name
-        else
-          tbl.name = tbl.name:gsub('^_G%.', '') -- strip _G required for LDoc/LuaDoc
-        end
-        local tbl_id = tbl.name ~= 'buffer' and tbl.name ~= 'view' and tbl.name ~= 'keys' and
-          tbl.name:gsub('^_G.', '') or ('_G.' .. tbl.name)
-        f:write(string.format(TABLE, tbl_id, tbl.name))
-        write_description(f, tbl.summary .. tbl.description)
-        write_hashmap(f, TFIELD, tbl.params)
-        write_list(f, USAGE, tbl.usage)
-        write_list(f, SEE, tbl.tags.see, name)
-      end
-    end
+    write(f, module, module.name)
     f:write('---\n')
   end
 end
@@ -213,7 +280,7 @@ function M.start(doc)
   f:write('## Textadept API Documentation\n\n')
 
   -- Create the table of contents.
-  for _, name in ipairs(modules) do f:write(string.format(TOC, name, '#' .. name)) end
+  for _, name in ipairs(modules) do f:write(string.format(TOC, name, name)) end
   f:write('\n')
 
   -- Create a map of doc objects to file names so their Markdown doc comments can be extracted.

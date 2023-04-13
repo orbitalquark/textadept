@@ -92,7 +92,7 @@ local function set_style(view, style_num)
   if style then for k, v in pairs(style) do view['style_' .. (map[k] or k)][style_num] = v end end
 end
 
--- Documentation is in core/.view.luadoc.
+-- Documentation is in core/.buffer.luadoc.
 local function set_styles(view)
   if buffer == ui.command_entry then view = ui.command_entry end
   view:style_reset_default()
@@ -104,7 +104,7 @@ local function set_styles(view)
   for i = view.STYLE_FOLDDISPLAYTEXT + 1, num_styles do set_style(view, i) end
 end
 
--- Documentation is in core/.view.luadoc.
+-- Documentation is in core/.buffer.luadoc.
 local function set_theme(view, name, env)
   if not name or type(name) == 'table' then name, env = _THEME, name end
   if not assert_type(name, 'string', 2):find('[/\\]') then
@@ -119,7 +119,7 @@ local function set_theme(view, name, env)
   view:set_styles()
 end
 
---- Metatable for `view.styles`, whose documentation is in core/.view.luadoc.
+--- Metatable for `view.styles`, whose documentation is in core/.buffer.luadoc.
 local styles_mt = {
   __index = function(t, k) return k and t[k:match('^(.+)[_%.]')] or nil end,
   __newindex = function(t, k, v)

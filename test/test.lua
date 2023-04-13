@@ -5512,19 +5512,25 @@ end
 -- Load buffer and view API from their respective LuaDoc files.
 local function load_buffer_view_props()
   local buffer_props, view_props = {}, {}
-  for name, props in pairs{buffer = buffer_props, view = view_props} do
-    for line in io.lines(string.format('%s/core/.%s.luadoc', _HOME, name)) do
-      if line:find('@field') then
-        props[line:match('@field ([%w_]+)')] = true
-      elseif line:find('^function') then
-        props[line:match('^function ([%w_]+)')] = true
-      end
+  for line in io.lines(_HOME .. '/core/.buffer.luadoc') do
+    if line:find('@field view%.') then
+      view_props[line:match('@field view%.([%w_]+)')] = true
+    elseif line:find('@table view%.') then
+      view_props[line:match('@table view%.([%w_]+)')] = true
+    elseif line:find('@function view:') then
+      view_props[line:match('@function view:([%w_]+)')] = true
+    elseif line:find('@field') then
+      buffer_props[line:match('@field ([%w_]+)')] = true
+    elseif line:find('@table') then
+      buffer_props[line:match('@table ([%w_]+)')] = true
+    elseif line:find('@function') then
+      buffer_props[line:match('@function ([%w_]+)')] = true
     end
   end
   return buffer_props, view_props
 end
 
-local function check_property_usage(filename, buffer_props, view_props)
+local function check_property_usage(filename, buffer_props, view_props, errors)
   print(string.format('Processing file "%s"', filename:gsub(_HOME, '')))
   local line_num, count = 1, 0
   for line in io.lines(filename) do
@@ -5532,30 +5538,39 @@ local function check_property_usage(filename, buffer_props, view_props)
       if id == 'M' or id == 'f' or id:find('^p%d?$') or id == 'lexer' or id == 'spawn_proc' then
         goto continue
       end
-      if id == 'textadept' and prop == 'MARK_BOOKMARK' then goto continue end
-      if (id == 'ui' or id == 'split') and prop == 'size' then goto continue end
-      if id == 'keys' and prop == 'home' then goto continue end
-      if id == 'Rout' and prop == 'save' then goto continue end
-      if (id == 'detail' or id == 'record') and (prop == 'filename' or prop == 'column') then
+      if prop == 'MARK_BOOKMARK' and id == 'textadept' then goto continue end
+      if prop == 'size' and (id == 'ui' or id == 'split') then goto continue end
+      if prop == 'home' and id == 'keys' then goto continue end
+      if prop == 'save' and id == 'Rout' then goto continue end
+      if (prop == 'filename' or prop == 'column') and (id == 'detail' or id == 'record') then
         goto continue
       end
-      if (id == 'placeholder' or id == 'ph') and prop == 'length' then goto continue end
-      if (id == 'client' or id == 'server') and prop == 'close' then goto continue end
-      if (id == 'Foo' or id == 'Array' or id == 'Server' or id == 'snippet') and prop == 'new' then
+      if prop == 'length' and (id == 'placeholder' or id == 'ph') then goto continue end
+      if prop == 'close' and (id == 'client' or id == 'server') then goto continue end
+      if prop == 'new' and (id == 'Foo' or id == 'Array' or id == 'Server' or id == 'snippet') then
         goto continue
       end
       if id == 'snip' then goto continue end
-      if id == 'state' and prop == 'indent' then goto continue end
-      if id == 'format' and prop == 'line_length' then goto continue end
-      if id == 'styles' and prop == 'tag' then goto continue end
-      if (id == 'styles' or id == 'view') and prop == 'property' then goto continue end
-      if id == 'server' and prop == 'auto_c_fill_ups' then goto continue end
+      if prop == 'indent' and id == 'state' then goto continue end
+      if prop == 'line_length' and id == 'format' then goto continue end
+      if prop == 'tag' and id == 'styles' then goto continue end
+      if prop == 'property' and (id == 'styles' or id == 'view') then goto continue end
+      if prop == 'auto_c_fill_ups' and id == 'server' then goto continue end
+      if prop == 'buffer' and (id == '_G' or id == 'split' or id == 'view1' or id == 'view2') then
+        goto continue
+      end
+      if prop == 'goto_pos' and id == 'view' then goto continue end -- core/ui.lua's print_to()
       if buffer_props[prop] then
-        assert(id:find('^buffer%d?$') or id:find('buf$'),
-          'line %d:%d: "%s" should be a buffer property', line_num, pos, prop)
+        if not id:find('^buffer%d?$') and not id:find('buf$') then
+          errors[#errors + 1] = string.format('%s:%d:%d: "%s" should be a buffer property',
+            filename, line_num, pos, prop)
+        end
         count = count + 1
       elseif view_props[prop] then
-        assert(id == 'view', 'line %d:%d: "%s" should be a view property', line_num, pos, prop)
+        if id ~= 'view' then
+          errors[#errors + 1] = string.format('%s:%d:%d: "%s" should be a view property', filename,
+            line_num, pos, prop)
+        end
         count = count + 1
       end
       ::continue::
@@ -5570,12 +5585,14 @@ function test_buffer_view_usage()
   local filter = {
     '.lua', '.luadoc', '!/lexers', '!/modules/lsp/doc', '!/modules/lsp/dkjson.lua',
     '!/modules/lsp/ldoc', '!/modules/lsp/ldoc.lua', '!modules/lsp/pl', '!modules/lsp/logging',
-    '!/modules/debugger/lua/mobdebug.lua', '!/modules/debugger/lua/socket.lua',
-    '!/modules/debugger/luasocket', '!/scripts', '!/build'
+    '!/modules/debugger/dkjson.lua', '!/modules/debugger/lua/mobdebug.lua',
+    '!/modules/debugger/lua/socket.lua', '!/modules/debugger/luasocket', '!/scripts', '!/build'
   }
+  local errors = {}
   for filename in lfs.walk(_HOME, filter) do
-    check_property_usage(filename, buffer_props, view_props)
+    check_property_usage(filename, buffer_props, view_props, errors)
   end
+  assert(#errors == 0, '\n' .. table.concat(errors, '\n'))
 end
 
 --------------------------------------------------------------------------------

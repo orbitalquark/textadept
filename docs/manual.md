@@ -1640,6 +1640,7 @@ next_* | Renamed | [new_*][]
 **buffer**||
 [tab_label][] | Changed | Write-only
 property_int | Removed | N/A
+MARKNUM_FOLDER* | Renamed | view.MARKNUM_FOLDER*
 **events**||
 [KEYPRESS][] | Changed | Changed arguments
 [TAB_CLICKED][] | Changed | Changed arguments
@@ -1758,6 +1759,7 @@ Themes can be migrated from Textadept 11 to 12 in the following way:
   to `styles[lexer.COMMENT] = {...}`.
 - Lexer-specific style names do not have constants, so they can be used directly (e.g. CSS
   `styles.property = {...}`).
+- Replace `buffer.MARKNUM_FOLDER`\* with `view.MARKNUM_FOLDER`\*.
 
 [styles]: api.html#view.styles
 
