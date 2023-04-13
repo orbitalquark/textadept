@@ -220,8 +220,7 @@ f:write([[
 --- Map of Scintilla property names to table values containing their "get" function IDs, "set"
 -- function IDs, return types, and wParam types.
 -- The wParam type will be non-zero if the property is indexable.
--- Types are the same as in the `functions` table.
--- @see functions
+-- Types are the same as in the `_SCINTILLA.functions` table.
 M.properties = {} -- empty declaration to avoid LDoc processing
 M.properties = {]])
 for _, property in ipairs(properties) do
@@ -237,11 +236,10 @@ f:write('}\n\n')
 f:write([[
 local marker_number, indic_number, list_type, image_type = 0, 0, 0, 0
 
---- Returns a unique marker number for use with `view.marker_define()`.
+--- Returns a unique marker number for use with `view:marker_define()`.
 -- Use this function for custom markers in order to prevent clashes with identifiers of other
 -- custom markers.
 -- @usage local marknum = _SCINTILLA.new_marker_number()
--- @see view.marker_define
 function M.new_marker_number()
   assert(marker_number < M.constants.MARKER_MAX, 'too many markers in use')
   marker_number = marker_number + 1
@@ -259,23 +257,20 @@ function M.new_indic_number()
   return indic_number
 end
 
---- Returns a unique user list identier number for use with `buffer.user_list_show()`.
+--- Returns a unique user list identier number for use with `buffer:user_list_show()`.
 -- Use this function for custom user lists in order to prevent clashes with list identifiers
 -- of other custom user lists.
 -- @usage local list_type = _SCINTILLA.new_user_list_type()
--- @see buffer.user_list_show
 function M.new_user_list_type()
   list_type = list_type + 1
   return list_type
 end
 
---- Returns a unique image type identier number for use with `view.register_image()` and
--- `view.register_rgba_image()`.
+--- Returns a unique image type identier number for use with `view:register_image()` and
+-- `view:register_rgba_image()`.
 -- Use this function for custom image types in order to prevent clashes with identifiers of
 -- other custom image types.
 -- @usage local image_type = _SCINTILLA.new_image_type()
--- @see view.register_image
--- @see view.register_rgba_image
 function M.new_image_type()
   image_type = image_type + 1
   return image_type

@@ -1,9 +1,10 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
 --- Compile and run source code files with Textadept.
--- [Language modules](#compile-and-run) may tweak the `compile_commands`, and `run_commands`
--- tables for particular languages.
--- The user may tweak `build_commands` and `test_commands` for particular projects.
+-- [Language modules](#compile-and-run) may tweak the `textadept.run.compile_commands`,
+-- and `textadept.run.run_commands` tables for particular languages. The user
+-- may tweak `textadept.run.build_commands`, `textadept.run.test_commands`, and
+-- `textadept.run.run_project_commands` for particular projects.
 -- @module textadept.run
 local M = {}
 
@@ -182,13 +183,11 @@ M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc 
 -- LuaFormatter on
 
 --- Prompts the user with the command entry to compile file *filename* or the current file using
--- an appropriate shell command from the `compile_commands` table.
+-- an appropriate shell command from the `textadept.run.compile_commands` table.
 -- The shell command is determined from the file's filename, extension, or language, in that order.
--- Emits `COMPILE_OUTPUT` events.
+-- Emits `events.COMPILE_OUTPUT`.
 -- @param[opt] filename Optional path to the file to compile. The default value is the current
 --   file's filename.
--- @see compile_commands
--- @see _G.events
 function M.compile(filename)
   if assert_type(filename, 'string/nil', 1) or buffer.filename then
     compile_or_run(filename or buffer.filename, M.compile_commands)
@@ -213,13 +212,11 @@ M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "f
 -- LuaFormatter on
 
 --- Prompts the user with the command entry to run file *filename* or the current file using an
--- appropriate shell command from the `run_commands` table.
+-- appropriate shell command from the `textadept.run.run_commands` table.
 -- The shell command is determined from the file's filename, extension, or language, in that order.
--- Emits `RUN_OUTPUT` events.
+-- Emits `events.RUN_OUTPUT`.
 -- @param[opt] filename Optional path to the file to run. The default value is the current
 --   file's filename.
--- @see run_commands
--- @see _G.events
 function M.run(filename)
   if assert_type(filename, 'string/nil', 1) or buffer.filename then
     compile_or_run(filename or buffer.filename, M.run_commands)
@@ -236,13 +233,12 @@ M.build_commands = {} -- empty declaration to avoid LDoc processing
 M.build_commands = {--[[Ant]]['build.xml']='ant',--[[Dockerfile]]Dockerfile='docker build .',--[[Make]]Makefile='make',GNUmakefile='make',makefile='make',--[[Meson]]['meson.build']='meson compile',--[[Maven]]['pom.xml']='mvn',--[[Ruby]]Rakefile='rake'}
 -- LuaFormatter on
 
---- Prompts the user with the command entry to build the project whose root path is *dir* or
--- the current project using the shell command from the `build_commands` table.  The current
--- project is determined by either the buffer's filename or the current working directory.
--- Emits `BUILD_OUTPUT` events.
+--- Prompts the user with the command entry to build the project whose root path is *dir*
+-- or the current project using the shell command from the `textadept.run.build_commands` table.
+-- The current project is determined by either the buffer's filename or the current working
+-- directory.
+-- Emits `events.BUILD_OUTPUT`.
 -- @param[opt] dir Optional path to the project to build. The default value is the current project.
--- @see build_commands
--- @see _G.events
 function M.build(dir)
   if not assert_type(dir, 'string/nil', 1) then
     dir = io.get_project_root()
@@ -269,13 +265,12 @@ end
 M.test_commands = {}
 
 --- Prompts the user with the command entry to run tests for the project whose root path is *dir*
--- or the current project using the shell command from the `test_commands` table.  The current
+-- or the current project using the shell command from the `textadept.run.test_commands` table.
+-- The current
 -- project is determined by either the buffer's filename or the current working directory.
--- Emits `TEST_OUTPUT` events.
+-- Emits `events.TEST_OUTPUT`.
 -- @param[opt] dir Optional path to the project to run tests for. The default value is the
 --   current project.
--- @see test_commands
--- @see _G.events
 function M.test(dir)
   if not assert_type(dir, 'string/nil', 1) then
     dir = io.get_project_root()
@@ -294,17 +289,15 @@ end
 M.run_project_commands = {}
 
 --- Prompts the user with the command entry to run shell command *cmd* or the shell command
--- from the `run_project_commands` table for the project whose root path is *dir* or the
--- current project.
+-- from the `textadept.run.run_project_commands` table for the project whose root path is *dir*
+-- or the current project.
 -- The current project is determined by either the buffer's filename or the current working
 -- directory.
--- Emits `RUN_OUTPUT` events.
+-- Emits `events.RUN_OUTPUT`.
 -- @param[opt] dir Optional path to the project to run a command for. The default value is the
 --   current project.
 -- @param[opt] cmd Optional string command to run. If given, the command entry initially shows
---   this command. The default value comes from `run_project_commands` and *dir*.
--- @see run_project_commands
--- @see _G.events
+--   this command. The default value comes from `textadept.run.run_project_commands` and *dir*.
 function M.run_project(dir, cmd)
   if not assert_type(dir, 'string/nil', 1) then
     dir = io.get_project_root()

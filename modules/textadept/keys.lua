@@ -241,7 +241,7 @@
 -- *: For use when the `-p` or `--preserve` command line option is given to the non-Windows
 -- terminal version, since ^S and ^Q are flow control sequences.
 --
--- †: If you prefer ^Z to suspend, you can bind it to [`ui.suspend()`]().
+-- †: If you prefer ^Z to suspend, you can bind it to `ui.suspend()`.
 --
 -- @module textadept.keys
 local M = {}

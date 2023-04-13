@@ -6,7 +6,7 @@
 -- a menu, etc. You can even emit events yourself using Lua. Each event has a set of event
 -- handlers, which are simply Lua functions called in the order they were connected to an
 -- event. For example, if you created a module that needs to do something each time Textadept
--- creates a new buffer, connect a Lua function to the [`events.BUFFER_NEW`]() event:
+-- creates a new buffer, connect a Lua function to the `events.BUFFER_NEW` event:
 --
 --     events.connect(events.BUFFER_NEW, function()
 --       -- Do something here.
@@ -43,7 +43,7 @@ local M = {}
 
 --- Emitted after selecting an item from an autocompletion list, but before inserting that item
 -- into the buffer.
--- Automatic insertion can be canceled by calling [`buffer:auto_c_cancel()`]() before returning
+-- Automatic insertion can be canceled by calling `buffer:auto_c_cancel()` before returning
 -- from the event handler.
 -- Arguments:
 --
@@ -54,44 +54,43 @@ local M = {}
 --- Emitted as items are highlighted in an autocompletion or user list.
 -- Arguments:
 --
---   - *id*: Either the *id* from [`buffer.user_list_show()`]() or `0` for an autocompletion list.
+--   - *id*: Either the *id* from `buffer:user_list_show()` or `0` for an autocompletion list.
 --   - *text*: The current selection's text.
 --   - *position*: The position the list was displayed at.
 -- @field AUTO_C_SELECTION_CHANGE
 
 --- Emitted right after switching to another buffer.
 -- The buffer being switched to is `buffer`.
--- Emitted by [`view.goto_buffer()`]().
+-- Emitted by `view:goto_buffer()`.
 -- @field BUFFER_AFTER_SWITCH
 
 --- Emitted before replacing the contents of the current buffer.
--- Note that it is not guaranteed that [`events.BUFFER_AFTER_REPLACE_TEXT`]() will be emitted
+-- Note that it is not guaranteed that `events.BUFFER_AFTER_REPLACE_TEXT` will be emitted
 -- shortly after this event.
 -- The buffer **must not** be modified during this event.
 -- @field BUFFER_BEFORE_REPLACE_TEXT
 
 --- Emitted right before switching to another buffer.
 -- The buffer being switched from is `buffer`.
--- Emitted by [`view.goto_buffer()`]().
+-- Emitted by `view:goto_buffer()`.
 -- @field BUFFER_BEFORE_SWITCH
 
 --- Emitted after replacing the contents of the current buffer.
--- Note that it is not guaranteed that [`events.BUFFER_BEFORE_REPLACE_TEXT`]() was emitted
--- previously.
+-- Note that it is not guaranteed that `events.BUFFER_BEFORE_REPLACE_TEXT` was emitted previously.
 -- The buffer **must not** be modified during this event.
 -- @field BUFFER_AFTER_REPLACE_TEXT
 
 --- Emitted after deleting a buffer.
--- Emitted by [`buffer.delete()`]().
+-- Emitted by `buffer:delete()`.
 -- Arguments:
 --
 --   - *buffer*: Simple representation of the deleted buffer. Buffer operations cannot be
---     performed on it, but fields like `filename` can be read.
+--     performed on it, but fields like `buffer.filename` can be read.
 -- @field BUFFER_DELETED
 
 --- Emitted after creating a new buffer.
 -- The new buffer is `buffer`.
--- Emitted on startup and by [`buffer.new()`]().
+-- Emitted on startup and by `buffer.new()`.
 -- @field BUFFER_NEW
 
 --- Emitted when clicking on a calltip.
@@ -132,7 +131,8 @@ local M = {}
 --   - *args*: Table of numeric arguments of the CSI sequence.
 -- @field CSI
 
---- Emitted after `DWELL_START` when the user moves the mouse, presses a key, or scrolls the view.
+--- Emitted after `events.DWELL_START` when the user moves the mouse, presses a key, or scrolls
+-- the view.
 -- Arguments:
 --
 --   - *position*: The position closest to *x* and *y*.
@@ -140,7 +140,7 @@ local M = {}
 --   - *y*: The y-coordinate of the mouse in the view.
 -- @field DWELL_END
 
---- Emitted when the mouse is stationary for [`view.mouse_dwell_time`]() milliseconds.
+--- Emitted when the mouse is stationary for `view.mouse_dwell_time` milliseconds.
 -- Arguments:
 --
 --   - *position*: The position closest to *x* and *y*.
@@ -209,7 +209,7 @@ local M = {}
 --- Emitted after selecting a menu item.
 -- Arguments:
 --
---   - *menu_id*: The numeric ID of the menu item, which was defined in [`ui.menu()`]().
+--   - *menu_id*: The numeric ID of the menu item, which was defined in `ui.menu()`.
 -- @field MENU_CLICKED
 
 --- Emitted by the GUI version when switching between light mode and dark mode.
@@ -238,7 +238,7 @@ local M = {}
 -- Textadept closes all open buffers. If a handler returns `true`, Textadept does not quit. It is
 -- not recommended to return `false` from a quit handler, as that may interfere with Textadept's
 -- normal shutdown procedure.
--- Emitted by [`quit()`]().
+-- Emitted by `quit()`.
 -- @field QUIT
 
 --- Emitted to replace selected (found) text.
@@ -255,7 +255,7 @@ local M = {}
 -- @field REPLACE_ALL
 
 --- Emitted after resetting Textadept's Lua state.
--- Emitted by [`reset()`]().
+-- Emitted by `reset()`.
 -- Arguments:
 --
 --   - *persist*: Table of data persisted by `events.RESET_BEFORE`. All handlers will have
@@ -263,7 +263,7 @@ local M = {}
 -- @field RESET_AFTER
 
 --- Emitted before resetting Textadept's Lua state.
--- Emitted by [`reset()`]().
+-- Emitted by `reset()`.
 -- Arguments:
 --
 --   - *persist*: Table to store persistent data in for use by `events.RESET_AFTER`. All
@@ -337,28 +337,28 @@ local M = {}
 --- Emitted after selecting an item in a user list.
 -- Arguments:
 --
---   - *id*: The *id* from [`buffer.user_list_show()`]().
+--   - *id*: The *id* from `buffer:user_list_show()`.
 --   - *text*: The selection's text.
 --   - *position*: The position the list was displayed at.
 -- @field USER_LIST_SELECTION
 
 --- Emitted after creating a new view.
 -- The new view is `view`.
--- Emitted on startup and by [`view.split()`]().
+-- Emitted on startup and by `view:split()`.
 -- @field VIEW_NEW
 
 --- Emitted right before switching to another view.
 -- The view being switched from is `view`.
--- Emitted by [`ui.goto_view()`]().
+-- Emitted by `ui.goto_view()`.
 -- @field VIEW_BEFORE_SWITCH
 
 --- Emitted right after switching to another view.
 -- The view being switched to is `view`.
--- Emitted by [`ui.goto_view()`]().
+-- Emitted by `ui.goto_view()`.
 -- @field VIEW_AFTER_SWITCH
 
---- Emitted after changing [`view.zoom`]().
--- Emitted by [`view.zoom_in()`]() and [`view.zoom_out()`]().
+--- Emitted after changing `view.zoom`.
+-- Emitted by `view:zoom_in()` and `view:zoom_out()`.
 -- @field ZOOM
 
 --- Map of event names to tables of handler functions.
@@ -379,7 +379,6 @@ local handlers = setmetatable({}, {
 -- @param f The Lua function to connect to *event*.
 -- @param[opt] index Optional index to insert the handler into.
 -- @usage events.connect('my_event', function(msg) ui.print(msg) end)
--- @see disconnect
 function M.connect(event, f, index)
   assert_type(event, 'string', 1)
   assert_type(f, 'function', 2)
@@ -391,7 +390,6 @@ end
 --- Removes function *f* from the set of handlers for event *event*.
 -- @param event The string event name.
 -- @param f The Lua function connected to *event*.
--- @see connect
 function M.disconnect(event, f)
   assert_type(f, 'function', 2)
   for i = 1, #handlers[assert_type(event, 'string', 1)] do

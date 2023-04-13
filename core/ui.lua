@@ -7,14 +7,14 @@ local ui = ui
 --- The title text of Textadept's window. (Write-only)
 -- @field title
 
---- The buffer's context menu, a [`ui.menu()`]().
+--- The buffer's context menu, a `ui.menu()`.
 -- This is a low-level field. You probably want to use the higher-level
--- [`textadept.menu.context_menu`]().
+-- `textadept.menu.context_menu`.
 -- @field context_menu
 
---- The context menu for the buffer's tab, a [`ui.menu()`]().
+--- The context menu for the buffer's tab, a `ui.menu()`.
 -- This is a low-level field. You probably want to use the higher-level
--- [`textadept.menu.tab_context_menu`]().
+-- `textadept.menu.tab_context_menu`.
 -- @field tab_context_menu
 
 --- The text on the clipboard.
@@ -194,7 +194,6 @@ end
 -- Buffers are listed in the order they were opened unless `ui.buffer_list_zorder` is `true`, in
 -- which case buffers are listed by their z-order (most recently viewed to least recently viewed).
 -- Buffers in the same project as the current buffer are shown with relative paths.
--- @see buffer_list_zorder
 function ui.switch_buffer()
   local buffers = not ui.buffer_list_zorder and _BUFFERS or buffers_zorder
   local columns, items = {_L['Name'], _L['Filename']}, {}
@@ -213,8 +212,8 @@ end
 -- If no view was found and *split* is `true`, splits the current view in order to show the
 -- requested file. If *split* is `false`, shifts to the next or *preferred_view* view in order
 -- to show the requested file. If *sloppy* is `true`, requires only the basename of *filename*
--- to match a buffer's `filename`. If the requested file was not found, it is opened in the
--- desired view.
+-- to match a buffer's `buffer.filename`. If the requested file was not found, it is opened in
+-- the desired view.
 -- @param filename The filename of the buffer to go to.
 -- @param[opt] split Optional flag that indicates whether or not to open the buffer in a split
 --   view if there is only one view. The default value is `false`.
@@ -476,7 +475,6 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 
 --- A table of menus defining a menubar. (Write-only).
 -- This is a low-level field. You probably want to use the higher-level `textadept.menu.menubar`.
--- @see textadept.menu.menubar
 -- @table menubar
 
 --- A table containing the width and height pixel values of Textadept's window.
@@ -493,17 +491,14 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 -- @function get_split_table
 
 --- Shifts to view *view* or the view *view* number of views relative to the current one.
--- Emits `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
+-- Emits `events.VIEW_BEFORE_SWITCH` and `events.VIEW_AFTER_SWITCH`.
 -- @param view A view or relative view number (typically 1 or -1).
--- @see _G._VIEWS
--- @see events.VIEW_BEFORE_SWITCH
--- @see events.VIEW_AFTER_SWITCH
 -- @function goto_view
 
 --- Low-level function for creating a menu from table *menu_table* and returning the userdata.
 -- You probably want to use the higher-level `textadept.menu.menubar`,
 -- `textadept.menu.context_menu`, or `textadept.menu.tab_context_menu` tables.
--- Emits a `MENU_CLICKED` event when a menu item is selected.
+-- Emits `events.MENU_CLICKED` when a menu item is selected.
 -- @param menu_table A table defining the menu. It is an ordered list of tables with a string
 --   menu item, integer menu ID, and optional keycode and modifier mask. The latter two are
 --   used to display key shortcuts in the menu. '&' characters are treated as a menu mnemonics
@@ -512,17 +507,13 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 --   `title` key.
 -- @usage ui.menu{ {'_New', 1}, {'_Open', 2}, {''}, {'&Quit', 4} }
 -- @usage ui.menu{ {'_New', 1, string.byte('n'), view.MOD_CTRL} } -- 'Ctrl+N'
--- @see events.MENU_CLICKED
--- @see textadept.menu.menubar
--- @see textadept.menu.context_menu
--- @see textadept.menu.tab_context_menu
 -- @function menu
 
 --- Displays a popup menu, typically the right-click context menu.
 -- @param menu Menu to display.
 -- @usage ui.popup_menu(ui.context_menu)
--- @see ui.menu
 -- @see ui.context_menu
+-- @see ui.menu
 -- @function popup_menu
 
 --- Processes pending UI events, including reading from spawned processes.
@@ -532,8 +523,6 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 --- Suspends Textadept.
 -- This only works in the terminal version. By default, Textadept ignores ^Z suspend signals from
 -- the terminal.
--- Emits `events.SUSPEND` and `events.RESUME` events.
+-- Emits `events.SUSPEND` and `events.RESUME`.
 -- @usage keys['ctrl+z'] = ui.suspend
--- @see events.SUSPEND
--- @see events.RESUME
 -- @function suspend

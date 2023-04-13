@@ -198,11 +198,9 @@ end, 1)
 -- This changes the order buffers are displayed in in the tab bar and buffer browser.
 -- @param from Index of the buffer to move.
 -- @param to Index to move the buffer to.
--- @see _BUFFERS
 -- @function move_buffer
 
---- Emits a `QUIT` event, and unless any handler returns `false`, quits Textadept.
--- @see events.QUIT
+--- Emits `events.QUIT`, and unless any handler returns `false`, quits Textadept.
 -- @function quit
 
 --- Resets the Lua State by reloading all initialization scripts.

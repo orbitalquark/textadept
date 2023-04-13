@@ -785,7 +785,7 @@ known encoding list, before attempting to open one. For example, in your *~/.tex
     table.insert(io.encodings, 3, 'Macintosh') -- before CP1252
 
 You can convert a buffer's encoding using the "Buffer > Encoding" menu or
-[`buffer.set_encoding()`][]. You can extend the menu to include more encodings. For example,
+[`buffer:set_encoding()`][]. You can extend the menu to include more encodings. For example,
 in your *~/.textadept/init.lua*:
 
     local menu = textadept.menu.menubar[_L['Buffer']][_L['Encoding']]
@@ -796,7 +796,7 @@ The default encoding for new buffers is UTF-8, due to its wide support in other 
 and all modern operating systems.
 
 [`io.encodings`]: api.html#io.encodings
-[`buffer.set_encoding()`]: api.html#buffer.set_encoding
+[`buffer:set_encoding()`]: api.html#buffer.set_encoding
 
 ##### Buffer Settings
 
@@ -1335,7 +1335,7 @@ Textadept attempts to load, in order, a given theme from the following locations
 them when you update Textadept. These themes also take precedence over the ones installed
 with Textadept.
 
-You can set Textadept's theme using [`view.set_theme()`][]. You can also tweak a theme's styles
+You can set Textadept's theme using [`view:set_theme()`][]. You can also tweak a theme's styles
 on a per-language basis. For example, in your *~/.textadept/init.lua*:
 
     if not CURSES then
@@ -1356,7 +1356,7 @@ on a per-language basis. For example, in your *~/.textadept/init.lua*:
 to either your *~/.textadept/init.lua* or theme file, issuing the `reset` command will reload
 your changes.
 
-[`view.set_theme()`]: api.html#view.set_theme
+[`view:set_theme()`]: api.html#view.set_theme
 [`reset()`]: api.html#reset
 
 The widgets in the GTK version of Textadept cannot be themed using Lua theme files. Instead, you
@@ -1555,7 +1555,7 @@ Liberation Mono), and lacks some GUI features due to the terminal's constraints:
 
 - No alpha values or transparency.
 - No images in autocompletion lists. Instead, autocompletion lists show the first character in
-  the string passed to [`buffer.register_image()`][].
+  the string passed to [`buffer:register_image()`][].
 - No buffered or two-phase drawing.
 - Carets cannot have a period, line style, or width.
 - No drag and drop.
@@ -1576,7 +1576,7 @@ Liberation Mono), and lacks some GUI features due to the terminal's constraints:
 - When using the mouse in the Windows console, Shift+Double-click extends selections and
   quadruple-clicking inside a selection collapses it.
 
-[`buffer.register_image()`]: api.html#buffer.register_image
+[`buffer:register_image()`]: api.html#buffer.register_image
 
 #### Directory Structure
 

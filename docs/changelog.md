@@ -1453,11 +1453,11 @@ Changes:
 - Removed the need for *~/.textadept/properties.lua*. All `buffer` settings set in
   *~/.textadept/init.lua* will apply to the first and subsequent buffers.
 - Renamed `ui.set_theme()` to `buffer.set_theme()`.
-- Enforce extra argument to [`buffer.brace_match()`][] added back in Scintilla 3.7.0.
+- Enforce extra argument to [`buffer:brace_match()`][] added back in Scintilla 3.7.0.
 - Added [`events.ZOOM`][].
 - New, object-oriented way to [create lexers][].
 
-[`buffer.brace_match()`]: api.html#buffer.brace_match
+[`buffer:brace_match()`]: api.html#buffer.brace_match
 [`events.ZOOM`]: api.html#events.ZOOM
 [create lexers]: api.html#lexer
 
@@ -3282,7 +3282,7 @@ Changes:
 - Mac OSX uses GTK 2.24.
 - Added [`io.open_recent_file()`][].
 - Changes to localization file again.
-- [`buffer`][] functions may omit the first `buffer` argument (e.g.n `buffer.line_down()`
+- [`buffer`][] functions may omit the first `buffer` argument (e.g. `buffer.line_down()`
   is allowed).
 - Complete overhaul of menus and added accelerators to [menu][] items.
 - Renamed `_m.textadept.editing.SAVE_STRIPS_WS` to

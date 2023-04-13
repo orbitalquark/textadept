@@ -31,7 +31,7 @@ M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
 M.highlight_words = M.HIGHLIGHT_NONE
 
 --- Whether or not to auto-enclose selected text when typing a punctuation character, taking
--- [`textadept.editing.auto_pairs`]() into account.
+-- `textadept.editing.auto_pairs` into account.
 -- The default value is `false`.
 M.auto_enclose = false
 
@@ -62,12 +62,11 @@ events.connect(events.VIEW_NEW, function()
 end)
 for _ = 1, #M.XPM_IMAGES do _SCINTILLA.new_image_type() end -- sync
 
---- Map of lexer names to line comment strings for programming languages, used by the
--- `toggle_comment()` function.
+--- Map of lexer names to line comment strings for programming languages, used by
+-- `editing.toggle_comment()`.
 -- Keys are lexer names and values are either the language's line comment prefixes or block
 -- comment delimiters separated by a '|' character. If no comment string exists for a given
 -- language, the lexer-supplied string is used, if available.
--- @see toggle_comment
 M.comment_string = {}
 
 --- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
@@ -410,10 +409,10 @@ end, 1)
 --- Selects the text between strings *left* and *right* that enclose the caret.
 -- If that range is already selected, toggles between selecting *left* and *right* as well.
 -- If *left* and *right* are not provided, they are assumed to be one of the delimiter pairs
--- specified in `auto_pairs` and are inferred from the current position or selection.
+-- specified in `textadept.editing.auto_pairs` and are inferred from the current position
+-- or selection.
 -- @param[opt] left Optional left part of the enclosure.
 -- @param[opt] right Optional right part of the enclosure.
--- @see auto_pairs
 function M.select_enclosed(left, right)
   local s, e, anchor, pos = -1, -1, buffer.anchor, buffer.current_pos
   if assert_type(left, 'string/nil', 1) and assert_type(right, 'string', 2) then
@@ -480,7 +479,6 @@ end
 --- Converts indentation between tabs and spaces according to `buffer.use_tabs`.
 -- If `buffer.use_tabs` is `true`, `buffer.tab_width` indenting spaces are converted to tabs.
 -- Otherwise, all indenting tabs are converted to `buffer.tab_width` spaces.
--- @see buffer.use_tabs
 function M.convert_indentation()
   buffer:begin_undo_action()
   for line = 1, buffer.line_count do
@@ -588,8 +586,8 @@ end
 
 --- Displays an autocompletion list provided by the autocompleter function associated with string
 -- *name*, and returns `true` if completions were found.
--- @param name The name of an autocompleter function in the `autocompleters` table to use for
---   providing autocompletions.
+-- @param name The name of an autocompleter function in the `textadept.editing.autocompleters`
+--   table to use for providing autocompletions.
 -- @see autocompleters
 function M.autocomplete(name)
   if not M.autocompleters[assert_type(name, 'string', 1)] then return end

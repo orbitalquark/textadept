@@ -18,8 +18,8 @@
 --
 -- Represents a placeholder, where *n* is an integer and *text* is default placeholder
 -- text. Textadept moves the caret to placeholders in numeric order each time it calls
--- [`textadept.snippets.insert()`](), finishing at either the "%0" placeholder if it exists or
--- at the end of the snippet. Examples are
+-- `textadept.snippets.insert()`, finishing at either the "%0" placeholder if it exists or at
+-- the end of the snippet. Examples are
 --
 --     snippets['foo'] = 'foobar%1(baz)'
 --     snippets['bar'] = 'start\n\t%0\nend'
@@ -82,13 +82,13 @@
 --
 -- #### `\t`
 --
--- A single unit of indentation based on the buffer's indentation settings ([`buffer.use_tabs`]()
--- and [`buffer.tab_width`]()).
+-- A single unit of indentation based on the buffer's indentation settings (`buffer.use_tabs`
+-- and `buffer.tab_width`.
 --
 -- #### `\n`
 --
 -- A single set of line ending delimiters based on the buffer's end of line mode
--- ([`buffer.eol_mode`]()).
+-- (`buffer.eol_mode`).
 --
 -- [`io.popen()`]: https://www.lua.org/manual/5.3/manual.html#pdf-io.popen
 -- @module textadept.snippets

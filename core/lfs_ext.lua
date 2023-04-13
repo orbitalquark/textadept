@@ -4,11 +4,10 @@
 -- @module lfs
 
 --- The filter table containing common binary file extensions and version control directories
--- to exclude when iterating over files and directories using `walk`.
+-- to exclude when iterating over files and directories using `lfs.walk`.
 -- Extensions excluded: a, bmp, bz2, class, dll, exe, gif, gz, jar, jpeg, jpg, o, pdf, png,
 -- so, tar, tgz, tif, tiff, xz, and zip.
 -- Directories excluded: .bzr, .git, .hg, .svn, _FOSSIL_, and node_modules.
--- @see walk
 lfs.default_filter = {} -- empty declaration to avoid LDoc processing
 -- LuaFormatter off
 lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!.exe','!.gif','!.gz','!.jar','!.jpeg','!.jpg','!.o','!.pdf','!.png','!.so','!.tar','!.tgz','!.tif','!.tiff','!.xz','!.zip',--[[Directories]]'!/.bzr','!/.git','!/.hg','!/.svn','!/_FOSSIL_','!/node_modules'}
@@ -75,7 +74,6 @@ end
 -- @param[opt] include_dirs Optional flag indicating whether or not to yield directory names too.
 --   Directory names are passed with a trailing '/' or '\', depending on the current platform.
 --   The default value is `false`.
--- @see default_filter
 function lfs.walk(dir, filter, n, include_dirs)
   dir = assert_type(dir, 'string', 1):match('^(..-)[/\\]?$')
   if not assert_type(filter, 'string/table/nil', 2) then filter = lfs.default_filter end

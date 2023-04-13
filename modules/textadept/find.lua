@@ -112,7 +112,6 @@ for _, v in ipairs(find_events) do events[v:upper()] = v end
 --- Map of directory paths to filters used in `ui.find.find_in_files()`.
 -- This table is updated when the user manually specifies a filter in the "Filter" entry during
 -- an "In files" search.
--- @see find_in_files
 M.find_in_files_filters = {}
 
 -- When finding in files, note the current view since results are shown in a split view. Jumping
@@ -278,8 +277,8 @@ events.connect(events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wr
 --- Searches directory *dir* or the user-specified directory for files that match search text
 -- and search options (subject to optional filter *filter*), and prints the results to a buffer
 -- titled "Files Found", highlighting found text.
--- Use the `find_entry_text`, `match_case`, `whole_word`, and `regex` fields to set the search
--- text and option flags, respectively.
+-- Use the `ui.find.find_entry_text`, `ui.find.match_case`, `ui.find.whole_word`, and
+-- `ui.find.regex` fields to set the search text and option flags, respectively.
 -- A filter determines which files to search in, with the default filter being
 -- `ui.find.find_in_files_filters[dir]` (if it exists) or `lfs.default_filter`. A filter consists
 -- of glob patterns that match file and directory paths to include or exclude. Patterns are
@@ -291,7 +290,6 @@ events.connect(events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wr
 -- @param[opt] dir Optional directory path to search. If `nil`, the user is prompted for one.
 -- @param[opt] filter Optional filter for files and directories to exclude. The default value is
 --   `lfs.default_filter` unless a filter for *dir* is defined in `ui.find.find_in_files_filters`.
--- @see find_in_files_filters
 function M.find_in_files(dir, filter)
   if not assert_type(dir, 'string/nil', 1) then
     dir = ui.dialogs.open{title = _L['Select Directory'], only_dirs = true, dir = ff_dir()}

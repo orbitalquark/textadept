@@ -24,18 +24,25 @@ local titles = {
   [TFIELD] = 'Fields'
 }
 
+--- Set of all known symbols that can be linked to.
+-- Symbol names are mapped to `true` values.
+-- This set must be populated after LDoc parses sources, but before writing anything.
+local known_symbols = {}
+--- Returns the given markdown with code spans linked to their symbols, if known.
+-- @param md Markdown to auto-link symbols in.
+local function link_known_symbols(md)
+  return md:gsub('(`([%w_.:]+)%(?%)?`)', function(code, symbol)
+    return known_symbols[symbol] and string.format('[%s](#%s)', code, symbol:gsub(':', '.')) or nil
+  end)
+end
+
 --- Writes an LDoc description to the given file.
 -- @param f The markdown file being written to.
 -- @param description The description.
 -- @param name The name of the module the description belongs to. Used for headers in module
 --   descriptions.
 local function write_description(f, description, name)
-  -- Substitute custom [`code`]() link convention with [`code`](#code) links.
-  local self_link = '(%[`([^`(]+)%(?%)?`%])%(%)'
-  description = description:gsub(self_link, function(link, id)
-    return string.format('%s(#%s)', link, id:gsub(':', '.'))
-  end)
-  description = description:gsub('\n ', '\n') -- strip leading spaces
+  description = link_known_symbols(description):gsub('\n ', '\n') -- strip leading spaces
   f:write(string.format(DESCRIPTION, description))
 end
 
@@ -48,6 +55,7 @@ local function write_hashmap(f, fmt, hashmap)
   f:write(string.format(LIST_TITLE, titles[fmt]))
   for _, name in ipairs(hashmap) do
     local description = hashmap.map and hashmap.map[name] or hashmap[name] or ''
+    if fmt == PARAM or fmt == TFIELD then description = link_known_symbols(description) end
     if fmt == PARAM then description = description:gsub('^%[opt%] ', '') end
     f:write(string.format(fmt, name, description))
   end
@@ -261,11 +269,20 @@ function M.ldoc(doc)
     end
   end
 
+  -- Populate `known_symbols`.
+  for _, module in ipairs(doc) do
+    known_symbols[module.name] = true
+    for _, item in ipairs(module.items) do
+      known_symbols[not item.name:find('[.:]') and module.name ~= '_G' and module.name .. '.' ..
+        item.name or item.name] = true
+    end
+  end
+
   -- Create the table of contents.
   for _, module in ipairs(doc) do f:write(string.format(TOC, module.name, module.name)) end
   f:write('\n')
 
-  -- Loop over modules, writing the Markdown document to stdout.
+  -- Loop over modules, writing the Markdown document (to stdout).
   for _, module in ipairs(doc) do
     write(f, module, module.name)
     f:write('---\n')

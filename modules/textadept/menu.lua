@@ -379,7 +379,6 @@ end
 -- @param contextmenu Flag indicating whether or not the menu is a context menu. If so, menu_id
 --   offset is 1000. The default value is `false`.
 -- @return menu that can be passed to `ui.menu()`.
--- @see ui.menu
 local function read_menu_table(menu, contextmenu)
   local ui_menu = {title = menu.title}
   for _, item in ipairs(menu) do
@@ -435,8 +434,8 @@ end
 -- function with its parameters to call when an item is clicked. Menu items may also be sub-menus,
 -- ordered lists of menu items with an additional `title` key for the sub-menu's title text.
 -- @param menubar The table of menu tables to create the menubar from. If `nil`, clears the
---   menubar from view, but keeps it intact in order for `M.select_command()` to function properly.
--- @see ui.menubar
+--   menubar from view, but keeps it intact in order for `textadept.menu.select_command()`
+--   to function properly.
 -- @see ui.menu
 local function set_menubar(menubar)
   if not menubar then
@@ -465,8 +464,6 @@ proxies.menubar = proxy_menu(default_menubar, function() end)
 --   uses the default context menu.
 -- @param[opt] tab_menu Optional menu table to create the tabbar context menu from. If `nil`,
 --   uses the default tab context menu.
--- @see ui.context_menu
--- @see ui.tab_context_menu
 -- @see ui.menu
 local function set_contextmenus(buffer_menu, tab_menu)
   contextmenu_items = {} -- reset

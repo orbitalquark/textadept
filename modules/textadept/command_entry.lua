@@ -5,7 +5,7 @@
 -- It supports multiple modes that each have their own functionality (such as running Lua code
 -- and filtering text through shell commands) and history.
 -- In addition to the functions and fields listed below, the command entry also has the same
--- functions and fields that [`buffer`]()s and [`view`]()s do.
+-- functions and fields that `buffer`s and `view`s do.
 -- @module ui.command_entry
 local M = ui.command_entry
 
@@ -206,7 +206,6 @@ end
 -- @param[opt] initial_text Optional string of text to initially show in the command entry. The
 --   default value comes from the command history for *f*.
 -- @param[opt] ... Optional additional arguments to pass to *f*.
--- @see editing_keys
 -- @usage ui.command_entry.run('echo:', ui.print)
 function M.run(label, f, keys, lang, initial_text, ...)
   if _G.keys.mode == '_command_entry' then return end -- already in command entry

@@ -207,7 +207,7 @@ Usage:
 <a id="move_buffer"></a>
 #### `move_buffer`(*from*, *to*)
 
-Moves the buffer at index *from* to index *to* in the `_BUFFERS` table, shifting other buffers
+Moves the buffer at index *from* to index *to* in the [`_BUFFERS`](#_BUFFERS) table, shifting other buffers
 as necessary.
 This changes the order buffers are displayed in in the tab bar and buffer browser.
 
@@ -219,15 +219,15 @@ Parameters:
 <a id="quit"></a>
 #### `quit`()
 
-Emits a `QUIT` event, and unless any handler returns `false`, quits Textadept.
+Emits [`events.QUIT`](#events.QUIT), and unless any handler returns `false`, quits Textadept.
 
 <a id="reset"></a>
 #### `reset`()
 
 Resets the Lua State by reloading all initialization scripts.
 This function is useful for modifying user scripts (such as *~/.textadept/init.lua*) on the
-fly without having to restart Textadept. `arg` is set to `nil` when reinitializing the Lua
-State. Any scripts that need to differentiate between startup and reset can test `arg`.
+fly without having to restart Textadept. [`arg`](#arg) is set to `nil` when reinitializing the Lua
+State. Any scripts that need to differentiate between startup and reset can test [`arg`](#arg).
 
 <a id="timeout"></a>
 #### `timeout`(*interval*, *f*[, ...])
@@ -295,7 +295,7 @@ and lParam types. Types are as follows:
 Map of Scintilla property names to table values containing their "get" function IDs, "set"
 function IDs, return types, and wParam types.
 The wParam type will be non-zero if the property is indexable.
-Types are the same as in the `functions` table.
+Types are the same as in the [`_SCINTILLA.functions`](#_SCINTILLA.functions) table.
 
 
 ### Functions defined by `_SCINTILLA`
@@ -303,8 +303,8 @@ Types are the same as in the `functions` table.
 <a id="_SCINTILLA.new_image_type"></a>
 #### `_SCINTILLA.new_image_type`()
 
-Returns a unique image type identier number for use with `view.register_image()` and
-`view.register_rgba_image()`.
+Returns a unique image type identier number for use with [`view:register_image()`](#view.register_image) and
+[`view:register_rgba_image()`](#view.register_rgba_image).
 Use this function for custom image types in order to prevent clashes with identifiers of
 other custom image types.
 
@@ -312,11 +312,6 @@ Usage:
 
 - `local image_type = _SCINTILLA.new_image_type()
 `
-
-See also:
-
-- [`view.register_image`](#view.register_image)
-- [`view.register_rgba_image`](#view.register_rgba_image)
 
 <a id="_SCINTILLA.new_indic_number"></a>
 #### `_SCINTILLA.new_indic_number`()
@@ -337,7 +332,7 @@ See also:
 <a id="_SCINTILLA.new_marker_number"></a>
 #### `_SCINTILLA.new_marker_number`()
 
-Returns a unique marker number for use with `view.marker_define()`.
+Returns a unique marker number for use with [`view:marker_define()`](#view.marker_define).
 Use this function for custom markers in order to prevent clashes with identifiers of other
 custom markers.
 
@@ -346,14 +341,10 @@ Usage:
 - `local marknum = _SCINTILLA.new_marker_number()
 `
 
-See also:
-
-- [`view.marker_define`](#view.marker_define)
-
 <a id="_SCINTILLA.new_user_list_type"></a>
 #### `_SCINTILLA.new_user_list_type`()
 
-Returns a unique user list identier number for use with `buffer.user_list_show()`.
+Returns a unique user list identier number for use with [`buffer:user_list_show()`](#buffer.user_list_show).
 Use this function for custom user lists in order to prevent clashes with list identifiers
 of other custom user lists.
 
@@ -404,12 +395,12 @@ website](https://scintilla.org/ScintillaDoc.html).
 Any buffer and view fields set on startup (e.g. in *~/.textadept/init.lua*) will be the
 default, initial values for all buffers.
 
-**Note:** This `buffer` and `view` API is largely interchangeable. That is, `view.`*field*
+**Note:** This [`buffer`](#buffer) and [`view`](#view) API is largely interchangeable. That is, `view.`*field*
 and `view:`*function* are often equivalent to `buffer.`*field* and `buffer:`*function*,
 respectively. While this reference chooses one notation over the other, these choices are not
 always strict requirements. Still, it is recommended to follow this convention. Functions
-and fields related to manipulating buffer text and selections should use `buffer`, while
-functions and fields related to displaying buffer text and other visuals should use `view`.
+and fields related to manipulating buffer text and selections should use [`buffer`](#buffer), while
+functions and fields related to displaying buffer text and other visuals should use [`view`](#view).
 
 1. [Create Buffers and Views](#create-buffers-and-views)
 1. [View Information](#view-information)
@@ -474,7 +465,7 @@ functions and fields related to displaying buffer text and other visuals should 
 #### `buffer:new`()
 
 Creates a new buffer, displays it in the current view, and returns it.
-Emits a `BUFFER_NEW` event.
+Emits [`events.BUFFER_NEW`](#events.BUFFER_NEW).
 
 Return:
 
@@ -486,7 +477,7 @@ Return:
 Splits the view into top and bottom views (unless *vertical* is `true`), focuses the new view,
 and returns both the old and new views.
 If *vertical* is `false`, splits the view vertically into left and right views.
-Emits a `VIEW_NEW` event.
+Emits [`events.VIEW_NEW`](#events.VIEW_NEW).
 
 Parameters:
 
@@ -532,7 +523,7 @@ Reloads the buffer's file contents, discarding any changes.
 
 Saves the buffer to its file, returning `true` on success.
 If the buffer does not have a file, the user is prompted for one.
-Emits `FILE_BEFORE_SAVE` and `FILE_AFTER_SAVE` events.
+Emits [`events.FILE_BEFORE_SAVE`](#events.FILE_BEFORE_SAVE) and [`events.FILE_AFTER_SAVE`](#events.FILE_AFTER_SAVE).
 
 Return:
 
@@ -543,7 +534,7 @@ Return:
 
 Saves the buffer to file *filename* or the user-specified filename, returning `true`
 on success.
-Emits a `FILE_AFTER_SAVE` event.
+Emits [`events.FILE_AFTER_SAVE`](#events.FILE_AFTER_SAVE).
 
 Parameters:
 
@@ -623,38 +614,38 @@ Moves the caret right one character.
 
 Moves the caret to the previous part of the current word.
 Word parts are delimited by underscore characters or changes in capitalization.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.word_part_right"></a>
 #### `buffer:word_part_right`()
 
 Moves the caret to the next part of the current word.
 Word parts are delimited by underscore characters or changes in capitalization.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.word_left_end"></a>
 #### `buffer:word_left_end`()
 
 Moves the caret left one word, positioning it at the end of the previous word.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.word_right_end"></a>
 #### `buffer:word_right_end`()
 
 Moves the caret right one word, positioning it at the end of the current word.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.word_left"></a>
 #### `buffer:word_left`()
 
 Moves the caret left one word.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.word_right"></a>
 #### `buffer:word_right`()
 
 Moves the caret right one word.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.home"></a>
 #### `buffer:home`()
@@ -744,15 +735,15 @@ Moves the caret down one line.
 
 The caret's preferred horizontal position when moving between lines.
 
-  - `buffer.CARETSTICKY_OFF`
+  - [`buffer.CARETSTICKY_OFF`](#buffer.CARETSTICKY_OFF)
     Use the same position the caret had on the previous line.
-  - `buffer.CARETSTICKY_ON`
+  - [`buffer.CARETSTICKY_ON`](#buffer.CARETSTICKY_ON)
     Use the last position the caret was moved to via the mouse, left/right arrow keys,
     home/end keys, etc. Typing text does not affect the position.
-  - `buffer.CARETSTICKY_WHITESPACE`
+  - [`buffer.CARETSTICKY_WHITESPACE`](#buffer.CARETSTICKY_WHITESPACE)
     Use the position the caret had on the previous line, but prior to any inserted indentation.
 
-  The default value is `buffer.CARETSTICKY_OFF`.
+  The default value is [`buffer.CARETSTICKY_OFF`](#buffer.CARETSTICKY_OFF).
 
 <a id="buffer.choose_caret_x"></a>
 #### `buffer:choose_caret_x`()
@@ -763,8 +754,8 @@ when moving between lines.
 <a id="buffer.toggle_caret_sticky"></a>
 #### `buffer:toggle_caret_sticky`()
 
-Cycles between `buffer.caret_sticky` option settings `buffer.CARETSTICKY_ON` and
-`buffer.CARETSTICKY_OFF`.
+Cycles between [`buffer.caret_sticky`](#buffer.caret_sticky) option settings [`buffer.CARETSTICKY_ON`](#buffer.CARETSTICKY_ON) and
+[`buffer.CARETSTICKY_OFF`](#buffer.CARETSTICKY_OFF).
 
 ### Move Between Pages
 
@@ -799,7 +790,7 @@ Moves the caret down one page.
 
 Switches to buffer *buffer* or the buffer *buffer* number of buffers relative to the
 current one.
-Emits `BUFFER_BEFORE_SWITCH` and `BUFFER_AFTER_SWITCH` events.
+Emits [`events.BUFFER_BEFORE_SWITCH`](#events.BUFFER_BEFORE_SWITCH) and [`events.BUFFER_AFTER_SWITCH`](#events.BUFFER_AFTER_SWITCH).
 
 Parameters:
 
@@ -1035,19 +1026,19 @@ If text is selected, deletes it.
 #### `buffer:del_word_left`()
 
 Deletes the word to the left of the caret, including any leading non-word characters.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.del_word_right"></a>
 #### `buffer:del_word_right`()
 
 Deletes the word to the right of the caret, including any trailing non-word characters.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.del_word_right_end"></a>
 #### `buffer:del_word_right_end`()
 
 Deletes the word to the right of the caret, excluding any trailing non-word characters.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.del_line_left"></a>
 #### `buffer:del_line_left`()
@@ -1230,7 +1221,7 @@ Parameters:
 #### `buffer:paste`()
 
 Pastes the clipboard's contents into the buffer, replacing any selected text according to
-`buffer.multi_paste`.
+[`buffer.multi_paste`](#buffer.multi_paste).
 
 <a id="buffer.multi_paste"></a>
 #### `buffer.multi_paste` 
@@ -1258,7 +1249,8 @@ Parameters:
 - *start_pos*:  The start position of the range of text in *buffer* to select. If negative,
    it means the end of the buffer.
 - *end_pos*:  The end position of the range of text in *buffer* to select. If negative,
-   it means remove any selection (i.e. set the `anchor` to the same position as `current_pos`).
+   it means remove any selection (i.e. set [`buffer.anchor`](#buffer.anchor) to the same position as
+   [`buffer.current_pos`](#buffer.current_pos)).
 
 <a id="buffer.selection_start"></a>
 #### `buffer.selection_start` 
@@ -1332,7 +1324,7 @@ Moves the caret right one character, extending the selected text to the new posi
 Moves the caret to the previous part of the current word, extending the selected text to
 the new position.
 Word parts are delimited by underscore characters or changes in capitalization.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.word_part_right_extend"></a>
 #### `buffer:word_part_right_extend`()
@@ -1340,29 +1332,29 @@ Word parts are delimited by underscore characters or changes in capitalization.
 Moves the caret to the next part of the current word, extending the selected text to the
 new position.
 Word parts are delimited by underscore characters or changes in capitalization.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.word_left_extend"></a>
 #### `buffer:word_left_extend`()
 
 Moves the caret left one word, extending the selected text to the new position.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.word_right_extend"></a>
 #### `buffer:word_right_extend`()
 
 Moves the caret right one word, extending the selected text to the new position.
-`buffer.word_chars` contains the set of characters that constitute words.
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words.
 
 <a id="buffer.word_left_end_extend"></a>
 #### `buffer:word_left_end_extend`()
 
-Like `buffer.word_left_end()`, but extends the selected text to the new position.
+Like [`buffer:word_left_end()`](#buffer.word_left_end), but extends the selected text to the new position.
 
 <a id="buffer.word_right_end_extend"></a>
 #### `buffer:word_right_end_extend`()
 
-Like `buffer.word_right_end()`, but extends the selected text to the new position.
+Like [`buffer:word_right_end()`](#buffer.word_right_end), but extends the selected text to the new position.
 
 <a id="buffer.home_extend"></a>
 #### `buffer:home_extend`()
@@ -1391,27 +1383,27 @@ new position.
 <a id="buffer.home_wrap_extend"></a>
 #### `buffer:home_wrap_extend`()
 
-Like `buffer.home_wrap()`, but extends the selected text to the new position.
+Like [`buffer:home_wrap()`](#buffer.home_wrap), but extends the selected text to the new position.
 
 <a id="buffer.line_end_wrap_extend"></a>
 #### `buffer:line_end_wrap_extend`()
 
-Like `buffer.line_end_wrap()`, but extends the selected text to the new position.
+Like [`buffer:line_end_wrap()`](#buffer.line_end_wrap), but extends the selected text to the new position.
 
 <a id="buffer.vc_home_extend"></a>
 #### `buffer:vc_home_extend`()
 
-Like `buffer.vc_home()`, but extends the selected text to the new position.
+Like [`buffer:vc_home()`](#buffer.vc_home), but extends the selected text to the new position.
 
 <a id="buffer.vc_home_display_extend"></a>
 #### `buffer:vc_home_display_extend`()
 
-Like `buffer.vc_home_display()`, but extends the selected text to the new position.
+Like [`buffer:vc_home_display()`](#buffer.vc_home_display), but extends the selected text to the new position.
 
 <a id="buffer.vc_home_wrap_extend"></a>
 #### `buffer:vc_home_wrap_extend`()
 
-Like `buffer.vc_home_wrap()`, but extends the selected text to the new position.
+Like [`buffer:vc_home_wrap()`](#buffer.vc_home_wrap), but extends the selected text to the new position.
 
 <a id="buffer.line_up_extend"></a>
 #### `buffer:line_up_extend`()
@@ -1438,12 +1430,12 @@ Paragraphs are surrounded by one or more blank lines.
 <a id="buffer.stuttered_page_up_extend"></a>
 #### `buffer:stuttered_page_up_extend`()
 
-Like `buffer.stuttered_page_up()`, but extends the selected text to the new position.
+Like [`buffer:stuttered_page_up()`](#buffer.stuttered_page_up), but extends the selected text to the new position.
 
 <a id="buffer.stuttered_page_down_extend"></a>
 #### `buffer:stuttered_page_down_extend`()
 
-Like `buffer.stuttered_page_down()`, but extends the selected text to the new position.
+Like [`buffer:stuttered_page_down()`](#buffer.stuttered_page_down), but extends the selected text to the new position.
 
 <a id="buffer.page_up_extend"></a>
 #### `buffer:page_up_extend`()
@@ -1480,18 +1472,18 @@ Whether or not regular caret movement alters the selected text. (Read-only)
 
 The selection mode.
 
-  - `buffer.SEL_STREAM`
+  - [`buffer.SEL_STREAM`](#buffer.SEL_STREAM)
     Character selection.
-  - `buffer.SEL_RECTANGLE`
+  - [`buffer.SEL_RECTANGLE`](#buffer.SEL_RECTANGLE)
     Rectangular selection.
-  - `buffer.SEL_LINES`
+  - [`buffer.SEL_LINES`](#buffer.SEL_LINES)
     Line selection.
-  - `buffer.SEL_THIN`
+  - [`buffer.SEL_THIN`](#buffer.SEL_THIN)
     Thin rectangular selection. This is the mode after a rectangular selection has been
     typed into and ensures that no characters are selected.
 
   When set, caret movement alters the selected text until this field is set again to the
-  same value or until [`buffer.cancel()`](#buffer.cancel) is called.
+  same value or until [`buffer:cancel()`](#buffer.cancel) is called.
 
 ### Make and Modify Multiple Selections
 
@@ -1514,7 +1506,7 @@ Parameters:
 Selects the range of text between positions *start_pos* to *end_pos* as the main selection,
 retaining all other selections as additional selections.
 Since an empty selection (i.e. the current position) still counts as a selection, use
-`buffer:set_selection()` first when setting a list of selections.
+[`buffer:set_selection()`](#buffer.set_selection) first when setting a list of selections.
 
 Parameters:
 
@@ -1665,7 +1657,7 @@ new position.
 <a id="buffer.vc_home_rect_extend"></a>
 #### `buffer:vc_home_rect_extend`()
 
-Like `buffer.vc_home()`, but extends the rectangular selection to the new position.
+Like [`buffer:vc_home()`](#buffer.vc_home), but extends the rectangular selection to the new position.
 
 <a id="buffer.line_up_rect_extend"></a>
 #### `buffer:line_up_rect_extend`()
@@ -1693,15 +1685,15 @@ Moves the caret down one page, extending the rectangular selection to the new po
 The modifier key used in combination with a mouse drag in order to create a rectangular
 selection.
 
-  - `view.MOD_CTRL`
+  - [`view.MOD_CTRL`](#view.MOD_CTRL)
     The "Control" modifier key.
-  - `view.MOD_ALT`
+  - [`view.MOD_ALT`](#view.MOD_ALT)
     The "Alt" modifier key.
-  - `view.MOD_SUPER`
+  - [`view.MOD_SUPER`](#view.MOD_SUPER)
     The "Super" modifier key, usually defined as the left "Windows" or
     "Command" key.
 
-The default value is `view.MOD_CTRL`.
+The default value is [`view.MOD_CTRL`](#view.MOD_CTRL).
 
 <a id="view.mouse_selection_rectangular_switch"></a>
 #### `view.mouse_selection_rectangular_switch` 
@@ -1725,7 +1717,7 @@ Parameters:
 <a id="buffer.search_anchor"></a>
 #### `buffer:search_anchor`()
 
-Anchors the position that `buffer.search_next()` and `buffer.search_prev()` start at to the
+Anchors the position that [`buffer:search_next()`](#buffer.search_next) and [`buffer:search_prev()`](#buffer.search_prev) start at to the
 beginning of the current selection or caret position.
 
 <a id="buffer.search_next"></a>
@@ -1738,7 +1730,7 @@ Selected text is not scrolled into view.
 
 Parameters:
 
-- *flags*:  The search flags to use. See `buffer.search_flags`.
+- *flags*:  The search flags to use. See [`buffer.search_flags`](#buffer.search_flags).
 - *text*:  The text to search for.
 
 Return:
@@ -1753,7 +1745,7 @@ search flags *flags*, returning that occurrence's position or `-1` if *text* was
 
 Parameters:
 
-- *flags*:  The search flags to use. See `buffer.search_flags`.
+- *flags*:  The search flags to use. See [`buffer.search_flags`](#buffer.search_flags).
 - *text*:  The text to search for.
 
 Return:
@@ -1769,15 +1761,15 @@ Return:
 <a id="buffer.search_flags"></a>
 #### `buffer.search_flags` 
 
-The bit-mask of search flags used by [`buffer.search_in_target()`](#buffer.search_in_target).
+The bit-mask of search flags used by [`buffer:search_in_target()`](#buffer.search_in_target).
 
-  - `buffer.FIND_WHOLEWORD`
+  - [`buffer.FIND_WHOLEWORD`](#buffer.FIND_WHOLEWORD)
     Match search text only when it is surrounded by non-word characters.
-  - `buffer.FIND_MATCHCASE`
+  - [`buffer.FIND_MATCHCASE`](#buffer.FIND_MATCHCASE)
     Match search text case sensitively.
-  - `buffer.FIND_WORDSTART`
+  - [`buffer.FIND_WORDSTART`](#buffer.FIND_WORDSTART)
     Match search text only when the previous character is a non-word character.
-  - `buffer.FIND_REGEXP`
+  - [`buffer.FIND_REGEXP`](#buffer.FIND_REGEXP)
     Interpret search text as a regular expression.
 
   The default value is `0`.
@@ -1792,7 +1784,7 @@ of the document, respectively.
 #### `buffer:search_in_target`(*text*)
 
 Searches for the first occurrence of string *text* in the target range bounded by
-`buffer.target_start` and `buffer.target_end` using search flags `buffer.search_flags`
+[`buffer.target_start`](#buffer.target_start) and [`buffer.target_end`](#buffer.target_end) using search flags [`buffer.search_flags`](#buffer.search_flags)
 and, if found, sets the new target range to that occurrence, returning its position or `-1`
 if *text* was not found.
 
@@ -1828,27 +1820,27 @@ The text in the target range. (Read-only)
 #### `buffer.target_start` 
 
 The position of the beginning of the target range.
-This is also set by a successful [`buffer.search_in_target()`](#buffer.search_in_target).
+This is also set by a successful [`buffer:search_in_target()`](#buffer.search_in_target).
 
 <a id="buffer.target_end"></a>
 #### `buffer.target_end` 
 
 The position of the end of the target range.
-This is also set by a successful [`buffer.search_in_target()`](#buffer.search_in_target).
+This is also set by a successful [`buffer:search_in_target()`](#buffer.search_in_target).
 
 <a id="buffer.target_start_virtual_space"></a>
 #### `buffer.target_start_virtual_space` 
 
 The position of the beginning of virtual space in the target range.
 This is set to `1` when [`buffer.target_start`](#buffer.target_start) or [`buffer.target_end`](#buffer.target_end) is set, or when
-[`buffer.set_target_range()`](#buffer.set_target_range) is called.
+[`buffer:set_target_range()`](#buffer.set_target_range) is called.
 
 <a id="buffer.target_end_virtual_space"></a>
 #### `buffer.target_end_virtual_space` 
 
 The position of the end of virtual space in the target range.
 This is set to `1` when [`buffer.target_start`](#buffer.target_start) or [`buffer.target_end`](#buffer.target_end) is set, or when
-[`buffer.set_target_range()`](#buffer.set_target_range) is called.
+[`buffer:set_target_range()`](#buffer.set_target_range) is called.
 
 <a id="buffer.tag"></a>
 #### `buffer.tag` 
@@ -1914,7 +1906,7 @@ Return:
 #### `buffer:word_start_position`(*pos*, *only_word_chars*)
 
 Returns the position of the beginning of the word at position *pos*.
-`buffer.word_chars` contains the set of characters that constitute words. If *pos* has
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words. If *pos* has
 a non-word character to its left and *only_word_chars* is `false`, returns the last word
 character's position.
 
@@ -1930,7 +1922,7 @@ Parameters:
 #### `buffer:word_end_position`(*pos*, *only_word_chars*)
 
 Returns the position of the end of the word at position *pos*.
-`buffer.word_chars` contains the set of characters that constitute words. If *pos* has a
+[`buffer.word_chars`](#buffer.word_chars) contains the set of characters that constitute words. If *pos* has a
 non-word character to its right and *only_word_chars* is `false`, returns the first word
 character's position.
 
@@ -2019,7 +2011,7 @@ The line number of the line at the top of the view.
 #### `buffer:line_from_position`(*pos*)
 
 Returns the line number of the line that contains position *pos*.
-Returns `1` if *pos* is less than 1 or `buffer.line_count` if *pos* is greater than
+Returns `1` if *pos* is less than 1 or [`buffer.line_count`](#buffer.line_count) if *pos* is greater than
 `buffer.length + 1`.
 
 Parameters:
@@ -2084,7 +2076,7 @@ Return:
 Returns the actual line number of displayed line number *display_line*, taking wrapped,
 annotated, and hidden lines into account.
 If *display_line* is less than or equal to `1`, returns `1`. If *display_line* is greater
-than the number of displayed lines, returns `buffer.line_count`.
+than the number of displayed lines, returns [`buffer.line_count`](#buffer.line_count).
 
 Parameters:
 
@@ -2170,58 +2162,58 @@ The default value is `5`.
 <a id="view.margin_type_n"></a>
 #### `view.margin_type_n` &lt;table&gt;
 
-List of margin types for margin numbers from `1` to `view.margins` (`5` by default).
+List of margin types for margin numbers from `1` to [`view.margins`](#view.margins) (`5` by default).
 
-  - `view.MARGIN_SYMBOL`
+  - [`view.MARGIN_SYMBOL`](#view.MARGIN_SYMBOL)
     A marker symbol margin.
-  - `view.MARGIN_NUMBER`
+  - [`view.MARGIN_NUMBER`](#view.MARGIN_NUMBER)
     A line number margin.
-  - `view.MARGIN_BACK`
+  - [`view.MARGIN_BACK`](#view.MARGIN_BACK)
     A marker symbol margin whose background color matches the default text background color.
-  - `view.MARGIN_FORE`
+  - [`view.MARGIN_FORE`](#view.MARGIN_FORE)
     A marker symbol margin whose background color matches the default text foreground color.
-  - `view.MARGIN_TEXT`
+  - [`view.MARGIN_TEXT`](#view.MARGIN_TEXT)
     A text margin.
-  - `view.MARGIN_RTEXT`
+  - [`view.MARGIN_RTEXT`](#view.MARGIN_RTEXT)
     A right-justified text margin.
-  - `view.MARGIN_COLOR`
+  - [`view.MARGIN_COLOR`](#view.MARGIN_COLOR)
     A marker symbol margin whose background color is configurable.
 
-The default value for the first margin is `view.MARGIN_NUMBER`, followed by `view.MARGIN_SYMBOL`
+The default value for the first margin is [`view.MARGIN_NUMBER`](#view.MARGIN_NUMBER), followed by [`view.MARGIN_SYMBOL`](#view.MARGIN_SYMBOL)
 for the rest.
 
 <a id="view.margin_width_n"></a>
 #### `view.margin_width_n` &lt;table&gt;
 
-List of pixel margin widths for margin numbers from `1` to `view.margins` (`5` by default).
+List of pixel margin widths for margin numbers from `1` to [`view.margins`](#view.margins) (`5` by default).
 
 <a id="view.margin_mask_n"></a>
 #### `view.margin_mask_n` &lt;table&gt;
 
 List of bit-masks of markers whose symbols marker symbol margins can display for margin
-numbers from `1` to `view.margins` (`5` by default).
+numbers from `1` to [`view.margins`](#view.margins) (`5` by default).
 Bit-masks are 32-bit values whose bits correspond to the 32 available markers.
-The default values are `0`, `view.MASK_FOLDERS`, `0`, `0`, and `0`, for a line margin and
+The default values are `0`, [`view.MASK_FOLDERS`](#view.MASK_FOLDERS), `0`, `0`, and `0`, for a line margin and
 logical marker margin.
 
 <a id="view.margin_sensitive_n"></a>
 #### `view.margin_sensitive_n` &lt;table&gt;
 
 List of flags that indicate whether or not mouse clicks in margins emit `MARGIN_CLICK`
-events for margin numbers from `1` to `view.margins` (`5` by default).
+events for margin numbers from `1` to [`view.margins`](#view.margins) (`5` by default).
 The default values are `false`.
 
 <a id="view.margin_cursor_n"></a>
 #### `view.margin_cursor_n` &lt;table&gt;
 
-List of cursor types shown over margin numbers from `1` to `view.margins` (`5` by default).
+List of cursor types shown over margin numbers from `1` to [`view.margins`](#view.margins) (`5` by default).
 
-  - `view.CURSORARROW`
+  - [`view.CURSORARROW`](#view.CURSORARROW)
     Normal arrow cursor.
-  - `view.CURSORREVERSEARROW`
+  - [`view.CURSORREVERSEARROW`](#view.CURSORREVERSEARROW)
     Reversed arrow cursor.
 
-The default values are `view.CURSORREVERSEARROW`.
+The default values are [`view.CURSORREVERSEARROW`](#view.CURSORREVERSEARROW).
 
 <a id="buffer.margin_text"></a>
 #### `buffer.margin_text` &lt;table&gt;
@@ -2245,20 +2237,20 @@ Clears all text in text margins.
 
 A bit-mask of margin option settings.
 
-  - `view.MARGINOPTION_NONE`
+  - [`view.MARGINOPTION_NONE`](#view.MARGINOPTION_NONE)
     None.
-  - `view.MARGINOPTION_SUBLINESELECT`
+  - [`view.MARGINOPTION_SUBLINESELECT`](#view.MARGINOPTION_SUBLINESELECT)
     Select only a wrapped line's sub-line (rather than the entire line) when the line number
     margin is clicked.
 
-The default value is `view.MARGINOPTION_NONE`.
+The default value is [`view.MARGINOPTION_NONE`](#view.MARGINOPTION_NONE).
 
 <a id="view.margin_back_n"></a>
 #### `view.margin_back_n` &lt;table&gt;
 
-List of background colors, in "0xBBGGRR" format, of margin numbers from `1` to `view.margins`
+List of background colors, in "0xBBGGRR" format, of margin numbers from `1` to [`view.margins`](#view.margins)
 (`5` by default).
-Only affects margins of type `view.MARGIN_COLOR`.
+Only affects margins of type [`view.MARGIN_COLOR`](#view.MARGIN_COLOR).
 
 <a id="view.set_fold_margin_color"></a>
 #### `view:set_fold_margin_color`(*use_setting*, *color*)
@@ -2298,7 +2290,7 @@ The default value is `1`.
 
 
  Each marker has an assigned symbol that is displayed in properly configured
- [margins](configure-line-margins). For lines with multiple markers, markers are drawn over
+ [margins](#configure-line-margins). For lines with multiple markers, markers are drawn over
  one another in ascending order. Markers move in sync with the lines they were added to as
  text is inserted and deleted. When a line that has a marker on it is deleted, that marker
  moves to the previous line.
@@ -2317,7 +2309,7 @@ Parameters:
 #### `view:marker_define_pixmap`(*marker*, *pixmap*)
 
 Associates marker number *marker*, in the range of `1` to `32`, with XPM image *pixmap*.
-The `view.MARK_PIXMAP` marker symbol must be assigned to *marker*. *pixmap* is shown in
+The [`view.MARK_PIXMAP`](#view.MARK_PIXMAP) marker symbol must be assigned to *marker*. *pixmap* is shown in
 marker symbol margins next to lines marked with *marker*.
 
 Parameters:
@@ -2329,10 +2321,10 @@ Parameters:
 #### `view:marker_define_rgba_image`(*marker*, *pixels*)
 
 Associates marker number *marker*, in the range of `1` to `32`, with RGBA image *pixels*.
-The dimensions for *pixels* (`view.rgba_image_width` and `view.rgba_image_height`) must
+The dimensions for *pixels* ([`view.rgba_image_width`](#view.rgba_image_width) and [`view.rgba_image_height`](#view.rgba_image_height)) must
 have already been defined. *pixels* is a sequence of 4 byte pixel values (red, blue, green,
 and alpha) defining the image line by line starting at the top-left pixel.
-The `view.MARK_RGBAIMAGE` marker symbol must be assigned to *marker*. *pixels* is shown in
+The [`view.MARK_RGBAIMAGE`](#view.MARK_RGBAIMAGE) marker symbol must be assigned to *marker*. *pixels* is shown in
 symbol margins next to lines marked with *marker*.
 
 Parameters:
@@ -2349,8 +2341,8 @@ Parameters:
 #### `buffer:marker_add`(*line*, *marker*)
 
 Adds marker number *marker*, in the range of `1` to `32`, to line number *line*, returning
-the added marker's handle which can be used in `buffer.marker_delete_handle()` and
-`buffer.marker_line_from_handle()`, or `-1` if *line* is invalid.
+the added marker's handle which can be used in [`buffer:marker_delete_handle()`](#buffer.marker_delete_handle) and
+[`buffer:marker_line_from_handle()`](#buffer.marker_line_from_handle), or `-1` if *line* is invalid.
 
 Parameters:
 
@@ -2377,11 +2369,11 @@ Parameters:
 <a id="buffer.marker_delete_handle"></a>
 #### `buffer:marker_delete_handle`(*handle*)
 
-Deletes the marker with handle *handle* returned by `buffer.marker_add()`.
+Deletes the marker with handle *handle* returned by [`buffer:marker_add()`](#buffer.marker_add).
 
 Parameters:
 
-- *handle*:  The identifier of a marker returned by `buffer.marker_add()`.
+- *handle*:  The identifier of a marker returned by [`buffer:marker_add()`](#buffer.marker_add).
 
 <a id="buffer.marker_delete"></a>
 #### `buffer:marker_delete`(*line*, *marker*)
@@ -2410,11 +2402,11 @@ Parameters:
 #### `buffer:marker_line_from_handle`(*handle*)
 
 Returns the line number of the line that contains the marker with handle *handle* (returned
-`buffer.marker_add()`), or `-1` if the line was not found.
+[`buffer:marker_add()`](#buffer.marker_add)), or `-1` if the line was not found.
 
 Parameters:
 
-- *handle*:  The identifier of a marker returned by `buffer.marker_add()`.
+- *handle*:  The identifier of a marker returned by [`buffer:marker_add()`](#buffer.marker_add).
 
 Return:
 
@@ -2495,8 +2487,8 @@ Parameters:
 #### `view:marker_symbol_defined`(*marker*)
 
 Returns the symbol assigned to marker number *marker*, in the range of `1` to `32`, used in
-`view.marker_define()`,
-`view.marker_define_pixmap()`, or `view.marker_define_rgba_image()`.
+[`view:marker_define()`](#view.marker_define),
+[`view:marker_define_pixmap()`](#view.marker_define_pixmap), or [`view:marker_define_rgba_image()`](#view.marker_define_rgba_image).
 
 Parameters:
 
@@ -2534,7 +2526,7 @@ List of background colors, in "0xAABBGGRR" format, of marker numbers from `1` to
 
 List of alpha values, ranging from `0` (transparent) to `255` (opaque), of markers drawn in
 the text area (not the margin) for markers numbers from `1` to `32`. (Write-only)
-The default values are `view.ALPHA_NOALPHA`, for no alpha.
+The default values are [`view.ALPHA_NOALPHA`](#view.ALPHA_NOALPHA), for no alpha.
 
 <a id="view.marker_enable_highlight"></a>
 #### `view:marker_enable_highlight`(*enabled*)
@@ -2563,14 +2555,14 @@ selected for marker numbers from `1` to `32`. (Write-only)
 Table of layer modes for drawing markers in the text area (not the margin) for marker
 numbers from `1` to `32`.
 
-  - `view.LAYER_BASE`
+  - [`view.LAYER_BASE`](#view.LAYER_BASE)
     Draw markers opaquely on the background.
-  - `view.LAYER_UNDER_TEXT`
+  - [`view.LAYER_UNDER_TEXT`](#view.LAYER_UNDER_TEXT)
     Draw markers translucently under text.
-  - `view.LAYER_OVER_TEXT`
+  - [`view.LAYER_OVER_TEXT`](#view.LAYER_OVER_TEXT)
     Draw markers translucently over text.
 
-The default values are `view.LAYER_BASE`.
+The default values are [`view.LAYER_BASE`](#view.LAYER_BASE).
 
 <a id="view.marker_stroke_width"></a>
 #### `view.marker_stroke_width` &lt;table&gt;
@@ -2623,49 +2615,49 @@ Clears EOL annotations from all lines.
 
 The annotation visibility mode.
 
-  - `view.ANNOTATION_HIDDEN`
+  - [`view.ANNOTATION_HIDDEN`](#view.ANNOTATION_HIDDEN)
     Annotations are invisible.
-  - `view.ANNOTATION_STANDARD`
+  - [`view.ANNOTATION_STANDARD`](#view.ANNOTATION_STANDARD)
     Draw annotations left-justified with no decoration.
-  - `view.ANNOTATION_BOXED`
+  - [`view.ANNOTATION_BOXED`](#view.ANNOTATION_BOXED)
     Indent annotations to match the annotated text and outline them with a box.
-  - `view.ANNOTATION_INDENTED`
+  - [`view.ANNOTATION_INDENTED`](#view.ANNOTATION_INDENTED)
     Indent non-decorated annotations to match the annotated text.
 
-The default value is `view.ANNOTATION_HIDDEN`.
+The default value is [`view.ANNOTATION_HIDDEN`](#view.ANNOTATION_HIDDEN).
 
 <a id="view.eol_annotation_visible"></a>
 #### `view.eol_annotation_visible` 
 
 The EOL annotation visibility mode.
 
-  - `view.EOLANNOTATION_HIDDEN`
+  - [`view.EOLANNOTATION_HIDDEN`](#view.EOLANNOTATION_HIDDEN)
     EOL Annotations are invisible.
-  - `view.EOLANNOTATION_STANDARD`
+  - [`view.EOLANNOTATION_STANDARD`](#view.EOLANNOTATION_STANDARD)
     Draw EOL annotations no decoration.
-  - `view.EOLANNOTATION_BOXED`
+  - [`view.EOLANNOTATION_BOXED`](#view.EOLANNOTATION_BOXED)
     Draw EOL annotations outlined with a box.
-  - `view.EOLANNOTATION_STADIUM`
+  - [`view.EOLANNOTATION_STADIUM`](#view.EOLANNOTATION_STADIUM)
     Draw EOL annotations outline with curved ends.
-  - `view.EOLANNOTATION_FLAT_CIRCLE`
+  - [`view.EOLANNOTATION_FLAT_CIRCLE`](#view.EOLANNOTATION_FLAT_CIRCLE)
     Draw EOL annotations outline with a flat left end and curved right end.
-  - `view.EOLANNOTATION_ANGLE_CIRCLE`
+  - [`view.EOLANNOTATION_ANGLE_CIRCLE`](#view.EOLANNOTATION_ANGLE_CIRCLE)
     Draw EOL annotations outline with an angled left end and curved right end.
-  - `view.EOLANNOTATION_CIRCLE_FLAT`
+  - [`view.EOLANNOTATION_CIRCLE_FLAT`](#view.EOLANNOTATION_CIRCLE_FLAT)
     Draw EOL annotations outline with a curved left end and flat right end.
-  - `view.EOLANNOTATION_FLATS`
+  - [`view.EOLANNOTATION_FLATS`](#view.EOLANNOTATION_FLATS)
     Draw EOL annotations outline with a flat ends.
-  - `view.EOLANNOTATION_ANGLE_FLAT`
+  - [`view.EOLANNOTATION_ANGLE_FLAT`](#view.EOLANNOTATION_ANGLE_FLAT)
     Draw EOL annotations outline with an angled left end and flat right end.
-  - `view.EOLANNOTATION_CIRCLE_ANGLE`
+  - [`view.EOLANNOTATION_CIRCLE_ANGLE`](#view.EOLANNOTATION_CIRCLE_ANGLE)
     Draw EOL annotations outline with a curved left end and angled right end.
-  - `view.EOLANNOTATION_FLAT_ANGLE`
+  - [`view.EOLANNOTATION_FLAT_ANGLE`](#view.EOLANNOTATION_FLAT_ANGLE)
     Draw EOL annotations outline with a flat left end and angled right end.
-  - `view.EOLANNOTATION_ANGLES`
+  - [`view.EOLANNOTATION_ANGLES`](#view.EOLANNOTATION_ANGLES)
     Draw EOL annotations outline with angled ends.
 
 All annotations are drawn with the same shape. The default value is
-`view.EOLANNOTATION_HIDDEN`.
+[`view.EOLANNOTATION_HIDDEN`](#view.EOLANNOTATION_HIDDEN).
 
 <a id="buffer.annotation_lines"></a>
 #### `buffer.annotation_lines` &lt;table&gt;
@@ -2683,61 +2675,61 @@ List of the number of annotation text lines per line number. (Read-only)
 
 List of styles for indicator numbers from `1` to `32`.
 
-  - `view.INDIC_PLAIN`
+  - [`view.INDIC_PLAIN`](#view.INDIC_PLAIN)
     An underline.
-  - `view.INDIC_SQUIGGLE`
+  - [`view.INDIC_SQUIGGLE`](#view.INDIC_SQUIGGLE)
     A squiggly underline 3 pixels in height.
-  - `view.INDIC_TT`
+  - [`view.INDIC_TT`](#view.INDIC_TT)
     An underline of small 'T' shapes.
-  - `view.INDIC_DIAGONAL`
+  - [`view.INDIC_DIAGONAL`](#view.INDIC_DIAGONAL)
     An underline of diagonal hatches.
-  - `view.INDIC_STRIKE`
+  - [`view.INDIC_STRIKE`](#view.INDIC_STRIKE)
     Strike out.
-  - `view.INDIC_HIDDEN`
+  - [`view.INDIC_HIDDEN`](#view.INDIC_HIDDEN)
     Invisible.
-  - `view.INDIC_BOX`
+  - [`view.INDIC_BOX`](#view.INDIC_BOX)
     A bounding box.
-  - `view.INDIC_ROUNDBOX`
+  - [`view.INDIC_ROUNDBOX`](#view.INDIC_ROUNDBOX)
     A translucent box with rounded corners around the text. Use [`view.indic_alpha`](#view.indic_alpha) and
     [`view.indic_outline_alpha`](#view.indic_outline_alpha) to set the fill and outline transparency, respectively.
     Their default values are `30` and `50`.
-  - `view.INDIC_STRAIGHTBOX`
-    Similar to `INDIC_ROUNDBOX` but with sharp corners.
-  - `view.INDIC_DASH`
+  - [`view.INDIC_STRAIGHTBOX`](#view.INDIC_STRAIGHTBOX)
+    Similar to [`view.INDIC_ROUNDBOX`](#view.INDIC_ROUNDBOX) but with sharp corners.
+  - [`view.INDIC_DASH`](#view.INDIC_DASH)
     A dashed underline.
-  - `view.INDIC_DOTS`
+  - [`view.INDIC_DOTS`](#view.INDIC_DOTS)
     A dotted underline.
-  - `view.INDIC_SQUIGGLELOW`
+  - [`view.INDIC_SQUIGGLELOW`](#view.INDIC_SQUIGGLELOW)
     A squiggly underline 2 pixels in height.
-  - `view.INDIC_DOTBOX`
-    Similar to `INDIC_STRAIGHTBOX` but with a dotted outline.
+  - [`view.INDIC_DOTBOX`](#view.INDIC_DOTBOX)
+    Similar to [`view.INDIC_STRAIGHTBOX`](#view.INDIC_STRAIGHTBOX) but with a dotted outline.
     Translucency alternates between [`view.indic_alpha`](#view.indic_alpha) and [`view.indic_outline_alpha`](#view.indic_outline_alpha)
     starting with the top-left pixel.
-  - `view.INDIC_SQUIGGLEPIXMAP`
-    Identical to `INDIC_SQUIGGLE` but draws faster by using a pixmap instead of multiple
+  - [`view.INDIC_SQUIGGLEPIXMAP`](#view.INDIC_SQUIGGLEPIXMAP)
+    Identical to [`view.INDIC_SQUIGGLE`](#view.INDIC_SQUIGGLE) but draws faster by using a pixmap instead of multiple
     line segments.
-  - `view.INDIC_COMPOSITIONTHICK`
+  - [`view.INDIC_COMPOSITIONTHICK`](#view.INDIC_COMPOSITIONTHICK)
     A 2-pixel thick underline at the bottom of the line inset by 1 pixel on on either
     side. Similar in appearance to the target in Asian language input composition.
-  - `view.INDIC_COMPOSITIONTHIN`
+  - [`view.INDIC_COMPOSITIONTHIN`](#view.INDIC_COMPOSITIONTHIN)
     A 1-pixel thick underline just before the bottom of the line inset by 1 pixel on either
     side. Similar in appearance to the non-target ranges in Asian language input composition.
-  - `view.INDIC_FULLBOX`
-    Similar to `INDIC_STRAIGHTBOX` but extends to the top of its line, potentially touching
-    any similar indicators on the line above.
-  - `view.INDIC_TEXTFORE`
+  - [`view.INDIC_FULLBOX`](#view.INDIC_FULLBOX)
+    Similar to [`view.INDIC_STRAIGHTBOX`](#view.INDIC_STRAIGHTBOX) but extends to the top of its line, potentially
+    touching any similar indicators on the line above.
+  - [`view.INDIC_TEXTFORE`](#view.INDIC_TEXTFORE)
     Changes the color of text to an indicator's foreground color.
-  - `view.INDIC_POINT`
+  - [`view.INDIC_POINT`](#view.INDIC_POINT)
     A triangle below the start of the indicator range.
-  - `view.INDIC_POINTCHARACTER`
+  - [`view.INDIC_POINTCHARACTER`](#view.INDIC_POINTCHARACTER)
     A triangle below the center of the first character of the indicator
     range.
-  - `view.INDIC_GRADIENT`
+  - [`view.INDIC_GRADIENT`](#view.INDIC_GRADIENT)
     A box with a vertical gradient from solid on top to transparent on bottom.
-  - `view.INDIC_GRADIENTCENTER`
+  - [`view.INDIC_GRADIENTCENTER`](#view.INDIC_GRADIENTCENTER)
     A box with a centered gradient from solid in the middle to transparent on the top
     and bottom.
-  - `view.INDIC_POINT_TOP`
+  - [`view.INDIC_POINT_TOP`](#view.INDIC_POINT_TOP)
     A triangle above the start of the indicator range.
 
 Use [`_SCINTILLA.new_indic_number()`](#_SCINTILLA.new_indic_number) for custom indicators.
@@ -2761,14 +2753,14 @@ The default values are the respective indicator styles.
 <a id="buffer.indicator_current"></a>
 #### `buffer.indicator_current` 
 
-The indicator number in the range of `1` to `32` used by [`buffer.indicator_fill_range()`](#buffer.indicator_fill_range)
-and [`buffer.indicator_clear_range()`](#buffer.indicator_clear_range).
+The indicator number in the range of `1` to `32` used by [`buffer:indicator_fill_range()`](#buffer.indicator_fill_range)
+and [`buffer:indicator_clear_range()`](#buffer.indicator_clear_range).
 
 <a id="buffer.indicator_fill_range"></a>
 #### `buffer:indicator_fill_range`(*pos*, *length*)
 
 Fills the range of text from position *pos* to *pos* + *length* with indicator number
-`buffer.indicator_current`.
+[`buffer.indicator_current`](#buffer.indicator_current).
 
 Parameters:
 
@@ -2778,7 +2770,7 @@ Parameters:
 <a id="buffer.indicator_clear_range"></a>
 #### `buffer:indicator_clear_range`(*pos*, *length*)
 
-Clears indicator number `buffer.indicator_current` over the range of text from position *pos*
+Clears indicator number [`buffer.indicator_current`](#buffer.indicator_current) over the range of text from position *pos*
 to *pos* + *length*.
 
 Parameters:
@@ -2834,17 +2826,17 @@ Changing an indicator's foreground color resets that indicator's hover foregroun
 #### `view.indic_alpha` &lt;table&gt;
 
 List of fill color alpha values, ranging from `0` (transparent) to `255` (opaque),
-for indicator numbers from `1` to `32` whose styles are either `INDIC_ROUNDBOX`,
-`INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
-The default values are `view.ALPHA_NOALPHA`, for no alpha.
+for indicator numbers from `1` to `32` whose styles are either [`view.INDIC_ROUNDBOX`](#view.INDIC_ROUNDBOX),
+[`view.INDIC_STRAIGHTBOX`](#view.INDIC_STRAIGHTBOX), or [`view.INDIC_DOTBOX`](#view.INDIC_DOTBOX).
+The default values are [`view.ALPHA_NOALPHA`](#view.ALPHA_NOALPHA), for no alpha.
 
 <a id="view.indic_outline_alpha"></a>
 #### `view.indic_outline_alpha` &lt;table&gt;
 
 List of outline color alpha values, ranging from `0` (transparent) to `255` (opaque),
-for indicator numbers from `1` to `32` whose styles are either `INDIC_ROUNDBOX`,
-`INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
-The default values are `view.ALPHA_NOALPHA`, for no alpha.
+for indicator numbers from `1` to `32` whose styles are either [`view.INDIC_ROUNDBOX`](#view.INDIC_ROUNDBOX),
+[`view.INDIC_STRAIGHTBOX`](#view.INDIC_STRAIGHTBOX), or [`view.INDIC_DOTBOX`](#view.INDIC_DOTBOX).
+The default values are [`view.ALPHA_NOALPHA`](#view.ALPHA_NOALPHA), for no alpha.
 
 <a id="view.indic_hover_fore"></a>
 #### `view.indic_hover_fore` &lt;table&gt;
@@ -2856,9 +2848,10 @@ The default values are the respective indicator foreground colors.
 #### `view.indic_stroke_width` &lt;table&gt;
 
 List of stroke widths in hundredths of a pixel for indicator numbers from `1` to `32`
-whose styles are either `INDIC_PLAIN`, `INDIC_SQUIGGLE`, `INDIC_TT`, `INDIC_DIAGONAL`,
-`INDIC_STRIKE`, `INDIC_BOX`, `INDIC_ROUNDBOX`, `INDIC_STRAIGHTBOX`, `INDIC_FULLBOX`,
-`INDIC_DASH`, `INDIC_DOTS`,  or `INDIC_SQUIGGLELOW`.
+whose styles are either [`view.INDIC_PLAIN`](#view.INDIC_PLAIN), [`view.INDIC_SQUIGGLE`](#view.INDIC_SQUIGGLE), [`view.INDIC_TT`](#view.INDIC_TT),
+[`view.INDIC_DIAGONAL`](#view.INDIC_DIAGONAL), [`view.INDIC_STRIKE`](#view.INDIC_STRIKE), [`view.INDIC_BOX`](#view.INDIC_BOX), [`view.INDIC_ROUNDBOX`](#view.INDIC_ROUNDBOX),
+[`view.INDIC_STRAIGHTBOX`](#view.INDIC_STRAIGHTBOX), [`view.INDIC_FULLBOX`](#view.INDIC_FULLBOX), [`view.INDIC_DASH`](#view.INDIC_DASH), [`view.INDIC_DOTS`](#view.INDIC_DOTS),  or
+[`view.INDIC_SQUIGGLELOW`](#view.INDIC_SQUIGGLELOW).
 The default values are `100`, or 1 pixel.
 
 ### Display an Autocompletion List
@@ -2882,48 +2875,49 @@ The default value is `32` (' ').
 
 The order setting for autocompletion and user lists.
 
-  - `buffer.ORDER_PRESORTED`
-    Lists passed to [`buffer.auto_c_show()`](#buffer.auto_c_show) are in sorted, alphabetical order.
-  - `buffer.ORDER_PERFORMSORT`
-    Sort autocompletion lists passed to [`buffer.auto_c_show()`](#buffer.auto_c_show).
-  - `buffer.ORDER_CUSTOM`
-    Lists passed to [`buffer.auto_c_show()`](#buffer.auto_c_show) are already in a custom order.
+  - [`buffer.ORDER_PRESORTED`](#buffer.ORDER_PRESORTED)
+    Lists passed to [`buffer:auto_c_show()`](#buffer.auto_c_show) are in sorted, alphabetical order.
+  - [`buffer.ORDER_PERFORMSORT`](#buffer.ORDER_PERFORMSORT)
+    Sort autocompletion lists passed to [`buffer:auto_c_show()`](#buffer.auto_c_show).
+  - [`buffer.ORDER_CUSTOM`](#buffer.ORDER_CUSTOM)
+    Lists passed to [`buffer:auto_c_show()`](#buffer.auto_c_show) are already in a custom order.
 
-  The default value is `buffer.ORDER_PRESORTED`.
+  The default value is [`buffer.ORDER_PRESORTED`](#buffer.ORDER_PRESORTED).
 
 <a id="buffer.auto_c_show"></a>
 #### `buffer:auto_c_show`(*len_entered*, *items*)
 
 Displays an autocompletion list constructed from string *items* (whose items are delimited by
-`buffer.auto_c_separator` characters) using *len_entered* number of characters behind the
+[`buffer.auto_c_separator`](#buffer.auto_c_separator) characters) using *len_entered* number of characters behind the
 caret as the prefix of the word to be autocompleted.
-The sorted order of *items* (`buffer.auto_c_order`) must have already been defined.
+The sorted order of *items* ([`buffer.auto_c_order`](#buffer.auto_c_order)) must have already been defined.
 
 Parameters:
 
 - *len_entered*:  The number of characters before the caret used to provide the context.
-- *items*:  The sorted string of words to show, separated by `buffer.auto_c_separator`
+- *items*:  The sorted string of words to show, separated by [`buffer.auto_c_separator`](#buffer.auto_c_separator)
    characters (initially spaces).
 
 <a id="buffer.user_list_show"></a>
 #### `buffer:user_list_show`(*id*, *items*)
 
 Displays a user list identified by list identifier number *id* and constructed from string
-*items* (whose items are delimited by `buffer.auto_c_separator` characters).
-The sorted order of *items* (`buffer.auto_c_order`) must have already been defined. When the
-user selects an item, *id* is sent in a `USER_LIST_SELECTION` event along with the selection.
+*items* (whose items are delimited by [`buffer.auto_c_separator`](#buffer.auto_c_separator) characters).
+The sorted order of *items* ([`buffer.auto_c_order`](#buffer.auto_c_order)) must have already been defined. When
+the user selects an item, *id* is sent in an [`events.USER_LIST_SELECTION`](#events.USER_LIST_SELECTION) event along with
+the selection.
 
 Parameters:
 
 - *id*:  The list identifier number greater than zero to use.
-- *items*:  The sorted string of words to show, separated by `buffer.auto_c_separator`
+- *items*:  The sorted string of words to show, separated by [`buffer.auto_c_separator`](#buffer.auto_c_separator)
    characters (initially spaces).
 
 <a id="buffer.auto_c_select"></a>
 #### `buffer:auto_c_select`(*prefix*)
 
 Selects the first item that starts with string *prefix* in an autocompletion or user list,
-using the case sensitivity setting `buffer.auto_c_ignore_case`.
+using the case sensitivity setting [`buffer.auto_c_ignore_case`](#buffer.auto_c_ignore_case).
 
 Parameters:
 
@@ -3019,12 +3013,12 @@ The default value is `false`.
 The behavior mode for a case insensitive autocompletion or user list when
 [`buffer.auto_c_ignore_case`](#buffer.auto_c_ignore_case) is `true`.
 
-  - `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`
+  - [`buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`](#buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE)
     Prefer to select case-sensitive matches.
-  - `buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE`
+  - [`buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE`](#buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE)
     No preference.
 
-  The default value is `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`.
+  The default value is [`buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`](#buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE).
 
 <a id="view.auto_c_max_width"></a>
 #### `view.auto_c_max_width` 
@@ -3049,12 +3043,12 @@ The default value is `false`.
 
 The multiple selection autocomplete mode.
 
-  - `buffer.MULTIAUTOC_ONCE`
+  - [`buffer.MULTIAUTOC_ONCE`](#buffer.MULTIAUTOC_ONCE)
     Autocomplete into only the main selection.
-  - `buffer.MULTIAUTOC_EACH`
+  - [`buffer.MULTIAUTOC_EACH`](#buffer.MULTIAUTOC_EACH)
     Autocomplete into all selections.
 
-  The default value is `buffer.MULTIAUTOC_ONCE`.
+  The default value is [`buffer.MULTIAUTOC_ONCE`](#buffer.MULTIAUTOC_ONCE).
 
 ### Display Images in Lists
 
@@ -3070,7 +3064,7 @@ Registers XPM image *xpm_data* to type number *type* for use in autocompletion a
 Parameters:
 
 - *type*:  Integer type to register the image with.
-- *xpm_data*:  The XPM data as described in `view.marker_define_pixmap()`.
+- *xpm_data*:  The XPM data as described in [`view:marker_define_pixmap()`](#view.marker_define_pixmap).
 
 See also:
 
@@ -3079,19 +3073,19 @@ See also:
 <a id="view.rgba_image_width"></a>
 #### `view.rgba_image_width` 
 
-The width of the RGBA image to be defined using [`view.marker_define_rgba_image()`](#view.marker_define_rgba_image) and
-[`view.register_rgba_image()`](#view.register_rgba_image).
+The width of the RGBA image to be defined using [`view:marker_define_rgba_image()`](#view.marker_define_rgba_image) and
+[`view:register_rgba_image()`](#view.register_rgba_image).
 
 <a id="view.rgba_image_height"></a>
 #### `view.rgba_image_height` 
 
-The height of the RGBA image to be defined using [`view.marker_define_rgba_image()`](#view.marker_define_rgba_image).
+The height of the RGBA image to be defined using [`view:marker_define_rgba_image()`](#view.marker_define_rgba_image).
 
 <a id="view.rgba_image_scale"></a>
 #### `view.rgba_image_scale` 
 
 The scale factor in percent of the RGBA image to be defined using
-[`view.marker_define_rgba_image()`](#view.marker_define_rgba_image).
+[`view:marker_define_rgba_image()`](#view.marker_define_rgba_image).
 This is useful on macOS with a retina display where each display unit is 2 pixels: use a
 factor of `200` so that each image pixel is displayed using a screen pixel.
 The default scale, `100`, will stretch each image pixel to cover 4 screen pixels on a
@@ -3101,28 +3095,28 @@ retina display.
 #### `view:register_rgba_image`(*type*, *pixels*)
 
 Registers RGBA image *pixels* to type number *type* for use in autocompletion and user lists.
-The dimensions for *pixels* (`view.rgba_image_width` and `view.rgba_image_height`) must
+The dimensions for *pixels* ([`view.rgba_image_width`](#view.rgba_image_width) and [`view.rgba_image_height`](#view.rgba_image_height)) must
 have already been defined. *pixels* is a sequence of 4 byte pixel values (red, blue, green,
 and alpha) defining the image line by line starting at the top-left pixel.
 
 Parameters:
 
 - *type*:  Integer type to register the image with.
-- *pixels*:  The RGBA data as described in `view.marker_define_rgba_image()`.
+- *pixels*:  The RGBA data as described in [`view:marker_define_rgba_image()`](#view.marker_define_rgba_image).
 
 <a id="buffer.auto_c_type_separator"></a>
 #### `buffer.auto_c_type_separator` 
 
 The character byte that separates autocompletion and user list items and their image types.
 Autocompletion and user list items can display both an image and text. Register images and
-their types using [`view.register_image()`](#view.register_image) or [`view.register_rgba_image()`](#view.register_rgba_image) before
-appending image types to list items after type separator characters.
+their types using [`view:register_image()`](#view.register_image) or [`view:register_rgba_image()`](#view.register_rgba_image) before appending
+image types to list items after type separator characters.
 The default value is 63 ('?').
 
 <a id="view.clear_registered_images"></a>
 #### `view:clear_registered_images`()
 
-Clears all images registered using `view.register_image()` and `view.register_rgba_image()`.
+Clears all images registered using [`view:register_image()`](#view.register_image) and [`view:register_rgba_image()`](#view.register_rgba_image).
 
 ### Show a Call Tip
 
@@ -3147,7 +3141,7 @@ Parameters:
 #### `view:call_tip_set_hlt`(*start_pos*, *end_pos*)
 
 Highlights a call tip's text between positions *start_pos* to *end_pos* with the color
-`view.call_tip_fore_hlt`.
+[`view.call_tip_fore_hlt`](#view.call_tip_fore_hlt).
 
 Parameters:
 
@@ -3187,8 +3181,8 @@ The default value is `false`.
 #### `view.call_tip_use_style` 
 
 The pixel width of tab characters in call tips.
-When non-zero, also enables the use of style number `view.STYLE_CALLTIP` instead of
-`view.STYLE_DEFAULT` for call tip styles.
+When non-zero, also enables the use of style number [`view.STYLE_CALLTIP`](#view.STYLE_CALLTIP) instead of
+[`view.STYLE_DEFAULT`](#view.STYLE_DEFAULT) for call tip styles.
 The default value is `0`.
 
 <a id="view.call_tip_pos_start"></a>
@@ -3223,7 +3217,7 @@ Parameters:
 Toggles a fold point on line number *line* between expanded (where all of its child lines are
 displayed) and contracted (where all of its child lines are hidden), and shows string *text*
 next to that line.
-*text* is drawn with style number `view.STYLE_FOLDDISPLAYTEXT`.
+*text* is drawn with style number [`view.STYLE_FOLDDISPLAYTEXT`](#view.STYLE_FOLDDISPLAYTEXT).
 
 Parameters:
 
@@ -3240,9 +3234,9 @@ Parameters:
 - *line*:  The line number in *view* to set the fold state for.
 - *action*:  The fold action to perform. Valid values are:
 
-   - `view.FOLDACTION_CONTRACT`
-   - `view.FOLDACTION_EXPAND`
-   - `view.FOLDACTION_TOGGLE`
+   - [`view.FOLDACTION_CONTRACT`](#view.FOLDACTION_CONTRACT)
+   - [`view.FOLDACTION_EXPAND`](#view.FOLDACTION_EXPAND)
+   - [`view.FOLDACTION_TOGGLE`](#view.FOLDACTION_TOGGLE)
 
 <a id="view.fold_children"></a>
 #### `view:fold_children`(*line*, *action*)
@@ -3255,9 +3249,9 @@ Parameters:
 - *line*:  The line number in *view* to set the fold states for.
 - *action*:  The fold action to perform. Valid values are:
 
-   - `view.FOLDACTION_CONTRACT`
-   - `view.FOLDACTION_EXPAND`
-   - `view.FOLDACTION_TOGGLE`
+   - [`view.FOLDACTION_CONTRACT`](#view.FOLDACTION_CONTRACT)
+   - [`view.FOLDACTION_EXPAND`](#view.FOLDACTION_EXPAND)
+   - [`view.FOLDACTION_TOGGLE`](#view.FOLDACTION_TOGGLE)
 
 <a id="view.fold_all"></a>
 #### `view:fold_all`(*action*)
@@ -3269,10 +3263,10 @@ Parameters:
 
 - *action*:  The fold action to perform. Valid values are:
 
-   - `view.FOLDACTION_CONTRACT`
-   - `view.FOLDACTION_EXPAND`
-   - `view.FOLDACTION_TOGGLE`
-   - `view.FOLDACTION_CONTRACT_EVERY_LEVEL`
+   - [`view.FOLDACTION_CONTRACT`](#view.FOLDACTION_CONTRACT)
+   - [`view.FOLDACTION_EXPAND`](#view.FOLDACTION_EXPAND)
+   - [`view.FOLDACTION_TOGGLE`](#view.FOLDACTION_TOGGLE)
+   - [`view.FOLDACTION_CONTRACT_EVERY_LEVEL`](#view.FOLDACTION_CONTRACT_EVERY_LEVEL)
 
 <a id="view.hide_lines"></a>
 #### `view:hide_lines`(*start_line*, *end_line*)
@@ -3309,11 +3303,25 @@ Parameters:
 #### `view:ensure_visible_enforce_policy`(*line*)
 
 Ensures line number *line* is visible by expanding any fold points hiding it based on the
-vertical caret policy previously defined in `view.set_visible_policy()`.
+vertical caret policy previously defined in [`view:set_visible_policy()`](#view.set_visible_policy).
 
 Parameters:
 
 - *line*:  The line number in *view* to ensure visible.
+
+<a id="view.set_default_fold_display_text"></a>
+#### `view:set_default_fold_display_text`(*text*)
+
+Sets the default fold display text to string *text*.
+
+Parameters:
+
+- *text*:  The text to display by default next to folded lines.
+
+<a id="view.get_default_fold_display_text"></a>
+#### `view:get_default_fold_display_text`()
+
+Returns the default fold display text.
 
 <a id="buffer.fold_level"></a>
 #### `buffer.fold_level` &lt;table&gt;
@@ -3321,11 +3329,11 @@ Parameters:
 List of fold level bit-masks per line number.
 Fold level masks comprise of an integer level combined with any of the following bit flags:
 
-  - `buffer.FOLDLEVELBASE`
+  - [`buffer.FOLDLEVELBASE`](#buffer.FOLDLEVELBASE)
     The initial fold level.
-  - `buffer.FOLDLEVELWHITEFLAG`
+  - [`buffer.FOLDLEVELWHITEFLAG`](#buffer.FOLDLEVELWHITEFLAG)
     The line is blank.
-  - `buffer.FOLDLEVELHEADERFLAG`
+  - [`buffer.FOLDLEVELHEADERFLAG`](#buffer.FOLDLEVELHEADERFLAG)
     The line is a header, or fold point.
 
 <a id="buffer.fold_parent"></a>
@@ -3352,7 +3360,7 @@ Parameters:
 List of flags per line number that indicate whether or not fold points are expanded for
 those line numbers.
 Setting expanded fold states does not toggle folds; it only updates fold margin markers. Use
-[`view.toggle_fold()`](#view.toggle_fold) instead.
+[`view:toggle_fold()`](#view.toggle_fold) instead.
 
 <a id="view.contracted_fold_next"></a>
 #### `view:contracted_fold_next`(*line*)
@@ -3414,14 +3422,14 @@ Parameters:
 #### `view:scroll_caret`()
 
 Scrolls the caret into view based on the policies previously defined in
-`view.set_x_caret_policy()` and `view.set_y_caret_policy()`.
+[`view:set_x_caret_policy()`](#view.set_x_caret_policy) and [`view:set_y_caret_policy()`](#view.set_y_caret_policy).
 
 <a id="view.scroll_range"></a>
 #### `view:scroll_range`(*secondary_pos*, *primary_pos*)
 
 Scrolls into view the range of text between positions *primary_pos* and *secondary_pos*,
 with priority given to *primary_pos*.
-Similar to `view.scroll_caret()`, but with *primary_pos* instead of `buffer.current_pos`.
+Similar to [`view:scroll_caret()`](#view.scroll_caret), but with *primary_pos* instead of [`buffer.current_pos`](#buffer.current_pos).
 This is useful for scrolling search results into view.
 
 Parameters:
@@ -3486,16 +3494,16 @@ The default value is `false`.
 
 The current end of line mode.
 Changing the current mode does not convert any of the buffer's existing end of line
-characters. Use [`buffer.convert_eols()`](#buffer.convert_eols) to do so.
+characters. Use [`buffer:convert_eols()`](#buffer.convert_eols) to do so.
 
-  - `buffer.EOL_CRLF`
+  - [`buffer.EOL_CRLF`](#buffer.EOL_CRLF)
     Carriage return with line feed ("\r\n").
-  - `buffer.EOL_CR`
+  - [`buffer.EOL_CR`](#buffer.EOL_CR)
     Carriage return ("\r").
-  - `buffer.EOL_LF`
+  - [`buffer.EOL_LF`](#buffer.EOL_LF)
     Line feed ("\n").
 
-  The default value is `buffer.EOL_CRLF` on Windows platforms, `buffer.EOL_LF` otherwise.
+  The default value is [`buffer.EOL_CRLF`](#buffer.EOL_CRLF) on Windows platforms, [`buffer.EOL_LF`](#buffer.EOL_LF) otherwise.
 
 <a id="buffer.convert_eols"></a>
 #### `buffer:convert_eols`(*mode*)
@@ -3505,9 +3513,9 @@ Converts all end of line characters to those in end of line mode *mode*.
 Parameters:
 
 - *mode*:  The end of line mode to convert to. Valid values are:
-   - `buffer.EOL_CRLF`
-   - `buffer.EOL_CR`
-   - `buffer.EOL_LF`
+   - [`buffer.EOL_CRLF`](#buffer.EOL_CRLF)
+   - [`buffer.EOL_CR`](#buffer.EOL_CR)
+   - [`buffer.EOL_LF`](#buffer.EOL_LF)
 
 ### Configure Character Settings
 
@@ -3539,7 +3547,7 @@ The default value is a string that contains all non-word and non-whitespace char
 <a id="buffer.set_chars_default"></a>
 #### `buffer:set_chars_default`()
 
-Resets `buffer.word_chars`, `buffer.whitespace_chars`, and `buffer.punctuation_chars` to
+Resets [`buffer.word_chars`](#buffer.word_chars), [`buffer.whitespace_chars`](#buffer.whitespace_chars), and [`buffer.punctuation_chars`](#buffer.punctuation_chars) to
 their respective defaults.
 
 <a id="view.representation"></a>
@@ -3549,7 +3557,7 @@ Map of alternative string representations of characters.
 Representations are displayed in the same way control characters are. Use the empty string
 for the '\0' character when assigning its representation. Characters are strings, not numeric
 codes, and can be multi-byte characters.
-Call [`view.clear_representation()`](#view.clear_representation) to remove a representation.
+Call [`view:clear_representation()`](#view.clear_representation) to remove a representation.
 
 <a id="view.clear_representation"></a>
 #### `view:clear_representation`(*char*)
@@ -3559,7 +3567,7 @@ character).
 
 Parameters:
 
-- *char*:  The string character in `buffer.representations` to remove the alternate string
+- *char*:  The string character in [`view.representation`](#view.representation) to remove the alternate string
    representation for.
 
 <a id="view.clear_all_representations"></a>
@@ -3572,14 +3580,14 @@ Removes all alternate string representations of characters.
 
 Map of characters to their string representation's appearance.
 
-  - `view.REPRESENTATION_PLAIN`
+  - [`view.REPRESENTATION_PLAIN`](#view.REPRESENTATION_PLAIN)
     Draw the representation with no decoration.
-  - `view.REPRESENTATION_BLOB`
+  - [`view.REPRESENTATION_BLOB`](#view.REPRESENTATION_BLOB)
     Draw the representation within a rounded rectangle and an inverted color.
-  - `view.REPRESENTATION_COLOR`
+  - [`view.REPRESENTATION_COLOR`](#view.REPRESENTATION_COLOR)
     Draw the representation using the color set in [`view.representation_color`](#view.representation_color).
 
-The default values are `view.REPRESENTATION_BLOB`.
+The default values are [`view.REPRESENTATION_BLOB`](#view.REPRESENTATION_BLOB).
 
 <a id="view.representation_color"></a>
 #### `view.representation_color` &lt;table&gt;
@@ -3589,9 +3597,9 @@ Map of characters to their string representation's color in "0xBBGGRR" format.
 ### Configure the Color Theme
 
 
- Themes are Lua files that define colors, specifies how the view displays text, and
- assigns colors and alpha values to various view properties. Colors are integers that
- range from 0 to 0xFFFFFF. Alpha transparency values are integers that range from 0 to 255
+ Themes are Lua files that define colors, specify how the view displays text, and assign
+ colors and alpha values to various view properties. Colors are integers that range
+ from 0 to 0xFFFFFF. Alpha transparency values are integers that range from 0 to 255
  (`view.ALPHA_TRANSPARENT` to `view.ALPHA_OPAQUE`), or `view.ALPHA_NOALPHA`.
 <a id="view.set_theme"></a>
 #### `view:set_theme`([*name*[, *env*]])
@@ -3643,18 +3651,17 @@ Style names consist of the following default names as well as the tag names defi
   - [`view.STYLE_LINENUMBER`](#view.STYLE_LINENUMBER): The line number margin style.
   - [`view.STYLE_CONTROLCHAR`](#view.STYLE_CONTROLCHAR): The style of control character blocks.
   - [`view.STYLE_INDENTGUIDE`](#view.STYLE_INDENTGUIDE): The style of indentation guides.
-  - [`view.STYLE_CALLTIP`](#view.STYLE_CALLTIP): The style of call tip text. Only the `font`, `size`, `fore`,
-    and `back` style definition fields are supported.
+  - [`view.STYLE_CALLTIP`](#view.STYLE_CALLTIP): The style of call tip text. Only the `font`, `size`, `fore`, and
+    `back` style definition fields are supported.
   - [`view.STYLE_FOLDDISPLAYTEXT`](#view.STYLE_FOLDDISPLAYTEXT): The style of text displayed next to folded lines.
-  - [`lexer.ATTRIBUTE`](#lexer.ATTRIBUTE), [`lexer.BOLD`](#lexer.BOLD), [`lexer.CLASS`](#lexer.CLASS), [`lexer.CODE`](#lexer.CODE),
-    [`lexer.COMMENT`](#lexer.COMMENT), [`lexer.CONSTANT`](#lexer.CONSTANT), [`lexer.CONSTANT_BUILTIN`](#lexer.CONSTANT_BUILTIN),
-    [`lexer.EMBEDDED`](#lexer.EMBEDDED), [`lexer.ERROR`](#lexer.ERROR), [`lexer.FUNCTION`](#lexer.FUNCTION), [`lexer.FUNCTION_BUILTIN`](#lexer.FUNCTION_BUILTIN),
-    [`lexer.FUNCTION_METHOD`](#lexer.FUNCTION_METHOD), [`lexer.IDENTIFIER`](#lexer.IDENTIFIER), [`lexer.ITALIC`](#lexer.ITALIC),
-    [`lexer.KEYWORD`](#lexer.KEYWORD), [`lexer.LABEL`](#lexer.LABEL), [`lexer.LINK`](#lexer.LINK), [`lexer.NUMBER`](#lexer.NUMBER),
-    [`lexer.OPERATOR`](#lexer.OPERATOR), [`lexer.PREPROCESSOR`](#lexer.PREPROCESSOR), [`lexer.REFERENCE`](#lexer.REFERENCE), [`lexer.REGEX`](#lexer.REGEX),
-    [`lexer.STRING`](#lexer.STRING), [`lexer.TAG`](#lexer.TAG), [`lexer.TITLE`](#lexer.TITLE), [`lexer.TYPE`](#lexer.TYPE),
-    [`lexer.UNDERLINE`](#lexer.UNDERLINE), [`lexer.VARIABLE`](#lexer.VARIABLE), [`lexer.VARIABLE_BUILTIN`](#lexer.VARIABLE_BUILTIN): Some tag
-    names used by lexers. Some lexers may define more tag names, so this list is not exhaustive.
+  - [`lexer.ATTRIBUTE`](#lexer.ATTRIBUTE), [`lexer.BOLD`](#lexer.BOLD), [`lexer.CLASS`](#lexer.CLASS), [`lexer.CODE`](#lexer.CODE), [`lexer.COMMENT`](#lexer.COMMENT),
+    [`lexer.CONSTANT`](#lexer.CONSTANT), [`lexer.CONSTANT_BUILTIN`](#lexer.CONSTANT_BUILTIN), [`lexer.EMBEDDED`](#lexer.EMBEDDED), [`lexer.ERROR`](#lexer.ERROR),
+    [`lexer.FUNCTION`](#lexer.FUNCTION), [`lexer.FUNCTION_BUILTIN`](#lexer.FUNCTION_BUILTIN), [`lexer.FUNCTION_METHOD`](#lexer.FUNCTION_METHOD), [`lexer.IDENTIFIER`](#lexer.IDENTIFIER),
+    [`lexer.ITALIC`](#lexer.ITALIC), [`lexer.KEYWORD`](#lexer.KEYWORD), [`lexer.LABEL`](#lexer.LABEL), [`lexer.LINK`](#lexer.LINK), [`lexer.NUMBER`](#lexer.NUMBER),
+    [`lexer.OPERATOR`](#lexer.OPERATOR), [`lexer.PREPROCESSOR`](#lexer.PREPROCESSOR), [`lexer.REFERENCE`](#lexer.REFERENCE), [`lexer.REGEX`](#lexer.REGEX), [`lexer.STRING`](#lexer.STRING),
+    [`lexer.TAG`](#lexer.TAG), [`lexer.TYPE`](#lexer.TYPE), [`lexer.UNDERLINE`](#lexer.UNDERLINE), [`lexer.VARIABLE`](#lexer.VARIABLE), [`lexer.VARIABLE_BUILTIN`](#lexer.VARIABLE_BUILTIN):
+    Some tag names used by lexers. Some lexers may define more tag names, so this list is
+    not exhaustive.
 
 Style definition tables may contain the following fields:
 
@@ -3668,8 +3675,8 @@ Style definition tables may contain the following fields:
   - `back`: Font face background color in "0xBBGGRR" format.
   - `eol_filled`: Whether or not the background color extends to the end of the line. The
     default value is `false`.
-  - `case`: Font case: `view.CASE_UPPER` for upper, `view.CASE_LOWER` for lower, and
-    `view.CASE_MIXED` for normal, mixed case. The default value is `view.CASE_MIXED`.
+  - `case`: Font case: [`view.CASE_UPPER`](#view.CASE_UPPER) for upper, [`view.CASE_LOWER`](#view.CASE_LOWER) for lower, and
+    [`view.CASE_MIXED`](#view.CASE_MIXED) for normal, mixed case. The default value is [`view.CASE_MIXED`](#view.CASE_MIXED).
   - `visible`: Whether or not the text is visible. The default value is `true`.
   - `changeable`: Whether the text is changeable instead of read-only. The default value is
     `true`.
@@ -3678,7 +3685,7 @@ Style definition tables may contain the following fields:
 #### `view:set_styles`()
 
 Applies defined styles to the view.
-This should be called any time a style in `styles` changes.
+This should be called any time a style in [`view.styles`](#view.styles) changes.
 
 ### Override Style Settings
 
@@ -3689,12 +3696,12 @@ This should be called any time a style in `styles` changes.
 <a id="view.style_reset_default"></a>
 #### `view:style_reset_default`()
 
-Resets `view.STYLE_DEFAULT` to its initial state.
+Resets [`view.STYLE_DEFAULT`](#view.STYLE_DEFAULT) to its initial state.
 
 <a id="view.style_clear_all"></a>
 #### `view:style_clear_all`()
 
-Reverts all styles to having the same properties as `view.STYLE_DEFAULT`.
+Reverts all styles to having the same properties as [`view.STYLE_DEFAULT`](#view.STYLE_DEFAULT).
 
 <a id="view.style_font"></a>
 #### `view.style_font` &lt;table&gt;
@@ -3748,16 +3755,16 @@ The default values are `false`.
 
 List of letter case modes of text for style numbers from `1` to `256`.
 
-  - `view.CASE_MIXED`
+  - [`view.CASE_MIXED`](#view.CASE_MIXED)
     Display text in normally.
-  - `view.CASE_UPPER`
+  - [`view.CASE_UPPER`](#view.CASE_UPPER)
     Display text in upper case.
-  - `view.CASE_LOWER`
+  - [`view.CASE_LOWER`](#view.CASE_LOWER)
     Display text in lower case.
-  - `view.CASE_CAMEL`
+  - [`view.CASE_CAMEL`](#view.CASE_CAMEL)
     Display text in camel case.
 
-The default values are `view.CASE_MIXED`.
+The default values are [`view.CASE_MIXED`](#view.CASE_MIXED).
 
 <a id="view.style_visible"></a>
 #### `view.style_visible` &lt;table&gt;
@@ -3782,37 +3789,37 @@ Read-only styles do not allow the caret into the range of text.
 Map of colors in "0xAABBGGRR" format for UI element identifiers.
 If the alpha byte is omitted, it is assumed to be `0xFF` (opaque).
 
-  - `view.ELEMENT_SELECTION_TEXT`
+  - [`view.ELEMENT_SELECTION_TEXT`](#view.ELEMENT_SELECTION_TEXT)
     The main selection's text color.
-  - `view.ELEMENT_SELECTION_BACK`
+  - [`view.ELEMENT_SELECTION_BACK`](#view.ELEMENT_SELECTION_BACK)
     The main selection's background color.
-  - `view.ELEMENT_SELECTION_ADDITIONAL_TEXT`
+  - [`view.ELEMENT_SELECTION_ADDITIONAL_TEXT`](#view.ELEMENT_SELECTION_ADDITIONAL_TEXT)
     The text color of additional selections.
-  - `view.ELEMENT_SELECTION_ADDITIONAL_BACK`
+  - [`view.ELEMENT_SELECTION_ADDITIONAL_BACK`](#view.ELEMENT_SELECTION_ADDITIONAL_BACK)
     The background color of additional selections.
-  - `view.ELEMENT_SELECTION_SECONDARY_TEXT`
+  - [`view.ELEMENT_SELECTION_SECONDARY_TEXT`](#view.ELEMENT_SELECTION_SECONDARY_TEXT)
     The text color of selections when another window contains the primary selection.
     This is only available on Linux.
-  - `view.ELEMENT_SELECTION_SECONDARY_BACK`
+  - [`view.ELEMENT_SELECTION_SECONDARY_BACK`](#view.ELEMENT_SELECTION_SECONDARY_BACK)
     The background color of selections when another window contains the primary selection.
     This is only available on Linux.
-  - `view.ELEMENT_SELECTION_INACTIVE_TEXT`
+  - [`view.ELEMENT_SELECTION_INACTIVE_TEXT`](#view.ELEMENT_SELECTION_INACTIVE_TEXT)
     The text color of selections when another window has focus.
-  - `view.ELEMENT_SELECTION_INACTIVE_BACK`
+  - [`view.ELEMENT_SELECTION_INACTIVE_BACK`](#view.ELEMENT_SELECTION_INACTIVE_BACK)
     The background color of selections when another window has focus.
-  - `view.ELEMENT_CARET`
+  - [`view.ELEMENT_CARET`](#view.ELEMENT_CARET)
     The main selection's caret color.
-  - `view.ELEMENT_CARET_ADDITIONAL`
+  - [`view.ELEMENT_CARET_ADDITIONAL`](#view.ELEMENT_CARET_ADDITIONAL)
     The caret color of additional selections.
-  - `view.ELEMENT_CARET_LINE_BACK`
+  - [`view.ELEMENT_CARET_LINE_BACK`](#view.ELEMENT_CARET_LINE_BACK)
     The background color of the line that contains the caret.
-  - `view.ELEMENT_WHITE_SPACE`
+  - [`view.ELEMENT_WHITE_SPACE`](#view.ELEMENT_WHITE_SPACE)
     The color of visible whitespace.
-  - `view.ELEMENT_WHITE_SPACE_BACK`
+  - [`view.ELEMENT_WHITE_SPACE_BACK`](#view.ELEMENT_WHITE_SPACE_BACK)
     The background color of visible whitespace.
-  - `view.ELEMENT_FOLD_LINE`
+  - [`view.ELEMENT_FOLD_LINE`](#view.ELEMENT_FOLD_LINE)
     The color of fold lines.
-  - `view.ELEMENT_HIDDEN_LINE`
+  - [`view.ELEMENT_HIDDEN_LINE`](#view.ELEMENT_HIDDEN_LINE)
     The color of lines shown in place of hidden lines.
 
 <a id="view.element_is_set"></a>
@@ -3828,7 +3835,7 @@ Resets the color of UI element *element* to its default color.
 
 Parameters:
 
-- *element*:  One of the UI elements specified in [`view.element_color`]().
+- *element*:  One of the UI elements specified in [`view.element_color`](#view.element_color).
 
 <a id="view.element_base_color"></a>
 #### `view.element_base_color` &lt;table&gt;
@@ -3847,14 +3854,14 @@ translucent colors.
 
 The layer mode for drawing selections.
 
-  - `view.LAYER_BASE`
+  - [`view.LAYER_BASE`](#view.LAYER_BASE)
     Draw selections opaquely on the background.
-  - `view.LAYER_UNDER_TEXT`
+  - [`view.LAYER_UNDER_TEXT`](#view.LAYER_UNDER_TEXT)
     Draw selections translucently under text.
-  - `view.LAYER_OVER_TEXT`
+  - [`view.LAYER_OVER_TEXT`](#view.LAYER_OVER_TEXT)
     Draw selections translucently over text.
 
-The default value is `view.LAYER_BASE`.
+The default value is [`view.LAYER_BASE`](#view.LAYER_BASE).
 
 ### Configure Caret Display
 
@@ -3864,17 +3871,17 @@ The default value is `view.LAYER_BASE`.
 
 The caret's visual style.
 
-  - `view.CARETSTYLE_INVISIBLE`
+  - [`view.CARETSTYLE_INVISIBLE`](#view.CARETSTYLE_INVISIBLE)
     No caret.
-  - `view.CARETSTYLE_LINE`
+  - [`view.CARETSTYLE_LINE`](#view.CARETSTYLE_LINE)
     A line caret.
-  - `view.CARETSTYLE_BLOCK`
+  - [`view.CARETSTYLE_BLOCK`](#view.CARETSTYLE_BLOCK)
     A block caret.
 
 Any block setting may be combined with `view.CARETSTYLE_BLOCK_AFTER` via bitwise OR (`|`)
 in order to draw the caret after the end of a selection, as opposed to just inside it.
 
-The default value is `view.CARETSTYLE_LINE`.
+The default value is [`view.CARETSTYLE_LINE`](#view.CARETSTYLE_LINE).
 
 <a id="view.caret_width"></a>
 #### `view.caret_width` 
@@ -3900,7 +3907,7 @@ The default value is `false`.
 
 The caret line's frame width in pixels.
 When non-zero, the line that contains the caret is framed instead of colored in. The
-`view.caret_line_back` and `view.caret_line_back_alpha` properties apply to the frame.
+[`view.ELEMENT_CARET_LINE_BACK`](#view.ELEMENT_CARET_LINE_BACK) color applies to the frame.
 The default value is `0`.
 
 <a id="view.caret_line_highlight_subline"></a>
@@ -3921,14 +3928,14 @@ The default value is `false`, showing the line only when the view is in focus.
 
 The caret line layer mode.
 
-  - `view.LAYER_BASE`
+  - [`view.LAYER_BASE`](#view.LAYER_BASE)
     Draw the caret line opaquely on the background.
-  - `view.LAYER_UNDER_TEXT`
+  - [`view.LAYER_UNDER_TEXT`](#view.LAYER_UNDER_TEXT)
     Draw the caret line translucently under text.
-  - `view.LAYER_OVER_TEXT`
+  - [`view.LAYER_OVER_TEXT`](#view.LAYER_OVER_TEXT)
     Draw the caret line translucently over text.
 
-The default value is `view.LAYER_BASE`.
+The default value is [`view.LAYER_BASE`](#view.LAYER_BASE).
 
 <a id="view.additional_carets_visible"></a>
 #### `view.additional_carets_visible` 
@@ -3947,19 +3954,19 @@ The default value is `true`.
 
 The virtual space mode.
 
-  - `buffer.VS_NONE`
+  - [`buffer.VS_NONE`](#buffer.VS_NONE)
     Disable virtual space.
-  - `buffer.VS_RECTANGULARSELECTION`
+  - [`buffer.VS_RECTANGULARSELECTION`](#buffer.VS_RECTANGULARSELECTION)
     Enable virtual space only for rectangular selections.
-  - `buffer.VS_USERACCESSIBLE`
+  - [`buffer.VS_USERACCESSIBLE`](#buffer.VS_USERACCESSIBLE)
     Enable virtual space.
-  - `buffer.VS_NOWRAPLINESTART`
-    Prevent the caret from wrapping to the previous line via `buffer:char_left()` and
-    `buffer:char_left_extend()`. This option is not restricted to virtual space and should
+  - [`buffer.VS_NOWRAPLINESTART`](#buffer.VS_NOWRAPLINESTART)
+    Prevent the caret from wrapping to the previous line via [`buffer:char_left()`](#buffer.char_left) and
+    [`buffer:char_left_extend()`](#buffer.char_left_extend). This option is not restricted to virtual space and should
     be added to any of the above options.
 
   When virtual space is enabled, the caret may move into the space past end of line characters.
-  The default value is `buffer.VS_NONE`.
+  The default value is [`buffer.VS_NONE`](#buffer.VS_NONE).
 
 ### Configure Selection Display
 
@@ -3979,16 +3986,16 @@ The default value is `false`.
 
 The whitespace visibility mode.
 
-  - `view.WS_INVISIBLE`
+  - [`view.WS_INVISIBLE`](#view.WS_INVISIBLE)
     Whitespace is invisible.
-  - `view.WS_VISIBLEALWAYS`
+  - [`view.WS_VISIBLEALWAYS`](#view.WS_VISIBLEALWAYS)
     Display all space characters as dots and tab characters as arrows.
-  - `view.WS_VISIBLEAFTERINDENT`
+  - [`view.WS_VISIBLEAFTERINDENT`](#view.WS_VISIBLEAFTERINDENT)
     Display only non-indentation spaces and tabs as dots and arrows.
-  - `view.WS_VISIBLEONLYININDENT`
+  - [`view.WS_VISIBLEONLYININDENT`](#view.WS_VISIBLEONLYININDENT)
     Display only indentation spaces and tabs as dots and arrows.
 
-The default value is `view.WS_INVISIBLE`.
+The default value is [`view.WS_INVISIBLE`](#view.WS_INVISIBLE).
 
 <a id="view.whitespace_size"></a>
 #### `view.whitespace_size` 
@@ -4001,12 +4008,12 @@ The default value is `1`.
 
 The draw mode of visible tabs.
 
-  - `view.TD_LONGARROW`
+  - [`view.TD_LONGARROW`](#view.TD_LONGARROW)
     An arrow that stretches until the tabstop.
-  - `view.TD_STRIKEOUT`
+  - [`view.TD_STRIKEOUT`](#view.TD_STRIKEOUT)
     A horizontal line that stretches until the tabstop.
 
-The default value is `view.TD_LONGARROW`.
+The default value is [`view.TD_LONGARROW`](#view.TD_LONGARROW).
 
 <a id="view.view_eol"></a>
 #### `view.view_eol` 
@@ -4071,8 +4078,8 @@ of pixels away from the horizontal margins.
 
 Parameters:
 
-- *policy*:  The combination of `view.CARET_SLOP`, `view.CARET_STRICT`, `view.CARET_EVEN`,
-   and `view.CARET_JUMPS` policy flags to set.
+- *policy*:  The combination of [`view.CARET_SLOP`](#view.CARET_SLOP), [`view.CARET_STRICT`](#view.CARET_STRICT), [`view.CARET_EVEN`](#view.CARET_EVEN),
+   and [`view.CARET_JUMPS`](#view.CARET_JUMPS) policy flags to set.
 - *x*:  The number of pixels from the horizontal margins to keep the caret.
 
 <a id="view.set_y_caret_policy"></a>
@@ -4083,21 +4090,21 @@ of lines away from the vertical margins.
 
 Parameters:
 
-- *policy*:  The combination of `view.CARET_SLOP`, `view.CARET_STRICT`, `view.CARET_EVEN`,
-   and `view.CARET_JUMPS` policy flags to set.
+- *policy*:  The combination of [`view.CARET_SLOP`](#view.CARET_SLOP), [`view.CARET_STRICT`](#view.CARET_STRICT), [`view.CARET_EVEN`](#view.CARET_EVEN),
+   and [`view.CARET_JUMPS`](#view.CARET_JUMPS) policy flags to set.
 - *y*:  The number of lines from the vertical margins to keep the caret.
 
 <a id="view.set_visible_policy"></a>
 #### `view:set_visible_policy`(*policy*, *y*)
 
 Defines scrolling policy bit-mask *policy* as the policy for keeping the caret *y* number
-of lines away from the vertical margins as `view.ensure_visible_enforce_policy()` redisplays
+of lines away from the vertical margins as [`view:ensure_visible_enforce_policy()`](#view.ensure_visible_enforce_policy) redisplays
 hidden or folded lines.
-It is similar in operation to `view.set_y_caret_policy()`.
+It is similar in operation to [`view:set_y_caret_policy()`](#view.set_y_caret_policy).
 
 Parameters:
 
-- *policy*:  The combination of `view.VISIBLE_SLOP` and `view.VISIBLE_STRICT` policy flags
+- *policy*:  The combination of [`view.VISIBLE_SLOP`](#view.VISIBLE_SLOP) and [`view.VISIBLE_STRICT`](#view.VISIBLE_STRICT) policy flags
    to set.
 - *y*:  The number of lines from the vertical margins to keep the caret.
 
@@ -4109,16 +4116,16 @@ Parameters:
 
 The display cursor type.
 
-  - `view.CURSORNORMAL`
+  - [`view.CURSORNORMAL`](#view.CURSORNORMAL)
     The text insert cursor.
-  - `view.CURSORARROW`
+  - [`view.CURSORARROW`](#view.CURSORARROW)
     The arrow cursor.
-  - `view.CURSORWAIT`
+  - [`view.CURSORWAIT`](#view.CURSORWAIT)
     The wait cursor.
-  - `view.CURSORREVERSEARROW`
+  - [`view.CURSORREVERSEARROW`](#view.CURSORREVERSEARROW)
     The reversed arrow cursor.
 
-The default value is `view.CURSORNORMAL`.
+The default value is [`view.CURSORNORMAL`](#view.CURSORNORMAL).
 
 ### Configure Wrapped Line Display
 
@@ -4130,52 +4137,52 @@ The default value is `view.CURSORNORMAL`.
 
 Long line wrap mode.
 
-  - `view.WRAP_NONE`
+  - [`view.WRAP_NONE`](#view.WRAP_NONE)
     Long lines are not wrapped.
-  - `view.WRAP_WORD`
+  - [`view.WRAP_WORD`](#view.WRAP_WORD)
     Wrap long lines at word (and style) boundaries.
-  - `view.WRAP_CHAR`
+  - [`view.WRAP_CHAR`](#view.WRAP_CHAR)
     Wrap long lines at character boundaries.
-  - `view.WRAP_WHITESPACE`
+  - [`view.WRAP_WHITESPACE`](#view.WRAP_WHITESPACE)
     Wrap long lines at word boundaries (ignoring style boundaries).
 
-The default value is `view.WRAP_NONE`.
+The default value is [`view.WRAP_NONE`](#view.WRAP_NONE).
 
 <a id="view.wrap_visual_flags"></a>
 #### `view.wrap_visual_flags` 
 
 The wrapped line visual flag display mode.
 
-  - `view.WRAPVISUALFLAG_NONE`
+  - [`view.WRAPVISUALFLAG_NONE`](#view.WRAPVISUALFLAG_NONE)
     No visual flags.
-  - `view.WRAPVISUALFLAG_END`
+  - [`view.WRAPVISUALFLAG_END`](#view.WRAPVISUALFLAG_END)
     Show a visual flag at the end of a wrapped line.
-  - `view.WRAPVISUALFLAG_START`
+  - [`view.WRAPVISUALFLAG_START`](#view.WRAPVISUALFLAG_START)
     Show a visual flag at the beginning of a sub-line.
-  - `view.WRAPVISUALFLAG_MARGIN`
+  - [`view.WRAPVISUALFLAG_MARGIN`](#view.WRAPVISUALFLAG_MARGIN)
     Show a visual flag in the sub-line's line number margin.
 
-The default value is `view.WRAPVISUALFLAG_NONE`.
+The default value is [`view.WRAPVISUALFLAG_NONE`](#view.WRAPVISUALFLAG_NONE).
 
 <a id="view.wrap_visual_flags_location"></a>
 #### `view.wrap_visual_flags_location` 
 
 The wrapped line visual flag location.
 
-  - `view.WRAPVISUALFLAGLOC_DEFAULT`
+  - [`view.WRAPVISUALFLAGLOC_DEFAULT`](#view.WRAPVISUALFLAGLOC_DEFAULT)
     Draw a visual flag near the view's right margin.
-  - `view.WRAPVISUALFLAGLOC_END_BY_TEXT`
+  - [`view.WRAPVISUALFLAGLOC_END_BY_TEXT`](#view.WRAPVISUALFLAGLOC_END_BY_TEXT)
     Draw a visual flag near text at the end of a wrapped line.
-  - `view.WRAPVISUALFLAGLOC_START_BY_TEXT`
+  - [`view.WRAPVISUALFLAGLOC_START_BY_TEXT`](#view.WRAPVISUALFLAGLOC_START_BY_TEXT)
     Draw a visual flag near text at the beginning of a subline.
 
-The default value is `view.WRAPVISUALFLAGLOC_DEFAULT`.
+The default value is [`view.WRAPVISUALFLAGLOC_DEFAULT`](#view.WRAPVISUALFLAGLOC_DEFAULT).
 
 <a id="view.wrap_start_indent"></a>
 #### `view.wrap_start_indent` 
 
 The number of spaces of indentation to display wrapped lines with if
-[`view.wrap_indent_mode`](#view.wrap_indent_mode) is `view.WRAPINDENT_FIXED`.
+[`view.wrap_indent_mode`](#view.wrap_indent_mode) is [`view.WRAPINDENT_FIXED`](#view.WRAPINDENT_FIXED).
 The default value is `0`.
 
 <a id="view.wrap_indent_mode"></a>
@@ -4183,16 +4190,16 @@ The default value is `0`.
 
 The wrapped line indent mode.
 
-  - `view.WRAPINDENT_FIXED`
+  - [`view.WRAPINDENT_FIXED`](#view.WRAPINDENT_FIXED)
     Indent wrapped lines by [`view.wrap_start_indent`](#view.wrap_start_indent).
-  - `view.WRAPINDENT_SAME`
+  - [`view.WRAPINDENT_SAME`](#view.WRAPINDENT_SAME)
     Indent wrapped lines the same amount as the first line.
-  - `view.WRAPINDENT_INDENT`
+  - [`view.WRAPINDENT_INDENT`](#view.WRAPINDENT_INDENT)
     Indent wrapped lines one more level than the level of the first line.
-  - `view.WRAPINDENT_DEEPINDENT`
+  - [`view.WRAPINDENT_DEEPINDENT`](#view.WRAPINDENT_DEEPINDENT)
     Indent wrapped lines two more levels than the level of the first line.
 
-The default value is `view.WRAPINDENT_FIXED`.
+The default value is [`view.WRAPINDENT_FIXED`](#view.WRAPINDENT_FIXED).
 
 ### Configure Text Zoom
 
@@ -4229,15 +4236,13 @@ The column number to mark long lines at.
 
 The long line mark mode.
 
-  - `view.EDGE_NONE`
+  - [`view.EDGE_NONE`](#view.EDGE_NONE)
     Long lines are not marked.
-  - `view.EDGE_LINE`
-    Draw a single vertical line whose color is [`view.edge_color`](#view.edge_color) at column
-    [`view.edge_column`](#view.edge_column).
-  - `view.EDGE_BACKGROUND`
-    Change the background color of text after column [`view.edge_column`](#view.edge_column) to
-    [`view.edge_color`](#view.edge_color).
-  - `view.EDGE_MULTILINE`
+  - [`view.EDGE_LINE`](#view.EDGE_LINE)
+    Draw a single vertical line whose color is [`view.edge_color`](#view.edge_color) at column [`view.edge_column`](#view.edge_column).
+  - [`view.EDGE_BACKGROUND`](#view.EDGE_BACKGROUND)
+    Change the background color of text after column [`view.edge_column`](#view.edge_column) to [`view.edge_color`](#view.edge_color).
+  - [`view.EDGE_MULTILINE`](#view.EDGE_MULTILINE)
     Draw vertical lines whose colors and columns are defined by calls to
     [`view:multi_edge_add_line()`](#view.multi_edge_add_line).
 
@@ -4254,7 +4259,7 @@ Parameters:
 <a id="view.multi_edge_clear_all"></a>
 #### `view:multi_edge_clear_all`()
 
-Clears all vertical lines created by `view:multi_edge_add_line()`.
+Clears all vertical lines created by [`view:multi_edge_add_line()`](#view.multi_edge_add_line).
 
 <a id="view.multi_edge_column"></a>
 #### `view.multi_edge_column` &lt;table&gt;
@@ -4266,7 +4271,7 @@ A position of `-1` means no edge column was found.
 #### `view.edge_color` 
 
 The color, in "0xBBGGRR" format, of the single edge or background for long lines according to
-`view.edge_mode`.
+[`view.edge_mode`](#view.edge_mode).
 
 ### Configure Fold Settings and Folded Line Display
 
@@ -4301,52 +4306,38 @@ Some lexers automatically enable this option. It is disabled by default.
 
 Bit-mask of folding lines to draw in the buffer. (Read-only)
 
-  - `view.FOLDFLAG_NONE`
+  - [`view.FOLDFLAG_NONE`](#view.FOLDFLAG_NONE)
     Do not draw folding lines.
-  - `view.FOLDFLAG_LINEBEFORE_EXPANDED`
+  - [`view.FOLDFLAG_LINEBEFORE_EXPANDED`](#view.FOLDFLAG_LINEBEFORE_EXPANDED)
     Draw lines above expanded folds.
-  - `view.FOLDFLAG_LINEBEFORE_CONTRACTED`
+  - [`view.FOLDFLAG_LINEBEFORE_CONTRACTED`](#view.FOLDFLAG_LINEBEFORE_CONTRACTED)
     Draw lines above collapsed folds.
-  - `view.FOLDFLAG_LINEAFTER_EXPANDED`
+  - [`view.FOLDFLAG_LINEAFTER_EXPANDED`](#view.FOLDFLAG_LINEAFTER_EXPANDED)
     Draw lines below expanded folds.
-  - `view.FOLDFLAG_LINEAFTER_CONTRACTED`
+  - [`view.FOLDFLAG_LINEAFTER_CONTRACTED`](#view.FOLDFLAG_LINEAFTER_CONTRACTED)
     Draw lines below collapsed folds.
-  - `view.FOLDFLAG_LEVELNUMBERS`
+  - [`view.FOLDFLAG_LEVELNUMBERS`](#view.FOLDFLAG_LEVELNUMBERS)
     Show hexadecimal fold levels in line margins.
-    This option cannot be combined with `FOLDFLAG_LINESTATE`.
-  - `view.FOLDFLAG_LINESTATE`
+    This option cannot be combined with [`view.FOLDFLAG_LINESTATE`](#view.FOLDFLAG_LINESTATE).
+  - [`view.FOLDFLAG_LINESTATE`](#view.FOLDFLAG_LINESTATE)
     Show line state in line margins.
-    This option cannot be combined with `FOLDFLAG_LEVELNUMBERS`.
+    This option cannot be combined with [`view.FOLDFLAG_LEVELNUMBERS`](#view.FOLDFLAG_LEVELNUMBERS).
 
-The default value is `view.FOLDFLAG_NONE`.
+The default value is [`view.FOLDFLAG_NONE`](#view.FOLDFLAG_NONE).
 
 <a id="view.fold_display_text_style"></a>
 #### `view.fold_display_text_style` 
 
 The fold display text mode.
 
-  - `view.FOLDDISPLAYTEXT_HIDDEN`
+  - [`view.FOLDDISPLAYTEXT_HIDDEN`](#view.FOLDDISPLAYTEXT_HIDDEN)
     Fold display text is not shown.
-  - `view.FOLDDISPLAYTEXT_STANDARD`
+  - [`view.FOLDDISPLAYTEXT_STANDARD`](#view.FOLDDISPLAYTEXT_STANDARD)
     Fold display text is shown with no decoration.
-  - `view.FOLDDISPLAYTEXT_BOXED`
+  - [`view.FOLDDISPLAYTEXT_BOXED`](#view.FOLDDISPLAYTEXT_BOXED)
     Fold display text is shown outlined with a box.
 
-The default value is `view.FOLDDISPLAYTEXT_HIDDEN`.
-
-<a id="view.set_default_fold_display_text"></a>
-#### `view:set_default_fold_display_text`(*text*)
-
-Sets the default fold display text to string *text*.
-
-Parameters:
-
-- *text*:  The text to display by default next to folded lines.
-
-<a id="view.get_default_fold_display_text"></a>
-#### `view:get_default_fold_display_text`()
-
-Returns the default fold display text.
+The default value is [`view.FOLDDISPLAYTEXT_HIDDEN`](#view.FOLDDISPLAYTEXT_HIDDEN).
 
 ### Highlight Matching Braces
 
@@ -4366,7 +4357,7 @@ Parameters:
 #### `view:brace_bad_light_indicator`(*use_indicator*, *indicator*)
 
 Highlights unmatched brace characters with indicator number *indicator*, in the range of
-`1` to `32`, instead of the `view.STYLE_BRACEBAD` style if *use_indicator* is `true`.
+`1` to `32`, instead of the [`view.STYLE_BRACEBAD`](#view.STYLE_BRACEBAD) style if *use_indicator* is `true`.
 
 Parameters:
 
@@ -4378,8 +4369,8 @@ Parameters:
 
 Highlights the characters at positions *pos1* and *pos2* as matching braces using the
 `'style.bracelight'` style.
-If indent guides are enabled, locates the column with `buffer.column` and sets
-`view.highlight_guide` in order to highlight the indent guide.
+If indent guides are enabled, locates the column with [`buffer.column`](#buffer.column) and sets
+[`view.highlight_guide`](#view.highlight_guide) in order to highlight the indent guide.
 
 Parameters:
 
@@ -4390,7 +4381,7 @@ Parameters:
 #### `view:brace_highlight_indicator`(*use_indicator*, *indicator*)
 
 Highlights matching brace characters with indicator number *indicator*, in the range of `1`
-to `32`, instead of the `view.STYLE_BRACELIGHT` style if *use_indicator* is `true`.
+to `32`, instead of the [`view.STYLE_BRACELIGHT`](#view.STYLE_BRACELIGHT) style if *use_indicator* is `true`.
 
 Parameters:
 
@@ -4407,18 +4398,18 @@ The indentation guide drawing mode.
 Indentation guides are dotted vertical lines that appear within indentation whitespace at
 each level of indentation.
 
-  - `view.IV_NONE`
+  - [`view.IV_NONE`](#view.IV_NONE)
     Does not draw any guides.
-  - `view.IV_REAL`
+  - [`view.IV_REAL`](#view.IV_REAL)
     Draw guides only within indentation whitespace.
-  - `view.IV_LOOKFORWARD`
+  - [`view.IV_LOOKFORWARD`](#view.IV_LOOKFORWARD)
     Draw guides beyond the current line up to the next non-empty line's indentation level,
     but with an additional level if the previous non-empty line is a fold point.
-  - `view.IV_LOOKBOTH`
+  - [`view.IV_LOOKBOTH`](#view.IV_LOOKBOTH)
     Draw guides beyond the current line up to either the indentation level of the previous
     or next non-empty line, whichever is greater.
 
-The default value is `view.IV_NONE`.
+The default value is [`view.IV_NONE`](#view.IV_NONE).
 
 <a id="view.highlight_guide"></a>
 #### `view.highlight_guide` 
@@ -4460,7 +4451,7 @@ Parameters:
 #### `buffer.lexer_language` 
 
 The buffer's lexer name. (Read-only)
-If the lexer is a multi-language lexer, [`buffer.get_lexer()`](#buffer.get_lexer) can obtain the lexer under
+If the lexer is a multi-language lexer, [`buffer:get_lexer()`](#buffer.get_lexer) can obtain the lexer under
 the caret.
 
 ### Manually Style Text
@@ -4491,7 +4482,7 @@ Clears all styling and folding information.
 #### `buffer:start_styling`(*position*, *unused*)
 
 Begins styling at position *position* with styling bit-mask *style_mask*.
-*style_mask* specifies which style bits can be set with `buffer.set_styling()`.
+*style_mask* specifies which style bits can be set with [`buffer:set_styling()`](#buffer.set_styling).
 
 Parameters:
 
@@ -4508,7 +4499,7 @@ Usage:
 
 Assigns style number *style*, in the range from `1` to `256`, to the next *length* characters,
 starting from the current styling position, and increments the styling position by *length*.
-[`buffer:start_styling`](#buffer.start_styling) should be called before `buffer:set_styling()`.
+[`buffer:start_styling()`](#buffer.start_styling) should be called before [`buffer:set_styling()`](#buffer.set_styling).
 
 Parameters:
 
@@ -4546,7 +4537,7 @@ Return:
 <a id="buffer.style_of_name"></a>
 #### `buffer:style_of_name`(*style_name*)
 
-Returns the style number associated with string *style_name*, or `view.STYLE_DEFAULT` if
+Returns the style number associated with string *style_name*, or [`view.STYLE_DEFAULT`](#view.STYLE_DEFAULT) if
 *style_name* is not in use.
 
 Parameters:
@@ -4584,7 +4575,7 @@ Cancels the active selection mode, autocompletion or user list, call tip, etc.
 <a id="buffer.edit_toggle_overtype"></a>
 #### `buffer:edit_toggle_overtype`()
 
-Toggles `buffer.overtype`.
+Toggles [`buffer.overtype`](#buffer.overtype).
 
 <a id="buffer.overtype"></a>
 #### `buffer.overtype` 
@@ -4596,31 +4587,31 @@ The default value is `false`.
 #### `view.idle_styling` 
 
 The idle styling mode.
-This mode has no effect when `view.wrap_mode` is on.
+This mode has no effect when [`view.wrap_mode`](#view.wrap_mode) is on.
 
-  - `view.IDLESTYLING_NONE`
+  - [`view.IDLESTYLING_NONE`](#view.IDLESTYLING_NONE)
     Style all the currently visible text before displaying it.
-  - `view.IDLESTYLING_TOVISIBLE`
+  - [`view.IDLESTYLING_TOVISIBLE`](#view.IDLESTYLING_TOVISIBLE)
     Style some text before displaying it and then style the rest incrementally in the
     background as an idle-time task.
-  - `view.IDLESTYLING_AFTERVISIBLE`
+  - [`view.IDLESTYLING_AFTERVISIBLE`](#view.IDLESTYLING_AFTERVISIBLE)
     Style text after the currently visible portion in the background.
-  - `view.IDLESTYLING_ALL`
+  - [`view.IDLESTYLING_ALL`](#view.IDLESTYLING_ALL)
     Style text both before and after the visible text in the background.
 
-  The default value is `view.IDLESTYLING_NONE`.
+  The default value is [`view.IDLESTYLING_NONE`](#view.IDLESTYLING_NONE).
 
 <a id="view.mouse_dwell_time"></a>
 #### `view.mouse_dwell_time` 
 
-The number of milliseconds the mouse must idle before generating a `DWELL_START` event.
-A time of `view.TIME_FOREVER` will never generate one.
+The number of milliseconds the mouse must idle before generating an [`events.DWELL_START`](#events.DWELL_START) event.
+A time of [`view.TIME_FOREVER`](#view.TIME_FOREVER) will never generate one.
 
 <a id="buffer.delete"></a>
 #### `buffer:delete`()
 
 Deletes the buffer.
-**Do not call this function.** Call `buffer:close()` instead. Emits a `BUFFER_DELETED` event.
+**Do not call this function.** Call [`buffer:close()`](#buffer.close) instead. Emits [`events.BUFFER_DELETED`](#events.BUFFER_DELETED).
 
 ---
 <a id="events"></a>
@@ -4699,7 +4690,7 @@ Arguments:
 Emitted as items are highlighted in an autocompletion or user list.
 Arguments:
 
-  - *id*: Either the *id* from [`buffer.user_list_show()`](#buffer.user_list_show) or `0` for an autocompletion list.
+  - *id*: Either the *id* from [`buffer:user_list_show()`](#buffer.user_list_show) or `0` for an autocompletion list.
   - *text*: The current selection's text.
   - *position*: The position the list was displayed at.
 
@@ -4707,16 +4698,15 @@ Arguments:
 #### `events.BUFFER_AFTER_REPLACE_TEXT` 
 
 Emitted after replacing the contents of the current buffer.
-Note that it is not guaranteed that [`events.BUFFER_BEFORE_REPLACE_TEXT`](#events.BUFFER_BEFORE_REPLACE_TEXT) was emitted
-previously.
+Note that it is not guaranteed that [`events.BUFFER_BEFORE_REPLACE_TEXT`](#events.BUFFER_BEFORE_REPLACE_TEXT) was emitted previously.
 The buffer **must not** be modified during this event.
 
 <a id="events.BUFFER_AFTER_SWITCH"></a>
 #### `events.BUFFER_AFTER_SWITCH` 
 
 Emitted right after switching to another buffer.
-The buffer being switched to is `buffer`.
-Emitted by [`view.goto_buffer()`](#view.goto_buffer).
+The buffer being switched to is [`buffer`](#buffer).
+Emitted by [`view:goto_buffer()`](#view.goto_buffer).
 
 <a id="events.BUFFER_BEFORE_REPLACE_TEXT"></a>
 #### `events.BUFFER_BEFORE_REPLACE_TEXT` 
@@ -4730,25 +4720,25 @@ The buffer **must not** be modified during this event.
 #### `events.BUFFER_BEFORE_SWITCH` 
 
 Emitted right before switching to another buffer.
-The buffer being switched from is `buffer`.
-Emitted by [`view.goto_buffer()`](#view.goto_buffer).
+The buffer being switched from is [`buffer`](#buffer).
+Emitted by [`view:goto_buffer()`](#view.goto_buffer).
 
 <a id="events.BUFFER_DELETED"></a>
 #### `events.BUFFER_DELETED` 
 
 Emitted after deleting a buffer.
-Emitted by [`buffer.delete()`](#buffer.delete).
+Emitted by [`buffer:delete()`](#buffer.delete).
 Arguments:
 
   - *buffer*: Simple representation of the deleted buffer. Buffer operations cannot be
-    performed on it, but fields like `filename` can be read.
+    performed on it, but fields like [`buffer.filename`](#buffer.filename) can be read.
 
 <a id="events.BUFFER_NEW"></a>
 #### `events.BUFFER_NEW` 
 
 Emitted after creating a new buffer.
-The new buffer is `buffer`.
-Emitted on startup and by [`buffer.new()`](#buffer.new).
+The new buffer is [`buffer`](#buffer).
+Emitted on startup and by `buffer.new()`.
 
 <a id="events.BUILD_OUTPUT"></a>
 #### `events.BUILD_OUTPUT` 
@@ -4812,16 +4802,17 @@ Arguments:
 
   - *position*: The position double-clicked.
   - *line*: The line number of the position double-clicked.
-  - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
-    `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
-    key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
-    `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
+  - *modifiers*: A bit-mask of any modifier keys held down: [`view.MOD_CTRL`](#view.MOD_CTRL),
+    [`view.MOD_SHIFT`](#view.MOD_SHIFT), [`view.MOD_ALT`](#view.MOD_ALT), and [`view.MOD_META`](#view.MOD_META). On macOS, the Command modifier
+    key is reported as [`view.MOD_CTRL`](#view.MOD_CTRL) and Ctrl is [`view.MOD_META`](#view.MOD_META). Note: If you set
+    [`view.rectangular_selection_modifier`](#view.rectangular_selection_modifier) to [`view.MOD_CTRL`](#view.MOD_CTRL), the "Control" modifier is
     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 
 <a id="events.DWELL_END"></a>
 #### `events.DWELL_END` 
 
-Emitted after `DWELL_START` when the user moves the mouse, presses a key, or scrolls the view.
+Emitted after [`events.DWELL_START`](#events.DWELL_START) when the user moves the mouse, presses a key, or scrolls
+the view.
 Arguments:
 
   - *position*: The position closest to *x* and *y*.
@@ -4906,7 +4897,7 @@ Arguments:
 #### `events.FIND_TEXT_CHANGED` 
 
 Emitted when the text in the "Find" field of the Find & Replace Pane changes.
-`ui.find.find_entry_text` contains the current text.
+[`ui.find.find_entry_text`](#ui.find.find_entry_text) contains the current text.
 
 <a id="events.FIND_WRAPPED"></a>
 #### `events.FIND_WRAPPED` 
@@ -4930,10 +4921,10 @@ Emitted when clicking the mouse on text that has an indicator present.
 Arguments:
 
   - *position*: The clicked text's position.
-  - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
-    `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
-    key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
-    `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
+  - *modifiers*: A bit-mask of any modifier keys held down: [`view.MOD_CTRL`](#view.MOD_CTRL),
+    [`view.MOD_SHIFT`](#view.MOD_SHIFT), [`view.MOD_ALT`](#view.MOD_ALT), and [`view.MOD_META`](#view.MOD_META). On macOS, the Command modifier
+    key is reported as [`view.MOD_CTRL`](#view.MOD_CTRL) and Ctrl is [`view.MOD_META`](#view.MOD_META). Note: If you set
+    [`view.rectangular_selection_modifier`](#view.rectangular_selection_modifier) to [`view.MOD_CTRL`](#view.MOD_CTRL), the "Control" modifier is
     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 
 <a id="events.INDICATOR_RELEASE"></a>
@@ -4943,10 +4934,10 @@ Emitted when releasing the mouse after clicking on text that has an indicator pr
 Arguments:
 
   - *position*: The clicked text's position.
-  - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
-    `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
-    key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
-    `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
+  - *modifiers*: A bit-mask of any modifier keys held down: [`view.MOD_CTRL`](#view.MOD_CTRL),
+    [`view.MOD_SHIFT`](#view.MOD_SHIFT), [`view.MOD_ALT`](#view.MOD_ALT), and [`view.MOD_META`](#view.MOD_META). On macOS, the Command modifier
+    key is reported as [`view.MOD_CTRL`](#view.MOD_CTRL) and Ctrl is [`view.MOD_META`](#view.MOD_META). Note: If you set
+    [`view.rectangular_selection_modifier`](#view.rectangular_selection_modifier) to [`view.MOD_CTRL`](#view.MOD_CTRL), the "Control" modifier is
     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 
 <a id="events.INITIALIZED"></a>
@@ -4981,10 +4972,10 @@ Arguments:
 
   - *margin*: The margin number clicked.
   - *position*: The beginning position of the clicked margin's line.
-  - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
-    `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
-    key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
-    `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
+  - *modifiers*: A bit-mask of any modifier keys held down: [`view.MOD_CTRL`](#view.MOD_CTRL),
+    [`view.MOD_SHIFT`](#view.MOD_SHIFT), [`view.MOD_ALT`](#view.MOD_ALT), and [`view.MOD_META`](#view.MOD_META). On macOS, the Command modifier
+    key is reported as [`view.MOD_CTRL`](#view.MOD_CTRL) and Ctrl is [`view.MOD_META`](#view.MOD_META). Note: If you set
+    [`view.rectangular_selection_modifier`](#view.rectangular_selection_modifier) to [`view.MOD_CTRL`](#view.MOD_CTRL), the "Control" modifier is
     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 
 <a id="events.MENU_CLICKED"></a>
@@ -5012,7 +5003,7 @@ A handler should return `true` if it handled the event. Otherwise Textadept will
 event to a different view that a handler has switched to.)
 Arguments:
 
-  - *event*: The mouse event: `view.MOUSE_PRESS`, `view.MOUSE_DRAG`, or `view.MOUSE_RELEASE`.
+  - *event*: The mouse event: [`view.MOUSE_PRESS`](#view.MOUSE_PRESS), [`view.MOUSE_DRAG`](#view.MOUSE_DRAG), or [`view.MOUSE_RELEASE`](#view.MOUSE_RELEASE).
   - *button*: The mouse button number.
   - *y*: The y-coordinate of the mouse event, starting from 1.
   - *x*: The x-coordinate of the mouse event, starting from 1.
@@ -5054,7 +5045,7 @@ Emitted after resetting Textadept's Lua state.
 Emitted by [`reset()`](#reset).
 Arguments:
 
-  - *persist*: Table of data persisted by `events.RESET_BEFORE`. All handlers will have
+  - *persist*: Table of data persisted by [`events.RESET_BEFORE`](#events.RESET_BEFORE). All handlers will have
     access to this same table.
 
 <a id="events.RESET_BEFORE"></a>
@@ -5064,7 +5055,7 @@ Emitted before resetting Textadept's Lua state.
 Emitted by [`reset()`](#reset).
 Arguments:
 
-  - *persist*: Table to store persistent data in for use by `events.RESET_AFTER`. All
+  - *persist*: Table to store persistent data in for use by [`events.RESET_AFTER`](#events.RESET_AFTER). All
     handlers will have access to this same table.
 
 <a id="events.RESUME"></a>
@@ -5130,10 +5121,10 @@ Arguments:
   - *index*: The numeric index of the clicked tab.
   - *button*: The mouse button number that was clicked, either `1` (left button), `2`
     (middle button), `3` (right button), `4` (wheel up), or `5` (wheel down).
-  - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
-    `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
-    key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
-    `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
+  - *modifiers*: A bit-mask of any modifier keys held down: [`view.MOD_CTRL`](#view.MOD_CTRL),
+    [`view.MOD_SHIFT`](#view.MOD_SHIFT), [`view.MOD_ALT`](#view.MOD_ALT), and [`view.MOD_META`](#view.MOD_META). On macOS, the Command modifier
+    key is reported as [`view.MOD_CTRL`](#view.MOD_CTRL) and Ctrl is [`view.MOD_META`](#view.MOD_META). Note: If you set
+    [`view.rectangular_selection_modifier`](#view.rectangular_selection_modifier) to [`view.MOD_CTRL`](#view.MOD_CTRL), the "Control" modifier is
     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 
 <a id="events.TAB_CLOSE_CLICKED"></a>
@@ -5171,13 +5162,13 @@ Arguments:
 
   - *updated*: A bitmask of changes since the last update.
 
-    + `buffer.UPDATE_CONTENT`
+    + [`buffer.UPDATE_CONTENT`](#buffer.UPDATE_CONTENT)
       Buffer contents, styling, or markers have changed.
-    + `buffer.UPDATE_SELECTION`
+    + [`buffer.UPDATE_SELECTION`](#buffer.UPDATE_SELECTION)
       Buffer selection has changed (including caret movement).
-    + `view.UPDATE_V_SCROLL`
+    + [`view.UPDATE_V_SCROLL`](#view.UPDATE_V_SCROLL)
       View has scrolled vertically.
-    + `view.UPDATE_H_SCROLL`
+    + [`view.UPDATE_H_SCROLL`](#view.UPDATE_H_SCROLL)
       View has scrolled horizontally.
 
 <a id="events.URI_DROPPED"></a>
@@ -5194,7 +5185,7 @@ Arguments:
 Emitted after selecting an item in a user list.
 Arguments:
 
-  - *id*: The *id* from [`buffer.user_list_show()`](#buffer.user_list_show).
+  - *id*: The *id* from [`buffer:user_list_show()`](#buffer.user_list_show).
   - *text*: The selection's text.
   - *position*: The position the list was displayed at.
 
@@ -5202,28 +5193,28 @@ Arguments:
 #### `events.VIEW_AFTER_SWITCH` 
 
 Emitted right after switching to another view.
-The view being switched to is `view`.
+The view being switched to is [`view`](#view).
 Emitted by [`ui.goto_view()`](#ui.goto_view).
 
 <a id="events.VIEW_BEFORE_SWITCH"></a>
 #### `events.VIEW_BEFORE_SWITCH` 
 
 Emitted right before switching to another view.
-The view being switched from is `view`.
+The view being switched from is [`view`](#view).
 Emitted by [`ui.goto_view()`](#ui.goto_view).
 
 <a id="events.VIEW_NEW"></a>
 #### `events.VIEW_NEW` 
 
 Emitted after creating a new view.
-The new view is `view`.
-Emitted on startup and by [`view.split()`](#view.split).
+The new view is [`view`](#view).
+Emitted on startup and by [`view:split()`](#view.split).
 
 <a id="events.ZOOM"></a>
 #### `events.ZOOM` 
 
 Emitted after changing [`view.zoom`](#view.zoom).
-Emitted by [`view.zoom_in()`](#view.zoom_in) and [`view.zoom_out()`](#view.zoom_out).
+Emitted by [`view:zoom_in()`](#view.zoom_in) and [`view:zoom_out()`](#view.zoom_out).
 
 
 ### Functions defined by `events`
@@ -5286,7 +5277,7 @@ Return:
 ## The `io` Module
 ---
 
-Extends Lua's `io` library with Textadept functions for working with files.
+Extends Lua's [`io`](#io) library with Textadept functions for working with files.
 
 ### Fields defined by `io`
 
@@ -5328,7 +5319,7 @@ The default value is `false` on Windows, and `true` on Linux and macOS.
 <a id="io.quick_open_filters"></a>
 #### `io.quick_open_filters` &lt;table&gt;
 
-Map of directory paths to filters used by `io.quick_open()`.
+Map of directory paths to filters used by [`io.quick_open()`](#io.quick_open).
 
 <a id="io.quick_open_max"></a>
 #### `io.quick_open_max` 
@@ -5378,18 +5369,14 @@ Return:
 #### `io.open_file`([*filenames*[, *encodings*]])
 
 Opens *filenames*, a string filename or list of filenames, or the user-selected filename(s).
-Emits a `FILE_OPENED` event.
+Emits [`events.FILE_OPENED`](#events.FILE_OPENED).
 
 Parameters:
 
 - *filenames*:  Optional string filename or table of filenames to open. If `nil`,
    the user is prompted with a fileselect dialog.
 - *encodings*:  Optional string encoding or table of encodings file contents are in
-   (one encoding per file). If `nil`, encoding auto-detection is attempted via `io.encodings`.
-
-See also:
-
-- [`events`](#events)
+   (one encoding per file). If `nil`, encoding auto-detection is attempted via [`io.encodings`](#io.encodings).
 
 <a id="io.open_recent_file"></a>
 #### `io.open_recent_file`()
@@ -5402,16 +5389,16 @@ Prompts the user to select a recently opened file to be reopened.
 Prompts the user to select files to be opened from *paths*, a string directory path or list
 of directory paths, using a list dialog.
 If *paths* is `nil`, uses the current project's root directory, which is obtained from
-`io.get_project_root()`.
+[`io.get_project_root()`](#io.get_project_root).
 String or list *filter* determines which files to show in the dialog, with the default filter
-being `io.quick_open_filters[path]` (if it exists) or `lfs.default_filter`. A filter consists
+being `io.quick_open_filters[path]` (if it exists) or [`lfs.default_filter`](#lfs.default_filter). A filter consists
 of glob patterns that match file and directory paths to include or exclude. Patterns are
 inclusive by default. Exclusive patterns begin with a '!'. If no inclusive patterns are given,
 any path is initially considered. As a convenience, '/' also matches the Windows directory
 separator ('[/\\]' is not needed).
-The number of files in the list is capped at `quick_open_max`.
+The number of files in the list is capped at [`io.quick_open_max`](#io.quick_open_max).
 If *filter* is `nil` and *paths* is ultimately a string, the filter from the
-`io.quick_open_filters` table is used. If that filter does not exist, `lfs.default_filter`
+[`io.quick_open_filters`](#io.quick_open_filters) table is used. If that filter does not exist, [`lfs.default_filter`](#lfs.default_filter)
 is used.
 
 Parameters:
@@ -5419,8 +5406,8 @@ Parameters:
 - *paths*:  Optional string directory path or table of directory paths to search. The
    default value is the current project's root directory, if available.
 - *filter*:  Optional filter for files and directories to include and/or exclude. The
-   default value is `lfs.default_filter` unless a filter for *paths* is defined in
-   `io.quick_open_filters`.
+   default value is [`lfs.default_filter`](#lfs.default_filter) unless a filter for *paths* is defined in
+   [`io.quick_open_filters`](#io.quick_open_filters).
 
 Usage:
 
@@ -5460,7 +5447,7 @@ Manages key bindings in Textadept.
 
 ### Overview
 
-Define key bindings in the global `keys` table in key-value pairs. Each pair consists of
+Define key bindings in the global [`keys`](#keys) table in key-value pairs. Each pair consists of
 either a string key sequence and its associated command, a string lexer name (from the
 *lexers/* directory) with a table of key sequences and commands, a string key mode with a
 table of key sequences and commands, or a key sequence with a table of more sequences and
@@ -5506,7 +5493,7 @@ A command bound to a key sequence is simply a Lua function. For example:
     keys['ctrl+z'] = buffer.undo
     keys['ctrl+u'] = function() io.quick_open(_USERHOME) end
 
-Textadept handles [`buffer`](#buffer) references properly in static contexts.
+Textadept handles [`buffer`](#buffer) and [`view`](#view) references properly in static contexts.
 
 ### Modes
 
@@ -5602,9 +5589,9 @@ convenience functions for creating and working with other more advanced patterns
 
 Operator | Description
 -|-
-`lpeg.P(string)` | Matches `string` literally.
+`lpeg.P(string)` | Matches [`string`](#string) literally.
 `lpeg.P(`_`n`_`)` | Matches exactly _`n`_ number of characters.
-`lpeg.S(string)` | Matches any character in set `string`.
+`lpeg.S(string)` | Matches any character in set [`string`](#string).
 `lpeg.R("`_`xy`_`")`| Matches any character between range `x` and `y`.
 `patt^`_`n`_ | Matches at least _`n`_ repetitions of `patt`.
 `patt^-`_`n`_ | Matches at most _`n`_ repetitions of `patt`.
@@ -5664,8 +5651,8 @@ The first line of code is a Lua convention to store a global variable into a loc
 for quick access. The second line simply defines often used convenience variables. The third
 and last lines [define](#lexer.new) and return the lexer object Scintillua uses; they are
 very important and must be part of every lexer. Note the `...` passed to [`lexer.new()`](#lexer.new) is
-literal: the lexer will assume the name of its filename or an alternative name specified by
-[`lexer.load()`](#lexer.load) in embedded lexer applications. The fourth line uses something called a
+literal: the lexer will assume the name of its filename or an alternative name specified
+by [`lexer.load()`](#lexer.load) in embedded lexer applications. The fourth line uses something called a
 "tag", an essential component of lexers. You will learn about tags shortly. The fifth line
 defines a lexer grammar rule, which you will learn about later. (Be aware that it is common
 practice to combine these two lines for short rules.)  Note, however, the `local` prefix in
@@ -5687,8 +5674,8 @@ find it helpful for the lexer to distinguish between them all. It is perfectly a
 to just recognize keywords and identifiers.
 
 In a lexer, LPeg patterns that match particular sequences of characters are tagged with a
-tag name using the the [`lexer.tag()`](#lexer.tag) function. Let us examine the "identifier" tag used
-in the template shown earlier:
+tag name using the the [`lexer.tag()`](#lexer.tag) function. Let us examine the "identifier" tag used in
+the template shown earlier:
 
     local identifier = lex:tag(lexer.IDENTIFIER, lexer.word)
 
@@ -5697,29 +5684,26 @@ argument does not appear to be an LPeg pattern. Perhaps you expected something l
 
     lex:tag('identifier', (lpeg.R('AZ', 'az')  + '_') * (lpeg.R('AZ', 'az', '09') + '_')^0)
 
-The `lexer` module actually provides a convenient list of common tag names and common LPeg
+The [`lexer`](#lexer) module actually provides a convenient list of common tag names and common LPeg
 patterns for you to use. Tag names for programming languages include (but are not limited
-to) [`lexer.DEFAULT`](#lexer.DEFAULT), [`lexer.COMMENT`](#lexer.COMMENT), [`lexer.STRING`](#lexer.STRING), [`lexer.NUMBER`](#lexer.NUMBER),
-[`lexer.KEYWORD`](#lexer.KEYWORD), [`lexer.IDENTIFIER`](#lexer.IDENTIFIER), [`lexer.OPERATOR`](#lexer.OPERATOR), [`lexer.ERROR`](#lexer.ERROR),
-[`lexer.PREPROCESSOR`](#lexer.PREPROCESSOR), [`lexer.CONSTANT`](#lexer.CONSTANT), [`lexer.CONSTANT_BUILTIN`](#lexer.CONSTANT_BUILTIN),
-[`lexer.VARIABLE`](#lexer.VARIABLE), [`lexer.VARIABLE_BUILTIN`](#lexer.VARIABLE_BUILTIN), [`lexer.FUNCTION`](#lexer.FUNCTION),
-[`lexer.FUNCTION_BUILTIN`](#lexer.FUNCTION_BUILTIN), [`lexer.FUNCTION_METHOD`](#lexer.FUNCTION_METHOD), [`lexer.CLASS`](#lexer.CLASS), [`lexer.TYPE`](#lexer.TYPE),
-[`lexer.LABEL`](#lexer.LABEL), [`lexer.REGEX`](#lexer.REGEX), [`lexer.EMBEDDED`](#lexer.EMBEDDED), and [`lexer.ANNOTATION`](#lexer.ANNOTATION). Tag
-names for markup languages include (but are not limited to) [`lexer.TAG`](#lexer.TAG),
-[`lexer.ATTRIBUTE`](#lexer.ATTRIBUTE), [`lexer.HEADING`](#lexer.HEADING), [`lexer.BOLD`](#lexer.BOLD), [`lexer.ITALIC`](#lexer.ITALIC),
-[`lexer.UNDERLINE`](#lexer.UNDERLINE), [`lexer.CODE`](#lexer.CODE), [`lexer.LINK`](#lexer.LINK), [`lexer.REFERENCE`](#lexer.REFERENCE), and
-[`lexer.LIST`](#lexer.LIST). Patterns include [`lexer.any`](#lexer.any), [`lexer.alpha`](#lexer.alpha), [`lexer.digit`](#lexer.digit),
-[`lexer.alnum`](#lexer.alnum), [`lexer.lower`](#lexer.lower), [`lexer.upper`](#lexer.upper), [`lexer.xdigit`](#lexer.xdigit), [`lexer.graph`](#lexer.graph),
-[`lexer.print`](#lexer.print), [`lexer.punct`](#lexer.punct), [`lexer.space`](#lexer.space), [`lexer.newline`](#lexer.newline),
-[`lexer.nonnewline`](#lexer.nonnewline), [`lexer.dec_num`](#lexer.dec_num), [`lexer.hex_num`](#lexer.hex_num), [`lexer.oct_num`](#lexer.oct_num),
-[`lexer.bin_num`](#lexer.bin_num), [`lexer.integer`](#lexer.integer), [`lexer.float`](#lexer.float), [`lexer.number`](#lexer.number), and
-[`lexer.word`](#lexer.word). You may use your own tag names if none of the above fit your language,
-but an advantage to using predefined tag names is that the language elements your lexer
-recognizes will inherit any universal syntax highlighting color theme that your editor
-uses. You can also "subclass" existing tag names by appending a '.*subclass*' string to
-them. For example, the HTML lexer tags unknown tags as `lexer.TAG .. '.unknown'`. This gives
-editors the opportunity to style those subclassed tags in a different way than normal tags,
-or fall back to styling them as normal tags.
+to) [`lexer.DEFAULT`](#lexer.DEFAULT), [`lexer.COMMENT`](#lexer.COMMENT), [`lexer.STRING`](#lexer.STRING), [`lexer.NUMBER`](#lexer.NUMBER), [`lexer.KEYWORD`](#lexer.KEYWORD),
+[`lexer.IDENTIFIER`](#lexer.IDENTIFIER), [`lexer.OPERATOR`](#lexer.OPERATOR), [`lexer.ERROR`](#lexer.ERROR), [`lexer.PREPROCESSOR`](#lexer.PREPROCESSOR), [`lexer.CONSTANT`](#lexer.CONSTANT),
+[`lexer.CONSTANT_BUILTIN`](#lexer.CONSTANT_BUILTIN), [`lexer.VARIABLE`](#lexer.VARIABLE), [`lexer.VARIABLE_BUILTIN`](#lexer.VARIABLE_BUILTIN), [`lexer.FUNCTION`](#lexer.FUNCTION),
+[`lexer.FUNCTION_BUILTIN`](#lexer.FUNCTION_BUILTIN), [`lexer.FUNCTION_METHOD`](#lexer.FUNCTION_METHOD), [`lexer.CLASS`](#lexer.CLASS), [`lexer.TYPE`](#lexer.TYPE), [`lexer.LABEL`](#lexer.LABEL),
+[`lexer.REGEX`](#lexer.REGEX), [`lexer.EMBEDDED`](#lexer.EMBEDDED), and [`lexer.ANNOTATION`](#lexer.ANNOTATION). Tag names for markup languages include
+(but are not limited to) [`lexer.TAG`](#lexer.TAG), [`lexer.ATTRIBUTE`](#lexer.ATTRIBUTE), [`lexer.HEADING`](#lexer.HEADING), [`lexer.BOLD`](#lexer.BOLD),
+[`lexer.ITALIC`](#lexer.ITALIC), [`lexer.UNDERLINE`](#lexer.UNDERLINE), [`lexer.CODE`](#lexer.CODE), [`lexer.LINK`](#lexer.LINK), [`lexer.REFERENCE`](#lexer.REFERENCE), and
+[`lexer.LIST`](#lexer.LIST). Patterns include [`lexer.any`](#lexer.any), [`lexer.alpha`](#lexer.alpha), [`lexer.digit`](#lexer.digit), [`lexer.alnum`](#lexer.alnum),
+[`lexer.lower`](#lexer.lower), [`lexer.upper`](#lexer.upper), [`lexer.xdigit`](#lexer.xdigit), [`lexer.graph`](#lexer.graph), [`lexer.punct`](#lexer.punct), [`lexer.space`](#lexer.space),
+[`lexer.newline`](#lexer.newline), [`lexer.nonnewline`](#lexer.nonnewline), [`lexer.dec_num`](#lexer.dec_num), [`lexer.hex_num`](#lexer.hex_num), [`lexer.oct_num`](#lexer.oct_num),
+[`lexer.bin_num`](#lexer.bin_num), [`lexer.integer`](#lexer.integer), [`lexer.float`](#lexer.float), [`lexer.number`](#lexer.number), and [`lexer.word`](#lexer.word). You may
+use your own tag names if none of the above fit your language, but an advantage to using
+predefined tag names is that the language elements your lexer recognizes will inherit any
+universal syntax highlighting color theme that your editor uses. You can also "subclass"
+existing tag names by appending a '.*subclass*' string to them. For example, the HTML lexer
+tags unknown tags as `lexer.TAG .. '.unknown'`. This gives editors the opportunity to style
+those subclassed tags in a different way than normal tags, or fall back to styling them as
+normal tags.
 
 ##### Example Tags
 
@@ -5842,8 +5826,8 @@ highlighting to be. After all, you are not writing a compiler or interpreter!
 Programming languages have grammars, which specify valid syntactic structure. For example,
 comments usually cannot appear within a string, and valid identifiers (like variable names)
 cannot be keywords. In Lua lexers, grammars consist of LPeg pattern rules, many of which
-are tagged.  Recall from the lexer template the [`lexer.add_rule()`](#lexer.add_rule) call, which adds a
-rule to the lexer's grammar:
+are tagged.  Recall from the lexer template the [`lexer.add_rule()`](#lexer.add_rule) call, which adds a rule
+to the lexer's grammar:
 
     lex:add_rule('identifier', identifier)
 
@@ -5878,7 +5862,7 @@ you want to highlight these "syntax errors", add a final rule:
     ...
     lex:add_rule('error', lex:tag(lexer.ERROR, lexer.any))
 
-This identifies and tags any character not matched by an existing rule as a `lexer.ERROR`.
+This identifies and tags any character not matched by an existing rule as a [`lexer.ERROR`](#lexer.ERROR).
 
 Even though the rules defined in the examples above contain a single tagged pattern, rules may
 consist of multiple tagged patterns. For example, the rule for an HTML tag could consist of a
@@ -5981,7 +5965,7 @@ in this case, call [`lexer.embed()`](#lexer.embed) with switched arguments. For 
     html:embed(lex, php_start_rule, php_end_rule)
 
 Note that the use of a 'php_tag' tag will require the editor using the lexer to specify how
-to highlight text with that tag. In order to avoid this, you could use the `lexer.PREPROCESSOR`
+to highlight text with that tag. In order to avoid this, you could use the [`lexer.PREPROCESSOR`](#lexer.PREPROCESSOR)
 tag instead.
 
 #### Lexers with Complex State
@@ -6009,15 +5993,15 @@ The fold points for most languages occur on keywords or character sequences. Exa
 fold keywords are "if" and "end" in Lua and examples of fold character sequences are '{',
 '}', "/\*", and "\*/" in C for code block and comment delimiters, respectively. However,
 these fold points cannot occur just anywhere. For example, lexers should not recognize fold
-keywords that appear within strings or comments. The [`lexer.add_fold_point()`](#lexer.add_fold_point) function
-allows you to conveniently define fold points with such granularity. For example, consider C:
+keywords that appear within strings or comments. The [`lexer.add_fold_point()`](#lexer.add_fold_point) function allows
+you to conveniently define fold points with such granularity. For example, consider C:
 
     lex:add_fold_point(lexer.OPERATOR, '{', '}')
     lex:add_fold_point(lexer.COMMENT, '/*', '*/')
 
-The first assignment states that any '{' or '}' that the lexer tagged as an `lexer.OPERATOR`
+The first assignment states that any '{' or '}' that the lexer tagged as an [`lexer.OPERATOR`](#lexer.OPERATOR)
 is a fold point. Likewise, the second assignment states that any "/\*" or "\*/" that the
-lexer tagged as part of a `lexer.COMMENT` is a fold point. The lexer does not consider any
+lexer tagged as part of a [`lexer.COMMENT`](#lexer.COMMENT) is a fold point. The lexer does not consider any
 occurrences of these characters outside their tagged elements (such as in a string) as fold
 points. How do you specify fold keywords? Here is an example for Lua:
 
@@ -6130,19 +6114,19 @@ Legacy lexers are of the form:
 While Scintillua will mostly handle such legacy lexers just fine without any changes, it is
 recommended that you migrate yours. The migration process is fairly straightforward:
 
-1. `lexer` exists in the default lexer environment, so `require('lexer')` should be replaced
-   by simply `lexer`. (Keep in mind `local lexer = lexer` is a Lua idiom.)
-2. Every lexer created using [`lexer.new()`](#lexer.new) should no longer specify a lexer name by
-   string, but should instead use `...` (three dots), which evaluates to the lexer's filename
-   or alternative name in embedded lexer applications.
-3. Every lexer created using `lexer.new()` now includes a rule to match whitespace. Unless
+1. [`lexer`](#lexer) exists in the default lexer environment, so `require('lexer')` should be replaced
+   by simply [`lexer`](#lexer). (Keep in mind `local lexer = lexer` is a Lua idiom.)
+2. Every lexer created using [`lexer.new()`](#lexer.new) should no longer specify a lexer name by string,
+   but should instead use `...` (three dots), which evaluates to the lexer's filename or
+   alternative name in embedded lexer applications.
+3. Every lexer created using [`lexer.new()`](#lexer.new) now includes a rule to match whitespace. Unless
    your lexer has significant whitespace, you can remove your legacy lexer's whitespace
    token and rule. Otherwise, your defined whitespace rule will replace the default one.
 4. The concept of tokens has been replaced with tags. Instead of calling a `token()` function,
    call [`lex:tag()`](#lexer.tag) instead.
-5. Lexers now support replaceable word lists. Instead of calling [`lexer.word_match()`](#lexer.word_match)
-   with large word lists, call it as an instance method with an identifier string (typically
-   something like `lexer.KEYWORD`). Then at the end of the lexer (before `return lex`), call
+5. Lexers now support replaceable word lists. Instead of calling [`lexer.word_match()`](#lexer.word_match) with
+   large word lists, call it as an instance method with an identifier string (typically
+   something like [`lexer.KEYWORD`](#lexer.KEYWORD)). Then at the end of the lexer (before `return lex`), call
    [`lex:set_word_list()`](#lexer.set_word_list) with the same identifier and the usual
    list of words to match. This allows users of your lexer to call `lex:set_word_list()`
    with their own set of words should they wish to.
@@ -6204,13 +6188,13 @@ There might be some slight overhead when initializing a lexer, but loading a fil
 into Scintilla is usually more expensive. Actually painting the syntax highlighted text to
 the screen is often more expensive than the lexing operation. On modern computer systems,
 I see no difference in speed between Lua lexers and Scintilla's C++ ones. Optimize lexers for
-speed by re-arranging `lexer.add_rule()` calls so that the most common rules match first. Do
+speed by re-arranging [`lexer.add_rule()`](#lexer.add_rule) calls so that the most common rules match first. Do
 keep in mind that order matters for similar rules.
 
 In some cases, folding may be far more expensive than lexing, particularly in lexers with a
 lot of potential fold points. If your lexer is exhibiting signs of slowness, try disabling
 folding in your text editor first. If that speeds things up, you can try reducing the number
-of fold points you added, overriding `lexer.fold()` with your own implementation, or simply
+of fold points you added, overriding [`lexer.fold()`](#lexer.fold) with your own implementation, or simply
 eliminating folding support from your lexer.
 
 #### Limitations
@@ -6485,11 +6469,11 @@ A pattern that matches a floating point number.
 Table of fold level bit-masks for line numbers starting from 1. (Read-only)
 Fold level masks are composed of an integer level combined with any of the following bits:
 
-  - `lexer.FOLD_BASE`
+  - [`lexer.FOLD_BASE`](#lexer.FOLD_BASE)
     The initial fold level.
-  - `lexer.FOLD_BLANK`
+  - [`lexer.FOLD_BLANK`](#lexer.FOLD_BLANK)
     The line is blank.
-  - `lexer.FOLD_HEADER`
+  - [`lexer.FOLD_HEADER`](#lexer.FOLD_HEADER)
     The line is a header, or fold point.
 
 <a id="lexer.graph"></a>
@@ -6838,7 +6822,7 @@ Parameters:
 #### `lexer.names`([*path*])
 
 Returns a list of all known lexer names.
-This function is not available to lexers and requires the LuaFileSystem (`lfs`) module to
+This function is not available to lexers and requires the LuaFileSystem ([`lfs`](#lfs)) module to
 be available.
 
 Parameters:
@@ -6866,7 +6850,7 @@ Parameters:
      fold points should be calculated based on changes in line indentation. The default value
      is `false`.
    - `case_insensitive_fold_points`: Whether or not fold points added via
-     `lexer.add_fold_point()` ignore case. The default value is `false`.
+     [`lexer.add_fold_point()`](#lexer.add_fold_point) ignore case. The default value is `false`.
    - `no_user_word_lists`: Does not automatically allocate word lists that can be set by
      users. This should really only be set by non-programming languages like markup languages.
    - `inherit`: Lexer to inherit from. The default value is `nil`.
@@ -7063,7 +7047,7 @@ Return:
 ## The `lfs` Module
 ---
 
-Extends the `lfs` library to find files in directories and determine absolute file paths.
+Extends the [`lfs`](#lfs) library to find files in directories and determine absolute file paths.
 
 ### Fields defined by `lfs`
 
@@ -7071,7 +7055,7 @@ Extends the `lfs` library to find files in directories and determine absolute fi
 #### `lfs.default_filter` &lt;table&gt;
 
 The filter table containing common binary file extensions and version control directories
-to exclude when iterating over files and directories using `walk`.
+to exclude when iterating over files and directories using [`lfs.walk`](#lfs.walk).
 Extensions excluded: a, bmp, bz2, class, dll, exe, gif, gz, jar, jpeg, jpg, o, pdf, png,
 so, tar, tgz, tif, tiff, xz, and zip.
 Directories excluded: .bzr, .git, .hg, .svn, _FOSSIL_, and node_modules.
@@ -7101,7 +7085,7 @@ Return:
 Returns an iterator that iterates over all files and sub-directories (up to *n* levels deep)
 in directory *dir* and yields each file found.
 String or list *filter* determines which files to yield, with the default filter being
-`lfs.default_filter`. A filter consists of glob patterns that match file and directory paths to
+[`lfs.default_filter`](#lfs.default_filter). A filter consists of glob patterns that match file and directory paths to
 include or exclude. Exclusive patterns begin with a '!'. If no inclusive patterns are given,
 any path is initially considered. As a convenience, '/' also matches the Windows directory
 separator ('[/\\]' is not needed).
@@ -7110,7 +7094,7 @@ Parameters:
 
 - *dir*:  The directory path to iterate over.
 - *filter*:  Optional filter for files and directories to include and exclude. The
-   default value is `lfs.default_filter`.
+   default value is [`lfs.default_filter`](#lfs.default_filter).
 - *n*:  Optional maximum number of directory levels to descend into. The default value
    is `nil`, which indicates no limit.
 - *include_dirs*:  Optional flag indicating whether or not to yield directory names too.
@@ -7123,7 +7107,7 @@ Parameters:
 ## The `os` Module
 ---
 
-Extends Lua's `os` library to provide process spawning capabilities.
+Extends Lua's [`os`](#os) library to provide process spawning capabilities.
 
 ### Functions defined by `os`
 
@@ -7188,7 +7172,7 @@ Reads and returns stdout from process *spawn_proc*, according to string format o
 Similar to Lua's `io.read()` and blocks for input. *spawn_proc* must still be running. If
 an error occurs while reading, returns `nil`, an error code, and an error message.
 Ensure any read operations read all stdout available, as the stdout callback function passed
-to `os.spawn()` will not be called until the stdout buffer is clear.
+to [`os.spawn()`](#os.spawn) will not be called until the stdout buffer is clear.
 
 Parameters:
 
@@ -7238,7 +7222,7 @@ Parameters:
 ## The `string` Module
 ---
 
-Extends Lua's `string` library to provide character set conversions.
+Extends Lua's [`string`](#string) library to provide character set conversions.
 
 ### Functions defined by `string`
 
@@ -7389,15 +7373,15 @@ Fields:
 
 - `word`: Returns for the word part behind the caret a list of whole word completions
  constructed from the current buffer or all open buffers (depending on
- `textadept.editing.autocomplete_all_words`).
- If `buffer.auto_c_ignore_case` is `true`, completions are not case-sensitive.
+ [`textadept.editing.autocomplete_all_words`](#textadept.editing.autocomplete_all_words)).
+ If [`buffer.auto_c_ignore_case`](#buffer.auto_c_ignore_case) is `true`, completions are not case-sensitive.
 - `snippet`: Autocompleter function for snippet trigger words.
 
 <a id="textadept.editing.comment_string"></a>
 #### `textadept.editing.comment_string` &lt;table&gt;
 
-Map of lexer names to line comment strings for programming languages, used by the
-`toggle_comment()` function.
+Map of lexer names to line comment strings for programming languages, used by
+`editing.toggle_comment()`.
 Keys are lexer names and values are either the language's line comment prefixes or block
 comment delimiters separated by a '|' character. If no comment string exists for a given
 language, the lexer-supplied string is used, if available.
@@ -7439,15 +7423,15 @@ Displays an autocompletion list provided by the autocompleter function associate
 
 Parameters:
 
-- *name*:  The name of an autocompleter function in the `autocompleters` table to use for
-   providing autocompletions.
+- *name*:  The name of an autocompleter function in the [`textadept.editing.autocompleters`](#textadept.editing.autocompleters)
+   table to use for providing autocompletions.
 
 <a id="textadept.editing.convert_indentation"></a>
 #### `textadept.editing.convert_indentation`()
 
-Converts indentation between tabs and spaces according to `buffer.use_tabs`.
-If `buffer.use_tabs` is `true`, `buffer.tab_width` indenting spaces are converted to tabs.
-Otherwise, all indenting tabs are converted to `buffer.tab_width` spaces.
+Converts indentation between tabs and spaces according to [`buffer.use_tabs`](#buffer.use_tabs).
+If [`buffer.use_tabs`](#buffer.use_tabs) is `true`, [`buffer.tab_width`](#buffer.tab_width) indenting spaces are converted to tabs.
+Otherwise, all indenting tabs are converted to [`buffer.tab_width`](#buffer.tab_width) spaces.
 
 <a id="textadept.editing.enclose"></a>
 #### `textadept.editing.enclose`(*left*, *right*[, *select*])
@@ -7481,7 +7465,7 @@ Standard input is as follows:
 Note: Be careful when using commands that emit stdout while reading stdin (as opposed
 to emitting stdout only after stdin is closed).  Input that generates more output
 than an OS-specific pipe can hold may hang Textadept. On Linux, this may be 64K. See
-[`spawn_proc:write()`](#spawn_proc:write).
+[[`spawn_proc:write()`](#spawn_proc.write)](#spawn_proc:write).
 
 Parameters:
 
@@ -7516,7 +7500,8 @@ and the indentation of the current and preceding lines.
 Selects the text between strings *left* and *right* that enclose the caret.
 If that range is already selected, toggles between selecting *left* and *right* as well.
 If *left* and *right* are not provided, they are assumed to be one of the delimiter pairs
-specified in `auto_pairs` and are inferred from the current position or selection.
+specified in [`textadept.editing.auto_pairs`](#textadept.editing.auto_pairs) and are inferred from the current position
+or selection.
 
 Parameters:
 
@@ -7730,8 +7715,8 @@ Alt+, | ^, | M-, | Start/stop recording macro
 Alt+. | ^. | M-. | Play recorded macro
 None | None | None | Save recorded macro
 None | None | None | Load saved macro
-Ctrl+Alt+U | ⌘⇧U | M-U | Quickly open `_USERHOME`
-Ctrl+Alt+H | ⌘⇧H | M-H | Quickly open `_HOME`
+Ctrl+Alt+U | ⌘⇧U | M-U | Quickly open [`_USERHOME`](#_USERHOME)
+Ctrl+Alt+H | ⌘⇧H | M-H | Quickly open [`_HOME`](#_HOME)
 None | None | None | Quickly open current directory
 Ctrl+Shift+O | ⌘⇧O | M-^O | Quickly open current project
 None | None | None | Insert snippet...
@@ -7963,9 +7948,10 @@ Prompts the user to select a menu command to run.
 ---
 
 Compile and run source code files with Textadept.
-[Language modules](#compile-and-run) may tweak the `compile_commands`, and `run_commands`
-tables for particular languages.
-The user may tweak `build_commands` and `test_commands` for particular projects.
+[Language modules](#compile-and-run) may tweak the [`textadept.run.compile_commands`](#textadept.run.compile_commands),
+and [`textadept.run.run_commands`](#textadept.run.run_commands) tables for particular languages. The user
+may tweak [`textadept.run.build_commands`](#textadept.run.build_commands), [`textadept.run.test_commands`](#textadept.run.test_commands), and
+[`textadept.run.run_project_commands`](#textadept.run.run_project_commands) for particular projects.
 
 ### Fields defined by `textadept.run`
 
@@ -8060,35 +8046,28 @@ is Textadept's environment.
 <a id="textadept.run.build"></a>
 #### `textadept.run.build`([*dir*])
 
-Prompts the user with the command entry to build the project whose root path is *dir* or
-the current project using the shell command from the `build_commands` table.  The current
-project is determined by either the buffer's filename or the current working directory.
-Emits `BUILD_OUTPUT` events.
+Prompts the user with the command entry to build the project whose root path is *dir*
+or the current project using the shell command from the [`textadept.run.build_commands`](#textadept.run.build_commands) table.
+The current project is determined by either the buffer's filename or the current working
+directory.
+Emits [`events.BUILD_OUTPUT`](#events.BUILD_OUTPUT).
 
 Parameters:
 
 - *dir*:  Optional path to the project to build. The default value is the current project.
 
-See also:
-
-- [`events`](#events)
-
 <a id="textadept.run.compile"></a>
 #### `textadept.run.compile`([*filename*])
 
 Prompts the user with the command entry to compile file *filename* or the current file using
-an appropriate shell command from the `compile_commands` table.
+an appropriate shell command from the [`textadept.run.compile_commands`](#textadept.run.compile_commands) table.
 The shell command is determined from the file's filename, extension, or language, in that order.
-Emits `COMPILE_OUTPUT` events.
+Emits [`events.COMPILE_OUTPUT`](#events.COMPILE_OUTPUT).
 
 Parameters:
 
 - *filename*:  Optional path to the file to compile. The default value is the current
    file's filename.
-
-See also:
-
-- [`events`](#events)
 
 <a id="textadept.run.goto_error"></a>
 #### `textadept.run.goto_error`(*location*)
@@ -8107,39 +8086,31 @@ Parameters:
 #### `textadept.run.run`([*filename*])
 
 Prompts the user with the command entry to run file *filename* or the current file using an
-appropriate shell command from the `run_commands` table.
+appropriate shell command from the [`textadept.run.run_commands`](#textadept.run.run_commands) table.
 The shell command is determined from the file's filename, extension, or language, in that order.
-Emits `RUN_OUTPUT` events.
+Emits [`events.RUN_OUTPUT`](#events.RUN_OUTPUT).
 
 Parameters:
 
 - *filename*:  Optional path to the file to run. The default value is the current
    file's filename.
 
-See also:
-
-- [`events`](#events)
-
 <a id="textadept.run.run_project"></a>
 #### `textadept.run.run_project`([*dir*[, *cmd*]])
 
 Prompts the user with the command entry to run shell command *cmd* or the shell command
-from the `run_project_commands` table for the project whose root path is *dir* or the
-current project.
+from the [`textadept.run.run_project_commands`](#textadept.run.run_project_commands) table for the project whose root path is *dir*
+or the current project.
 The current project is determined by either the buffer's filename or the current working
 directory.
-Emits `RUN_OUTPUT` events.
+Emits [`events.RUN_OUTPUT`](#events.RUN_OUTPUT).
 
 Parameters:
 
 - *dir*:  Optional path to the project to run a command for. The default value is the
    current project.
 - *cmd*:  Optional string command to run. If given, the command entry initially shows
-   this command. The default value comes from `run_project_commands` and *dir*.
-
-See also:
-
-- [`events`](#events)
+   this command. The default value comes from [`textadept.run.run_project_commands`](#textadept.run.run_project_commands) and *dir*.
 
 <a id="textadept.run.stop"></a>
 #### `textadept.run.stop`()
@@ -8152,18 +8123,15 @@ Processes in the list are sorted from longest lived at the top to shortest lived
 #### `textadept.run.test`([*dir*])
 
 Prompts the user with the command entry to run tests for the project whose root path is *dir*
-or the current project using the shell command from the `test_commands` table.  The current
+or the current project using the shell command from the [`textadept.run.test_commands`](#textadept.run.test_commands) table.
+The current
 project is determined by either the buffer's filename or the current working directory.
-Emits `TEST_OUTPUT` events.
+Emits [`events.TEST_OUTPUT`](#events.TEST_OUTPUT).
 
 Parameters:
 
 - *dir*:  Optional path to the project to run tests for. The default value is the
    current project.
-
-See also:
-
-- [`events`](#events)
 
 
 ---
@@ -8212,7 +8180,7 @@ Return:
 Saves the session to file *filename* or the user-selected file.
 Saves split views, opened buffers, cursor information, recent files, and bookmarks.
 Upon quitting, the current session is saved to *filename* again, unless
-`textadept.session.save_on_quit` is `false`.
+[`textadept.session.save_on_quit`](#textadept.session.save_on_quit) is `false`.
 
 Parameters:
 
@@ -8234,7 +8202,7 @@ Snippets for Textadept.
 
 ### Overview
 
-Define snippets in the global `snippets` table in key-value pairs. Each pair consists of
+Define snippets in the global [`snippets`](#snippets) table in key-value pairs. Each pair consists of
 either a string trigger word and its snippet text, or a string lexer name (from the *lexers/*
 directory) with a table of trigger words and snippet texts. When searching for a snippet to
 insert based on a trigger word, Textadept considers snippets in the current lexer to have
@@ -8248,8 +8216,8 @@ the global one.
 
 Represents a placeholder, where *n* is an integer and *text* is default placeholder
 text. Textadept moves the caret to placeholders in numeric order each time it calls
-[`textadept.snippets.insert()`](#textadept.snippets.insert), finishing at either the "%0" placeholder if it exists or
-at the end of the snippet. Examples are
+[`textadept.snippets.insert()`](#textadept.snippets.insert), finishing at either the "%0" placeholder if it exists or at
+the end of the snippet. Examples are
 
     snippets['foo'] = 'foobar%1(baz)'
     snippets['bar'] = 'start\n\t%0\nend'
@@ -8313,7 +8281,7 @@ being interpreted as code to execute.
 #### `\t`
 
 A single unit of indentation based on the buffer's indentation settings ([`buffer.use_tabs`](#buffer.use_tabs)
-and [`buffer.tab_width`](#buffer.tab_width)).
+and [`buffer.tab_width`](#buffer.tab_width).
 
 #### `\n`
 
@@ -8334,7 +8302,7 @@ The snippet placeholder indicator number.
 
 List of directory paths to look for snippet files in.
 Filenames are of the form *lexer.trigger.ext* or *trigger.ext* (*.ext* is an optional,
-arbitrary file extension). If the global `snippets` table does not contain a snippet for
+arbitrary file extension). If the global [`snippets`](#snippets) table does not contain a snippet for
 a given trigger, this table is consulted for a matching filename, and the contents of that
 file is inserted as a snippet.
 Note: If a directory has multiple snippets with the same trigger, the snippet chosen for
@@ -8398,7 +8366,7 @@ Utilities for interacting with Textadept's user interface.
 <a id="ui.SHOW_ALL_TABS"></a>
 #### `ui.SHOW_ALL_TABS` 
 
-Option for `ui.tabs` that always shows the tab bar, even if only one buffer is open.
+Option for [`ui.tabs`](#ui.tabs) that always shows the tab bar, even if only one buffer is open.
 
 <a id="ui.buffer_list_zorder"></a>
 #### `ui.buffer_list_zorder` 
@@ -8434,7 +8402,7 @@ This field is always `false` in the terminal version.
 #### `ui.menubar` &lt;table&gt;
 
 A table of menus defining a menubar. (Write-only).
-This is a low-level field. You probably want to use the higher-level `textadept.menu.menubar`.
+This is a low-level field. You probably want to use the higher-level [`textadept.menu.menubar`](#textadept.menu.menubar).
 
 <a id="ui.size"></a>
 #### `ui.size` &lt;table&gt;
@@ -8458,7 +8426,7 @@ This is a low-level field. You probably want to use the higher-level
 
 Whether or not to display the tab bar when multiple buffers are open.
 The default value is `true`.
-A third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar, even if only one
+A third option, [`ui.SHOW_ALL_TABS`](#ui.SHOW_ALL_TABS) may be used to always show the tab bar, even if only one
 buffer is open.
 
 <a id="ui.title"></a>
@@ -8489,8 +8457,8 @@ Switches to the existing view whose buffer's filename is *filename*.
 If no view was found and *split* is `true`, splits the current view in order to show the
 requested file. If *split* is `false`, shifts to the next or *preferred_view* view in order
 to show the requested file. If *sloppy* is `true`, requires only the basename of *filename*
-to match a buffer's `filename`. If the requested file was not found, it is opened in the
-desired view.
+to match a buffer's [`buffer.filename`](#buffer.filename). If the requested file was not found, it is opened in
+the desired view.
 
 Parameters:
 
@@ -8500,8 +8468,8 @@ Parameters:
 - *preferred_view*:  Optional view to open the desired buffer in if the buffer is not
    visible in any other view.
 - *sloppy*:  Optional flag that indicates whether or not to not match *filename*
-   to `buffer.filename` exactly. When `true`, matches *filename* to only the last part of
-   `buffer.filename` This is useful for run and compile commands which output relative filenames
+   to [`buffer.filename`](#buffer.filename) exactly. When `true`, matches *filename* to only the last part of
+   [`buffer.filename`](#buffer.filename) This is useful for run and compile commands which output relative filenames
    and paths instead of full ones and it is likely that the file in question is already open.
    The default value is `false`.
 
@@ -8509,7 +8477,7 @@ Parameters:
 #### `ui.goto_view`(*view*)
 
 Shifts to view *view* or the view *view* number of views relative to the current one.
-Emits `VIEW_BEFORE_SWITCH` and `VIEW_AFTER_SWITCH` events.
+Emits [`events.VIEW_BEFORE_SWITCH`](#events.VIEW_BEFORE_SWITCH) and [`events.VIEW_AFTER_SWITCH`](#events.VIEW_AFTER_SWITCH).
 
 Parameters:
 
@@ -8519,9 +8487,9 @@ Parameters:
 #### `ui.menu`(*menu_table*)
 
 Low-level function for creating a menu from table *menu_table* and returning the userdata.
-You probably want to use the higher-level `textadept.menu.menubar`,
-`textadept.menu.context_menu`, or `textadept.menu.tab_context_menu` tables.
-Emits a `MENU_CLICKED` event when a menu item is selected.
+You probably want to use the higher-level [`textadept.menu.menubar`](#textadept.menu.menubar),
+[`textadept.menu.context_menu`](#textadept.menu.context_menu), or [`textadept.menu.tab_context_menu`](#textadept.menu.tab_context_menu) tables.
+Emits [`events.MENU_CLICKED`](#events.MENU_CLICKED) when a menu item is selected.
 
 Parameters:
 
@@ -8629,7 +8597,7 @@ Return:
 Prints the given value(s) to the buffer of string type *type*, along with a trailing newline,
 and returns that buffer.
 Opens a new buffer for printing to if necessary. If the print buffer is already open in a
-view, the value(s) is printed to that view. Otherwise the view is split (unless `ui.tabs`
+view, the value(s) is printed to that view. Otherwise the view is split (unless [`ui.tabs`](#ui.tabs)
 is `true`) and the print buffer is displayed before being printed to.
 
 Parameters:
@@ -8653,7 +8621,7 @@ Return:
 Suspends Textadept.
 This only works in the terminal version. By default, Textadept ignores ^Z suspend signals from
 the terminal.
-Emits `events.SUSPEND` and `events.RESUME` events.
+Emits [`events.SUSPEND`](#events.SUSPEND) and [`events.RESUME`](#events.RESUME).
 
 Usage:
 
@@ -8664,7 +8632,7 @@ Usage:
 #### `ui.switch_buffer`()
 
 Prompts the user to select a buffer to switch to.
-Buffers are listed in the order they were opened unless `ui.buffer_list_zorder` is `true`, in
+Buffers are listed in the order they were opened unless [`ui.buffer_list_zorder`](#ui.buffer_list_zorder) is `true`, in
 which case buffers are listed by their z-order (most recently viewed to least recently viewed).
 Buffers in the same project as the current buffer are shown with relative paths.
 
@@ -8728,7 +8696,7 @@ function *f* (if non-`nil`) with the command entry's text as an argument, along 
 extra arguments passed to this function.
 By default with no arguments given, opens a Lua command entry.
 The command entry does not respond to Textadept's default key bindings, but instead to the
-key bindings defined in *keys* and in `ui.command_entry.editing_keys`.
+key bindings defined in *keys* and in [`ui.command_entry.editing_keys`](#ui.command_entry.editing_keys).
 
 Parameters:
 
@@ -8736,7 +8704,7 @@ Parameters:
 - *f*:  Function to call upon pressing `Enter` in the command entry, ending the mode.
    It should accept at a minimum the command entry text as an argument.
 - *keys*:  Optional table of key bindings to respond to. This is in addition to the
-   basic editing and movement keys defined in `ui.command_entry.editing_keys`. `Esc` and
+   basic editing and movement keys defined in [`ui.command_entry.editing_keys`](#ui.command_entry.editing_keys). `Esc` and
    `Enter` are automatically defined to cancel and finish the command entry, respectively.
    This parameter may be omitted completely.
 - *lang*:  Optional string lexer name to use for command entry text. The default value
@@ -8965,7 +8933,7 @@ The text in the "Find" entry.
 <a id="ui.find.find_in_files_filters"></a>
 #### `ui.find.find_in_files_filters` &lt;table&gt;
 
-Map of directory paths to filters used in `ui.find.find_in_files()`.
+Map of directory paths to filters used in [`ui.find.find_in_files()`](#ui.find.find_in_files).
 This table is updated when the user manually specifies a filter in the "Filter" entry during
 an "In files" search.
 
@@ -9088,22 +9056,22 @@ This is primarily used for localization.
 Searches directory *dir* or the user-specified directory for files that match search text
 and search options (subject to optional filter *filter*), and prints the results to a buffer
 titled "Files Found", highlighting found text.
-Use the `find_entry_text`, `match_case`, `whole_word`, and `regex` fields to set the search
-text and option flags, respectively.
+Use the [`ui.find.find_entry_text`](#ui.find.find_entry_text), [`ui.find.match_case`](#ui.find.match_case), [`ui.find.whole_word`](#ui.find.whole_word), and
+[`ui.find.regex`](#ui.find.regex) fields to set the search text and option flags, respectively.
 A filter determines which files to search in, with the default filter being
-`ui.find.find_in_files_filters[dir]` (if it exists) or `lfs.default_filter`. A filter consists
+`ui.find.find_in_files_filters[dir]` (if it exists) or [`lfs.default_filter`](#lfs.default_filter). A filter consists
 of glob patterns that match file and directory paths to include or exclude. Patterns are
 inclusive by default. Exclusive patterns begin with a '!'. If no inclusive patterns are
 given, any filename is initially considered. As a convenience, '/' also matches the Windows
 directory separator ('[/\\]' is not needed). If *filter* is `nil`, the filter from the
-`ui.find.find_in_files_filters` table for *dir* is used. If that filter does not exist,
-`lfs.default_filter` is used.
+[`ui.find.find_in_files_filters`](#ui.find.find_in_files_filters) table for *dir* is used. If that filter does not exist,
+[`lfs.default_filter`](#lfs.default_filter) is used.
 
 Parameters:
 
 - *dir*:  Optional directory path to search. If `nil`, the user is prompted for one.
 - *filter*:  Optional filter for files and directories to exclude. The default value is
-   `lfs.default_filter` unless a filter for *dir* is defined in `ui.find.find_in_files_filters`.
+   [`lfs.default_filter`](#lfs.default_filter) unless a filter for *dir* is defined in [`ui.find.find_in_files_filters`](#ui.find.find_in_files_filters).
 
 <a id="ui.find.find_next"></a>
 #### `ui.find.find_next`()
@@ -9122,7 +9090,7 @@ Displays and focuses the Find & Replace Pane.
 
 Parameters:
 
-- *options*:  Optional table of `ui.find` field options to initially set.
+- *options*:  Optional table of [`ui.find`](#ui.find) field options to initially set.
 
 <a id="ui.find.goto_file_found"></a>
 #### `ui.find.goto_file_found`(*location*)

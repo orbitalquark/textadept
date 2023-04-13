@@ -52,7 +52,6 @@ function M.record()
 end
 
 --- Plays a recorded or loaded macro.
--- @see load
 function M.play()
   if recording or not macro then return end
   -- If this function is run as a key command, `keys.keychain` cannot be cleared until this

@@ -24,19 +24,18 @@
 -- @section
 
 --- Creates a new buffer, displays it in the current view, and returns it.
--- Emits a `BUFFER_NEW` event.
+-- Emits `events.BUFFER_NEW`.
 -- @return the new buffer.
--- @see events.BUFFER_NEW
+-- @see io.open_file
 -- @function new
 
 --- Splits the view into top and bottom views (unless *vertical* is `true`), focuses the new view,
 -- and returns both the old and new views.
 -- If *vertical* is `false`, splits the view vertically into left and right views.
--- Emits a `VIEW_NEW` event.
+-- Emits `events.VIEW_NEW`.
 -- @param[opt] vertical Optional flag indicating whether or not to split the view vertically. The
 --   default value is `false`, for horizontal.
 -- @return old view and new view.
--- @see events.VIEW_NEW
 -- @function view:split
 
 --- Unsplits the view if possible, returning `true` on success.
@@ -61,7 +60,7 @@
 
 --- Saves the buffer to its file, returning `true` on success.
 -- If the buffer does not have a file, the user is prompted for one.
--- Emits `FILE_BEFORE_SAVE` and `FILE_AFTER_SAVE` events.
+-- Emits `events.FILE_BEFORE_SAVE` and `events.FILE_AFTER_SAVE`.
 -- @return `true` if the file was saved; `nil` otherwise.
 -- @see textadept.editing.strip_trailing_spaces
 -- @see io.ensure_final_newline
@@ -70,7 +69,7 @@
 
 --- Saves the buffer to file *filename* or the user-specified filename, returning `true`
 -- on success.
--- Emits a `FILE_AFTER_SAVE` event.
+-- Emits `events.FILE_AFTER_SAVE`.
 -- @param[opt] filename Optional new filepath to save the buffer to. If `nil`, the user is
 --   prompted for one.
 -- @return `true` if the file was saved; `nil` otherwise.
@@ -241,11 +240,8 @@
 
 --- Switches to buffer *buffer* or the buffer *buffer* number of buffers relative to the
 -- current one.
--- Emits `BUFFER_BEFORE_SWITCH` and `BUFFER_AFTER_SWITCH` events.
+-- Emits `events.BUFFER_BEFORE_SWITCH` and `events.BUFFER_AFTER_SWITCH`.
 -- @param buffer A buffer or relative buffer number (typically 1 or -1).
--- @see _G._BUFFERS
--- @see events.BUFFER_BEFORE_SWITCH
--- @see events.BUFFER_AFTER_SWITCH
 -- @function view:goto_buffer
 
 --- Other Movements.
@@ -330,7 +326,7 @@
 -- is selected, duplicates the current line on a new line below.
 -- @function selection_duplicate
 
---- Types a new line at the caret position according to [`buffer.eol_mode`]().
+--- Types a new line at the caret position according to `buffer.eol_mode`.
 -- @function new_line
 
 --- Replace Text.
@@ -529,7 +525,8 @@
 -- @param start_pos The start position of the range of text in *buffer* to select. If negative,
 --   it means the end of the buffer.
 -- @param end_pos The end position of the range of text in *buffer* to select. If negative,
---   it means remove any selection (i.e. set the `anchor` to the same position as `current_pos`).
+--   it means remove any selection (i.e. set `buffer.anchor` to the same position as
+--   `buffer.current_pos`).
 -- @function set_sel
 
 --- The position of the beginning of the selected text.
@@ -592,10 +589,10 @@
 -- `buffer.word_chars` contains the set of characters that constitute words.
 -- @function word_right_extend
 
---- Like `buffer.word_left_end()`, but extends the selected text to the new position.
+--- Like `buffer:word_left_end()`, but extends the selected text to the new position.
 -- @function word_left_end_extend
 
---- Like `buffer.word_right_end()`, but extends the selected text to the new position.
+--- Like `buffer:word_right_end()`, but extends the selected text to the new position.
 -- @function word_right_end_extend
 
 --- Moves the caret to the beginning of the current line, extending the selected text to the
@@ -614,19 +611,19 @@
 -- new position.
 -- @function line_end_display_extend
 
---- Like `buffer.home_wrap()`, but extends the selected text to the new position.
+--- Like `buffer:home_wrap()`, but extends the selected text to the new position.
 -- @function home_wrap_extend
 
---- Like `buffer.line_end_wrap()`, but extends the selected text to the new position.
+--- Like `buffer:line_end_wrap()`, but extends the selected text to the new position.
 -- @function line_end_wrap_extend
 
---- Like `buffer.vc_home()`, but extends the selected text to the new position.
+--- Like `buffer:vc_home()`, but extends the selected text to the new position.
 -- @function vc_home_extend
 
---- Like `buffer.vc_home_display()`, but extends the selected text to the new position.
+--- Like `buffer:vc_home_display()`, but extends the selected text to the new position.
 -- @function vc_home_display_extend
 
---- Like `buffer.vc_home_wrap()`, but extends the selected text to the new position.
+--- Like `buffer:vc_home_wrap()`, but extends the selected text to the new position.
 -- @function vc_home_wrap_extend
 
 --- Moves the caret up one line, extending the selected text to the new position.
@@ -643,10 +640,10 @@
 -- Paragraphs are surrounded by one or more blank lines.
 -- @function para_down_extend
 
---- Like `buffer.stuttered_page_up()`, but extends the selected text to the new position.
+--- Like `buffer:stuttered_page_up()`, but extends the selected text to the new position.
 -- @function stuttered_page_up_extend
 
---- Like `buffer.stuttered_page_down()`, but extends the selected text to the new position.
+--- Like `buffer:stuttered_page_down()`, but extends the selected text to the new position.
 -- @function stuttered_page_down_extend
 
 --- Moves the caret up one page, extending the selected text to the new position.
@@ -663,7 +660,7 @@
 -- @function document_end_extend
 
 --- Whether or not regular caret movement alters the selected text. (Read-only)
--- [`buffer.selection_mode`]() dictates this property.
+-- `buffer.selection_mode` dictates this property.
 -- @field move_extends_selection
 
 --- Modal Selection.
@@ -682,7 +679,7 @@
 --     typed into and ensures that no characters are selected.
 --
 --   When set, caret movement alters the selected text until this field is set again to the
---   same value or until [`buffer.cancel()`]() is called.
+--   same value or until `buffer:cancel()` is called.
 -- @field selection_mode
 
 --- Line selection.
@@ -714,7 +711,6 @@
 -- `buffer:set_selection()` first when setting a list of selections.
 -- @param end_pos The caret position of the range of text to select in *buffer*.
 -- @param start_pos The anchor position of the range of text to select in *buffer*.
--- @see set_selection
 -- @function add_selection
 
 --- Adds to the set of selections the next occurrence of the main selection within the target
@@ -809,7 +805,7 @@
 -- new position.
 -- @function line_end_rect_extend
 
---- Like `buffer.vc_home()`, but extends the rectangular selection to the new position.
+--- Like `buffer:vc_home()`, but extends the rectangular selection to the new position.
 -- @function vc_home_rect_extend
 
 --- Moves the caret up one line, extending the rectangular selection to the new position.
@@ -853,7 +849,7 @@
 --- The "Super" modifier key, usually defined as the left "Windows" or "Command" key.
 -- @field view.MOD_SUPER
 
---- Whether or not pressing [`view.rectangular_selection_modifier`]() when selecting text
+--- Whether or not pressing `view.rectangular_selection_modifier` when selecting text
 -- normally with the mouse turns on rectangular selection.
 -- The default value is `false`.
 -- @field view.mouse_selection_rectangular_switch
@@ -865,7 +861,7 @@
 --- Simple Search.
 -- @section
 
---- Anchors the position that `buffer.search_next()` and `buffer.search_prev()` start at to the
+--- Anchors the position that `buffer:search_next()` and `buffer:search_prev()` start at to the
 -- beginning of the current selection or caret position.
 -- @function search_anchor
 
@@ -893,7 +889,7 @@
 -- as output).
 -- @section
 
---- The bit-mask of search flags used by [`buffer.search_in_target()`]().
+--- The bit-mask of search flags used by `buffer:search_in_target()`.
 --
 --   - `buffer.FIND_WHOLEWORD`
 --     Match search text only when it is surrounded by non-word characters.
@@ -931,7 +927,6 @@
 -- if *text* was not found.
 -- @param text The text to search the target range for.
 -- @return number
--- @see search_flags
 -- @function search_in_target
 
 --- Replaces the text in the target range with string *text* but first replaces any "\d" sequences
@@ -946,21 +941,21 @@
 -- @field target_text
 
 --- The position of the beginning of the target range.
--- This is also set by a successful [`buffer.search_in_target()`]().
+-- This is also set by a successful `buffer:search_in_target()`.
 -- @field target_start
 
 --- The position of the end of the target range.
--- This is also set by a successful [`buffer.search_in_target()`]().
+-- This is also set by a successful `buffer:search_in_target()`.
 -- @field target_end
 
 --- The position of the beginning of virtual space in the target range.
--- This is set to `1` when [`buffer.target_start`]() or [`buffer.target_end`]() is set, or when
--- [`buffer.set_target_range()`]() is called.
+-- This is set to `1` when `buffer.target_start` or `buffer.target_end` is set, or when
+-- `buffer:set_target_range()` is called.
 -- @field target_start_virtual_space
 
 --- The position of the end of virtual space in the target range.
--- This is set to `1` when [`buffer.target_start`]() or [`buffer.target_end`]() is set, or when
--- [`buffer.set_target_range()`]() is called.
+-- This is set to `1` when `buffer.target_start` or `buffer.target_end` is set, or when
+-- `buffer:set_target_range()` is called.
 -- @field target_end_virtual_space
 
 --- List of capture text for capture numbers from a regular expression search. (Read-only)
@@ -1381,14 +1376,12 @@
 --   order, a red byte, a green byte, a blue byte and an alpha byte. The color bytes are not
 --   premultiplied by the alpha value. That is, a fully red pixel that is 25% opaque will be
 --   `[FF, 00, 00, 3F]`.
--- @see view.rgba_image_width
--- @see view.rgba_image_height
 -- @see view.rgba_image_scale
 -- @function view:marker_define_rgba_image
 
 --- Adds marker number *marker*, in the range of `1` to `32`, to line number *line*, returning
--- the added marker's handle which can be used in `buffer.marker_delete_handle()` and
--- `buffer.marker_line_from_handle()`, or `-1` if *line* is invalid.
+-- the added marker's handle which can be used in `buffer:marker_delete_handle()` and
+-- `buffer:marker_line_from_handle()`, or `-1` if *line* is invalid.
 -- @param line The line number to add the marker on.
 -- @param marker The marker number in the range of `1` to `32` to add.
 -- @return number
@@ -1402,8 +1395,8 @@
 --   bit for marker 2 and so on.
 -- @function marker_add_set
 
---- Deletes the marker with handle *handle* returned by `buffer.marker_add()`.
--- @param handle The identifier of a marker returned by `buffer.marker_add()`.
+--- Deletes the marker with handle *handle* returned by `buffer:marker_add()`.
+-- @param handle The identifier of a marker returned by `buffer:marker_add()`.
 -- @function marker_delete_handle
 
 --- Deletes marker number *marker*, in the range of `1` to `32`, from line number *line*.
@@ -1420,8 +1413,8 @@
 -- @function marker_delete_all
 
 --- Returns the line number of the line that contains the marker with handle *handle* (returned
--- `buffer.marker_add()`), or `-1` if the line was not found.
--- @param handle The identifier of a marker returned by `buffer.marker_add()`.
+-- `buffer:marker_add()`), or `-1` if the line was not found.
+-- @param handle The identifier of a marker returned by `buffer:marker_add()`.
 -- @return number
 -- @function marker_line_from_handle
 
@@ -1463,8 +1456,8 @@
 -- @function marker_number_from_line
 
 --- Returns the symbol assigned to marker number *marker*, in the range of `1` to `32`, used in
--- `view.marker_define()`,
--- `view.marker_define_pixmap()`, or `view.marker_define_rgba_image()`.
+-- `view:marker_define()`,
+-- `view:marker_define_pixmap()`, or `view:marker_define_rgba_image()`.
 -- @param marker The marker number in the range of `1` to `32` to get the symbol of.
 -- @return number
 -- @function view:marker_symbol_defined
@@ -1653,11 +1646,11 @@
 --   - `view.INDIC_BOX`
 --     A bounding box.
 --   - `view.INDIC_ROUNDBOX`
---     A translucent box with rounded corners around the text. Use [`view.indic_alpha`]() and
---     [`view.indic_outline_alpha`]() to set the fill and outline transparency, respectively.
+--     A translucent box with rounded corners around the text. Use `view.indic_alpha` and
+--     `view.indic_outline_alpha` to set the fill and outline transparency, respectively.
 --     Their default values are `30` and `50`.
 --   - `view.INDIC_STRAIGHTBOX`
---     Similar to `INDIC_ROUNDBOX` but with sharp corners.
+--     Similar to `view.INDIC_ROUNDBOX` but with sharp corners.
 --   - `view.INDIC_DASH`
 --     A dashed underline.
 --   - `view.INDIC_DOTS`
@@ -1665,11 +1658,11 @@
 --   - `view.INDIC_SQUIGGLELOW`
 --     A squiggly underline 2 pixels in height.
 --   - `view.INDIC_DOTBOX`
---     Similar to `INDIC_STRAIGHTBOX` but with a dotted outline.
---     Translucency alternates between [`view.indic_alpha`]() and [`view.indic_outline_alpha`]()
+--     Similar to `view.INDIC_STRAIGHTBOX` but with a dotted outline.
+--     Translucency alternates between `view.indic_alpha` and `view.indic_outline_alpha`
 --     starting with the top-left pixel.
 --   - `view.INDIC_SQUIGGLEPIXMAP`
---     Identical to `INDIC_SQUIGGLE` but draws faster by using a pixmap instead of multiple
+--     Identical to `view.INDIC_SQUIGGLE` but draws faster by using a pixmap instead of multiple
 --     line segments.
 --   - `view.INDIC_COMPOSITIONTHICK`
 --     A 2-pixel thick underline at the bottom of the line inset by 1 pixel on on either
@@ -1678,8 +1671,8 @@
 --     A 1-pixel thick underline just before the bottom of the line inset by 1 pixel on either
 --     side. Similar in appearance to the non-target ranges in Asian language input composition.
 --   - `view.INDIC_FULLBOX`
---     Similar to `INDIC_STRAIGHTBOX` but extends to the top of its line, potentially touching
---     any similar indicators on the line above.
+--     Similar to `view.INDIC_STRAIGHTBOX` but extends to the top of its line, potentially
+--     touching any similar indicators on the line above.
 --   - `view.INDIC_TEXTFORE`
 --     Changes the color of text to an indicator's foreground color.
 --   - `view.INDIC_POINT`
@@ -1695,7 +1688,7 @@
 --   - `view.INDIC_POINT_TOP`
 --     A triangle above the start of the indicator range.
 --
--- Use [`_SCINTILLA.new_indic_number()`]() for custom indicators.
+-- Use `_SCINTILLA.new_indic_number()` for custom indicators.
 -- Changing an indicator's style resets that indicator's hover style.
 -- @table view.indic_style
 
@@ -1716,15 +1709,15 @@
 --- An underline of diagonal hatches.
 -- @field view.INDIC_DIAGONAL
 
---- Similar to `INDIC_STRAIGHTBOX` but with a dotted outline.
--- Translucency alternates between [`view.indic_alpha`]() and [`view.indic_outline_alpha`]()
+--- Similar to `view.INDIC_STRAIGHTBOX` but with a dotted outline.
+-- Translucency alternates between `view.indic_alpha` and `view.indic_outline_alpha`
 -- starting with the top-left pixel.
 -- @field view.INDIC_DOTBOX
 
 --- A dotted underline.
 -- @field view.INDIC_DOTS
 
---- Similar to `INDIC_STRAIGHTBOX` but extends to the top of its line, potentially touching any
+--- Similar to `view.INDIC_STRAIGHTBOX` but extends to the top of its line, potentially touching any
 -- similar indicators on the line above.
 -- @field view.INDIC_FULLBOX
 
@@ -1749,8 +1742,8 @@
 --- A triangle below the center of the first character of the indicator range.
 -- @field view.INDIC_POINTCHARACTER
 
---- A translucent box with rounded corners around the text. Use [`view.indic_alpha`]() and
--- [`view.indic_outline_alpha`]() to set the fill and outline transparency, respectively.
+--- A translucent box with rounded corners around the text. Use `view.indic_alpha` and
+-- `view.indic_outline_alpha` to set the fill and outline transparency, respectively.
 -- Their default values are `30` and `50`.
 -- @field view.INDIC_ROUNDBOX
 
@@ -1760,11 +1753,11 @@
 --- A squiggly underline 2 pixels in height.
 -- @field view.INDIC_SQUIGGLELOW
 
---- Identical to `INDIC_SQUIGGLE` but draws faster by using a pixmap instead of multiple line
+--- Identical to `view.INDIC_SQUIGGLE` but draws faster by using a pixmap instead of multiple line
 -- segments.
 -- @field view.INDIC_SQUIGGLEPIXMAP
 
---- Similar to `INDIC_ROUNDBOX` but with sharp corners.
+--- Similar to `view.INDIC_ROUNDBOX` but with sharp corners.
 -- @field view.INDIC_STRAIGHTBOX
 
 --- Strike out.
@@ -1789,8 +1782,8 @@
 -- The default values are the respective indicator styles.
 -- @table view.indic_hover_style
 
---- The indicator number in the range of `1` to `32` used by [`buffer.indicator_fill_range()`]()
--- and [`buffer.indicator_clear_range()`]().
+--- The indicator number in the range of `1` to `32` used by `buffer:indicator_fill_range()`
+-- and `buffer:indicator_clear_range()`.
 -- @field indicator_current
 
 --- Fills the range of text from position *pos* to *pos* + *length* with indicator number
@@ -1830,14 +1823,14 @@
 -- @table view.indic_fore
 
 --- List of fill color alpha values, ranging from `0` (transparent) to `255` (opaque),
--- for indicator numbers from `1` to `32` whose styles are either `INDIC_ROUNDBOX`,
--- `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
+-- for indicator numbers from `1` to `32` whose styles are either `view.INDIC_ROUNDBOX`,
+-- `view.INDIC_STRAIGHTBOX`, or `view.INDIC_DOTBOX`.
 -- The default values are `view.ALPHA_NOALPHA`, for no alpha.
 -- @table view.indic_alpha
 
 --- List of outline color alpha values, ranging from `0` (transparent) to `255` (opaque),
--- for indicator numbers from `1` to `32` whose styles are either `INDIC_ROUNDBOX`,
--- `INDIC_STRAIGHTBOX`, or `INDIC_DOTBOX`.
+-- for indicator numbers from `1` to `32` whose styles are either `view.INDIC_ROUNDBOX`,
+-- `view.INDIC_STRAIGHTBOX`, or `view.INDIC_DOTBOX`.
 -- The default values are `view.ALPHA_NOALPHA`, for no alpha.
 -- @table view.indic_outline_alpha
 
@@ -1846,9 +1839,10 @@
 -- @table view.indic_hover_fore
 
 --- List of stroke widths in hundredths of a pixel for indicator numbers from `1` to `32`
--- whose styles are either `INDIC_PLAIN`, `INDIC_SQUIGGLE`, `INDIC_TT`, `INDIC_DIAGONAL`,
--- `INDIC_STRIKE`, `INDIC_BOX`, `INDIC_ROUNDBOX`, `INDIC_STRAIGHTBOX`, `INDIC_FULLBOX`,
--- `INDIC_DASH`, `INDIC_DOTS`,  or `INDIC_SQUIGGLELOW`.
+-- whose styles are either `view.INDIC_PLAIN`, `view.INDIC_SQUIGGLE`, `view.INDIC_TT`,
+-- `view.INDIC_DIAGONAL`, `view.INDIC_STRIKE`, `view.INDIC_BOX`, `view.INDIC_ROUNDBOX`,
+-- `view.INDIC_STRAIGHTBOX`, `view.INDIC_FULLBOX`, `view.INDIC_DASH`, `view.INDIC_DOTS`,  or
+-- `view.INDIC_SQUIGGLELOW`.
 -- The default values are `100`, or 1 pixel.
 -- @table view.indic_stroke_width
 
@@ -1869,22 +1863,22 @@
 --- The order setting for autocompletion and user lists.
 --
 --   - `buffer.ORDER_PRESORTED`
---     Lists passed to [`buffer.auto_c_show()`]() are in sorted, alphabetical order.
+--     Lists passed to `buffer:auto_c_show()` are in sorted, alphabetical order.
 --   - `buffer.ORDER_PERFORMSORT`
---     Sort autocompletion lists passed to [`buffer.auto_c_show()`]().
+--     Sort autocompletion lists passed to `buffer:auto_c_show()`.
 --   - `buffer.ORDER_CUSTOM`
---     Lists passed to [`buffer.auto_c_show()`]() are already in a custom order.
+--     Lists passed to `buffer:auto_c_show()` are already in a custom order.
 --
 --   The default value is `buffer.ORDER_PRESORTED`.
 -- @field auto_c_order
 
---- Lists passed to [`buffer.auto_c_show()`]() are already in a custom order.
+--- Lists passed to `buffer:auto_c_show()` are already in a custom order.
 -- @field ORDER_CUSTOM
 
---- Sort autocompletion lists passed to [`buffer.auto_c_show()`]().
+--- Sort autocompletion lists passed to `buffer:auto_c_show()`.
 -- @field ORDER_PERFORMSORT
 
---- Lists passed to [`buffer.auto_c_show()`]() are in sorted, alphabetical order.
+--- Lists passed to `buffer:auto_c_show()` are in sorted, alphabetical order.
 -- @field ORDER_PRESORTED
 
 --- Displays an autocompletion list constructed from string *items* (whose items are delimited by
@@ -1894,21 +1888,19 @@
 -- @param len_entered The number of characters before the caret used to provide the context.
 -- @param items The sorted string of words to show, separated by `buffer.auto_c_separator`
 --   characters (initially spaces).
--- @see auto_c_separator
--- @see auto_c_order
 -- @see textadept.editing.autocompleters
 -- @see textadept.editing.autocomplete
 -- @function auto_c_show
 
 --- Displays a user list identified by list identifier number *id* and constructed from string
 -- *items* (whose items are delimited by `buffer.auto_c_separator` characters).
--- The sorted order of *items* (`buffer.auto_c_order`) must have already been defined. When the
--- user selects an item, *id* is sent in a `USER_LIST_SELECTION` event along with the selection.
+-- The sorted order of *items* (`buffer.auto_c_order`) must have already been defined. When
+-- the user selects an item, *id* is sent in an `events.USER_LIST_SELECTION` event along with
+-- the selection.
 -- @param id The list identifier number greater than zero to use.
 -- @param items The sorted string of words to show, separated by `buffer.auto_c_separator`
 --   characters (initially spaces).
 -- @see _SCINTILLA.new_user_list_type
--- @see events.USER_LIST_SELECTION
 -- @function user_list_show
 
 --- Selects the first item that starts with string *prefix* in an autocompletion or user list,
@@ -1968,7 +1960,7 @@
 -- @field auto_c_ignore_case
 
 --- The behavior mode for a case insensitive autocompletion or user list when
--- [`buffer.auto_c_ignore_case`]() is `true`.
+-- `buffer.auto_c_ignore_case` is `true`.
 --
 --   - `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`
 --     Prefer to select case-sensitive matches.
@@ -2020,20 +2012,20 @@
 
 --- Registers XPM image *xpm_data* to type number *type* for use in autocompletion and user lists.
 -- @param type Integer type to register the image with.
--- @param xpm_data The XPM data as described in `view.marker_define_pixmap()`.
+-- @param xpm_data The XPM data as described in `view:marker_define_pixmap()`.
 -- @see _SCINTILLA.new_image_type
 -- @see textadept.editing.XPM_IMAGES
 -- @function view:register_image
 
---- The width of the RGBA image to be defined using [`view.marker_define_rgba_image()`]() and
--- [`view.register_rgba_image()`]().
+--- The width of the RGBA image to be defined using `view:marker_define_rgba_image()` and
+-- `view:register_rgba_image()`.
 -- @field view.rgba_image_width
 
---- The height of the RGBA image to be defined using [`view.marker_define_rgba_image()`]().
+--- The height of the RGBA image to be defined using `view:marker_define_rgba_image()`.
 -- @field view.rgba_image_height
 
 --- The scale factor in percent of the RGBA image to be defined using
--- [`view.marker_define_rgba_image()`]().
+-- `view:marker_define_rgba_image()`.
 -- This is useful on macOS with a retina display where each display unit is 2 pixels: use a
 -- factor of `200` so that each image pixel is displayed using a screen pixel.
 -- The default scale, `100`, will stretch each image pixel to cover 4 screen pixels on a
@@ -2045,17 +2037,17 @@
 -- have already been defined. *pixels* is a sequence of 4 byte pixel values (red, blue, green,
 -- and alpha) defining the image line by line starting at the top-left pixel.
 -- @param type Integer type to register the image with.
--- @param pixels The RGBA data as described in `view.marker_define_rgba_image()`.
+-- @param pixels The RGBA data as described in `view:marker_define_rgba_image()`.
 -- @function view:register_rgba_image
 
 --- The character byte that separates autocompletion and user list items and their image types.
 -- Autocompletion and user list items can display both an image and text. Register images and
--- their types using [`view.register_image()`]() or [`view.register_rgba_image()`]() before
--- appending image types to list items after type separator characters.
+-- their types using `view:register_image()` or `view:register_rgba_image()` before appending
+-- image types to list items after type separator characters.
 -- The default value is 63 ('?').
 -- @field auto_c_type_separator
 
---- Clears all images registered using `view.register_image()` and `view.register_rgba_image()`.
+--- Clears all images registered using `view:register_image()` and `view:register_rgba_image()`.
 -- @function view:clear_registered_images
 
 --- Show a Call Tip.
@@ -2114,7 +2106,6 @@
 --- Toggles the fold point on line number *line* between expanded (where all of its child lines
 -- are displayed) and contracted (where all of its child lines are hidden).
 -- @param line The line number in *view* to toggle the fold on.
--- @see set_default_fold_display_text
 -- @function view:toggle_fold
 
 --- Toggles a fold point on line number *line* between expanded (where all of its child lines are
@@ -2123,6 +2114,7 @@
 -- *text* is drawn with style number `view.STYLE_FOLDDISPLAYTEXT`.
 -- @param line The line number in *view* to toggle the fold on and display *text* after.
 -- @param text The text to display after the line.
+-- @see set_default_fold_display_text
 -- @function view:toggle_fold_show_text
 
 --- Contracts, expands, or toggles the fold point on line number *line*, depending on *action*.
@@ -2177,9 +2169,17 @@
 -- @function view:ensure_visible
 
 --- Ensures line number *line* is visible by expanding any fold points hiding it based on the
--- vertical caret policy previously defined in `view.set_visible_policy()`.
+-- vertical caret policy previously defined in `view:set_visible_policy()`.
 -- @param line The line number in *view* to ensure visible.
 -- @function view:ensure_visible_enforce_policy
+
+--- Sets the default fold display text to string *text*.
+-- @param text The text to display by default next to folded lines.
+-- @see toggle_fold_show_text
+-- @function view:set_default_fold_display_text
+
+--- Returns the default fold display text.
+-- @function view:get_default_fold_display_text
 
 --- List of fold level bit-masks per line number.
 -- Fold level masks comprise of an integer level combined with any of the following bit flags:
@@ -2219,7 +2219,7 @@
 --- List of flags per line number that indicate whether or not fold points are expanded for
 -- those line numbers.
 -- Setting expanded fold states does not toggle folds; it only updates fold margin markers. Use
--- [`view.toggle_fold()`]() instead.
+-- `view:toggle_fold()` instead.
 -- @table view.fold_expanded
 
 --- Returns the line number of the next contracted fold point starting from line number *line*,
@@ -2257,14 +2257,12 @@
 -- @function view:line_scroll
 
 --- Scrolls the caret into view based on the policies previously defined in
--- `view.set_x_caret_policy()` and `view.set_y_caret_policy()`.
--- @see set_x_caret_policy
--- @see set_y_caret_policy
+-- `view:set_x_caret_policy()` and `view:set_y_caret_policy()`.
 -- @function view:scroll_caret
 
 --- Scrolls into view the range of text between positions *primary_pos* and *secondary_pos*,
 -- with priority given to *primary_pos*.
--- Similar to `view.scroll_caret()`, but with *primary_pos* instead of `buffer.current_pos`.
+-- Similar to `view:scroll_caret()`, but with *primary_pos* instead of `buffer.current_pos`.
 -- This is useful for scrolling search results into view.
 -- @param secondary_pos The secondary range position to scroll into view.
 -- @param primary_pos The primary range position to scroll into view.
@@ -2286,18 +2284,16 @@
 
 --- Use tabs instead of spaces in indentation.
 -- Changing the current setting does not convert any of the buffer's existing indentation. Use
--- [`textadept.editing.convert_indentation()`]() to do so.
+-- `textadept.editing.convert_indentation()` to do so.
 -- The default value is `true`.
--- @see textadept.editing.convert_indentation
 -- @field use_tabs
 
 --- The number of space characters represented by a tab character.
 -- The default value is `8`.
--- @see textadept.editing.convert_indentation
 -- @field tab_width
 
 --- The number of spaces in one level of indentation.
--- The default value is `0`, which uses the value of [`buffer.tab_width`]().
+-- The default value is `0`, which uses the value of `buffer.tab_width`.
 -- @field indent
 
 --- Indent text when tabbing within indentation.
@@ -2311,7 +2307,7 @@
 
 --- The current end of line mode.
 -- Changing the current mode does not convert any of the buffer's existing end of line
--- characters. Use [`buffer.convert_eols()`]() to do so.
+-- characters. Use `buffer:convert_eols()` to do so.
 --
 --   - `buffer.EOL_CRLF`
 --     Carriage return with line feed ("\r\n").
@@ -2351,32 +2347,29 @@
 -- @field word_chars
 
 --- The string set of characters recognized as whitespace characters.
--- Set this only after setting [`buffer.word_chars`]().
+-- Set this only after setting `buffer.word_chars`.
 -- The default value is a string that contains all non-newline characters less than ASCII value 33.
 -- @field whitespace_chars
 
 --- The string set of characters recognized as punctuation characters.
--- Set this only after setting [`buffer.word_chars`]().
+-- Set this only after setting `buffer.word_chars`.
 -- The default value is a string that contains all non-word and non-whitespace characters.
 -- @field punctuation_chars
 
 --- Resets `buffer.word_chars`, `buffer.whitespace_chars`, and `buffer.punctuation_chars` to
 -- their respective defaults.
--- @see word_chars
--- @see whitespace_chars
--- @see punctuation_chars
 -- @function set_chars_default
 
 --- Map of alternative string representations of characters.
 -- Representations are displayed in the same way control characters are. Use the empty string
 -- for the '\0' character when assigning its representation. Characters are strings, not numeric
 -- codes, and can be multi-byte characters.
--- Call [`view.clear_representation()`]() to remove a representation.
+-- Call `view:clear_representation()` to remove a representation.
 -- @table view.representation
 
 --- Removes the alternate string representation for character *char* (which may be a multi-byte
 -- character).
--- @param char The string character in `buffer.representations` to remove the alternate string
+-- @param char The string character in `view.representation` to remove the alternate string
 --   representation for.
 -- @function view:clear_representation
 
@@ -2390,7 +2383,7 @@
 --   - `view.REPRESENTATION_BLOB`
 --     Draw the representation within a rounded rectangle and an inverted color.
 --   - `view.REPRESENTATION_COLOR`
---     Draw the representation using the color set in [`view.representation_color`]().
+--     Draw the representation using the color set in `view.representation_color`.
 --
 -- The default values are `view.REPRESENTATION_BLOB`.
 -- @table view.representation_appearance
@@ -2401,7 +2394,7 @@
 --- Draw the representation within a rounded rectangle and an inverted color.
 -- @field view.REPRESENTATION_BLOB
 
---- Draw the representation using the color set in [`view.representation_color`]().
+--- Draw the representation using the color set in `view.representation_color`.
 -- @field view.REPRESENTATION_COLOR
 
 --- Map of characters to their string representation's color in "0xBBGGRR" format.
@@ -2425,8 +2418,6 @@
 --   settings such as font and size.
 -- @usage view:set_theme{font = 'Monospace', size = 12}
 -- @usage view:set_theme('my_theme', {font = 'Monospace', size = 12})
--- @see view.styles
--- @see view.colors
 -- @function view:set_theme
 
 --- Map of color name strings to color values in `0xBBGGRR` format.
@@ -2447,22 +2438,21 @@
 --
 -- Style names consist of the following default names as well as the tag names defined by lexers.
 --
---   - [`view.STYLE_DEFAULT`](): The default style all others are based on.
---   - [`view.STYLE_LINENUMBER`](): The line number margin style.
---   - [`view.STYLE_CONTROLCHAR`](): The style of control character blocks.
---   - [`view.STYLE_INDENTGUIDE`](): The style of indentation guides.
---   - [`view.STYLE_CALLTIP`](): The style of call tip text. Only the `font`, `size`, `fore`,
---     and `back` style definition fields are supported.
---   - [`view.STYLE_FOLDDISPLAYTEXT`](): The style of text displayed next to folded lines.
---   - [`lexer.ATTRIBUTE`](), [`lexer.BOLD`](), [`lexer.CLASS`](), [`lexer.CODE`](),
---     [`lexer.COMMENT`](), [`lexer.CONSTANT`](), [`lexer.CONSTANT_BUILTIN`](),
---     [`lexer.EMBEDDED`](), [`lexer.ERROR`](), [`lexer.FUNCTION`](), [`lexer.FUNCTION_BUILTIN`](),
---     [`lexer.FUNCTION_METHOD`](), [`lexer.IDENTIFIER`](), [`lexer.ITALIC`](),
---     [`lexer.KEYWORD`](), [`lexer.LABEL`](), [`lexer.LINK`](), [`lexer.NUMBER`](),
---     [`lexer.OPERATOR`](), [`lexer.PREPROCESSOR`](), [`lexer.REFERENCE`](), [`lexer.REGEX`](),
---     [`lexer.STRING`](), [`lexer.TAG`](), [`lexer.TITLE`](), [`lexer.TYPE`](),
---     [`lexer.UNDERLINE`](), [`lexer.VARIABLE`](), [`lexer.VARIABLE_BUILTIN`](): Some tag
---     names used by lexers. Some lexers may define more tag names, so this list is not exhaustive.
+--   - `view.STYLE_DEFAULT`: The default style all others are based on.
+--   - `view.STYLE_LINENUMBER`: The line number margin style.
+--   - `view.STYLE_CONTROLCHAR`: The style of control character blocks.
+--   - `view.STYLE_INDENTGUIDE`: The style of indentation guides.
+--   - `view.STYLE_CALLTIP`: The style of call tip text. Only the `font`, `size`, `fore`, and
+--     `back` style definition fields are supported.
+--   - `view.STYLE_FOLDDISPLAYTEXT`: The style of text displayed next to folded lines.
+--   - `lexer.ATTRIBUTE`, `lexer.BOLD`, `lexer.CLASS`, `lexer.CODE`, `lexer.COMMENT`,
+--     `lexer.CONSTANT`, `lexer.CONSTANT_BUILTIN`, `lexer.EMBEDDED`, `lexer.ERROR`,
+--     `lexer.FUNCTION`, `lexer.FUNCTION_BUILTIN`, `lexer.FUNCTION_METHOD`, `lexer.IDENTIFIER`,
+--     `lexer.ITALIC`, `lexer.KEYWORD`, `lexer.LABEL`, `lexer.LINK`, `lexer.NUMBER`,
+--     `lexer.OPERATOR`, `lexer.PREPROCESSOR`, `lexer.REFERENCE`, `lexer.REGEX`, `lexer.STRING`,
+--     `lexer.TAG`, `lexer.TYPE`, `lexer.UNDERLINE`, `lexer.VARIABLE`, `lexer.VARIABLE_BUILTIN`:
+--     Some tag names used by lexers. Some lexers may define more tag names, so this list is
+--     not exhaustive.
 --
 -- Style definition tables may contain the following fields:
 --
@@ -2498,8 +2488,7 @@
 --- @field view.STYLE_MAX
 
 --- Applies defined styles to the view.
--- This should be called any time a style in `styles` changes.
--- @see view.styles
+-- This should be called any time a style in `view.styles` changes.
 -- @function view:set_styles
 
 --- Override Style Settings.
@@ -2673,7 +2662,7 @@
 -- @table view.element_is_set
 
 --- Resets the color of UI element *element* to its default color.
--- @param element One of the UI elements specified in [`view.element_color`]().
+-- @param element One of the UI elements specified in `view.element_color`.
 -- @function view:reset_element_color
 
 --- Map of default colors on "0xAABBGGRR" format for UI element identifiers. (Read-only)
@@ -2738,7 +2727,7 @@
 
 --- The caret line's frame width in pixels.
 -- When non-zero, the line that contains the caret is framed instead of colored in. The
--- `view.caret_line_back` and `view.caret_line_back_alpha` properties apply to the frame.
+-- `view.ELEMENT_CARET_LINE_BACK` color applies to the frame.
 -- The default value is `0`.
 -- @field view.caret_line_frame
 
@@ -2894,12 +2883,12 @@
 --- The horizontal scrolling pixel width.
 -- For performance, the view does not measure the display width of the buffer to determine
 -- the properties of the horizontal scroll bar, but uses an assumed width instead. To ensure
--- the width of the currently visible lines can be scrolled use [`view.scroll_width_tracking`]().
+-- the width of the currently visible lines can be scrolled use `view.scroll_width_tracking`.
 -- The default value is `2000`.
 -- @field view.scroll_width
 
 --- Continuously update the horizontal scrolling width to match the maximum width of a displayed
--- line beyond [`view.scroll_width`]().
+-- line beyond `view.scroll_width`.
 -- The default value is `false`.
 -- @field view.scroll_width_tracking
 
@@ -2930,9 +2919,9 @@
 -- @function view:set_y_caret_policy
 
 --- Defines scrolling policy bit-mask *policy* as the policy for keeping the caret *y* number
--- of lines away from the vertical margins as `view.ensure_visible_enforce_policy()` redisplays
+-- of lines away from the vertical margins as `view:ensure_visible_enforce_policy()` redisplays
 -- hidden or folded lines.
--- It is similar in operation to `view.set_y_caret_policy()`.
+-- It is similar in operation to `view:set_y_caret_policy()`.
 -- @param policy The combination of `view.VISIBLE_SLOP` and `view.VISIBLE_STRICT` policy flags
 --   to set.
 -- @param y The number of lines from the vertical margins to keep the caret.
@@ -3050,14 +3039,14 @@
 -- @field view.WRAPVISUALFLAGLOC_START_BY_TEXT
 
 --- The number of spaces of indentation to display wrapped lines with if
--- [`view.wrap_indent_mode`]() is `view.WRAPINDENT_FIXED`.
+-- `view.wrap_indent_mode` is `view.WRAPINDENT_FIXED`.
 -- The default value is `0`.
 -- @field view.wrap_start_indent
 
 --- The wrapped line indent mode.
 --
 --   - `view.WRAPINDENT_FIXED`
---     Indent wrapped lines by [`view.wrap_start_indent`]().
+--     Indent wrapped lines by `view.wrap_start_indent`.
 --   - `view.WRAPINDENT_SAME`
 --     Indent wrapped lines the same amount as the first line.
 --   - `view.WRAPINDENT_INDENT`
@@ -3071,7 +3060,7 @@
 --- Indent wrapped lines two more levels than the level of the first line.
 -- @field view.WRAPINDENT_DEEPINDENT
 
---- Indent wrapped lines by [`view.wrap_start_indent`]().
+--- Indent wrapped lines by `view.wrap_start_indent`.
 -- @field view.WRAPINDENT_FIXED
 
 --- Indent wrapped lines one more level than the level of the first line.
@@ -3107,26 +3096,22 @@
 --   - `view.EDGE_NONE`
 --     Long lines are not marked.
 --   - `view.EDGE_LINE`
---     Draw a single vertical line whose color is [`view.edge_color`]() at column
---     [`view.edge_column`]().
+--     Draw a single vertical line whose color is `view.edge_color` at column `view.edge_column`.
 --   - `view.EDGE_BACKGROUND`
---     Change the background color of text after column [`view.edge_column`]() to
---     [`view.edge_color`]().
+--     Change the background color of text after column `view.edge_column` to `view.edge_color`.
 --   - `view.EDGE_MULTILINE`
 --     Draw vertical lines whose colors and columns are defined by calls to
---     [`view:multi_edge_add_line()`]().
+--     `view:multi_edge_add_line()`.
 -- @field view.edge_mode
 
---- Change the background color of text after column [`view.edge_column`]() to
--- [`view.edge_color`]().
+--- Change the background color of text after column `view.edge_column` to `view.edge_color`.
 -- @field view.EDGE_BACKGROUND
 
---- Draw a single vertical line whose color is [`view.edge_color`]() at column
--- [`view.edge_column`]().
+--- Draw a single vertical line whose color is `view.edge_color` at column `view.edge_column`.
 -- @field view.EDGE_LINE
 
 --- Draw vertical lines whose colors and columns are defined by calls to
--- [`view:multi_edge_add_line()`]().
+-- `view:multi_edge_add_line()`.
 -- @field view.EDGE_MULTILINE
 
 --- Long lines are not marked.
@@ -3182,10 +3167,10 @@
 --     Draw lines below collapsed folds.
 --   - `view.FOLDFLAG_LEVELNUMBERS`
 --     Show hexadecimal fold levels in line margins.
---     This option cannot be combined with `FOLDFLAG_LINESTATE`.
+--     This option cannot be combined with `view.FOLDFLAG_LINESTATE`.
 --   - `view.FOLDFLAG_LINESTATE`
 --     Show line state in line margins.
---     This option cannot be combined with `FOLDFLAG_LEVELNUMBERS`.
+--     This option cannot be combined with `view.FOLDFLAG_LEVELNUMBERS`.
 --
 -- The default value is `view.FOLDFLAG_NONE`.
 -- @field view.fold_flags
@@ -3224,14 +3209,6 @@
 
 --- Fold display text is shown outlined with a box.
 -- @field view.FOLDDISPLAYTEXT_BOXED
-
---- Sets the default fold display text to string *text*.
--- @param text The text to display by default next to folded lines.
--- @see toggle_fold_show_text
--- @function view:set_default_fold_display_text
-
---- Returns the default fold display text.
--- @function view:get_default_fold_display_text
 
 --- Highlight Matching Braces.
 -- @section
@@ -3321,11 +3298,10 @@
 -- lexer.
 -- @param current Whether or not to get the lexer at the current caret position in multi-language
 --   lexers. The default is `false` and returns the parent lexer.
--- @see lexer_language
 -- @function get_lexer
 
 --- The buffer's lexer name. (Read-only)
--- If the lexer is a multi-language lexer, [`buffer.get_lexer()`]() can obtain the lexer under
+-- If the lexer is a multi-language lexer, `buffer:get_lexer()` can obtain the lexer under
 -- the caret.
 -- @field lexer_language
 
@@ -3347,16 +3323,15 @@
 -- @function clear_document_style
 
 --- Begins styling at position *position* with styling bit-mask *style_mask*.
--- *style_mask* specifies which style bits can be set with `buffer.set_styling()`.
+-- *style_mask* specifies which style bits can be set with `buffer:set_styling()`.
 -- @param position The position in *buffer* to start styling at.
 -- @param unused Unused number. `0` can be safely used.
 -- @usage buffer:start_styling(1, 0)
--- @see set_styling
 -- @function start_styling
 
 --- Assigns style number *style*, in the range from `1` to `256`, to the next *length* characters,
 -- starting from the current styling position, and increments the styling position by *length*.
--- [`buffer:start_styling`]() should be called before `buffer:set_styling()`.
+-- `buffer:start_styling()` should be called before `buffer:set_styling()`.
 -- @param length The number of characters to style.
 -- @param style The style number to set.
 -- @function set_styling
@@ -3381,7 +3356,6 @@
 -- *style_name* is not in use.
 -- @param style_name The style name to get the number of.
 -- @return style number, between `1` and `256`.
--- @see name_of_style
 -- @function style_of_name
 
 --- The current styling position or the last correctly styled character's position. (Read-only)
@@ -3431,7 +3405,7 @@
 
 --- @field view.IDLESTYLING_ALL
 
---- The number of milliseconds the mouse must idle before generating a `DWELL_START` event.
+--- The number of milliseconds the mouse must idle before generating an `events.DWELL_START` event.
 -- A time of `view.TIME_FOREVER` will never generate one.
 -- @field view.mouse_dwell_time
 
@@ -3464,8 +3438,7 @@
 --- @field view.ALPHA_TRANSPARENT
 
 --- Deletes the buffer.
--- **Do not call this function.** Call `buffer:close()` instead. Emits a `BUFFER_DELETED` event.
--- @see events.BUFFER_DELETED
+-- **Do not call this function.** Call `buffer:close()` instead. Emits `events.BUFFER_DELETED`.
 -- @function delete
 
 -- Unused Fields.

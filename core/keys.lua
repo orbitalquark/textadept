@@ -38,7 +38,7 @@
 -- English keyboard, since the combination of `Ctrl+Shift+,` has the key sequence `ctrl+<`
 -- (`Shift+,` inserts a `<`), Textadept recognizes the key binding as `Ctrl+<`. This allows
 -- key bindings to be language and layout agnostic. For key values greater than 255, Textadept
--- uses the [`keys.KEYSYMS`]() lookup table. Therefore, `Ctrl+Right Arrow` has the key sequence
+-- uses the `keys.KEYSYMS` lookup table. Therefore, `Ctrl+Right Arrow` has the key sequence
 -- `ctrl+right`. Uncommenting the `print()` statements in *core/keys.lua* causes Textadept to
 -- print key sequences to standard out (stdout) for inspection.
 --
@@ -50,7 +50,7 @@
 --     keys['ctrl+z'] = buffer.undo
 --     keys['ctrl+u'] = function() io.quick_open(_USERHOME) end
 --
--- Textadept handles [`buffer`]() references properly in static contexts.
+-- Textadept handles `buffer` and `view` references properly in static contexts.
 --
 -- ### Modes
 --
@@ -82,7 +82,7 @@
 --
 -- Key chains are a powerful concept. They allow you to assign multiple key bindings to one
 -- key sequence. By default, the `Esc` key cancels a key chain, but you can redefine it via
--- [`keys.CLEAR`](). An example key chain looks like:
+-- `keys.CLEAR`. An example key chain looks like:
 --
 --     keys['alt+a'] = {
 --       a = function1,

@@ -30,13 +30,11 @@ end
 --- Processes command line argument table *arg*, handling options previously defined using
 -- `args.register()` and treats unrecognized arguments as filenames to open or directories to
 -- change to.
--- Emits an `ARG_NONE` event when no file or directory arguments are present unless
+-- Emits `events.ARG_NONE` when no file or directory arguments are present unless
 -- *no_emit_arg_none* is `true`.
 -- @param arg Argument table.
 -- @param[opt] no_emit_arg_none When `true`, do not emit `ARG_NONE` when no arguments are present.
 --   The default value is `false`.
--- @see register
--- @see _G.events
 local function process(arg, no_emit_arg_none)
   local no_args = true
   local i = 1

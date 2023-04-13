@@ -8,21 +8,21 @@ local file_io_events = {'file_opened', 'file_before_save', 'file_after_save', 'f
 for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 
 --- Emitted after opening a file in a new buffer.
--- Emitted by [`io.open_file()`]().
+-- Emitted by `io.open_file()`.
 -- Arguments:
 --
 --   - *filename*: The opened file's filename.
 -- @field _G.events.FILE_OPENED
 
 --- Emitted right before saving a file to disk.
--- Emitted by [`buffer:save()`]().
+-- Emitted by `buffer:save()`.
 -- Arguments:
 --
 --   - *filename*: The filename of the file being saved.
 -- @field _G.events.FILE_BEFORE_SAVE
 
 --- Emitted right after saving a file to disk.
--- Emitted by [`buffer:save()`]() and [`buffer:save_as()`]().
+-- Emitted by `buffer:save()` and `buffer:save_as()`.
 -- Arguments:
 --
 --   - *filename*: The filename of the file being saved.
@@ -65,12 +65,11 @@ io.recent_files = {}
 io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}
 
 --- Opens *filenames*, a string filename or list of filenames, or the user-selected filename(s).
--- Emits a `FILE_OPENED` event.
+-- Emits `events.FILE_OPENED`.
 -- @param[opt] filenames Optional string filename or table of filenames to open. If `nil`,
 --   the user is prompted with a fileselect dialog.
 -- @param[opt] encodings Optional string encoding or table of encodings file contents are in
 --   (one encoding per file). If `nil`, encoding auto-detection is attempted via `io.encodings`.
--- @see _G.events
 function io.open_file(filenames, encodings)
   assert_type(encodings, 'string/table/nil', 2)
   if not assert_type(filenames, 'string/table/nil', 1) then
@@ -216,7 +215,6 @@ end
 -- @param untitled Whether or not to prompt for filenames for untitled buffers. The default
 --   value is `false`.
 -- @return `true` if all savable files were saved; `nil` otherwise.
--- @see buffer.save
 function io.save_all_files(untitled)
   for _, buffer in ipairs(_BUFFERS) do
     if buffer.modify and (buffer.filename or untitled and not buffer._type) then
@@ -246,8 +244,8 @@ local function close(buffer, force)
   return true
 end
 
---- Detects if the current file has been externally modified and, if so, emits a `FILE_CHANGED`
--- event.
+--- Detects if the current file has been externally modified and, if so, emits
+-- `events.FILE_CHANGED`.
 local function update_modified_file()
   if not buffer.filename then return end
   local mod_time = lfs.attributes(buffer.filename, 'modification')
@@ -265,7 +263,6 @@ events.connect(events.RESUME, update_modified_file)
 -- returns `true` if the user did not cancel.
 -- No buffers are saved automatically. They must be saved manually.
 -- @return `true` if user did not cancel; `nil` otherwise.
--- @see buffer.close
 function io.close_all_buffers()
   events.disconnect(events.BUFFER_AFTER_SWITCH, update_modified_file)
   while #_BUFFERS > 1 do if not buffer:close() then return nil end end
@@ -352,7 +349,6 @@ function io.get_project_root(path, submodule)
 end
 
 --- Map of directory paths to filters used by `io.quick_open()`.
--- @see quick_open
 io.quick_open_filters = {}
 
 --- Prompts the user to select files to be opened from *paths*, a string directory path or list
@@ -365,7 +361,7 @@ io.quick_open_filters = {}
 -- inclusive by default. Exclusive patterns begin with a '!'. If no inclusive patterns are given,
 -- any path is initially considered. As a convenience, '/' also matches the Windows directory
 -- separator ('[/\\]' is not needed).
--- The number of files in the list is capped at `quick_open_max`.
+-- The number of files in the list is capped at `io.quick_open_max`.
 -- If *filter* is `nil` and *paths* is ultimately a string, the filter from the
 -- `io.quick_open_filters` table is used. If that filter does not exist, `lfs.default_filter`
 -- is used.
@@ -380,9 +376,6 @@ io.quick_open_filters = {}
 --   project
 -- @usage io.quick_open(io.get_current_project(), '!/build') -- list all files in the current
 --   project except those in the build directory
--- @see quick_open_filters
--- @see lfs.default_filter
--- @see quick_open_max
 function io.quick_open(paths, filter)
   if not assert_type(paths, 'string/table/nil', 1) then
     paths = io.get_project_root()
