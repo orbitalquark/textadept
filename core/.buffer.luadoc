@@ -514,7 +514,7 @@
 --   - `buffer.MULTIPASTE_EACH`
 --     Paste into all selections.
 --
---   The default value is `buffer.MULTIPASTE_ONCE`.
+--   The default value is `buffer.MULTIPASTE_EACH`.
 -- @field multi_paste
 
 --- Make Simple Selections.
@@ -769,11 +769,11 @@
 -- @field selections
 
 --- Enable multiple selection.
--- The default value is `false`.
+-- The default value is `true`.
 -- @field multiple_selection
 
 --- Type into multiple selections.
--- The default value is `false`.
+-- The default value is `true`.
 -- @field additional_selection_typing
 
 --- Make Rectangular Selections.
@@ -831,7 +831,7 @@
 --     The "Super" modifier key, usually defined as the left "Windows" or
 --     "Command" key.
 --
--- The default value is `view.MOD_CTRL`.
+-- The default value is `view.MOD_ALT`.
 -- @field view.rectangular_selection_modifier
 
 --- The "Alt" modifier key.
@@ -851,7 +851,7 @@
 
 --- Whether or not pressing `view.rectangular_selection_modifier` when selecting text
 -- normally with the mouse turns on rectangular selection.
--- The default value is `false`.
+-- The default value is `true`.
 -- @field view.mouse_selection_rectangular_switch
 
 --- Replaces the rectangular selection with string *text*.
@@ -1181,15 +1181,15 @@
 --- List of bit-masks of markers whose symbols marker symbol margins can display for margin
 -- numbers from `1` to `view.margins` (`5` by default).
 -- Bit-masks are 32-bit values whose bits correspond to the 32 available markers.
--- The default values are `0`, `view.MASK_FOLDERS`, `0`, `0`, and `0`, for a line margin and
--- logical marker margin.
+-- The default values are `0`, `~view.MASK_FOLDERS`, `view.MASK_FOLDERS`, `0`, and `0`, for a
+-- line margin and logical marker margin.
 -- @table view.margin_mask_n
 
 --- @field view.MASK_FOLDERS
 
 --- List of flags that indicate whether or not mouse clicks in margins emit `MARGIN_CLICK`
 -- events for margin numbers from `1` to `view.margins` (`5` by default).
--- The default values are `false`.
+-- The default values are `false` for the first margin and `true` for the others.
 -- @table view.margin_sensitive_n
 
 --- List of cursor types shown over margin numbers from `1` to `view.margins` (`5` by default).
@@ -1199,7 +1199,7 @@
 --   - `view.CURSORREVERSEARROW`
 --     Reversed arrow cursor.
 --
--- The default values are `view.CURSORREVERSEARROW`.
+-- The default values are `view.CURSORARROW`.
 -- @table view.margin_cursor_n
 
 --- List of text displayed in text margins per line number.
@@ -1550,7 +1550,7 @@
 --   - `view.ANNOTATION_INDENTED`
 --     Indent non-decorated annotations to match the annotated text.
 --
--- The default value is `view.ANNOTATION_HIDDEN`.
+-- The default value is `view.ANNOTATION_BOXED`.
 -- @field view.annotation_visible
 
 --- Indent annotations to match the annotated text and outline them with a box.
@@ -1593,7 +1593,7 @@
 --     Draw EOL annotations outline with angled ends.
 --
 -- All annotations are drawn with the same shape. The default value is
--- `view.EOLANNOTATION_HIDDEN`.
+-- `view.EOLANNOTATION_BOXED`.
 -- @field view.eol_annotation_visible
 
 --- @field view.EOLANNOTATION_HIDDEN
@@ -1930,7 +1930,7 @@
 
 --- Automatically choose the item in a single-item autocompletion list.
 -- This option has no effect for a user list.
--- The default value is `false`.
+-- The default value is `true`.
 -- @field auto_c_choose_single
 
 --- The set of characters that choose the currently selected item in an autocompletion or user
@@ -1995,7 +1995,7 @@
 --   - `buffer.MULTIAUTOC_EACH`
 --     Autocomplete into all selections.
 --
---   The default value is `buffer.MULTIAUTOC_ONCE`.
+--   The default value is `buffer.MULTIAUTOC_EACH`.
 -- @field auto_c_multi
 
 --- Autocomplete into all selections.
@@ -2088,7 +2088,7 @@
 --- The pixel width of tab characters in call tips.
 -- When non-zero, also enables the use of style number `view.STYLE_CALLTIP` instead of
 -- `view.STYLE_DEFAULT` for call tip styles.
--- The default value is `0`.
+-- The default value is depends on `buffer.tab_width` and the current font.
 -- @field view.call_tip_use_style
 
 --- The position at which backspacing beyond it hides a visible call tip. (Write-only)
@@ -2285,11 +2285,11 @@
 --- Use tabs instead of spaces in indentation.
 -- Changing the current setting does not convert any of the buffer's existing indentation. Use
 -- `textadept.editing.convert_indentation()` to do so.
--- The default value is `true`.
+-- The default value is `false`.
 -- @field use_tabs
 
 --- The number of space characters represented by a tab character.
--- The default value is `8`.
+-- The default value is `2`.
 -- @field tab_width
 
 --- The number of spaces in one level of indentation.
@@ -2297,12 +2297,12 @@
 -- @field indent
 
 --- Indent text when tabbing within indentation.
--- The default value is `false`.
+-- The default value is `true`.
 -- @see textadept.editing.auto_indent
 -- @field tab_indents
 
 --- Un-indent text when backspacing within indentation.
--- The default value is `false`.
+-- The default value is `true`.
 -- @field back_space_un_indents
 
 --- The current end of line mode.
@@ -3137,7 +3137,7 @@
 -- @section
 
 --- Whether or not folding is enabled for the lexers that support it.
--- This option is disabled by default.
+-- This option is enabled by default.
 -- @field view.folding
 
 --- Whether or not blank lines after an ending fold point are included in that fold.
@@ -3172,7 +3172,8 @@
 --     Show line state in line margins.
 --     This option cannot be combined with `view.FOLDFLAG_LEVELNUMBERS`.
 --
--- The default value is `view.FOLDFLAG_NONE`.
+-- The default value is `view.FOLDFLAG_LINEAFTER_CONTRACTED` in the GUI version, and
+-- `view.FOLDFLAG_NONE` in the terminal version.
 -- @field view.fold_flags
 
 --- @field view.FOLDFLAG_NONE
@@ -3198,7 +3199,7 @@
 --   - `view.FOLDDISPLAYTEXT_BOXED`
 --     Fold display text is shown outlined with a box.
 --
--- The default value is `view.FOLDDISPLAYTEXT_HIDDEN`.
+-- The default value is `view.FOLDDISPLAYTEXT_BOXED`.
 -- @field view.fold_display_text_style
 
 --- Fold display text is not shown.
@@ -3261,7 +3262,8 @@
 --     Draw guides beyond the current line up to either the indentation level of the previous
 --     or next non-empty line, whichever is greater.
 --
--- The default value is `view.IV_NONE`.
+-- The default value is `view.IV_LOOKBOTH` in the GUI version, and `view.IV_NONE` in the
+-- terminal version.
 -- @field view.indentation_guides
 
 --- Draw guides beyond the current line up to either the indentation level of the previous or
@@ -3394,7 +3396,7 @@
 --   - `view.IDLESTYLING_ALL`
 --     Style text both before and after the visible text in the background.
 --
---   The default value is `view.IDLESTYLING_NONE`.
+--   The default value is `view.IDLESTYLING_ALL`.
 -- @field view.idle_styling
 
 --- @field view.IDLESTYLING_NONE

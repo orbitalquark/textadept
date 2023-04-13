@@ -1233,7 +1233,7 @@ The multiple selection paste mode.
   - `buffer.MULTIPASTE_EACH`
     Paste into all selections.
 
-  The default value is `buffer.MULTIPASTE_ONCE`.
+  The default value is `buffer.MULTIPASTE_EACH`.
 
 ### Make Simple Selections
 
@@ -1601,13 +1601,13 @@ The number of active selections. There is always at least one selection. (Read-o
 #### `buffer.multiple_selection` 
 
 Enable multiple selection.
-The default value is `false`.
+The default value is `true`.
 
 <a id="buffer.additional_selection_typing"></a>
 #### `buffer.additional_selection_typing` 
 
 Type into multiple selections.
-The default value is `false`.
+The default value is `true`.
 
 ### Make Rectangular Selections
 
@@ -1693,14 +1693,14 @@ selection.
     The "Super" modifier key, usually defined as the left "Windows" or
     "Command" key.
 
-The default value is [`view.MOD_CTRL`](#view.MOD_CTRL).
+The default value is [`view.MOD_ALT`](#view.MOD_ALT).
 
 <a id="view.mouse_selection_rectangular_switch"></a>
 #### `view.mouse_selection_rectangular_switch` 
 
 Whether or not pressing [`view.rectangular_selection_modifier`](#view.rectangular_selection_modifier) when selecting text
 normally with the mouse turns on rectangular selection.
-The default value is `false`.
+The default value is `true`.
 
 <a id="buffer.replace_rectangular"></a>
 #### `buffer:replace_rectangular`(*text*)
@@ -2193,15 +2193,15 @@ List of pixel margin widths for margin numbers from `1` to [`view.margins`](#vie
 List of bit-masks of markers whose symbols marker symbol margins can display for margin
 numbers from `1` to [`view.margins`](#view.margins) (`5` by default).
 Bit-masks are 32-bit values whose bits correspond to the 32 available markers.
-The default values are `0`, [`view.MASK_FOLDERS`](#view.MASK_FOLDERS), `0`, `0`, and `0`, for a line margin and
-logical marker margin.
+The default values are `0`, `~view.MASK_FOLDERS`, [`view.MASK_FOLDERS`](#view.MASK_FOLDERS), `0`, and `0`, for a
+line margin and logical marker margin.
 
 <a id="view.margin_sensitive_n"></a>
 #### `view.margin_sensitive_n` &lt;table&gt;
 
 List of flags that indicate whether or not mouse clicks in margins emit `MARGIN_CLICK`
 events for margin numbers from `1` to [`view.margins`](#view.margins) (`5` by default).
-The default values are `false`.
+The default values are `false` for the first margin and `true` for the others.
 
 <a id="view.margin_cursor_n"></a>
 #### `view.margin_cursor_n` &lt;table&gt;
@@ -2213,7 +2213,7 @@ List of cursor types shown over margin numbers from `1` to [`view.margins`](#vie
   - [`view.CURSORREVERSEARROW`](#view.CURSORREVERSEARROW)
     Reversed arrow cursor.
 
-The default values are [`view.CURSORREVERSEARROW`](#view.CURSORREVERSEARROW).
+The default values are [`view.CURSORARROW`](#view.CURSORARROW).
 
 <a id="buffer.margin_text"></a>
 #### `buffer.margin_text` &lt;table&gt;
@@ -2624,7 +2624,7 @@ The annotation visibility mode.
   - [`view.ANNOTATION_INDENTED`](#view.ANNOTATION_INDENTED)
     Indent non-decorated annotations to match the annotated text.
 
-The default value is [`view.ANNOTATION_HIDDEN`](#view.ANNOTATION_HIDDEN).
+The default value is [`view.ANNOTATION_BOXED`](#view.ANNOTATION_BOXED).
 
 <a id="view.eol_annotation_visible"></a>
 #### `view.eol_annotation_visible` 
@@ -2657,7 +2657,7 @@ The EOL annotation visibility mode.
     Draw EOL annotations outline with angled ends.
 
 All annotations are drawn with the same shape. The default value is
-[`view.EOLANNOTATION_HIDDEN`](#view.EOLANNOTATION_HIDDEN).
+[`view.EOLANNOTATION_BOXED`](#view.EOLANNOTATION_BOXED).
 
 <a id="buffer.annotation_lines"></a>
 #### `buffer.annotation_lines` &lt;table&gt;
@@ -2966,7 +2966,7 @@ The text of the currently selected item in an autocompletion or user list. (Read
 
 Automatically choose the item in a single-item autocompletion list.
 This option has no effect for a user list.
-The default value is `false`.
+The default value is `true`.
 
 <a id="buffer.auto_c_fill_ups"></a>
 #### `buffer.auto_c_fill_ups` 
@@ -3048,7 +3048,7 @@ The multiple selection autocomplete mode.
   - [`buffer.MULTIAUTOC_EACH`](#buffer.MULTIAUTOC_EACH)
     Autocomplete into all selections.
 
-  The default value is [`buffer.MULTIAUTOC_ONCE`](#buffer.MULTIAUTOC_ONCE).
+  The default value is [`buffer.MULTIAUTOC_EACH`](#buffer.MULTIAUTOC_EACH).
 
 ### Display Images in Lists
 
@@ -3183,7 +3183,7 @@ The default value is `false`.
 The pixel width of tab characters in call tips.
 When non-zero, also enables the use of style number [`view.STYLE_CALLTIP`](#view.STYLE_CALLTIP) instead of
 [`view.STYLE_DEFAULT`](#view.STYLE_DEFAULT) for call tip styles.
-The default value is `0`.
+The default value is depends on [`buffer.tab_width`](#buffer.tab_width) and the current font.
 
 <a id="view.call_tip_pos_start"></a>
 #### `view.call_tip_pos_start` 
@@ -3463,13 +3463,13 @@ Scrolls to the end of the buffer without moving the caret.
 Use tabs instead of spaces in indentation.
 Changing the current setting does not convert any of the buffer's existing indentation. Use
 [`textadept.editing.convert_indentation()`](#textadept.editing.convert_indentation) to do so.
-The default value is `true`.
+The default value is `false`.
 
 <a id="buffer.tab_width"></a>
 #### `buffer.tab_width` 
 
 The number of space characters represented by a tab character.
-The default value is `8`.
+The default value is `2`.
 
 <a id="buffer.indent"></a>
 #### `buffer.indent` 
@@ -3481,13 +3481,13 @@ The default value is `0`, which uses the value of [`buffer.tab_width`](#buffer.t
 #### `buffer.tab_indents` 
 
 Indent text when tabbing within indentation.
-The default value is `false`.
+The default value is `true`.
 
 <a id="buffer.back_space_un_indents"></a>
 #### `buffer.back_space_un_indents` 
 
 Un-indent text when backspacing within indentation.
-The default value is `false`.
+The default value is `true`.
 
 <a id="buffer.eol_mode"></a>
 #### `buffer.eol_mode` 
@@ -4280,7 +4280,7 @@ The color, in "0xBBGGRR" format, of the single edge or background for long lines
 #### `view.folding` 
 
 Whether or not folding is enabled for the lexers that support it.
-This option is disabled by default.
+This option is enabled by default.
 
 <a id="view.fold_compact"></a>
 #### `view.fold_compact` 
@@ -4323,7 +4323,8 @@ Bit-mask of folding lines to draw in the buffer. (Read-only)
     Show line state in line margins.
     This option cannot be combined with [`view.FOLDFLAG_LEVELNUMBERS`](#view.FOLDFLAG_LEVELNUMBERS).
 
-The default value is [`view.FOLDFLAG_NONE`](#view.FOLDFLAG_NONE).
+The default value is [`view.FOLDFLAG_LINEAFTER_CONTRACTED`](#view.FOLDFLAG_LINEAFTER_CONTRACTED) in the GUI version, and
+[`view.FOLDFLAG_NONE`](#view.FOLDFLAG_NONE) in the terminal version.
 
 <a id="view.fold_display_text_style"></a>
 #### `view.fold_display_text_style` 
@@ -4337,7 +4338,7 @@ The fold display text mode.
   - [`view.FOLDDISPLAYTEXT_BOXED`](#view.FOLDDISPLAYTEXT_BOXED)
     Fold display text is shown outlined with a box.
 
-The default value is [`view.FOLDDISPLAYTEXT_HIDDEN`](#view.FOLDDISPLAYTEXT_HIDDEN).
+The default value is [`view.FOLDDISPLAYTEXT_BOXED`](#view.FOLDDISPLAYTEXT_BOXED).
 
 ### Highlight Matching Braces
 
@@ -4409,7 +4410,8 @@ each level of indentation.
     Draw guides beyond the current line up to either the indentation level of the previous
     or next non-empty line, whichever is greater.
 
-The default value is [`view.IV_NONE`](#view.IV_NONE).
+The default value is [`view.IV_LOOKBOTH`](#view.IV_LOOKBOTH) in the GUI version, and [`view.IV_NONE`](#view.IV_NONE) in the
+terminal version.
 
 <a id="view.highlight_guide"></a>
 #### `view.highlight_guide` 
@@ -4599,7 +4601,7 @@ This mode has no effect when [`view.wrap_mode`](#view.wrap_mode) is on.
   - [`view.IDLESTYLING_ALL`](#view.IDLESTYLING_ALL)
     Style text both before and after the visible text in the background.
 
-  The default value is [`view.IDLESTYLING_NONE`](#view.IDLESTYLING_NONE).
+  The default value is [`view.IDLESTYLING_ALL`](#view.IDLESTYLING_ALL).
 
 <a id="view.mouse_dwell_time"></a>
 #### `view.mouse_dwell_time` 
