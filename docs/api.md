@@ -82,6 +82,10 @@ Usage:
 - `_BUFFERS[buffer] --> index of buffer in _BUFFERS
 `
 
+See also:
+
+- [`buffer`](#buffer)
+
 <a id="_CHARSET"></a>
 #### `_CHARSET` 
 
@@ -135,10 +139,18 @@ Usage:
 - `_VIEWS[view] --> index of view in _VIEWS
 `
 
+See also:
+
+- [`view`](#view)
+
 <a id="arg"></a>
 #### `arg` &lt;table&gt;
 
 Table of command line parameters passed to Textadept.
+
+See also:
+
+- [`args`](#args)
 
 <a id="_G.buffer"></a>
 #### `buffer` &lt;table&gt;
@@ -267,6 +279,11 @@ Do not modify anything in this module. Doing so will have unpredictable conseque
 #### `_SCINTILLA.constants` &lt;table&gt;
 
 Map of Scintilla constant names to their numeric values.
+
+See also:
+
+- [`buffer`](#buffer)
+- [`view`](#view)
 
 <a id="_SCINTILLA.events"></a>
 #### `_SCINTILLA.events` &lt;table&gt;
@@ -471,6 +488,10 @@ Return:
 
 - the new buffer.
 
+See also:
+
+- [`io.open_file`](#io.open_file)
+
 <a id="view.split"></a>
 #### `view:split`([*vertical*])
 
@@ -529,6 +550,12 @@ Return:
 
 - `true` if the file was saved; `nil` otherwise.
 
+See also:
+
+- [`textadept.editing.strip_trailing_spaces`](#textadept.editing.strip_trailing_spaces)
+- [`io.ensure_final_newline`](#io.ensure_final_newline)
+- [`io.save_all_files`](#io.save_all_files)
+
 <a id="buffer.save_as"></a>
 #### `buffer:save_as`([*filename*])
 
@@ -560,6 +587,10 @@ Return:
 
 - `true` if the buffer was closed; `nil` otherwise.
 
+See also:
+
+- [`io.close_all_buffers`](#io.close_all_buffers)
+
 <a id="buffer.set_encoding"></a>
 #### `buffer:set_encoding`(*encoding*)
 
@@ -574,6 +605,11 @@ Usage:
 
 - `buffer:set_encoding('CP1252')
 `
+
+See also:
+
+- [`io.encodings`](#io.encodings)
+- [`string.iconv`](#string.iconv)
 
 <a id="buffer.filename"></a>
 #### `buffer.filename` 
@@ -719,6 +755,10 @@ Moves the caret to the beginning of line number *line* and scrolls it into view,
 Parameters:
 
 - *line*:  The line number in *buffer* to go to.
+
+See also:
+
+- [`textadept.editing.goto_line`](#textadept.editing.goto_line)
 
 <a id="buffer.line_up"></a>
 #### `buffer:line_up`()
@@ -1118,11 +1158,22 @@ Parameters:
 
 - *width*:  The pixel width to split lines at. When `0`, uses the width of the view.
 
+See also:
+
+- [`buffer.set_target_range`](#buffer.set_target_range)
+- [`buffer.target_from_selection`](#buffer.target_from_selection)
+
 <a id="buffer.lines_join"></a>
 #### `buffer:lines_join`()
 
 Joins the lines in the target range, inserting spaces between the words joined at line
 boundaries.
+
+See also:
+
+- [`buffer.set_target_range`](#buffer.set_target_range)
+- [`buffer.target_from_selection`](#buffer.target_from_selection)
+- [`textadept.editing.join_lines`](#textadept.editing.join_lines)
 
 ### Undo and Redo
 
@@ -1222,6 +1273,11 @@ Parameters:
 
 Pastes the clipboard's contents into the buffer, replacing any selected text according to
 [`buffer.multi_paste`](#buffer.multi_paste).
+
+See also:
+
+- [`textadept.editing.paste_reindent`](#textadept.editing.paste_reindent)
+- [`ui.clipboard_text`](#ui.clipboard_text)
 
 <a id="buffer.multi_paste"></a>
 #### `buffer.multi_paste` 
@@ -1520,11 +1576,19 @@ Adds to the set of selections the next occurrence of the main selection within t
 range, makes that occurrence the new main selection, and scrolls it into view.
 If there is no selected text, the current word is used.
 
+See also:
+
+- [`textadept.editing.select_word`](#textadept.editing.select_word)
+
 <a id="buffer.multiple_select_add_each"></a>
 #### `buffer:multiple_select_add_each`()
 
 Adds to the set of selections each occurrence of the main selection within the target range.
 If there is no selected text, the current word is used.
+
+See also:
+
+- [`textadept.editing.select_word`](#textadept.editing.select_word)
 
 <a id="buffer.main_selection"></a>
 #### `buffer.main_selection` 
@@ -1737,6 +1801,10 @@ Return:
 
 - number
 
+See also:
+
+- [`buffer.search_flags`](#buffer.search_flags)
+
 <a id="buffer.search_prev"></a>
 #### `buffer:search_prev`(*flags*, *text*)
 
@@ -1751,6 +1819,10 @@ Parameters:
 Return:
 
 - number
+
+See also:
+
+- [`buffer.search_flags`](#buffer.search_flags)
 
 ### Search and Replace
 
@@ -1779,6 +1851,11 @@ The bit-mask of search flags used by [`buffer:search_in_target()`](#buffer.searc
 
 Defines the target range's beginning and end positions as the beginning and end positions
 of the document, respectively.
+
+See also:
+
+- [`buffer.set_target_range`](#buffer.set_target_range)
+- [`buffer.target_from_selection`](#buffer.target_from_selection)
 
 <a id="buffer.search_in_target"></a>
 #### `buffer:search_in_target`(*text*)
@@ -1810,6 +1887,10 @@ Parameters:
 Return:
 
 - number
+
+See also:
+
+- [`buffer.replace_target`](#buffer.replace_target)
 
 <a id="buffer.target_text"></a>
 #### `buffer.target_text` 
@@ -2305,6 +2386,10 @@ Parameters:
 - *marker*:  The marker number in the range of `1` to `32` to set *symbol* for.
 - *symbol*:  The marker symbol: `view.MARK_*`.
 
+See also:
+
+- [`_SCINTILLA.new_marker_number`](#_SCINTILLA.new_marker_number)
+
 <a id="view.marker_define_pixmap"></a>
 #### `view:marker_define_pixmap`(*marker*, *pixmap*)
 
@@ -2336,6 +2421,10 @@ Parameters:
    order, a red byte, a green byte, a blue byte and an alpha byte. The color bytes are not
    premultiplied by the alpha value. That is, a fully red pixel that is 25% opaque will be
    `[FF, 00, 00, 3F]`.
+
+See also:
+
+- [`view.rgba_image_scale`](#view.rgba_image_scale)
 
 <a id="buffer.marker_add"></a>
 #### `buffer:marker_add`(*line*, *marker*)
@@ -2898,6 +2987,11 @@ Parameters:
 - *items*:  The sorted string of words to show, separated by [`buffer.auto_c_separator`](#buffer.auto_c_separator)
    characters (initially spaces).
 
+See also:
+
+- [`textadept.editing.autocompleters`](#textadept.editing.autocompleters)
+- [`textadept.editing.autocomplete`](#textadept.editing.autocomplete)
+
 <a id="buffer.user_list_show"></a>
 #### `buffer:user_list_show`(*id*, *items*)
 
@@ -2912,6 +3006,10 @@ Parameters:
 - *id*:  The list identifier number greater than zero to use.
 - *items*:  The sorted string of words to show, separated by [`buffer.auto_c_separator`](#buffer.auto_c_separator)
    characters (initially spaces).
+
+See also:
+
+- [`_SCINTILLA.new_user_list_type`](#_SCINTILLA.new_user_list_type)
 
 <a id="buffer.auto_c_select"></a>
 #### `buffer:auto_c_select`(*prefix*)
@@ -3068,6 +3166,7 @@ Parameters:
 
 See also:
 
+- [`_SCINTILLA.new_image_type`](#_SCINTILLA.new_image_type)
 - [`textadept.editing.XPM_IMAGES`](#textadept.editing.XPM_IMAGES)
 
 <a id="view.rgba_image_width"></a>
@@ -3224,6 +3323,10 @@ Parameters:
 - *line*:  The line number in *view* to toggle the fold on and display *text* after.
 - *text*:  The text to display after the line.
 
+See also:
+
+- [`buffer.set_default_fold_display_text`](#buffer.set_default_fold_display_text)
+
 <a id="view.fold_line"></a>
 #### `view:fold_line`(*line*, *action*)
 
@@ -3317,6 +3420,10 @@ Sets the default fold display text to string *text*.
 Parameters:
 
 - *text*:  The text to display by default next to folded lines.
+
+See also:
+
+- [`buffer.toggle_fold_show_text`](#buffer.toggle_fold_show_text)
 
 <a id="view.get_default_fold_display_text"></a>
 #### `view:get_default_fold_display_text`()
@@ -4437,6 +4544,11 @@ Usage:
 - `buffer:set_lexer('lexer_name')
 `
 
+See also:
+
+- [`lexer.detect_extensions`](#lexer.detect_extensions)
+- [`lexer.detect_patterns`](#lexer.detect_patterns)
+
 <a id="buffer.get_lexer"></a>
 #### `buffer:get_lexer`(*current*)
 
@@ -5384,6 +5496,10 @@ Parameters:
 #### `io.open_recent_file`()
 
 Prompts the user to select a recently opened file to be reopened.
+
+See also:
+
+- [`io.recent_files`](#io.recent_files)
 
 <a id="io.quick_open"></a>
 #### `io.quick_open`([*paths*[, *filter*]])
@@ -6448,12 +6564,20 @@ A pattern that matches a decimal number.
 Map of file extensions, without the '.' prefix, to their associated lexer names.
 This map has precedence over Scintillua's built-in map.
 
+See also:
+
+- [`lexer.detect`](#lexer.detect)
+
 <a id="lexer.detect_patterns"></a>
 #### `lexer.detect_patterns` &lt;table&gt;
 
 Map of line patterns to their associated lexer names.
 These are Lua string patterns, not LPeg patterns.
 This map has precedence over Scintillua's built-in map.
+
+See also:
+
+- [`lexer.detect`](#lexer.detect)
 
 <a id="lexer.digit"></a>
 #### `lexer.digit` 
@@ -6623,6 +6747,10 @@ Parameters:
    passed to `tag()`.
 - *rule*:  The LPeg pattern of the rule.
 
+See also:
+
+- [`lexer.modify_rule`](#lexer.modify_rule)
+
 <a id="lexer.after_set"></a>
 #### `lexer.after_set`(*set*, *patt*, *skip*)
 
@@ -6676,6 +6804,11 @@ Parameters:
 Return:
 
 - string lexer name to pass to `load()`, or `nil` if none was detected
+
+See also:
+
+- [`lexer.detect_extensions`](#lexer.detect_extensions)
+- [`lexer.detect_patterns`](#lexer.detect_patterns)
 
 <a id="lexer.embed"></a>
 #### `lexer.embed`(*lexer*, *child*, *start_rule*, *end_rule*)
@@ -7328,6 +7461,22 @@ Editing features for Textadept.
 
 The word highlight indicator number.
 
+<a id="textadept.editing.XPM_IMAGES"></a>
+#### `textadept.editing.XPM_IMAGES` &lt;table&gt;
+
+Map of image names to registered image numbers.
+
+Fields:
+
+- `CLASS`:  The image number for classes.
+- `NAMESPACE`:  The image number for namespaces.
+- `METHOD`:  The image number for methods.
+- `SIGNAL`:  The image number for signals.
+- `SLOT`:  The image number for slots.
+- `VARIABLE`:  The image number for variables.
+- `STRUCT`:  The image number for structures.
+- `TYPEDEF`:  The image number for type definitions.
+
 <a id="textadept.editing.auto_enclose"></a>
 #### `textadept.editing.auto_enclose` 
 
@@ -7379,6 +7528,10 @@ Fields:
  If [`buffer.auto_c_ignore_case`](#buffer.auto_c_ignore_case) is `true`, completions are not case-sensitive.
 - `snippet`: Autocompleter function for snippet trigger words.
 
+See also:
+
+- [`textadept.editing.autocomplete`](#textadept.editing.autocomplete)
+
 <a id="textadept.editing.comment_string"></a>
 #### `textadept.editing.comment_string` &lt;table&gt;
 
@@ -7427,6 +7580,10 @@ Parameters:
 
 - *name*:  The name of an autocompleter function in the [`textadept.editing.autocompleters`](#textadept.editing.autocompleters)
    table to use for providing autocompletions.
+
+See also:
+
+- [`textadept.editing.autocompleters`](#textadept.editing.autocompleters)
 
 <a id="textadept.editing.convert_indentation"></a>
 #### `textadept.editing.convert_indentation`()
@@ -7532,12 +7689,20 @@ Parameters:
 - *all*:  Whether or not to select all occurrences of the current word. The default value is
    `false`.
 
+See also:
+
+- [`buffer.word_chars`](#buffer.word_chars)
+
 <a id="textadept.editing.toggle_comment"></a>
 #### `textadept.editing.toggle_comment`()
 
 Comments or uncomments the selected lines based on the current language.
 As long as any part of a line is selected, the entire line is eligible for
 commenting/uncommenting.
+
+See also:
+
+- [`textadept.editing.comment_string`](#textadept.editing.comment_string)
 
 
 ---
@@ -8339,6 +8504,10 @@ Return:
 
 - `false` if no action was taken; `nil` otherwise.
 
+See also:
+
+- [`buffer.word_chars`](#buffer.word_chars)
+
 <a id="textadept.snippets.previous"></a>
 #### `textadept.snippets.previous`()
 
@@ -8524,6 +8693,10 @@ Return:
 
 - output buffer
 
+See also:
+
+- [`ui.output_silent`](#ui.output_silent)
+
 <a id="ui.output_silent"></a>
 #### `ui.output_silent`(...)
 
@@ -8538,6 +8711,10 @@ Return:
 
 - output buffer
 
+See also:
+
+- [`ui.output`](#ui.output)
+
 <a id="ui.popup_menu"></a>
 #### `ui.popup_menu`(*menu*)
 
@@ -8551,6 +8728,11 @@ Usage:
 
 - `ui.popup_menu(ui.context_menu)
 `
+
+See also:
+
+- [`ui.context_menu`](#ui.context_menu)
+- [`ui.menu`](#ui.menu)
 
 <a id="ui.print"></a>
 #### `ui.print`(...)
@@ -8576,6 +8758,10 @@ Return:
 
 - print buffer
 
+See also:
+
+- [`ui.print`](#ui.print)
+
 <a id="ui.print_silent_to"></a>
 #### `ui.print_silent_to`(*type*, ...)
 
@@ -8592,6 +8778,10 @@ Parameters:
 Return:
 
 - print buffer
+
+See also:
+
+- [`ui.print_to`](#ui.print_to)
 
 <a id="ui.print_to"></a>
 #### `ui.print_to`(*type*, ...)
@@ -8616,6 +8806,10 @@ Usage:
 Return:
 
 - print buffer
+
+See also:
+
+- [`ui.print_silent_to`](#ui.print_silent_to)
 
 <a id="ui.suspend"></a>
 #### `ui.suspend`()
