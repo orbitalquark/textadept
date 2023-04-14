@@ -49,7 +49,7 @@ end
 --- Writes an LDoc hashmap to the given file.
 -- @param f The markdown file being written to.
 -- @param fmt The format of a hashmap item.
--- @param list The LDoc hashmap.
+-- @param hashmap The LDoc hashmap.
 local function write_hashmap(f, fmt, hashmap)
   if not hashmap or #hashmap == 0 then return end
   f:write(string.format(LIST_TITLE, titles[fmt]))
@@ -113,7 +113,7 @@ end
 
 --- Writes an LDoc function to the given file.
 -- @param f The markdown file being written to.
--- @param function The LDoc function.
+-- @param func The LDoc function.
 -- @param module_name The LDoc function's module name.
 local function write_function(f, func, module_name)
   if not func.name:find('[%.:]') and module_name ~= '_G' then
@@ -133,7 +133,7 @@ end
 
 --- Writes an LDoc table to the given file.
 -- @param f The markdown file being written to.
--- @param table The LDoc table.
+-- @param tbl The LDoc table.
 -- @param module_name The LDoc table's module name.
 local function write_table(f, tbl, module_name)
   if not tbl.name:find('%.') and module_name ~= '_G' then
