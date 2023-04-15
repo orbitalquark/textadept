@@ -30,7 +30,8 @@ local increments = { -- constants to increment by one
 local changed_setter = {} -- holds properties changed to setter functions
 local function to_en_us(name)
   return name:gsub('([iIlL][oO])[uU]([rR])', '%1%2'):gsub('ise$', 'ize'):gsub(
-    '([cC][eE][nN][tT])([rR])([eE])', '%1%3%2'):gsub('CANCELLED', 'CANCELED')
+    '([cC][eE][nN][tT])([rR])([eE])', '%1%3%2'):gsub('([Cc][Aa][Nn][Cc][Ee][Ll])[Ll]([Ee][Dd])',
+    '%1%2')
 end
 local function to_lua_name(camel_case)
   return to_en_us(camel_case:gsub('([a-z])([A-Z])', '%1_%2'):gsub('([A-Z])([A-Z][a-z])', '%1_%2')
