@@ -394,6 +394,7 @@ function io.quick_open(paths, filter)
       utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
     end
   end
+  if #utf8_list == 0 then return end
   if #utf8_list >= io.quick_open_max then
     ui.dialogs.message{
       title = _L['File Limit Exceeded'], text = string.format('%d %s %d', io.quick_open_max,
