@@ -25,5 +25,6 @@ for line in f:lines() do
 end
 f:close()
 
-if QT then setmetatable(M, {__newindex = function(t, k, v) rawset(t, k, v:gsub('_', '&')) end}) end
+setmetatable(M, {__index = function(_, k) return k end})
+if QT then getmetatable(M).__newindex = function(t, k, v) rawset(t, k, v:gsub('_', '&')) end end
 return M
