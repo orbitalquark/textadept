@@ -50,8 +50,10 @@ end
 --- The default main menubar.
 -- Individual menus, submenus, and menu items can be retrieved by name in addition to table
 -- index number.
--- @usage textadept.menu.menubar[_L['File']][_L['New']]
--- @usage textadept.menu.menubar[_L['File']][_L['New']][2] = function() .. end
+-- As a convenience, a single menu path may be used, with submenus delineated by '/'. Labels
+-- are localized as needed, so English labels or their localized equivalent may be used.
+-- @usage textadept.menu.menubar['File/New']
+-- @usage textadept.menu.menubar['File/New'][2] = function() .. end
 -- @table menubar
 local default_menubar = {} -- empty declaration to avoid LDoc processing
 default_menubar = {
@@ -404,14 +406,14 @@ end
 --   or added.
 -- @param menubar Used internally to keep track of the top-level menu for calling *update* with.
 local function proxy_menu(menu, update, menubar)
-  return setmetatable({}, {
+  local proxy_mt = {
     __index = function(_, k)
       local v
       if type(k) == 'number' or k == 'title' then
         v = menu[k]
       elseif type(k) == 'string' then
         for _, item in ipairs(menu) do
-          if item.title == k or item[1] == k then
+          if item.title == _L[k] or item[1] == _L[k] then
             v = item
             break
           end
@@ -424,8 +426,25 @@ local function proxy_menu(menu, update, menubar)
       -- After adding or removing menus or menu items, update the menubar or context menu. When
       -- updating a menu item's function, do nothing extra.
       if type(v) ~= 'function' then update(menubar or menu) end
-    end, __len = function() return #menu end, menu = menu -- store existing menu for copying (e.g. m[#m + 1] = m[#m])
-  })
+    end, --
+    __len = function() return #menu end, --
+    menu = menu -- store existing menu for copying (e.g. m[#m + 1] = m[#m])
+  }
+  local proxy = setmetatable({}, proxy_mt)
+  if menubar then return proxy end
+  -- Handle shorthand `menubar['Edit/Select/Select Word']` notation for top-level menus.
+  local toplevel_proxy_mt = {}
+  for k, v in pairs(proxy_mt) do toplevel_proxy_mt[k] = v end
+  toplevel_proxy_mt.__index = function(_, k)
+    if type(k) ~= 'string' or not k:find('/') then return proxy[k] end
+    local proxy = proxy
+    for label in k:gmatch('[^/]+') do
+      proxy = proxy[label]
+      if not proxy then break end
+    end
+    return proxy
+  end
+  return setmetatable({}, toplevel_proxy_mt)
 end
 
 --- Sets `ui.menubar` from menu table *menubar*.

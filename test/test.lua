@@ -1720,11 +1720,11 @@ function test_command_entry_lua_documentation()
   ui.command_entry.run()
   ui.command_entry:set_text('print(') -- Lua api
   require('lsp')
-  textadept.menu.menubar[_L['Tools']][_L['Language Server']][_L['Show Documentation']][2]()
+  textadept.menu.menubar['Tools/Language Server/Show Documentation'][2]()
   assert(ui.command_entry:call_tip_active(), 'documentation not found')
   ui.command_entry:call_tip_cancel()
   ui.command_entry:set_text('current_pos') -- Textadept api
-  textadept.menu.menubar[_L['Tools']][_L['Language Server']][_L['Show Documentation']][2]()
+  textadept.menu.menubar['Tools/Language Server/Show Documentation'][2]()
   assert(ui.command_entry:call_tip_active(), 'documentation not found')
   ui.command_entry:focus() -- hide
 end
@@ -3406,89 +3406,89 @@ function test_menu_menu_functions()
   textadept.editing.select_word()
   textadept.editing.select_word()
   assert_equal(buffer.selections, 2)
-  textadept.menu.menubar[_L['Edit']][_L['Select']][_L['Deselect Word']][2]()
+  textadept.menu.menubar['Edit/Select/Deselect Word'][2]()
   assert_equal(buffer.selections, 1)
   assert_equal(buffer:get_sel_text(), 'foo')
-  textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Upper Case Selection']][2]()
+  textadept.menu.menubar['Edit/Selection/Upper Case Selection'][2]()
   assert_equal(buffer:get_sel_text(), 'FOO')
   buffer:char_left()
-  textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Lower Case Selection']][2]()
+  textadept.menu.menubar['Edit/Selection/Lower Case Selection'][2]()
   assert(buffer:get_text():find('^foo'), 'did not lower case current word')
   assert(buffer.selection_empty, 'lower case kept selection')
   assert_equal(buffer.current_pos, 1) -- caret should be restored to original position
-  textadept.menu.menubar[_L['Buffer']][_L['Indentation']][_L['Tab width: 8']][2]()
+  textadept.menu.menubar['Buffer/Indentation/Tab width: 8'][2]()
   assert_equal(buffer.tab_width, 8)
-  textadept.menu.menubar[_L['Buffer']][_L['EOL Mode']][_L['CRLF']][2]()
+  textadept.menu.menubar['Buffer/EOL Mode/CRLF'][2]()
   assert_equal(buffer.eol_mode, buffer.EOL_CRLF)
-  textadept.menu.menubar[_L['Buffer']][_L['Encoding']][_L['CP-1252 Encoding']][2]()
+  textadept.menu.menubar['Buffer/Encoding/CP-1252 Encoding'][2]()
   assert_equal(buffer.encoding, 'CP1252')
   buffer:set_text('foo')
-  textadept.menu.menubar[_L['Edit']][_L['Delete Word']][2]()
+  textadept.menu.menubar['Edit/Delete Word'][2]()
   assert_equal(buffer:get_text(), '')
   buffer:set_text('(foo)')
   buffer:home()
-  textadept.menu.menubar[_L['Edit']][_L['Match Brace']][2]()
+  textadept.menu.menubar['Edit/Match Brace'][2]()
   assert_equal(buffer.char_at[buffer.current_pos], string.byte(')'))
   buffer:set_text('foo f')
   buffer:line_end()
-  textadept.menu.menubar[_L['Edit']][_L['Complete Word']][2]()
+  textadept.menu.menubar['Edit/Complete Word'][2]()
   assert_equal(buffer:get_text(), 'foo foo')
   buffer:set_text(table.concat({'2', '1', '3', ''}, newline()))
   if not (WIN32 and CURSES) then
-    textadept.menu.menubar[_L['Edit']][_L['Filter Through']][2]()
+    textadept.menu.menubar['Edit/Filter Through'][2]()
     ui.command_entry:set_text('sort')
     events.emit(events.KEYPRESS, '\n')
     assert_equal(buffer:get_text(), table.concat({'1', '2', '3', ''}, newline()))
   end
   buffer:set_text('foo')
   buffer:line_end()
-  textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Enclose as XML Tags']][2]()
+  textadept.menu.menubar['Edit/Selection/Enclose as XML Tags'][2]()
   assert_equal(buffer:get_text(), '<foo></foo>')
   assert_equal(buffer.current_pos, 6)
   buffer:undo()
   assert_equal(buffer:get_text(), 'foo') -- verify atomic undo
-  textadept.menu.menubar[_L['Edit']][_L['Selection']][_L['Enclose as Single XML Tag']][2]()
+  textadept.menu.menubar['Edit/Selection/Enclose as Single XML Tag'][2]()
   assert_equal(buffer:get_text(), '<foo />')
   assert_equal(buffer.current_pos, buffer.line_end_position[1])
   if not CURSES then -- there are focus issues in curses
-    textadept.menu.menubar[_L['Search']][_L['Find in Files']][2]()
+    textadept.menu.menubar['Search/Find in Files'][2]()
     assert(ui.find.in_files, 'not finding in files')
-    textadept.menu.menubar[_L['Search']][_L['Find']][2]()
+    textadept.menu.menubar['Search/Find'][2]()
     assert(not ui.find.in_files, 'finding in files')
   end
   buffer:clear_all()
   buffer:insert_text(-1, '.')
-  textadept.menu.menubar[_L['Tools']][_L['Show Style']][2]()
+  textadept.menu.menubar['Tools/Show Style'][2]()
   assert(view:call_tip_active(), 'style not shown')
   view:call_tip_cancel()
   local use_tabs = buffer.use_tabs
-  textadept.menu.menubar[_L['Buffer']][_L['Indentation']][_L['Toggle Use Tabs']][2]()
+  textadept.menu.menubar['Buffer/Indentation/Toggle Use Tabs'][2]()
   assert(buffer.use_tabs ~= use_tabs, 'use tabs not toggled')
   local wrap_mode = view.wrap_mode
-  textadept.menu.menubar[_L['Buffer']][_L['Toggle Wrap Mode']][2]()
+  textadept.menu.menubar['Buffer/Toggle Wrap Mode'][2]()
   assert(view.wrap_mode ~= wrap_mode, 'wrap mode not toggled')
   local view_whitespace = view.view_ws
-  textadept.menu.menubar[_L['Buffer']][_L['Toggle View Whitespace']][2]()
+  textadept.menu.menubar['Buffer/Toggle View Whitespace'][2]()
   assert(view.view_ws ~= view_whitespace, 'view whitespace not toggled')
   view:split()
   ui.update()
   local size = view.size
-  textadept.menu.menubar[_L['View']][_L['Grow View']][2]()
+  textadept.menu.menubar['View/Grow View'][2]()
   assert(view.size > size, 'view shrunk')
-  textadept.menu.menubar[_L['View']][_L['Shrink View']][2]()
+  textadept.menu.menubar['View/Shrink View'][2]()
   assert_equal(view.size, size)
   view:unsplit()
   view.folding = true -- view.property['fold'] = '1'
   buffer:set_text('if foo then\n  bar\nend')
   buffer:set_lexer('lua')
   buffer:colorize(1, -1)
-  textadept.menu.menubar[_L['View']][_L['Toggle Current Fold']][2]()
+  textadept.menu.menubar['View/Toggle Current Fold'][2]()
   assert_equal(view.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
   local indentation_guides = view.indentation_guides
-  textadept.menu.menubar[_L['View']][_L['Toggle Show Indent Guides']][2]()
+  textadept.menu.menubar['View/Toggle Show Indent Guides'][2]()
   assert(view.indentation_guides ~= indentation_guides, 'indentation guides not toggled')
   local virtual_space = buffer.virtual_space_options
-  textadept.menu.menubar[_L['View']][_L['Toggle Virtual Space']][2]()
+  textadept.menu.menubar['View/Toggle Virtual Space'][2]()
   assert(buffer.virtual_space_options ~= virtual_space, 'virtual space not toggled')
   buffer:close(true)
 end
@@ -3496,18 +3496,18 @@ end
 function test_menu_functions_interactive()
   buffer.new()
   local name = buffer.lexer_language
-  textadept.menu.menubar[_L['Buffer']][_L['Select Lexer...']][2]()
+  textadept.menu.menubar['Buffer/Select Lexer...'][2]()
   assert(buffer.lexer_language ~= name, 'lexer unchanged')
   buffer:close()
 
   io.open_file(_HOME .. '/core/init.lua')
-  textadept.menu.menubar[_L['Tools']][_L['Quick Open']][_L['Quickly Open Current Directory']][2]()
+  textadept.menu.menubar['Tools/Quick Open/Quickly Open Current Directory'][2]()
   assert(buffer.filename:find(file(_HOME .. '/core/')), 'did not quickly open in current directory')
   buffer:close()
   buffer:close()
 
-  textadept.menu.menubar[_L['Help']][_L['Show Manual']][2]()
-  textadept.menu.menubar[_L['Help']][_L['About']][2]()
+  textadept.menu.menubar['Help/Show Manual'][2]()
+  textadept.menu.menubar['Help/About'][2]()
 
   buffer.new()
   table.insert(textadept.menu.context_menu, {'Test', function() end})
@@ -4807,10 +4807,10 @@ function test_file_diff()
   }, {[17] = ' '})
 
   -- Stop comparing, verify the buffers are restored to normal, and then start comparing again.
-  textadept.menu.menubar[_L['Tools']][_L['Compare Files']][_L['Stop Comparing']][2]()
+  textadept.menu.menubar['Tools/Compare Files/Stop Comparing'][2]()
   verify(buffer1, {}, {}, {})
   verify(buffer2, {}, {}, {})
-  textadept.menu.menubar[_L['Tools']][_L['Compare Files']][_L['Compare Buffers']][2]()
+  textadept.menu.menubar['Tools/Compare Files/Compare Buffers'][2]()
 
   -- Test goto next/prev change.
   assert_equal(buffer1:line_from_position(buffer1.current_pos), 1)
@@ -5007,7 +5007,7 @@ function test_file_diff()
   -- TODO: test vertical synchronization
 
   ::curses_skip::
-  textadept.menu.menubar[_L['Tools']][_L['Compare Files']][_L['Stop Comparing']][2]()
+  textadept.menu.menubar['Tools/Compare Files/Stop Comparing'][2]()
   ui.goto_view(_VIEWS[#_VIEWS])
   buffer:close(true)
   ui.goto_view(-1)
@@ -5022,7 +5022,7 @@ function test_file_diff_interactive()
   local diff = require('file_diff')
   diff.start(_HOME .. '/test/modules/file_diff/1')
   assert_equal(#_VIEWS, 2)
-  textadept.menu.menubar[_L['Tools']][_L['Compare Files']][_L['Stop Comparing']][2]()
+  textadept.menu.menubar['Tools/Compare Files/Stop Comparing'][2]()
   local different_files = _VIEWS[1].buffer.filename ~= _VIEWS[2].buffer.filename
   ui.goto_view(1)
   buffer:close(true)
@@ -5108,7 +5108,7 @@ function test_lsp_clangd()
   -- events.FILE_OPENED, etc.
   lsp.start()
   sleep(0.5) -- allow time to initialize
-  textadept.menu.menubar[_L['Tools']][_L['Language Server']][_L['Show Log']][2]()
+  textadept.menu.menubar['Tools/Language Server/Show Log'][2]()
   local lsp_buf = _BUFFERS[#_BUFFERS]
   assert_equal(lsp_buf._type, '[LSP]')
   assert(lsp_buf:get_line(1):find('^Starting language server: clangd'), 'clangd did not start')
@@ -5142,7 +5142,7 @@ function test_lsp_clangd()
   buffer:goto_pos(buffer:find_column(5, 11)) -- Foo foo(
   lsp.signature_help()
   assert(view:call_tip_active(), 'call tip not active')
-  textadept.menu.menubar[_L['Tools']][_L['Language Server']][_L['Show Documentation']][2]() -- cycle through signatures
+  textadept.menu.menubar['Tools/Language Server/Show Documentation'][2]() -- cycle through signatures
   assert(view:call_tip_active(), 'call tip still not active')
   view:call_tip_cancel()
   events.emit(events.CHAR_ADDED, string.byte('('))
@@ -5217,7 +5217,7 @@ function test_lsp_clangd_interactive()
   os.execute(string.format('%s %s %s', not WIN32 and 'cp' or 'copy',
     file(_HOME .. '/test/modules/lsp/clangd/*'), dir))
   local lsp = require('lsp')
-  local lsp_menu = textadept.menu.menubar[_L['Tools']][_L['Language Server']]
+  local lsp_menu = textadept.menu.menubar['Tools/Language Server']
 
   io.open_file(dir .. '/main.cpp')
   lsp.server_commands.cpp = 'clangd'
@@ -5506,7 +5506,7 @@ end
 
 function test_spellcheck_load_interactive()
   require('spellcheck')
-  textadept.menu.menubar[_L['Tools']][_L['Spelling']][_L['Load Dictionary...']][2]()
+  textadept.menu.menubar['Tools/Spelling/Load Dictionary...'][2]()
 end
 
 -- Load buffer and view API from their respective LuaDoc files.

@@ -12,11 +12,10 @@ local recording, macro
 -- executed will be recorded in some form.
 local ignore
 events.connect(events.INITIALIZED, function()
-  local m_tools = textadept.menu.menubar[_L['Tools']]
   ignore = {
-    textadept.menu.menubar[_L['Search']][_L['Find']][2],
-    textadept.menu.menubar[_L['Search']][_L['Find Incremental']][2],
-    m_tools[_L['Select Command']][2], m_tools[_L['Macros']][_L['Start/Stop Recording']][2]
+    textadept.menu.menubar['Search/Find'][2], textadept.menu.menubar['Search/Find Incremental'][2],
+    textadept.menu.menubar['Tools/Select Command'][2],
+    textadept.menu.menubar['Tools/Macros']['Start/Stop Recording'][2]
   }
 end)
 

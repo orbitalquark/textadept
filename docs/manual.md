@@ -126,7 +126,7 @@ Here is a simple *~/.textadept/init.lua* for illustration:
 
     -- Create a key binding to the "Edit > Preferences" menu item.
     if not OSX and not CURSES then
-      keys['ctrl+,'] = textadept.menu.menubar[_L['Edit']][_L['Preferences']][2]
+      keys['ctrl+,'] = textadept.menu.menubar['Edit/Preferences'][2]
     end
 
     -- Load an external module and bind a key to it.
@@ -394,7 +394,7 @@ You can extend Textadept's menu with your own menus, sub-menus, and menu items b
 the [`textadept.menu.menubar`][] table. Any modifications will show up in the selection dialog
 mentioned previously, even in the terminal version. For example, in your *~/.textadept/init.lua*:
 
-    local tools = textadept.menu.menubar[_L['Tools']]
+    local tools = textadept.menu.menubar['Tools']
     tools[#tools + 1] = {''} -- separator
     tools[#tools + 1] = {'Reset L&ua State', reset}
 
@@ -788,7 +788,7 @@ You can convert a buffer's encoding using the "Buffer > Encoding" menu or
 [`buffer:set_encoding()`][]. You can extend the menu to include more encodings. For example,
 in your *~/.textadept/init.lua*:
 
-    local menu = textadept.menu.menubar[_L['Buffer']][_L['Encoding']]
+    local menu = textadept.menu.menubar['Buffer/Encoding']
     local encoding = 'UTF-32'
     menu[#menu + 1] = {encoding, function() buffer:set_encoding(encoding) end}
 
@@ -1671,7 +1671,7 @@ show_documentation | Removed | N/A
 **textadept.file_types**| Removed | N/A
 extensions | Renamed | [lexer.detect_extensions][]
 patterns | Renamed | [lexer.detect_patterns][]
-select_lexer() | Replaced | `textadept.menu.menubar[L['Buffer']]`<br/>`[L['Select Lexer...']][2]`
+select_lexer() | Replaced | `textadept.menu.menubar['Buffer/Select Lexer...'][2]`
 **textadept.run**||
 error_patterns | Removed | N/A
 set_arguments() | Removed | N/A<sup>e</sup>
@@ -1836,3 +1836,20 @@ can do this:
     events.connect(events.LEXER_LOADED, function(name)
       if package.searchpath(name, package.path) then _M[name] = require(name) end
     end)
+
+###### Menubar Access Changes
+
+Accessing and changing menu items from top-level menus (menubar, context menu, and tab menu)
+has a new shorthand notation:
+
+    local select_word = textadept.menu.menubar['Edit/Select/Select Word'][2]
+    local find = textadept.menu.menubar['Search/Find']
+    find[1], find[2] = 'Custom Find', custom_find_function
+
+Previously, you had to perform cumbersome one-at-a-time indexing:
+
+    local select_word = textadept.menu.menubar[_L['Edit']][_L['Select']][_L['Select Word']][2]
+    local find = textadept.menu.menubar[_L['Search']][_L['Find']]
+    find[1], find[2] = 'Custom Find', custom_find_function
+
+Also, menu labels are auto-localized. You can use your locale's labels or Textadept's English ones.

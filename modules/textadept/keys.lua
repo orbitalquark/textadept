@@ -280,16 +280,10 @@ local M = {}
 --
 -- Note: meta+[befhstv] may be used by Linux GUI terminals for menu access.
 
-local _L = _L
---- Returns the menu command associated with the '/'-separated string of menu labels.
--- Labels are automatically localized.
--- @param labels Path to the menu command.
+--- Returns the menu command associated with the given menu path.
+-- @param path Path to the menu item.
 -- @usage m('Edit/Select/Select in XML Tag')
-local function m(labels)
-  local menu = textadept.menu.menubar
-  for label in labels:gmatch('[^/]+') do menu = menu[_L[label]] end
-  return menu[2]
-end
+local function m(path) return textadept.menu.menubar[path][2] end
 
 --- Starts a new line below or above the current one.
 -- @param above Whether or not to start a new line above the current one. The default value is

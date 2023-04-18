@@ -8086,12 +8086,14 @@ Usage:
 The default main menubar.
 Individual menus, submenus, and menu items can be retrieved by name in addition to table
 index number.
+As a convenience, a single menu path may be used, with submenus delineated by '/'. Labels
+are localized as needed, so English labels or their localized equivalent may be used.
 
 Usage:
 
-- `textadept.menu.menubar[_L['File']][_L['New']]
+- `textadept.menu.menubar['File/New']
 `
-- `textadept.menu.menubar[_L['File']][_L['New']][2] = function() .. end
+- `textadept.menu.menubar['File/New'][2] = function() .. end
 `
 
 <a id="textadept.menu.tab_context_menu"></a>
