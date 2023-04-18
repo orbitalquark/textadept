@@ -43,8 +43,8 @@ for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 io.ensure_final_newline = not WIN32
 
 --- The maximum number of files listed in the quick open dialog.
--- The default value is `1000`.
-io.quick_open_max = 1000
+-- The default value is `5000`.
+io.quick_open_max = 5000
 
 --- List of recently opened files, the most recent being towards the top.
 io.recent_files = {}

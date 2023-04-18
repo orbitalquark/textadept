@@ -707,7 +707,7 @@ project depends largely on context. The current project is determined as follows
 line when running the application. This effectively starts Textadept with a "default project".
 
 By default, Textadept's quick open dialog displays nearly all types of files, and only the first
-1000 files it finds. You can assign a project or directory-specific filter that indicates which
+5000 files it finds. You can assign a project or directory-specific filter that indicates which
 files to display for that project or directory by modifying [`io.quick_open_filters`][], and
 you can specify a different maximum file list size that applies to all projects and directories
 by setting [`io.quick_open_max`][]. For example, in your *~/.textadept/init.lua*:

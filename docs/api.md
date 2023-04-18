@@ -5439,7 +5439,7 @@ Map of directory paths to filters used by [`io.quick_open()`](#io.quick_open).
 #### `io.quick_open_max` 
 
 The maximum number of files listed in the quick open dialog.
-The default value is `1000`.
+The default value is `5000`.
 
 <a id="io.recent_files"></a>
 #### `io.recent_files` &lt;table&gt;
