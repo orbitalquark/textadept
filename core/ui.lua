@@ -445,7 +445,7 @@ if CURSES then
   end
 
   local resize
-  events.connect(events.MOUSE, function(event, button, y, x)
+  events.connect(events.MOUSE, function(event, button, modifiers, y, x)
     if event == view.MOUSE_RELEASE or button ~= 1 then return end
     if event == view.MOUSE_PRESS then
       local view = get_view(ui.get_split_table(), y - 1, x) -- title is at y = 1

@@ -1644,6 +1644,7 @@ MARKNUM_FOLDER* | Renamed | view.MARKNUM_FOLDER*
 **events**||
 [KEYPRESS][] | Changed | Changed arguments
 [TAB_CLICKED][] | Changed | Changed arguments
+[MOUSE][] | Changed | Changed arguments
 **io**||
 N/A | Added | [ensure_final_newline][]<sup>b</sup>
 [quick_open()][] | Changed | Removed *opts* parameter
@@ -1710,6 +1711,7 @@ N/A | Added | [set_styles()][]
 [tab_label]: api.html#buffer.tab_label
 [KEYPRESS]: api.html#events.KEYPRESS
 [TAB_CLICKED]: api.html#events.TAB_CLICKED
+[MOUSE]: api.html#events.MOUSE
 [ensure_final_newline]: api.html#io.ensure_final_newline
 [quick_open()]: api.html#io.quick_open
 [names()]: api.html#lexer.names

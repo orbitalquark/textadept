@@ -226,11 +226,10 @@ local M = {}
 --
 --   - *event*: The mouse event: `view.MOUSE_PRESS`, `view.MOUSE_DRAG`, or `view.MOUSE_RELEASE`.
 --   - *button*: The mouse button number.
+--   - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`, `view.MOD_SHIFT`,
+--     and `view.MOD_ALT`.
 --   - *y*: The y-coordinate of the mouse event, starting from 1.
 --   - *x*: The x-coordinate of the mouse event, starting from 1.
---   - *shift*: The "Shift" modifier key is held down.
---   - *ctrl*: The "Control" modifier key is held down.
---   - *alt*: The "Alt"/"Option" modifier key is held down.
 -- @field MOUSE
 
 --- Emitted when quitting Textadept.

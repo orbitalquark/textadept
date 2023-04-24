@@ -33,7 +33,7 @@ endif()
 FetchContent_Declare(lexilla URL ${lexilla_url})
 FetchContent_MakeAvailable(lexilla)
 # Scinterm.
-set(scinterm_zip scinterm_4.1.zip)
+set(scinterm_zip scinterm_5.0.zip)
 set(scinterm_url file://${deps_dir}/${scinterm_zip})
 if(NIGHTLY)
   set(scinterm_zip default.zip)
