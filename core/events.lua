@@ -420,7 +420,7 @@ function M.emit(event, ...)
     if not ok then
       if not error_emitted then
         error_emitted = true
-        M.emit(events.ERROR, result)
+        M.emit(M.ERROR, result)
         error_emitted = false
       else
         io.stderr:write(result) -- prevent infinite loop
@@ -453,8 +453,8 @@ local DELETE, INSERT, UNDOREDO = _SCINTILLA.constants.MOD_BEFOREDELETE,
 --- Helper function for emitting `events.BUFFER_AFTER_REPLACE_TEXT` after a full-buffer undo/redo
 -- operation, e.g. after reloading buffer contents and then performing an undo.
 local function emit_after_replace_text()
-  events.disconnect(events.UPDATE_UI, emit_after_replace_text)
-  events.emit(events.BUFFER_AFTER_REPLACE_TEXT)
+  M.disconnect(M.UPDATE_UI, emit_after_replace_text)
+  M.emit(M.BUFFER_AFTER_REPLACE_TEXT)
 end
 -- Emits events prior to and after replacing buffer text.
 M.connect(M.MODIFIED, function(position, mod, text, length)
@@ -462,7 +462,7 @@ M.connect(M.MODIFIED, function(position, mod, text, length)
   if mod & (INSERT | UNDOREDO) == INSERT | UNDOREDO then
     -- Cannot emit BUFFER_AFTER_REPLACE_TEXT here because Scintilla will do things like update
     -- the selection afterwards, which could undo what event handlers do.
-    events.connect(events.UPDATE_UI, emit_after_replace_text)
+    M.connect(M.UPDATE_UI, emit_after_replace_text)
     return
   end
   M.emit(mod & DELETE > 0 and M.BUFFER_BEFORE_REPLACE_TEXT or M.BUFFER_AFTER_REPLACE_TEXT)

@@ -518,7 +518,7 @@ end
 -- Note: Be careful when using commands that emit stdout while reading stdin (as opposed
 -- to emitting stdout only after stdin is closed).  Input that generates more output
 -- than an OS-specific pipe can hold may hang Textadept. On Linux, this may be 64K. See
--- [`spawn_proc:write()`](#spawn_proc:write).
+-- `spawn_proc:write()`.
 -- @param command The Linux, macOS, or Windows shell command to filter text through. May
 --   contain pipes.
 function M.filter_through(command)

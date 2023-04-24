@@ -7624,7 +7624,7 @@ Standard input is as follows:
 Note: Be careful when using commands that emit stdout while reading stdin (as opposed
 to emitting stdout only after stdin is closed).  Input that generates more output
 than an OS-specific pipe can hold may hang Textadept. On Linux, this may be 64K. See
-[[`spawn_proc:write()`](#spawn_proc.write)](#spawn_proc:write).
+[`spawn_proc:write()`](#spawn_proc.write).
 
 Parameters:
 
