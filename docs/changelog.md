@@ -6,9 +6,79 @@
 
 [donate]: https://gum.co/textadept
 
-### 12.0 alpha 2 (01 Mar 2023)
+### 12.0 alpha 3 (01 May 2023)
 
 Please see the [migration guide][] for migrating from Textadept 11 to 12.
+
+Download:
+
+- [Textadept 12.0 alpha 3 -- Windows][]
+- [Textadept 12.0 alpha 3 -- macOS 10.13+][]
+- [Textadept 12.0 alpha 3 -- Linux][]
+- [Textadept 12.0 alpha 3 -- Modules][]
+
+Bugfixes:
+
+- Fixed syntax highlighting lag regression.
+- Fixed updating buffer tab's "dirty" status on save all.
+- Fixed error when backspacing over an auto-paired character before a multi-byte character.
+- Fixed `events.AUTO_C_CANCELED` not existing.
+- Fixed `_L` not returning non-localized messages.
+- Do not show an empty quick open list.
+- Qt version: fixed `button3` and `return_button` options for `ui.dialogs.list()`.
+- LSP: fixed issue sending file URIs to language servers on Windows.
+- LSP: fixed startup issue with many language servers that do not support selection ranges.
+- LSP: test that call tip triggers are present before trying to find one.
+- LSP: Lua language server writes its log to `_USERHOME`.
+- Scintilla: fixed GTK bug with too many or too few lines when wrapping.
+- Scintilla: draw background color for EOL annotations with no decorations or outlined with a box.
+- Scintilla: fixed `buffer:lines_join()` bug where '\r' were incorrectly retained.
+- Scintilla: fixed indicator drawing over the left margin in the Qt version.
+- Scintilla: fix clipping of line end wrap symbol for `view.WRAPVISUALFLAGLOC_END_BY_TEXT`.
+
+Changes:
+
+- Autodetect dark mode and implement auto-switching between light and dark modes (macOS and
+  Linux only for now).
+- Revamped API documentation, mainly for buffer and view API to be more readable.
+- Allow multiple selections in the recent file dialog.
+- Added a dialog button to clear the recent files list.
+- Hide the Windows popup console window when running Textadept as a Lua interpreter.
+- `ui.print_silent()` and `ui.output_silent()` always print silently and return their print
+  buffers.
+- Restored `ui.command_entry.height` and `textadept.snippets.paths`.
+- Increase `io.quick_open_max`.
+- Allow short-hand access notation for menu items in [`textadept.menu.menubar`][].
+- `events.MOUSE` emits a bit-mask of modifier keys instead of multiple booleans.
+- Format: only ignore header lines that have no content.
+- LSP: Lua language server supports local tables and functions.
+- LSP: highlight the active call tip parameter when typing, if possible.
+- Scintilla: draw lines more consistently by clipping drawing to just the line rectangle.
+- Scintilla: draw `view.MARK_BAR` markers underneath other markers.
+- Scintilla: enlarge `view.INDIC_POINT*` indicators and scale to be larger with text.
+- Scintilla: make `view:line_scroll()` more accurate when the width of a space is not an integer.
+- Scintilla: emit `events.AUTO_C_COMPLETED` when `buffer.auto_c_choose_single` is `true`.
+- Scintilla: `buffer:para_up*()` go to the start position of the paragraph first.
+- Scintilla: `view.rectangular_selection_modifier` works in the Qt version.
+- Scintilla: support IME context in the GTK version.
+- Scintilla: allow scrolling with mouse wheel when `view.*_scroll_bar` is `false` in the
+  Qt version.
+- Scintilla: added multi-threaded wrap to significantly improve performance of wrapping large
+  files.
+- Scintilla: allow individual bytes of multi-byte characters to be styled.
+- Updated to [Scintilla][] 5.3.4.
+- Updated to [Scinterm][] 5.0.
+
+[migration guide]: manual.html#migrating-from-textadept-11-to-12
+[Textadept 12.0 alpha 3 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_3/textadept_12.0_alpha_3.win.zip
+[Textadept 12.0 alpha 3 -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_3/textadept_12.0_alpha_3.macOS.zip
+[Textadept 12.0 alpha 3 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_3/textadept_12.0_alpha_3.linux.tgz
+[Textadept 12.0 alpha 3 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_3/textadept_12.0_alpha_3.modules.zip
+[`textadept.menu.menubar`]: api.html#textadept.menu.menubar
+[Scintilla]: https://scintilla.org
+[Scinterm]: https://github.com/orbitalquark/scinterm
+
+### 12.0 alpha 2 (01 Mar 2023)
 
 Download:
 
@@ -75,7 +145,6 @@ Changes:
 - LSP: stop logging to a buffer and added "Show Log" menu option instead.
 - LSP: allow for launching servers outside a project.
 
-[migration guide]: manual.html#migrating-from-textadept-11-to-12
 [Textadept 12.0 alpha 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_2/textadept_12.0_alpha_2.win.zip
 [Textadept 12.0 alpha 2 -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_2/textadept_12.0_alpha_2.macOS.zip
 [Textadept 12.0 alpha 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_2/textadept_12.0_alpha_2.linux.tgz
