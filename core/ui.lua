@@ -360,30 +360,6 @@ events.connect(events.BUFFER_NEW, update_bars)
 events.connect(events.BUFFER_AFTER_SWITCH, update_bars)
 events.connect(events.VIEW_AFTER_SWITCH, update_bars)
 
---- Save view state.
-local function save_view_state()
-  buffer._view_ws, buffer._wrap_mode = view.view_ws, view.wrap_mode
-  buffer._margin_type_n, buffer._margin_width_n = {}, {}
-  for i = 1, view.margins do
-    buffer._margin_type_n[i] = view.margin_type_n[i]
-    buffer._margin_width_n[i] = view.margin_width_n[i]
-  end
-end
-events.connect(events.BUFFER_BEFORE_SWITCH, save_view_state)
-events.connect(events.VIEW_BEFORE_SWITCH, save_view_state)
-
---- Restore view state.
-local function restore_view_state()
-  if not buffer._margin_type_n then return end
-  view.view_ws, view.wrap_mode = buffer._view_ws, buffer._wrap_mode
-  for i = 1, view.margins do
-    view.margin_type_n[i] = buffer._margin_type_n[i]
-    view.margin_width_n[i] = buffer._margin_width_n[i]
-  end
-end
-events.connect(events.BUFFER_AFTER_SWITCH, restore_view_state)
-events.connect(events.VIEW_AFTER_SWITCH, restore_view_state)
-
 events.connect(events.RESET_AFTER, function() ui.statusbar_text = _L['Lua reset'] end)
 
 -- Prompts for confirmation if any buffers are modified.
@@ -406,10 +382,8 @@ end)
 -- Keeps track of, and switches back to the previous buffer after buffer close.
 events.connect(events.BUFFER_BEFORE_SWITCH, function() view._prev_buffer = buffer end)
 events.connect(events.BUFFER_DELETED, function()
-  if _BUFFERS[view._prev_buffer] and buffer ~= view._prev_buffer then
-    restore_buffer_state() -- events.BUFFER_AFTER_SWITCH is not emitted in time
-    view:goto_buffer(view._prev_buffer)
-  end
+  if not _BUFFERS[view._prev_buffer] or buffer == view._prev_buffer then return end
+  view:goto_buffer(view._prev_buffer)
 end)
 
 -- Properly handle clipboard text between views in curses, enables and disables mouse mode,

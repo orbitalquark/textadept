@@ -836,7 +836,7 @@ You can manually change a buffer's indentation using the following process:
 Textadept normally does not wrap long lines into view, nor does it show whitespace characters. You
 can toggle line wrapping for the current buffer via `Ctrl+\` on Windows and Linux, `⌘\` on
 macOS, and `M-\` in the terminal version. You can toggle whitespace visibility for the current
-buffer via the "Buffer > Toggle View Whitespace" menu item. Visible spaces are represented by
+buffer via the "View > Toggle View Whitespace" menu item. Visible spaces are represented by
 dots, and visible tabs are represented by arrows. (The terminal version does not have default
 key bindings for either of these actions.)
 

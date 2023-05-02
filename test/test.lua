@@ -1360,13 +1360,10 @@ function test_ui_buffer_switch_save_restore_properties()
   io.open_file(filename)
   buffer:goto_pos(10)
   view:fold_line(buffer:line_from_position(buffer.current_pos), view.FOLDACTION_CONTRACT)
-  view.margin_width_n[1] = 0 -- hide line numbers
   view:goto_buffer(-1)
-  assert(view.margin_width_n[1] > 0, 'line numbers are still hidden')
   view:goto_buffer(1)
   assert_equal(buffer.current_pos, 10)
   assert_equal(view.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
-  assert_equal(view.margin_width_n[1], 0)
   buffer:close()
   view.folding = false -- restore
 end
@@ -3464,12 +3461,6 @@ function test_menu_menu_functions()
   local use_tabs = buffer.use_tabs
   textadept.menu.menubar['Buffer/Indentation/Toggle Use Tabs'][2]()
   assert(buffer.use_tabs ~= use_tabs, 'use tabs not toggled')
-  local wrap_mode = view.wrap_mode
-  textadept.menu.menubar['Buffer/Toggle Wrap Mode'][2]()
-  assert(view.wrap_mode ~= wrap_mode, 'wrap mode not toggled')
-  local view_whitespace = view.view_ws
-  textadept.menu.menubar['Buffer/Toggle View Whitespace'][2]()
-  assert(view.view_ws ~= view_whitespace, 'view whitespace not toggled')
   view:split()
   ui.update()
   local size = view.size
@@ -3477,19 +3468,26 @@ function test_menu_menu_functions()
   assert(view.size > size, 'view shrunk')
   textadept.menu.menubar['View/Shrink View'][2]()
   assert_equal(view.size, size)
-  view:unsplit()
   view.folding = true -- view.property['fold'] = '1'
   buffer:set_text('if foo then\n  bar\nend')
   buffer:set_lexer('lua')
   buffer:colorize(1, -1)
   textadept.menu.menubar['View/Toggle Current Fold'][2]()
   assert_equal(view.fold_expanded[buffer:line_from_position(buffer.current_pos)], false)
+  local wrap_mode = view.wrap_mode
+  textadept.menu.menubar['View/Toggle Wrap Mode'][2]()
+  assert(view.wrap_mode ~= wrap_mode, 'wrap mode not toggled')
   local indentation_guides = view.indentation_guides
   textadept.menu.menubar['View/Toggle Show Indent Guides'][2]()
   assert(view.indentation_guides ~= indentation_guides, 'indentation guides not toggled')
+  local view_whitespace = view.view_ws
+  textadept.menu.menubar['View/Toggle View Whitespace'][2]()
+  assert(view.view_ws ~= view_whitespace, 'view whitespace not toggled')
   local virtual_space = buffer.virtual_space_options
   textadept.menu.menubar['View/Toggle Virtual Space'][2]()
   assert(buffer.virtual_space_options ~= virtual_space, 'virtual space not toggled')
+  ui.goto_view(-1)
+  view:unsplit()
   buffer:close(true)
 end
 
@@ -4258,24 +4256,6 @@ function test_ui_maximized()
   assert_equal(not_maximized, not maximized)
 end
 if LINUX and GTK then expected_failure(test_ui_maximized) end
-
-function test_ui_restore_view_state()
-  buffer.new() -- 1
-  view.view_ws = view.WS_VISIBLEALWAYS
-  buffer.new() -- 2
-  assert(view.view_ws ~= view.WS_VISIBLEALWAYS, 'view whitespace settings not reset')
-  view:goto_buffer(-1) -- go back to 1
-  assert_equal(view.view_ws, view.WS_VISIBLEALWAYS)
-  view.view_ws = view.WS_INVISIBLE -- reset
-  buffer.new() -- 3
-  view.view_ws = view.WS_VISIBLEALWAYS
-  buffer:close() -- switches back to 1 (after briefly switching to 2)
-  assert_equal(view.view_ws, view.WS_INVISIBLE)
-  view:goto_buffer(1) -- go back to 2
-  assert_equal(view.view_ws, view.WS_INVISIBLE)
-  buffer:close()
-  buffer:close()
-end
 
 function test_move_buffer()
   local buffer1 = buffer.new()

@@ -248,17 +248,6 @@ default_menubar = {
       {_L['UTF-16 Encoding'], function() set_encoding('UTF-16LE') end}
     }, --
     SEPARATOR, {
-      _L['Toggle Wrap Mode'], function()
-        local first_visible_line = view.first_visible_line
-        local display_line = view:visible_from_doc_line(first_visible_line)
-        view.wrap_mode = view.wrap_mode == 0 and view.WRAP_WHITESPACE or 0
-        view:line_scroll(0, first_visible_line - display_line)
-      end
-    }, {
-      _L['Toggle View Whitespace'],
-      function() view.view_ws = view.view_ws == 0 and view.WS_VISIBLEALWAYS or 0 end
-    }, --
-    SEPARATOR, {
       _L['Select Lexer...'], function()
         local lexers = lexer.names()
         local i = ui.dialogs.list{title = _L['Select Lexer'], items = lexers}
@@ -288,10 +277,20 @@ default_menubar = {
       end
     }, --
     SEPARATOR, {
+      _L['Toggle Wrap Mode'], function()
+        local first_visible_line = view.first_visible_line
+        local display_line = view:visible_from_doc_line(first_visible_line)
+        view.wrap_mode = view.wrap_mode == 0 and view.WRAP_WHITESPACE or 0
+        view:line_scroll(0, first_visible_line - display_line)
+      end
+    }, {
       _L['Toggle Show Indent Guides'],
       function()
         view.indentation_guides = view.indentation_guides == 0 and view.IV_LOOKBOTH or 0
       end
+    }, {
+      _L['Toggle View Whitespace'],
+      function() view.view_ws = view.view_ws == 0 and view.WS_VISIBLEALWAYS or 0 end
     }, {
       _L['Toggle Virtual Space'], function()
         buffer.virtual_space_options = buffer.virtual_space_options == 0 and

@@ -136,8 +136,6 @@
 -- None | None | None | ASCII encoding
 -- None | None | None | CP-1252 encoding
 -- None | None | None | UTF-16 encoding
--- Ctrl+\\ | ⌘\\ | M-\\ | Toggle wrap mode
--- None | None | None | Toggle view whitespace
 -- Ctrl+Shift+L | ⌘⇧L | M-^L | Select lexer...
 -- **View**| | |
 -- Ctrl+Alt+PgDn | ^⌘⇟ | M-^PgDn<br/>M-PgUp^(‡) | Next view
@@ -149,7 +147,9 @@
 -- Ctrl+Alt++<br/>Ctrl+Alt+= | ^⌘+<br/>^⌘= | M-+<br/>M-= | Grow view
 -- Ctrl+Alt+- | ^⌘- | M-- | Shrink view
 -- Ctrl+} | ⌘} | M-} | Toggle current fold
+-- Ctrl+\\ | ⌘\\ | M-\\ | Toggle wrap mode
 -- None | None | N/A | Toggle indent guides
+-- None | None | None | Toggle view whitespace
 -- None | None | None | Toggle virtual space
 -- Ctrl+= | ⌘= | N/A | Zoom in
 -- Ctrl+- | ⌘- | N/A | Zoom out
@@ -430,8 +430,6 @@ local bindings = {
   -- TODO: m('Buffer/Encoding/ASCII Encoding')
   -- TODO: m('Buffer/Encoding/CP-1252 Encoding')
   -- TODO: m('Buffer/Encoding/UTF-16 Encoding')
-  [m('Buffer/Toggle Wrap Mode')] = {'ctrl+\\', 'cmd+\\', 'meta+\\'},
-  -- TODO: m('Buffer/Toggle View Whitespace')
   [m('Buffer/Select Lexer...')] = {'ctrl+L', 'cmd+L', 'ctrl+meta+l'},
 
   -- View.
@@ -447,7 +445,9 @@ local bindings = {
     {'ctrl+alt++', 'ctrl+alt+='}, {'ctrl+cmd++', 'ctrl+cmd+='}, {'meta++', 'meta+='}
   }, [m('View/Shrink View')] = {'ctrl+alt+-', 'ctrl+cmd+-', 'meta+-'},
   [m('View/Toggle Current Fold')] = {'ctrl+}', 'cmd+}', 'meta+}'},
+  [m('View/Toggle Wrap Mode')] = {'ctrl+\\', 'cmd+\\', 'meta+\\'},
   -- TODO: m('View/Toggle Show Indent Guides')
+  -- TODO: m('View/Toggle View Whitespace')
   -- TODO: m('View/Toggle Virtual Space')
   [view.zoom_in] = {'ctrl+=', 'cmd+=', nil}, --
   [view.zoom_out] = {'ctrl+-', 'cmd+-', nil}, --
