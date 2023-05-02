@@ -44,15 +44,16 @@ textadept.editing.INDIC_BRACEMATCH = _SCINTILLA.new_indic_number()
 textadept.editing.brace_matches, textadept.editing.api_files = {}, setmetatable({}, {__index = function(t, k) t[k] = {} return t[k] end })
 -- LuaFormatter on
 
--- The remainder of this file defines default buffer and view properties and applies them to
--- subsequent buffers and views. Normally, a setting like `buffer.use_tabs = false` only applies
--- to the current (initial) buffer.However, temporarily tap into buffer and view's metatables in
--- order to capture these initial settings (both from Textadept's init.lua and from the user's
--- init.lua) so they can be applied to subsequent buffers and views.
+-- The remainder of this file defines default buffer and view properties and applies them
+-- to subsequent buffers and views. Normally, a setting like `buffer.use_tabs = false` only
+-- applies to the current (initial) buffer. However, temporarily tap into buffer and view's
+-- metatables in order to capture these initial settings (both from Textadept's init.lua and
+-- from the user's init.lua) so they can be applied to subsequent buffers and views.
 
-local settings = {}
+local buffer_settings, view_settings = {}, {}
 
 local buffer_mt, view_mt = getmetatable(buffer), getmetatable(view)
+local settings = {[buffer_mt] = buffer_settings, [view_mt] = view_settings}
 local name = {[buffer_mt] = 'buffer', [view_mt] = 'view'}
 local function repr(v) return string.format(type(v) == 'string' and '%q' or '%s', v) end
 for _, mt in ipairs{buffer_mt, view_mt} do
@@ -64,14 +65,14 @@ for _, mt in ipairs{buffer_mt, view_mt} do
         local args = {...}
         if type(args[1]) == 'table' then table.remove(args, 1) end -- self
         for i = 1, #args do args[i] = repr(args[i]) end
-        settings[#settings + 1] = string.format('%s:%s(%s)', name[mt], k, table.concat(args, ','))
+        table.insert(settings[mt], string.format('%s:%s(%s)', name[mt], k, table.concat(args, ',')))
         return v(...)
       end
     elseif type(v) == 'table' then
       local property_mt = getmetatable(v)
       setmetatable(v, {
         __index = property_mt.__index, __newindex = function(property, k2, v2)
-          settings[#settings + 1] = string.format('%s.%s[%s]=%s', name[mt], k, repr(k2), repr(v2))
+          table.insert(settings[mt], string.format('%s.%s[%s]=%s', name[mt], k, repr(k2), repr(v2)))
           local ok, errmsg = pcall(property_mt.__newindex, property, k2, v2)
           if not ok then error(errmsg, 2) end
         end
@@ -80,7 +81,7 @@ for _, mt in ipairs{buffer_mt, view_mt} do
     return v
   end
   mt.__newindex = function(t, k, v)
-    settings[#settings + 1] = string.format('%s[%s]=%s', name[mt], repr(k), repr(v))
+    table.insert(settings[mt], string.format('%s[%s]=%s', name[mt], repr(k), repr(v)))
     mt.__orig_newindex(t, k, v)
   end
 end
@@ -311,12 +312,13 @@ end
 
 -- Generate default buffer settings for subsequent buffers and remove temporary buffer and view
 -- metatable listeners.
-local load_settings = load(table.concat(settings, '\n'))
+local load_buffer_settings = load(table.concat(buffer_settings, '\n'))
+local load_view_settings = load(table.concat(view_settings, '\n'))
 buffer_mt.__index, buffer_mt.__newindex = buffer_mt.__orig_index, buffer_mt.__orig_newindex
 view_mt.__index, view_mt.__newindex = view_mt.__orig_index, view_mt.__orig_newindex
 
 -- Sets default properties for a Scintilla document.
-events.connect(events.BUFFER_NEW, load_settings, 1)
+events.connect(events.BUFFER_NEW, load_buffer_settings, 1)
 
 -- Sets default properties for a Scintilla window.
 events.connect(events.VIEW_NEW, function()
@@ -324,6 +326,5 @@ events.connect(events.VIEW_NEW, function()
   -- Allow redefinitions of these Scintilla key bindings.
   for _, code in utf8.codes('[]/\\ZYXCVALTDU') do view:clear_cmd_key(code | CTRL << 16) end
   for _, code in utf8.codes('LTUZ') do view:clear_cmd_key(code | (CTRL | SHIFT) << 16) end
-  -- Since BUFFER_NEW loads themes and settings on startup, only load them for subsequent views.
-  if #_VIEWS > 1 then load_settings() end
+  load_view_settings()
 end, 1)

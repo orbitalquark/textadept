@@ -4483,7 +4483,23 @@ function test_view_fold_properties()
 end
 expected_failure(test_view_fold_properties)
 
--- TODO: test init.lua's buffer settings
+function test_buffer_view_settings_segregation()
+  buffer.new()
+  local use_tabs, tab_width = not buffer.use_tabs, buffer.tab_width + 2
+  buffer.use_tabs, buffer.tab_width = use_tabs, tab_width
+  local view_eol = view.view_eol
+  view.view_eol = not view_eol
+  view:split()
+  assert_equal(buffer.use_tabs, use_tabs)
+  assert_equal(buffer.tab_width, tab_width)
+  assert_equal(view.view_eol, view_eol)
+  view:unsplit()
+  buffer.new()
+  assert(buffer.use_tabs ~= use_tabs, 'custom buffer settings carried over to new buffer')
+  assert(buffer.tab_width ~= tab_width, 'custom buffer settings carried over to new buffer')
+  buffer:close()
+  buffer:close()
+end
 
 function test_debugger_ansi_c()
   if WIN32 or OSX then return end -- TODO:
