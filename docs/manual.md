@@ -1084,11 +1084,23 @@ a custom Lua script. The following key bindings apply for macros:
 
 - Start and stop recording a macro via `Alt+,` on Windows and Linux, `^,` on macOS, and `M-,`
   in the terminal version. The status bar will display when a macro starts and stops recording.
-- Play back the most recently recorded macro via `Alt+.` on Windows and Linux, `^.` on macOS,
-  and `M-.` in the terminal version.
+- Play back the most recently recorded or loaded macro via `Alt+.` on Windows and Linux,
+  `^.` on macOS, and `M-.` in the terminal version.
+- Register the most recently recorded macro to alphanumeric character *char* via
+  `Ctrl+Alt+Shift+R` *char* on Windows and Linux, `^⌘⇧R` *char* on macOS, and `M-S-R` *char*
+  in the terminal version. Note that this is a two-sequence [key chain](#key-bindings).
+- Load and play a macro registered to alphanumeric character *char* via `Ctrl+Alt+R` *char*
+  on Windows and Linux, `^⌘R` *char* on macOS, and `M-R` *char* in the terminal version. Note
+  that this is a two-sequence [key chain](#key-bindings). You can subsequently replay this
+  loaded macro via the default macro play key binding.
 
-You can use the "Tools > Macros" menu to save the most recently recorded macro to a file,
+You can also use the "Tools > Macros" menu to save the most recently recorded macro to a file,
 and to load one for playback on demand.
+
+**Tip:** the previously recorded/loaded macro is always registered to `0` (zero), so if you
+accidentally recorded/loaded a macro without having registered/saved the previous one, you can
+reload and play it via `Ctrl+Alt+R 0` on Windows and Linux, `^⌘R 0` on macOS, and `M-R 0`
+in the terminal version.
 
 #### Snippets
 
@@ -1673,6 +1685,8 @@ show_documentation | Removed | N/A
 extensions | Renamed | [lexer.detect_extensions][]
 patterns | Renamed | [lexer.detect_patterns][]
 select_lexer() | Replaced | `textadept.menu.menubar['Buffer/Select Lexer...'][2]`
+**textadept.macros** ||
+[play()][] | Changed | Added optional *filename* parameter
 **textadept.run**||
 error_patterns | Removed | N/A
 set_arguments() | Removed | N/A<sup>e</sup>
@@ -1727,6 +1741,7 @@ N/A | Added | [set_styles()][]
 [typeover_auto_paired]: api.html#textadept.editing.typeover_auto_paired
 [lexer.detect_extensions]: api.html#lexer.detect_extensions
 [lexer.detect_patterns]: api.html#lexer.detect_patterns
+[play()]: api.html#textadept.macros.play
 [run_project()]: api.html#textadept.run.run_project
 [run_project_commands]: api.html#textadept.run.run_project_commands
 [INDIC_WARNING]: api.html#textadept.run.INDIC_WARNING

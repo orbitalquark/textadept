@@ -7935,6 +7935,8 @@ Ctrl+Shift+Enter | ⌘⇧↩ | None | Start a new line above the current one
 Ctrl+Alt+Down | ^⌘⇣ | M-Down | Scroll line down
 Ctrl+Alt+Up | ^⌘⇡ | M-Up | Scroll line up
 Menu<br/> Shift+F10^(‡) | N/A | N/A | Show context menu
+Ctrl+Alt+Shift+R *c* | ^⌘⇧R *c* | M-S-R *c* | Save macro to alphanumeric register *c*
+Ctrl+Alt+R *c* | ^⌘R *c* | M-R *c* | Load and play macro from alphanumeric register *c*
 **Movement**| | |
 Down | ⇣<br/> ^N | Down | Line down
 Shift+Down | ⇧⇣<br/>^⇧N | S-Down | Line down extend selection
@@ -8036,12 +8038,19 @@ Loads a macro from file *filename* or the user-selected file.
 
 Parameters:
 
-- *filename*:  Optional macro file to load. If `nil`, the user is prompted for one.
+- *filename*:  Optional macro file to load. If `nil`, the user is prompted for one. If
+   the filename is a relative path, it will be relative to *[`_USERHOME`](#_USERHOME)/macros/*.
 
 <a id="textadept.macros.play"></a>
-#### `textadept.macros.play`()
+#### `textadept.macros.play`([*filename*])
 
-Plays a recorded or loaded macro.
+Plays a recorded or previously loaded macro, or loads and plays the macro from file *filename*
+if given.
+
+Parameters:
+
+- *filename*:  Optional filename of a macro to load and play. If the filename is a
+   relative path, it will be relative to *[`_USERHOME`](#_USERHOME)/macros/*.
 
 <a id="textadept.macros.record"></a>
 #### `textadept.macros.record`()
@@ -8055,8 +8064,9 @@ Saves a recorded macro to file *filename* or the user-selected file.
 
 Parameters:
 
-- *filename*:  Optional filename to save the recorded macro to. If `nil`, the user is
-   prompted for one.
+- *filename*:  Optional filename to save the recorded macro to. If `nil`, the
+   user is prompted for one. If the filename is a relative path, it will be relative to
+   *[`_USERHOME`](#_USERHOME)/macros/*.
 
 
 ---

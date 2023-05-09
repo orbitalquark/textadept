@@ -164,6 +164,8 @@
 -- Ctrl+Alt+Down | ^⌘⇣ | M-Down | Scroll line down
 -- Ctrl+Alt+Up | ^⌘⇡ | M-Up | Scroll line up
 -- Menu<br/> Shift+F10^(‡) | N/A | N/A | Show context menu
+-- Ctrl+Alt+Shift+R *c* | ^⌘⇧R *c* | M-S-R *c* | Save macro to alphanumeric register *c*
+-- Ctrl+Alt+R *c* | ^⌘R *c* | M-R *c* | Load and play macro from alphanumeric register *c*
 -- **Movement**| | |
 -- Down | ⇣<br/> ^N | Down | Line down
 -- Shift+Down | ⇧⇣<br/>^⇧N | S-Down | Line down extend selection
@@ -254,14 +256,14 @@ local M = {}
 -- Unassigned keys:
 -- ctrl: AEGhHiIJNQtY_(){;:'",<.>?\s
 -- alt: -_=+)]}\|;:/?\s\n
--- ctrl+alt: aAbBcCDFHiIjJlLmMnNoOpPqQrRsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
+-- ctrl+alt: aAbBcCDFHiIjJlLmMnNoOpPqQsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
 --
 -- macOS key bindings.
 --
 -- Unassigned keys:
 -- cmd: AEGhHiIJNQtY_(){;:'"<.>?\s
 -- ctrl: cCDgGHiIjJKLmMoOqQrRsStTuUvVwWxXyYzZ-_=+)]}\|;:/?\s\n
--- ctrl+cmd: aAbBcCDFHiIjJlLmMnNoOpPqQrRsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
+-- ctrl+cmd: aAbBcCDFHiIjJlLmMnNoOpPqQsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
 --
 -- Curses key bindings.
 --
@@ -278,7 +280,7 @@ local M = {}
 --
 -- Unassigned keys:
 -- ctrl: t\s
--- meta: aAbBcCDHiIjJlLMnNoOpPQrRUvVxXyYzZ);:?\s
+-- meta: aAbBcCDHiIjJlLMnNoOpPQUvVxXyYzZ);:?\s
 -- ctrl+meta: aeghijnqy_]\^
 --
 -- Note: meta+[befhstv] may be used by Linux GUI terminals for menu access.
@@ -301,6 +303,14 @@ end
 
 --- Shows the popup context menu.
 local function show_context_menu() ui.popup_menu(ui.context_menu) end
+
+--- Returns a macro register key chain for the given macro function (save or play).
+-- Non-alphanumeric keys are invalid registers.
+local function macro_register(f)
+  return setmetatable({}, {
+    __index = function(_, k) return k:find('^%w$') and function() f(k) end or false end
+  })
+end
 
 -- Bindings for Windows/Linux, macOS, Terminal.
 local bindings = {
@@ -469,6 +479,8 @@ local bindings = {
   [start_new_line] = {'shift+\n', 'shift+\n', nil},
   [function() start_new_line(true) end] = {'ctrl+shift+\n', 'cmd+shift+\n', nil},
   [show_context_menu] = {'menu', nil, nil},
+  [macro_register(textadept.macros.save)] = {'ctrl+alt+R', 'ctrl+cmd+R', 'meta+R'},
+  [macro_register(textadept.macros.play)] = {'ctrl+alt+r', 'ctrl+cmd+r', 'meta+r'},
 
   -- Unbound keys are handled by Scintilla, but when playing back a macro, this is not possible.
   -- Define some useful default key bindings so Scintilla does not have to handle them. Note

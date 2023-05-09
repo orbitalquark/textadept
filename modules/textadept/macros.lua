@@ -6,6 +6,7 @@
 -- @module textadept.macros
 local M = {}
 
+local macro_path = _USERHOME .. '/macros'
 local recording, macro
 
 -- List of commands bound to keys to ignore during macro recording, as the command(s) ultimately
@@ -40,6 +41,7 @@ local event_recorders = {
 --- Toggles between starting and stopping macro recording.
 function M.record()
   if not recording then
+    if macro then M.save('0') end -- store most recently recorded macro in register 0
     macro = {}
     for event, f in pairs(event_recorders) do events.connect(event, f, 1) end
     ui.statusbar_text = _L['Macro recording']
@@ -50,9 +52,14 @@ function M.record()
   recording = not recording
 end
 
---- Plays a recorded or loaded macro.
-function M.play()
-  if recording or not macro then return end
+--- Plays a recorded or previously loaded macro, or loads and plays the macro from file *filename*
+-- if given.
+-- @param[opt] filename Optional filename of a macro to load and play. If the filename is a
+--   relative path, it will be relative to *`_USERHOME`/macros/*.
+function M.play(filename)
+  if recording then return end
+  if assert_type(filename, 'string/nil', 1) then M.load(filename) end
+  if not macro then return end
   -- If this function is run as a key command, `keys.keychain` cannot be cleared until this
   -- function returns. Emit 'esc' to forcibly clear it so subsequent keypress events can be
   -- properly handled.
@@ -66,16 +73,22 @@ function M.play()
   end
 end
 
+--- Returns an absolute path for the given path, relative to `macro_path` if necessary.
+local function make_absolute(path)
+  return (path:find('^[/\\]') or path:find('^%a:[/\\]')) and path or macro_path .. '/' .. path
+end
+
 --- Saves a recorded macro to file *filename* or the user-selected file.
--- @param[opt] filename Optional filename to save the recorded macro to. If `nil`, the user is
---   prompted for one.
+-- @param[opt] filename Optional filename to save the recorded macro to. If `nil`, the
+--   user is prompted for one. If the filename is a relative path, it will be relative to
+--   *`_USERHOME`/macros/*.
 function M.save(filename)
   if recording or not macro then return end
   if not assert_type(filename, 'string/nil', 1) then
-    filename = ui.dialogs.save{title = _L['Save Macro'], dir = _USERHOME}
+    filename = ui.dialogs.save{title = _L['Save Macro'], dir = macro_path}
     if not filename then return end
   end
-  local f = assert(io.open(filename, 'w'))
+  local f = assert(io.open(make_absolute(filename), 'w'))
   f:write('return {\n')
   for _, event in ipairs(macro) do
     f:write(string.format('{%q,', event[1]))
@@ -88,14 +101,19 @@ function M.save(filename)
 end
 
 --- Loads a macro from file *filename* or the user-selected file.
--- @param[opt] filename Optional macro file to load. If `nil`, the user is prompted for one.
+-- @param[opt] filename Optional macro file to load. If `nil`, the user is prompted for one. If
+--   the filename is a relative path, it will be relative to *`_USERHOME`/macros/*.
 function M.load(filename)
   if recording then return end
   if not assert_type(filename, 'string/nil', 1) then
-    filename = ui.dialogs.open{title = _L['Load Macro'], dir = _USERHOME}
+    filename = ui.dialogs.open{title = _L['Load Macro'], dir = macro_path}
     if not filename then return end
   end
-  macro = assert(loadfile(filename, 't', {}))()
+  local loaded = assert(loadfile(make_absolute(filename), 't', {}))()
+  M.save('0') -- store previous macro in register 0
+  macro = loaded
 end
+
+if not lfs.attributes(macro_path) then lfs.mkdir(macro_path) end
 
 return M

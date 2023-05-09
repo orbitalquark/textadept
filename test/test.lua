@@ -3349,7 +3349,8 @@ function test_macro_record_play_save_load()
   events.emit(events.CHAR_ADDED, string.byte('a'))
   buffer:add_text('r')
   events.emit(events.CHAR_ADDED, string.byte('r'))
-  events.emit(events.KEYPRESS, not OSX and 'alt+"' or 'ctrl+"') -- enclose in ""
+  local enclose = not OSX and (not CURSES and 'alt' or 'meta') .. '+"' or 'ctrl+"'
+  events.emit(events.KEYPRESS, enclose)
   textadept.macros.play() -- should not do anything
   textadept.macros.save() -- should not do anything
   textadept.macros.load() -- should not do anything
@@ -3374,26 +3375,65 @@ function test_macro_record_play_save_load()
 
   assert_raises(function() textadept.macros.save(1) end, 'string/nil expected, got number')
   assert_raises(function() textadept.macros.load(1) end, 'string/nil expected, got number')
+  assert_raises(function() textadept.macros.play(1) end, 'string/nil expected, got number')
+end
+
+function test_macro_registers()
+  buffer.new()
+  buffer:append_text('foobar')
+  textadept.macros.record()
+  events.emit(events.KEYPRESS, 'right')
+  assert_equal(buffer.current_pos, 2)
+  textadept.macros.record() -- stop
+  textadept.macros.play()
+  assert_equal(buffer.current_pos, 3)
+  textadept.macros.record() -- should store previously recorded macro (char right) in register 0
+  events.emit(events.KEYPRESS, 'left')
+  assert_equal(buffer.current_pos, 2)
+  textadept.macros.record() -- stop
+  textadept.macros.play('0') -- char right (should store previously recorded macro, char left)
+  assert_equal(buffer.current_pos, 3)
+  textadept.macros.play('0') -- char left
+  assert_equal(buffer.current_pos, 2)
+  textadept.macros.save('test1')
+  assert(lfs.attributes(_USERHOME .. '/macros/test1'), 'macro not saved to _USERHOME/macros/')
+  textadept.macros.record()
+  for i = 1, 2 do events.emit(events.KEYPRESS, 'right') end
+  textadept.macros.record() -- stop
+  assert_equal(buffer.current_pos, 4)
+  textadept.macros.play('test1') -- char left
+  assert_equal(buffer.current_pos, 3)
+  textadept.macros.play() -- not 2 x char right
+  assert_equal(buffer.current_pos, 2)
+  os.remove(_USERHOME .. '/macros/test1')
+  buffer:close(true)
 end
 
 function test_macro_record_play_with_keys_only()
   buffer.new()
   buffer.eol_mode = buffer.EOL_LF
   buffer:append_text('foo\nbar\nbaz\n')
-  events.emit(events.KEYPRESS, not OSX and 'alt+,' or 'ctrl+,') -- start recording
+  local start_stop = not OSX and (not CURSES and 'alt+,' or 'meta+,') or 'ctrl+,'
+  local play = not OSX and (not CURSES and 'alt+.' or 'meta+.') or 'ctrl+.'
+  events.emit(events.KEYPRESS, start_stop) -- start recording
   events.emit(events.KEYPRESS, 'end')
   events.emit(events.KEYPRESS, '\n')
   buffer:new_line()
   events.emit(events.KEYPRESS, 'down')
-  events.emit(events.KEYPRESS, not OSX and 'alt+,' or 'ctrl+,') -- stop recording
+  events.emit(events.KEYPRESS, start_stop) -- stop recording
   assert_equal(buffer:get_text(), 'foo\n\nbar\nbaz\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(3))
-  events.emit(events.KEYPRESS, not OSX and 'alt+.' or 'ctrl+.') -- play
+  events.emit(events.KEYPRESS, play)
   assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(5))
-  events.emit(events.KEYPRESS, not OSX and 'alt+.' or 'ctrl+.') --  play
+  events.emit(events.KEYPRESS, play)
   assert_equal(buffer:get_text(), 'foo\n\nbar\n\nbaz\n\n')
   assert_equal(buffer.current_pos, buffer:position_from_line(7))
+  events.emit(events.KEYPRESS, start_stop) -- start recording
+  events.emit(events.KEYPRESS, start_stop) -- stop recording
+  events.emit(events.KEYPRESS, not OSX and (not CURSES and 'ctrl+alt+r' or 'meta+r') or 'ctrl+cmd+r')
+  events.emit(events.KEYPRESS, '0') -- play previously recorded macro
+  assert_equal(buffer.current_pos, buffer:position_from_line(8))
   buffer:close(true)
 end
 
