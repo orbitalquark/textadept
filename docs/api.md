@@ -7907,8 +7907,6 @@ None | None | None | UTF-8 encoding
 None | None | None | ASCII encoding
 None | None | None | CP-1252 encoding
 None | None | None | UTF-16 encoding
-Ctrl+\\ | ⌘\\ | M-\\ | Toggle wrap mode
-None | None | None | Toggle view whitespace
 Ctrl+Shift+L | ⌘⇧L | M-^L | Select lexer...
 **View**| | |
 Ctrl+Alt+PgDn | ^⌘⇟ | M-^PgDn<br/>M-PgUp^(‡) | Next view
@@ -7920,7 +7918,9 @@ Ctrl+Alt+Shift+W | ^⌘⇧W | M-S-W | Unsplit all views
 Ctrl+Alt++<br/>Ctrl+Alt+= | ^⌘+<br/>^⌘= | M-+<br/>M-= | Grow view
 Ctrl+Alt+- | ^⌘- | M-- | Shrink view
 Ctrl+} | ⌘} | M-} | Toggle current fold
+Ctrl+\\ | ⌘\\ | M-\\ | Toggle wrap mode
 None | None | N/A | Toggle indent guides
+None | None | None | Toggle view whitespace
 None | None | None | Toggle virtual space
 Ctrl+= | ⌘= | N/A | Zoom in
 Ctrl+- | ⌘- | N/A | Zoom out
@@ -7934,6 +7934,7 @@ Shift+Enter | ⇧↩ | None | Start a new line below the current one
 Ctrl+Shift+Enter | ⌘⇧↩ | None | Start a new line above the current one
 Ctrl+Alt+Down | ^⌘⇣ | M-Down | Scroll line down
 Ctrl+Alt+Up | ^⌘⇡ | M-Up | Scroll line up
+Menu<br/> Shift+F10^(‡) | N/A | N/A | Show context menu
 **Movement**| | |
 Down | ⇣<br/> ^N | Down | Line down
 Shift+Down | ⇧⇣<br/>^⇧N | S-Down | Line down extend selection
@@ -8013,6 +8014,8 @@ N/A | N/A | F4 | Toggle "Find in Files"
 terminal version, since ^S and ^Q are flow control sequences.
 
 †: If you prefer ^Z to suspend, you can bind it to [`ui.suspend()`](#ui.suspend).
+
+‡: Only on Windows or the GTK version on Linux.
 
 
 ---

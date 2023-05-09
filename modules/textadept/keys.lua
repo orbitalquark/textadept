@@ -163,6 +163,7 @@
 -- Ctrl+Shift+Enter | ⌘⇧↩ | None | Start a new line above the current one
 -- Ctrl+Alt+Down | ^⌘⇣ | M-Down | Scroll line down
 -- Ctrl+Alt+Up | ^⌘⇡ | M-Up | Scroll line up
+-- Menu<br/> Shift+F10^(‡) | N/A | N/A | Show context menu
 -- **Movement**| | |
 -- Down | ⇣<br/> ^N | Down | Line down
 -- Shift+Down | ⇧⇣<br/>^⇧N | S-Down | Line down extend selection
@@ -243,6 +244,8 @@
 --
 -- †: If you prefer ^Z to suspend, you can bind it to `ui.suspend()`.
 --
+-- ‡: Only on Windows or the GTK version on Linux.
+--
 -- @module textadept.keys
 local M = {}
 
@@ -295,6 +298,9 @@ local function start_new_line(above)
   buffer:new_line()
   if above and line == 1 then buffer:line_up() end
 end
+
+--- Shows the popup context menu.
+local function show_context_menu() ui.popup_menu(ui.context_menu) end
 
 -- Bindings for Windows/Linux, macOS, Terminal.
 local bindings = {
@@ -462,6 +468,7 @@ local bindings = {
   [view.line_scroll_up] = {'ctrl+alt+up', 'ctrl+cmd+up', 'meta+up'},
   [start_new_line] = {'shift+\n', 'shift+\n', nil},
   [function() start_new_line(true) end] = {'ctrl+shift+\n', 'cmd+shift+\n', nil},
+  [show_context_menu] = {'menu', nil, nil},
 
   -- Unbound keys are handled by Scintilla, but when playing back a macro, this is not possible.
   -- Define some useful default key bindings so Scintilla does not have to handle them. Note
@@ -529,9 +536,6 @@ for f, plat_keys in pairs(bindings) do
   end
 end
 
---- Shows the popup context menu.
-local function show_context_menu() ui.popup_menu(ui.context_menu) end
-keys.menu = show_context_menu
 if WIN32 or GTK then keys['shift+f10'] = show_context_menu end
 
 return M
