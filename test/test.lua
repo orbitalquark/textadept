@@ -1,6 +1,6 @@
 -- Copyright 2020-2023 Mitchell. See LICENSE.
 
--- Overloads tostring() to print more user-friendly output for `assert_equal()`.
+--- Overloads tostring() to print more user-friendly output for `assert_equal()`.
 local function tostring(value)
   if type(value) == 'table' then
     return string.format('{%s}', table.concat(value, ', '))
@@ -11,7 +11,7 @@ local function tostring(value)
   end
 end
 
--- Asserts that values *v1* and *v2* are equal.
+--- Asserts that values *v1* and *v2* are equal.
 -- Tables are compared by value, not by reference.
 local function assert_equal(v1, v2)
   if v1 == v2 then return end
@@ -28,7 +28,7 @@ local function assert_equal(v1, v2)
   error(string.format('%s ~= %s', v1, v2), 2)
 end
 
--- Asserts that function *f* raises an error whose error message contains string *expected_errmsg*.
+--- Asserts that function *f* raises an error whose error message contains string *expected_errmsg*.
 -- @param f Function to call.
 -- @param expected_errmsg String the error message should contain.
 local function assert_raises(f, expected_errmsg)
@@ -39,7 +39,7 @@ local function assert_raises(f, expected_errmsg)
   end
 end
 
--- Returns the filename *filename* with directory separators matching the current platform.
+--- Returns the filename *filename* with directory separators matching the current platform.
 -- This is only needed for filename comparisons. Filenames passed to functions like
 -- `io.open_file()` do not need to be converted if no later filename tests are performed.
 local function file(filename) return not WIN32 and filename or filename:gsub('/', '\\') end
@@ -54,18 +54,18 @@ if WIN32 then
   end
 end
 
--- Sleeps for *n* number of seconds.
+--- Sleeps for *n* number of seconds.
 -- On Windows this has to be an integer so *n* is rounded up as necessary.
 local function sleep(n)
   if WIN32 then n = math.ceil(n) end
   os.execute(not WIN32 and 'sleep ' .. n or 'timeout /T ' .. n)
 end
 
--- Removes directory *dir* and its contents.
+--- Removes directory *dir* and its contents.
 local function removedir(dir) os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q') .. dir) end
 
 local newlines = ({[buffer.EOL_LF] = '\n', [buffer.EOL_CRLF] = '\r\n'})
--- Returns a string containing a single newline depending on the current buffer EOL mode.
+--- Returns a string containing a single newline depending on the current buffer EOL mode.
 local function newline() return newlines[buffer.eol_mode] end
 
 local expected_failures = {}
