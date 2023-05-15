@@ -32,7 +32,8 @@ jobs:
       - name: Install Qt (Windows, macOS)
         uses: jurplel/install-qt-action@v3
         with:
-          version: '5.15.2'
+          version: '6.5'
+          modules: 'qt5compat'
         if: "!startsWith(matrix.os, 'ubuntu')"
       - name: Install Qt and GTK (Linux)
         shell: bash
