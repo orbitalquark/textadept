@@ -166,8 +166,8 @@ it has no external dependencies. On Linux, the GUI version depends only on [Qt][
 implementation of curses like [ncurses][](w). Most Linux systems either already have these
 dependencies installed, or they are readily available from a package manager.
 
-Windows 7 (64-bit) and macOS 10.13 (High Sierra) are the minimum required operating systems. Linux
-has no defined minimum.
+Windows 10 (64-bit) and macOS 11 are the minimum required operating systems. Linux has no
+defined minimum.
 
 [Qt]: https://www.qt.io
 [GTK]: https://gtk.org
@@ -188,8 +188,8 @@ The following table lists Textadept's approximate download and installation size
 Platform | Download Size | Installed Size
 -|-|-
 Linux | 7 MB | 23 MB
-Windows | 25 MB | 62 MB (7 MB without bundled Qt Runtime)
-macOS | 14 MB | 35 MB (13 MB without bundled Qt Runtime)
+Windows | 25 MB | 57 MB (7 MB without bundled Qt Runtime)
+macOS | 23 MB | 59 MB (14 MB without bundled Qt Runtime)
 
 **Note:** the Windows and macOS platform packages each contain two executables: one for the
 GUI version of Textadept, and one for the terminal version. The Linux platform package contains
@@ -1449,9 +1449,9 @@ Requirements:
 - A C and C++ compiler, such as:
   - [GNU C compiler][] (*gcc*) 7.1+
   - [Microsoft Visual Studio][] 2019+
-  - [Clang][] 9+
+  - [Clang][] 13+
 - A UI toolkit (at least one of the following):
-  - [Qt][] 5 development libraries for the GUI version
+  - [Qt][] 5 or Qt 6 development libraries for the GUI version
   - [GTK][] 3 development libraries for the GUI version (GTK 2.24 is also supported)
   - [ncurses][](w) development libraries (wide character support) for the terminal version
 

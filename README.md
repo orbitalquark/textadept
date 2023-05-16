@@ -77,9 +77,9 @@ General Requirements:
 - A C and C++ compiler, such as:
   - [GNU C compiler][] (*gcc*) 7.1+
   - [Microsoft Visual Studio][] 2019+
-  - [Clang][] 9+
+  - [Clang][] 13+
 - A UI toolkit (at least one of the following):
-  - [Qt][] 5 development libraries for the GUI version
+  - [Qt][] 5 or Qt 6 development libraries for the GUI version
   - [GTK][] 3 development libraries for the GUI version (GTK 2.24 is also supported)
   - [ncurses][](w) development libraries (wide character support) for the terminal version
 
