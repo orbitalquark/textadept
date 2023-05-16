@@ -100,18 +100,6 @@ events.connect(events.INITIALIZED, function()
     ui.command_entry:set_theme(theme) -- env/nil
   end)
 end)
--- On reset, cycle through buffers, resetting the lexers, and cycle through views, simulating
--- `events.VIEW_NEW` event to update themes, colors, and styles.
-events.connect(events.RESET_AFTER, function()
-  for _, buffer in ipairs(_BUFFERS) do
-    buffer:set_lexer(buffer.lexer._name)
-    buffer:colorize(1, 1) -- signal re-lexing is needed
-  end
-  for i = 1, #_VIEWS do
-    ui.goto_view(1)
-    events.emit(events.VIEW_NEW)
-  end
-end)
 
 -- Default buffer and view settings.
 
@@ -327,4 +315,17 @@ events.connect(events.VIEW_NEW, function()
   for _, code in utf8.codes('[]/\\ZYXCVALTDU') do view:clear_cmd_key(code | CTRL << 16) end
   for _, code in utf8.codes('LTUZ') do view:clear_cmd_key(code | (CTRL | SHIFT) << 16) end
   load_view_settings()
+end, 1)
+
+-- On reset, cycle through buffers and views, simulating `events.BUFFER_NEW` and `events.VIEW_NEW`
+-- events to update settings, themes, colors, and styles.
+events.connect(events.RESET_AFTER, function()
+  for i = 1, #_BUFFERS do
+    events.emit(events.BUFFER_NEW)
+    view:goto_buffer(1)
+  end
+  for i = 1, #_VIEWS do
+    events.emit(events.VIEW_NEW)
+    ui.goto_view(1)
+  end
 end, 1)

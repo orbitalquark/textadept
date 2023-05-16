@@ -144,12 +144,13 @@ events.connect(events.STYLE_NEEDED, function(end_pos, buffer)
   end
 end)
 
--- Gives new buffers lexer-specific functions and sets a default lexer.
+-- Gives new buffers lexer-specific functions and sets a default lexer (or resets the current
+-- one on reset).
 events.connect(events.BUFFER_NEW, function()
   rawset(buffer, 'property', setmetatable({}, {__index = function() return '' end}))
   buffer.get_lexer, buffer.set_lexer = get_lexer, set_lexer
   buffer.name_of_style, buffer.style_of_name = name_of_style, style_of_name
-  set_lexer(buffer, 'text')
+  set_lexer(buffer, not rawget(buffer, 'lexer') and 'text' or buffer.lexer._name)
 end)
 
 --- Refreshes styles for the buffer's lexer.
