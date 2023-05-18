@@ -2721,10 +2721,6 @@
 -- The default value is `500`.
 -- @field view.caret_period
 
---- Color the background of the line that contains the caret a different color.
--- The default value is `false`.
--- @field view.caret_line_visible
-
 --- The caret line's frame width in pixels.
 -- When non-zero, the line that contains the caret is framed instead of colored in. The
 -- `view.ELEMENT_CARET_LINE_BACK` color applies to the frame.
@@ -3451,6 +3447,7 @@
 --   - buffered_draw
 --   - call_tip_back
 --   - call_tip_fore
+--   - caret_line_visible
 --   - change_history
 --   - character_category_optimization
 --   - character_pointer
@@ -3557,7 +3554,6 @@
 --   - caret_fore
 --   - caret_line_back
 --   - caret_line_back_alpha
---   - caret_line_visible
 --   - change_insertion
 --   - change_lexer_state
 --   - char_position_from_point

@@ -4003,12 +4003,6 @@ The time between caret blinks in milliseconds.
 A value of `0` stops blinking.
 The default value is `500`.
 
-<a id="view.caret_line_visible"></a>
-#### `view.caret_line_visible` 
-
-Color the background of the line that contains the caret a different color.
-The default value is `false`.
-
 <a id="view.caret_line_frame"></a>
 #### `view.caret_line_frame` 
 
