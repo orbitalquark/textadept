@@ -184,7 +184,7 @@ view.annotation_visible = view.ANNOTATION_BOXED
 view.eol_annotation_visible = view.EOLANNOTATION_BOXED
 
 -- Other.
--- buffer.buffered_draw = not GTK
+-- view.buffered_draw = not GTK
 -- buffer.word_chars =
 -- buffer.whitespace_chars =
 -- buffer.punctuation_chars =
@@ -284,7 +284,7 @@ view.layout_threads = 1000 -- will be reduced to system specs
 -- view.edge_column = 80
 
 -- Accessibility.
-buffer.accessibility = buffer.ACCESSIBILITY_DISABLED
+view.accessibility = view.ACCESSIBILITY_DISABLED
 
 -- Notifications.
 if QT and WIN32 then view.mouse_dwell_time = 500 end -- only different here for some reason
@@ -315,6 +315,17 @@ events.connect(events.VIEW_NEW, function()
   for _, code in utf8.codes('[]/\\ZYXCVALTDU') do view:clear_cmd_key(code | CTRL << 16) end
   for _, code in utf8.codes('LTUZ') do view:clear_cmd_key(code | (CTRL | SHIFT) << 16) end
   load_view_settings()
+  -- The buffer and view APIs have an artificial separation. Some settings like
+  -- `buffer.multiple_selection` and `buffer.auto_c_*` actually belong to views, while other
+  -- settings like `buffer.tab_width` and `buffer.use_tabs` really do belong to buffers.
+  -- Load buffer settings for new views, but retain any true buffer settings overwritten.
+  local buffer_props = {
+    'eol_mode', 'word_chars', 'whitespace_chars', 'punctuation_chars', 'tab_width', 'use_tabs',
+    'indent', 'tab_indents', 'back_space_un_indents'
+  }
+  for _, prop in ipairs(buffer_props) do buffer_props[prop] = _G.buffer[prop] end
+  load_buffer_settings()
+  for _, prop in ipairs(buffer_props) do _G.buffer[prop] = buffer_props[prop] end
 end, 1)
 
 -- On reset, cycle through buffers and views, simulating `events.BUFFER_NEW` and `events.VIEW_NEW`
