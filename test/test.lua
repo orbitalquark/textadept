@@ -4509,10 +4509,12 @@ function test_buffer_view_settings_segregation()
   buffer.use_tabs, buffer.tab_width = use_tabs, tab_width
   local view_eol = view.view_eol
   view.view_eol = not view_eol
+  local multiple_selection = buffer.multiple_selection
   view:split()
   assert_equal(buffer.use_tabs, use_tabs)
   assert_equal(buffer.tab_width, tab_width)
   assert_equal(view.view_eol, view_eol)
+  assert_equal(buffer.multiple_selection, multiple_selection) -- this "buffer" property be set too
   view:unsplit()
   buffer.new()
   assert(buffer.use_tabs ~= use_tabs, 'custom buffer settings carried over to new buffer')
