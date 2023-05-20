@@ -266,14 +266,14 @@ void set_statusbar_text(int bar, const char *text) {
 }
 
 void *read_menu(lua_State *L, int index) {
-  auto menu = new QMenu;
+  auto menu = new QMenu; // TODO: this is never deleted (it is never reparented)
   if (lua_getfield(L, index, "title")) menu->setTitle(lua_tostring(L, -1)); // submenu title
   lua_pop(L, 1); // title
   for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++) {
     if (lua_rawgeti(L, -1, i) != LUA_TTABLE) continue; // popped on loop
     if (bool isSubmenu = lua_getfield(L, -1, "title"); lua_pop(L, 1), isSubmenu) {
       auto submenu = static_cast<QMenu *>(read_menu(L, -1));
-      menu->addMenu(submenu); // TODO: menu does not take ownership; does this leak?
+      menu->addMenu(submenu); // menu does not take ownership
       continue;
     }
     const char *label = (lua_rawgeti(L, -1, 1), lua_tostring(L, -1));
@@ -306,10 +306,10 @@ void popup_menu(void *menu, void *userdata) {
 }
 
 void set_menubar(lua_State *L, int index) {
-  delete ta->menuBar();
+  ta->menuBar()->clear(); // does not delete menus
   for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++) {
     auto menu = static_cast<QMenu *>(lua_rawgeti(L, index, i), lua_touserdata(L, -1));
-    ta->menuBar()->addMenu(menu); // TODO: menubar does not take ownership; does this leak?
+    ta->menuBar()->addMenu(menu); // menubar does not take ownership
   }
   ta->menuBar()->setVisible(lua_rawlen(L, index) > 0);
 }
