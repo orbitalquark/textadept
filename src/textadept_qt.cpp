@@ -150,6 +150,7 @@ static void remove_views(QSplitter *pane, void (*delete_view)(SciObject *view)) 
 bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
   auto pane = qobject_cast<QSplitter *>(SCI(view)->parent());
   if (!pane) return false;
+  SciObject *orig_focused_view = focused_view == view ? focused_view : nullptr;
   QWidget *other = pane->widget(!pane->indexOf(SCI(view)));
   auto otherPane = qobject_cast<QSplitter *>(other);
   otherPane ? remove_views(otherPane, delete_view) : delete_view(other);
@@ -157,7 +158,8 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
     parentPane->replaceWidget(parentPane->indexOf(pane), SCI(view));
   else // note: cannot use ternary operator here due to distinct pointer types.
     pane->parentWidget()->layout()->replaceWidget(pane, SCI(view));
-  return (SCI(focused_view)->setFocus(), true);
+  // Note: the previous operation likely triggered view_focused(), changing focused_view.
+  return (SCI(orig_focused_view ? orig_focused_view : focused_view)->setFocus(), true);
 }
 
 void delete_scintilla(SciObject *view) { delete SCI(view); }

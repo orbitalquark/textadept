@@ -4381,8 +4381,10 @@ function test_view_split_resize_unsplit()
   view.size = view.size + 1
   assert_equal(view.size, size + 1)
   assert_equal(#_VIEWS, 3)
+  local current_view = view
   view:unsplit()
   assert_equal(#_VIEWS, 2)
+  assert(view == current_view, 'view focus changed')
   view:split(true)
   ui.goto_view(_VIEWS[1])
   view:unsplit() -- unsplits split view, leaving single view
