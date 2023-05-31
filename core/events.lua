@@ -365,10 +365,10 @@ local M = {}
 -- @table handlers
 -- @local
 local handlers = setmetatable({}, {
-  __index = function(t, k)
-    t[k] = {}
-    return t[k]
-  end
+	__index = function(t, k)
+		t[k] = {}
+		return t[k]
+	end
 })
 
 --- Adds function *f* to the set of event handlers for event *event* at position *index*.
@@ -379,24 +379,24 @@ local handlers = setmetatable({}, {
 -- @param[opt] index Optional index to insert the handler into.
 -- @usage events.connect('my_event', function(msg) ui.print(msg) end)
 function M.connect(event, f, index)
-  assert_type(event, 'string', 1)
-  assert_type(f, 'function', 2)
-  assert_type(index, 'number/nil', 3)
-  M.disconnect(event, f) -- in case it already exists
-  table.insert(handlers[event], index or #handlers[event] + 1, f)
+	assert_type(event, 'string', 1)
+	assert_type(f, 'function', 2)
+	assert_type(index, 'number/nil', 3)
+	M.disconnect(event, f) -- in case it already exists
+	table.insert(handlers[event], index or #handlers[event] + 1, f)
 end
 
 --- Removes function *f* from the set of handlers for event *event*.
 -- @param event The string event name.
 -- @param f The Lua function connected to *event*.
 function M.disconnect(event, f)
-  assert_type(f, 'function', 2)
-  for i = 1, #handlers[assert_type(event, 'string', 1)] do
-    if handlers[event][i] == f then
-      table.remove(handlers[event], i)
-      break
-    end
-  end
+	assert_type(f, 'function', 2)
+	for i = 1, #handlers[assert_type(event, 'string', 1)] do
+		if handlers[event][i] == f then
+			table.remove(handlers[event], i)
+			break
+		end
+	end
 end
 
 local error_emitted = false
@@ -411,31 +411,31 @@ local error_emitted = false
 --   that value
 -- @usage events.emit('my_event', 'my message')
 function M.emit(event, ...)
-  local event_handlers = handlers[assert_type(event, 'string', 1)]
-  local i = 1
-  while i <= #event_handlers do
-    local handler = event_handlers[i]
-    local ok, result = pcall(handler, ...)
-    if not ok then
-      if not error_emitted then
-        error_emitted = true
-        M.emit(M.ERROR, result)
-        error_emitted = false
-      else
-        io.stderr:write(result) -- prevent infinite loop
-      end
-    end
-    if result ~= nil then return result end
-    if event_handlers[i] == handler then i = i + 1 end -- unless M.disconnect()
-  end
+	local event_handlers = handlers[assert_type(event, 'string', 1)]
+	local i = 1
+	while i <= #event_handlers do
+		local handler = event_handlers[i]
+		local ok, result = pcall(handler, ...)
+		if not ok then
+			if not error_emitted then
+				error_emitted = true
+				M.emit(M.ERROR, result)
+				error_emitted = false
+			else
+				io.stderr:write(result) -- prevent infinite loop
+			end
+		end
+		if result ~= nil then return result end
+		if event_handlers[i] == handler then i = i + 1 end -- unless M.disconnect()
+	end
 end
 
 -- Handles Scintilla notifications.
 M.connect('SCN', function(notification)
-  local iface = _SCINTILLA.events[notification.code]
-  local args = {}
-  for i = 2, #iface do args[i - 1] = notification[iface[i]] end
-  return M.emit(iface[1], table.unpack(args))
+	local iface = _SCINTILLA.events[notification.code]
+	local args = {}
+	for i = 2, #iface do args[i - 1] = notification[iface[i]] end
+	return M.emit(iface[1], table.unpack(args))
 end)
 
 -- Set event constants.
@@ -448,23 +448,23 @@ for _, v in pairs(textadept_events) do M[v:upper()] = v end
 -- Implement `events.BUFFER_{BEFORE,AFTER}_REPLACE_TEXT` as a convenience in lieu of the
 -- undocumented `events.MODIFIED`.
 local DELETE, INSERT, UNDOREDO = _SCINTILLA.constants.MOD_BEFOREDELETE,
-  _SCINTILLA.constants.MOD_INSERTTEXT, _SCINTILLA.constants.MULTILINEUNDOREDO
+	_SCINTILLA.constants.MOD_INSERTTEXT, _SCINTILLA.constants.MULTILINEUNDOREDO
 --- Helper function for emitting `events.BUFFER_AFTER_REPLACE_TEXT` after a full-buffer undo/redo
 -- operation, e.g. after reloading buffer contents and then performing an undo.
 local function emit_after_replace_text()
-  M.disconnect(M.UPDATE_UI, emit_after_replace_text)
-  M.emit(M.BUFFER_AFTER_REPLACE_TEXT)
+	M.disconnect(M.UPDATE_UI, emit_after_replace_text)
+	M.emit(M.BUFFER_AFTER_REPLACE_TEXT)
 end
 -- Emits events prior to and after replacing buffer text.
 M.connect(M.MODIFIED, function(position, mod, text, length)
-  if mod & (DELETE | INSERT) == 0 or length ~= buffer.length then return end
-  if mod & (INSERT | UNDOREDO) == INSERT | UNDOREDO then
-    -- Cannot emit BUFFER_AFTER_REPLACE_TEXT here because Scintilla will do things like update
-    -- the selection afterwards, which could undo what event handlers do.
-    M.connect(M.UPDATE_UI, emit_after_replace_text)
-    return
-  end
-  M.emit(mod & DELETE > 0 and M.BUFFER_BEFORE_REPLACE_TEXT or M.BUFFER_AFTER_REPLACE_TEXT)
+	if mod & (DELETE | INSERT) == 0 or length ~= buffer.length then return end
+	if mod & (INSERT | UNDOREDO) == INSERT | UNDOREDO then
+		-- Cannot emit BUFFER_AFTER_REPLACE_TEXT here because Scintilla will do things like update
+		-- the selection afterwards, which could undo what event handlers do.
+		M.connect(M.UPDATE_UI, emit_after_replace_text)
+		return
+	end
+	M.emit(mod & DELETE > 0 and M.BUFFER_BEFORE_REPLACE_TEXT or M.BUFFER_AFTER_REPLACE_TEXT)
 end)
 
 return M

@@ -9,19 +9,19 @@ local M = {}
 
 local f = io.open(_USERHOME .. '/locale.conf', 'rb')
 if not f then
-  local lang = (os.getenv('LANG') or ''):match('^[^_.@]+') -- TODO: LC_MESSAGES?
-  if lang then f = io.open(string.format('%s/core/locales/locale.%s.conf', _HOME, lang)) end
+	local lang = (os.getenv('LANG') or ''):match('^[^_.@]+') -- TODO: LC_MESSAGES?
+	if lang then f = io.open(string.format('%s/core/locales/locale.%s.conf', _HOME, lang)) end
 end
 if not f then f = io.open(_HOME .. '/core/locale.conf', 'rb') end
 assert(f, '"core/locale.conf" not found')
 for line in f:lines() do
-  -- Any line that starts with a non-word character except '[' is considered a comment.
-  if not line:find('^%s*[%w_%[]') then goto continue end
-  local id, str = line:match('^(.-)%s*=%s*(.-)\r?$')
-  if id and str and assert(not M[id], 'duplicate locale key "%s"', id) then
-    M[id] = GTK and str or str:gsub('_', QT and '&' or '')
-  end
-  ::continue::
+	-- Any line that starts with a non-word character except '[' is considered a comment.
+	if not line:find('^%s*[%w_%[]') then goto continue end
+	local id, str = line:match('^(.-)%s*=%s*(.-)\r?$')
+	if id and str and assert(not M[id], 'duplicate locale key "%s"', id) then
+		M[id] = GTK and str or str:gsub('_', QT and '&' or '')
+	end
+	::continue::
 end
 f:close()
 

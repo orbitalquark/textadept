@@ -26,13 +26,13 @@ colors.base0F = 0x5a68a3
 
 -- Default font.
 if not font then
-  font = WIN32 and 'Courier New' or OSX and 'Monaco' or 'Bitstream Vera Sans Mono'
+	font = WIN32 and 'Courier New' or OSX and 'Monaco' or 'Bitstream Vera Sans Mono'
 end
 if not size then size = not OSX and 10 or 12 end
 
 -- Predefined styles.
 styles.default = {
-  font = font, size = size, fore = colors.base05, back = colors.base00
+	font = font, size = size, fore = colors.base05, back = colors.base00
 }
 styles.line_number = {fore = colors.base04, back = colors.base00}
 -- styles.control_char =
@@ -85,9 +85,9 @@ view.marker_back[textadept.run.MARK_WARNING] = colors.base0E
 -- view.marker_fore[textadept.run.MARK_ERROR] = colors.base00
 view.marker_back[textadept.run.MARK_ERROR] = colors.base08
 for i = view.MARKNUM_FOLDEREND, view.MARKNUM_FOLDEROPEN do -- fold margin
-  view.marker_fore[i] = colors.base00
-  view.marker_back[i] = colors.base03
-  view.marker_back_selected[i] = colors.base02
+	view.marker_fore[i] = colors.base00
+	view.marker_back[i] = colors.base03
+	view.marker_back_selected[i] = colors.base02
 end
 
 -- Indicators.

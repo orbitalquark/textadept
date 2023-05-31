@@ -1,9 +1,9 @@
 function foo(i)
-  print('foo', i)
+	print('foo', i)
 end
 
 print('start')
 for i = 1, 4 do
-  foo(i)
+	foo(i)
 end
 print('end')

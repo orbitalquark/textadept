@@ -20,10 +20,10 @@ typedef void FindOption;
 
 /** Contains information about the pane holding one or more Scintilla views. */
 typedef struct {
-  bool is_split, vertical;
-  SciObject *view;
-  Pane *self, *child1, *child2;
-  int size;
+	bool is_split, vertical;
+	SciObject *view;
+	Pane *self, *child1, *child2;
+	int size;
 } PaneInfo;
 
 /** Contains dialog options.
@@ -32,9 +32,9 @@ typedef struct {
  * `search_column` is 1-based.
  */
 typedef struct {
-  const char *title, *text, *icon, *buttons[3], *dir, *file;
-  bool only_dirs, multiple, return_button;
-  int columns, search_column, items;
+	const char *title, *text, *icon, *buttons[3], *dir, *file;
+	bool only_dirs, multiple, return_button;
+	int columns, search_column, items;
 } DialogOptions;
 
 /** Contains information about a spawned child process.
@@ -294,7 +294,7 @@ int save_dialog(DialogOptions opts, lua_State *L);
  * made so the platform can update its progress bar.
  */
 int progress_dialog(DialogOptions opts, lua_State *L,
-  bool (*work)(void (*update)(double percent, const char *text, void *userdata), void *userdata));
+	bool (*work)(void (*update)(double percent, const char *text, void *userdata), void *userdata));
 
 /** Asks the platform to show a list dialog using the given options.
  * The list data may consist of multiple columns of data. The dialog should contain a text entry
@@ -339,7 +339,7 @@ int list_dialog(DialogOptions opts, lua_State *L);
  * @see process_exited
  */
 bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *cwd, int envi,
-  bool monitor_stdout, bool monitor_stderr, const char **error);
+	bool monitor_stdout, bool monitor_stderr, const char **error);
 
 /** Returns the size of the platform's implemented Process struct. */
 size_t process_size();

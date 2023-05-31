@@ -19,12 +19,12 @@ local options = {}
 -- @param f The Lua function to run when the option is set. It is passed *narg* string arguments.
 -- @param description The string description of the option for command line help.
 function M.register(short, long, narg, f, description)
-  local option = {
-    narg = assert_type(narg, 'number', 3), f = assert_type(f, 'function', 4),
-    description = assert_type(description, 'string', 5)
-  }
-  options[assert_type(short, 'string', 1)] = option
-  options[assert_type(long, 'string', 2)] = option
+	local option = {
+		narg = assert_type(narg, 'number', 3), f = assert_type(f, 'function', 4),
+		description = assert_type(description, 'string', 5)
+	}
+	options[assert_type(short, 'string', 1)] = option
+	options[assert_type(long, 'string', 2)] = option
 end
 
 --- Processes command line argument table *arg*, handling options previously defined using
@@ -36,55 +36,55 @@ end
 -- @param[opt] no_emit_arg_none When `true`, do not emit `ARG_NONE` when no arguments are present.
 --   The default value is `false`.
 local function process(arg, no_emit_arg_none)
-  local no_args = true
-  local i = 1
-  while i <= #arg do
-    local option = options[arg[i]]
-    if option then
-      option.f(table.unpack(arg, i + 1, i + option.narg))
-      i = i + option.narg
-    else
-      local filename = lfs.abspath(arg[i], arg[-1] or lfs.currentdir())
-      if lfs.attributes(filename, 'mode') ~= 'directory' then
-        io.open_file(filename)
-      else
-        lfs.chdir(filename)
-      end
-      no_args = false
-    end
-    i = i + 1
-  end
-  if no_args and not no_emit_arg_none then events.emit(events.ARG_NONE) end
+	local no_args = true
+	local i = 1
+	while i <= #arg do
+		local option = options[arg[i]]
+		if option then
+			option.f(table.unpack(arg, i + 1, i + option.narg))
+			i = i + option.narg
+		else
+			local filename = lfs.abspath(arg[i], arg[-1] or lfs.currentdir())
+			if lfs.attributes(filename, 'mode') ~= 'directory' then
+				io.open_file(filename)
+			else
+				lfs.chdir(filename)
+			end
+			no_args = false
+		end
+		i = i + 1
+	end
+	if no_args and not no_emit_arg_none then events.emit(events.ARG_NONE) end
 end
 events.connect(events.INITIALIZED, function() if arg then process(arg) end end)
 -- Undocumented, single-instance event handler for forwarding arguments.
 if GTK then events.connect('command_line', function(arg) process(arg, true) end) end
 
 if not CURSES then
-  -- Shows all registered command line options on the command line.
-  M.register('-h', '--help', 0, function()
-    print('Usage: textadept [args] [filenames]')
-    local list = {}
-    for name in pairs(options) do list[#list + 1] = name end
-    table.sort(list, function(a, b) return a:match('^%-*(.*)$') < b:match('^%-*(.*)$') end)
-    for _, name in ipairs(list) do
-      local option = options[name]
-      print(string.format('  %s [%d args]: %s', name, option.narg, option.description))
-    end
-    os.exit()
-  end, 'Shows this')
-  -- Shows Textadept version and copyright on the command line.
-  M.register('-v', '--version', 0, function()
-    print(_RELEASE .. '\n' .. _COPYRIGHT)
-    os.exit()
-  end, 'Prints Textadept version and copyright')
-  -- After Textadept finishes initializing and processes arguments, remove the help and
-  -- version options in order to prevent another instance from sending '-h', '--help', '-v',
-  -- and '--version' to the first instance, killing the latter.
-  events.connect(events.INITIALIZED, function()
-    options['-h'], options['--help'] = nil, nil
-    options['-v'], options['--version'] = nil, nil
-  end)
+	-- Shows all registered command line options on the command line.
+	M.register('-h', '--help', 0, function()
+		print('Usage: textadept [args] [filenames]')
+		local list = {}
+		for name in pairs(options) do list[#list + 1] = name end
+		table.sort(list, function(a, b) return a:match('^%-*(.*)$') < b:match('^%-*(.*)$') end)
+		for _, name in ipairs(list) do
+			local option = options[name]
+			print(string.format('  %s [%d args]: %s', name, option.narg, option.description))
+		end
+		os.exit()
+	end, 'Shows this')
+	-- Shows Textadept version and copyright on the command line.
+	M.register('-v', '--version', 0, function()
+		print(_RELEASE .. '\n' .. _COPYRIGHT)
+		os.exit()
+	end, 'Prints Textadept version and copyright')
+	-- After Textadept finishes initializing and processes arguments, remove the help and
+	-- version options in order to prevent another instance from sending '-h', '--help', '-v',
+	-- and '--version' to the first instance, killing the latter.
+	events.connect(events.INITIALIZED, function()
+		options['-h'], options['--help'] = nil, nil
+		options['-v'], options['--version'] = nil, nil
+	end)
 end
 
 -- Set `_G._USERHOME`.
@@ -97,10 +97,10 @@ end
 -- *~/* is the value of "$HOME" (typically */home/username/* and */Users/username/* respectively).
 _G._USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE') .. '/.textadept'
 for i, option in ipairs(arg) do
-  if (option == '-u' or option == '--userhome') and arg[i + 1] then
-    _USERHOME = arg[i + 1]
-    break
-  end
+	if (option == '-u' or option == '--userhome') and arg[i + 1] then
+		_USERHOME = arg[i + 1]
+		break
+	end
 end
 local mode = lfs.attributes(_USERHOME, 'mode')
 assert(not mode or mode == 'directory', '"%s" is not a directory', _USERHOME)
@@ -119,12 +119,12 @@ M.register('-p', '--preserve', 0, function() end, 'Preserve ^Q (XON) and ^S (XOF
 -- Note: have them run after the last `events.INITIALIZED` handler so everything is completely
 -- initialized (e.g. menus, macro module, etc.).
 M.register('-t', '--test', 1, function(patterns)
-  events.connect(events.INITIALIZED, function()
-    local arg = {}
-    for patt in (patterns or ''):gmatch('[^,]+') do arg[#arg + 1] = patt end
-    local env = setmetatable({arg = arg}, {__index = _G})
-    assert(loadfile(_HOME .. '/test/test.lua', 't', env))()
-  end)
+	events.connect(events.INITIALIZED, function()
+		local arg = {}
+		for patt in (patterns or ''):gmatch('[^,]+') do arg[#arg + 1] = patt end
+		local env = setmetatable({arg = arg}, {__index = _G})
+		assert(loadfile(_HOME .. '/test/test.lua', 't', env))()
+	end)
 end, 'Runs unit tests indicated by comma-separated list of patterns (or all)')
 
 return M

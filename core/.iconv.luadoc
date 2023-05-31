@@ -32,4 +32,4 @@
 -- @param text The text to convert.
 -- @param new The string encoding to convert to.
 -- @param old The string encoding to convert from.
-function iconv(text, new, old) end
+-- @function iconv

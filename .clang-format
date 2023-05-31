@@ -11,3 +11,5 @@ BreakBeforeTernaryOperators: false
 ColumnLimit: 100
 ContinuationIndentWidth: 2
 SortIncludes: false
+TabWidth: 2
+UseTab: true

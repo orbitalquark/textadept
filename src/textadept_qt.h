@@ -9,16 +9,16 @@ class Textadept;
 
 // A Textadept window.
 class Textadept : public QMainWindow {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  explicit Textadept(QWidget *parent = nullptr);
-  ~Textadept() override = default;
+	explicit Textadept(QWidget *parent = nullptr);
+	~Textadept() override = default;
 
-  Ui::Textadept *ui;
-  QLabel *docStatusBar; // permanent statusbar widget
+	Ui::Textadept *ui;
+	QLabel *docStatusBar; // permanent statusbar widget
 
 protected:
-  void closeEvent(QCloseEvent *ev) override;
-  void keyPressEvent(QKeyEvent *ev) override;
+	void closeEvent(QCloseEvent *ev) override;
+	void keyPressEvent(QKeyEvent *ev) override;
 };

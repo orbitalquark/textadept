@@ -71,142 +71,142 @@ io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}
 -- @param[opt] encodings Optional string encoding or table of encodings file contents are in
 --   (one encoding per file). If `nil`, encoding auto-detection is attempted via `io.encodings`.
 function io.open_file(filenames, encodings)
-  assert_type(encodings, 'string/table/nil', 2)
-  if not assert_type(filenames, 'string/table/nil', 1) then
-    filenames = ui.dialogs.open{
-      title = _L['Open File'], multiple = true,
-      dir = (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir()
-    }
-    if not filenames then return end
-  end
-  if type(filenames) == 'string' then filenames = {filenames} end
-  if type(encodings) ~= 'table' then encodings = {encodings} end
-  for i = 1, #filenames do
-    local filename = lfs.abspath((filenames[i]:gsub('^file://', '')))
-    for _, buffer in ipairs(_BUFFERS) do
-      if filename == buffer.filename then
-        view:goto_buffer(buffer)
-        goto continue
-      end
-    end
+	assert_type(encodings, 'string/table/nil', 2)
+	if not assert_type(filenames, 'string/table/nil', 1) then
+		filenames = ui.dialogs.open{
+			title = _L['Open File'], multiple = true,
+			dir = (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir()
+		}
+		if not filenames then return end
+	end
+	if type(filenames) == 'string' then filenames = {filenames} end
+	if type(encodings) ~= 'table' then encodings = {encodings} end
+	for i = 1, #filenames do
+		local filename = lfs.abspath((filenames[i]:gsub('^file://', '')))
+		for _, buffer in ipairs(_BUFFERS) do
+			if filename == buffer.filename then
+				view:goto_buffer(buffer)
+				goto continue
+			end
+		end
 
-    local text = ''
-    if lfs.attributes(filename) then
-      local f, errmsg = io.open(filename, 'rb')
-      if not f then error(string.format('cannot open %s', errmsg), 2) end
-      text = f:read('a')
-      f:close()
-      if not text then goto continue end -- filename exists, but cannot read it
-    end
-    local buffer = buffer.new()
-    if encodings[i] then
-      buffer.encoding, text = encodings[i], text:iconv('UTF-8', encodings[i])
-    else
-      -- Try to detect character encoding and convert to UTF-8.
-      local has_zeroes = text:sub(1, 65535):find('\0')
-      for _, encoding in ipairs(io.encodings) do
-        if not has_zeroes or encoding:find('^UTF') then
-          local ok, conv = pcall(string.iconv, text, 'UTF-8', encoding)
-          if ok then
-            buffer.encoding, text = encoding, conv
-            goto encoding_detected
-          end
-        end
-      end
-      assert(has_zeroes, _L['Encoding conversion failed.'])
-      buffer.encoding = nil -- binary (default was 'UTF-8')
-    end
-    ::encoding_detected::
-    buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
-    -- Detect EOL mode.
-    local s, e = text:find('\r?\n')
-    if s then buffer.eol_mode = buffer[s ~= e and 'EOL_CRLF' or 'EOL_LF'] end
-    -- Insert buffer text and set properties.
-    buffer:append_text(text)
-    view.first_visible_line, view.x_offset = 1, 0 -- reset view scroll
-    buffer:empty_undo_buffer()
-    buffer.mod_time = lfs.attributes(filename, 'modification') or os.time()
-    buffer.filename = filename
-    buffer:set_save_point()
-    buffer:set_lexer() -- auto-detect
-    events.emit(events.FILE_OPENED, filename)
+		local text = ''
+		if lfs.attributes(filename) then
+			local f, errmsg = io.open(filename, 'rb')
+			if not f then error(string.format('cannot open %s', errmsg), 2) end
+			text = f:read('a')
+			f:close()
+			if not text then goto continue end -- filename exists, but cannot read it
+		end
+		local buffer = buffer.new()
+		if encodings[i] then
+			buffer.encoding, text = encodings[i], text:iconv('UTF-8', encodings[i])
+		else
+			-- Try to detect character encoding and convert to UTF-8.
+			local has_zeroes = text:sub(1, 65535):find('\0')
+			for _, encoding in ipairs(io.encodings) do
+				if not has_zeroes or encoding:find('^UTF') then
+					local ok, conv = pcall(string.iconv, text, 'UTF-8', encoding)
+					if ok then
+						buffer.encoding, text = encoding, conv
+						goto encoding_detected
+					end
+				end
+			end
+			assert(has_zeroes, _L['Encoding conversion failed.'])
+			buffer.encoding = nil -- binary (default was 'UTF-8')
+		end
+		::encoding_detected::
+		buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
+		-- Detect EOL mode.
+		local s, e = text:find('\r?\n')
+		if s then buffer.eol_mode = buffer[s ~= e and 'EOL_CRLF' or 'EOL_LF'] end
+		-- Insert buffer text and set properties.
+		buffer:append_text(text)
+		view.first_visible_line, view.x_offset = 1, 0 -- reset view scroll
+		buffer:empty_undo_buffer()
+		buffer.mod_time = lfs.attributes(filename, 'modification') or os.time()
+		buffer.filename = filename
+		buffer:set_save_point()
+		buffer:set_lexer() -- auto-detect
+		events.emit(events.FILE_OPENED, filename)
 
-    -- Add file to recent files list, eliminating duplicates.
-    table.insert(io.recent_files, 1, filename)
-    for j = 2, #io.recent_files do
-      if io.recent_files[j] == filename then
-        table.remove(io.recent_files, j)
-        break
-      end
-    end
-    ::continue::
-  end
+		-- Add file to recent files list, eliminating duplicates.
+		table.insert(io.recent_files, 1, filename)
+		for j = 2, #io.recent_files do
+			if io.recent_files[j] == filename then
+				table.remove(io.recent_files, j)
+				break
+			end
+		end
+		::continue::
+	end
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function reload(buffer)
-  if not buffer then buffer = _G.buffer end
-  if not buffer.filename then return end
-  local f = assert(io.open(buffer.filename, 'rb'))
-  local text = f:read('a')
-  f:close()
-  if buffer.encoding then text = text:iconv('UTF-8', buffer.encoding) end
-  buffer:target_whole_document()
-  buffer:replace_target(text)
-  buffer:set_save_point()
-  buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
+	if not buffer then buffer = _G.buffer end
+	if not buffer.filename then return end
+	local f = assert(io.open(buffer.filename, 'rb'))
+	local text = f:read('a')
+	f:close()
+	if buffer.encoding then text = text:iconv('UTF-8', buffer.encoding) end
+	buffer:target_whole_document()
+	buffer:replace_target(text)
+	buffer:set_save_point()
+	buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function set_encoding(buffer, encoding)
-  assert_type(encoding, 'string/nil', 1)
-  local pos, first_visible_line = buffer.current_pos, view.first_visible_line
-  local text = buffer:get_text()
-  if buffer.encoding then
-    text = text:iconv(buffer.encoding, 'UTF-8')
-    if encoding then text = text:iconv(encoding, buffer.encoding) end
-  end
-  if encoding then text = text:iconv('UTF-8', encoding) end
-  buffer:target_whole_document()
-  buffer:replace_target(text)
-  buffer:goto_pos(pos)
-  view.first_visible_line = first_visible_line
-  buffer.encoding = encoding
-  buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
+	assert_type(encoding, 'string/nil', 1)
+	local pos, first_visible_line = buffer.current_pos, view.first_visible_line
+	local text = buffer:get_text()
+	if buffer.encoding then
+		text = text:iconv(buffer.encoding, 'UTF-8')
+		if encoding then text = text:iconv(encoding, buffer.encoding) end
+	end
+	if encoding then text = text:iconv('UTF-8', encoding) end
+	buffer:target_whole_document()
+	buffer:replace_target(text)
+	buffer:goto_pos(pos)
+	view.first_visible_line = first_visible_line
+	buffer.encoding = encoding
+	buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function save(buffer)
-  if not buffer then buffer = _G.buffer end
-  if not buffer.filename then return buffer:save_as() end
-  events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
-  if io.ensure_final_newline and buffer.encoding and buffer.char_at[buffer.length] ~= 10 then
-    buffer:append_text(buffer.eol_mode == buffer.EOL_LF and '\n' or '\r\n')
-  end
-  local text = buffer:get_text()
-  if buffer.encoding then text = text:iconv(buffer.encoding, 'UTF-8') end
-  assert(io.open(buffer.filename, 'wb')):write(text):close()
-  buffer:set_save_point()
-  if buffer ~= _G.buffer then events.emit(events.SAVE_POINT_REACHED, buffer) end -- update tab label
-  buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
-  if buffer._type then buffer._type = nil end
-  events.emit(events.FILE_AFTER_SAVE, buffer.filename)
-  return true
+	if not buffer then buffer = _G.buffer end
+	if not buffer.filename then return buffer:save_as() end
+	events.emit(events.FILE_BEFORE_SAVE, buffer.filename)
+	if io.ensure_final_newline and buffer.encoding and buffer.char_at[buffer.length] ~= 10 then
+		buffer:append_text(buffer.eol_mode == buffer.EOL_LF and '\n' or '\r\n')
+	end
+	local text = buffer:get_text()
+	if buffer.encoding then text = text:iconv(buffer.encoding, 'UTF-8') end
+	assert(io.open(buffer.filename, 'wb')):write(text):close()
+	buffer:set_save_point()
+	if buffer ~= _G.buffer then events.emit(events.SAVE_POINT_REACHED, buffer) end -- update tab label
+	buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
+	if buffer._type then buffer._type = nil end
+	events.emit(events.FILE_AFTER_SAVE, buffer.filename)
+	return true
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function save_as(buffer, filename)
-  if not buffer then buffer = _G.buffer end
-  local dir, name = (buffer.filename or lfs.currentdir() .. '/'):match('^(.-[/\\]?)([^/\\]*)$')
-  if not assert_type(filename, 'string/nil', 1) then
-    filename = ui.dialogs.save{title = _L['Save File'], dir = dir, file = name}
-    if not filename then return end
-  end
-  buffer.filename = filename
-  buffer:save()
-  buffer:set_lexer() -- auto-detect
-  events.emit(events.FILE_AFTER_SAVE, filename, true)
-  return true
+	if not buffer then buffer = _G.buffer end
+	local dir, name = (buffer.filename or lfs.currentdir() .. '/'):match('^(.-[/\\]?)([^/\\]*)$')
+	if not assert_type(filename, 'string/nil', 1) then
+		filename = ui.dialogs.save{title = _L['Save File'], dir = dir, file = name}
+		if not filename then return end
+	end
+	buffer.filename = filename
+	buffer:save()
+	buffer:set_lexer() -- auto-detect
+	events.emit(events.FILE_AFTER_SAVE, filename, true)
+	return true
 end
 
 --- Saves all unsaved buffers to their respective files, prompting the user for filenames for
@@ -216,43 +216,43 @@ end
 --   value is `false`.
 -- @return `true` if all savable files were saved; `nil` otherwise.
 function io.save_all_files(untitled)
-  for _, buffer in ipairs(_BUFFERS) do
-    if buffer.modify and (buffer.filename or untitled and not buffer._type) then
-      if not buffer.filename then view:goto_buffer(buffer) end
-      if not buffer:save() then return end
-    end
-  end
-  return true
+	for _, buffer in ipairs(_BUFFERS) do
+		if buffer.modify and (buffer.filename or untitled and not buffer._type) then
+			if not buffer.filename then view:goto_buffer(buffer) end
+			if not buffer:save() then return end
+		end
+	end
+	return true
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
 local function close(buffer, force)
-  if not buffer then buffer = _G.buffer end
-  if buffer.modify and not force then
-    local filename = buffer.filename or buffer._type or _L['Untitled']
-    if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
-    local button = ui.dialogs.message{
-      title = _L['Close without saving?'],
-      text = string.format('%s\n%s', _L['There are unsaved changes in'], filename),
-      icon = 'dialog-question', button1 = _L['Save'], button2 = _L['Cancel'],
-      button3 = _L['Close without saving']
-    }
-    if button == 1 then return buffer:save() end
-    if button ~= 3 then return nil end -- do not propagate key command
-  end
-  buffer:delete()
-  return true
+	if not buffer then buffer = _G.buffer end
+	if buffer.modify and not force then
+		local filename = buffer.filename or buffer._type or _L['Untitled']
+		if buffer.filename then filename = filename:iconv('UTF-8', _CHARSET) end
+		local button = ui.dialogs.message{
+			title = _L['Close without saving?'],
+			text = string.format('%s\n%s', _L['There are unsaved changes in'], filename),
+			icon = 'dialog-question', button1 = _L['Save'], button2 = _L['Cancel'],
+			button3 = _L['Close without saving']
+		}
+		if button == 1 then return buffer:save() end
+		if button ~= 3 then return nil end -- do not propagate key command
+	end
+	buffer:delete()
+	return true
 end
 
 --- Detects if the current file has been externally modified and, if so, emits
 -- `events.FILE_CHANGED`.
 local function update_modified_file()
-  if not buffer.filename then return end
-  local mod_time = lfs.attributes(buffer.filename, 'modification')
-  if mod_time and buffer.mod_time and buffer.mod_time < mod_time then
-    buffer.mod_time = mod_time
-    events.emit(events.FILE_CHANGED, buffer.filename)
-  end
+	if not buffer.filename then return end
+	local mod_time = lfs.attributes(buffer.filename, 'modification')
+	if mod_time and buffer.mod_time and buffer.mod_time < mod_time then
+		buffer.mod_time = mod_time
+		events.emit(events.FILE_CHANGED, buffer.filename)
+	end
 end
 events.connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
 events.connect(events.VIEW_AFTER_SWITCH, update_modified_file)
@@ -264,17 +264,17 @@ events.connect(events.RESUME, update_modified_file)
 -- No buffers are saved automatically. They must be saved manually.
 -- @return `true` if user did not cancel; `nil` otherwise.
 function io.close_all_buffers()
-  events.disconnect(events.BUFFER_AFTER_SWITCH, update_modified_file)
-  while #_BUFFERS > 1 do if not buffer:close() then return nil end end
-  events.connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
-  return buffer:close() -- the last one
+	events.disconnect(events.BUFFER_AFTER_SWITCH, update_modified_file)
+	while #_BUFFERS > 1 do if not buffer:close() then return nil end end
+	events.connect(events.BUFFER_AFTER_SWITCH, update_modified_file)
+	return buffer:close() -- the last one
 end
 
 -- Sets buffer io methods and the default buffer encoding.
 events.connect(events.BUFFER_NEW, function()
-  buffer.reload = reload
-  buffer.set_encoding, buffer.encoding = set_encoding, 'UTF-8'
-  buffer.save, buffer.save_as, buffer.close = save, save_as, close
+	buffer.reload = reload
+	buffer.set_encoding, buffer.encoding = set_encoding, 'UTF-8'
+	buffer.save, buffer.save_as, buffer.close = save, save_as, close
 end)
 -- Export for later storage into the first buffer, which does not exist yet.
 -- Cannot rely on `events.BUFFER_NEW` because init scripts (e.g. menus and key bindings) can
@@ -283,43 +283,43 @@ io._reload, io._save, io._save_as, io._close = reload, save, save_as, close
 
 -- Prompts the user to reload the current file if it has been externally modified.
 events.connect(events.FILE_CHANGED, function(filename)
-  local button = ui.dialogs.message{
-    title = _L['Reload modified file?'],
-    text = string.format('"%s"\n%s', filename:iconv('UTF-8', _CHARSET),
-      _L['has been modified. Reload it?']), icon = 'dialog-question', button1 = _L['Yes'],
-    button2 = _L['No']
-  }
-  if button == 1 then buffer:reload() end
+	local button = ui.dialogs.message{
+		title = _L['Reload modified file?'],
+		text = string.format('"%s"\n%s', filename:iconv('UTF-8', _CHARSET),
+			_L['has been modified. Reload it?']), icon = 'dialog-question', button1 = _L['Yes'],
+		button2 = _L['No']
+	}
+	if button == 1 then buffer:reload() end
 end)
 
 -- Closes the initial "Untitled" buffer when another buffer is opened.
 events.connect(events.FILE_OPENED, function()
-  if #_BUFFERS > 2 then return end
-  local buf = _BUFFERS[1]
-  if not (buf.filename or buf._type or buf.modify) then buf:close() end
+	if #_BUFFERS > 2 then return end
+	local buf = _BUFFERS[1]
+	if not (buf.filename or buf._type or buf.modify) then buf:close() end
 end)
 
 --- Prompts the user to select a recently opened file to be reopened.
 -- @see recent_files
 function io.open_recent_file()
-  if #io.recent_files == 0 then return end
-  local utf8_list, i = {}, 1
-  while i <= #io.recent_files do
-    local filename = io.recent_files[i]
-    if lfs.attributes(filename) then
-      utf8_list[#utf8_list + 1] = io.recent_files[i]:iconv('UTF-8', _CHARSET)
-      i = i + 1
-    else
-      table.remove(io.recent_files, i)
-    end
-  end
-  local selected, button = ui.dialogs.list{
-    title = _L['Open File'], items = utf8_list, multiple = true, button3 = _L['Clear List'],
-    return_button = true
-  }
-  if button == 3 then io.recent_files = {} end
-  if not selected or button ~= 1 then return end
-  for _, i in ipairs(selected) do io.open_file(io.recent_files[i]) end
+	if #io.recent_files == 0 then return end
+	local utf8_list, i = {}, 1
+	while i <= #io.recent_files do
+		local filename = io.recent_files[i]
+		if lfs.attributes(filename) then
+			utf8_list[#utf8_list + 1] = io.recent_files[i]:iconv('UTF-8', _CHARSET)
+			i = i + 1
+		else
+			table.remove(io.recent_files, i)
+		end
+	end
+	local selected, button = ui.dialogs.list{
+		title = _L['Open File'], items = utf8_list, multiple = true, button3 = _L['Clear List'],
+		return_button = true
+	}
+	if button == 3 then io.recent_files = {} end
+	if not selected or button ~= 1 then return end
+	for _, i in ipairs(selected) do io.open_file(io.recent_files[i]) end
 end
 
 --- List of version control directories.
@@ -335,17 +335,17 @@ local vcs = {'.bzr', '.git', '.hg', '.svn', '_FOSSIL_'}
 --   current submodule (if applicable). The default value is `false`.
 -- @return string root or nil
 function io.get_project_root(path, submodule)
-  if type(path) == 'boolean' then path, submodule = nil, path end
-  if not assert_type(path, 'string/nil', 1) then path = buffer.filename or lfs.currentdir() end
-  local dir = path:match('^(.-)[/\\]?$')
-  while dir do
-    for i = 1, #vcs do
-      local mode = lfs.attributes(dir .. '/' .. vcs[i], 'mode')
-      if mode and (submodule or mode == 'directory') then return dir end
-    end
-    dir = dir:match('^(.+)[/\\]')
-  end
-  return nil
+	if type(path) == 'boolean' then path, submodule = nil, path end
+	if not assert_type(path, 'string/nil', 1) then path = buffer.filename or lfs.currentdir() end
+	local dir = path:match('^(.-)[/\\]?$')
+	while dir do
+		for i = 1, #vcs do
+			local mode = lfs.attributes(dir .. '/' .. vcs[i], 'mode')
+			if mode and (submodule or mode == 'directory') then return dir end
+		end
+		dir = dir:match('^(.+)[/\\]')
+	end
+	return nil
 end
 
 --- Map of directory paths to filters used by `io.quick_open()`.
@@ -377,46 +377,46 @@ io.quick_open_filters = {}
 -- @usage io.quick_open(io.get_current_project(), '!/build') -- list all files in the current
 --   project except those in the build directory
 function io.quick_open(paths, filter)
-  if not assert_type(paths, 'string/table/nil', 1) then
-    paths = io.get_project_root()
-    if not paths then return end
-  end
-  if not assert_type(filter, 'string/table/nil', 2) then
-    filter = io.quick_open_filters[paths] or lfs.default_filter
-  end
-  local utf8_list = {}
-  paths = type(paths) == 'table' and paths or {paths}
-  local prefix = #paths == 1 and paths[1] .. (not WIN32 and '/' or '\\')
-  for _, path in ipairs(paths) do
-    for filename in lfs.walk(path, filter) do
-      if #utf8_list >= io.quick_open_max then break end
-      if prefix then filename = filename:sub(#prefix + 1) end
-      utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
-    end
-  end
-  if #utf8_list == 0 then return end
-  if #utf8_list >= io.quick_open_max then
-    ui.dialogs.message{
-      title = _L['File Limit Exceeded'], text = string.format('%d %s %d', io.quick_open_max,
-        _L['files or more were found. Showing the first'], io.quick_open_max),
-      icon = 'dialog-information'
-    }
-  end
-  local title = _L['Open File']
-  if prefix then title = title .. ': ' .. prefix:iconv('UTF-8', _CHARSET) end
-  local selected = ui.dialogs.list{title = title, items = utf8_list, multiple = true}
-  if not selected then return end
-  local filenames = {}
-  for i = 1, #selected do
-    local filename = utf8_list[selected[i]]:iconv(_CHARSET, 'UTF-8')
-    if prefix then filename = prefix .. filename end
-    filenames[i] = filename
-  end
-  io.open_file(filenames)
+	if not assert_type(paths, 'string/table/nil', 1) then
+		paths = io.get_project_root()
+		if not paths then return end
+	end
+	if not assert_type(filter, 'string/table/nil', 2) then
+		filter = io.quick_open_filters[paths] or lfs.default_filter
+	end
+	local utf8_list = {}
+	paths = type(paths) == 'table' and paths or {paths}
+	local prefix = #paths == 1 and paths[1] .. (not WIN32 and '/' or '\\')
+	for _, path in ipairs(paths) do
+		for filename in lfs.walk(path, filter) do
+			if #utf8_list >= io.quick_open_max then break end
+			if prefix then filename = filename:sub(#prefix + 1) end
+			utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
+		end
+	end
+	if #utf8_list == 0 then return end
+	if #utf8_list >= io.quick_open_max then
+		ui.dialogs.message{
+			title = _L['File Limit Exceeded'], text = string.format('%d %s %d', io.quick_open_max,
+				_L['files or more were found. Showing the first'], io.quick_open_max),
+			icon = 'dialog-information'
+		}
+	end
+	local title = _L['Open File']
+	if prefix then title = title .. ': ' .. prefix:iconv('UTF-8', _CHARSET) end
+	local selected = ui.dialogs.list{title = title, items = utf8_list, multiple = true}
+	if not selected then return end
+	local filenames = {}
+	for i = 1, #selected do
+		local filename = utf8_list[selected[i]]:iconv(_CHARSET, 'UTF-8')
+		if prefix then filename = prefix .. filename end
+		filenames[i] = filename
+	end
+	io.open_file(filenames)
 end
 
 args.register('-', '-', 0, function()
-  if buffer.filename or buffer._type then buffer.new() end
-  buffer:append_text(io.read('a'))
-  buffer:set_save_point()
+	if buffer.filename or buffer._type then buffer.new() end
+	buffer:append_text(io.read('a'))
+	buffer:set_save_point()
 end, 'Read stdin into a new buffer')

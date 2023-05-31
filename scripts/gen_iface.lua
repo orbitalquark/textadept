@@ -12,125 +12,125 @@ local const_patt = '^val ([%w_]+)=([-%dx%x]+)'
 local event_patt = '^evt %a+ ([%w_]+)=(%d+)(%b())'
 local msg_patt = '^(%a+) (%a+) (%w+)=(%d+)%((%a*)%s*([^,]*),%s*(%a*)%s*([^)]*)'
 local types = { -- note: anything after stringresult does not matter
-  [''] = 0, void = 0, int = 1, length = 2, index = 3, position = 3, line = 3, colour = 4,
-  colouralpha = 4, bool = 5, keymod = 6, string = 7, stringresult = 8, cells = 9, pointer = 1,
-  textrange = 10, textrangefull = 11, findtext = 12, findtextfull = 13, formatrange = 14,
-  formatrangefull = 15
+	[''] = 0, void = 0, int = 1, length = 2, index = 3, position = 3, line = 3, colour = 4,
+	colouralpha = 4, bool = 5, keymod = 6, string = 7, stringresult = 8, cells = 9, pointer = 1,
+	textrange = 10, textrangefull = 11, findtext = 12, findtextfull = 13, formatrange = 14,
+	formatrangefull = 15
 }
 local ignores = { -- constants to ignore
-  '^INDIC[012S]_', '^INVALID_POSITION', '^KEYWORDSET_MAX', '^SC_AC_', '^SC_DOCUMENTOPTION_',
-  '^SC_CACHE_', '^SC_CHARSET_', '^SC_ELEMENT_LIST', '^SC_EFF_', '^SC_FONT_SIZE_MULTIPLIER',
-  '^SC_INDIC', '^SC_LINE_END_TYPE_', '^SC_PHASES_', '^SC_POPUP_', '^SC_PRINT_', '^SC_STATUS_',
-  '^SC_SUPPORTS_', '^SC_TECHNOLOGY_', '^SC_TYPE_', '^SC_WEIGHT_', '^SCE_', '^SCEN_',
-  '^SCFIND_POSIX', '^SCI_', '^SCK_', '^SCLEX_', '^UNDO_MAY_COALESCE'
+	'^INDIC[012S]_', '^INVALID_POSITION', '^KEYWORDSET_MAX', '^SC_AC_', '^SC_DOCUMENTOPTION_',
+	'^SC_CACHE_', '^SC_CHARSET_', '^SC_ELEMENT_LIST', '^SC_EFF_', '^SC_FONT_SIZE_MULTIPLIER',
+	'^SC_INDIC', '^SC_LINE_END_TYPE_', '^SC_PHASES_', '^SC_POPUP_', '^SC_PRINT_', '^SC_STATUS_',
+	'^SC_SUPPORTS_', '^SC_TECHNOLOGY_', '^SC_TYPE_', '^SC_WEIGHT_', '^SCE_', '^SCEN_',
+	'^SCFIND_POSIX', '^SCI_', '^SCK_', '^SCLEX_', '^UNDO_MAY_COALESCE'
 }
 local increments = { -- constants to increment by one
-  '^MARKER_MAX', '^MARKNUM_', '^MAX_MARGIN', '^STYLE_', '^INDICATOR_'
+	'^MARKER_MAX', '^MARKNUM_', '^MAX_MARGIN', '^STYLE_', '^INDICATOR_'
 }
 local changed_setter = {} -- holds properties changed to setter functions
 local function to_en_us(name)
-  return name:gsub('([iIlL][oO])[uU]([rR])', '%1%2'):gsub('ise$', 'ize'):gsub(
-    '([cC][eE][nN][tT])([rR])([eE])', '%1%3%2'):gsub('([Cc][Aa][Nn][Cc][Ee][Ll])[Ll]([Ee][Dd])',
-    '%1%2')
+	return name:gsub('([iIlL][oO])[uU]([rR])', '%1%2'):gsub('ise$', 'ize'):gsub(
+		'([cC][eE][nN][tT])([rR])([eE])', '%1%3%2'):gsub('([Cc][Aa][Nn][Cc][Ee][Ll])[Ll]([Ee][Dd])',
+		'%1%2')
 end
 local function to_lua_name(camel_case)
-  return to_en_us(camel_case:gsub('([a-z])([A-Z])', '%1_%2'):gsub('([A-Z])([A-Z][a-z])', '%1_%2')
-    :lower())
+	return to_en_us(camel_case:gsub('([a-z])([A-Z])', '%1_%2'):gsub('([A-Z])([A-Z][a-z])', '%1_%2')
+		:lower())
 end
 local function is_length(ptype, param) return ptype == 'position' and param:find('^length') end
 local function is_index(ptype, param)
-  return ptype == 'int' and
-    (param == 'style' or param == 'markerNumber' or param == 'margin' or param == 'indicator' or
-      param == 'selection')
+	return ptype == 'int' and
+		(param == 'style' or param == 'markerNumber' or param == 'margin' or param == 'indicator' or
+			param == 'selection')
 end
 
 for line in io.lines('../build/_deps/scintilla-src/include/Scintilla.iface') do
-  if line:find('^val ') then
-    local name, value = line:match(const_patt)
-    for i = 1, #ignores do if name:find(ignores[i]) then goto continue end end
-    name = to_en_us(name:gsub('^SC_', ''):gsub('^SC([^N]%u+)', '%1'))
-    if name == 'FIND_REGEXP' then
-      value = tostring(tonumber(value) + 2^23) -- add SCFIND_CXX11REGEX
-      value = value:gsub('%.0$', '') -- Lua 5.3+ may append this
-    else
-      for i = 1, #increments do
-        if name:find(increments[i]) then value = tonumber(value) + 1 end
-      end
-    end
-    constants[#constants + 1] = string.format('%s=%s', name, value)
-  elseif line:find('^evt ') then
-    local name, value, param_list = line:match(event_patt)
-    name = to_lua_name(name)
-    local event, has_modifiers = {string.format('%q', name)}, false
-    for param in param_list:gmatch('(%a+)[,)]') do
-      if param ~= 'void' and param ~= 'modifiers' then
-        event[#event + 1] = string.format('%q', to_lua_name(param))
-      elseif param == 'modifiers' then
-        has_modifiers = true
-      end
-    end
-    if name:find('^margin') then
-      event[2], event[3] = event[3], event[2] -- swap position, margin
-    end
-    if has_modifiers then event[#event + 1] = '"modifiers"' end -- prefer at end
-    events[#events + 1] = value
-    events[value] = table.concat(event, ',')
-  elseif line:find('^fun ') then
-    local _, rtype, name, id, wtype, param, ltype, param2 = line:match(msg_patt)
-    if rtype:find('^%u') then rtype = 'int' end
-    if wtype:find('^%u') then wtype = 'int' end
-    if ltype:find('^%u') then ltype = 'int' end
-    name = to_lua_name(name)
-    if name == 'convert_eo_ls' then name = 'convert_eols' end
-    if is_length(wtype, param) then
-      wtype = 'length'
-    elseif is_index(wtype, param) then
-      wtype = 'index'
-    end
-    if is_length(ltype, param2) then
-      ltype = 'length'
-    elseif is_index(ltype, param2) then
-      ltype = 'index'
-    elseif ltype == 'stringresult' then
-      rtype = 'void'
-    end
-    functions[#functions + 1] = name
-    functions[name] = {id, types[rtype], types[wtype], types[ltype]}
-  elseif line:find('^get ') or line:find('^set ') then
-    local kind, rtype, name, id, wtype, param, ltype, param2 = line:match(msg_patt)
-    if rtype:find('^%u') then rtype = 'int' end
-    if wtype:find('^%u') then wtype = 'int' end
-    if ltype:find('^%u') then ltype = 'int' end
-    name = to_lua_name(name:gsub('[GS]et%f[%u]', ''))
-    if kind == 'get' and types[wtype] == types.int and types[ltype] == types.int or
-      (wtype == 'bool' and ltype ~= '') or changed_setter[name] then
-      -- Special case getter/setter; handle as function.
-      local fname = kind .. '_' .. name
-      functions[#functions + 1] = fname
-      functions[fname] = {id, types[rtype], types[wtype], types[ltype]}
-      changed_setter[name] = true
-      goto continue
-    end
-    if not properties[name] then
-      properties[#properties + 1] = name
-      properties[name] = {0, 0, 0, 0}
-    end
-    if is_index(wtype, param) then wtype = 'index' end
-    if is_index(ltype, param2) then ltype = 'index' end
-    local prop = properties[name]
-    if kind == 'get' then
-      prop[1] = id
-      prop[3] = types[ltype ~= 'stringresult' and rtype or ltype]
-      if wtype ~= '' then prop[4] = types[wtype] end
-    else
-      prop[2] = id
-      if prop[1] == 0 then prop[3] = types[wtype ~= '' and ltype == '' and wtype or ltype] end
-      prop[4] = types[ltype ~= '' and wtype or ltype]
-    end
-  elseif line:find('cat Provisional') then
-    break
-  end
-  ::continue::
+	if line:find('^val ') then
+		local name, value = line:match(const_patt)
+		for i = 1, #ignores do if name:find(ignores[i]) then goto continue end end
+		name = to_en_us(name:gsub('^SC_', ''):gsub('^SC([^N]%u+)', '%1'))
+		if name == 'FIND_REGEXP' then
+			value = tostring(tonumber(value) + 2^23) -- add SCFIND_CXX11REGEX
+			value = value:gsub('%.0$', '') -- Lua 5.3+ may append this
+		else
+			for i = 1, #increments do
+				if name:find(increments[i]) then value = tonumber(value) + 1 end
+			end
+		end
+		constants[#constants + 1] = string.format('%s=%s', name, value)
+	elseif line:find('^evt ') then
+		local name, value, param_list = line:match(event_patt)
+		name = to_lua_name(name)
+		local event, has_modifiers = {string.format('%q', name)}, false
+		for param in param_list:gmatch('(%a+)[,)]') do
+			if param ~= 'void' and param ~= 'modifiers' then
+				event[#event + 1] = string.format('%q', to_lua_name(param))
+			elseif param == 'modifiers' then
+				has_modifiers = true
+			end
+		end
+		if name:find('^margin') then
+			event[2], event[3] = event[3], event[2] -- swap position, margin
+		end
+		if has_modifiers then event[#event + 1] = '"modifiers"' end -- prefer at end
+		events[#events + 1] = value
+		events[value] = table.concat(event, ',')
+	elseif line:find('^fun ') then
+		local _, rtype, name, id, wtype, param, ltype, param2 = line:match(msg_patt)
+		if rtype:find('^%u') then rtype = 'int' end
+		if wtype:find('^%u') then wtype = 'int' end
+		if ltype:find('^%u') then ltype = 'int' end
+		name = to_lua_name(name)
+		if name == 'convert_eo_ls' then name = 'convert_eols' end
+		if is_length(wtype, param) then
+			wtype = 'length'
+		elseif is_index(wtype, param) then
+			wtype = 'index'
+		end
+		if is_length(ltype, param2) then
+			ltype = 'length'
+		elseif is_index(ltype, param2) then
+			ltype = 'index'
+		elseif ltype == 'stringresult' then
+			rtype = 'void'
+		end
+		functions[#functions + 1] = name
+		functions[name] = {id, types[rtype], types[wtype], types[ltype]}
+	elseif line:find('^get ') or line:find('^set ') then
+		local kind, rtype, name, id, wtype, param, ltype, param2 = line:match(msg_patt)
+		if rtype:find('^%u') then rtype = 'int' end
+		if wtype:find('^%u') then wtype = 'int' end
+		if ltype:find('^%u') then ltype = 'int' end
+		name = to_lua_name(name:gsub('[GS]et%f[%u]', ''))
+		if kind == 'get' and types[wtype] == types.int and types[ltype] == types.int or
+			(wtype == 'bool' and ltype ~= '') or changed_setter[name] then
+			-- Special case getter/setter; handle as function.
+			local fname = kind .. '_' .. name
+			functions[#functions + 1] = fname
+			functions[fname] = {id, types[rtype], types[wtype], types[ltype]}
+			changed_setter[name] = true
+			goto continue
+		end
+		if not properties[name] then
+			properties[#properties + 1] = name
+			properties[name] = {0, 0, 0, 0}
+		end
+		if is_index(wtype, param) then wtype = 'index' end
+		if is_index(ltype, param2) then ltype = 'index' end
+		local prop = properties[name]
+		if kind == 'get' then
+			prop[1] = id
+			prop[3] = types[ltype ~= 'stringresult' and rtype or ltype]
+			if wtype ~= '' then prop[4] = types[wtype] end
+		else
+			prop[2] = id
+			if prop[1] == 0 then prop[3] = types[wtype ~= '' and ltype == '' and wtype or ltype] end
+			prop[4] = types[ltype ~= '' and wtype or ltype]
+		end
+	elseif line:find('cat Provisional') then
+		break
+	end
+	::continue::
 end
 
 -- Manually adjust special-case messages that do not quite follow the rules.
@@ -214,7 +214,7 @@ f:write([[
 M.functions = {} -- empty declaration to avoid LDoc processing
 M.functions = {]])
 for _, func in ipairs(functions) do
-  f:write(string.format('%s={%d,%d,%d,%d},', func, table.unpack(functions[func])))
+	f:write(string.format('%s={%d,%d,%d,%d},', func, table.unpack(functions[func])))
 end
 f:write('}\n\n')
 f:write([[
@@ -225,7 +225,7 @@ f:write([[
 M.properties = {} -- empty declaration to avoid LDoc processing
 M.properties = {]])
 for _, property in ipairs(properties) do
-  f:write(string.format('%s={%d,%d,%d,%d},', property, table.unpack(properties[property])))
+	f:write(string.format('%s={%d,%d,%d,%d},', property, table.unpack(properties[property])))
 end
 f:write('}\n\n')
 f:write([[

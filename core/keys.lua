@@ -123,23 +123,23 @@ M.KEYSYMS = {--[[From Scintilla.h for CURSES]][7]='esc',[8]='\b',[9]='\t',[13]='
 -- LuaFormatter on
 
 local MOD_SHIFT, MOD_CTRL, MOD_ALT, MOD_META = _SCINTILLA.constants.MOD_SHIFT,
-  _SCINTILLA.constants.MOD_CTRL, _SCINTILLA.constants.MOD_ALT, _SCINTILLA.constants.MOD_META
+	_SCINTILLA.constants.MOD_CTRL, _SCINTILLA.constants.MOD_ALT, _SCINTILLA.constants.MOD_META
 -- Converts raw key events into key sequences and emits `events.KEYPRESS`.
 events.connect(events.KEY, function(code, modifiers)
-  local shift, ctrl, alt, cmd = modifiers & MOD_SHIFT > 0, modifiers & MOD_CTRL > 0,
-    modifiers & MOD_ALT > 0, modifiers & MOD_META > 0
-  if OSX and not CURSES then ctrl, cmd = cmd, ctrl end -- swap
-  -- print(code, M.KEYSYMS[code], shift and 'shift', ctrl and 'ctrl', alt and 'alt', cmd and 'cmd')
-  local key = code >= 32 and code < 256 and string.char(code) or M.KEYSYMS[code]
-  if not key then return end
-  if QT and not shift and code < 256 then key = key:lower() end -- Qt always give uppercase codes
-  -- Since printable characters are uppercased, disable shift.
-  if shift and code >= 32 and code < 256 then shift = false end
-  -- For composed keys on macOS, ignore alt.
-  if (OSX and not CURSES) and alt and code < 256 then alt = false end
-  return events.emit(events.KEYPRESS,
-    string.format('%s%s%s%s%s', ctrl and CTRL or '', alt and ALT or '', cmd and OSX and CMD or '',
-      shift and SHIFT or '', key))
+	local shift, ctrl, alt, cmd = modifiers & MOD_SHIFT > 0, modifiers & MOD_CTRL > 0,
+		modifiers & MOD_ALT > 0, modifiers & MOD_META > 0
+	if OSX and not CURSES then ctrl, cmd = cmd, ctrl end -- swap
+	-- print(code, M.KEYSYMS[code], shift and 'shift', ctrl and 'ctrl', alt and 'alt', cmd and 'cmd')
+	local key = code >= 32 and code < 256 and string.char(code) or M.KEYSYMS[code]
+	if not key then return end
+	if QT and not shift and code < 256 then key = key:lower() end -- Qt always give uppercase codes
+	-- Since printable characters are uppercased, disable shift.
+	if shift and code >= 32 and code < 256 then shift = false end
+	-- For composed keys on macOS, ignore alt.
+	if (OSX and not CURSES) and alt and code < 256 then alt = false end
+	return events.emit(events.KEYPRESS,
+		string.format('%s%s%s%s%s', ctrl and CTRL or '', alt and ALT or '', cmd and OSX and CMD or '',
+			shift and SHIFT or '', key))
 end)
 
 --- The current key sequence.
@@ -148,8 +148,8 @@ local keychain = {}
 --- The current chain of key sequences. (Read-only.)
 -- @table keychain
 M.keychain = setmetatable({}, {
-  __index = keychain, __newindex = function() error('read-only table') end,
-  __len = function() return #keychain end
+	__index = keychain, __newindex = function() error('read-only table') end,
+	__len = function() return #keychain end
 })
 
 --- Clears the current key sequence.
@@ -166,45 +166,45 @@ local function key_error(errmsg) events.emit(events.ERROR, errmsg) end
 -- @param[opt] prefix Optional prefix name for mode/lexer-specific commands.
 -- @return `INVALID`, `PROPAGATE`, `CHAIN`, or `HALT`.
 local function key_command(prefix)
-  local key = not prefix and M or M[prefix]
-  for i = 1, #keychain do
-    if type(key) ~= 'table' then return INVALID end
-    key = key[keychain[i]]
-  end
-  if type(key) ~= 'function' and type(key) ~= 'table' then return INVALID end
-  if type(key) == 'table' then
-    ui.statusbar_text = string.format('%s %s', _L['Keychain:'], table.concat(keychain, ' '))
-    return CHAIN
-  end
-  return select(2, xpcall(key, key_error)) == false and PROPAGATE or HALT
+	local key = not prefix and M or M[prefix]
+	for i = 1, #keychain do
+		if type(key) ~= 'table' then return INVALID end
+		key = key[keychain[i]]
+	end
+	if type(key) ~= 'function' and type(key) ~= 'table' then return INVALID end
+	if type(key) == 'table' then
+		ui.statusbar_text = string.format('%s %s', _L['Keychain:'], table.concat(keychain, ' '))
+		return CHAIN
+	end
+	return select(2, xpcall(key, key_error)) == false and PROPAGATE or HALT
 end
 
 -- Handles Textadept keypresses, executing commands based on a mode or lexer as necessary.
 events.connect(events.KEYPRESS, function(key)
-  -- print(key)
-  ui.statusbar_text = ''
-  -- if CURSES then ui.statusbar_text = string.format('"%s"', key) end
-  local in_chain = #keychain > 0
-  if in_chain and key == M.CLEAR then
-    clear_key_seq()
-    return true
-  end
-  keychain[#keychain + 1] = key
+	-- print(key)
+	ui.statusbar_text = ''
+	-- if CURSES then ui.statusbar_text = string.format('"%s"', key) end
+	local in_chain = #keychain > 0
+	if in_chain and key == M.CLEAR then
+		clear_key_seq()
+		return true
+	end
+	keychain[#keychain + 1] = key
 
-  local status
-  if not M.mode then
-    status = key_command(buffer:get_lexer(true))
-    if status <= PROPAGATE and not M.mode then status = key_command() end
-  else
-    status = key_command(M.mode)
-  end
-  if status ~= CHAIN then clear_key_seq() end
-  if status > PROPAGATE then return true end -- CHAIN or HALT
-  if status == INVALID and in_chain then
-    ui.statusbar_text = _L['Invalid sequence']
-    return true
-  end
-  -- PROPAGATE otherwise.
+	local status
+	if not M.mode then
+		status = key_command(buffer:get_lexer(true))
+		if status <= PROPAGATE and not M.mode then status = key_command() end
+	else
+		status = key_command(M.mode)
+	end
+	if status ~= CHAIN then clear_key_seq() end
+	if status > PROPAGATE then return true end -- CHAIN or HALT
+	if status == INVALID and in_chain then
+		ui.statusbar_text = _L['Invalid sequence']
+		return true
+	end
+	-- PROPAGATE otherwise.
 end)
 
 --- Map of [key bindings](#keys) to commands, with language-specific key tables assigned to a

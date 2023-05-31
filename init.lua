@@ -1,12 +1,12 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
 package.path = table.concat({
-  _USERHOME .. '/modules/?.lua', _USERHOME .. '/modules/?/init.lua', _HOME .. '/modules/?.lua',
-  _HOME .. '/modules/?/init.lua', package.path
+	_USERHOME .. '/modules/?.lua', _USERHOME .. '/modules/?/init.lua', _HOME .. '/modules/?.lua',
+	_HOME .. '/modules/?/init.lua', package.path
 }, ';');
 package.cpath = table.concat({
-  string.format('%s/modules/?.%s', _USERHOME, not WIN32 and 'so' or 'dll'),
-  string.format('%s/modules/?.%s', _HOME, not WIN32 and 'so' or 'dll'), package.cpath
+	string.format('%s/modules/?.%s', _USERHOME, not WIN32 and 'so' or 'dll'),
+	string.format('%s/modules/?.%s', _HOME, not WIN32 and 'so' or 'dll'), package.cpath
 }, ';')
 
 -- Populate initial `_G.buffer` with temporarily exported io functions now that it exists. This
@@ -24,17 +24,17 @@ local type_map={msgbox='message',ok_msgbox='message',yesno_msgbox='message',inpu
 local option_map={with_directory='dir',with_file='file',select_multiple='multiple',select_only_directories='only_dirs'}
 -- LuaFormatter on
 setmetatable(ui.dialogs, {
-  __index = function(_, k)
-    return function(options, f)
-      local new_type, new_options = type_map[k], {return_button = true}
-      if not new_type then error('Unsupported dialog', 2) end
-      for k, v in pairs(options) do new_options[option_map[k] or k] = v end
-      if k == 'progressbar' then new_options.work = f end
-      local value, button = rawget(ui.dialogs, new_type)(new_options)
-      if button then return button, value end
-      return value
-    end
-  end
+	__index = function(_, k)
+		return function(options, f)
+			local new_type, new_options = type_map[k], {return_button = true}
+			if not new_type then error('Unsupported dialog', 2) end
+			for k, v in pairs(options) do new_options[option_map[k] or k] = v end
+			if k == 'progressbar' then new_options.work = f end
+			local value, button = rawget(ui.dialogs, new_type)(new_options)
+			if button then return button, value end
+			return value
+		end
+	end
 })
 textadept.file_types = {extensions = lexer.detect_extensions, patterns = lexer.detect_patterns}
 -- LuaFormatter off
@@ -57,33 +57,33 @@ local settings = {[buffer_mt] = buffer_settings, [view_mt] = view_settings}
 local name = {[buffer_mt] = 'buffer', [view_mt] = 'view'}
 local function repr(v) return string.format(type(v) == 'string' and '%q' or '%s', v) end
 for _, mt in ipairs{buffer_mt, view_mt} do
-  mt.__orig_index, mt.__orig_newindex = mt.__index, mt.__newindex
-  mt.__index = function(t, k)
-    local v = mt.__orig_index(t, k)
-    if type(v) == 'function' then
-      return function(...)
-        local args = {...}
-        if type(args[1]) == 'table' then table.remove(args, 1) end -- self
-        for i = 1, #args do args[i] = repr(args[i]) end
-        table.insert(settings[mt], string.format('%s:%s(%s)', name[mt], k, table.concat(args, ',')))
-        return v(...)
-      end
-    elseif type(v) == 'table' then
-      local property_mt = getmetatable(v)
-      setmetatable(v, {
-        __index = property_mt.__index, __newindex = function(property, k2, v2)
-          table.insert(settings[mt], string.format('%s.%s[%s]=%s', name[mt], k, repr(k2), repr(v2)))
-          local ok, errmsg = pcall(property_mt.__newindex, property, k2, v2)
-          if not ok then error(errmsg, 2) end
-        end
-      })
-    end
-    return v
-  end
-  mt.__newindex = function(t, k, v)
-    table.insert(settings[mt], string.format('%s[%s]=%s', name[mt], repr(k), repr(v)))
-    mt.__orig_newindex(t, k, v)
-  end
+	mt.__orig_index, mt.__orig_newindex = mt.__index, mt.__newindex
+	mt.__index = function(t, k)
+		local v = mt.__orig_index(t, k)
+		if type(v) == 'function' then
+			return function(...)
+				local args = {...}
+				if type(args[1]) == 'table' then table.remove(args, 1) end -- self
+				for i = 1, #args do args[i] = repr(args[i]) end
+				table.insert(settings[mt], string.format('%s:%s(%s)', name[mt], k, table.concat(args, ',')))
+				return v(...)
+			end
+		elseif type(v) == 'table' then
+			local property_mt = getmetatable(v)
+			setmetatable(v, {
+				__index = property_mt.__index, __newindex = function(property, k2, v2)
+					table.insert(settings[mt], string.format('%s.%s[%s]=%s', name[mt], k, repr(k2), repr(v2)))
+					local ok, errmsg = pcall(property_mt.__newindex, property, k2, v2)
+					if not ok then error(errmsg, 2) end
+				end
+			})
+		end
+		return v
+	end
+	mt.__newindex = function(t, k, v)
+		table.insert(settings[mt], string.format('%s[%s]=%s', name[mt], repr(k), repr(v)))
+		mt.__orig_newindex(t, k, v)
+	end
 end
 
 -- Record the initial call(s) to `view:set_theme()` in order to apply it to subsequent views.
@@ -93,12 +93,12 @@ events.connect(events.VIEW_NEW, function() view:set_theme(theme, env) end)
 -- Set the command entry theme after initialization and synchronize light/dark editor theme
 -- with light/dark GUI mode.
 events.connect(events.INITIALIZED, function()
-  ui.command_entry:set_theme(theme, env)
-  events.connect(events.MODE_CHANGED, function()
-    if type(theme) == 'string' then return end -- do not override a manually set theme
-    for _, view in ipairs(_VIEWS) do view:set_theme(theme) end -- env/nil
-    ui.command_entry:set_theme(theme) -- env/nil
-  end)
+	ui.command_entry:set_theme(theme, env)
+	events.connect(events.MODE_CHANGED, function()
+		if type(theme) == 'string' then return end -- do not override a manually set theme
+		for _, view in ipairs(_VIEWS) do view:set_theme(theme) end -- env/nil
+		ui.command_entry:set_theme(theme) -- env/nil
+	end)
 end)
 
 -- Default buffer and view settings.
@@ -156,11 +156,11 @@ if not CURSES then view.idle_styling = view.IDLESTYLING_ALL end
 -- Line Number Margin.
 view.margin_type_n[1] = view.MARGIN_NUMBER
 local function resize_line_number_margin(shrinkable)
-  -- This needs to be evaluated dynamically since themes/styles can change.
-  local buffer, view = _G.buffer, _G.view
-  local width = math.max(4, #tostring(buffer.line_count)) *
-    view:text_width(view.STYLE_LINENUMBER, '9') + (not CURSES and 4 or 0)
-  view.margin_width_n[1] = not shrinkable and math.max(view.margin_width_n[1], width) or width
+	-- This needs to be evaluated dynamically since themes/styles can change.
+	local buffer, view = _G.buffer, _G.view
+	local width = math.max(4, #tostring(buffer.line_count)) *
+		view:text_width(view.STYLE_LINENUMBER, '9') + (not CURSES and 4 or 0)
+	view.margin_width_n[1] = not shrinkable and math.max(view.margin_width_n[1], width) or width
 end
 events.connect(events.BUFFER_NEW, resize_line_number_margin)
 events.connect(events.VIEW_NEW, resize_line_number_margin)
@@ -174,9 +174,9 @@ view.margin_width_n[3] = not CURSES and 12 or 1
 view.margin_mask_n[3] = view.MASK_FOLDERS
 -- Other Margins.
 for i = 2, view.margins do
-  view.margin_type_n[i] = view.MARGIN_SYMBOL
-  view.margin_sensitive_n[i], view.margin_cursor_n[i] = true, view.CURSORARROW
-  if i > 3 then view.margin_width_n[i] = 0 end
+	view.margin_type_n[i] = view.MARGIN_SYMBOL
+	view.margin_sensitive_n[i], view.margin_cursor_n[i] = true, view.CURSORARROW
+	if i > 3 then view.margin_width_n[i] = 0 end
 end
 
 -- Annotations.
@@ -242,7 +242,7 @@ view.indic_under[textadept.editing.INDIC_HIGHLIGHT] = not CURSES
 view.indic_style[textadept.run.INDIC_WARNING] = view.INDIC_SQUIGGLE
 view.indic_style[textadept.run.INDIC_ERROR] = view.INDIC_SQUIGGLE
 view.indic_style[textadept.snippets.INDIC_PLACEHOLDER] = not CURSES and view.INDIC_DOTBOX or
-  view.INDIC_STRAIGHTBOX
+	view.INDIC_STRAIGHTBOX
 
 -- Autocompletion.
 -- buffer.auto_c_separator =
@@ -292,10 +292,10 @@ if QT and WIN32 then view.mouse_dwell_time = 500 end -- only different here for 
 -- Load user init file, which may also define default buffer settings.
 local user_init = _USERHOME .. '/init.lua'
 if lfs.attributes(user_init) then
-  local ok, errmsg = pcall(dofile, user_init)
-  if not ok then
-    events.connect(events.INITIALIZED, function() events.emit(events.ERROR, errmsg) end)
-  end
+	local ok, errmsg = pcall(dofile, user_init)
+	if not ok then
+		events.connect(events.INITIALIZED, function() events.emit(events.ERROR, errmsg) end)
+	end
 end
 
 -- Generate default buffer settings for subsequent buffers and remove temporary buffer and view
@@ -310,33 +310,33 @@ events.connect(events.BUFFER_NEW, load_buffer_settings, 1)
 
 -- Sets default properties for a Scintilla window.
 events.connect(events.VIEW_NEW, function()
-  local view, CTRL, SHIFT = _G.view, view.MOD_CTRL, view.MOD_SHIFT
-  -- Allow redefinitions of these Scintilla key bindings.
-  for _, code in utf8.codes('[]/\\ZYXCVALTDU') do view:clear_cmd_key(code | CTRL << 16) end
-  for _, code in utf8.codes('LTUZ') do view:clear_cmd_key(code | (CTRL | SHIFT) << 16) end
-  load_view_settings()
-  -- The buffer and view APIs have an artificial separation. Some settings like
-  -- `buffer.multiple_selection` and `buffer.auto_c_*` actually belong to views, while other
-  -- settings like `buffer.tab_width` and `buffer.use_tabs` really do belong to buffers.
-  -- Load buffer settings for new views, but retain any true buffer settings overwritten.
-  local buffer_props = {
-    'eol_mode', 'word_chars', 'whitespace_chars', 'punctuation_chars', 'tab_width', 'use_tabs',
-    'indent', 'tab_indents', 'back_space_un_indents'
-  }
-  for _, prop in ipairs(buffer_props) do buffer_props[prop] = _G.buffer[prop] end
-  load_buffer_settings()
-  for _, prop in ipairs(buffer_props) do _G.buffer[prop] = buffer_props[prop] end
+	local view, CTRL, SHIFT = _G.view, view.MOD_CTRL, view.MOD_SHIFT
+	-- Allow redefinitions of these Scintilla key bindings.
+	for _, code in utf8.codes('[]/\\ZYXCVALTDU') do view:clear_cmd_key(code | CTRL << 16) end
+	for _, code in utf8.codes('LTUZ') do view:clear_cmd_key(code | (CTRL | SHIFT) << 16) end
+	load_view_settings()
+	-- The buffer and view APIs have an artificial separation. Some settings like
+	-- `buffer.multiple_selection` and `buffer.auto_c_*` actually belong to views, while other
+	-- settings like `buffer.tab_width` and `buffer.use_tabs` really do belong to buffers.
+	-- Load buffer settings for new views, but retain any true buffer settings overwritten.
+	local buffer_props = {
+		'eol_mode', 'word_chars', 'whitespace_chars', 'punctuation_chars', 'tab_width', 'use_tabs',
+		'indent', 'tab_indents', 'back_space_un_indents'
+	}
+	for _, prop in ipairs(buffer_props) do buffer_props[prop] = _G.buffer[prop] end
+	load_buffer_settings()
+	for _, prop in ipairs(buffer_props) do _G.buffer[prop] = buffer_props[prop] end
 end, 1)
 
 -- On reset, cycle through buffers and views, simulating `events.BUFFER_NEW` and `events.VIEW_NEW`
 -- events to update settings, themes, colors, and styles.
 events.connect(events.RESET_AFTER, function()
-  for i = 1, #_BUFFERS do
-    events.emit(events.BUFFER_NEW)
-    view:goto_buffer(1)
-  end
-  for i = 1, #_VIEWS do
-    events.emit(events.VIEW_NEW)
-    ui.goto_view(1)
-  end
+	for i = 1, #_BUFFERS do
+		events.emit(events.BUFFER_NEW)
+		view:goto_buffer(1)
+	end
+	for i = 1, #_VIEWS do
+		events.emit(events.VIEW_NEW)
+		ui.goto_view(1)
+	end
 end, 1)
