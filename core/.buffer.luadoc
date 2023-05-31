@@ -2285,11 +2285,11 @@
 --- Use tabs instead of spaces in indentation.
 -- Changing the current setting does not convert any of the buffer's existing indentation. Use
 -- `textadept.editing.convert_indentation()` to do so.
--- The default value is `false`.
+-- The default value is `true`.
 -- @field use_tabs
 
 --- The number of space characters represented by a tab character.
--- The default value is `2`.
+-- The default value is `8`.
 -- @field tab_width
 
 --- The number of spaces in one level of indentation.

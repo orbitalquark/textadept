@@ -3570,13 +3570,13 @@ Scrolls to the end of the buffer without moving the caret.
 Use tabs instead of spaces in indentation.
 Changing the current setting does not convert any of the buffer's existing indentation. Use
 [`textadept.editing.convert_indentation()`](#textadept.editing.convert_indentation) to do so.
-The default value is `false`.
+The default value is `true`.
 
 <a id="buffer.tab_width"></a>
 #### `buffer.tab_width` 
 
 The number of space characters represented by a tab character.
-The default value is `2`.
+The default value is `8`.
 
 <a id="buffer.indent"></a>
 #### `buffer.indent` 

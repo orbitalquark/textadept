@@ -114,9 +114,9 @@ Here is a simple *~/.textadept/init.lua* for illustration:
       view:set_theme('light', {font = 'Monospace', size = 12})
     end
 
-    -- Always use tabs for indentation.
-    buffer.use_tabs = true
-    buffer.tab_width = 4
+    -- Always use spaces for indentation.
+    buffer.use_tabs = false
+    buffer.tab_width = 2
 
     -- Always strip trailing spaces on save, automatically highlight the current
     -- word, and use C89-style block comments in C code.
@@ -805,21 +805,21 @@ Textadept attempts to auto-detect a file's line end mode (EOL mode), falling bac
 the line ending mode using the "Buffer > EOL Mode" menu.
 
 Textadept does not attempt to auto-detect a file's indentation. The default indentation setting
-is two spaces, but you can specify your preferred indentation settings globally, and on a
-language-specific basis. For example, in your *~/.textadept/init.lua*:
+is a tab representing 8 spaces, but you can specify your preferred indentation settings globally,
+and on a language-specific basis. For example, in your *~/.textadept/init.lua*:
 
     -- Default indentation settings for all buffers.
-    buffer.use_tabs = true
-    buffer.tab_width = 8
+    buffer.use_tabs = false
+    buffer.tab_width = 2
 
     -- Indentation settings for individual languages.
     events.connect(events.LEXER_LOADED, function(name)
       if name == 'python' then
         buffer.use_tabs = false
         buffer.tab_width = 4
-      elseif name == 'ruby' or name == 'yaml' then
-        buffer.use_tabs = false
-        buffer.tab_width = 2
+      elseif name == 'go' then
+        buffer.use_tabs = true
+        buffer.tab_width = 4
       end
     end)
 
@@ -1305,7 +1305,7 @@ event handler. For example, in your *~/.textadept/init.lua*:
 
     -- Setup language-specific indentation settings.
     events.connect(events.LEXER_LOADED, function(name)
-      if name == 'python' then buffer.tab_width, buffer.use_tabs = 4, false end
+      if name == 'python' then buffer.use_tabs, buffer.tab_width = false, 4 end
     end)
 
 [`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED

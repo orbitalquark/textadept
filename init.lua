@@ -191,7 +191,7 @@ view.eol_annotation_visible = view.EOLANNOTATION_BOXED
 
 -- Tabs and Indentation Guides.
 -- Note: tab and indentation settings apply to individual buffers.
-buffer.tab_width, buffer.use_tabs = 2, false
+buffer.tab_width, buffer.use_tabs = 8, true
 -- buffer.indent = 2
 buffer.tab_indents, buffer.back_space_un_indents = true, true
 view.indentation_guides = not CURSES and view.IV_LOOKBOTH or view.IV_NONE
