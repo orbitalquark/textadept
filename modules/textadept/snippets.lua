@@ -183,12 +183,10 @@ end
 --   placeholder index contains the state of the snippet with all placeholders of that index
 --   filled in (prior to moving to the next placeholder index). Snippet state consists of a
 --   `text` string field and a `placeholders` table field.
+-- @field finished Whether or not the snippet has no more placeholders to visit.
 local snippet = {}
 
---- The stack of currently running snippets.
-local stack = {}
-
---- Inserts a new snippet and adds it to the snippet stack.
+--- Creates and returns new snippet from text *text* and trigger text *trigger*.
 -- @param text The new snippet to insert.
 -- @param trigger The trigger text used to expand the snippet, if any.
 -- @local
@@ -240,6 +238,7 @@ function snippet.new(text, trigger)
 	--   identification purposes.
 	-- @field index This placeholder's index.
 	-- @field default This placeholder's default text, if any.
+	-- @field simple Whether or not this placeholder is a simple one (i.e. a tab stop).
 	-- @field transform Whether or not this placeholder is a transform (containing either Lua or
 	--   Shell code).
 	-- @field lua_code The Lua code of this transform.
@@ -272,7 +271,7 @@ function snippet.new(text, trigger)
 				-- @return plain text from `s` (i.e. no placeholder markup)
 				local function process_placeholders(s, start_pos)
 					--- Processes a placeholder capture from LPeg.
-					-- @param position The position a the beginning of the placeholder.
+					-- @param position The position at the beginning of the placeholder.
 					-- @param index The placeholder index.
 					-- @param default The default placeholder text, if any.
 					local function ph(position, index, default)
@@ -310,16 +309,7 @@ function snippet.new(text, trigger)
 	if text_part ~= '' then snapshot.text = snapshot.text .. text_part:gsub('%%(%p)', '%1') end
 	snip.snapshots[0] = snapshot
 
-	-- Insert the snippet into the buffer and mark its end position.
-	buffer:begin_undo_action()
-	buffer:set_target_range(snip.start_pos, buffer.selection_end)
-	buffer:replace_target('  ') -- placeholder for snippet text
-	buffer.indicator_current = INDIC_SNIPPET
-	buffer:indicator_fill_range(snip.start_pos + 1, 1)
-	snip:insert() -- insert into placeholder
-	buffer:end_undo_action()
-
-	stack[#stack + 1] = snip
+	return snip
 end
 
 --- Provides dynamic field values and methods for this snippet.
@@ -357,6 +347,7 @@ end
 -- @local
 function snippet:next()
 	if buffer:auto_c_active() then buffer:auto_c_complete() end
+
 	-- Take a snapshot of the current state in order to restore it later if necessary.
 	if self.index > 0 and self.start_pos < self.end_pos then
 		local text = buffer:text_range(self.start_pos, self.end_pos)
@@ -432,7 +423,7 @@ end
 -- @local
 function snippet:previous()
 	if self.index < 2 then
-		self:finish(true)
+		self:finish(true) -- cancel
 		return
 	end
 	self.index = self.index - 2
@@ -455,7 +446,7 @@ function snippet:finish(canceling)
 		buffer:set_sel(s, e)
 		buffer:replace_sel(self.trigger or self.original_sel_text)
 	end
-	stack[#stack] = nil
+	self.finished = true
 end
 
 --- Returns a generator that returns each placeholder's position and state for all placeholders
@@ -539,6 +530,11 @@ function snippet:update_transforms()
 	end
 end
 
+local active_snippet
+
+--- The stack of currently running snippets.
+local stack = {}
+
 --- Inserts snippet text *text* or the snippet assigned to the trigger word behind the caret.
 -- Otherwise, if a snippet is active, goes to the active snippet's next placeholder. Returns
 -- `false` if no action was taken.
@@ -554,25 +550,39 @@ function M.insert(text)
 		if type(text) == 'function' then text = text() end
 		assert_type(text, 'string/nil', trigger or '?')
 	end
-	if text then snippet.new(text, trigger) end
-	if #stack == 0 then return false end
-	stack[#stack]:next()
+	if text then
+		active_snippet = snippet.new(text, trigger)
+		stack[#stack + 1] = active_snippet
+		-- Insert the snippet into the buffer and mark its end position.
+		buffer:begin_undo_action()
+		buffer:set_target_range(active_snippet.start_pos, buffer.selection_end)
+		buffer:replace_target('  ') -- placeholder for snippet text
+		buffer.indicator_current = INDIC_SNIPPET
+		buffer:indicator_fill_range(active_snippet.start_pos + 1, 1)
+		active_snippet:insert() -- insert into placeholder
+		buffer:end_undo_action()
+	end
+	if not active_snippet then return false end
+	active_snippet:next()
+	if active_snippet.finished then active_snippet = table.remove(stack) end
 end
 
 --- Jumps back to the previous snippet placeholder, reverting any changes from the current one.
 -- Returns `false` if no snippet is active.
 -- @return `false` if no snippet is active; `nil` otherwise.
 function M.previous()
-	if #stack == 0 then return false end
-	stack[#stack]:previous()
+	if not active_snippet then return false end
+	active_snippet:previous()
+	if active_snippet.finished then active_snippet = table.remove(stack) end
 end
 
 --- Cancels the active snippet, removing all inserted text.
 -- Returns `false` if no snippet is active.
 -- @return `false` if no snippet is active; `nil` otherwise.
 function M.cancel()
-	if #stack == 0 then return false end
-	stack[#stack]:finish(true)
+	if not active_snippet then return false end
+	active_snippet:finish(true)
+	active_snippet = table.remove(stack)
 end
 
 --- Prompts the user to select a snippet to insert from a list of global and language-specific
@@ -594,8 +604,8 @@ end
 
 -- Update snippet transforms when text is added or deleted.
 events.connect(events.UPDATE_UI, function(updated)
-	if #stack == 0 then return end
-	if updated & buffer.UPDATE_CONTENT > 0 then stack[#stack]:update_transforms() end
+	if not active_snippet then return end
+	if updated & buffer.UPDATE_CONTENT > 0 then active_snippet:update_transforms() end
 	if #keys.keychain == 0 then ui.statusbar_text = _L['Snippet active'] end
 end)
 
