@@ -7510,8 +7510,11 @@ The default value is `false`.
 Map of autocompleter names to autocompletion functions.
 Names are typically lexer names and autocompletion functions typically autocomplete symbols.
 Autocompletion functions must return two values: the number of characters behind the caret
-that are used as the prefix of the entity to be autocompleted, and a list of completions to
-be shown. Autocompletion lists are sorted automatically.
+that are used as the prefix of the entity to be autocompleted, and a list of completions
+to be shown. By default, the list of completions should be separated by space characters,
+but the function may change [`buffer.auto_c_separator`](#buffer.auto_c_separator) if needed. Also, autocompletion lists
+are sorted automatically by default, but the function may change [`buffer.auto_c_order`](#buffer.auto_c_order)
+if it wants to control sort order.
 
 Fields:
 

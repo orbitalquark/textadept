@@ -160,8 +160,8 @@ local function complete_lua()
 		end
 	end
 	table.sort(cmpls)
-	M.auto_c_order = buffer.ORDER_PRESORTED
-	M:auto_c_show(#part - 1, table.concat(cmpls, string.char(M.auto_c_separator)))
+	M.auto_c_separator, M.auto_c_order = string.byte(' '), buffer.ORDER_PRESORTED
+	M:auto_c_show(#part - 1, table.concat(cmpls, ' '))
 end
 
 --- Mode for entering Lua commands.

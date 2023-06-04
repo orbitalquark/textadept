@@ -402,11 +402,8 @@ function snippet:next()
 	buffer:indicator_clear_range(ph.position, e - ph.position)
 	if not ph.default then buffer:replace_sel('') end -- delete filler ' '
 	if ph.choice then
-		local sep = buffer.auto_c_separator
-		buffer.auto_c_separator = string.byte(',')
-		buffer.auto_c_order = buffer.ORDER_CUSTOM
+		buffer.auto_c_separator, buffer.auto_c_order = string.byte(','), buffer.ORDER_CUSTOM
 		buffer:auto_c_show(0, ph.choice)
-		buffer.auto_c_separator = sep -- restore
 	end
 
 	-- Add additional carets at mirrors and clear their markers.
