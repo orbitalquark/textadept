@@ -551,8 +551,8 @@ function M.insert(text)
 		assert_type(text, 'string/nil', trigger or '?')
 	end
 	if text then
+		if active_snippet then stack[#stack + 1] = active_snippet end
 		active_snippet = snippet.new(text, trigger)
-		stack[#stack + 1] = active_snippet
 		-- Insert the snippet into the buffer and mark its end position.
 		buffer:begin_undo_action()
 		buffer:set_target_range(active_snippet.start_pos, buffer.selection_end)
