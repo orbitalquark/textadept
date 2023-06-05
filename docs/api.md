@@ -8456,6 +8456,10 @@ would be interpreted as a placeholder or transform. Note: it is currently not po
 escape a '<' or '[' immediately after a `%`*n* mirror due to `%<...>` and `%[...]` sequences
 being interpreted as code to execute.
 
+#### `%)`
+
+Stands for a single ')' inside a placeholder's default text.
+
 #### `\t`
 
 A single unit of indentation based on the buffer's indentation settings ([`buffer.use_tabs`](#buffer.use_tabs)
@@ -8466,7 +8470,7 @@ and [`buffer.tab_width`](#buffer.tab_width).
 A single set of line ending delimiters based on the buffer's end of line mode
 ([`buffer.eol_mode`](#buffer.eol_mode)).
 
-[`io.popen()`]: https://www.lua.org/manual/5.3/manual.html#pdf-io.popen
+[`io.popen()`]: https://www.lua.org/manual/5.4/manual.html#pdf-io.popen
 
 ### Fields defined by `textadept.snippets`
 

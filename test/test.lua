@@ -4235,7 +4235,7 @@ function test_snippets_autocomplete()
 end
 
 function test_snippets_mirror_in_placeholder()
-	snippets.foo = '%1(one) %2(two(%1).three)'
+	snippets.foo = '%1(one) %2(two(%1%).three)'
 	buffer.new()
 	buffer:add_text('foo')
 	textadept.snippets.insert()
@@ -4247,7 +4247,7 @@ function test_snippets_mirror_in_placeholder()
 end
 
 function test_snippets_nested_placeholders()
-	snippets.foo = '%1(bar)%2((%3(baz)))'
+	snippets.foo = '%1(bar)%2((%3(baz)%))'
 	buffer.new()
 	buffer:add_text('foo')
 	textadept.snippets.insert()

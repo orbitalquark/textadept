@@ -80,6 +80,10 @@
 -- escape a '<' or '[' immediately after a `%`*n* mirror due to `%<...>` and `%[...]` sequences
 -- being interpreted as code to execute.
 --
+-- #### `%)`
+--
+-- Stands for a single ')' inside a placeholder's default text.
+--
 -- #### `\t`
 --
 -- A single unit of indentation based on the buffer's indentation settings (`buffer.use_tabs`
@@ -90,7 +94,7 @@
 -- A single set of line ending delimiters based on the buffer's end of line mode
 -- (`buffer.eol_mode`).
 --
--- [`io.popen()`]: https://www.lua.org/manual/5.3/manual.html#pdf-io.popen
+-- [`io.popen()`]: https://www.lua.org/manual/5.4/manual.html#pdf-io.popen
 -- @module textadept.snippets
 local M = {}
 
@@ -186,6 +190,21 @@ end
 -- @field finished Whether or not the snippet has no more placeholders to visit.
 local snippet = {}
 
+local P, S, R, V = lpeg.P, lpeg.S, lpeg.R, lpeg.V
+local C, Cs, Cp, Ct, Cg, Cc = lpeg.C, lpeg.Cs, lpeg.Cp, lpeg.Ct, lpeg.Cg, lpeg.Cc
+local grammar = P{
+	Ct((V('plain_text') + V('placeholder'))^0),
+	plain_text = Cs((P(1) - '%' + '%' * C(S('({%')) / 1)^1), --
+	placeholder = Ct('%' *
+		(V('index')^-1 * (V('angles') + V('brackets')) * Cg(Cc(true), 'transform') +
+			(V('index') * (V('parens') + V('braces') + Cg(Cc(true), 'simple'))))), --
+	index = Cg(R('09')^1 / tonumber, 'index'),
+	parens = '(' * Cg(Ct((Cs((1 - S('%)') + P('%)') / ')')^1) + V('placeholder'))^1), 'default') * ')', --
+	brackets = '[' * Cg((1 - S('[]') + V('brackets'))^0, 'sh_code') * ']',
+	braces = '{' * Cg((1 - S('{}') + V('braces'))^0, 'choice') * '}',
+	angles = '<' * -P('/') * Cg((1 - S('<>') + V('angles'))^0, 'lua_code') * '>'
+}
+
 --- Creates and returns new snippet from text *text* and trigger text *trigger*.
 -- @param text The new snippet to insert.
 -- @param trigger The trigger text used to expand the snippet, if any.
@@ -194,7 +213,7 @@ function snippet.new(text, trigger)
 	local snip = setmetatable({
 		trigger = trigger, original_sel_text = buffer:get_sel_text(),
 		start_pos = buffer.selection_start - (trigger and #trigger or 0), index = 0, max_index = 0,
-		snapshots = {}
+		snapshots = {[0] = {text = '', placeholders = {}}}
 	}, snippet)
 
 	-- Convert and match indentation.
@@ -215,101 +234,59 @@ function snippet.new(text, trigger)
 	end
 	text = table.concat(lines, ({[0] = '\r\n', '\r', '\n'})[buffer.eol_mode])
 
-	-- Parse placeholders and generate initial snapshot.
-	local snapshot = {text = '', placeholders = {}}
-	local P, S, R, V = lpeg.P, lpeg.S, lpeg.R, lpeg.V
-	local C, Cp, Ct, Cg, Cc = lpeg.C, lpeg.Cp, lpeg.Ct, lpeg.Cg, lpeg.Cc
-	local patt = P{
-		V('plain_text') * V('placeholder') * Cp() + V('plain_text') * -1,
-		plain_text = C(((P(1) - '%' + '%' * S('({'))^1 + '%%')^0), --
-		placeholder = Ct('%' *
-			(V('index')^-1 * (V('angles') + V('brackets') + V('braces')) * V('transform') + V('index') *
-				(V('parens') + V('simple')))), --
-		index = Cg(R('09')^1 / tonumber, 'index'),
-		parens = '(' * Cg((1 - S('()') + V('parens'))^0, 'default') * ')',
-		simple = Cg(Cc(true), 'simple'), transform = Cg(Cc(true), 'transform'),
-		brackets = '[' * Cg((1 - S('[]') + V('brackets'))^0, 'sh_code') * ']',
-		braces = '{' * Cg((1 - S('{}') + V('braces'))^0, 'choice') * '}',
-		angles = '<' * -P('/') * Cg((1 - S('<>') + V('angles'))^0, 'lua_code') * '>'
-	}
-	--- A snippet placeholder.
-	-- Each placeholder is stored in a snippet snapshot.
-	-- @field id This placeholder's unique ID. This field is used as an indicator's value for
-	--   identification purposes.
-	-- @field index This placeholder's index.
-	-- @field default This placeholder's default text, if any.
-	-- @field simple Whether or not this placeholder is a simple one (i.e. a tab stop).
-	-- @field transform Whether or not this placeholder is a transform (containing either Lua or
-	--   Shell code).
-	-- @field lua_code The Lua code of this transform.
-	-- @field sh_code The Shell code of this transform.
-	-- @field choice A list of options to insert from an autocompletion list.
-	-- @field position This placeholder's initial position in its snapshot. This field will not
-	--   update until the next snapshot is taken. Use `snippet:each_placeholder()` to determine
-	--   a placeholder's current position.
-	-- @field length This placeholder's initial length in its snapshot. This field will never
-	--   update. Use `buffer:indicator_end()` in conjunction with `snippet:each_placeholder()`
-	--   to determine a placeholder's current length.
-	-- @table placeholder
-	-- @local
-	local text_part, placeholder, e = patt:match(text)
-	while placeholder do
-		if placeholder.index then
-			local i = placeholder.index
-			if i > snip.max_index then snip.max_index = i end
-			placeholder.id = #snapshot.placeholders + 1
-			snapshot.placeholders[#snapshot.placeholders + 1] = placeholder
-		end
-		if text_part ~= '' then snapshot.text = snapshot.text .. text_part:gsub('%%(%p)', '%1') end
-		placeholder.position = #snapshot.text
-		if placeholder.default then
-			if placeholder.default:find('%%%d+') then
-				--- Parses out embedded placeholders, adding them to this snippet's snapshot.
-				-- @param s The placeholder string to parse.
-				-- @param start_pos The absolute position in the snippet `s` starts from. All computed
-				--   positions are anchored from here.
-				-- @return plain text from `s` (i.e. no placeholder markup)
-				local function process_placeholders(s, start_pos)
-					--- Processes a placeholder capture from LPeg.
-					-- @param position The position at the beginning of the placeholder.
-					-- @param index The placeholder index.
-					-- @param default The default placeholder text, if any.
-					local function ph(position, index, default)
-						position = start_pos + position - 1
-						if default then
-							-- Process sub-placeholders starting at the index after '%n('.
-							default = process_placeholders(default:sub(2, -2), position + #index + 2)
-						end
-						index = tonumber(index)
-						if index > snip.max_index then snip.max_index = index end
-						snapshot.placeholders[#snapshot.placeholders + 1] = {
-							id = #snapshot.placeholders + 1, index = index, default = default,
-							simple = not default or nil, length = #(default or ' '),
-							position = snip.start_pos + position
-						}
-						return default or ' ' -- fill empty placeholder for display
-					end
-					return lpeg.match(P{
-						lpeg.Cs((Cp() * '%' * C(R('09')^1) * C(V('parens'))^-1 / ph + 1)^0),
-						parens = '(' * (1 - S('()') + V('parens'))^0 * ')'
-					}, s)
-				end
-				placeholder.default = process_placeholders(placeholder.default, placeholder.position)
-			end
-			snapshot.text = snapshot.text .. placeholder.default
-		elseif placeholder.transform and not placeholder.index then
-			snapshot.text = snapshot.text .. snip:execute_code(placeholder)
-		else
-			snapshot.text = snapshot.text .. ' ' -- fill empty placeholder for display
-		end
-		placeholder.length = #snapshot.text - placeholder.position
-		placeholder.position = snip.start_pos + placeholder.position -- absolute
-		text_part, placeholder, e = patt:match(text, e)
-	end
-	if text_part ~= '' then snapshot.text = snapshot.text .. text_part:gsub('%%(%p)', '%1') end
-	snip.snapshots[0] = snapshot
+	-- Parse snippet and add text and placeholders.
+	for _, part in ipairs(grammar:match(text)) do snip:add_part(part) end
 
 	return snip
+end
+
+--- A snippet placeholder object, constructed in part by LPeg.
+-- Each placeholder is stored in a snippet snapshot.
+-- @field id This placeholder's unique ID. This field is used as an indicator's value for
+--   identification purposes.
+-- @field index This placeholder's index.
+-- @field default This placeholder's default text, if any.
+-- @field simple Whether or not this placeholder is a simple one (i.e. a tab stop).
+-- @field transform Whether or not this placeholder is a transform (containing either Lua or
+--   Shell code).
+-- @field lua_code The Lua code of this transform.
+-- @field sh_code The Shell code of this transform.
+-- @field choice A list of options to insert from an autocompletion list.
+-- @field position This placeholder's initial position in its snapshot. This field will not
+--   update until the next snapshot is taken. Use `snippet:each_placeholder()` to determine a
+--   placeholder's current position.
+-- @field length This placeholder's initial length in its snapshot. This field will never
+--   update. Use `buffer:indicator_end()` in conjunction with `snippet:each_placeholder()`
+--   to determine a placeholder's current length.
+-- @table placeholder
+-- @local
+
+--- Adds string or placeholder *part* to this snippet.
+-- @param part The LPeg-generated part to add.
+-- @local
+function snippet:add_part(part)
+	if type(part) == 'string' then
+		self.snapshots[0].text = self.snapshots[0].text .. part
+		return
+	end
+	local placeholder = part
+	if placeholder.index then
+		self.max_index = math.max(self.max_index, placeholder.index)
+		placeholder.id = #self.snapshots[0].placeholders + 1
+		self.snapshots[0].placeholders[placeholder.id] = placeholder
+	end
+	local position = #self.snapshots[0].text
+	if placeholder.default then
+		for _, part in ipairs(placeholder.default) do self:add_part(part) end
+		placeholder.default = self.snapshots[0].text:sub(position + 1)
+		if placeholder.default == '' then placeholder.default = ' ' end -- fill empty ph for display
+	elseif placeholder.transform and not placeholder.index then
+		self:add_part(self:execute_code(placeholder))
+	else
+		self:add_part(' ') -- fill empty placeholder for display
+	end
+	placeholder.length = #self.snapshots[0].text - position
+	placeholder.position = self.start_pos + position -- absolute
 end
 
 --- Provides dynamic field values and methods for this snippet.
