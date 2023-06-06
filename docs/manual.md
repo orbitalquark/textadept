@@ -288,7 +288,7 @@ You can add your own command line arguments using [`args.register()`][]. For exa
 [`args.register()`]: api.html#args.register
 
 **Note:** the `-L` and `--lua` option allows Textadept to function as a standalone Lua
-interpreter.  All other command line options listed above or registered have no effect, but
+interpreter. All other command line options listed above or registered have no effect, but
 they will be available to the script via the global `arg` table. Textadept defines `arg` as it
 is described in the Lua manual: the script name goes at index 0, the first argument after the
 script name goes to 1, and so on; arguments before the script name (i.e. the Textadept binary

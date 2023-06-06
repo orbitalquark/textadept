@@ -82,7 +82,7 @@
 -- jumps to the second argument for input.
 --
 -- Note that plain text inside default values may not contain a '}' character either, as it is
--- reserved to indicate the end of the placeholder.  Use `\}` to represent a literal '}'.
+-- reserved to indicate the end of the placeholder. Use `\}` to represent a literal '}'.
 --
 -- ##### Mirrors
 --

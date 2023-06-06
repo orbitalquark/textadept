@@ -52,7 +52,7 @@ a separate set of modules that provide extra features and functionality to the c
 
 ## Installation and Usage
 
-Textadept comes with a comprehensive [user manual][] in its *docs/* directory.  It covers all
+Textadept comes with a comprehensive [user manual][] in its *docs/* directory. It covers all
 of Textadept's main features, including installation, usage, configuration, theming, scripting,
 and compilation.
 

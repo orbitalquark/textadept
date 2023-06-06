@@ -125,9 +125,9 @@ local function write_function(f, func, module_name)
 	write_hashmap(f, PARAM, func.params)
 	write_list(f, USAGE, func.usage)
 	write_list(f, RETURN, func.ret)
-	-- Note: LDoc 1.4.6's *docs.lua* `Module:resolve_references()` removes tags.see values for
-	-- found references.  This interferes with custom `--filter` functions. Comment out the
-	-- `tags.see:remove_value()` call.
+	-- Note: LDoc 1.4.6's *docs.lua* `Module:resolve_references()` removes tags.see values
+	-- for found references. This interferes with custom `--filter` functions. Comment out
+	-- the `tags.see:remove_value()` call.
 	write_list(f, SEE, func.tags.see, module_name)
 end
 

@@ -7615,7 +7615,7 @@ Standard input is as follows:
 	line is excluded.
 
 Note: Be careful when using commands that emit stdout while reading stdin (as opposed
-to emitting stdout only after stdin is closed).  Input that generates more output
+to emitting stdout only after stdin is closed). Input that generates more output
 than an OS-specific pipe can hold may hang Textadept. On Linux, this may be 64K. See
 [`spawn_proc:write()`](#spawn_proc.write).
 
@@ -8457,7 +8457,7 @@ with a single argument. On the other hand, pressing `Tab` again at the third pla
 jumps to the second argument for input.
 
 Note that plain text inside default values may not contain a '}' character either, as it is
-reserved to indicate the end of the placeholder.  Use `\}` to represent a literal '}'.
+reserved to indicate the end of the placeholder. Use `\}` to represent a literal '}'.
 
 ##### Mirrors
 

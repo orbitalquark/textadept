@@ -1786,7 +1786,7 @@ Changes:
   [`textadept.run.run_in_background`][], removed `textadept.run.cwd` and `textadept.run.proc`,
   added optional arguments to [`textadept.run.compile()`][], [`textadept.run.run()`][], and
   [`textadept.run.build()`][], and changed the format of `textadept.run.error_patterns`.
-- Rewrote sections 7-9 in the [manual][] and added a new part to section 11.  Understanding how
+- Rewrote sections 7-9 in the [manual][] and added a new part to section 11. Understanding how
   to configure and script Textadept should be easier now.
 - `textadept.editing.goto_line()` takes a 0-based line number like all Scintilla functions.
 - `ui.goto_view()` and `view:goto_buffer()` now take actual `view` and `buffer` arguments,
@@ -3484,7 +3484,7 @@ Changes:
 - Lua module fields are now in Lua Adeptsense.
 - Updated to [Scintilla][] 2.25.
 - Rewrote [`_m.textadept.snippets`][] with syntax changes.
-- `Alt+I` (`Ctrl+I` on Mac OSX) is now "Select Snippet" instead of "Show Style".  "Show Style"
+- `Alt+I` (`Ctrl+I` on Mac OSX) is now "Select Snippet" instead of "Show Style". "Show Style"
   is now `Ctrl+Alt+Shift+I` (`Ctrl+Apple+Shift+I`).
 - Adeptsense can exclude types matched by `sense.syntax.type_declarations` patterns.
 - `Ctrl+T, V` (`Apple+T, V` on Mac OSX) keychain for toggling whitespace, wrap, etc. is now

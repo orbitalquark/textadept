@@ -5,7 +5,7 @@ If Textadept is so minimalist, why are the downloads tens of MB in size and the 
 folders more than double that? Why is the Git repository more than 50MB in size?
 
 **A:**
-Each download contains 2 executables: a GUI version and a terminal version.  Furthermore, the
+Each download contains 2 executables: a GUI version and a terminal version. Furthermore, the
 Windows and macOS packages bundle in Qt runtimes, accounting for 60-90% of the total application
 size. (Qt is the cross-platform GUI toolkit Textadept uses.)
 
@@ -40,7 +40,7 @@ On Windows my anti-virus software says Textadept contains a virus. Does it? Or i
 false-positive?
 
 **A:**
-Textadept does not contain any viruses and it certainly is a false positive.  The likely culprit
+Textadept does not contain any viruses and it certainly is a false positive. The likely culprit
 is the `textadept-curses.exe` executable, which runs in the Windows command prompt.
 
 - - -
