@@ -78,6 +78,17 @@ if(NOT EXISTS ${deps_dir}/${lfs_zip})
 endif()
 FetchContent_Declare(lfs URL ${lfs_url})
 FetchContent_MakeAvailable(lfs)
+# Regex.
+set(regex_zip 2cec9523ea60af49572ef24cb47caf8c3a229dc2.zip)
+set(regex_url file://${deps_dir}/${regex_zip})
+if(NIGHTLY)
+  set(regex_zip default.zip)
+endif()
+if(NIGHTLY OR NOT EXISTS ${deps_dir}/${regex_zip})
+  set(regex_url https://github.com/orbitalquark/lua-std-regex/archive/${regex_zip})
+endif()
+FetchContent_Declare(regex URL ${regex_url})
+FetchContent_MakeAvailable(regex)
 # CDK.
 set(cdk_tgz cdk-5.0-20200923.tgz)
 set(cdk_url file://${deps_dir}/${cdk_tgz})
@@ -255,6 +266,13 @@ file(GLOB lfs_src ${lfs_dir}/src/*.c)
 target_sources(lfs PRIVATE ${lfs_src})
 target_link_libraries(lfs PRIVATE lua)
 
+# Regex.
+add_library(regex STATIC)
+set(regex_dir ${regex_SOURCE_DIR})
+file(GLOB regex_src ${regex_dir}/*.cpp)
+target_sources(regex PRIVATE ${regex_src})
+target_link_libraries(regex PRIVATE lua)
+
 if(CURSES)
   # PDCurses.
   if(WIN32)
@@ -312,7 +330,7 @@ set(ta_compile_opts
   $<IF:$<NOT:$<BOOL:${WIN32}>>,-pedantic -Wall -Wextra -Wno-unused-parameter
     -Wno-missing-field-initializers,/W4>
   $<$<BOOL:${PROFILE}>:-pg -fprofile-arcs -ftest-coverage>)
-set(ta_link_libs scintilla lua lpeg lfs
+set(ta_link_libs scintilla lua lpeg lfs regex
   $<$<OR:$<BOOL:${WIN32}>,$<BOOL:${APPLE}>>:iconv>
   $<$<BOOL:${PROFILE}>:gcov>)
 

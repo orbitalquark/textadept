@@ -1620,6 +1620,7 @@ Textadept is composed of the following technologies:
 - [Lua][]: core scripting language
 - [LPeg][]: Lua pattern matching library for syntax highlighting
 - [LuaFileSystem][]: Lua library for accessing the host filesystem
+- [Lua-std-regex][]: Lua library for regular expressions
 - [iconv][]: library for converting text to and from Unicode
 
 [Qt]: https://www.qt.io
@@ -1631,6 +1632,7 @@ Textadept is composed of the following technologies:
 [Lua]: https://www.lua.org
 [LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/lpeg.html
 [LuaFileSystem]: https://keplerproject.github.io/luafilesystem
+[Lua-std-regex]: https://github.com/orbitalquark/lua-std-regex
 [ncurses]: https://invisible-island.net/ncurses
 [pdcurses]: http://pdcurses.sourceforge.net
 [cdk]: https://invisible-island.net/cdk
