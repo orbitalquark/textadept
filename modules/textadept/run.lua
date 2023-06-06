@@ -1,10 +1,12 @@
 -- Copyright 2007-2023 Mitchell. See LICENSE.
 
 --- Compile and run source code files with Textadept.
--- [Language modules](#compile-and-run) may tweak the `textadept.run.compile_commands`,
--- and `textadept.run.run_commands` tables for particular languages. The user
--- may tweak `textadept.run.build_commands`, `textadept.run.test_commands`, and
+-- Language [modules][] may tweak the `textadept.run.compile_commands`, and
+-- `textadept.run.run_commands` tables for particular languages. The user may
+-- tweak `textadept.run.build_commands`, `textadept.run.test_commands`, and
 -- `textadept.run.run_project_commands` for particular projects.
+--
+-- [modules]: manual.html#modules
 -- @module textadept.run
 local M = {}
 
