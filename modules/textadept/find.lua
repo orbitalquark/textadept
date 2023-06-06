@@ -98,8 +98,8 @@ for _, v in ipairs(find_events) do events[v:upper()] = v end
 --- Emitted when a result is found. It is selected and has been scrolled into view.
 -- Arguments:
 --
---   - *find_text*: The text originally searched for.
---   - *wrapped*: Whether or not the result found is after a text search wrapped.
+-- - *find_text*: The text originally searched for.
+-- - *wrapped*: Whether or not the result found is after a text search wrapped.
 -- @field _G.events.FIND_RESULT_FOUND
 
 --- Emitted when a text search wraps (passes through the beginning of the buffer), either from
@@ -178,12 +178,12 @@ local incremental_orig_pos
 -- @param text The text to find.
 -- @param next Flag indicating whether or not the search direction is forward.
 -- @param flags Search flags. This is a bit-mask of 4 flags: `buffer.FIND_MATCHCASE`,
---   `buffer.FIND_WHOLEWORD`, `buffer.FIND_REGEXP`, and 1 << 31 (in files), each joined with
---   binary OR. If `nil`, this is determined based on the checkboxes in the find box.
+--	`buffer.FIND_WHOLEWORD`, `buffer.FIND_REGEXP`, and 1 << 31 (in files), each joined with
+--	binary OR. If `nil`, this is determined based on the checkboxes in the find box.
 -- @param no_wrap Flag indicating whether or not the search will not wrap.
 -- @param wrapped Utility flag indicating whether or not the search has wrapped for displaying
---   useful statusbar information. This flag is used and set internally, and should not be
---   set otherwise.
+--	useful statusbar information. This flag is used and set internally, and should not be
+--	set otherwise.
 -- @return position of the found text or `-1`
 local function find(text, next, flags, no_wrap, wrapped)
 	-- Note: cannot use assert_type(), as event errors are handled silently.
@@ -288,8 +288,9 @@ events.connect(events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wr
 -- `ui.find.find_in_files_filters` table for *dir* is used. If that filter does not exist,
 -- `lfs.default_filter` is used.
 -- @param[opt] dir Optional directory path to search. If `nil`, the user is prompted for one.
--- @param[opt] filter Optional filter for files and directories to exclude. The default value is
---   `lfs.default_filter` unless a filter for *dir* is defined in `ui.find.find_in_files_filters`.
+-- @param[opt] filter Optional filter for files and directories to exclude. The
+--	default value is `lfs.default_filter` unless a filter for *dir* is defined in
+--	`ui.find.find_in_files_filters`.
 function M.find_in_files(dir, filter)
 	if not assert_type(dir, 'string/nil', 1) then
 		dir = ui.dialogs.open{title = _L['Select Directory'], only_dirs = true, dir = ff_dir()}
@@ -391,13 +392,13 @@ local re_patt = lpeg.Cs(P{
 })
 --- Returns string *text* with the following sequences unescaped:
 --
---   - "\uXXXX" sequences replaced with the equivalent UTF-8 character.
---   - "\d" sequences replaced with the text of capture number *d* from the regular expression
---     (or the entire match for *d* = 0).
---   - "\U" and "\L" sequences convert everything up to the next "\U", "\L", or "\E" to uppercase
---     and lowercase, respectively.
---   - "\u" and "\l" sequences convert the next character to uppercase and lowercase, respectively.
---     They may appear within "\U" and "\L" constructs.
+-- - "\uXXXX" sequences replaced with the equivalent UTF-8 character.
+-- - "\d" sequences replaced with the text of capture number *d* from the regular expression
+--	(or the entire match for *d* = 0).
+-- - "\U" and "\L" sequences convert everything up to the next "\U", "\L", or "\E" to uppercase
+--	and lowercase, respectively.
+-- - "\u" and "\l" sequences convert the next character to uppercase and lowercase, respectively.
+--	They may appear within "\U" and "\L" constructs.
 -- @param text String text to unescape.
 -- @return unescaped text
 local function unescape(text)
@@ -467,7 +468,7 @@ end
 --- Jumps to the source of the next or previous find in files search result in the buffer titled
 -- "Files Found", or the result on a given line number, depending on the value of *location*.
 -- @param location When `true`, jumps to the next search result. When `false`, jumps to the
---   previous one. When a line number, jumps to it.
+--	previous one. When a line number, jumps to it.
 function M.goto_file_found(location)
 	local line_num = type(assert_type(location, 'boolean/number', 1)) == 'number' and location
 	local ff_view, ff_buffer = get_ff_view(), get_ff_buffer()

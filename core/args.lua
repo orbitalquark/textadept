@@ -34,7 +34,7 @@ end
 -- *no_emit_arg_none* is `true`.
 -- @param arg Argument table.
 -- @param[opt] no_emit_arg_none When `true`, do not emit `ARG_NONE` when no arguments are present.
---   The default value is `false`.
+--	The default value is `false`.
 local function process(arg, no_emit_arg_none)
 	local no_args = true
 	local i = 1

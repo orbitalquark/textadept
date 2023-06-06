@@ -202,15 +202,15 @@ f:write([[
 --- Map of Scintilla function names to tables containing their IDs, return types, wParam types,
 -- and lParam types. Types are as follows:
 --
---   - `0`: Void.
---   - `1`: Integer.
---   - `2`: Length of the given lParam string.
---   - `3`: Integer position.
---   - `4`: Color, in "0xBBGGRR" format or "0xAABBGGRR" format where supported.
---   - `5`: Boolean `true` or `false`.
---   - `6`: Bitmask of Scintilla key modifiers and a key value.
---   - `7`: String parameter.
---   - `8`: String return value.
+-- - `0`: Void.
+-- - `1`: Integer.
+-- - `2`: Length of the given lParam string.
+-- - `3`: Integer position.
+-- - `4`: Color, in "0xBBGGRR" format or "0xAABBGGRR" format where supported.
+-- - `5`: Boolean `true` or `false`.
+-- - `6`: Bitmask of Scintilla key modifiers and a key value.
+-- - `7`: String parameter.
+-- - `8`: String return value.
 M.functions = {} -- empty declaration to avoid LDoc processing
 M.functions = {]])
 for _, func in ipairs(functions) do

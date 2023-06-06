@@ -11,22 +11,22 @@ for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 -- Emitted by `io.open_file()`.
 -- Arguments:
 --
---   - *filename*: The opened file's filename.
+-- - *filename*: The opened file's filename.
 -- @field _G.events.FILE_OPENED
 
 --- Emitted right before saving a file to disk.
 -- Emitted by `buffer:save()`.
 -- Arguments:
 --
---   - *filename*: The filename of the file being saved.
+-- - *filename*: The filename of the file being saved.
 -- @field _G.events.FILE_BEFORE_SAVE
 
 --- Emitted right after saving a file to disk.
 -- Emitted by `buffer:save()` and `buffer:save_as()`.
 -- Arguments:
 --
---   - *filename*: The filename of the file being saved.
---   - *saved_as*: Whether or not the file was saved under a different filename.
+-- - *filename*: The filename of the file being saved.
+-- - *saved_as*: Whether or not the file was saved under a different filename.
 -- @field _G.events.FILE_AFTER_SAVE
 
 --- Emitted when Textadept detects that an open file was modified externally.
@@ -34,7 +34,7 @@ for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 -- prompt to reload the file.
 -- Arguments:
 --
---   - *filename*: The filename externally modified.
+-- - *filename*: The filename externally modified.
 -- @field _G.events.FILE_CHANGED
 
 --- Whether or not to ensure there is a final newline when saving text files.
@@ -53,12 +53,12 @@ io.recent_files = {}
 -- You should add to this list if you get a "Conversion failed" error when trying to open a file
 -- whose encoding is not recognized. Valid encodings are [GNU iconv's encodings][] and include:
 --
---   - European: ASCII, ISO-8859-{1,2,3,4,5,7,9,10,13,14,15,16}, KOI8-R,
---     KOI8-U, KOI8-RU, CP{1250,1251,1252,1253,1254,1257}, CP{850,866,1131},
---     Mac{Roman,CentralEurope,Iceland,Croatian,Romania}, Mac{Cyrillic,Ukraine,Greek,Turkish},
---     Macintosh.
---   - Unicode: UTF-8, UCS-2, UCS-2BE, UCS-2LE, UCS-4, UCS-4BE, UCS-4LE, UTF-16, UTF-16BE,
---     UTF-16LE, UTF-32, UTF-32BE, UTF-32LE, UTF-7, C99, JAVA.
+-- - European: ASCII, ISO-8859-{1,2,3,4,5,7,9,10,13,14,15,16}, KOI8-R,
+--	KOI8-U, KOI8-RU, CP{1250,1251,1252,1253,1254,1257}, CP{850,866,1131},
+--	Mac{Roman,CentralEurope,Iceland,Croatian,Romania}, Mac{Cyrillic,Ukraine,Greek,Turkish},
+--	Macintosh.
+-- - Unicode: UTF-8, UCS-2, UCS-2BE, UCS-2LE, UCS-4, UCS-4BE, UCS-4LE, UTF-16, UTF-16BE,
+--	UTF-16LE, UTF-32, UTF-32BE, UTF-32LE, UTF-7, C99, JAVA.
 --
 -- [GNU iconv's encodings]: https://www.gnu.org/software/libiconv/
 -- @usage io.encodings[#io.encodings + 1] = 'UTF-32'
@@ -67,9 +67,9 @@ io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}
 --- Opens *filenames*, a string filename or list of filenames, or the user-selected filename(s).
 -- Emits `events.FILE_OPENED`.
 -- @param[opt] filenames Optional string filename or table of filenames to open. If `nil`,
---   the user is prompted with a fileselect dialog.
+--	the user is prompted with a fileselect dialog.
 -- @param[opt] encodings Optional string encoding or table of encodings file contents are in
---   (one encoding per file). If `nil`, encoding auto-detection is attempted via `io.encodings`.
+--	(one encoding per file). If `nil`, encoding auto-detection is attempted via `io.encodings`.
 function io.open_file(filenames, encodings)
 	assert_type(encodings, 'string/table/nil', 2)
 	if not assert_type(filenames, 'string/table/nil', 1) then
@@ -213,7 +213,7 @@ end
 -- untitled buffers if *untitled* is `true`, and returns `true` on success.
 -- Print and output buffers are ignored.
 -- @param untitled Whether or not to prompt for filenames for untitled buffers. The default
---   value is `false`.
+--	value is `false`.
 -- @return `true` if all savable files were saved; `nil` otherwise.
 function io.save_all_files(untitled)
 	for _, buffer in ipairs(_BUFFERS) do
@@ -329,10 +329,10 @@ local vcs = {'.bzr', '.git', '.hg', '.svn', '_FOSSIL_'}
 -- In order to be recognized, projects must be under version control. Recognized VCSes are
 -- Bazaar, Fossil, Git, Mercurial, and SVN.
 -- @param[opt] path Optional filesystem path to a project or a file contained within a project. The
---   default value is the buffer's filename or the current working directory. This parameter
---   may be omitted.
+--	default value is the buffer's filename or the current working directory. This parameter
+--	may be omitted.
 -- @param[opt] submodule Optional flag that indicates whether or not to return the root of the
---   current submodule (if applicable). The default value is `false`.
+--	current submodule (if applicable). The default value is `false`.
 -- @return string root or nil
 function io.get_project_root(path, submodule)
 	if type(path) == 'boolean' then path, submodule = nil, path end
@@ -366,16 +366,16 @@ io.quick_open_filters = {}
 -- `io.quick_open_filters` table is used. If that filter does not exist, `lfs.default_filter`
 -- is used.
 -- @param[opt] paths Optional string directory path or table of directory paths to search. The
---   default value is the current project's root directory, if available.
+--	default value is the current project's root directory, if available.
 -- @param[opt] filter Optional filter for files and directories to include and/or exclude. The
---   default value is `lfs.default_filter` unless a filter for *paths* is defined in
---   `io.quick_open_filters`.
+--	default value is `lfs.default_filter` unless a filter for *paths* is defined in
+--	`io.quick_open_filters`.
 -- @usage io.quick_open(buffer.filename:match('^(.+)[/\\]')) -- list all files in the current
---   file's directory, subject to the default filter
+--	file's directory, subject to the default filter
 -- @usage io.quick_open(io.get_current_project(), '.lua') -- list all Lua files in the current
---   project
+--	project
 -- @usage io.quick_open(io.get_current_project(), '!/build') -- list all files in the current
---   project except those in the build directory
+--	project except those in the build directory
 function io.quick_open(paths, filter)
 	if not assert_type(paths, 'string/table/nil', 1) then
 		paths = io.get_project_root()

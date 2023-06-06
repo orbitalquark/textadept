@@ -15,7 +15,7 @@ M.names = function(path) return names(path or _LEXERPATH) end
 -- setting up language-specific editing features for source files.
 -- Arguments:
 --
---   - *name*: The language lexer's name.
+-- - *name*: The language lexer's name.
 _G.events.LEXER_LOADED = 'lexer_loaded'
 
 -- LuaDoc is in core/.buffer.luadoc.

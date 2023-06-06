@@ -34,7 +34,7 @@
 -- If *vertical* is `false`, splits the view vertically into left and right views.
 -- Emits `events.VIEW_NEW`.
 -- @param[opt] vertical Optional flag indicating whether or not to split the view vertically. The
---   default value is `false`, for horizontal.
+--	default value is `false`, for horizontal.
 -- @return old view and new view.
 -- @function view:split
 
@@ -71,21 +71,21 @@
 -- on success.
 -- Emits `events.FILE_AFTER_SAVE`.
 -- @param[opt] filename Optional new filepath to save the buffer to. If `nil`, the user is
---   prompted for one.
+--	prompted for one.
 -- @return `true` if the file was saved; `nil` otherwise.
 -- @function save_as
 
 --- Closes the buffer, prompting the user to continue if there are unsaved changes (unless *force*
 -- is `true`), and returns `true` if the buffer was closed.
 -- @param[opt] force Optional flag that discards unsaved changes without prompting the user. The
---   default value is `false`.
+--	default value is `false`.
 -- @return `true` if the buffer was closed; `nil` otherwise.
 -- @see io.close_all_buffers
 -- @function close
 
 --- Converts the buffer's contents to encoding *encoding*.
 -- @param encoding The string encoding to set. Valid encodings are ones that GNU iconv accepts. If
---   `nil`, assumes a binary encoding.
+--	`nil`, assumes a binary encoding.
 -- @usage buffer:set_encoding('CP1252')
 -- @see io.encodings
 -- @see string.iconv
@@ -193,15 +193,15 @@
 
 --- The caret's preferred horizontal position when moving between lines.
 --
---   - `buffer.CARETSTICKY_OFF`
---     Use the same position the caret had on the previous line.
---   - `buffer.CARETSTICKY_ON`
---     Use the last position the caret was moved to via the mouse, left/right arrow keys,
---     home/end keys, etc. Typing text does not affect the position.
---   - `buffer.CARETSTICKY_WHITESPACE`
---     Use the position the caret had on the previous line, but prior to any inserted indentation.
+-- - `buffer.CARETSTICKY_OFF`
+--	Use the same position the caret had on the previous line.
+-- - `buffer.CARETSTICKY_ON`
+--	Use the last position the caret was moved to via the mouse, left/right arrow keys,
+--	home/end keys, etc. Typing text does not affect the position.
+-- - `buffer.CARETSTICKY_WHITESPACE`
+--	Use the position the caret had on the previous line, but prior to any inserted indentation.
 --
---   The default value is `buffer.CARETSTICKY_OFF`.
+--	The default value is `buffer.CARETSTICKY_OFF`.
 -- @field caret_sticky
 
 --- @field CARETSTICKY_OFF
@@ -509,12 +509,12 @@
 
 --- The multiple selection paste mode.
 --
---   - `buffer.MULTIPASTE_ONCE`
---     Paste into only the main selection.
---   - `buffer.MULTIPASTE_EACH`
---     Paste into all selections.
+-- - `buffer.MULTIPASTE_ONCE`
+--	Paste into only the main selection.
+-- - `buffer.MULTIPASTE_EACH`
+--	Paste into all selections.
 --
---   The default value is `buffer.MULTIPASTE_EACH`.
+--	The default value is `buffer.MULTIPASTE_EACH`.
 -- @field multi_paste
 
 --- Make Simple Selections.
@@ -523,10 +523,10 @@
 --- Selects the range of text between positions *start_pos* and *end_pos*, scrolling the selected
 -- text into view.
 -- @param start_pos The start position of the range of text in *buffer* to select. If negative,
---   it means the end of the buffer.
+--	it means the end of the buffer.
 -- @param end_pos The end position of the range of text in *buffer* to select. If negative,
---   it means remove any selection (i.e. set `buffer.anchor` to the same position as
---   `buffer.current_pos`).
+--	it means remove any selection (i.e. set `buffer.anchor` to the same position as
+--	`buffer.current_pos`).
 -- @function set_sel
 
 --- The position of the beginning of the selected text.
@@ -555,9 +555,9 @@
 
 --- Returns whether or not the the positions *start_pos* and *end_pos* are at word boundaries.
 -- @param start_pos The start position of the range of text in *buffer* to check for a word
---   boundary at.
+--	boundary at.
 -- @param end_pos The end position of the range of text in *buffer* to check for a word
---   boundary at.
+--	boundary at.
 -- @function is_range_word
 
 --- Make Movement Selections.
@@ -668,18 +668,18 @@
 
 --- The selection mode.
 --
---   - `buffer.SEL_STREAM`
---     Character selection.
---   - `buffer.SEL_RECTANGLE`
---     Rectangular selection.
---   - `buffer.SEL_LINES`
---     Line selection.
---   - `buffer.SEL_THIN`
---     Thin rectangular selection. This is the mode after a rectangular selection has been
---     typed into and ensures that no characters are selected.
+-- - `buffer.SEL_STREAM`
+--	Character selection.
+-- - `buffer.SEL_RECTANGLE`
+--	Rectangular selection.
+-- - `buffer.SEL_LINES`
+--	Line selection.
+-- - `buffer.SEL_THIN`
+--	Thin rectangular selection. This is the mode after a rectangular selection has been
+--	typed into and ensures that no characters are selected.
 --
---   When set, caret movement alters the selected text until this field is set again to the
---   same value or until `buffer:cancel()` is called.
+--	When set, caret movement alters the selected text until this field is set again to the
+--	same value or until `buffer:cancel()` is called.
 -- @field selection_mode
 
 --- Line selection.
@@ -823,13 +823,12 @@
 --- The modifier key used in combination with a mouse drag in order to create a rectangular
 -- selection.
 --
---   - `view.MOD_CTRL`
---     The "Control" modifier key.
---   - `view.MOD_ALT`
---     The "Alt" modifier key.
---   - `view.MOD_SUPER`
---     The "Super" modifier key, usually defined as the left "Windows" or
---     "Command" key.
+-- - `view.MOD_CTRL`
+--	The "Control" modifier key.
+-- - `view.MOD_ALT`
+--	The "Alt" modifier key.
+-- - `view.MOD_SUPER`
+--	The "Super" modifier key, usually defined as the left "Windows" or "Command" key.
 --
 -- The default value is `view.MOD_ALT`.
 -- @field view.rectangular_selection_modifier
@@ -891,16 +890,16 @@
 
 --- The bit-mask of search flags used by `buffer:search_in_target()`.
 --
---   - `buffer.FIND_WHOLEWORD`
---     Match search text only when it is surrounded by non-word characters.
---   - `buffer.FIND_MATCHCASE`
---     Match search text case sensitively.
---   - `buffer.FIND_WORDSTART`
---     Match search text only when the previous character is a non-word character.
---   - `buffer.FIND_REGEXP`
---     Interpret search text as a regular expression.
+-- - `buffer.FIND_WHOLEWORD`
+--	Match search text only when it is surrounded by non-word characters.
+-- - `buffer.FIND_MATCHCASE`
+--	Match search text case sensitively.
+-- - `buffer.FIND_WORDSTART`
+--	Match search text only when the previous character is a non-word character.
+-- - `buffer.FIND_REGEXP`
+--	Interpret search text as a regular expression.
 --
---   The default value is `0`.
+--	The default value is `0`.
 -- @field search_flags
 
 --- Match search text only when it is surrounded by non-word characters.
@@ -987,7 +986,7 @@
 -- Returns `1` if the position is less than 1 or greater than `buffer.length + 1`.
 -- @param pos The position in *buffer* to get the relative position from.
 -- @param n The relative number of characters to get the position for. A negative number
---   indicates a position before while a positive number indicates a position after.
+--	indicates a position before while a positive number indicates a position after.
 -- @return number
 -- @function position_relative
 
@@ -996,10 +995,10 @@
 -- a non-word character to its left and *only_word_chars* is `false`, returns the last word
 -- character's position.
 -- @param pos The position in *buffer* of the word.
--- @param only_word_chars If `true`, stops searching at the first non-word character in
---   the search direction. Otherwise, the first character in the search direction sets the
---   type of the search as word or non-word and the search stops at the first non-matching
---   character. Searches are also terminated by the start or end of the buffer.
+-- @param only_word_chars If `true`, stops searching at the first non-word character in the
+--	search direction. Otherwise, the first character in the search direction sets the
+--	type of the search as word or non-word and the search stops at the first non-matching
+--	character. Searches are also terminated by the start or end of the buffer.
 -- @function word_start_position
 
 --- Returns the position of the end of the word at position *pos*.
@@ -1007,10 +1006,10 @@
 -- non-word character to its right and *only_word_chars* is `false`, returns the first word
 -- character's position.
 -- @param pos The position in *buffer* of the word.
--- @param only_word_chars If `true`, stops searching at the first non-word character in
---   the search direction. Otherwise, the first character in the search direction sets the
---   type of the search as word or non-word and the search stops at the first non-matching
---   character. Searches are also terminated by the start or end of the buffer.
+-- @param only_word_chars If `true`, stops searching at the first non-word character in the
+--	search direction. Otherwise, the first character in the search direction sets the
+--	type of the search as word or non-word and the search stops at the first non-matching
+--	character. Searches are also terminated by the start or end of the buffer.
 -- @function word_end_position
 
 --- Returns the position at the beginning of line number *line*.
@@ -1135,20 +1134,20 @@
 
 --- List of margin types for margin numbers from `1` to `view.margins` (`5` by default).
 --
---   - `view.MARGIN_SYMBOL`
---     A marker symbol margin.
---   - `view.MARGIN_NUMBER`
---     A line number margin.
---   - `view.MARGIN_BACK`
---     A marker symbol margin whose background color matches the default text background color.
---   - `view.MARGIN_FORE`
---     A marker symbol margin whose background color matches the default text foreground color.
---   - `view.MARGIN_TEXT`
---     A text margin.
---   - `view.MARGIN_RTEXT`
---     A right-justified text margin.
---   - `view.MARGIN_COLOR`
---     A marker symbol margin whose background color is configurable.
+-- - `view.MARGIN_SYMBOL`
+--	A marker symbol margin.
+-- - `view.MARGIN_NUMBER`
+--	A line number margin.
+-- - `view.MARGIN_BACK`
+--	A marker symbol margin whose background color matches the default text background color.
+-- - `view.MARGIN_FORE`
+--	A marker symbol margin whose background color matches the default text foreground color.
+-- - `view.MARGIN_TEXT`
+--	A text margin.
+-- - `view.MARGIN_RTEXT`
+--	A right-justified text margin.
+-- - `view.MARGIN_COLOR`
+--	A marker symbol margin whose background color is configurable.
 --
 -- The default value for the first margin is `view.MARGIN_NUMBER`, followed by `view.MARGIN_SYMBOL`
 -- for the rest.
@@ -1194,10 +1193,10 @@
 
 --- List of cursor types shown over margin numbers from `1` to `view.margins` (`5` by default).
 --
---   - `view.CURSORARROW`
---     Normal arrow cursor.
---   - `view.CURSORREVERSEARROW`
---     Reversed arrow cursor.
+-- - `view.CURSORARROW`
+--	Normal arrow cursor.
+-- - `view.CURSORREVERSEARROW`
+--	Reversed arrow cursor.
 --
 -- The default values are `view.CURSORARROW`.
 -- @table view.margin_cursor_n
@@ -1215,11 +1214,11 @@
 
 --- A bit-mask of margin option settings.
 --
---   - `view.MARGINOPTION_NONE`
---     None.
---   - `view.MARGINOPTION_SUBLINESELECT`
---     Select only a wrapped line's sub-line (rather than the entire line) when the line number
---     margin is clicked.
+-- - `view.MARGINOPTION_NONE`
+--	None.
+-- - `view.MARGINOPTION_SUBLINESELECT`
+--	Select only a wrapped line's sub-line (rather than the entire line) when the line number
+--	margin is clicked.
 --
 -- The default value is `view.MARGINOPTION_NONE`.
 -- @field view.margin_options
@@ -1371,11 +1370,11 @@
 -- symbol margins next to lines marked with *marker*.
 -- @param marker The marker number in the range of `1` to `32` to define RGBA data *pixels* for.
 -- @param pixels The string sequence of 4 byte pixel values starting with the pixels for the
---   top line, with the leftmost pixel first, then continuing with the pixels for subsequent
---   lines. There is no gap between lines for alignment reasons. Each pixel consists of, in
---   order, a red byte, a green byte, a blue byte and an alpha byte. The color bytes are not
---   premultiplied by the alpha value. That is, a fully red pixel that is 25% opaque will be
---   `[FF, 00, 00, 3F]`.
+--	top line, with the leftmost pixel first, then continuing with the pixels for subsequent
+--	lines. There is no gap between lines for alignment reasons. Each pixel consists of, in
+--	order, a red byte, a green byte, a blue byte and an alpha byte. The color bytes are not
+--	premultiplied by the alpha value. That is, a fully red pixel that is 25% opaque will be
+--	`[FF, 00, 00, 3F]`.
 -- @see view.rgba_image_scale
 -- @function view:marker_define_rgba_image
 
@@ -1392,7 +1391,7 @@
 -- up to marker number 32.
 -- @param line The line number to add the markers on.
 -- @param marker_mask The mask of markers to set. Set the first bit to set marker 1, the second
---   bit for marker 2 and so on.
+--	bit for marker 2 and so on.
 -- @function marker_add_set
 
 --- Deletes the marker with handle *handle* returned by `buffer:marker_add()`.
@@ -1403,13 +1402,13 @@
 -- If *marker* is `-1`, deletes all markers from *line*.
 -- @param line The line number to delete the marker on.
 -- @param marker The marker number in the range of `1` to `32` to delete from *line*, or `-1`
---   to delete all markers from the line.
+--	to delete all markers from the line.
 -- @function marker_delete
 
 --- Deletes marker number *marker*, in the range of `1` to `32`, from any line that has it.
 -- If *marker* is `-1`, deletes all markers from all lines.
 -- @param marker The marker number in the range of `1` to `32` to delete from all lines, or
---   `-1` to delete all markers from all lines.
+--	`-1` to delete all markers from all lines.
 -- @function marker_delete_all
 
 --- Returns the line number of the line that contains the marker with handle *handle* (returned
@@ -1424,7 +1423,7 @@
 -- The first bit is set if marker 1 is set, the second bit for marker 2, etc., up to marker 32.
 -- @param line The start line to search from.
 -- @param marker_mask The mask of markers to find. Set the first bit to find marker 1, the
---   second bit for marker 2, and so on.
+--	second bit for marker 2, and so on.
 -- @return number
 -- @function marker_next
 
@@ -1434,7 +1433,7 @@
 -- The first bit is set if marker 1 is set, the second bit for marker 2, etc., up to marker 32.
 -- @param line The start line to search from.
 -- @param marker_mask The mask of markers to find. Set the first bit to find marker 1, the
---   second bit for marker 2, and so on.
+--	second bit for marker 2, and so on.
 -- @return number
 -- @function marker_previous
 
@@ -1497,12 +1496,12 @@
 --- Table of layer modes for drawing markers in the text area (not the margin) for marker
 -- numbers from `1` to `32`.
 --
---   - `view.LAYER_BASE`
---     Draw markers opaquely on the background.
---   - `view.LAYER_UNDER_TEXT`
---     Draw markers translucently under text.
---   - `view.LAYER_OVER_TEXT`
---     Draw markers translucently over text.
+-- - `view.LAYER_BASE`
+--	Draw markers opaquely on the background.
+-- - `view.LAYER_UNDER_TEXT`
+--	Draw markers translucently under text.
+-- - `view.LAYER_OVER_TEXT`
+--	Draw markers translucently over text.
 --
 -- The default values are `view.LAYER_BASE`.
 -- @table view.marker_layer
@@ -1541,14 +1540,14 @@
 
 --- The annotation visibility mode.
 --
---   - `view.ANNOTATION_HIDDEN`
---     Annotations are invisible.
---   - `view.ANNOTATION_STANDARD`
---     Draw annotations left-justified with no decoration.
---   - `view.ANNOTATION_BOXED`
---     Indent annotations to match the annotated text and outline them with a box.
---   - `view.ANNOTATION_INDENTED`
---     Indent non-decorated annotations to match the annotated text.
+-- - `view.ANNOTATION_HIDDEN`
+--	Annotations are invisible.
+-- - `view.ANNOTATION_STANDARD`
+--	Draw annotations left-justified with no decoration.
+-- - `view.ANNOTATION_BOXED`
+--	Indent annotations to match the annotated text and outline them with a box.
+-- - `view.ANNOTATION_INDENTED`
+--	Indent non-decorated annotations to match the annotated text.
 --
 -- The default value is `view.ANNOTATION_BOXED`.
 -- @field view.annotation_visible
@@ -1567,30 +1566,30 @@
 
 --- The EOL annotation visibility mode.
 --
---   - `view.EOLANNOTATION_HIDDEN`
---     EOL Annotations are invisible.
---   - `view.EOLANNOTATION_STANDARD`
---     Draw EOL annotations no decoration.
---   - `view.EOLANNOTATION_BOXED`
---     Draw EOL annotations outlined with a box.
---   - `view.EOLANNOTATION_STADIUM`
---     Draw EOL annotations outline with curved ends.
---   - `view.EOLANNOTATION_FLAT_CIRCLE`
---     Draw EOL annotations outline with a flat left end and curved right end.
---   - `view.EOLANNOTATION_ANGLE_CIRCLE`
---     Draw EOL annotations outline with an angled left end and curved right end.
---   - `view.EOLANNOTATION_CIRCLE_FLAT`
---     Draw EOL annotations outline with a curved left end and flat right end.
---   - `view.EOLANNOTATION_FLATS`
---     Draw EOL annotations outline with a flat ends.
---   - `view.EOLANNOTATION_ANGLE_FLAT`
---     Draw EOL annotations outline with an angled left end and flat right end.
---   - `view.EOLANNOTATION_CIRCLE_ANGLE`
---     Draw EOL annotations outline with a curved left end and angled right end.
---   - `view.EOLANNOTATION_FLAT_ANGLE`
---     Draw EOL annotations outline with a flat left end and angled right end.
---   - `view.EOLANNOTATION_ANGLES`
---     Draw EOL annotations outline with angled ends.
+-- - `view.EOLANNOTATION_HIDDEN`
+--	EOL Annotations are invisible.
+-- - `view.EOLANNOTATION_STANDARD`
+--	Draw EOL annotations no decoration.
+-- - `view.EOLANNOTATION_BOXED`
+--	Draw EOL annotations outlined with a box.
+-- - `view.EOLANNOTATION_STADIUM`
+--	Draw EOL annotations outline with curved ends.
+-- - `view.EOLANNOTATION_FLAT_CIRCLE`
+--	Draw EOL annotations outline with a flat left end and curved right end.
+-- - `view.EOLANNOTATION_ANGLE_CIRCLE`
+--	Draw EOL annotations outline with an angled left end and curved right end.
+-- - `view.EOLANNOTATION_CIRCLE_FLAT`
+--	Draw EOL annotations outline with a curved left end and flat right end.
+-- - `view.EOLANNOTATION_FLATS`
+--	Draw EOL annotations outline with a flat ends.
+-- - `view.EOLANNOTATION_ANGLE_FLAT`
+--	Draw EOL annotations outline with an angled left end and flat right end.
+-- - `view.EOLANNOTATION_CIRCLE_ANGLE`
+--	Draw EOL annotations outline with a curved left end and angled right end.
+-- - `view.EOLANNOTATION_FLAT_ANGLE`
+--	Draw EOL annotations outline with a flat left end and angled right end.
+-- - `view.EOLANNOTATION_ANGLES`
+--	Draw EOL annotations outline with angled ends.
 --
 -- All annotations are drawn with the same shape. The default value is
 -- `view.EOLANNOTATION_BOXED`.
@@ -1631,62 +1630,60 @@
 
 --- List of styles for indicator numbers from `1` to `32`.
 --
---   - `view.INDIC_PLAIN`
---     An underline.
---   - `view.INDIC_SQUIGGLE`
---     A squiggly underline 3 pixels in height.
---   - `view.INDIC_TT`
---     An underline of small 'T' shapes.
---   - `view.INDIC_DIAGONAL`
---     An underline of diagonal hatches.
---   - `view.INDIC_STRIKE`
---     Strike out.
---   - `view.INDIC_HIDDEN`
---     Invisible.
---   - `view.INDIC_BOX`
---     A bounding box.
---   - `view.INDIC_ROUNDBOX`
---     A translucent box with rounded corners around the text. Use `view.indic_alpha` and
---     `view.indic_outline_alpha` to set the fill and outline transparency, respectively.
---     Their default values are `30` and `50`.
---   - `view.INDIC_STRAIGHTBOX`
---     Similar to `view.INDIC_ROUNDBOX` but with sharp corners.
---   - `view.INDIC_DASH`
---     A dashed underline.
---   - `view.INDIC_DOTS`
---     A dotted underline.
---   - `view.INDIC_SQUIGGLELOW`
---     A squiggly underline 2 pixels in height.
---   - `view.INDIC_DOTBOX`
---     Similar to `view.INDIC_STRAIGHTBOX` but with a dotted outline.
---     Translucency alternates between `view.indic_alpha` and `view.indic_outline_alpha`
---     starting with the top-left pixel.
---   - `view.INDIC_SQUIGGLEPIXMAP`
---     Identical to `view.INDIC_SQUIGGLE` but draws faster by using a pixmap instead of multiple
---     line segments.
---   - `view.INDIC_COMPOSITIONTHICK`
---     A 2-pixel thick underline at the bottom of the line inset by 1 pixel on on either
---     side. Similar in appearance to the target in Asian language input composition.
---   - `view.INDIC_COMPOSITIONTHIN`
---     A 1-pixel thick underline just before the bottom of the line inset by 1 pixel on either
---     side. Similar in appearance to the non-target ranges in Asian language input composition.
---   - `view.INDIC_FULLBOX`
---     Similar to `view.INDIC_STRAIGHTBOX` but extends to the top of its line, potentially
---     touching any similar indicators on the line above.
---   - `view.INDIC_TEXTFORE`
---     Changes the color of text to an indicator's foreground color.
---   - `view.INDIC_POINT`
---     A triangle below the start of the indicator range.
---   - `view.INDIC_POINTCHARACTER`
---     A triangle below the center of the first character of the indicator
---     range.
---   - `view.INDIC_GRADIENT`
---     A box with a vertical gradient from solid on top to transparent on bottom.
---   - `view.INDIC_GRADIENTCENTER`
---     A box with a centered gradient from solid in the middle to transparent on the top
---     and bottom.
---   - `view.INDIC_POINT_TOP`
---     A triangle above the start of the indicator range.
+-- - `view.INDIC_PLAIN`
+--	An underline.
+-- - `view.INDIC_SQUIGGLE`
+--	A squiggly underline 3 pixels in height.
+-- - `view.INDIC_TT`
+--	An underline of small 'T' shapes.
+-- - `view.INDIC_DIAGONAL`
+--	An underline of diagonal hatches.
+-- - `view.INDIC_STRIKE`
+--	Strike out.
+-- - `view.INDIC_HIDDEN`
+--	Invisible.
+-- - `view.INDIC_BOX`
+--	A bounding box.
+-- - `view.INDIC_ROUNDBOX`
+--	A translucent box with rounded corners around the text. Use `view.indic_alpha` and
+--	`view.indic_outline_alpha` to set the fill and outline transparency, respectively.
+--	Their default values are `30` and `50`.
+-- - `view.INDIC_STRAIGHTBOX`
+--	Similar to `view.INDIC_ROUNDBOX` but with sharp corners.
+-- - `view.INDIC_DASH`
+--	A dashed underline.
+-- - `view.INDIC_DOTS`
+--	A dotted underline.
+-- - `view.INDIC_SQUIGGLELOW`
+--	A squiggly underline 2 pixels in height.
+-- - `view.INDIC_DOTBOX`
+--	Similar to `view.INDIC_STRAIGHTBOX` but with a dotted outline. Translucency alternates
+--	between `view.indic_alpha` and `view.indic_outline_alpha` starting with the top-left pixel.
+-- - `view.INDIC_SQUIGGLEPIXMAP`
+--	Identical to `view.INDIC_SQUIGGLE` but draws faster by using a pixmap instead of multiple
+--	line segments.
+-- - `view.INDIC_COMPOSITIONTHICK`
+--	A 2-pixel thick underline at the bottom of the line inset by 1 pixel on on either
+--	side. Similar in appearance to the target in Asian language input composition.
+-- - `view.INDIC_COMPOSITIONTHIN`
+--	A 1-pixel thick underline just before the bottom of the line inset by 1 pixel on either
+--	side. Similar in appearance to the non-target ranges in Asian language input composition.
+-- - `view.INDIC_FULLBOX`
+--	Similar to `view.INDIC_STRAIGHTBOX` but extends to the top of its line, potentially
+--	touching any similar indicators on the line above.
+-- - `view.INDIC_TEXTFORE`
+--	Changes the color of text to an indicator's foreground color.
+-- - `view.INDIC_POINT`
+--	A triangle below the start of the indicator range.
+-- - `view.INDIC_POINTCHARACTER`
+--	A triangle below the center of the first character of the indicator range.
+-- - `view.INDIC_GRADIENT`
+--	A box with a vertical gradient from solid on top to transparent on bottom.
+-- - `view.INDIC_GRADIENTCENTER`
+--	A box with a centered gradient from solid in the middle to transparent on the top
+--	and bottom.
+-- - `view.INDIC_POINT_TOP`
+--	A triangle above the start of the indicator range.
 --
 -- Use `_SCINTILLA.new_indic_number()` for custom indicators.
 -- Changing an indicator's style resets that indicator's hover style.
@@ -1862,14 +1859,14 @@
 
 --- The order setting for autocompletion and user lists.
 --
---   - `buffer.ORDER_PRESORTED`
---     Lists passed to `buffer:auto_c_show()` are in sorted, alphabetical order.
---   - `buffer.ORDER_PERFORMSORT`
---     Sort autocompletion lists passed to `buffer:auto_c_show()`.
---   - `buffer.ORDER_CUSTOM`
---     Lists passed to `buffer:auto_c_show()` are already in a custom order.
+-- - `buffer.ORDER_PRESORTED`
+--	Lists passed to `buffer:auto_c_show()` are in sorted, alphabetical order.
+-- - `buffer.ORDER_PERFORMSORT`
+--	Sort autocompletion lists passed to `buffer:auto_c_show()`.
+-- - `buffer.ORDER_CUSTOM`
+--	Lists passed to `buffer:auto_c_show()` are already in a custom order.
 --
---   The default value is `buffer.ORDER_PRESORTED`.
+--	The default value is `buffer.ORDER_PRESORTED`.
 -- @field auto_c_order
 
 --- Lists passed to `buffer:auto_c_show()` are already in a custom order.
@@ -1887,7 +1884,7 @@
 -- The sorted order of *items* (`buffer.auto_c_order`) must have already been defined.
 -- @param len_entered The number of characters before the caret used to provide the context.
 -- @param items The sorted string of words to show, separated by `buffer.auto_c_separator`
---   characters (initially spaces).
+--	characters (initially spaces).
 -- @see textadept.editing.autocompleters
 -- @see textadept.editing.autocomplete
 -- @function auto_c_show
@@ -1899,7 +1896,7 @@
 -- the selection.
 -- @param id The list identifier number greater than zero to use.
 -- @param items The sorted string of words to show, separated by `buffer.auto_c_separator`
---   characters (initially spaces).
+--	characters (initially spaces).
 -- @see _SCINTILLA.new_user_list_type
 -- @function user_list_show
 
@@ -1942,7 +1939,7 @@
 -- autocompletion or user list.
 -- The default set is empty.
 -- @param chars The string of characters that cancel autocompletion. This string is empty
---   by default.
+--	by default.
 -- @function auto_c_stops
 
 --- Automatically cancel an autocompletion or user list when no entries match typed text.
@@ -1962,12 +1959,12 @@
 --- The behavior mode for a case insensitive autocompletion or user list when
 -- `buffer.auto_c_ignore_case` is `true`.
 --
---   - `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`
---     Prefer to select case-sensitive matches.
---   - `buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE`
---     No preference.
+-- - `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`
+--	Prefer to select case-sensitive matches.
+-- - `buffer.CASEINSENSITIVEBEHAVIOR_IGNORECASE`
+--	No preference.
 --
---   The default value is `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`.
+--	The default value is `buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`.
 -- @field auto_c_case_insensitive_behavior
 
 --- No preference.
@@ -1990,12 +1987,12 @@
 
 --- The multiple selection autocomplete mode.
 --
---   - `buffer.MULTIAUTOC_ONCE`
---     Autocomplete into only the main selection.
---   - `buffer.MULTIAUTOC_EACH`
---     Autocomplete into all selections.
+-- - `buffer.MULTIAUTOC_ONCE`
+--	Autocomplete into only the main selection.
+-- - `buffer.MULTIAUTOC_EACH`
+--	Autocomplete into all selections.
 --
---   The default value is `buffer.MULTIAUTOC_EACH`.
+--	The default value is `buffer.MULTIAUTOC_EACH`.
 -- @field auto_c_multi
 
 --- Autocomplete into all selections.
@@ -2121,9 +2118,9 @@
 -- @param line The line number in *view* to set the fold state for.
 -- @param action The fold action to perform. Valid values are:
 --
---   - `view.FOLDACTION_CONTRACT`
---   - `view.FOLDACTION_EXPAND`
---   - `view.FOLDACTION_TOGGLE`
+-- - `view.FOLDACTION_CONTRACT`
+-- - `view.FOLDACTION_EXPAND`
+-- - `view.FOLDACTION_TOGGLE`
 -- @function view:fold_line
 
 --- @field view.FOLDACTION_CONTRACT
@@ -2137,19 +2134,19 @@
 -- @param line The line number in *view* to set the fold states for.
 -- @param action The fold action to perform. Valid values are:
 --
---   - `view.FOLDACTION_CONTRACT`
---   - `view.FOLDACTION_EXPAND`
---   - `view.FOLDACTION_TOGGLE`
+-- - `view.FOLDACTION_CONTRACT`
+-- - `view.FOLDACTION_EXPAND`
+-- - `view.FOLDACTION_TOGGLE`
 -- @function view:fold_children
 
 --- Contracts, expands, or toggles all fold points, depending on *action*.
 -- When toggling, the state of the first fold point determines whether to expand or contract.
 -- @param action The fold action to perform. Valid values are:
 --
---   - `view.FOLDACTION_CONTRACT`
---   - `view.FOLDACTION_EXPAND`
---   - `view.FOLDACTION_TOGGLE`
---   - `view.FOLDACTION_CONTRACT_EVERY_LEVEL`
+-- - `view.FOLDACTION_CONTRACT`
+-- - `view.FOLDACTION_EXPAND`
+-- - `view.FOLDACTION_TOGGLE`
+-- - `view.FOLDACTION_CONTRACT_EVERY_LEVEL`
 -- @function view:fold_all
 
 --- Hides the range of lines between line numbers *start_line* to *end_line*.
@@ -2184,12 +2181,12 @@
 --- List of fold level bit-masks per line number.
 -- Fold level masks comprise of an integer level combined with any of the following bit flags:
 --
---   - `buffer.FOLDLEVELBASE`
---     The initial fold level.
---   - `buffer.FOLDLEVELWHITEFLAG`
---     The line is blank.
---   - `buffer.FOLDLEVELHEADERFLAG`
---     The line is a header, or fold point.
+-- - `buffer.FOLDLEVELBASE`
+--	The initial fold level.
+-- - `buffer.FOLDLEVELWHITEFLAG`
+--	The line is blank.
+-- - `buffer.FOLDLEVELHEADERFLAG`
+--	The line is a header, or fold point.
 -- @table fold_level
 
 --- The initial fold level.
@@ -2309,14 +2306,14 @@
 -- Changing the current mode does not convert any of the buffer's existing end of line
 -- characters. Use `buffer:convert_eols()` to do so.
 --
---   - `buffer.EOL_CRLF`
---     Carriage return with line feed ("\r\n").
---   - `buffer.EOL_CR`
---     Carriage return ("\r").
---   - `buffer.EOL_LF`
---     Line feed ("\n").
+-- - `buffer.EOL_CRLF`
+--	Carriage return with line feed ("\r\n").
+-- - `buffer.EOL_CR`
+--	Carriage return ("\r").
+-- - `buffer.EOL_LF`
+--	Line feed ("\n").
 --
---   The default value is `buffer.EOL_CRLF` on Windows platforms, `buffer.EOL_LF` otherwise.
+--	The default value is `buffer.EOL_CRLF` on Windows platforms, `buffer.EOL_LF` otherwise.
 -- @field eol_mode
 
 --- Carriage return ("\r").
@@ -2330,9 +2327,9 @@
 
 --- Converts all end of line characters to those in end of line mode *mode*.
 -- @param mode The end of line mode to convert to. Valid values are:
---   - `buffer.EOL_CRLF`
---   - `buffer.EOL_CR`
---   - `buffer.EOL_LF`
+-- - `buffer.EOL_CRLF`
+-- - `buffer.EOL_CR`
+-- - `buffer.EOL_LF`
 -- @function convert_eols
 
 --- Configure Character Settings.
@@ -2370,7 +2367,7 @@
 --- Removes the alternate string representation for character *char* (which may be a multi-byte
 -- character).
 -- @param char The string character in `view.representation` to remove the alternate string
---   representation for.
+--	representation for.
 -- @function view:clear_representation
 
 --- Removes all alternate string representations of characters.
@@ -2378,12 +2375,12 @@
 
 --- Map of characters to their string representation's appearance.
 --
---   - `view.REPRESENTATION_PLAIN`
---     Draw the representation with no decoration.
---   - `view.REPRESENTATION_BLOB`
---     Draw the representation within a rounded rectangle and an inverted color.
---   - `view.REPRESENTATION_COLOR`
---     Draw the representation using the color set in `view.representation_color`.
+-- - `view.REPRESENTATION_PLAIN`
+--	Draw the representation with no decoration.
+-- - `view.REPRESENTATION_BLOB`
+--	Draw the representation within a rounded rectangle and an inverted color.
+-- - `view.REPRESENTATION_COLOR`
+--	Draw the representation using the color set in `view.representation_color`.
 --
 -- The default values are `view.REPRESENTATION_BLOB`.
 -- @table view.representation_appearance
@@ -2412,10 +2409,10 @@
 -- User themes override Textadept's default themes when they have the same name. If *name*
 -- contains slashes, it is assumed to be an absolute path to a theme instead of a theme name.
 -- @param[opt] name Optional string name or absolute path of a theme to set. The default value
---   is either 'light' or 'dark', depending on whether light mode or dark mode, respectively,
---   is enabled.
+--	is either 'light' or 'dark', depending on whether light mode or dark mode, respectively,
+--	is enabled.
 -- @param[opt] env Optional table of global variables themes can utilize to override default
---   settings such as font and size.
+--	settings such as font and size.
 -- @usage view:set_theme{font = 'Monospace', size = 12}
 -- @usage view:set_theme('my_theme', {font = 'Monospace', size = 12})
 -- @function view:set_theme
@@ -2438,39 +2435,39 @@
 --
 -- Style names consist of the following default names as well as the tag names defined by lexers.
 --
---   - `view.STYLE_DEFAULT`: The default style all others are based on.
---   - `view.STYLE_LINENUMBER`: The line number margin style.
---   - `view.STYLE_CONTROLCHAR`: The style of control character blocks.
---   - `view.STYLE_INDENTGUIDE`: The style of indentation guides.
---   - `view.STYLE_CALLTIP`: The style of call tip text. Only the `font`, `size`, `fore`, and
---     `back` style definition fields are supported.
---   - `view.STYLE_FOLDDISPLAYTEXT`: The style of text displayed next to folded lines.
---   - `lexer.ATTRIBUTE`, `lexer.BOLD`, `lexer.CLASS`, `lexer.CODE`, `lexer.COMMENT`,
---     `lexer.CONSTANT`, `lexer.CONSTANT_BUILTIN`, `lexer.EMBEDDED`, `lexer.ERROR`,
---     `lexer.FUNCTION`, `lexer.FUNCTION_BUILTIN`, `lexer.FUNCTION_METHOD`, `lexer.IDENTIFIER`,
---     `lexer.ITALIC`, `lexer.KEYWORD`, `lexer.LABEL`, `lexer.LINK`, `lexer.NUMBER`,
---     `lexer.OPERATOR`, `lexer.PREPROCESSOR`, `lexer.REFERENCE`, `lexer.REGEX`, `lexer.STRING`,
---     `lexer.TAG`, `lexer.TYPE`, `lexer.UNDERLINE`, `lexer.VARIABLE`, `lexer.VARIABLE_BUILTIN`:
---     Some tag names used by lexers. Some lexers may define more tag names, so this list is
---     not exhaustive.
+-- - `view.STYLE_DEFAULT`: The default style all others are based on.
+-- - `view.STYLE_LINENUMBER`: The line number margin style.
+-- - `view.STYLE_CONTROLCHAR`: The style of control character blocks.
+-- - `view.STYLE_INDENTGUIDE`: The style of indentation guides.
+-- - `view.STYLE_CALLTIP`: The style of call tip text. Only the `font`, `size`, `fore`, and
+--	`back` style definition fields are supported.
+-- - `view.STYLE_FOLDDISPLAYTEXT`: The style of text displayed next to folded lines.
+-- - `lexer.ATTRIBUTE`, `lexer.BOLD`, `lexer.CLASS`, `lexer.CODE`, `lexer.COMMENT`,
+--	`lexer.CONSTANT`, `lexer.CONSTANT_BUILTIN`, `lexer.EMBEDDED`, `lexer.ERROR`,
+--	`lexer.FUNCTION`, `lexer.FUNCTION_BUILTIN`, `lexer.FUNCTION_METHOD`, `lexer.IDENTIFIER`,
+--	`lexer.ITALIC`, `lexer.KEYWORD`, `lexer.LABEL`, `lexer.LINK`, `lexer.NUMBER`,
+--	`lexer.OPERATOR`, `lexer.PREPROCESSOR`, `lexer.REFERENCE`, `lexer.REGEX`, `lexer.STRING`,
+--	`lexer.TAG`, `lexer.TYPE`, `lexer.UNDERLINE`, `lexer.VARIABLE`, `lexer.VARIABLE_BUILTIN`:
+--	Some tag names used by lexers. Some lexers may define more tag names, so this list is
+--	not exhaustive.
 --
 -- Style definition tables may contain the following fields:
 --
---   - `font`: String font name.
---   - `size`: Integer font size.
---   - `bold`: Whether or not the font face is bold. The default value is `false`.
---   - `weight`: Integer weight or boldness of a font, between 1 and 999.
---   - `italic`: Whether or not the font face is italic. The default value is `false`.
---   - `underline`: Whether or not the font face is underlined. The default value is `false`.
---   - `fore`: Font face foreground color in "0xBBGGRR" format.
---   - `back`: Font face background color in "0xBBGGRR" format.
---   - `eol_filled`: Whether or not the background color extends to the end of the line. The
---     default value is `false`.
---   - `case`: Font case: `view.CASE_UPPER` for upper, `view.CASE_LOWER` for lower, and
---     `view.CASE_MIXED` for normal, mixed case. The default value is `view.CASE_MIXED`.
---   - `visible`: Whether or not the text is visible. The default value is `true`.
---   - `changeable`: Whether the text is changeable instead of read-only. The default value is
---     `true`.
+-- - `font`: String font name.
+-- - `size`: Integer font size.
+-- - `bold`: Whether or not the font face is bold. The default value is `false`.
+-- - `weight`: Integer weight or boldness of a font, between 1 and 999.
+-- - `italic`: Whether or not the font face is italic. The default value is `false`.
+-- - `underline`: Whether or not the font face is underlined. The default value is `false`.
+-- - `fore`: Font face foreground color in "0xBBGGRR" format.
+-- - `back`: Font face background color in "0xBBGGRR" format.
+-- - `eol_filled`: Whether or not the background color extends to the end of the line. The
+--	default value is `false`.
+-- - `case`: Font case: `view.CASE_UPPER` for upper, `view.CASE_LOWER` for lower, and
+--	`view.CASE_MIXED` for normal, mixed case. The default value is `view.CASE_MIXED`.
+-- - `visible`: Whether or not the text is visible. The default value is `true`.
+-- - `changeable`: Whether the text is changeable instead of read-only. The default value is
+--	`true`.
 -- @table view.styles
 
 --- @field view.STYLE_CALLTIP
@@ -2536,14 +2533,14 @@
 
 --- List of letter case modes of text for style numbers from `1` to `256`.
 --
---   - `view.CASE_MIXED`
---     Display text in normally.
---   - `view.CASE_UPPER`
---     Display text in upper case.
---   - `view.CASE_LOWER`
---     Display text in lower case.
---   - `view.CASE_CAMEL`
---     Display text in camel case.
+-- - `view.CASE_MIXED`
+--	Display text in normally.
+-- - `view.CASE_UPPER`
+--	Display text in upper case.
+-- - `view.CASE_LOWER`
+--	Display text in lower case.
+-- - `view.CASE_CAMEL`
+--	Display text in camel case.
 --
 -- The default values are `view.CASE_MIXED`.
 -- @table view.style_case
@@ -2576,38 +2573,38 @@
 --- Map of colors in "0xAABBGGRR" format for UI element identifiers.
 -- If the alpha byte is omitted, it is assumed to be `0xFF` (opaque).
 --
---   - `view.ELEMENT_SELECTION_TEXT`
---     The main selection's text color.
---   - `view.ELEMENT_SELECTION_BACK`
---     The main selection's background color.
---   - `view.ELEMENT_SELECTION_ADDITIONAL_TEXT`
---     The text color of additional selections.
---   - `view.ELEMENT_SELECTION_ADDITIONAL_BACK`
---     The background color of additional selections.
---   - `view.ELEMENT_SELECTION_SECONDARY_TEXT`
---     The text color of selections when another window contains the primary selection.
---     This is only available on Linux.
---   - `view.ELEMENT_SELECTION_SECONDARY_BACK`
---     The background color of selections when another window contains the primary selection.
---     This is only available on Linux.
---   - `view.ELEMENT_SELECTION_INACTIVE_TEXT`
---     The text color of selections when another window has focus.
---   - `view.ELEMENT_SELECTION_INACTIVE_BACK`
---     The background color of selections when another window has focus.
---   - `view.ELEMENT_CARET`
---     The main selection's caret color.
---   - `view.ELEMENT_CARET_ADDITIONAL`
---     The caret color of additional selections.
---   - `view.ELEMENT_CARET_LINE_BACK`
---     The background color of the line that contains the caret.
---   - `view.ELEMENT_WHITE_SPACE`
---     The color of visible whitespace.
---   - `view.ELEMENT_WHITE_SPACE_BACK`
---     The background color of visible whitespace.
---   - `view.ELEMENT_FOLD_LINE`
---     The color of fold lines.
---   - `view.ELEMENT_HIDDEN_LINE`
---     The color of lines shown in place of hidden lines.
+-- - `view.ELEMENT_SELECTION_TEXT`
+--	The main selection's text color.
+-- - `view.ELEMENT_SELECTION_BACK`
+--	The main selection's background color.
+-- - `view.ELEMENT_SELECTION_ADDITIONAL_TEXT`
+--	The text color of additional selections.
+-- - `view.ELEMENT_SELECTION_ADDITIONAL_BACK`
+--	The background color of additional selections.
+-- - `view.ELEMENT_SELECTION_SECONDARY_TEXT`
+--	The text color of selections when another window contains the primary selection.
+--	This is only available on Linux.
+-- - `view.ELEMENT_SELECTION_SECONDARY_BACK`
+--	The background color of selections when another window contains the primary selection.
+--	This is only available on Linux.
+-- - `view.ELEMENT_SELECTION_INACTIVE_TEXT`
+--	The text color of selections when another window has focus.
+-- - `view.ELEMENT_SELECTION_INACTIVE_BACK`
+--	The background color of selections when another window has focus.
+-- - `view.ELEMENT_CARET`
+--	The main selection's caret color.
+-- - `view.ELEMENT_CARET_ADDITIONAL`
+--	The caret color of additional selections.
+-- - `view.ELEMENT_CARET_LINE_BACK`
+--	The background color of the line that contains the caret.
+-- - `view.ELEMENT_WHITE_SPACE`
+--	The color of visible whitespace.
+-- - `view.ELEMENT_WHITE_SPACE_BACK`
+--	The background color of visible whitespace.
+-- - `view.ELEMENT_FOLD_LINE`
+--	The color of fold lines.
+-- - `view.ELEMENT_HIDDEN_LINE`
+--	The color of lines shown in place of hidden lines.
 -- @table view.element_color
 
 --- The main selection's text color.
@@ -2675,12 +2672,12 @@
 
 --- The layer mode for drawing selections.
 --
---   - `view.LAYER_BASE`
---     Draw selections opaquely on the background.
---   - `view.LAYER_UNDER_TEXT`
---     Draw selections translucently under text.
---   - `view.LAYER_OVER_TEXT`
---     Draw selections translucently over text.
+-- - `view.LAYER_BASE`
+--	Draw selections opaquely on the background.
+-- - `view.LAYER_UNDER_TEXT`
+--	Draw selections translucently under text.
+-- - `view.LAYER_OVER_TEXT`
+--	Draw selections translucently over text.
 --
 -- The default value is `view.LAYER_BASE`.
 -- @field view.selection_layer
@@ -2690,12 +2687,12 @@
 
 --- The caret's visual style.
 --
---   - `view.CARETSTYLE_INVISIBLE`
---     No caret.
---   - `view.CARETSTYLE_LINE`
---     A line caret.
---   - `view.CARETSTYLE_BLOCK`
---     A block caret.
+-- - `view.CARETSTYLE_INVISIBLE`
+--	No caret.
+-- - `view.CARETSTYLE_LINE`
+--	A line caret.
+-- - `view.CARETSTYLE_BLOCK`
+--	A block caret.
 --
 -- Any block setting may be combined with `view.CARETSTYLE_BLOCK_AFTER` via bitwise OR (`|`)
 -- in order to draw the caret after the end of a selection, as opposed to just inside it.
@@ -2738,12 +2735,12 @@
 
 --- The caret line layer mode.
 --
---   - `view.LAYER_BASE`
---     Draw the caret line opaquely on the background.
---   - `view.LAYER_UNDER_TEXT`
---     Draw the caret line translucently under text.
---   - `view.LAYER_OVER_TEXT`
---     Draw the caret line translucently over text.
+-- - `view.LAYER_BASE`
+--	Draw the caret line opaquely on the background.
+-- - `view.LAYER_UNDER_TEXT`
+--	Draw the caret line translucently under text.
+-- - `view.LAYER_OVER_TEXT`
+--	Draw the caret line translucently over text.
 --
 -- The default value is `view.LAYER_BASE`.
 -- @field view.caret_line_layer
@@ -2767,19 +2764,19 @@
 
 --- The virtual space mode.
 --
---   - `buffer.VS_NONE`
---     Disable virtual space.
---   - `buffer.VS_RECTANGULARSELECTION`
---     Enable virtual space only for rectangular selections.
---   - `buffer.VS_USERACCESSIBLE`
---     Enable virtual space.
---   - `buffer.VS_NOWRAPLINESTART`
---     Prevent the caret from wrapping to the previous line via `buffer:char_left()` and
---     `buffer:char_left_extend()`. This option is not restricted to virtual space and should
---     be added to any of the above options.
+-- - `buffer.VS_NONE`
+--	Disable virtual space.
+-- - `buffer.VS_RECTANGULARSELECTION`
+--	Enable virtual space only for rectangular selections.
+-- - `buffer.VS_USERACCESSIBLE`
+--	Enable virtual space.
+-- - `buffer.VS_NOWRAPLINESTART`
+--	Prevent the caret from wrapping to the previous line via `buffer:char_left()` and
+--	`buffer:char_left_extend()`. This option is not restricted to virtual space and should
+--	be added to any of the above options.
 --
---   When virtual space is enabled, the caret may move into the space past end of line characters.
---   The default value is `buffer.VS_NONE`.
+--	When virtual space is enabled, the caret may move into the space past end of line characters.
+--	The default value is `buffer.VS_NONE`.
 -- @field virtual_space_options
 
 --- Disable virtual space.
@@ -2809,14 +2806,14 @@
 
 --- The whitespace visibility mode.
 --
---   - `view.WS_INVISIBLE`
---     Whitespace is invisible.
---   - `view.WS_VISIBLEALWAYS`
---     Display all space characters as dots and tab characters as arrows.
---   - `view.WS_VISIBLEAFTERINDENT`
---     Display only non-indentation spaces and tabs as dots and arrows.
---   - `view.WS_VISIBLEONLYININDENT`
---     Display only indentation spaces and tabs as dots and arrows.
+-- - `view.WS_INVISIBLE`
+--	Whitespace is invisible.
+-- - `view.WS_VISIBLEALWAYS`
+--	Display all space characters as dots and tab characters as arrows.
+-- - `view.WS_VISIBLEAFTERINDENT`
+--	Display only non-indentation spaces and tabs as dots and arrows.
+-- - `view.WS_VISIBLEONLYININDENT`
+--	Display only indentation spaces and tabs as dots and arrows.
 --
 -- The default value is `view.WS_INVISIBLE`.
 -- @field view.view_ws
@@ -2839,10 +2836,10 @@
 
 --- The draw mode of visible tabs.
 --
---   - `view.TD_LONGARROW`
---     An arrow that stretches until the tabstop.
---   - `view.TD_STRIKEOUT`
---     A horizontal line that stretches until the tabstop.
+-- - `view.TD_LONGARROW`
+--	An arrow that stretches until the tabstop.
+-- - `view.TD_STRIKEOUT`
+--	A horizontal line that stretches until the tabstop.
 --
 -- The default value is `view.TD_LONGARROW`.
 -- @field view.tab_draw_mode
@@ -2895,7 +2892,7 @@
 --- Defines scrolling policy bit-mask *policy* as the policy for keeping the caret *x* number
 -- of pixels away from the horizontal margins.
 -- @param policy The combination of `view.CARET_SLOP`, `view.CARET_STRICT`, `view.CARET_EVEN`,
---   and `view.CARET_JUMPS` policy flags to set.
+--	and `view.CARET_JUMPS` policy flags to set.
 -- @param x The number of pixels from the horizontal margins to keep the caret.
 -- @function view:set_x_caret_policy
 
@@ -2910,7 +2907,7 @@
 --- Defines scrolling policy bit-mask *policy* as the policy for keeping the caret *y* number
 -- of lines away from the vertical margins.
 -- @param policy The combination of `view.CARET_SLOP`, `view.CARET_STRICT`, `view.CARET_EVEN`,
---   and `view.CARET_JUMPS` policy flags to set.
+--	and `view.CARET_JUMPS` policy flags to set.
 -- @param y The number of lines from the vertical margins to keep the caret.
 -- @function view:set_y_caret_policy
 
@@ -2919,7 +2916,7 @@
 -- hidden or folded lines.
 -- It is similar in operation to `view:set_y_caret_policy()`.
 -- @param policy The combination of `view.VISIBLE_SLOP` and `view.VISIBLE_STRICT` policy flags
---   to set.
+--	to set.
 -- @param y The number of lines from the vertical margins to keep the caret.
 -- @function view:set_visible_policy
 
@@ -2932,14 +2929,14 @@
 
 --- The display cursor type.
 --
---   - `view.CURSORNORMAL`
---     The text insert cursor.
---   - `view.CURSORARROW`
---     The arrow cursor.
---   - `view.CURSORWAIT`
---     The wait cursor.
---   - `view.CURSORREVERSEARROW`
---     The reversed arrow cursor.
+-- - `view.CURSORNORMAL`
+--	The text insert cursor.
+-- - `view.CURSORARROW`
+--	The arrow cursor.
+-- - `view.CURSORWAIT`
+--	The wait cursor.
+-- - `view.CURSORREVERSEARROW`
+--	The reversed arrow cursor.
 --
 -- The default value is `view.CURSORNORMAL`.
 -- @field view.cursor
@@ -2963,14 +2960,14 @@
 
 --- Long line wrap mode.
 --
---   - `view.WRAP_NONE`
---     Long lines are not wrapped.
---   - `view.WRAP_WORD`
---     Wrap long lines at word (and style) boundaries.
---   - `view.WRAP_CHAR`
---     Wrap long lines at character boundaries.
---   - `view.WRAP_WHITESPACE`
---     Wrap long lines at word boundaries (ignoring style boundaries).
+-- - `view.WRAP_NONE`
+--	Long lines are not wrapped.
+-- - `view.WRAP_WORD`
+--	Wrap long lines at word (and style) boundaries.
+-- - `view.WRAP_CHAR`
+--	Wrap long lines at character boundaries.
+-- - `view.WRAP_WHITESPACE`
+--	Wrap long lines at word boundaries (ignoring style boundaries).
 --
 -- The default value is `view.WRAP_NONE`.
 -- @field view.wrap_mode
@@ -2989,14 +2986,14 @@
 
 --- The wrapped line visual flag display mode.
 --
---   - `view.WRAPVISUALFLAG_NONE`
---     No visual flags.
---   - `view.WRAPVISUALFLAG_END`
---     Show a visual flag at the end of a wrapped line.
---   - `view.WRAPVISUALFLAG_START`
---     Show a visual flag at the beginning of a sub-line.
---   - `view.WRAPVISUALFLAG_MARGIN`
---     Show a visual flag in the sub-line's line number margin.
+-- - `view.WRAPVISUALFLAG_NONE`
+--	No visual flags.
+-- - `view.WRAPVISUALFLAG_END`
+--	Show a visual flag at the end of a wrapped line.
+-- - `view.WRAPVISUALFLAG_START`
+--	Show a visual flag at the beginning of a sub-line.
+-- - `view.WRAPVISUALFLAG_MARGIN`
+--	Show a visual flag in the sub-line's line number margin.
 --
 -- The default value is `view.WRAPVISUALFLAG_NONE`.
 -- @field view.wrap_visual_flags
@@ -3015,12 +3012,12 @@
 
 --- The wrapped line visual flag location.
 --
---   - `view.WRAPVISUALFLAGLOC_DEFAULT`
---     Draw a visual flag near the view's right margin.
---   - `view.WRAPVISUALFLAGLOC_END_BY_TEXT`
---     Draw a visual flag near text at the end of a wrapped line.
---   - `view.WRAPVISUALFLAGLOC_START_BY_TEXT`
---     Draw a visual flag near text at the beginning of a subline.
+-- - `view.WRAPVISUALFLAGLOC_DEFAULT`
+--	Draw a visual flag near the view's right margin.
+-- - `view.WRAPVISUALFLAGLOC_END_BY_TEXT`
+--	Draw a visual flag near text at the end of a wrapped line.
+-- - `view.WRAPVISUALFLAGLOC_START_BY_TEXT`
+--	Draw a visual flag near text at the beginning of a subline.
 --
 -- The default value is `view.WRAPVISUALFLAGLOC_DEFAULT`.
 -- @field view.wrap_visual_flags_location
@@ -3041,14 +3038,14 @@
 
 --- The wrapped line indent mode.
 --
---   - `view.WRAPINDENT_FIXED`
---     Indent wrapped lines by `view.wrap_start_indent`.
---   - `view.WRAPINDENT_SAME`
---     Indent wrapped lines the same amount as the first line.
---   - `view.WRAPINDENT_INDENT`
---     Indent wrapped lines one more level than the level of the first line.
---   - `view.WRAPINDENT_DEEPINDENT`
---     Indent wrapped lines two more levels than the level of the first line.
+-- - `view.WRAPINDENT_FIXED`
+--	Indent wrapped lines by `view.wrap_start_indent`.
+-- - `view.WRAPINDENT_SAME`
+--	Indent wrapped lines the same amount as the first line.
+-- - `view.WRAPINDENT_INDENT`
+--	Indent wrapped lines one more level than the level of the first line.
+-- - `view.WRAPINDENT_DEEPINDENT`
+--	Indent wrapped lines two more levels than the level of the first line.
 --
 -- The default value is `view.WRAPINDENT_FIXED`.
 -- @field view.wrap_indent_mode
@@ -3089,15 +3086,15 @@
 
 --- The long line mark mode.
 --
---   - `view.EDGE_NONE`
---     Long lines are not marked.
---   - `view.EDGE_LINE`
---     Draw a single vertical line whose color is `view.edge_color` at column `view.edge_column`.
---   - `view.EDGE_BACKGROUND`
---     Change the background color of text after column `view.edge_column` to `view.edge_color`.
---   - `view.EDGE_MULTILINE`
---     Draw vertical lines whose colors and columns are defined by calls to
---     `view:multi_edge_add_line()`.
+-- - `view.EDGE_NONE`
+--	Long lines are not marked.
+-- - `view.EDGE_LINE`
+--	Draw a single vertical line whose color is `view.edge_color` at column `view.edge_column`.
+-- - `view.EDGE_BACKGROUND`
+--	Change the background color of text after column `view.edge_column` to `view.edge_color`.
+-- - `view.EDGE_MULTILINE`
+--	Draw vertical lines whose colors and columns are defined by calls to
+--	`view:multi_edge_add_line()`.
 -- @field view.edge_mode
 
 --- Change the background color of text after column `view.edge_column` to `view.edge_color`.
@@ -3151,22 +3148,22 @@
 
 --- Bit-mask of folding lines to draw in the buffer. (Read-only)
 --
---   - `view.FOLDFLAG_NONE`
---     Do not draw folding lines.
---   - `view.FOLDFLAG_LINEBEFORE_EXPANDED`
---     Draw lines above expanded folds.
---   - `view.FOLDFLAG_LINEBEFORE_CONTRACTED`
---     Draw lines above collapsed folds.
---   - `view.FOLDFLAG_LINEAFTER_EXPANDED`
---     Draw lines below expanded folds.
---   - `view.FOLDFLAG_LINEAFTER_CONTRACTED`
---     Draw lines below collapsed folds.
---   - `view.FOLDFLAG_LEVELNUMBERS`
---     Show hexadecimal fold levels in line margins.
---     This option cannot be combined with `view.FOLDFLAG_LINESTATE`.
---   - `view.FOLDFLAG_LINESTATE`
---     Show line state in line margins.
---     This option cannot be combined with `view.FOLDFLAG_LEVELNUMBERS`.
+-- - `view.FOLDFLAG_NONE`
+--	Do not draw folding lines.
+-- - `view.FOLDFLAG_LINEBEFORE_EXPANDED`
+--	Draw lines above expanded folds.
+-- - `view.FOLDFLAG_LINEBEFORE_CONTRACTED`
+--	Draw lines above collapsed folds.
+-- - `view.FOLDFLAG_LINEAFTER_EXPANDED`
+--	Draw lines below expanded folds.
+-- - `view.FOLDFLAG_LINEAFTER_CONTRACTED`
+--	Draw lines below collapsed folds.
+-- - `view.FOLDFLAG_LEVELNUMBERS`
+--	Show hexadecimal fold levels in line margins.
+--	This option cannot be combined with `view.FOLDFLAG_LINESTATE`.
+-- - `view.FOLDFLAG_LINESTATE`
+--	Show line state in line margins.
+--	This option cannot be combined with `view.FOLDFLAG_LEVELNUMBERS`.
 --
 -- The default value is `view.FOLDFLAG_LINEAFTER_CONTRACTED` in the GUI version, and
 -- `view.FOLDFLAG_NONE` in the terminal version.
@@ -3188,12 +3185,12 @@
 
 --- The fold display text mode.
 --
---   - `view.FOLDDISPLAYTEXT_HIDDEN`
---     Fold display text is not shown.
---   - `view.FOLDDISPLAYTEXT_STANDARD`
---     Fold display text is shown with no decoration.
---   - `view.FOLDDISPLAYTEXT_BOXED`
---     Fold display text is shown outlined with a box.
+-- - `view.FOLDDISPLAYTEXT_HIDDEN`
+--	Fold display text is not shown.
+-- - `view.FOLDDISPLAYTEXT_STANDARD`
+--	Fold display text is shown with no decoration.
+-- - `view.FOLDDISPLAYTEXT_BOXED`
+--	Fold display text is shown outlined with a box.
 --
 -- The default value is `view.FOLDDISPLAYTEXT_BOXED`.
 -- @field view.fold_display_text_style
@@ -3247,16 +3244,16 @@
 -- Indentation guides are dotted vertical lines that appear within indentation whitespace at
 -- each level of indentation.
 --
---   - `view.IV_NONE`
---     Does not draw any guides.
---   - `view.IV_REAL`
---     Draw guides only within indentation whitespace.
---   - `view.IV_LOOKFORWARD`
---     Draw guides beyond the current line up to the next non-empty line's indentation level,
---     but with an additional level if the previous non-empty line is a fold point.
---   - `view.IV_LOOKBOTH`
---     Draw guides beyond the current line up to either the indentation level of the previous
---     or next non-empty line, whichever is greater.
+-- - `view.IV_NONE`
+--	Does not draw any guides.
+-- - `view.IV_REAL`
+--	Draw guides only within indentation whitespace.
+-- - `view.IV_LOOKFORWARD`
+--	Draw guides beyond the current line up to the next non-empty line's indentation level,
+--	but with an additional level if the previous non-empty line is a fold point.
+-- - `view.IV_LOOKBOTH`
+--	Draw guides beyond the current line up to either the indentation level of the previous
+--	or next non-empty line, whichever is greater.
 --
 -- The default value is `view.IV_LOOKBOTH` in the GUI version, and `view.IV_NONE` in the
 -- terminal version.
@@ -3285,7 +3282,7 @@
 
 --- Associates string lexer name *name* or the auto-detected lexer name with the buffer.
 -- @param[opt] name Optional string lexer name to set. If `nil`, attempts to auto-detect the
---   buffer's lexer.
+--	buffer's lexer.
 -- @usage buffer:set_lexer('lexer_name')
 -- @see lexer.detect_extensions
 -- @see lexer.detect_patterns
@@ -3295,7 +3292,7 @@
 -- If *current* is `true`, returns the name of the lexer under the caret in a multiple-language
 -- lexer.
 -- @param current Whether or not to get the lexer at the current caret position in multi-language
---   lexers. The default is `false` and returns the parent lexer.
+--	lexers. The default is `false` and returns the parent lexer.
 -- @function get_lexer
 
 --- The buffer's lexer name. (Read-only)
@@ -3314,7 +3311,7 @@
 -- highlighting or incorrect fold points.
 -- @param start_pos The start position of the range of text in *buffer* to process.
 -- @param end_pos The end position of the range of text in *buffer* to process, or `-1` to
---   process from *start_pos* to the end of *buffer*.
+--	process from *start_pos* to the end of *buffer*.
 -- @function colorize
 
 --- Clears all styling and folding information.
@@ -3382,17 +3379,17 @@
 --- The idle styling mode.
 -- This mode has no effect when `view.wrap_mode` is on.
 --
---   - `view.IDLESTYLING_NONE`
---     Style all the currently visible text before displaying it.
---   - `view.IDLESTYLING_TOVISIBLE`
---     Style some text before displaying it and then style the rest incrementally in the
---     background as an idle-time task.
---   - `view.IDLESTYLING_AFTERVISIBLE`
---     Style text after the currently visible portion in the background.
---   - `view.IDLESTYLING_ALL`
---     Style text both before and after the visible text in the background.
+-- - `view.IDLESTYLING_NONE`
+--	Style all the currently visible text before displaying it.
+-- - `view.IDLESTYLING_TOVISIBLE`
+--	Style some text before displaying it and then style the rest incrementally in the
+--	background as an idle-time task.
+-- - `view.IDLESTYLING_AFTERVISIBLE`
+--	Style text after the currently visible portion in the background.
+-- - `view.IDLESTYLING_ALL`
+--	Style text both before and after the visible text in the background.
 --
---   The default value is `view.IDLESTYLING_ALL`.
+--	The default value is `view.IDLESTYLING_ALL`.
 -- @field view.idle_styling
 
 --- @field view.IDLESTYLING_NONE
@@ -3440,190 +3437,190 @@
 -- @function delete
 
 -- Unused Fields.
---   - accessibility
---   - annotation_style_offset
---   - annotation_styles
---   - automatic_fold
---   - buffered_draw
---   - call_tip_back
---   - call_tip_fore
---   - caret_line_visible
---   - change_history
---   - character_category_optimization
---   - character_pointer
---   - code_page
---   - command_events
---   - control_char_symbol
---   - direct_function
---   - direct_pointer
---   - direct_status_function
---   - distance_to_secondary_styles
---   - doc_pointer
---   - eol_annotation_style_offset
---   - focus
---   - font_quality
---   - gap_position
---   - hotspot_active_underline
---   - hotspot_single_line
---   - identifier
---   - identifiers
---   - ime_interaction
---   - indic_flags
---   - indicator_value
---   - key_words
---   - layout_cache
---   - lexer
---   - line_character_index
---   - line_end_types_active
---   - line_end_types_allowed
---   - line_end_types_supported
---   - line_state
---   - margin_style_offset
---   - margin_styles
---   - max_line_state
---   - mod_event_mask
---   - mouse_down_captures
---   - paste_convert_endings
---   - phases_draw
---   - position_cache
---   - primary_style_from_style
---   - print_color_mode
---   - print_magnification
---   - print_wrap_mode
---   - property
---   - property_int
---   - selection_hidden
---   - status
---   - style_character_set
---   - style_check_monospaced
---   - style_from_sub_style
---   - style_hotspot
---   - style_index_at
---   - style_size_fractional
---   - style_weight
---   - sub_style_bases
---   - sub_styles_length
---   - sub_styles_start
---   - supports_feature
---   - tab_minimum_width
---   - technology
---   - two_phase_draw
---   - undo_collection
---   - INDICATOR_CONTAINER
---   - MOD_NORM
---   - CP_UTF8
---   - LASTSTEPINUNDOREDO
---   - MAX_MARGIN
---   - MODEVENTMASKALL
---   - MOD_BEFOREDELETE
---   - MOD_BEFOREINSERT
---   - MOD_CHANGEANNOTATION
---   - MOD_CHANGEFOLD
---   - MOD_CHANGEINDICATOR
---   - MOD_CHANGELINESTATE
---   - MOD_CHANGEMARGIN
---   - MOD_CHANGEMARKER
---   - MOD_CHANGESTYLE
---   - MOD_CONTAINER
---   - MOD_DELETETEXT
---   - MOD_INSERTCHECK
---   - MOD_INSERTTEXT
---   - MOD_LEXERSTATE
---   - MULTILINEUNDOREDO
---   - MULTISTEPUNDOREDO
---   - PERFORMED_REDO
---   - PERFORMED_UNDO
---   - PERFORMED_USER
---   - STARTACTION
---   - STYLE_LASTPREDEFINED
+-- - accessibility
+-- - annotation_style_offset
+-- - annotation_styles
+-- - automatic_fold
+-- - buffered_draw
+-- - call_tip_back
+-- - call_tip_fore
+-- - caret_line_visible
+-- - change_history
+-- - character_category_optimization
+-- - character_pointer
+-- - code_page
+-- - command_events
+-- - control_char_symbol
+-- - direct_function
+-- - direct_pointer
+-- - direct_status_function
+-- - distance_to_secondary_styles
+-- - doc_pointer
+-- - eol_annotation_style_offset
+-- - focus
+-- - font_quality
+-- - gap_position
+-- - hotspot_active_underline
+-- - hotspot_single_line
+-- - identifier
+-- - identifiers
+-- - ime_interaction
+-- - indic_flags
+-- - indicator_value
+-- - key_words
+-- - layout_cache
+-- - lexer
+-- - line_character_index
+-- - line_end_types_active
+-- - line_end_types_allowed
+-- - line_end_types_supported
+-- - line_state
+-- - margin_style_offset
+-- - margin_styles
+-- - max_line_state
+-- - mod_event_mask
+-- - mouse_down_captures
+-- - paste_convert_endings
+-- - phases_draw
+-- - position_cache
+-- - primary_style_from_style
+-- - print_color_mode
+-- - print_magnification
+-- - print_wrap_mode
+-- - property
+-- - property_int
+-- - selection_hidden
+-- - status
+-- - style_character_set
+-- - style_check_monospaced
+-- - style_from_sub_style
+-- - style_hotspot
+-- - style_index_at
+-- - style_size_fractional
+-- - style_weight
+-- - sub_style_bases
+-- - sub_styles_length
+-- - sub_styles_start
+-- - supports_feature
+-- - tab_minimum_width
+-- - technology
+-- - two_phase_draw
+-- - undo_collection
+-- - INDICATOR_CONTAINER
+-- - MOD_NORM
+-- - CP_UTF8
+-- - LASTSTEPINUNDOREDO
+-- - MAX_MARGIN
+-- - MODEVENTMASKALL
+-- - MOD_BEFOREDELETE
+-- - MOD_BEFOREINSERT
+-- - MOD_CHANGEANNOTATION
+-- - MOD_CHANGEFOLD
+-- - MOD_CHANGEINDICATOR
+-- - MOD_CHANGELINESTATE
+-- - MOD_CHANGEMARGIN
+-- - MOD_CHANGEMARKER
+-- - MOD_CHANGESTYLE
+-- - MOD_CONTAINER
+-- - MOD_DELETETEXT
+-- - MOD_INSERTCHECK
+-- - MOD_INSERTTEXT
+-- - MOD_LEXERSTATE
+-- - MULTILINEUNDOREDO
+-- - MULTISTEPUNDOREDO
+-- - PERFORMED_REDO
+-- - PERFORMED_UNDO
+-- - PERFORMED_USER
+-- - STARTACTION
+-- - STYLE_LASTPREDEFINED
 
 -- Unused Functions.
---   - add_ref_document
---   - add_styled_text
---   - add_tab_stop
---   - add_undo_action
---   - allocate
---   - allocate_lines
---   - allocate_extended_styles
---   - allocate_line_character_index
---   - allocate_sub_styles
---   - assign_cmd_key
---   - auto_c_set_options
---   - brace_match_next
---   - can_paste
---   - caret_fore
---   - caret_line_back
---   - caret_line_back_alpha
---   - change_insertion
---   - change_lexer_state
---   - char_position_from_point
---   - char_position_from_point_close
---   - character_category_optimization
---   - clear_all_cmd_keys
---   - clear_cmd_key
---   - clear_selections
---   - clear_tab_stops
---   - copy_allow_line
---   - count_code_units
---   - create_document
---   - create_loader
---   - describe_property
---   - describe_key_word_sets
---   - description_of_style
---   - encoded_from_utf8
---   - expand_children
---   - find_indicator_flash
---   - find_indicator_hide
---   - find_indicator_show
---   - find_text
---   - find_text_full
---   - form_feed
---   - format_range
---   - format_range_full
---   - free_sub_styles
---   - get_font_locale
---   - get_hotspot_active_back
---   - get_hotspot_active_fore
---   - get_line_sel_end_position
---   - get_line_sel_start_position
---   - get_next_tab_stop
---   - get_range_pointer
---   - get_styled_text
---   - get_styled_text_full
---   - grab_focus
---   - hide_selection
---   - index_position_from_line
---   - indicator_value_at
---   - layout_threads
---   - line_from_index_position
---   - load_lexer_library
---   - mouse_wheel_captures
---   - null
---   - point_x_from_position
---   - point_y_from_position
---   - position_from_point
---   - position_from_point_close
---   - position_relative_code_units
---   - private_lexer_call
---   - property_expanded
---   - property_names
---   - property_type
---   - release_all_extended_styles
---   - release_document
---   - release_line_character_index
---   - replace_target_minimal
---   - sel_alpha
---   - set_font_locale
---   - set_hotspot_active_back
---   - set_hotspot_active_fore
---   - set_length_for_encode
---   - set_sel_back
---   - set_sel_fore
---   - set_styling_ex
---   - start_record
---   - stop_record
---   - style_invisible_representation
---   - tags_of_style
---   - target_as_utf8
---   - text_range_full
---   - use_pop_up
+-- - add_ref_document
+-- - add_styled_text
+-- - add_tab_stop
+-- - add_undo_action
+-- - allocate
+-- - allocate_lines
+-- - allocate_extended_styles
+-- - allocate_line_character_index
+-- - allocate_sub_styles
+-- - assign_cmd_key
+-- - auto_c_set_options
+-- - brace_match_next
+-- - can_paste
+-- - caret_fore
+-- - caret_line_back
+-- - caret_line_back_alpha
+-- - change_insertion
+-- - change_lexer_state
+-- - char_position_from_point
+-- - char_position_from_point_close
+-- - character_category_optimization
+-- - clear_all_cmd_keys
+-- - clear_cmd_key
+-- - clear_selections
+-- - clear_tab_stops
+-- - copy_allow_line
+-- - count_code_units
+-- - create_document
+-- - create_loader
+-- - describe_property
+-- - describe_key_word_sets
+-- - description_of_style
+-- - encoded_from_utf8
+-- - expand_children
+-- - find_indicator_flash
+-- - find_indicator_hide
+-- - find_indicator_show
+-- - find_text
+-- - find_text_full
+-- - form_feed
+-- - format_range
+-- - format_range_full
+-- - free_sub_styles
+-- - get_font_locale
+-- - get_hotspot_active_back
+-- - get_hotspot_active_fore
+-- - get_line_sel_end_position
+-- - get_line_sel_start_position
+-- - get_next_tab_stop
+-- - get_range_pointer
+-- - get_styled_text
+-- - get_styled_text_full
+-- - grab_focus
+-- - hide_selection
+-- - index_position_from_line
+-- - indicator_value_at
+-- - layout_threads
+-- - line_from_index_position
+-- - load_lexer_library
+-- - mouse_wheel_captures
+-- - null
+-- - point_x_from_position
+-- - point_y_from_position
+-- - position_from_point
+-- - position_from_point_close
+-- - position_relative_code_units
+-- - private_lexer_call
+-- - property_expanded
+-- - property_names
+-- - property_type
+-- - release_all_extended_styles
+-- - release_document
+-- - release_line_character_index
+-- - replace_target_minimal
+-- - sel_alpha
+-- - set_font_locale
+-- - set_hotspot_active_back
+-- - set_hotspot_active_fore
+-- - set_length_for_encode
+-- - set_sel_back
+-- - set_sel_fore
+-- - set_styling_ex
+-- - start_record
+-- - stop_record
+-- - style_invisible_representation
+-- - tags_of_style
+-- - target_as_utf8
+-- - text_range_full
+-- - use_pop_up

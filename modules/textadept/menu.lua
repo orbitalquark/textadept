@@ -378,7 +378,7 @@ end
 -- Also assigns key bindings.
 -- @param menu The menu to create a menu from.
 -- @param contextmenu Flag indicating whether or not the menu is a context menu. If so, menu_id
---   offset is 1000. The default value is `false`.
+--	offset is 1000. The default value is `false`.
 -- @return menu that can be passed to `ui.menu()`.
 local function read_menu_table(menu, contextmenu)
 	local ui_menu = {title = menu.title}
@@ -402,7 +402,7 @@ end
 -- *update* is called to update the menu in the UI.
 -- @param menu The menu or table of menus to create a proxy for.
 -- @param update The function to call to update the menu in the UI when a menu item is changed
---   or added.
+--	or added.
 -- @param menubar Used internally to keep track of the top-level menu for calling *update* with.
 local function proxy_menu(menu, update, menubar)
 	local proxy_mt = {
@@ -452,8 +452,8 @@ end
 -- function with its parameters to call when an item is clicked. Menu items may also be sub-menus,
 -- ordered lists of menu items with an additional `title` key for the sub-menu's title text.
 -- @param menubar The table of menu tables to create the menubar from. If `nil`, clears the
---   menubar from view, but keeps it intact in order for `textadept.menu.select_command()`
---   to function properly.
+--	menubar from view, but keeps it intact in order for `textadept.menu.select_command()`
+--	to function properly.
 -- @see ui.menu
 local function set_menubar(menubar)
 	if not menubar then
@@ -479,9 +479,9 @@ proxies.menubar = proxy_menu(default_menubar, function() end)
 -- function with its parameters to call when an item is clicked. Menu items may also be sub-menus,
 -- ordered lists of menu items with an additional `title` key for the sub-menu's title text.
 -- @param[opt] buffer_menu Optional menu table to create the buffer context menu from. If `nil`,
---   uses the default context menu.
+--	uses the default context menu.
 -- @param[opt] tab_menu Optional menu table to create the tabbar context menu from. If `nil`,
---   uses the default tab context menu.
+--	uses the default tab context menu.
 -- @see ui.menu
 local function set_contextmenus(buffer_menu, tab_menu)
 	contextmenu_items = {} -- reset

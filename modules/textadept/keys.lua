@@ -15,15 +15,15 @@
 --
 -- In general, bindings for the terminal version are the same as for Windows/Linux except:
 --
---   - Most `Ctrl+Shift+`*`key`* combinations become `M-^`*`key`* since most terminals recognize
---     few, if any, `Ctrl+Shift` key sequences.
---   - Most `Ctrl+`*`symbol`* combinations become `M-`*`symbol`* since most terminals recognize
---     only a few `Ctrl` combinations with symbol keys.
---   - All `Ctrl+Alt+`*`key`* combinations become `M-`*`key`* except for word part movement
---     keys and those involving `PgDn` and `PgUp`. The former are not supported and the latter
---     use both modifier keys.
---   - `Ctrl+J` and `Ctrl+M` become `M-J` and `M-M`, respectively, because control sequences
---     involving the `J` and `M` keys are often interpreted as involving the Enter key.
+-- - Most `Ctrl+Shift+`*`key`* combinations become `M-^`*`key`* since most terminals recognize
+--	few, if any, `Ctrl+Shift` key sequences.
+-- - Most `Ctrl+`*`symbol`* combinations become `M-`*`symbol`* since most terminals recognize
+--	only a few `Ctrl` combinations with symbol keys.
+-- - All `Ctrl+Alt+`*`key`* combinations become `M-`*`key`* except for word part movement keys
+--	and those involving `PgDn` and `PgUp`. The former are not supported and the latter use
+--	both modifier keys.
+-- - `Ctrl+J` and `Ctrl+M` become `M-J` and `M-M`, respectively, because control sequences
+--	involving the `J` and `M` keys are often interpreted as involving the Enter key.
 --
 -- ### Key Bindings
 --
@@ -270,13 +270,13 @@ local M = {}
 -- Key bindings available depend on your implementation of curses.
 --
 -- For ncurses (Linux and macOS):
---   - The only Control keys recognized are 'ctrl+a'-'ctrl+z', 'ctrl+ ', 'ctrl+\\', 'ctrl+]',
---     'ctrl+^', and 'ctrl+_'.
---   - Control+Shift and Control+Meta+Shift keys are not recognized.
---   - Modifiers for function keys F1-F12 are not recognized.
+-- - The only Control keys recognized are 'ctrl+a'-'ctrl+z', 'ctrl+ ', 'ctrl+\\', 'ctrl+]',
+--	'ctrl+^', and 'ctrl+_'.
+-- - Control+Shift and Control+Meta+Shift keys are not recognized.
+-- - Modifiers for function keys F1-F12 are not recognized.
 -- For pdcurses (Windows):
---   - Many Control+Symbol keys are not recognized, but most Control+Shift+Symbol keys are.
---   - Ctrl+Meta+Symbol keys are not recognized.
+-- - Many Control+Symbol keys are not recognized, but most Control+Shift+Symbol keys are.
+-- - Ctrl+Meta+Symbol keys are not recognized.
 --
 -- Unassigned keys:
 -- ctrl: t\s
@@ -292,7 +292,7 @@ local function m(path) return textadept.menu.menubar[path][2] end
 
 --- Starts a new line below or above the current one.
 -- @param above Whether or not to start a new line above the current one. The default value is
---   `false.`
+--	`false.`
 local function start_new_line(above)
 	local line = buffer:line_from_position(buffer.current_pos)
 	if above then buffer:line_up() end
@@ -423,7 +423,7 @@ local bindings = {
 	-- TODO: m('Tools/Snippets/Complete Trigger Word')
 	-- Other.
 	-- TODO: m('Tools/Show Style')
-	
+
 	-- Buffer.
 	[m('Buffer/Next Buffer')] = {
 		{'ctrl+\t', 'ctrl+pgdn'}, {'ctrl+\t', 'cmd+pgdn'}, WIN32 and 'ctrl+\t' or 'meta+pgdn'
@@ -485,7 +485,7 @@ local bindings = {
 	-- Unbound keys are handled by Scintilla, but when playing back a macro, this is not possible.
 	-- Define some useful default key bindings so Scintilla does not have to handle them. Note
 	-- that Scintilla still will handle some keys.
-	
+
 	-- Built-in movement commands.
 	[buffer.line_down] = {'down', {'down', 'ctrl+n'}, 'down'},
 	[buffer.line_down_extend] = {'shift+down', {'shift+down', 'ctrl+N'}, 'shift+down'},

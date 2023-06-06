@@ -19,7 +19,7 @@ lfs.default_filter = {--[[Extensions]]'!.a','!.bmp','!.bz2','!.class','!.dll','!
 -- @param n
 -- @param include_dirs
 -- @param seen Utility table that holds directories seen. If there is a duplicate, stop walking
---   down that path (it's probably a recursive symlink).
+--	down that path (it's probably a recursive symlink).
 -- @param level Utility value indicating the directory level this function is at.
 local function walk(dir, filter, n, include_dirs, seen, level)
 	if not seen then seen = {} end
@@ -68,12 +68,12 @@ end
 -- separator ('[/\\]' is not needed).
 -- @param dir The directory path to iterate over.
 -- @param[opt] filter Optional filter for files and directories to include and exclude. The
---   default value is `lfs.default_filter`.
+--	default value is `lfs.default_filter`.
 -- @param[opt] n Optional maximum number of directory levels to descend into. The default value
---   is `nil`, which indicates no limit.
+--	is `nil`, which indicates no limit.
 -- @param[opt] include_dirs Optional flag indicating whether or not to yield directory names too.
---   Directory names are passed with a trailing '/' or '\', depending on the current platform.
---   The default value is `false`.
+--	Directory names are passed with a trailing '/' or '\', depending on the current platform.
+--	The default value is `false`.
 function lfs.walk(dir, filter, n, include_dirs)
 	dir = assert_type(dir, 'string', 1):match('^(..-)[/\\]?$')
 	if not assert_type(filter, 'string/table/nil', 2) then filter = lfs.default_filter end

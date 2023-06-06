@@ -61,7 +61,7 @@ const char *get_charset();
  * tab bar and Scintilla views separate.
  *
  * @param get_view Function to call when the platform is ready to accept the first Scintilla view.
- *   The platform should be ready to create tab for that view at the very least.
+ *	The platform should be ready to create tab for that view at the very least.
  */
 void new_window(SciObject *(*get_view)());
 /** Sets the title of the Textadept window to the given text. */
@@ -78,8 +78,8 @@ void set_size(int width, int height);
 /** Asks the platform to create and return a new Scintilla view that calls the given callback
  * function with Scintilla notifications.
  * @param notified Scintilla notification function. It may be NULL. The int and void* parameters
- *   are unused and may be passed 0 and `NULL`, respectively. Only the view and notification
- *   parameters are needed.
+ *	are unused and may be passed 0 and `NULL`, respectively. Only the view and notification
+ *	parameters are needed.
  * @return Scintilla view
  */
 SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, void *));
@@ -317,22 +317,23 @@ int list_dialog(DialogOptions opts, lua_State *L);
  * While the platform is allowed to push values to the given Lua state, it may not pop off any
  * values it did not push.
  * @param proc Platform-specific process identifier. This pre-allocated chunk of memory should
- *   be filled in by the platform (i.e. its implementing struct's members). The size of `proc`
- *   is defined by `process_size()`.
+ *	be filled in by the platform (i.e. its implementing struct's members). The size of
+ *	`proc` is defined by `process_size()`.
  * @param index Lua stack index that contains `proc` in case the platform needs to store or
- *   refer to it.
+ *	refer to it.
  * @param cmd The command line string of the child process to spawn. The platform is expected
- *   to perform any processing needed to launch the process.
+ *	to perform any processing needed to launch the process.
  * @param cwd Optional directory to spawn the process in.
  * @param envi Optional stack index of a Lua table that contains a list of "key=value" environment
- *   strings. The platform is expected to read from this table in order to create a valid process
- *   environment. If this index is not provided, the child should inherit Textadept's environment.
+ *	strings. The platform is expected to read from this table in order to create a valid
+ *	process environment. If this index is not provided, the child should inherit Textadept's
+ *	environment.
  * @param monitor_stdout Whether or not the platform should notify Textadept of any process
- *   stdout as it comes in via `process_output()`.
+ *	stdout as it comes in via `process_output()`.
  * @param monitor_stderr Whether or not the platform should notify Textadept of any process
- *   stderr as it comes in via `process_output()`.
+ *	stderr as it comes in via `process_output()`.
  * @param error A message that describes the error that occurred if this function returns
- *   `false`. This pointer will not be freed -- it is expected to be a stored message.
+ *	`false`. This pointer will not be freed -- it is expected to be a stored message.
  * @return whether or not the child process was successfully spawned
  * @see process_size
  * @see process_output
@@ -355,8 +356,8 @@ void wait_process(Process *proc);
  * The platform should return NULL on EOF. If a read error occurs, it should return NULL and
  * store the error message and code in the given pointers.
  * @param option Like Lua's `io.read()` option: 'l' to read a single line excluding end-of-line
- *   (EOL) characters, 'L' to read a single line including EOL characters, 'a' to read until
- *   the end-of-file (EOF), or 'n' to read `*len` bytes.
+ *	(EOL) characters, 'L' to read a single line including EOL characters, 'a' to read until
+ *	the end-of-file (EOF), or 'n' to read `*len` bytes.
  */
 char *read_process_output(Process *proc, char option, size_t *len, const char **error, int *code);
 

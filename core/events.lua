@@ -8,9 +8,9 @@
 -- event. For example, if you created a module that needs to do something each time Textadept
 -- creates a new buffer, connect a Lua function to the `events.BUFFER_NEW` event:
 --
---     events.connect(events.BUFFER_NEW, function()
---       -- Do something here.
---     end)
+--	events.connect(events.BUFFER_NEW, function()
+--		-- Do something here.
+--	end)
 --
 -- Events themselves are nothing special. You do not have to declare one before using it. Events
 -- are simply strings containing arbitrary event names. When either you or Textadept emits an
@@ -25,7 +25,7 @@ local M = {}
 --- Emitted when macOS tells Textadept to open a file.
 -- Arguments:
 --
---   - *uri*: The UTF-8-encoded URI to open.
+-- - *uri*: The UTF-8-encoded URI to open.
 -- @field APPLEEVENT_ODOC
 
 --- Emitted after deleting a character while an autocompletion or user list is active.
@@ -37,8 +37,8 @@ local M = {}
 --- Emitted after inserting an item from an autocompletion list into the buffer.
 -- Arguments:
 --
---   - *text*: The selection's text.
---   - *position*: The autocompleted word's beginning position.
+-- - *text*: The selection's text.
+-- - *position*: The autocompleted word's beginning position.
 -- @field AUTO_C_COMPLETED
 
 --- Emitted after selecting an item from an autocompletion list, but before inserting that item
@@ -47,16 +47,16 @@ local M = {}
 -- from the event handler.
 -- Arguments:
 --
---   - *text*: The selection's text.
---   - *position*: The autocompleted word's beginning position.
+-- - *text*: The selection's text.
+-- - *position*: The autocompleted word's beginning position.
 -- @field AUTO_C_SELECTION
 
 --- Emitted as items are highlighted in an autocompletion or user list.
 -- Arguments:
 --
---   - *id*: Either the *id* from `buffer:user_list_show()` or `0` for an autocompletion list.
---   - *text*: The current selection's text.
---   - *position*: The position the list was displayed at.
+-- - *id*: Either the *id* from `buffer:user_list_show()` or `0` for an autocompletion list.
+-- - *text*: The current selection's text.
+-- - *position*: The position the list was displayed at.
 -- @field AUTO_C_SELECTION_CHANGE
 
 --- Emitted right after switching to another buffer.
@@ -84,8 +84,8 @@ local M = {}
 -- Emitted by `buffer:delete()`.
 -- Arguments:
 --
---   - *buffer*: Simple representation of the deleted buffer. Buffer operations cannot be
---     performed on it, but fields like `buffer.filename` can be read.
+-- - *buffer*: Simple representation of the deleted buffer. Buffer operations cannot be performed
+--	on it, but fields like `buffer.filename` can be read.
 -- @field BUFFER_DELETED
 
 --- Emitted after creating a new buffer.
@@ -96,14 +96,14 @@ local M = {}
 --- Emitted when clicking on a calltip.
 -- Arguments:
 --
---   - *position*: `1` if the up arrow was clicked, `2` if the down arrow was clicked, and
---     `0` otherwise.
+-- - *position*: `1` if the up arrow was clicked, `2` if the down arrow was clicked, and `0`
+--	otherwise.
 -- @field CALL_TIP_CLICK
 
 --- Emitted after the user types a text character into the buffer.
 -- Arguments:
 --
---   - *code*: The text character's character code.
+-- - *code*: The text character's character code.
 -- @field CHAR_ADDED
 
 --- Emitted when the text in the command entry changes.
@@ -113,52 +113,52 @@ local M = {}
 --- Emitted after double-clicking the mouse button.
 -- Arguments:
 --
---   - *position*: The position double-clicked.
---   - *line*: The line number of the position double-clicked.
---   - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
---     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
---     key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
---     `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
---     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
+-- - *position*: The position double-clicked.
+-- - *line*: The line number of the position double-clicked.
+-- - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
+--	`view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
+--	key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
+--	`view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
+--	reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 -- @field DOUBLE_CLICK
 
 --- Emitted when the terminal version receives an unrecognized CSI sequence.
 -- Arguments:
 --
---   - *cmd*: The 24-bit CSI command value. The lowest byte contains the command byte. The
---     second lowest byte contains the leading byte, if any (e.g. '?'). The third lowest byte
---     contains the intermediate byte, if any (e.g. '$').
---   - *args*: Table of numeric arguments of the CSI sequence.
+-- - *cmd*: The 24-bit CSI command value. The lowest byte contains the command byte. The second
+--	lowest byte contains the leading byte, if any (e.g. '?'). The third lowest byte contains
+--	the intermediate byte, if any (e.g. '$').
+-- - *args*: Table of numeric arguments of the CSI sequence.
 -- @field CSI
 
 --- Emitted after `events.DWELL_START` when the user moves the mouse, presses a key, or scrolls
 -- the view.
 -- Arguments:
 --
---   - *position*: The position closest to *x* and *y*.
---   - *x*: The x-coordinate of the mouse in the view.
---   - *y*: The y-coordinate of the mouse in the view.
+-- - *position*: The position closest to *x* and *y*.
+-- - *x*: The x-coordinate of the mouse in the view.
+-- - *y*: The y-coordinate of the mouse in the view.
 -- @field DWELL_END
 
 --- Emitted when the mouse is stationary for `view.mouse_dwell_time` milliseconds.
 -- Arguments:
 --
---   - *position*: The position closest to *x* and *y*.
---   - *x*: The x-coordinate of the mouse in the view.
---   - *y*: The y-coordinate of the mouse in the view.
+-- - *position*: The position closest to *x* and *y*.
+-- - *x*: The x-coordinate of the mouse in the view.
+-- - *y*: The y-coordinate of the mouse in the view.
 -- @field DWELL_START
 
 --- Emitted when an error occurs.
 -- Arguments:
 --
---   - *text*: The error message text.
+-- - *text*: The error message text.
 -- @field ERROR
 
 --- Emitted to find text via the Find & Replace Pane.
 -- Arguments:
 --
---   - *text*: The text to search for.
---   - *next*: Whether or not to search forward.
+-- - *text*: The text to search for.
+-- - *next*: Whether or not to search forward.
 -- @field FIND
 
 --- Emitted when the text in the "Find" field of the Find & Replace Pane changes.
@@ -172,23 +172,23 @@ local M = {}
 --- Emitted when clicking the mouse on text that has an indicator present.
 -- Arguments:
 --
---   - *position*: The clicked text's position.
---   - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
---     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
---     key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
---     `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
---     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
+-- - *position*: The clicked text's position.
+-- - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
+--	`view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
+--	key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
+--	`view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
+--	reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 -- @field INDICATOR_CLICK
 
 --- Emitted when releasing the mouse after clicking on text that has an indicator present.
 -- Arguments:
 --
---   - *position*: The clicked text's position.
---   - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
---     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
---     key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
---     `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
---     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
+-- - *position*: The clicked text's position.
+-- - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
+--	`view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
+--	key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
+--	`view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
+--	reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 -- @field INDICATOR_RELEASE
 
 --- Emitted after Textadept finishes initializing.
@@ -197,25 +197,25 @@ local M = {}
 --- Emitted when clicking the mouse inside a sensitive margin.
 -- Arguments:
 --
---   - *margin*: The margin number clicked.
---   - *position*: The beginning position of the clicked margin's line.
---   - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
---     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
---     key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
---     `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
---     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
+-- - *margin*: The margin number clicked.
+-- - *position*: The beginning position of the clicked margin's line.
+-- - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
+--	`view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
+--	key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
+--	`view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
+--	reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 -- @field MARGIN_CLICK
 
 --- Emitted after selecting a menu item.
 -- Arguments:
 --
---   - *menu_id*: The numeric ID of the menu item, which was defined in `ui.menu()`.
+-- - *menu_id*: The numeric ID of the menu item, which was defined in `ui.menu()`.
 -- @field MENU_CLICKED
 
 --- Emitted by the GUI version when switching between light mode and dark mode.
 -- Arguments:
 --
---   - *mode*: Either "light" or "dark".
+-- - *mode*: Either "light" or "dark".
 -- @field MODE_CHANGED
 
 --- Emitted by the terminal version for an unhandled mouse event.
@@ -224,12 +224,12 @@ local M = {}
 -- event to a different view that a handler has switched to.)
 -- Arguments:
 --
---   - *event*: The mouse event: `view.MOUSE_PRESS`, `view.MOUSE_DRAG`, or `view.MOUSE_RELEASE`.
---   - *button*: The mouse button number.
---   - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`, `view.MOD_SHIFT`,
---     and `view.MOD_ALT`.
---   - *y*: The y-coordinate of the mouse event, starting from 1.
---   - *x*: The x-coordinate of the mouse event, starting from 1.
+-- - *event*: The mouse event: `view.MOUSE_PRESS`, `view.MOUSE_DRAG`, or `view.MOUSE_RELEASE`.
+-- - *button*: The mouse button number.
+-- - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`, `view.MOD_SHIFT`,
+--	and `view.MOD_ALT`.
+-- - *y*: The y-coordinate of the mouse event, starting from 1.
+-- - *x*: The x-coordinate of the mouse event, starting from 1.
 -- @field MOUSE
 
 --- Emitted when quitting Textadept.
@@ -243,30 +243,30 @@ local M = {}
 --- Emitted to replace selected (found) text.
 -- Arguments:
 --
---   - *text*: The replacement text.
+-- - *text*: The replacement text.
 -- @field REPLACE
 
 --- Emitted to replace all occurrences of found text.
 -- Arguments:
 --
---   - *find_text*: The text to search for.
---   - *repl_text*: The replacement text.
+-- - *find_text*: The text to search for.
+-- - *repl_text*: The replacement text.
 -- @field REPLACE_ALL
 
 --- Emitted after resetting Textadept's Lua state.
 -- Emitted by `reset()`.
 -- Arguments:
 --
---   - *persist*: Table of data persisted by `events.RESET_BEFORE`. All handlers will have
---     access to this same table.
+-- - *persist*: Table of data persisted by `events.RESET_BEFORE`. All handlers will have access
+--	to this same table.
 -- @field RESET_AFTER
 
 --- Emitted before resetting Textadept's Lua state.
 -- Emitted by `reset()`.
 -- Arguments:
 --
---   - *persist*: Table to store persistent data in for use by `events.RESET_AFTER`. All
---     handlers will have access to this same table.
+-- - *persist*: Table to store persistent data in for use by `events.RESET_AFTER`. All handlers
+--	will have access to this same table.
 -- @field RESET_BEFORE
 
 --- Emitted when resuming Textadept from a suspended state.
@@ -289,14 +289,14 @@ local M = {}
 -- Note that Textadept always displays a context menu on right-click.
 -- Arguments:
 --
---   - *index*: The numeric index of the clicked tab.
---   - *button*: The mouse button number that was clicked, either `1` (left button), `2`
---     (middle button), `3` (right button), `4` (wheel up), or `5` (wheel down).
---   - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
---     `view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
---     key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
---     `view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
---     reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
+-- - *index*: The numeric index of the clicked tab.
+-- - *button*: The mouse button number that was clicked, either `1` (left button), `2` (middle
+--	button), `3` (right button), `4` (wheel up), or `5` (wheel down).
+-- - *modifiers*: A bit-mask of any modifier keys held down: `view.MOD_CTRL`,
+--	`view.MOD_SHIFT`, `view.MOD_ALT`, and `view.MOD_META`. On macOS, the Command modifier
+--	key is reported as `view.MOD_CTRL` and Ctrl is `view.MOD_META`. Note: If you set
+--	`view.rectangular_selection_modifier` to `view.MOD_CTRL`, the "Control" modifier is
+--	reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 -- @field TAB_CLICKED
 
 --- Emitted when the user clicks a buffer tab's close button.
@@ -305,7 +305,7 @@ local M = {}
 -- This event is only emitted in the Qt GUI version.
 -- Arguments:
 --
---   - *index*: The numeric index of the clicked tab.
+-- - *index*: The numeric index of the clicked tab.
 -- @field TAB_CLOSE_CLICKED
 
 --- Emitted when Textadept loses focus.
@@ -315,30 +315,30 @@ local M = {}
 --- Emitted after the view is visually updated.
 -- Arguments:
 --
---   - *updated*: A bitmask of changes since the last update.
+-- - *updated*: A bitmask of changes since the last update.
 --
---     + `buffer.UPDATE_CONTENT`
---       Buffer contents, styling, or markers have changed.
---     + `buffer.UPDATE_SELECTION`
---       Buffer selection has changed (including caret movement).
---     + `view.UPDATE_V_SCROLL`
---       View has scrolled vertically.
---     + `view.UPDATE_H_SCROLL`
---       View has scrolled horizontally.
+--	+ `buffer.UPDATE_CONTENT`
+--		Buffer contents, styling, or markers have changed.
+--	+ `buffer.UPDATE_SELECTION`
+--		Buffer selection has changed (including caret movement).
+--	+ `view.UPDATE_V_SCROLL`
+--		View has scrolled vertically.
+--	+ `view.UPDATE_H_SCROLL`
+--		View has scrolled horizontally.
 -- @field UPDATE_UI
 
 --- Emitted after dragging and dropping a URI into a view.
 -- Arguments:
 --
---   - *text*: The UTF-8-encoded URI dropped.
+-- - *text*: The UTF-8-encoded URI dropped.
 -- @field URI_DROPPED
 
 --- Emitted after selecting an item in a user list.
 -- Arguments:
 --
---   - *id*: The *id* from `buffer:user_list_show()`.
---   - *text*: The selection's text.
---   - *position*: The position the list was displayed at.
+-- - *id*: The *id* from `buffer:user_list_show()`.
+-- - *text*: The selection's text.
+-- - *position*: The position the list was displayed at.
 -- @field USER_LIST_SELECTION
 
 --- Emitted after creating a new view.
@@ -408,7 +408,7 @@ local error_emitted = false
 -- @param event The string event name.
 -- @param[opt] ... Arguments passed to the handler.
 -- @return `nil` unless any any handler explicitly returned a non-`nil` value; otherwise returns
---   that value
+--	that value
 -- @usage events.emit('my_event', 'my message')
 function M.emit(event, ...)
 	local event_handlers = handlers[assert_type(event, 'string', 1)]

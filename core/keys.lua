@@ -46,9 +46,9 @@
 --
 -- A command bound to a key sequence is simply a Lua function. For example:
 --
---     keys['ctrl+n'] = buffer.new
---     keys['ctrl+z'] = buffer.undo
---     keys['ctrl+u'] = function() io.quick_open(_USERHOME) end
+--	keys['ctrl+n'] = buffer.new
+--	keys['ctrl+z'] = buffer.undo
+--	keys['ctrl+u'] = function() io.quick_open(_USERHOME) end
 --
 -- Textadept handles `buffer` and `view` references properly in static contexts.
 --
@@ -58,22 +58,22 @@
 -- ignores all key bindings defined outside the mode until the mode is unset. Here is a simple
 -- vi mode example:
 --
---     keys.command_mode = {
---       ['h'] = buffer.char_left,
---       ['j'] = buffer.line_up,
---       ['k'] = buffer.line_down,
---       ['l'] = buffer.char_right,
---       ['i'] = function()
---         keys.mode = nil
---         ui.statusbar_text = 'INSERT MODE'
---       end
---     }
---     keys['esc'] = function() keys.mode = 'command_mode' end
---     events.connect(events.UPDATE_UI, function()
---       if keys.mode == 'command_mode' then return end
---       ui.statusbar_text = 'INSERT MODE'
---     end)
---     keys.mode = 'command_mode' -- default mode
+--	keys.command_mode = {
+--		['h'] = buffer.char_left,
+--		['j'] = buffer.line_up,
+--		['k'] = buffer.line_down,
+--		['l'] = buffer.char_right,
+--		['i'] = function()
+--			keys.mode = nil
+--			ui.statusbar_text = 'INSERT MODE'
+--		end
+--	}
+--	keys['esc'] = function() keys.mode = 'command_mode' end
+--	events.connect(events.UPDATE_UI, function()
+--		if keys.mode == 'command_mode' then return end
+--		ui.statusbar_text = 'INSERT MODE'
+--	end)
+--	keys.mode = 'command_mode' -- default mode
 --
 -- **Warning**: When creating a mode, be sure to define a way to exit the mode, otherwise you
 -- will probably have to restart Textadept.
@@ -84,11 +84,11 @@
 -- key sequence. By default, the `Esc` key cancels a key chain, but you can redefine it via
 -- `keys.CLEAR`. An example key chain looks like:
 --
---     keys['alt+a'] = {
---       a = function1,
---       b = function2,
---       c = {...}
---     }
+--	keys['alt+a'] = {
+--		a = function1,
+--		b = function2,
+--		c = {...}
+--	}
 -- @module keys
 local M = {}
 
@@ -101,7 +101,7 @@ local M = {}
 -- If any handler returns `true`, the key is not handled further (e.g. inserted into the buffer).
 -- Arguments:
 --
---   - *key*: The string representation of the [key sequence](#key-sequences).
+-- - *key*: The string representation of the [key sequence](#key-sequences).
 -- @field _G.events.KEYPRESS
 
 local CTRL, ALT, CMD, SHIFT = 'ctrl+', not CURSES and 'alt+' or 'meta+', 'cmd+', 'shift+'

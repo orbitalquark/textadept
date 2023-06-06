@@ -99,7 +99,7 @@ end
 -- is `true`) and the print buffer is displayed before being printed to.
 -- @param type String type of print buffer.
 -- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
---   They will be printed as tab-separated values.
+--	They will be printed as tab-separated values.
 -- @usage ui.print_to(_L['[Message Buffer]'], message)
 -- @return print buffer
 -- @see print_silent_to
@@ -110,7 +110,7 @@ function ui.print_to(type, ...) return print_to(assert_type(type, 'string', 1), 
 -- Opens a new buffer for printing to if necessary.
 -- @param type String type of print buffer.
 -- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
---   They will be printed as tab-separated values.
+--	They will be printed as tab-separated values.
 -- @return print buffer
 -- @see print_to
 function ui.print_silent_to(type, ...)
@@ -120,7 +120,7 @@ end
 --- Prints the given value(s) to the message buffer, along with a trailing newline.
 -- Opens a new buffer if one has not already been opened for printing messages.
 -- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
---   They will be printed as tab-separated values.
+--	They will be printed as tab-separated values.
 function ui.print(...) ui.print_to(_L['[Message Buffer]'], ...) end
 
 --- Silently prints the given value(s) to the message buffer, and returns that buffer.
@@ -216,14 +216,14 @@ end
 -- the desired view.
 -- @param filename The filename of the buffer to go to.
 -- @param[opt] split Optional flag that indicates whether or not to open the buffer in a split
---   view if there is only one view. The default value is `false`.
+--	view if there is only one view. The default value is `false`.
 -- @param[opt] preferred_view Optional view to open the desired buffer in if the buffer is not
---   visible in any other view.
--- @param[opt] sloppy Optional flag that indicates whether or not to not match *filename*
---   to `buffer.filename` exactly. When `true`, matches *filename* to only the last part of
---   `buffer.filename` This is useful for run and compile commands which output relative filenames
---   and paths instead of full ones and it is likely that the file in question is already open.
---   The default value is `false`.
+--	visible in any other view.
+-- @param[opt] sloppy Optional flag that indicates whether or not to not match *filename* to
+--	`buffer.filename` exactly. When `true`, matches *filename* to only the last part of
+--	`buffer.filename` This is useful for run and compile commands which output relative
+--	filenames and paths instead of full ones and it is likely that the file in question is
+--	already open. The default value is `false`.
 function ui.goto_file(filename, split, preferred_view, sloppy)
 	assert_type(filename, 'string', 1)
 	local patt = string.format('%s%s$', not sloppy and '^' or '',
@@ -459,9 +459,9 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 --- Returns a split table that contains Textadept's current split view structure.
 -- This is primarily used in session saving.
 -- @return table of split views. Each split view entry is a table with 4 fields: `1`, `2`,
---   `vertical`, and `size`. `1` and `2` have values of either nested split view entries or
---   the views themselves; `vertical` is a flag that indicates if the split is vertical or not;
---   and `size` is the integer position of the split resizer.
+--	`vertical`, and `size`. `1` and `2` have values of either nested split view entries or
+--	the views themselves; `vertical` is a flag that indicates if the split is vertical or
+--	not; and `size` is the integer position of the split resizer.
 -- @function get_split_table
 
 --- Shifts to view *view* or the view *view* number of views relative to the current one.
@@ -474,11 +474,11 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 -- `textadept.menu.context_menu`, or `textadept.menu.tab_context_menu` tables.
 -- Emits `events.MENU_CLICKED` when a menu item is selected.
 -- @param menu_table A table defining the menu. It is an ordered list of tables with a string
---   menu item, integer menu ID, and optional keycode and modifier mask. The latter two are
---   used to display key shortcuts in the menu. '&' characters are treated as a menu mnemonics
---   in Qt ('_' is the equivalent in GTK). If the menu item is empty, a menu separator item is
---   created. Submenus are just nested menu-structure tables. Their title text is defined with a
---   `title` key.
+--	menu item, integer menu ID, and optional keycode and modifier mask. The latter two are
+--	used to display key shortcuts in the menu. '&' characters are treated as a menu mnemonics
+--	in Qt ('_' is the equivalent in GTK). If the menu item is empty, a menu separator item
+--	is created. Submenus are just nested menu-structure tables. Their title text is defined
+--	with a `title` key.
 -- @usage ui.menu{ {'_New', 1}, {'_Open', 2}, {''}, {'&Quit', 4} }
 -- @usage ui.menu{ {'_New', 1, string.byte('n'), view.MOD_CTRL} } -- 'Ctrl+N'
 -- @function menu

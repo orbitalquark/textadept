@@ -20,12 +20,12 @@ M.autocomplete_all_words = false
 M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
 --- The word highlight mode.
 --
---   - `textadept.editing.HIGHLIGHT_CURRENT`
---     Automatically highlight all instances of the current word.
---   - `textadept.editing.HIGHLIGHT_SELECTED`
---     Automatically highlight all instances of the selected word.
---   - `textadept.editing.HIGHLIGHT_NONE`
---     Do not automatically highlight words.
+-- - `textadept.editing.HIGHLIGHT_CURRENT`
+--	Automatically highlight all instances of the current word.
+-- - `textadept.editing.HIGHLIGHT_SELECTED`
+--	Automatically highlight all instances of the selected word.
+-- - `textadept.editing.HIGHLIGHT_NONE`
+--	Do not automatically highlight words.
 --
 -- The default value is `textadept.editing.HIGHLIGHT_NONE`.
 M.highlight_words = M.HIGHLIGHT_NONE
@@ -381,7 +381,7 @@ end
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
 -- @param[opt] select Optional flag that indicates whether or not to keep enclosed text
---   selected. The default value is `false`.
+--	selected. The default value is `false`.
 function M.enclose(left, right, select)
 	assert_type(left, 'string', 1)
 	assert_type(right, 'string', 2)
@@ -454,7 +454,7 @@ end
 --- Selects the current word or, if *all* is `true`, all occurrences of the current word.
 -- If a word is already selected, selects the next occurrence as a multiple selection.
 -- @param all Whether or not to select all occurrences of the current word. The default value is
---   `false`.
+--	`false`.
 -- @see buffer.word_chars
 function M.select_word(all)
 	buffer:target_whole_document()
@@ -512,18 +512,18 @@ end
 --
 -- 1. If no text is selected, the entire buffer is used.
 -- 2. If text is selected and spans a single line, is a multiple selection, or is a rectangular
---   selection, only the selected text is used.
+--	selection, only the selected text is used.
 -- 3. If text is selected and spans multiple lines, all text on the lines that have text selected
---   is passed as stdin. However, if the end of the selection is at the beginning of a line,
---   only the line ending delimiters from the previous line are included. The rest of the line
---   is excluded.
+--	is passed as stdin. However, if the end of the selection is at the beginning of a line,
+--	only the line ending delimiters from the previous line are included. The rest of the
+--	line is excluded.
 --
 -- Note: Be careful when using commands that emit stdout while reading stdin (as opposed
 -- to emitting stdout only after stdin is closed).  Input that generates more output
 -- than an OS-specific pipe can hold may hang Textadept. On Linux, this may be 64K. See
 -- `spawn_proc:write()`.
 -- @param command The Linux, macOS, or Windows shell command to filter text through. May
---   contain pipes.
+--	contain pipes.
 function M.filter_through(command)
 	assert_type(command, 'string', 1)
 	assert(not (WIN32 and CURSES), 'not implemented in this environment')
@@ -591,7 +591,7 @@ end
 --- Displays an autocompletion list provided by the autocompleter function associated with string
 -- *name*, and returns `true` if completions were found.
 -- @param name The name of an autocompleter function in the `textadept.editing.autocompleters`
---   table to use for providing autocompletions.
+--	table to use for providing autocompletions.
 -- @see autocompleters
 function M.autocomplete(name)
 	if not M.autocompleters[assert_type(name, 'string', 1)] then return end

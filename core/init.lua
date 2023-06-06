@@ -158,7 +158,7 @@ end, 1)
 --- Whether or not Textadept is running in a terminal.
 -- Curses feature incompatibilities are listed in the [Appendix][].
 --
---   [Appendix]: manual.html#terminal-version-compatibility
+-- [Appendix]: manual.html#terminal-version-compatibility
 -- @field CURSES
 
 --- Textadept's current UI mode, either "light" or "dark".

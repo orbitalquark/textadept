@@ -40,7 +40,7 @@ end
 -- @param f The markdown file being written to.
 -- @param description The description.
 -- @param name The name of the module the description belongs to. Used for headers in module
---   descriptions.
+--	descriptions.
 local function write_description(f, description, name)
 	description = link_known_symbols(description):gsub('\n ', '\n') -- strip leading spaces
 	f:write(string.format(DESCRIPTION, description))

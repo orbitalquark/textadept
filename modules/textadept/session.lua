@@ -16,16 +16,16 @@ for _, v in ipairs(session_events) do events[v:upper()] = v end
 --- Emitted when saving a session.
 -- Arguments:
 --
---   - *session*: Table of session data to save. All handlers will have access to this same
---     table, and Textadept's default handler reserves the use of some keys.
---     Note that functions, userdata, and circular table values cannot be saved. The latter
---     case is not recognized at all, so beware.
+-- - *session*: Table of session data to save. All handlers will have access to this same table,
+--	and Textadept's default handler reserves the use of some keys. Note that functions,
+--	userdata, and circular table values cannot be saved. The latter case is not recognized
+--	at all, so beware.
 -- @field _G.events.SESSION_SAVE
 
 --- Emitted when loading a session.
 -- Arguments:
 --
---   - *session*: Table of session data to load. All handlers will have access to this same table.
+-- - *session*: Table of session data to load. All handlers will have access to this same table.
 -- @field _G.events.SESSION_LOAD
 
 -- This comment is needed for LDoc to process the previous field.
@@ -36,7 +36,7 @@ local session_file = _USERHOME .. (not CURSES and '/session' or '/session_term')
 -- file was opened and read.
 -- Textadept restores split views, opened buffers, cursor information, recent files, and bookmarks.
 -- @param[opt] filename Optional absolute path to the session file to load. If `nil`, the user
---   is prompted for one.
+--	is prompted for one.
 -- @return `true` if the session file was opened and read; `nil` otherwise.
 -- @usage textadept.session.load(filename)
 function M.load(filename)
@@ -130,7 +130,7 @@ end
 -- Upon quitting, the current session is saved to *filename* again, unless
 -- `textadept.session.save_on_quit` is `false`.
 -- @param filename[opt] Optional absolute path to the session file to save. If `nil`, the user
---   is prompted for one.
+--	is prompted for one.
 -- @usage textadept.session.save(filename)
 function M.save(filename)
 	local dir, name = session_file:match('^(.-[/\\]?)([^/\\]+)$')

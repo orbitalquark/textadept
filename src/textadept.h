@@ -35,9 +35,9 @@ bool init_textadept(int argc, char **argv);
 /** Emits a Lua event.
  * @param name The event name.
  * @param ... Arguments to pass with the event. Each pair of arguments should be a Lua type
- *   followed by the data value itself. For LUA_TLIGHTUSERDATA and LUA_TTABLE types, push the
- *   data values to the stack and give the value returned by luaL_ref(); luaL_unref() will be
- *   called appropriately. The list must be terminated with a -1.
+ *	followed by the data value itself. For LUA_TLIGHTUSERDATA and LUA_TTABLE types, push
+ *	the data values to the stack and give the value returned by luaL_ref(); luaL_unref()
+ *	will be called appropriately. The list must be terminated with a -1.
  * @return true or false depending on the boolean value returned by the event handler, if any.
  */
 bool emit(const char *name, ...);
@@ -47,7 +47,7 @@ bool emit(const char *name, ...);
  * @param from 1-based index of the buffer to move.
  * @param to 1-based index to move the buffer to.
  * @reorder_tabs Flag indicating whether or not to reorder platform tabs. This is `false`
- *   when responding to a platform reordering event and `true` when calling from Lua.
+ *	when responding to a platform reordering event and `true` when calling from Lua.
  */
 void move_buffer(int from, int to, bool reorder_tabs);
 

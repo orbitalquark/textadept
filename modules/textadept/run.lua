@@ -32,7 +32,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 -- behavior, connect to the event with an index of `1` and return `true`.
 -- Arguments:
 --
---   - *output*: A line of string output from the command.
+-- - *output*: A line of string output from the command.
 -- @field _G.events.COMPILE_OUTPUT
 
 --- Emitted when executing a language's or project's run shell command.
@@ -40,7 +40,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 -- connect to the event with an index of `1` and return `true`.
 -- Arguments:
 --
---   - *output*: A line of string output from the command.
+-- - *output*: A line of string output from the command.
 -- @field _G.events.RUN_OUTPUT
 
 --- Emitted when executing a project's build shell command.
@@ -48,7 +48,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 -- connect to the event with an index of `1` and return `true`.
 -- Arguments:
 --
---   - *output*: A line of string output from the command.
+-- - *output*: A line of string output from the command.
 -- @field _G.events.BUILD_OUTPUT
 
 --- Emitted when executing a project's shell command for running tests.
@@ -56,7 +56,7 @@ for _, event in ipairs(run_events) do events[event:upper()] = event end
 -- connect to the event with an index of `1` and return `true`.
 -- Arguments:
 --
---   - *output*: A line of string output from the command.
+-- - *output*: A line of string output from the command.
 -- @field _G.events.TEST_OUTPUT
 
 --- Table of currently running spawned processes.
@@ -115,13 +115,13 @@ local command_entry_f = {}
 -- emitting events of type *event* with any output received.
 -- @param label String label to display in the command entry.
 -- @param command String command to run, or a function returning such a string and optional
---   working directory and environment table. A returned working directory overrides *dir*.
+--	working directory and environment table. A returned working directory overrides *dir*.
 -- @param dir String working directory to run *command* in.
 -- @param event String event name to emit command output with.
 -- @param commands Table of commands that *command* came from. This is for saving/restoring
---   custom commands per file/directory.
+--	custom commands per file/directory.
 -- @param key String key in *commands* that produced *command*. This is for saving/restoring
---   custom commands per file/directory.
+--	custom commands per file/directory.
 -- @param[opt] macros Optional table of '%[char]' macros to expand within *command*.
 local function run_command(label, command, dir, event, commands, key, macros)
 	local is_func, working_dir, env = type(command) == 'function'
@@ -175,10 +175,10 @@ end
 -- command line strings or functions that return such strings.
 -- Command line strings may have the following macros:
 --
---   - `%f`: The file's name, including its extension.
---   - `%e`: The file's name, excluding its extension.
---   - `%d`: The file's directory path.
---   - `%p`: The file's full path.
+-- - `%f`: The file's name, including its extension.
+-- - `%e`: The file's name, excluding its extension.
+-- - `%d`: The file's directory path.
+-- - `%p`: The file's full path.
 --
 -- Functions may also return a working directory and process environment table to operate in. By
 -- default, the working directory is the current file's parent directory and the environment
@@ -193,7 +193,7 @@ M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc 
 -- The shell command is determined from the file's filename, extension, or language, in that order.
 -- Emits `events.COMPILE_OUTPUT`.
 -- @param[opt] filename Optional path to the file to compile. The default value is the current
---   file's filename.
+--	file's filename.
 function M.compile(filename)
 	if assert_type(filename, 'string/nil', 1) or buffer.filename then
 		compile_or_run(filename or buffer.filename, M.compile_commands)
@@ -204,10 +204,10 @@ end
 -- line strings or functions that return strings.
 -- Command line strings may have the following macros:
 --
---   - `%f`: The file's name, including its extension.
---   - `%e`: The file's name, excluding its extension.
---   - `%d`: The file's directory path.
---   - `%p`: The file's full path.
+-- - `%f`: The file's name, including its extension.
+-- - `%e`: The file's name, excluding its extension.
+-- - `%d`: The file's directory path.
+-- - `%p`: The file's full path.
 --
 -- Functions may also return a working directory and process environment table to operate in. By
 -- default, the working directory is the current file's parent directory and the environment
@@ -222,7 +222,7 @@ M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "f
 -- The shell command is determined from the file's filename, extension, or language, in that order.
 -- Emits `events.RUN_OUTPUT`.
 -- @param[opt] filename Optional path to the file to run. The default value is the current
---   file's filename.
+--	file's filename.
 function M.run(filename)
 	if assert_type(filename, 'string/nil', 1) or buffer.filename then
 		compile_or_run(filename or buffer.filename, M.run_commands)
@@ -276,7 +276,7 @@ M.test_commands = {}
 -- project is determined by either the buffer's filename or the current working directory.
 -- Emits `events.TEST_OUTPUT`.
 -- @param[opt] dir Optional path to the project to run tests for. The default value is the
---   current project.
+--	current project.
 function M.test(dir)
 	if not assert_type(dir, 'string/nil', 1) then
 		dir = io.get_project_root()
@@ -301,9 +301,9 @@ M.run_project_commands = {}
 -- directory.
 -- Emits `events.RUN_OUTPUT`.
 -- @param[opt] dir Optional path to the project to run a command for. The default value is the
---   current project.
+--	current project.
 -- @param[opt] cmd Optional string command to run. If given, the command entry initially shows
---   this command. The default value comes from `textadept.run.run_project_commands` and *dir*.
+--	this command. The default value comes from `textadept.run.run_project_commands` and *dir*.
 function M.run_project(dir, cmd)
 	if not assert_type(dir, 'string/nil', 1) then
 		dir = io.get_project_root()
@@ -355,7 +355,7 @@ end
 -- of *location*.
 -- Displays an annotation with the warning or error message if possible.
 -- @param location When `true`, jumps to the next recognized warning/error. When `false`,
---   jumps to the previous one. When a line number, jumps to it.
+--	jumps to the previous one. When a line number, jumps to it.
 function M.goto_error(location)
 	local line_num = type(assert_type(location, 'boolean/number', 1)) == 'number' and location
 	local output_view, output_buffer = get_output_view(), get_output_buffer()

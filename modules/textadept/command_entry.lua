@@ -174,7 +174,7 @@ local prev_key_mode
 -- This should only be called if `ui.command_entry.run()` is called with a keys table that has a
 -- custom binding for the Enter key ('\n'). Otherwise, history is automatically appended as needed.
 -- @param[opt] f Optional command entry mode to append history to. This is a function passed to
---   `ui.command_entry_run()`. If omitted, uses the current or most recent mode.
+--	`ui.command_entry_run()`. If omitted, uses the current or most recent mode.
 -- @param text String text to append to history.
 local function append_history(f, text)
 	if not assert_type(text, 'string/nil', 2) then
@@ -196,15 +196,15 @@ end
 -- key bindings defined in *keys* and in `ui.command_entry.editing_keys`.
 -- @param label String label to display in front of input.
 -- @param f Function to call upon pressing `Enter` in the command entry, ending the mode.
---   It should accept at a minimum the command entry text as an argument.
+--	It should accept at a minimum the command entry text as an argument.
 -- @param[opt] keys Optional table of key bindings to respond to. This is in addition to the
---   basic editing and movement keys defined in `ui.command_entry.editing_keys`. `Esc` and
---   `Enter` are automatically defined to cancel and finish the command entry, respectively.
---   This parameter may be omitted completely.
+--	basic editing and movement keys defined in `ui.command_entry.editing_keys`. `Esc` and
+--	`Enter` are automatically defined to cancel and finish the command entry, respectively.
+--	This parameter may be omitted completely.
 -- @param[opt] lang Optional string lexer name to use for command entry text. The default value
---   is `'text'`. This parameter may only be omitted if there are no more parameters.
+--	is `'text'`. This parameter may only be omitted if there are no more parameters.
 -- @param[opt] initial_text Optional string of text to initially show in the command entry. The
---   default value comes from the command history for *f*.
+--	default value comes from the command history for *f*.
 -- @param[opt] ... Optional additional arguments to pass to *f*.
 -- @usage ui.command_entry.run('echo:', ui.print)
 function M.run(label, f, keys, lang, initial_text, ...)
