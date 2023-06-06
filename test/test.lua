@@ -4057,6 +4057,67 @@ function test_snippets_placeholders()
 	buffer.new()
 	buffer.eol_mode = buffer.EOL_LF
 	local date_cmd = not WIN32 and 'date' or 'date /T'
+	local p = io.popen(date_cmd)
+	local shell_date = p:read('l')
+	p:close()
+	textadept.snippets.insert(table.concat({
+		'$0placeholder: ${1:foo} ${2:bar}', --
+		'choice: ${3|baz,quux|}', --
+		'mirror: $2$3', --
+		'transform: ${1/.+/${0:/upcase}/}', --
+		'variable: $TM_LINE_NUMBER', --
+		'Shell: `echo $TM_LINE_INDEX` `' .. date_cmd .. '`', --
+		'escape: \\$1 \\${4} \\`\\`'
+	}, '\n'))
+	assert_equal(buffer.selections, 1)
+	assert_equal(buffer.selection_start, 1 + 14)
+	assert_equal(buffer.selection_end, buffer.selection_start + 3)
+	assert_equal(buffer:get_sel_text(), 'foo')
+	buffer:replace_sel('baz')
+	events.emit(events.UPDATE_UI, buffer.UPDATE_CONTENT + buffer.UPDATE_SELECTION) -- simulate typing
+	assert_equal(buffer:get_text(), table.concat({
+		' placeholder: baz bar', -- placeholders to visit have 1 empty space
+		'choice:  ', -- placeholder choices are initially empty
+		'mirror:   ', -- placeholder mirrors are initially empty
+		'transform: BAZ', -- verify real-time transforms
+		'variable: 1', --
+		'Shell: 0 ' .. shell_date, --
+		'escape: $1 ${4} `` ' -- trailing space for snippet sentinel
+	}, newline()))
+	textadept.snippets.insert()
+	assert_equal(buffer.selections, 2)
+	assert_equal(buffer.selection_start, 1 + 18)
+	assert_equal(buffer.selection_end, buffer.selection_start + 3)
+	for i = 1, buffer.selections do
+		assert_equal(buffer.selection_n_end[i], buffer.selection_n_start[i] + 3)
+		assert_equal(buffer:text_range(buffer.selection_n_start[i], buffer.selection_n_end[i]), 'bar')
+	end
+	assert(buffer:get_text():find('mirror: bar'), 'mirror not updated')
+	textadept.snippets.insert()
+	assert_equal(buffer.selections, 2)
+	assert(buffer:auto_c_active(), 'no choice')
+	buffer:auto_c_select('quux')
+	buffer:auto_c_complete()
+	assert(buffer:get_text():find('\nmirror: barquux\n'), 'choice mirror not updated')
+	textadept.snippets.insert()
+	assert_equal(buffer:get_text(), table.concat({
+		'placeholder: baz bar', --
+		'choice: quux', --
+		'mirror: barquux', --
+		'transform: BAZ', --
+		'variable: 1', --
+		'Shell: 0 ' .. shell_date, --
+		'escape: $1 ${4} ``'
+	}, '\n'))
+	assert_equal(buffer.selection_start, 1)
+	assert_equal(buffer.selection_start, 1)
+	buffer:close(true)
+end
+
+function test_snippets_legacy_placeholders()
+	buffer.new()
+	buffer.eol_mode = buffer.EOL_LF
+	local date_cmd = not WIN32 and 'date' or 'date /T'
 	local lua_date = os.date()
 	local p = io.popen(date_cmd)
 	local shell_date = p:read('l')
@@ -4116,7 +4177,7 @@ end
 
 function test_snippets_irregular_placeholders()
 	buffer.new()
-	textadept.snippets.insert('%1(foo %2(bar))%5(quux)')
+	textadept.snippets.insert('${1:foo ${2:bar}}${5:quux}')
 	assert_equal(buffer:get_sel_text(), 'foo bar')
 	buffer:delete_back()
 	textadept.snippets.insert()
@@ -4128,7 +4189,7 @@ end
 
 function test_snippets_previous_cancel()
 	buffer.new()
-	textadept.snippets.insert('%1(foo) %2(bar) %3(baz)')
+	textadept.snippets.insert('${1:foo} ${2:bar} ${3:baz}')
 	assert_equal(buffer:get_text(), 'foo bar baz ') -- trailing space for snippet sentinel
 	buffer:delete_back()
 	textadept.snippets.insert()
@@ -4147,7 +4208,7 @@ function test_snippets_previous_cancel()
 end
 
 function test_snippets_nested()
-	snippets.foo = '%1(foo)%2(bar)%3(baz)'
+	snippets.foo = '${1:foo}${2:bar}${3:baz}'
 	buffer.new()
 
 	buffer:add_text('foo')
@@ -4235,34 +4296,47 @@ function test_snippets_autocomplete()
 end
 
 function test_snippets_mirror_in_placeholder()
-	snippets.foo = '%1(one) %2(two(%1%).three)'
+	snippets.foo = '${1:one} ${2:two{$1\\}.three}'
 	buffer.new()
 	buffer:add_text('foo')
 	textadept.snippets.insert()
 	textadept.snippets.insert()
-	assert_equal(buffer:get_sel_text(), 'two(one).three')
+	assert_equal(buffer:get_sel_text(), 'two{one}.three')
 	textadept.snippets.cancel()
 	buffer:close(true)
 	snippets.foo = nil
 end
 
 function test_snippets_nested_placeholders()
-	snippets.foo = '%1(bar)%2((%3(baz)%))'
+	snippets.foo = '${1:bar}${2:{${3:baz}\\}}'
 	buffer.new()
 	buffer:add_text('foo')
 	textadept.snippets.insert()
 	textadept.snippets.insert()
-	assert_equal(buffer:get_sel_text(), '(baz)')
+	assert_equal(buffer:get_sel_text(), '{baz}')
 	textadept.snippets.insert()
 	assert_equal(buffer:get_sel_text(), 'baz')
 	textadept.snippets.cancel()
-	snippets.foo = '%1(bar)(baz%2(, %3(quux)))'
+	snippets.foo = '${1:bar}(baz${2:, ${3:quux}})'
 	textadept.snippets.insert()
 	textadept.snippets.insert()
 	assert_equal(buffer:get_sel_text(), ', quux')
 	textadept.snippets.insert()
 	assert_equal(buffer:get_sel_text(), 'quux')
 	textadept.snippets.cancel()
+	buffer:close(true)
+	snippets.foo = nil
+end
+
+function test_snippets_transform_options()
+	buffer.new()
+	textadept.snippets.insert('${1:bar} ${1/./${0:/upcase}/}')
+	textadept.snippets.insert()
+	assert_equal(buffer:get_text(), 'bar Bar')
+	buffer:clear_all()
+	textadept.snippets.insert('${1:bar} ${1/./${0:/upcase}/g}')
+	textadept.snippets.insert()
+	assert_equal(buffer:get_text(), 'bar BAR')
 	buffer:close(true)
 	snippets.foo = nil
 end

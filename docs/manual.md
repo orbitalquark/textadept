@@ -1106,9 +1106,9 @@ in the terminal version.
 
 Snippets are dynamic text templates that can be inserted into the buffer on demand. They
 are composed of any combination of plain text, placeholders for interactive input, mirrors
-and transforms for interactive input, and arbitrary Lua and Shell code. Snippets eliminate
-the need for typing repetitive code constructs like class definitions, getters and setters,
-control structures, API calls, and more.
+and transforms for interactive input, and arbitrary Shell code. Snippets eliminate the need
+for typing repetitive code constructs like class definitions, getters and setters, control
+structures, API calls, and more.
 
 ![Snippet](images/snippet.png)
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -1696,6 +1696,8 @@ N/A | Added | [run_project()][], [run_project_commands][]
 N/A | Added | [INDIC_WARNING][], [INDIC_ERROR][]
 **textadept.snippets** ||
 cancel_current | Renamed | cancel
+N/A | Added | [transform_methods][]
+N/A | Added | [variables][]
 **ui**||
 N/A | Added | [output()][]
 silent_print | Replaced | [print_silent()][], [output_silent()][]
@@ -1748,6 +1750,8 @@ N/A | Added | [set_styles()][]
 [run_project_commands]: api.html#textadept.run.run_project_commands
 [INDIC_WARNING]: api.html#textadept.run.INDIC_WARNING
 [INDIC_ERROR]: api.html#textadept.run.INDIC_ERROR
+[transform_methods]: api.html#textadept.snippets.transform_methods
+[variables]: api.html#textadept.snippets.variables
 [output()]: api.html#ui.output
 [print_silent()]: api.html#ui.print_silent
 [output_silent()]: api.html#ui.output_silent
@@ -1796,6 +1800,14 @@ from within them.
 [convention]: api.html#migrating-legacy-lexers
 [`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
 [`buffer.lexer_language`]: api.html#buffer.lexer_language
+
+##### Snippet Changes
+
+Textadept now supports TextMate-style [snippets][]. The legacy format is still supported,
+but those snippets should be [migrated][] as soon as possible.
+
+[snippets]: api.html#textadept.snippets
+[migrated]: api.html#migrating-legacy-snippets
 
 ##### Compile, Run, Build, and Test Changes
 

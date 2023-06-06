@@ -12,89 +12,166 @@
 -- with the same trigger word, Textadept inserts the one specific to the current lexer, not
 -- the global one.
 --
--- ### Special Sequences
+-- ### Syntax
 --
--- #### `%`*n*`(`*text*`)`
+-- Snippets may contain any combination of plain-text sequences, variables, interpolated code,
+-- and placeholders.
 --
--- Represents a placeholder, where *n* is an integer and *text* is default placeholder
--- text. Textadept moves the caret to placeholders in numeric order each time it calls
--- `textadept.snippets.insert()`, finishing at either the "%0" placeholder if it exists or at
--- the end of the snippet. Examples are
+-- #### Plain Text
 --
---     snippets['foo'] = 'foobar%1(baz)'
---     snippets['bar'] = 'start\n\t%0\nend'
+-- Plain text consists of any character except '$' and '\`'. Those two characters are reserved for
+-- variables, interpolated code, and placeholders. In order to use either of those two characters
+-- literally, prefix them with '\' (e.g. `\$` inserts a literal '$').
 --
--- #### `%`*n*`{`*list*`}`
+-- #### Variables
 --
--- Also represents a placeholder (where *n* is an integer), but presents a list of choices for
--- placeholder text constructed from comma-separated *list*. Examples are
+-- Variables are defined in the `textadept.snippets.variables` table. Textadept expands
+-- them in place using the '$' prefix (e.g. `$TM_SELECTED_TEXT` references the currently
+-- selected text). You can provide default values for empty or undefined variables using the
+-- "${*variable*:*default*}" syntax (e.g. `${TM_SELECTED_TEXT:no text selected}`). The values of
+-- variables may be transformed in-place using the "${*variable*/*regex*/*format*/*options*}"
+-- syntax (e.g. `${TM_SELECTED_TEXT/.+/"$0"/}` quotes the selected text). The section on
+-- placeholder transforms below describes this syntax in more detail.
 --
---     snippets['op'] = 'operator(%1(1), %2(1), "%3{add,sub,mul,div}")'
+-- #### Interpolated Shell Code
 --
--- #### `%`*n*
+-- Snippets can execute shell code enclosed within '\`' characters, and insert any standard output
+-- (stdout) emitted by that code. Textadept omits a trailing newline if it exists. For example,
+-- the following snippet evaluates (on macOS and Linux) the currently selected arithmetic
+-- expression and replaces it with the result:
 --
--- Represents a mirror, where *n* is an integer. Mirrors with the same *n* as a placeholder mirror
--- any user input in the placeholder. If no placeholder exists for *n*, the first occurrence
--- of that mirror in the snippet becomes the placeholder, but with no default text. Examples are
+--     snippets.eval = '`echo $(( $TM_SELECTED_TEXT ))`'
 --
---     snippets['foo'] = '%1(mirror), %1, on the wall'
---     snippets['q'] = '"%1"'
+-- #### Placeholders
 --
--- #### `%`*n*`<`*Lua code*`>`<br/>`%`*n*`[`*Shell code*`]`
+-- The true power of snippets lies with placeholders. Using placeholders, you can insert a text
+-- template and tab through placeholders one at a time, filling them in. Placeholders may be
+-- linked to one another, either mirroring text or transforming it in-place.
 --
--- Represents a transform, where *n* is an integer that has an associated placeholder, *Lua code*
--- is arbitrary Lua code, and *Shell code* is arbitrary Shell code. Textadept executes the code
--- as text is typed into placeholder *n*. If the transform omits *n*, Textadept executes the
--- transform's code the moment the editor inserts the snippet.
+-- ##### Tab Stops
 --
--- Textadept runs Lua code in its Lua State and replaces the transform with the code's return
--- text. The code may use the temporary `text` and `selected_text` global variables which
--- contain placeholder *n*'s text and the text originally selected when the snippet was inserted,
--- respectively. An example is
+-- The simplest kind of placeholder is called a tab stop, and its syntax is either `$`*n*
+-- or `${`*n*`}`, where *n* is an integer. When a snippet is inserted, the caret is moved
+-- to the "$1" placeholder. Pressing the `Tab` key jumps to the next placeholder, "$2", and
+-- so on. When there are no more placeholders to jump to, the caret moves to either the "$0"
+-- placeholder if it exists, or it moves to the end of the snippet. For example, the following
+-- snippet inserts a 3-element vector, with tab stops at each element:
 --
---     snippets['attr'] = [[
---     %1(int) %2(foo) = %3;
+--     snippets.vec = '[$1, $2, $3]'
 --
---     %1 get%2<text:gsub('^.', function(c) return c:upper() end)>() {
---     	return %2;
---     }
---     void set%2<text:gsub('^.', function(c) return c:upper() end)>(%1 value) {
---     	%2 = value;
---     }
+-- ##### Default Values
+--
+-- Placeholders may have default values using the "${*n*:*default*}" syntax. For example,
+-- the following snippet creates a numeric "for" loop in Lua:
+--
+--     snippets.lua.fori = [[
+--     for ${1:i} = ${2:1}, $3 do
+--       $0
+--     end]]
+--
+-- Multiline snippets should be indented with tabs. Textadept will apply the buffer's current
+-- indentation settings to the snippet upon insertion.
+--
+-- Placeholders may be nested inside one another. For example, the following snippet inserts
+-- a function call with a mandatory first argument, but an optional second one:
+--
+--     snippets.call = '${1:func}($2${3:, $4})'
+--
+-- Upon arriving at the third placeholder, backspacing and pressing `Tab` completes the snippet
+-- with a single argument. On the other hand, pressing `Tab` again at the third placeholder
+-- jumps to the second argument for input.
+--
+-- Note that plain text inside default values may not contain a '}' character either, as it is
+-- reserved to indicate the end of the placeholder.  Use `\}` to represent a literal '}'.
+--
+-- ##### Mirrors
+--
+-- Multiple placeholders can share the same numeric index. When this happens, Textadept visits
+-- the one with a default value if it exists. Otherwise, the editor visits the first one it
+-- finds. As you type text into a placeholder, any other placeholders with the same index mirror
+-- the typed text. For example, the following snippet inserts beginning and ending HTML/XML
+-- tags with the same name:
+--
+--     snippets.tag = '<${1:div}>$0</$1>'
+--
+-- The end tag mirrors whatever name you type into the start tag.
+--
+-- ##### Transforms
+--
+-- Sometimes mirrors are not quite good enough. For example, perhaps the mirror's content needs to
+-- deviate slightly from its linked placeholder, like capitalizing the first letter. Or perhaps
+-- the mirror's contents should depend on the presence (or absence) of text in its linked
+-- placeholder. This is where placeholder transforms come in handy. They have the following
+-- syntax: "${*n*/*regex*/*format*/*options*}". *regex* is a [regular expression][] (regex)
+-- to match against the content of placeholder *n*, *format* is a formatted replacement for
+-- matched content, and *options* are regex options to use when matching. *format* may contain
+-- any of the following:
+--
+-- - Plain text.
+-- - "$*n*" and "${*n*}" sequences, which represent the content of the *n*th capture (*n*=0 is
+--   the entire match for this and all subsequent sequences).
+-- - "${*n*:/upcase}", "${*n*:/downcase}", and "${*n*:/capitalize}" sequences, which
+--   represent the uppercase, lowercase, and capitalized forms, respectively, of the
+--   content of the *n*th capture. You can define your own transformation function in
+--   `textadept.snippets.transform_methods`.
+-- - A "${*n*:?*if*:*else*}" sequence, which inserts *if* if the content of capture *n* is
+--   non-empty. Otherwise, *else* is used.
+-- - A "${*n*:+*if*}" sequence, which inserts *if* if the content of capture *n* is
+--   non-empty. Otherwise nothing is inserted.
+-- - "${*n*:*default*}" and "${*n*:-*default*}" sequences, which insert *default* if the content
+--   of capture *n* is empty. Otherwise, capture *n* is mirrored.
+--
+-- *options* may include any of the following letters:
+--
+-- - g: Replace all instances of matched text, not just the first one.
+--
+-- For example, the following snippet defines an attribute along with its getter and setter functions:
+--
+--     snippets.attr = [[
+--       ${1:int} ${2:name};
+--
+--       ${1} get${2/./${0:/upcase}/}() { return $2; }
+--       void set${2/./${0:/upcase}/}(${1} ${3:value}) { $2 = $3; }
 --     ]]
 --
--- Textadept executes shell code using Lua's [`io.popen()`][] and replaces the transform with the
--- process' standard output (stdout). The code may use a `%` character to represent placeholder
--- *n*'s text. An example is
+-- Note that the '/' and '}' characters are reserved in certain places within a placeholder
+-- transform. Use `\/` and `\}`, respectively, to represent literal versions of those characters
+-- where necessary.
 --
---     snippets['env'] = '$%1(HOME) = %1[echo $%]'
+-- [regular expression]: manual.html#regex-and-lua-pattern-syntax
 --
--- #### `%%`
+-- ##### Multiple Choices
 --
--- Stands for a single '%' since '%' by itself has a special meaning in snippets.
+-- Placeholders may define a list of options for the user to choose from using the
+-- "${*n*|*items*|}" syntax, where *items* is a comma-separated list of options
+-- (e.g. `${1|foo,bar,baz|}`).
 --
--- #### `%(`<br/>`%{`
+-- Items may not contain a '|' character, as it is reserved to indicate the end of the choice list.
+-- Use `\|` to represent a literal '|'.
 --
--- Stands for a single '(' or '{', respectively, after a `%`*n* mirror. Otherwise, the mirror
--- would be interpreted as a placeholder or transform. Note: it is currently not possible to
--- escape a '<' or '[' immediately after a `%`*n* mirror due to `%<...>` and `%[...]` sequences
--- being interpreted as code to execute.
+-- ### Migrating Legacy Snippets
 --
--- #### `%)`
+-- Legacy snippets used the following syntax:
 --
--- Stands for a single ')' inside a placeholder's default text.
+-- - "%*n*" for tab stops and mirrors.
+-- - "%*n*(*default*)" for default placeholders.
+-- - "%*n*<*Lua code*>" for Lua transforms, where *n* is optional.
+-- - "%*n*[*Shell code*]" for Shell transforms, where *n* is optional.
+-- - "%*n*{*items*}" for multiple choice placeholders.
 --
--- #### `\t`
+-- While Textadept currently supports legacy snippets, it will not do so forever. It is
+-- recommended that you migrate your snippets using the following steps:
 --
--- A single unit of indentation based on the buffer's indentation settings (`buffer.use_tabs`
--- and `buffer.tab_width`.
+-- 1. Substitute '%' with '$' in tab stops and mirrors.
+-- 2. Substitute "%*n*(*default*)" default placeholders with "${*n*:*default*}". The following
+--   regex and replacement should work for non-nested placeholders: "%(\d+)\(([^)]+)\)" and
+--   "${\1:\2}".
+-- 3. Replace *n*-based Lua and Shell transforms with [placeholder transforms](#transforms). You
+--   can add your own transform function to `textadept.snippets.transform_methods` if you need to.
+-- 4. Replace bare Lua and Shell transforms with interpolated shell code. If you have a Lua
+--   interpreter installed, you can use `` `lua -e 'Lua code'` `` if necessary.
+-- 5. Substitute "%*n*{*items*}" choice placeholders with "${*n*|*items*|}".
 --
--- #### `\n`
---
--- A single set of line ending delimiters based on the buffer's end of line mode
--- (`buffer.eol_mode`).
---
--- [`io.popen()`]: https://www.lua.org/manual/5.4/manual.html#pdf-io.popen
 -- @module textadept.snippets
 local M = {}
 
@@ -109,6 +186,29 @@ M.INDIC_PLACEHOLDER = _SCINTILLA.new_indic_number()
 -- Note: If a directory has multiple snippets with the same trigger, the snippet chosen for
 -- insertion is not defined and may not be constant.
 M.paths = {}
+
+--- Map of snippet variable names to string values or functions that return string values.
+-- Each time a snippet is inserted, this map is used to set its variables.
+-- @field TM_SELECTED_TEXT The currently selected text, if any.
+-- @field TM_CURRENT_LINE The contents of the current line.
+-- @field TM_CURRENT_WORD The word under the caret, if any.
+-- @field TM_LINE_NUMBER The current line number.
+-- @field TM_LINE_INDEX The current line number, counting from 0.
+-- @field TM_FILENAME The buffer's filename, excluding path, if any.
+-- @field TM_FILENAME_BASE The buffer's bare filename, without extension.
+-- @field TM_DIRECTORY The buffer's parent directory path.
+-- @field TM_FILEPATH The buffer's filename, including path.
+M.variables = {}
+
+--- Map of format method names to their functions for text captured in placeholder transforms.
+-- @field upcase Uppercases the captured text.
+-- @field downcase Lowercases the captured text.
+-- @field capitalize Capitalizes the captured text.
+M.transform_methods = {
+	upcase = string.upper, downcase = string.lower, capitalize = function(s)
+		return s:gsub('^(.)(.*)$', function(first, rest) return first:upper() .. rest:lower() end)
+	end
+}
 
 local INDIC_SNIPPET = _SCINTILLA.new_indic_number()
 local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.new_indic_number()
@@ -187,23 +287,79 @@ end
 --   placeholder index contains the state of the snippet with all placeholders of that index
 --   filled in (prior to moving to the next placeholder index). Snippet state consists of a
 --   `text` string field and a `placeholders` table field.
+-- @field variables A map of snippet variable names to their string values.
 -- @field finished Whether or not the snippet has no more placeholders to visit.
 local snippet = {}
 
 local P, S, R, V = lpeg.P, lpeg.S, lpeg.R, lpeg.V
 local C, Cs, Cp, Ct, Cg, Cc = lpeg.C, lpeg.Cs, lpeg.Cp, lpeg.Ct, lpeg.Cg, lpeg.Cc
+
+--- Returns a pattern that matches any character other than the one in string *chars*, but
+-- allowing for escapes.
+-- Escaped characters are captured without their forward slashes.
+-- @param chars String character set to exclude.
+local function any_but(chars) return Cs((1 - S(chars .. '\\') + '\\' * C(1) / 1)^1) end
+
+--- A snippet placeholder object, constructed in part by LPeg.
+-- Each placeholder is stored in a snippet snapshot.
+-- @field index This placeholder's index.
+-- @field default List of parts comprising this placeholder's default text, if any. Each part
+--   is either a string or another placeholder object.
+-- @field simple Whether or not this placeholder is a simple one (i.e. a tab stop).
+-- @field transform Whether or not this placeholder is a transform.
+-- @field regex The regex for this transform.
+-- @field repl List of replacement parts for this transform. Each part is either a string or
+--   format table for a capture. Format tables have 'index', 'method', 'if', and 'else' fields.
+-- @field opts Regex options for this transform.
+-- @field choice A list of options to insert from an autocompletion list for this placeholder.
+-- @field lua_code The Lua code of this transform (legacy).
+-- @field sh_code The Shell code of this transform (legacy).
+-- @field id This placeholder's unique ID. This field is used as an indicator's value for
+--   identification purposes.
+-- @field position This placeholder's initial position in its snapshot. This field will not
+--   update until the next snapshot is taken. Use `snippet:each_placeholder()` to determine a
+--   placeholder's current position.
+-- @field length This placeholder's initial length in its snapshot. This field will never
+--   update. Use `buffer:indicator_end()` in conjunction with `snippet:each_placeholder()`
+--   to determine a placeholder's current length.
+-- @table placeholder
+-- @local
 local grammar = P{
-	Ct((V('plain_text') + V('placeholder'))^0),
-	plain_text = Cs((P(1) - '%' + '%' * C(S('({%')) / 1)^1), --
-	placeholder = Ct('%' *
-		(V('index')^-1 * (V('angles') + V('brackets')) * Cg(Cc(true), 'transform') +
-			(V('index') * (V('parens') + V('braces') + Cg(Cc(true), 'simple'))))), --
+	Ct((V('text') + V('variable') + V('shell') + V('placeholder') + C(1))^0), --
+	text = any_but('$`'), --
+	variable = '$' * Ct(V('name') + '{' * V('name') * (V('format') + V('transform'))^-1 * '}'),
+	name = Cg((R('AZ', 'az') + '_') * (R('AZ', 'az', '09') + '_')^0, 'variable'), --
+	format = ':' *
+		('/' * Cg(R('az')^1, 'method') + ('?' * Cg(any_but(':'), 'if') * ':' * Cg(any_but('}'), 'else')) +
+			'+' * Cg(any_but('}'), 'if') + P('-')^-1 * Cg(any_but('}'), 'else')),
+	transform = '/' * V('regex') * '/' * V('repl') * '/' * V('opts') * Cg(Cc(true), 'transform'),
+	regex = Cg(any_but('/')^-1, 'regex'),
+	repl = Cg(Ct((any_but('/$') + ('$' * Ct(V('int') + '{' * V('int') * V('format')^-1 * '}')))^0),
+		'repl'), --
+	opts = Cg(R('az')^0, 'opts'), --
+	shell = '`' * Ct(Cg(any_but('`'), 'shell')) * '`',
+	placeholder = '$' * Ct((V('int') * Cg(Cc(true), 'simple') +
+		('{' * V('int') * (V('default') + V('transform') + V('choice') + Cg(Cc(true), 'simple')) * '}'))),
+	int = Cg(R('09')^1 / tonumber, 'index'),
+	default = ':' * Cg(Ct((any_but('$`}') + V('placeholder') + V('shell'))^0), 'default'),
+	choice = '|' * Cg(any_but('|'), 'choice') * '|'
+}
+
+local legacy_grammar = P{
+	Ct((V('text') + V('placeholder') + C(1))^0), --
+	text = Cs((P(1) - '%' + '%' * C(S('({%')) / 1)^1), --
+	placeholder = '%' *
+		Ct((V('index')^-1 * (V('angles') + V('brackets')) * Cg(Cc(true), 'transform') +
+			(V('index') * (V('parens') + V('braces') + Cg(Cc(true), 'simple')))) * Cg(Cc(true), 'legacy')),
 	index = Cg(R('09')^1 / tonumber, 'index'),
 	parens = '(' * Cg(Ct((Cs((1 - S('%)') + P('%)') / ')')^1) + V('placeholder'))^1), 'default') * ')', --
 	brackets = '[' * Cg((1 - S('[]') + V('brackets'))^0, 'sh_code') * ']',
 	braces = '{' * Cg((1 - S('{}') + V('braces'))^0, 'choice') * '}',
 	angles = '<' * -P('/') * Cg((1 - S('<>') + V('angles'))^0, 'lua_code') * '>'
 }
+--- Returns whether or not snippet text *text* uses the legacy snippet grammar.
+-- @param text Snippet text to check.
+local function is_legacy(text) return text:find('%%%d') or text:find('%%[%[<]') end
 
 --- Creates and returns new snippet from text *text* and trigger text *trigger*.
 -- @param text The new snippet to insert.
@@ -234,59 +390,63 @@ function snippet.new(text, trigger)
 	end
 	text = table.concat(lines, ({[0] = '\r\n', '\r', '\n'})[buffer.eol_mode])
 
+	-- Set variables.
+	local line, pos = buffer:line_from_position(buffer.current_pos), buffer.current_pos
+	local dir, name = (buffer.filename or ''):match('^(.-)([^/\\]*)$')
+	snip.variables = {
+		TM_SELECTED_TEXT = snip.original_sel_text, TM_CURRENT_LINE = buffer:get_cur_line(),
+		TM_CURRENT_WORD = buffer:text_range(buffer:word_start_position(pos, true),
+			buffer:word_end_position(pos, true)), TM_LINE_INDEX = tostring(line - 1),
+		TM_LINE_NUMBER = tostring(line), TM_FILENAME = name,
+		TM_FILENAME_BASE = name:gsub('%.[^.]+$', ''), TM_DIRECTORY = dir, TM_FILEPATH = buffer.filename
+	}
+	for name, value in pairs(M.variables) do
+		snip.variables[name] = tostring(type(value) == 'function' and value() or value)
+	end
+
 	-- Parse snippet and add text and placeholders.
+	local grammar = is_legacy(text) and legacy_grammar or grammar
 	for _, part in ipairs(grammar:match(text)) do snip:add_part(part) end
 
 	return snip
 end
 
---- A snippet placeholder object, constructed in part by LPeg.
--- Each placeholder is stored in a snippet snapshot.
--- @field id This placeholder's unique ID. This field is used as an indicator's value for
---   identification purposes.
--- @field index This placeholder's index.
--- @field default This placeholder's default text, if any.
--- @field simple Whether or not this placeholder is a simple one (i.e. a tab stop).
--- @field transform Whether or not this placeholder is a transform (containing either Lua or
---   Shell code).
--- @field lua_code The Lua code of this transform.
--- @field sh_code The Shell code of this transform.
--- @field choice A list of options to insert from an autocompletion list.
--- @field position This placeholder's initial position in its snapshot. This field will not
---   update until the next snapshot is taken. Use `snippet:each_placeholder()` to determine a
---   placeholder's current position.
--- @field length This placeholder's initial length in its snapshot. This field will never
---   update. Use `buffer:indicator_end()` in conjunction with `snippet:each_placeholder()`
---   to determine a placeholder's current length.
--- @table placeholder
--- @local
-
---- Adds string or placeholder *part* to this snippet.
+--- Adds string, variable, interpolated shell code, or placeholder *part* to this snippet.
 -- @param part The LPeg-generated part to add.
 -- @local
 function snippet:add_part(part)
 	if type(part) == 'string' then
 		self.snapshots[0].text = self.snapshots[0].text .. part
-		return
-	end
-	local placeholder = part
-	if placeholder.index then
+	elseif part.variable then
+		self:add_part(part.transform and self:transform(part) or self.variables[part.variable] or '')
+	elseif part.shell then
+		-- Linux and macOS need a shell to expand environment variables in, so execute
+		-- the shell code in a script.
+		local tmpfile = not WIN32 and os.tmpname()
+		if tmpfile then io.open(tmpfile, 'w'):write(part.shell):close() end
+		local cmd, env_cmd = not WIN32 and 'sh ' .. tmpfile or part.shell, not WIN32 and 'env' or 'set'
+		local env = {}
+		for k, v in os.spawn(env_cmd):read('a'):gmatch('([^=]+)=([^\r\n]*)\r?\n') do env[k] = v end
+		for k, v in pairs(self.variables) do env[k] = v end
+		self:add_part(os.spawn(cmd, env):read('a'):match('^(.-)\r?\n?$')) -- omit trailing newline
+		if tmpfile then os.remove(tmpfile) end
+	elseif part.legacy and part.transform and not part.index then
+		self:add_part(self:legacy_execute_code(part))
+	else
+		local placeholder = setmetatable({}, {__index = part})
 		self.max_index = math.max(self.max_index, placeholder.index)
 		placeholder.id = #self.snapshots[0].placeholders + 1
 		self.snapshots[0].placeholders[placeholder.id] = placeholder
+		local position = #self.snapshots[0].text
+		if placeholder.default then
+			for _, part in ipairs(placeholder.default) do self:add_part(part) end
+			placeholder.default = self.snapshots[0].text:sub(position + 1)
+		else
+			self:add_part(' ') -- fill empty placeholder for display
+		end
+		placeholder.position = self.start_pos + position -- absolute
+		placeholder.length = #self.snapshots[0].text - position
 	end
-	local position = #self.snapshots[0].text
-	if placeholder.default then
-		for _, part in ipairs(placeholder.default) do self:add_part(part) end
-		placeholder.default = self.snapshots[0].text:sub(position + 1)
-		if placeholder.default == '' then placeholder.default = ' ' end -- fill empty ph for display
-	elseif placeholder.transform and not placeholder.index then
-		self:add_part(self:execute_code(placeholder))
-	else
-		self:add_part(' ') -- fill empty placeholder for display
-	end
-	placeholder.length = #self.snapshots[0].text - position
-	placeholder.position = self.start_pos + position -- absolute
 end
 
 --- Provides dynamic field values and methods for this snippet.
@@ -454,11 +614,33 @@ function snippet:each_placeholder(index, type)
 	end
 end
 
+--- Returns the result of applying the transform in placeholder *placeholder* in the context
+-- of this snippet.
+-- @param placeholder The placeholder that contains the transform.
+-- @local
+function snippet:transform(placeholder)
+	local text = not placeholder.variable and
+		buffer:text_range(self.placeholder_pos, buffer.selection_end) or
+		tostring(self.variables[placeholder.variable])
+	return regex.gsub(text, string.format('(%s)', placeholder.regex), function(...)
+		local repl, captures = {}, {...}
+		for _, part in ipairs(placeholder.repl) do
+			if type(part) == 'table' then
+				local capture = captures[part.index + 1] -- $0 is captures[1]
+				part = part.method and M.transform_methods[part.method](capture) or
+					(capture ~= '' and (part['if'] or capture) or part['else'])
+			end
+			repl[#repl + 1] = part
+		end
+		return table.concat(repl)
+	end, placeholder.opts:find('g') and 0 or 1)
+end
+
 --- Returns the result of executing Lua or Shell code, in placeholder table *placeholder*,
 -- in the context of this snippet.
 -- @param placeholder The placeholder that contains code to execute.
 -- @local
-function snippet:execute_code(placeholder)
+function snippet:legacy_execute_code(placeholder)
 	local s, e = self.placeholder_pos, buffer.selection_end
 	if s > e then s, e = e, s end
 	local text = self.index and buffer:text_range(s, e) or '' -- %<...>, %[...]
@@ -485,7 +667,7 @@ function snippet:update_transforms()
 	for s, ph in self:each_placeholder(nil, 'transform') do
 		if ph.index == self.index and not processed[ph] then
 			-- Execute the code and replace any existing transform text.
-			local result = self:execute_code(ph)
+			local result = not ph.legacy and self:transform(ph) or self:legacy_execute_code(ph)
 			if result == '' then result = ' ' end -- fill for display
 			local id = buffer:indicator_value_at(M.INDIC_PLACEHOLDER, s)
 			buffer:set_target_range(s, buffer:indicator_end(M.INDIC_PLACEHOLDER, s))

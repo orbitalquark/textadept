@@ -8388,89 +8388,166 @@ priority, followed by the ones in the global table. This means if there are two 
 with the same trigger word, Textadept inserts the one specific to the current lexer, not
 the global one.
 
-### Special Sequences
+### Syntax
 
-#### `%`*n*`(`*text*`)`
+Snippets may contain any combination of plain-text sequences, variables, interpolated code,
+and placeholders.
 
-Represents a placeholder, where *n* is an integer and *text* is default placeholder
-text. Textadept moves the caret to placeholders in numeric order each time it calls
-[`textadept.snippets.insert()`](#textadept.snippets.insert), finishing at either the "%0" placeholder if it exists or at
-the end of the snippet. Examples are
+#### Plain Text
 
-    snippets['foo'] = 'foobar%1(baz)'
-    snippets['bar'] = 'start\n\t%0\nend'
+Plain text consists of any character except '$' and '\`'. Those two characters are reserved for
+variables, interpolated code, and placeholders. In order to use either of those two characters
+literally, prefix them with '\' (e.g. `\$` inserts a literal '$').
 
-#### `%`*n*`{`*list*`}`
+#### Variables
 
-Also represents a placeholder (where *n* is an integer), but presents a list of choices for
-placeholder text constructed from comma-separated *list*. Examples are
+Variables are defined in the [`textadept.snippets.variables`](#textadept.snippets.variables) table. Textadept expands
+them in place using the '$' prefix (e.g. `$TM_SELECTED_TEXT` references the currently
+selected text). You can provide default values for empty or undefined variables using the
+"${*variable*:*default*}" syntax (e.g. `${TM_SELECTED_TEXT:no text selected}`). The values of
+variables may be transformed in-place using the "${*variable*/*regex*/*format*/*options*}"
+syntax (e.g. `${TM_SELECTED_TEXT/.+/"$0"/}` quotes the selected text). The section on
+placeholder transforms below describes this syntax in more detail.
 
-    snippets['op'] = 'operator(%1(1), %2(1), "%3{add,sub,mul,div}")'
+#### Interpolated Shell Code
 
-#### `%`*n*
+Snippets can execute shell code enclosed within '\`' characters, and insert any standard output
+(stdout) emitted by that code. Textadept omits a trailing newline if it exists. For example,
+the following snippet evaluates (on macOS and Linux) the currently selected arithmetic
+expression and replaces it with the result:
 
-Represents a mirror, where *n* is an integer. Mirrors with the same *n* as a placeholder mirror
-any user input in the placeholder. If no placeholder exists for *n*, the first occurrence
-of that mirror in the snippet becomes the placeholder, but with no default text. Examples are
+    snippets.eval = '`echo $(( $TM_SELECTED_TEXT ))`'
 
-    snippets['foo'] = '%1(mirror), %1, on the wall'
-    snippets['q'] = '"%1"'
+#### Placeholders
 
-#### `%`*n*`<`*Lua code*`>`<br/>`%`*n*`[`*Shell code*`]`
+The true power of snippets lies with placeholders. Using placeholders, you can insert a text
+template and tab through placeholders one at a time, filling them in. Placeholders may be
+linked to one another, either mirroring text or transforming it in-place.
 
-Represents a transform, where *n* is an integer that has an associated placeholder, *Lua code*
-is arbitrary Lua code, and *Shell code* is arbitrary Shell code. Textadept executes the code
-as text is typed into placeholder *n*. If the transform omits *n*, Textadept executes the
-transform's code the moment the editor inserts the snippet.
+##### Tab Stops
 
-Textadept runs Lua code in its Lua State and replaces the transform with the code's return
-text. The code may use the temporary `text` and `selected_text` global variables which
-contain placeholder *n*'s text and the text originally selected when the snippet was inserted,
-respectively. An example is
+The simplest kind of placeholder is called a tab stop, and its syntax is either `$`*n*
+or `${`*n*`}`, where *n* is an integer. When a snippet is inserted, the caret is moved
+to the "$1" placeholder. Pressing the `Tab` key jumps to the next placeholder, "$2", and
+so on. When there are no more placeholders to jump to, the caret moves to either the "$0"
+placeholder if it exists, or it moves to the end of the snippet. For example, the following
+snippet inserts a 3-element vector, with tab stops at each element:
 
-    snippets['attr'] = [[
-    %1(int) %2(foo) = %3;
+    snippets.vec = '[$1, $2, $3]'
 
-    %1 get%2<text:gsub('^.', function(c) return c:upper() end)>() {
-    	return %2;
-    }
-    void set%2<text:gsub('^.', function(c) return c:upper() end)>(%1 value) {
-    	%2 = value;
-    }
+##### Default Values
+
+Placeholders may have default values using the "${*n*:*default*}" syntax. For example,
+the following snippet creates a numeric "for" loop in Lua:
+
+    snippets.lua.fori = [[
+    for ${1:i} = ${2:1}, $3 do
+      $0
+    end]]
+
+Multiline snippets should be indented with tabs. Textadept will apply the buffer's current
+indentation settings to the snippet upon insertion.
+
+Placeholders may be nested inside one another. For example, the following snippet inserts
+a function call with a mandatory first argument, but an optional second one:
+
+    snippets.call = '${1:func}($2${3:, $4})'
+
+Upon arriving at the third placeholder, backspacing and pressing `Tab` completes the snippet
+with a single argument. On the other hand, pressing `Tab` again at the third placeholder
+jumps to the second argument for input.
+
+Note that plain text inside default values may not contain a '}' character either, as it is
+reserved to indicate the end of the placeholder.  Use `\}` to represent a literal '}'.
+
+##### Mirrors
+
+Multiple placeholders can share the same numeric index. When this happens, Textadept visits
+the one with a default value if it exists. Otherwise, the editor visits the first one it
+finds. As you type text into a placeholder, any other placeholders with the same index mirror
+the typed text. For example, the following snippet inserts beginning and ending HTML/XML
+tags with the same name:
+
+    snippets.tag = '<${1:div}>$0</$1>'
+
+The end tag mirrors whatever name you type into the start tag.
+
+##### Transforms
+
+Sometimes mirrors are not quite good enough. For example, perhaps the mirror's content needs to
+deviate slightly from its linked placeholder, like capitalizing the first letter. Or perhaps
+the mirror's contents should depend on the presence (or absence) of text in its linked
+placeholder. This is where placeholder transforms come in handy. They have the following
+syntax: "${*n*/*regex*/*format*/*options*}". *regex* is a [regular expression][] (regex)
+to match against the content of placeholder *n*, *format* is a formatted replacement for
+matched content, and *options* are regex options to use when matching. *format* may contain
+any of the following:
+
+- Plain text.
+- "$*n*" and "${*n*}" sequences, which represent the content of the *n*th capture (*n*=0 is
+  the entire match for this and all subsequent sequences).
+- "${*n*:/upcase}", "${*n*:/downcase}", and "${*n*:/capitalize}" sequences, which
+  represent the uppercase, lowercase, and capitalized forms, respectively, of the
+  content of the *n*th capture. You can define your own transformation function in
+  [`textadept.snippets.transform_methods`](#textadept.snippets.transform_methods).
+- A "${*n*:?*if*:*else*}" sequence, which inserts *if* if the content of capture *n* is
+  non-empty. Otherwise, *else* is used.
+- A "${*n*:+*if*}" sequence, which inserts *if* if the content of capture *n* is
+  non-empty. Otherwise nothing is inserted.
+- "${*n*:*default*}" and "${*n*:-*default*}" sequences, which insert *default* if the content
+  of capture *n* is empty. Otherwise, capture *n* is mirrored.
+
+*options* may include any of the following letters:
+
+- g: Replace all instances of matched text, not just the first one.
+
+For example, the following snippet defines an attribute along with its getter and setter functions:
+
+    snippets.attr = [[
+      ${1:int} ${2:name};
+
+      ${1} get${2/./${0:/upcase}/}() { return $2; }
+      void set${2/./${0:/upcase}/}(${1} ${3:value}) { $2 = $3; }
     ]]
 
-Textadept executes shell code using Lua's [`io.popen()`][] and replaces the transform with the
-process' standard output (stdout). The code may use a `%` character to represent placeholder
-*n*'s text. An example is
+Note that the '/' and '}' characters are reserved in certain places within a placeholder
+transform. Use `\/` and `\}`, respectively, to represent literal versions of those characters
+where necessary.
 
-    snippets['env'] = '$%1(HOME) = %1[echo $%]'
+[regular expression]: manual.html#regex-and-lua-pattern-syntax
 
-#### `%%`
+##### Multiple Choices
 
-Stands for a single '%' since '%' by itself has a special meaning in snippets.
+Placeholders may define a list of options for the user to choose from using the
+"${*n*|*items*|}" syntax, where *items* is a comma-separated list of options
+(e.g. `${1|foo,bar,baz|}`).
 
-#### `%(`<br/>`%{`
+Items may not contain a '|' character, as it is reserved to indicate the end of the choice list.
+Use `\|` to represent a literal '|'.
 
-Stands for a single '(' or '{', respectively, after a `%`*n* mirror. Otherwise, the mirror
-would be interpreted as a placeholder or transform. Note: it is currently not possible to
-escape a '<' or '[' immediately after a `%`*n* mirror due to `%<...>` and `%[...]` sequences
-being interpreted as code to execute.
+### Migrating Legacy Snippets
 
-#### `%)`
+Legacy snippets used the following syntax:
 
-Stands for a single ')' inside a placeholder's default text.
+- "%*n*" for tab stops and mirrors.
+- "%*n*(*default*)" for default placeholders.
+- "%*n*<*Lua code*>" for Lua transforms, where *n* is optional.
+- "%*n*[*Shell code*]" for Shell transforms, where *n* is optional.
+- "%*n*{*items*}" for multiple choice placeholders.
 
-#### `\t`
+While Textadept currently supports legacy snippets, it will not do so forever. It is
+recommended that you migrate your snippets using the following steps:
 
-A single unit of indentation based on the buffer's indentation settings ([`buffer.use_tabs`](#buffer.use_tabs)
-and [`buffer.tab_width`](#buffer.tab_width).
+1. Substitute '%' with '$' in tab stops and mirrors.
+2. Substitute "%*n*(*default*)" default placeholders with "${*n*:*default*}". The following
+  regex and replacement should work for non-nested placeholders: "%(\d+)\(([^)]+)\)" and
+  "${\1:\2}".
+3. Replace *n*-based Lua and Shell transforms with [placeholder transforms](#transforms). You
+  can add your own transform function to [`textadept.snippets.transform_methods`](#textadept.snippets.transform_methods) if you need to.
+4. Replace bare Lua and Shell transforms with interpolated shell code. If you have a Lua
+  interpreter installed, you can use `` `lua -e 'Lua code'` `` if necessary.
+5. Substitute "%*n*{*items*}" choice placeholders with "${*n*|*items*|}".
 
-#### `\n`
-
-A single set of line ending delimiters based on the buffer's end of line mode
-([`buffer.eol_mode`](#buffer.eol_mode)).
-
-[`io.popen()`]: https://www.lua.org/manual/5.4/manual.html#pdf-io.popen
 
 ### Fields defined by `textadept.snippets`
 
@@ -8489,6 +8566,35 @@ a given trigger, this table is consulted for a matching filename, and the conten
 file is inserted as a snippet.
 Note: If a directory has multiple snippets with the same trigger, the snippet chosen for
 insertion is not defined and may not be constant.
+
+<a id="textadept.snippets.transform_methods"></a>
+#### `textadept.snippets.transform_methods` &lt;table&gt;
+
+Map of format method names to their functions for text captured in placeholder transforms.
+
+Fields:
+
+- `upcase`:  Uppercases the captured text.
+- `downcase`:  Lowercases the captured text.
+- `capitalize`:  Capitalizes the captured text.
+
+<a id="textadept.snippets.variables"></a>
+#### `textadept.snippets.variables` &lt;table&gt;
+
+Map of snippet variable names to string values or functions that return string values.
+Each time a snippet is inserted, this map is used to set its variables.
+
+Fields:
+
+- `TM_SELECTED_TEXT`:  The currently selected text, if any.
+- `TM_CURRENT_LINE`:  The contents of the current line.
+- `TM_CURRENT_WORD`:  The word under the caret, if any.
+- `TM_LINE_NUMBER`:  The current line number.
+- `TM_LINE_INDEX`:  The current line number, counting from 0.
+- `TM_FILENAME`:  The buffer's filename, excluding path, if any.
+- `TM_FILENAME_BASE`:  The buffer's bare filename, without extension.
+- `TM_DIRECTORY`:  The buffer's parent directory path.
+- `TM_FILEPATH`:  The buffer's filename, including path.
 
 
 ### Functions defined by `textadept.snippets`
