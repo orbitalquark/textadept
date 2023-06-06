@@ -81,14 +81,14 @@ end
 
 local line_state_marks = {M.MARK_ERROR, M.MARK_WARNING}
 local line_state_indics = {M.INDIC_ERROR, M.INDIC_WARNING}
---- Prints output from a compile, run, build, or test shell command.
+--- Prints output from a compile, run, build, or test shell command, or prints a Lua error.
 -- Any filenames encoded in _CHARSET are left alone and may not display properly.
 -- All stdout and stderr from the command is printed silently.
+-- @param silent Whether or not to print silently.
 -- @param ... Output to print.
-local function print_output(...)
+local function print_output(silent, ...)
 	local buffer = get_output_buffer()
 	local last_line = buffer and buffer.line_count or 1
-	local silent = M.run_in_background or not (...):find('^> ') or (...):find('^> exit')
 	buffer = ui[silent and 'output_silent' or 'output'](...)
 	for i = last_line, buffer.line_count do
 		local line_state = buffer.line_state[i]
@@ -102,8 +102,12 @@ local function print_output(...)
 		end
 	end
 end
-for _, event in ipairs(run_events) do events.connect(event, print_output) end
-events.connect(events.ERROR, function(errmsg) print_output(errmsg, '\n') end) -- mark Lua errors
+for _, event in ipairs(run_events) do
+	events.connect(event, function(...)
+		print_output(M.run_in_background or not (...):find('^> ') or (...):find('^> exit'), ...)
+	end)
+end
+events.connect(events.ERROR, function(errmsg) print_output(false, errmsg, '\n') end) -- mark Lua errors
 
 --- Separate command entry run functions for distinct command histories.
 local command_entry_f = {}
