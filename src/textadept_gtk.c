@@ -504,11 +504,15 @@ void update_ui() {
 }
 
 bool is_dark_mode() {
+#if GTK_CHECK_VERSION(3, 0, 0)
 	GtkStyleContext *context = gtk_style_context_new();
 	GdkRGBA fore, back;
 	gtk_style_context_lookup_color(context, "theme_fg_color", &fore);
 	gtk_style_context_lookup_color(context, "theme_bg_color", &back);
 	return (fore.red + fore.green + fore.blue) > (back.red + back.green + back.blue);
+#else
+	return false; // not supported in Gtk 2.0
+#endif
 }
 
 // Returns a new message dialog with the specified title, icon, and buttons.
