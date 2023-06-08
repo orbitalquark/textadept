@@ -7828,7 +7828,7 @@ Ctrl+D | ⌘D | ^D | Select word
 Ctrl+Alt+D | ^⌘D | M-D | Deselect word
 Ctrl+L | ⌘L | ^L | Select line
 Ctrl+Shift+P | ⌘⇧P | M-^P | Select paragraph
-Ctrl+Shift+U | ⌘⇧U | M-^U | Upper case selection
+Ctrl+Shift+U^(‡)<br/>Ctrl+Alt+Shift+U | ⌘⇧U | M-^U | Upper case selection
 Ctrl+U | ⌘U | ^U | Lower case selection
 Alt+< | ^< | M-< | Enclose selection as XML tags
 Alt+> | ^> | M-> | Enclose selection as single XML tag
@@ -7886,8 +7886,8 @@ Esc | Esc | Esc | Cancel snippet
 None | None | None | Complete trigger word
 None | None | None | Show style
 **Buffer**| | |
-Ctrl+Tab<br/>Ctrl+PgDn | ^⇥<br/>⌘⇟ | M-PgDn<br/> ^Tab^(‡) | Next buffer
-Ctrl+Shift+Tab<br/>Ctrl+PgUp | ^⇧⇥<br/>⌘⇞ | M-PgUp<br/>S-^Tab^(‡) | Previous buffer
+Ctrl+Tab<br/>Ctrl+PgDn | ^⇥<br/>⌘⇟ | M-PgDn<br/> ^Tab^(§) | Next buffer
+Ctrl+Shift+Tab<br/>Ctrl+PgUp | ^⇧⇥<br/>⌘⇞ | M-PgUp<br/>S-^Tab^(§) | Previous buffer
 Ctrl+B | ⌘B | ^B | Switch to buffer...
 None | None | None | Tab width: 2
 None | None | None | Tab width: 3
@@ -7903,8 +7903,8 @@ None | None | None | CP-1252 encoding
 None | None | None | UTF-16 encoding
 Ctrl+Shift+L | ⌘⇧L | M-^L | Select lexer...
 **View**| | |
-Ctrl+Alt+PgDn | ^⌘⇟ | M-^PgDn<br/>M-PgUp^(‡) | Next view
-Ctrl+Alt+PgUp | ^⌘⇞ | M-^PgUp<br/>M-PgDn^(‡) | Previous view
+Ctrl+Alt+PgDn | ^⌘⇟ | M-^PgDn<br/>M-PgUp^(§) | Next view
+Ctrl+Alt+PgUp | ^⌘⇞ | M-^PgUp<br/>M-PgDn^(§) | Previous view
 Ctrl+Alt+_ | ^⌘_ | M-_ | Split view horizontal
 Ctrl+Alt+&#124; | ^⌘&#124; | M-&#124; | Split view vertical
 Ctrl+Alt+W | ^⌘W | M-W | Unsplit view
@@ -7928,7 +7928,7 @@ Shift+Enter | ⇧↩ | None | Start a new line below the current one
 Ctrl+Shift+Enter | ⌘⇧↩ | None | Start a new line above the current one
 Ctrl+Alt+Down | ^⌘⇣ | M-Down | Scroll line down
 Ctrl+Alt+Up | ^⌘⇡ | M-Up | Scroll line up
-Menu<br/> Shift+F10^(‡) | N/A | N/A | Show context menu
+Menu<br/> Shift+F10^(§) | N/A | N/A | Show context menu
 Ctrl+Alt+Shift+R *c* | ^⌘⇧R *c* | M-S-R *c* | Save macro to alphanumeric register *c*
 Ctrl+Alt+R *c* | ^⌘R *c* | M-R *c* | Load and play macro from alphanumeric register *c*
 **Movement**| | |
@@ -8011,7 +8011,9 @@ terminal version, since ^S and ^Q are flow control sequences.
 
 †: If you prefer ^Z to suspend, you can bind it to [`ui.suspend()`](#ui.suspend).
 
-‡: Only on Windows or the GTK version on Linux.
+‡: Some versions of Linux intercept this for Unicode input.
+
+§: Only on Windows or the GTK version on Linux.
 
 
 ---
