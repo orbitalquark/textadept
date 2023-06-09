@@ -744,9 +744,12 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 		treeview_width +=
 			gtk_tree_view_column_get_width(gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), i));
 	}
-	treeview_width = fmax(treeview_width, 800); // minimum 800x500
-	gtk_window_resize(GTK_WINDOW(dialog), treeview_width, treeview_width * 10 / 16); // 16:10 ratio
-	gtk_widget_hide(dialog), gtk_widget_show(dialog); // re-center on Textadept window
+	int dw = fmax(treeview_width, 800), dh = dw * 10 / 16; // 16:10 ratio, minimum 800x500
+	gtk_window_resize(GTK_WINDOW(dialog), dw, dh);
+	int x, y, w, h;
+	gtk_window_get_position(GTK_WINDOW(window), &x, &y),
+		gtk_window_get_size(GTK_WINDOW(window), &w, &h);
+	gtk_window_move(GTK_WINDOW(dialog), x + (w - dw) / 2, y + (h - dh) / 2); // re-center
 
 	int button = (gtk_widget_show_all(dialog), gtk_dialog_run(dlg));
 	bool cancelled = button < 1 || (button == 2 && !opts.return_button);
