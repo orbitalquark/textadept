@@ -1,4 +1,4 @@
-## Textadept 12.0 alpha 3 Manual
+## Textadept 12.0 nightly Manual
 
 **Contents**
 
