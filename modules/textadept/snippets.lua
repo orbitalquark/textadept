@@ -164,8 +164,8 @@
 --
 -- 1. Substitute '%' with '$' in tab stops and mirrors.
 -- 2. Substitute "%*n*(*default*)" default placeholders with "${*n*:*default*}". The following
---	regex and replacement should work for non-nested placeholders: "%(\d+)\(([^)]+)\)" and
---	"${\1:\2}".
+--	regex and replacement should work for non-nested placeholders: `%(\d+)\(([^)]+)\)` and
+--	`${\1:\2}`.
 -- 3. Replace *n*-based Lua and Shell transforms with [placeholder transforms](#transforms). You
 --	can add your own transform function to `textadept.snippets.transform_methods` if you
 --	need to.
