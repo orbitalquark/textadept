@@ -8523,8 +8523,8 @@ Placeholders may define a list of options for the user to choose from using the
 "${*n*|*items*|}" syntax, where *items* is a comma-separated list of options
 (e.g. `${1|foo,bar,baz|}`).
 
-Items may not contain a '|' character, as it is reserved to indicate the end of the choice list.
-Use `\|` to represent a literal '|'.
+Items may not contain a '\|' character, as it is reserved to indicate the end of the choice list.
+Use `\|` to represent a literal '\|'.
 
 ### Migrating Legacy Snippets
 
@@ -8548,7 +8548,7 @@ recommended that you migrate your snippets using the following steps:
 	need to.
 4. Replace bare Lua and Shell transforms with interpolated shell code. If you have a Lua
 	interpreter installed, you can use `` `lua -e 'Lua code'` `` if necessary.
-5. Substitute "%*n*{*items*}" choice placeholders with "${*n*|*items*|}".
+5. Substitute "%*n*{*items*}" choice placeholders with "${*n*\|*items*\|}".
 
 
 ### Fields defined by `textadept.snippets`
