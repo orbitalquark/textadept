@@ -8419,6 +8419,17 @@ expression and replaces it with the result:
 
 	snippets.eval = '`echo $(( $TM_SELECTED_TEXT ))`'
 
+#### Interpolated Lua Code
+
+Snippets can also execute Lua code enclosed within "```" sequences, and insert any string
+results returned by that code. For example, the following snippet inserts the current date
+and time:
+
+	snippets.date = '```os.date()```'
+
+Lua code is executed within Textadept's Lua environment, with the addition of snippet
+variables available as global variables (e.g. `TM_SELECTED_TEXT` exists as a global).
+
 #### Placeholders
 
 The true power of snippets lies with placeholders. Using placeholders, you can insert a text
@@ -8546,8 +8557,7 @@ recommended that you migrate your snippets using the following steps:
 3. Replace *n*-based Lua and Shell transforms with [placeholder transforms](#transforms). You
 	can add your own transform function to [`textadept.snippets.transform_methods`](#textadept.snippets.transform_methods) if you
 	need to.
-4. Replace bare Lua and Shell transforms with interpolated shell code. If you have a Lua
-	interpreter installed, you can use `` `lua -e 'Lua code'` `` if necessary.
+4. Replace bare Lua and Shell transforms with interpolated Lua and shell code.
 5. Substitute "%*n*{*items*}" choice placeholders with "${*n*\|*items*\|}".
 
 

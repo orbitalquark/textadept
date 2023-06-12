@@ -4057,6 +4057,7 @@ function test_snippets_placeholders()
 	buffer.new()
 	buffer.eol_mode = buffer.EOL_LF
 	local date_cmd = not WIN32 and 'date' or 'date /T'
+	local lua_date = os.date()
 	local p = io.popen(date_cmd)
 	local shell_date = p:read('l')
 	p:close()
@@ -4067,6 +4068,7 @@ function test_snippets_placeholders()
 		'transform: ${1/.+/${0:/upcase}/}', --
 		'variable: $TM_LINE_NUMBER', --
 		'Shell: `echo $TM_LINE_INDEX` `' .. date_cmd .. '`', --
+		'Lua: ```os.date()```', --
 		'escape: \\$1 \\${4} \\`\\`'
 	}, '\n'))
 	assert_equal(buffer.selections, 1)
@@ -4082,6 +4084,7 @@ function test_snippets_placeholders()
 		'transform: BAZ', -- verify real-time transforms
 		'variable: 1', --
 		'Shell: 0 ' .. shell_date, --
+		'Lua: ' .. lua_date, --
 		'escape: $1 ${4} `` ' -- trailing space for snippet sentinel
 	}, newline()))
 	textadept.snippets.insert()
@@ -4107,6 +4110,7 @@ function test_snippets_placeholders()
 		'transform: BAZ', --
 		'variable: 1', --
 		'Shell: 0 ' .. shell_date, --
+		'Lua: ' .. lua_date, --
 		'escape: $1 ${4} ``'
 	}, '\n'))
 	assert_equal(buffer.selection_start, 1)

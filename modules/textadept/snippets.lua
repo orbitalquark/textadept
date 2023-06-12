@@ -42,6 +42,17 @@
 --
 --	snippets.eval = '`echo $(( $TM_SELECTED_TEXT ))`'
 --
+-- #### Interpolated Lua Code
+--
+-- Snippets can also execute Lua code enclosed within "\`\`\`" sequences, and insert any string
+-- results returned by that code. For example, the following snippet inserts the current date
+-- and time:
+--
+--	snippets.date = '```os.date()```'
+--
+-- Lua code is executed within Textadept's Lua environment, with the addition of snippet
+-- variables available as global variables (e.g. `TM_SELECTED_TEXT` exists as a global).
+--
 -- #### Placeholders
 --
 -- The true power of snippets lies with placeholders. Using placeholders, you can insert a text
@@ -169,8 +180,7 @@
 -- 3. Replace *n*-based Lua and Shell transforms with [placeholder transforms](#transforms). You
 --	can add your own transform function to `textadept.snippets.transform_methods` if you
 --	need to.
--- 4. Replace bare Lua and Shell transforms with interpolated shell code. If you have a Lua
---	interpreter installed, you can use `` `lua -e 'Lua code'` `` if necessary.
+-- 4. Replace bare Lua and Shell transforms with interpolated Lua and shell code.
 -- 5. Substitute "%*n*{*items*}" choice placeholders with "${*n*\|*items*\|}".
 --
 -- @module textadept.snippets
@@ -326,7 +336,7 @@ local function any_but(chars) return Cs((1 - S(chars .. '\\') + '\\' * C(1) / 1)
 -- @table placeholder
 -- @local
 local grammar = P{
-	Ct((V('text') + V('variable') + V('shell') + V('placeholder') + C(1))^0), --
+	Ct((V('text') + V('variable') + V('code') + V('placeholder') + C(1))^0), --
 	text = any_but('$`'), --
 	variable = '$' * Ct(V('name') + '{' * V('name') * (V('format') + V('transform'))^-1 * '}'),
 	name = Cg((R('AZ', 'az') + '_') * (R('AZ', 'az', '09') + '_')^0, 'variable'), --
@@ -338,11 +348,12 @@ local grammar = P{
 	repl = Cg(Ct((any_but('/$') + ('$' * Ct(V('int') + '{' * V('int') * V('format')^-1 * '}')))^0),
 		'repl'), --
 	opts = Cg(R('az')^0, 'opts'), --
+	code = V('lua') + V('shell'), lua = '```' * Ct(Cg(any_but('`'), 'lua')) * '```',
 	shell = '`' * Ct(Cg(any_but('`'), 'shell')) * '`',
 	placeholder = '$' * Ct((V('int') * Cg(Cc(true), 'simple') +
 		('{' * V('int') * (V('default') + V('transform') + V('choice') + Cg(Cc(true), 'simple')) * '}'))),
 	int = Cg(R('09')^1 / tonumber, 'index'),
-	default = ':' * Cg(Ct((any_but('$`}') + V('placeholder') + V('shell'))^0), 'default'),
+	default = ':' * Cg(Ct((any_but('$`}') + V('placeholder') + V('code'))^0), 'default'),
 	choice = '|' * Cg(any_but('|'), 'choice') * '|'
 }
 
@@ -412,7 +423,7 @@ function snippet.new(text, trigger)
 	return snip
 end
 
---- Adds string, variable, interpolated shell code, or placeholder *part* to this snippet.
+--- Adds string, variable, interpolated shell or Lua code, or placeholder *part* to this snippet.
 -- @param part The LPeg-generated part to add.
 -- @local
 function snippet:add_part(part)
@@ -431,6 +442,11 @@ function snippet:add_part(part)
 		for k, v in pairs(self.variables) do env[k] = v end
 		self:add_part(os.spawn(cmd, env):read('a'):match('^(.-)\r?\n?$')) -- omit trailing newline
 		if tmpfile then os.remove(tmpfile) end
+	elseif part.lua then
+		local env = setmetatable({}, {__index = _G})
+		for k, v in pairs(self.variables) do env[k] = v end
+		local f, result = load('return ' .. part.lua, nil, 't', env)
+		self:add_part(f and select(2, pcall(f)) or result or '')
 	elseif part.legacy and part.transform and not part.index then
 		self:add_part(self:legacy_execute_code(part))
 	else
