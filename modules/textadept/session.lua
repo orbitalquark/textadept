@@ -68,7 +68,7 @@ function M.load(filename)
 			buffer:set_save_point()
 			events.emit(events.FILE_OPENED, buf.filename) -- close initial buffer
 		else
-			not_found[#not_found + 1] = buf.filename
+			not_found[#not_found + 1] = buf.filename:iconv('UTF-8', _CHARSET)
 		end
 	end
 
@@ -101,7 +101,7 @@ function M.load(filename)
 		ui.dialogs.message{
 			title = _L['Session Files Not Found'],
 			text = string.format('%s\n • %s', _L['The following session files were not found:'],
-				table.concat(not_found, '\n • '):iconv('UTF-8', _CHARSET)), icon = 'dialog-warning'
+				table.concat(not_found, '\n • ')), icon = 'dialog-warning'
 		}
 	end
 	session_file = filename
