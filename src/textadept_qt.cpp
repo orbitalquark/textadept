@@ -463,7 +463,6 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 		model.setItem(i / numColumns, i % numColumns, (qitem->setEditable(false), qitem));
 	}
 	QSortFilterProxyModel filter;
-	filter.setFilterCaseSensitivity(Qt::CaseInsensitive);
 	filter.setFilterKeyColumn(opts.search_column - 1);
 	filter.setSourceModel(&model);
 
@@ -482,7 +481,9 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 	QItemSelectionModel *selection = treeView->selectionModel();
 	QObject::connect(
 		lineEdit, &QLineEdit::textChanged, &filter, [&filter, &selection](const QString &text) {
-			filter.setFilterWildcard(QString{text}.replace(' ', '*'));
+			QRegExp re{QString{text}.replace(QRegExp{"([*?\\[\\]\\\\])"}, "\\\\1").replace(' ', '*')};
+			re.setPatternSyntax(QRegExp::WildcardUnix), re.setCaseSensitivity(Qt::CaseInsensitive);
+			filter.setFilterRegExp(re);
 			selection->select(
 				filter.index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
 		});
