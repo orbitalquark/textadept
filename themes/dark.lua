@@ -29,7 +29,7 @@ if not size then size = not OSX and 10 or 12 end
 
 -- Predefined styles.
 styles[view.STYLE_DEFAULT] = {
-  font = font, size = size, fore = colors.light_grey, back = colors.black
+	font = font, size = size, fore = colors.light_grey, back = colors.black
 }
 styles[view.STYLE_LINENUMBER] = {fore = colors.dark_grey, back = colors.black}
 styles[view.STYLE_BRACELIGHT] = {fore = colors.blue, bold = true}
@@ -110,7 +110,7 @@ view.element_color[view.ELEMENT_SELECTION_INACTIVE_BACK] = colors.light_black
 view.element_color[view.ELEMENT_CARET] = colors.light_grey
 -- view.element_color[view.ELEMENT_CARET_ADDITIONAL] =
 if view ~= ui.command_entry then
-  view.element_color[view.ELEMENT_CARET_LINE_BACK] = colors.light_black | 0x80000000
+	view.element_color[view.ELEMENT_CARET_LINE_BACK] = colors.light_black | 0x80000000
 end
 view.caret_line_layer = view.LAYER_UNDER_TEXT
 
@@ -126,9 +126,9 @@ view.marker_back[textadept.run.MARK_WARNING] = colors.yellow
 -- view.marker_fore[textadept.run.MARK_ERROR] = colors.black
 view.marker_back[textadept.run.MARK_ERROR] = colors.red
 for i = view.MARKNUM_FOLDEREND, view.MARKNUM_FOLDEROPEN do -- fold margin
-  view.marker_fore[i] = colors.black
-  view.marker_back[i] = colors.dark_grey
-  view.marker_back_selected[i] = colors.light_grey
+	view.marker_fore[i] = colors.black
+	view.marker_back[i] = colors.dark_grey
+	view.marker_back_selected[i] = colors.light_grey
 end
 
 -- Indicators.

@@ -108,7 +108,7 @@ view.element_color[view.ELEMENT_SELECTION_INACTIVE_BACK] = colors.light_grey
 view.element_color[view.ELEMENT_CARET] = colors.black
 -- view.element_color[view.ELEMENT_CARET_ADDITIONAL] =
 if view ~= ui.command_entry then
-  view.element_color[view.ELEMENT_CARET_LINE_BACK] = colors.light_grey | 0x60000000
+	view.element_color[view.ELEMENT_CARET_LINE_BACK] = colors.light_grey | 0x60000000
 end
 view.caret_line_layer = view.LAYER_UNDER_TEXT
 
@@ -124,9 +124,9 @@ view.marker_back[textadept.run.MARK_WARNING] = colors.yellow
 -- view.marker_fore[textadept.run.MARK_ERROR] = colors.white
 view.marker_back[textadept.run.MARK_ERROR] = colors.red
 for i = view.MARKNUM_FOLDEREND, view.MARKNUM_FOLDEROPEN do -- fold margin
-  view.marker_fore[i] = colors.white
-  view.marker_back[i] = colors.dark_grey
-  view.marker_back_selected[i] = colors.black
+	view.marker_fore[i] = colors.white
+	view.marker_back[i] = colors.dark_grey
+	view.marker_back_selected[i] = colors.black
 end
 
 -- Indicators.
