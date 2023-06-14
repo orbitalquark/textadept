@@ -481,9 +481,12 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 	QItemSelectionModel *selection = treeView->selectionModel();
 	QObject::connect(
 		lineEdit, &QLineEdit::textChanged, &filter, [&filter, &selection](const QString &text) {
-			QRegExp re{QString{text}.replace(QRegExp{"([*?\\[\\]\\\\])"}, "\\\\1").replace(' ', '*')};
-			re.setPatternSyntax(QRegExp::WildcardUnix), re.setCaseSensitivity(Qt::CaseInsensitive);
-			filter.setFilterRegExp(re);
+			// TODO: Qt 5.15 introduced QRegularExpression::escape().
+			// QString re = QRegularExpression::escape(text).replace("\\ ", ".*");
+			QString re =
+				QString{text}.replace(QRegularExpression{"([^A-Za-z0-9_])"}, "\\\\1").replace("\\ ", ".*");
+			filter.setFilterRegularExpression(
+				QRegularExpression{re, QRegularExpression::CaseInsensitiveOption});
 			selection->select(
 				filter.index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
 		});
@@ -535,7 +538,8 @@ bool spawn(lua_State *L, Process *proc, int /*index*/, const char *cmd, const ch
 	std::string full_cmd = std::string{getenv("COMSPEC")} + " /c " + cmd;
 	cmd = full_cmd.c_str();
 #endif
-	// TODO: Qt 5.15 introduced QProcess:splitCommand().
+	// TODO: Qt 5.15 introduced QProcess::splitCommand().
+	// QStringList args = QProcess::splitCommand(QString{cmd}).
 	const char *p = cmd;
 	while (*p) {
 		while (*p == ' ') p++;
