@@ -340,9 +340,9 @@ local grammar = P{
 	text = any_but('$`'), --
 	variable = '$' * Ct(V('name') + '{' * V('name') * (V('format') + V('transform'))^-1 * '}'),
 	name = Cg((R('AZ', 'az') + '_') * (R('AZ', 'az', '09') + '_')^0, 'variable'), --
-	format = ':' *
-		('/' * Cg(R('az')^1, 'method') + ('?' * Cg(any_but(':'), 'if') * ':' * Cg(any_but('}'), 'else')) +
-			'+' * Cg(any_but('}'), 'if') + P('-')^-1 * Cg(any_but('}'), 'else')),
+	format = ':' * ('/' * Cg(R('az')^1, 'method') +
+		('?' * Cg(any_but(':')^-1, 'if') * ':' * Cg(any_but('}')^-1, 'else')) +
+		('+' * Cg(any_but('}')^-1, 'if')) + P('-')^-1 * Cg(any_but('}')^-1, 'else')),
 	transform = '/' * V('regex') * '/' * V('repl') * '/' * V('opts') * Cg(Cc(true), 'transform'),
 	regex = Cg(any_but('/')^-1, 'regex'),
 	repl = Cg(Ct((any_but('/$') + ('$' * Ct(V('int') + '{' * V('int') * V('format')^-1 * '}')))^0),
