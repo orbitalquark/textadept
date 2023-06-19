@@ -4665,6 +4665,7 @@ The current styling position or the last correctly styled character's position. 
 #### `buffer.tab_label` 
 
 The buffer's tab label in the tab bar. (Write-only)
+Textadept sets this automatically based on the buffer's filename or type, and its save status.
 
 <a id="buffer.read_only"></a>
 #### `buffer.read_only` 
@@ -7251,7 +7252,10 @@ Parameters:
 - *cwd*:  Optional current working directory (cwd) for the child process. When omitted,
 	the parent's cwd is used.
 - *env*:  Optional map of environment variables for the child process. When omitted,
-	Textadept's environment is used.
+	Textadept's environment is used. In order to create a new environment that inherits
+	from Textadept's, you can spawn 'env' on macOS and Linux, or 'set' on Windows, and
+	iterate over output matches of "key=value" pairs (one per line), assigning them to the
+	new environment table.
 - *stdout_cb*:  Optional Lua function that accepts a string parameter for a block of
 	standard output read from the child. Stdout is read asynchronously in 1KB or 0.5KB
 	blocks (depending on the platform), or however much data is available at the time.
@@ -8421,7 +8425,7 @@ expression and replaces it with the result:
 
 #### Interpolated Lua Code
 
-Snippets can also execute Lua code enclosed within "```" sequences, and insert any string
+Snippets can also execute Lua code enclosed within "\`\`\`" sequences, and insert any string
 results returned by that code. For example, the following snippet inserts the current date
 and time:
 

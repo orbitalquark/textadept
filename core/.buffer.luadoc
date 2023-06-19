@@ -3360,6 +3360,7 @@
 -- @section
 
 --- The buffer's tab label in the tab bar. (Write-only)
+-- Textadept sets this automatically based on the buffer's filename or type, and its save status.
 -- @field tab_label
 
 --- Whether or not the buffer is read-only.
