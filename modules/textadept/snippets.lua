@@ -768,6 +768,7 @@ function M.select()
 	for trigger, snippet in pairs(select(2, find_snippet(true, true))) do
 		all_snippets[#all_snippets + 1], all_snippets[trigger] = trigger, snippet
 	end
+	if #all_snippets == 0 then return end
 	table.sort(all_snippets)
 	for _, trigger in ipairs(all_snippets) do
 		items[#items + 1], items[#items + 2] = trigger, all_snippets[trigger]
