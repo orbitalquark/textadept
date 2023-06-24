@@ -338,8 +338,9 @@ local function any_but(chars) return Cs((1 - S(chars .. '\\') + '\\' * C(1) / 1)
 local grammar = P{
 	Ct((V('text') + V('variable') + V('code') + V('placeholder') + C(1))^0), --
 	text = any_but('$`'), --
-	variable = '$' * Ct(V('name') + '{' * V('name') * (V('format') + V('transform'))^-1 * '}'),
+	variable = '$' * Ct(V('name') + '{' * V('name') * (V('lcode') + V('format') + V('transform'))^-1 * '}'),
 	name = Cg((R('AZ', 'az') + '_') * (R('AZ', 'az', '09') + '_')^0, 'variable'), --
+    lcode = '*`' * Cg(any_but('`')^-1, 'lua_code'),
 	format = ':' * ('/' * Cg(R('az')^1, 'method') +
 		('?' * Cg(any_but(':')^-1, 'if') * ':' * Cg(any_but('}')^-1, 'else')) +
 		('+' * Cg(any_but('}')^-1, 'if')) + P('-')^-1 * Cg(any_but('}')^-1, 'else')),
