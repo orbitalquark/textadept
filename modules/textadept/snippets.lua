@@ -283,6 +283,22 @@ local function find_snippet(grep, no_trigger)
 	return trigger, matching_snippets
 end
 
+--- Dump an object to a string
+-- @param o The object to dump to a string
+-- @return String representing the object
+local function dump_obj(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. dump_obj(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
+
 --- A snippet object.
 -- @field trigger The word that triggered this snippet.
 -- @field original_sel_text The text originally selected when this snippet was inserted.
@@ -419,7 +435,9 @@ function snippet.new(text, trigger)
 
 	-- Parse snippet and add text and placeholders.
 	local grammar = is_legacy(text) and legacy_grammar or grammar
-	for _, part in ipairs(grammar:match(text)) do snip:add_part(part) end
+  local snip_table = grammar:match(text)
+  print (dump_obj(snip_table)) -- during the development process
+	for _, part in ipairs(snip_table) do snip:add_part(part) end
 
 	return snip
 end
