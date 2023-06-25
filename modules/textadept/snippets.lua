@@ -468,9 +468,9 @@ function snippet:add_part(part)
 		local f, result = load('return ' .. part.lua, nil, 't', env)
 		self:add_part(f and select(2, pcall(f)) or result or '')
 	elseif part.lcode then
-    print (dump_obj(part))
-    -- TODO: way to get the text that is currently being edited
-    local text = 'note' -- 'not yet' -- captures[part.index + 1]
+        print (dump_obj(part))
+        -- TODO: way to get the text in the placeholder that is currently being edited
+        local text = 'TODO'
 		local env = setmetatable({text=text, selected_text = self.original_sel_text}, {__index = _G})
 		for k, v in pairs(self.variables) do env[k] = v end
 		local f, result = load('return ' .. part.lcode, nil, 't', env)
