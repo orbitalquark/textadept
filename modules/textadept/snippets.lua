@@ -354,9 +354,8 @@ local function any_but(chars) return Cs((1 - S(chars .. '\\') + '\\' * C(1) / 1)
 local grammar = P{
 	Ct((V('text') + V('variable') + V('code') + V('placeholder') + C(1))^0), --
 	text = any_but('$`'), --
-	variable = '$' * Ct(V('name') + '{' * V('name') * (V('lcode') + V('format') + V('transform'))^-1 * '}'),
+	variable = '$' * Ct(V('name') + '{' * V('name') * (V('format') + V('transform'))^-1 * '}'),
 	name = Cg((R('AZ', 'az') + '_') * (R('AZ', 'az', '09') + '_')^0, 'variable'), --
-    lcode = '*`' * Cg(any_but('`')^-1, 'lua_code'),
 	format = ':' * ('/' * Cg(R('az')^1, 'method') +
 		('?' * Cg(any_but(':')^-1, 'if') * ':' * Cg(any_but('}')^-1, 'else')) +
 		('+' * Cg(any_but('}')^-1, 'if')) + P('-')^-1 * Cg(any_but('}')^-1, 'else')),
@@ -368,10 +367,11 @@ local grammar = P{
 	code = V('lua') + V('shell'), lua = '```' * Ct(Cg(any_but('`'), 'lua')) * '```',
 	shell = '`' * Ct(Cg(any_but('`'), 'shell')) * '`',
 	placeholder = '$' * Ct((V('int') * Cg(Cc(true), 'simple') +
-		('{' * V('int') * (V('default') + V('transform') + V('choice') + Cg(Cc(true), 'simple')) * '}'))),
+		('{' * V('int') * (V('default') + V('transform') + V('choice') + V('lcode') + Cg(Cc(true), 'simple')) * '}'))),
 	int = Cg(R('09')^1 / tonumber, 'index'),
 	default = ':' * Cg(Ct((any_but('$`}') + V('placeholder') + V('code'))^0), 'default'),
-	choice = '|' * Cg(any_but('|'), 'choice') * '|'
+	choice = '|' * Cg(any_but('|'), 'choice') * '|',
+	lcode = '%' * Cg(any_but('}'), 'lcode')
 }
 
 local legacy_grammar = P{
