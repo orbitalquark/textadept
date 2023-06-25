@@ -335,6 +335,7 @@ local function any_but(chars) return Cs((1 - S(chars .. '\\') + '\\' * C(1) / 1)
 -- @field simple Whether or not this placeholder is a simple one (i.e. a tab stop).
 -- @field transform Whether or not this placeholder is a transform.
 -- @field regex The regex for this transform.
+-- @field lcode Lua code to transform the text (like in the legacy).
 -- @field repl List of replacement parts for this transform. Each part is either a string or
 --	format table for a capture. Format tables have 'index', 'method', 'if', and 'else' fields.
 -- @field opts Regex options for this transform.
@@ -436,7 +437,7 @@ function snippet.new(text, trigger)
 	-- Parse snippet and add text and placeholders.
 	local grammar = is_legacy(text) and legacy_grammar or grammar
   local snip_table = grammar:match(text)
-  print (dump_obj(snip_table)) -- during the development process
+  -- print (dump_obj(snip_table)) -- during the development process
 	for _, part in ipairs(snip_table) do snip:add_part(part) end
 
 	return snip
@@ -465,6 +466,14 @@ function snippet:add_part(part)
 		local env = setmetatable({}, {__index = _G})
 		for k, v in pairs(self.variables) do env[k] = v end
 		local f, result = load('return ' .. part.lua, nil, 't', env)
+		self:add_part(f and select(2, pcall(f)) or result or '')
+	elseif part.lcode then
+    print (dump_obj(part))
+    -- TODO: way to get the text that is currently being edited
+    local text = 'note' -- 'not yet' -- captures[part.index + 1]
+		local env = setmetatable({text=text, selected_text = self.original_sel_text}, {__index = _G})
+		for k, v in pairs(self.variables) do env[k] = v end
+		local f, result = load('return ' .. part.lcode, nil, 't', env)
 		self:add_part(f and select(2, pcall(f)) or result or '')
 	elseif part.legacy and part.transform and not part.index then
 		self:add_part(self:legacy_execute_code(part))
