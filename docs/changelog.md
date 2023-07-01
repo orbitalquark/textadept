@@ -6,9 +6,56 @@
 
 [donate]: https://gum.co/textadept
 
-### 12.0 alpha 3 (01 May 2023)
+### 12.0 beta (01 Jul 2023)
 
 Please see the [migration guide][] for migrating from Textadept 11 to 12.
+
+Download:
+
+- [Textadept 12.0 beta  -- Windows][]
+- [Textadept 12.0 beta  -- macOS 11+][]
+- [Textadept 12.0 beta  -- Linux][]
+- [Textadept 12.0 beta  -- Modules][]
+
+Bugfixes:
+
+- Fixed a new view resetting a buffer's indentation settings.
+- Fixed Qt bug where unsplitting in a second-level split view changed view focus.
+- Do not silently print internal Lua errors.
+- Fixed compile error with Gtk 2.0.
+- Fixed Gtk list dialog display.
+- Fixed Qt bug that disallowed literal '*' in list dialog filters.
+- Fixed display of bullets in "session files not found" dialog on Windows.
+- Do not attempt to show a snippet list without snippets.
+- LSP: fixed calculation of character columns when tabs are enabled.
+- LSP: Lua language server highlights ':' method parameters starting at 2, not 1.
+
+Changes:
+
+- Windows 10 and macOS 11 are the new minimum system requirements; Linux is unchanged.
+- Moved "View Whitespace" and "Word Wrap" back into "View" menu and made them view-specific
+  properties.
+- Added alphanumeric [macro registers][].
+- Autodetect dark mode and implement auto-switching between light and dark modes on Windows.
+- Support Qt 6 and use it on Windows and macOS builds.
+- Switch default indentation to size 8 tabs.
+- Allow autocompleter functions to set separator character and sort order.
+- Added [lua-std-regex][] and its `regex` Lua module.
+- Support TextMate- and LSP-style snippets, and deprecated old format.
+- Alias `Ctrl+Shift+U` (upper-case selection) to `Ctrl+Alt+Shift+U` in case the former is
+  consumed by Linux for Unicode input.
+- LSP: added support for snippet completions.
+- LSP: support per-project language servers.
+
+[migration guide]: manual.html#migrating-from-textadept-11-to-12
+[Textadept 12.0 beta  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.win.zip
+[Textadept 12.0 beta  -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.macOS.zip
+[Textadept 12.0 beta  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.linux.tgz
+[Textadept 12.0 beta  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.modules.zip
+[macro registers]: manual.html#macros
+[lua-std-regex]: https://github.com/orbitalquark/lua-std-regex
+
+### 12.0 alpha 3 (01 May 2023)
 
 Download:
 
@@ -69,7 +116,6 @@ Changes:
 - Updated to [Scintilla][] 5.3.4.
 - Updated to [Scinterm][] 5.0.
 
-[migration guide]: manual.html#migrating-from-textadept-11-to-12
 [Textadept 12.0 alpha 3 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_3/textadept_12.0_alpha_3.win.zip
 [Textadept 12.0 alpha 3 -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_3/textadept_12.0_alpha_3.macOS.zip
 [Textadept 12.0 alpha 3 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha_3/textadept_12.0_alpha_3.linux.tgz
