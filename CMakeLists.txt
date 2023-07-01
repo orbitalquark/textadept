@@ -79,7 +79,7 @@ endif()
 FetchContent_Declare(lfs URL ${lfs_url})
 FetchContent_MakeAvailable(lfs)
 # Regex.
-set(regex_zip 2cec9523ea60af49572ef24cb47caf8c3a229dc2.zip)
+set(regex_zip 1.0.zip)
 set(regex_url file://${deps_dir}/${regex_zip})
 if(NIGHTLY)
   set(regex_zip default.zip)
