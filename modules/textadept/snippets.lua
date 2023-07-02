@@ -438,9 +438,9 @@ function snippet.new(text, trigger)
 	-- Parse snippet and add text and placeholders.
 	local grammar = is_legacy(text) and legacy_grammar or grammar
     local snip_table = grammar:match(text)
-    print (dump_obj(snip_table)) -- during the development process
+    -- To check the output of the grammar
+    -- print (dump_obj(snip_table))
 	for _, part in ipairs(snip_table) do snip:add_part(part) end
-
 	return snip
 end
 
@@ -448,10 +448,14 @@ end
 -- @param part The LPeg-generated part to add.
 -- @local
 function snippet:add_part(part)
+    if part == nil then return end -- Q&D - TODO: see how a nil part is generated
+    --  print('add_part (' .. dump_obj(part) .. ')')
 	if type(part) == 'string' then
 		self.snapshots[0].text = self.snapshots[0].text .. part
 	elseif part.variable then
 		self:add_part(part.transform and self:transform(part) or self.variables[part.variable] or '')
+	elseif part.lcode then
+        self:add_part(self:lcode(part))
 	elseif part.shell then
 		-- Linux and macOS need a shell to expand environment variables in, so execute
 		-- the shell code in a script.
@@ -467,15 +471,6 @@ function snippet:add_part(part)
 		local env = setmetatable({}, {__index = _G})
 		for k, v in pairs(self.variables) do env[k] = v end
 		local f, result = load('return ' .. part.lua, nil, 't', env)
-		self:add_part(f and select(2, pcall(f)) or result or '')
-	elseif part.lcode then
-        print ('part.lcode --> ' .. dump_obj(part))
-        -- TODO: way to get the text in the placeholder that is currently being edited
-        -- it should come from part.index
-        local text = 'TODO'
-		local env = setmetatable({text=text, selected_text = self.original_sel_text}, {__index = _G})
-		for k, v in pairs(self.variables) do env[k] = v end
-		local f, result = load('return ' .. part.inline, nil, 't', env)
 		self:add_part(f and select(2, pcall(f)) or result or '')
 	elseif part.legacy and part.transform and not part.index then
 		self:add_part(self:legacy_execute_code(part))
@@ -659,6 +654,19 @@ function snippet:each_placeholder(index, type)
 			s = buffer:indicator_end(M.INDIC_PLACEHOLDER, i)
 		end
 	end
+end
+
+function snippet:lcode(placeholder)
+    print ('placeholder.lcode --> ' .. dump_obj(placeholder))
+    local text = not placeholder.variable and
+		buffer:text_range(self.placeholder_pos, buffer.selection_end) or
+		tostring(self.variables[placeholder.variable])
+    -- TODO: way to get the text in the placeholder that is currently being edited
+	local env = setmetatable({text=text, selected_text = self.original_sel_text}, {__index = _G})
+    print ('env = ' .. dump_obj(env))
+	for k, v in pairs(self.variables) do env[k] = v end
+	local f, result = load('return ' .. placeholder.inline, nil, 't', env)
+	self:add_part(f and select(2, pcall(f)) or result or '')
 end
 
 --- Returns the result of applying the transform in placeholder *placeholder* in the context
