@@ -291,7 +291,7 @@ local function dump_obj(o)
       local s = '{ '
       for k,v in pairs(o) do
          if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. dump_obj(v) .. ','
+         s = s .. '['..k..'] = ' .. dump_obj(v) .. ',\n'
       end
       return s .. '} '
    else
@@ -355,7 +355,7 @@ local function any_but(chars) return Cs((1 - S(chars .. '\\') + '\\' * C(1) / 1)
 local grammar = P{
 	Ct((V('text') + V('variable') + V('code') + V('placeholder') + C(1))^0), --
 	text = any_but('$`'), --
-	variable = '$' * Ct(V('name') + '{' * V('name') * (V('format') + V('transform'))^-1 * '}'),
+	variable = '$' * Ct(V('name') + '{' * V('name') * (V('format') + V('transform') + V('lcode'))^-1 * '}'),
 	name = Cg((R('AZ', 'az') + '_') * (R('AZ', 'az', '09') + '_')^0, 'variable'), --
 	format = ':' * ('/' * Cg(R('az')^1, 'method') +
 		('?' * Cg(any_but(':')^-1, 'if') * ':' * Cg(any_but('}')^-1, 'else')) +
@@ -372,7 +372,8 @@ local grammar = P{
 	int = Cg(R('09')^1 / tonumber, 'index'),
 	default = ':' * Cg(Ct((any_but('$`}') + V('placeholder') + V('code'))^0), 'default'),
 	choice = '|' * Cg(any_but('|'), 'choice') * '|',
-	lcode = '%' * Cg(any_but('}'), 'lcode')
+	lcode = '%' *  V('inline') * Cg(Cc(true), 'lcode'),
+    inline = Cg(any_but('}'), 'inline'),
 }
 
 local legacy_grammar = P{
@@ -436,8 +437,8 @@ function snippet.new(text, trigger)
 
 	-- Parse snippet and add text and placeholders.
 	local grammar = is_legacy(text) and legacy_grammar or grammar
-  local snip_table = grammar:match(text)
-  -- print (dump_obj(snip_table)) -- during the development process
+    local snip_table = grammar:match(text)
+    print (dump_obj(snip_table)) -- during the development process
 	for _, part in ipairs(snip_table) do snip:add_part(part) end
 
 	return snip
@@ -468,12 +469,13 @@ function snippet:add_part(part)
 		local f, result = load('return ' .. part.lua, nil, 't', env)
 		self:add_part(f and select(2, pcall(f)) or result or '')
 	elseif part.lcode then
-        print (dump_obj(part))
+        print ('part.lcode --> ' .. dump_obj(part))
         -- TODO: way to get the text in the placeholder that is currently being edited
+        -- it should come from part.index
         local text = 'TODO'
 		local env = setmetatable({text=text, selected_text = self.original_sel_text}, {__index = _G})
 		for k, v in pairs(self.variables) do env[k] = v end
-		local f, result = load('return ' .. part.lcode, nil, 't', env)
+		local f, result = load('return ' .. part.inline, nil, 't', env)
 		self:add_part(f and select(2, pcall(f)) or result or '')
 	elseif part.legacy and part.transform and not part.index then
 		self:add_part(self:legacy_execute_code(part))
