@@ -229,6 +229,28 @@ local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.new_indic_number()
 _G.snippets = {}
 for _, name in ipairs(lexer.names()) do snippets[name] = {} end
 
+--- Auxiliary function: dump an object
+
+local function print_obj(obj, indent)
+  if indent ~= nil then
+    indent = ' ' .. indent
+  else
+    indent = ' '
+  end
+  if (type(obj) == "table") then
+    for k,v in pairs(obj) do
+      if (type(v) == "table") then
+        print (indent .. 'k: ' .. k)
+        print_obj(v,indent)
+      else
+        print(indent .. 'k: ' .. k .. '; v: `' .. v .. '`')
+      end
+    end
+  else
+    print(obj)
+  end
+end
+
 --- Finds the snippet assigned to the trigger word behind the caret and returns the trigger word
 -- and snippet text.
 -- If *grep* is `true`, returns a table of snippets (trigger-text key-value pairs) that match
@@ -283,22 +305,6 @@ local function find_snippet(grep, no_trigger)
 	return trigger, matching_snippets
 end
 
---- Dump an object to a string
--- @param o The object to dump to a string
--- @return String representing the object
-local function dump_obj(o)
-   if type(o) == 'table' then
-      local s = '{ '
-      for k,v in pairs(o) do
-         if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. dump_obj(v) .. ',\n'
-      end
-      return s .. '} '
-   else
-      return tostring(o)
-   end
-end
-
 --- A snippet object.
 -- @field trigger The word that triggered this snippet.
 -- @field original_sel_text The text originally selected when this snippet was inserted.
@@ -335,7 +341,6 @@ local function any_but(chars) return Cs((1 - S(chars .. '\\') + '\\' * C(1) / 1)
 -- @field simple Whether or not this placeholder is a simple one (i.e. a tab stop).
 -- @field transform Whether or not this placeholder is a transform.
 -- @field regex The regex for this transform.
--- @field lcode Lua code to transform the text (like in the legacy).
 -- @field repl List of replacement parts for this transform. Each part is either a string or
 --	format table for a capture. Format tables have 'index', 'method', 'if', and 'else' fields.
 -- @field opts Regex options for this transform.
@@ -355,7 +360,7 @@ local function any_but(chars) return Cs((1 - S(chars .. '\\') + '\\' * C(1) / 1)
 local grammar = P{
 	Ct((V('text') + V('variable') + V('code') + V('placeholder') + C(1))^0), --
 	text = any_but('$`'), --
-	variable = '$' * Ct(V('name') + '{' * V('name') * (V('format') + V('transform') + V('lcode'))^-1 * '}'),
+	variable = '$' * Ct(V('name') + '{' * V('name') * (V('format') + V('transform') + '%' * V('lcode'))^-1 * '}'),
 	name = Cg((R('AZ', 'az') + '_') * (R('AZ', 'az', '09') + '_')^0, 'variable'), --
 	format = ':' * ('/' * Cg(R('az')^1, 'method') +
 		('?' * Cg(any_but(':')^-1, 'if') * ':' * Cg(any_but('}')^-1, 'else')) +
@@ -365,15 +370,14 @@ local grammar = P{
 	repl = Cg(Ct((any_but('/$') + ('$' * Ct(V('int') + '{' * V('int') * V('format')^-1 * '}')))^0),
 		'repl'), --
 	opts = Cg(R('az')^0, 'opts'), --
+    lcode =  Ct(Cg(any_but'}'),'lcode')  * Cg(Ct(true), 'lcode'),
 	code = V('lua') + V('shell'), lua = '```' * Ct(Cg(any_but('`'), 'lua')) * '```',
 	shell = '`' * Ct(Cg(any_but('`'), 'shell')) * '`',
 	placeholder = '$' * Ct((V('int') * Cg(Cc(true), 'simple') +
-		('{' * V('int') * (V('default') + V('transform') + V('choice') + V('lcode') + Cg(Cc(true), 'simple')) * '}'))),
+                            ('{' * V('int') * (V('default') + V('transform') + '%' * V('lcode')+ V('choice') + Cg(Cc(true), 'simple')) * '}'))),
 	int = Cg(R('09')^1 / tonumber, 'index'),
 	default = ':' * Cg(Ct((any_but('$`}') + V('placeholder') + V('code'))^0), 'default'),
-	choice = '|' * Cg(any_but('|'), 'choice') * '|',
-	lcode = '%' *  V('inline') * Cg(Cc(true), 'lcode'),
-    inline = Cg(any_but('}'), 'inline'),
+	choice = '|' * Cg(any_but('|'), 'choice') * '|'
 }
 
 local legacy_grammar = P{
@@ -437,24 +441,28 @@ function snippet.new(text, trigger)
 
 	-- Parse snippet and add text and placeholders.
 	local grammar = is_legacy(text) and legacy_grammar or grammar
-    local snip_table = grammar:match(text)
-    -- To check the output of the grammar
-    -- print (dump_obj(snip_table))
-	for _, part in ipairs(snip_table) do snip:add_part(part) end
+    local parsed_text = grammar:match(text)
+    print_obj(parsed_text)
+	for _, part in ipairs(parsed_text) do snip:add_part(part) end
+
 	return snip
 end
 
+function snippet:lcode(part)
+    -- print('snippet:lcode(' .. print_obj(part) .. ')')
+    print('snippet:lcode()')
+    print_obj(part)
+    return ' '
+end
 --- Adds string, variable, interpolated shell or Lua code, or placeholder *part* to this snippet.
 -- @param part The LPeg-generated part to add.
 -- @local
 function snippet:add_part(part)
-    if part == nil then return end -- Q&D - TODO: see how a nil part is generated
-    --  print('add_part (' .. dump_obj(part) .. ')')
 	if type(part) == 'string' then
 		self.snapshots[0].text = self.snapshots[0].text .. part
 	elseif part.variable then
 		self:add_part(part.transform and self:transform(part) or self.variables[part.variable] or '')
-	elseif part.lcode then
+    elseif part.lcode then
         self:add_part(self:lcode(part))
 	elseif part.shell then
 		-- Linux and macOS need a shell to expand environment variables in, so execute
@@ -654,19 +662,6 @@ function snippet:each_placeholder(index, type)
 			s = buffer:indicator_end(M.INDIC_PLACEHOLDER, i)
 		end
 	end
-end
-
-function snippet:lcode(placeholder)
-    print ('placeholder.lcode --> ' .. dump_obj(placeholder))
-    local text = not placeholder.variable and
-		buffer:text_range(self.placeholder_pos, buffer.selection_end) or
-		tostring(self.variables[placeholder.variable])
-    -- TODO: way to get the text in the placeholder that is currently being edited
-	local env = setmetatable({text=text, selected_text = self.original_sel_text}, {__index = _G})
-    print ('env = ' .. dump_obj(env))
-	for k, v in pairs(self.variables) do env[k] = v end
-	local f, result = load('return ' .. placeholder.inline, nil, 't', env)
-	self:add_part(f and select(2, pcall(f)) or result or '')
 end
 
 --- Returns the result of applying the transform in placeholder *placeholder* in the context
