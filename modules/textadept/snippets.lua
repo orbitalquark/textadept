@@ -442,18 +442,12 @@ function snippet.new(text, trigger)
 	-- Parse snippet and add text and placeholders.
 	local grammar = is_legacy(text) and legacy_grammar or grammar
     local parsed_text = grammar:match(text)
-    print_obj(parsed_text)
+    -- print_obj(parsed_text)
 	for _, part in ipairs(parsed_text) do snip:add_part(part) end
 
 	return snip
 end
 
-function snippet:lcode(part)
-    -- print('snippet:lcode(' .. print_obj(part) .. ')')
-    print('snippet:lcode()')
-    print_obj(part)
-    return ' '
-end
 --- Adds string, variable, interpolated shell or Lua code, or placeholder *part* to this snippet.
 -- @param part The LPeg-generated part to add.
 -- @local
@@ -658,6 +652,10 @@ function snippet:each_placeholder(index, type)
 			end
 			local id = buffer:indicator_value_at(M.INDIC_PLACEHOLDER, s)
 			local ph = snapshot.placeholders[id]
+            -- if type == 'lcode' then
+            --     print (type .. ' --> ')
+            --     print_obj(ph)
+            -- end
 			if ph and (not index or ph.index == index) and (not type or ph[type]) then return s, ph end
 			s = buffer:indicator_end(M.INDIC_PLACEHOLDER, i)
 		end
@@ -686,6 +684,25 @@ function snippet:transform(placeholder)
 	end, placeholder.opts:find('g') and 0 or 1)
 end
 
+--- Will return the result of executing inlined Lua code linked to a placeholder
+-- This is what needs to be processed:
+-- snippet:lcode()
+--  k: 1
+--   k: 1; v: `snip.ifdefault(text,"pepe","OPT")`
+--  k: lcode
+--  k: index; v: `2`
+-- part.index is the field that should go to text
+-- part[1][1] is the part that needs to be executed
+
+function snippet:lcode(part)
+    -- print('snippet:lcode(' .. print_obj(part) .. ')')
+    print('snippet:lcode()')
+    print_obj(part)
+    print('Should execute: '..part[1][1])
+    print('  text = ph[' .. part.index .. ']')
+    return ' '
+end
+
 --- Returns the result of executing Lua or Shell code, in placeholder table *placeholder*,
 -- in the context of this snippet.
 -- @param placeholder The placeholder that contains code to execute.
@@ -706,6 +723,37 @@ function snippet:legacy_execute_code(placeholder)
 		p:close()
 		return result
 	end
+end
+
+--- Why doesn't this return anything?
+-- ta ➤ textadept
+-- snippet:lcode()
+--  k: 1
+--   k: 1; v: `snip.ifdefault(text,"pepe","OPT")`
+--  k: lcode
+--  k: index; v: `2`
+-- Should execute: snip.ifdefault(text,"pepe","OPT")
+--   text = ph[2]
+-- this is before modifying the placeholder referenced in the lcode
+-- update_lcode()
+-- lcode -->
+--  k: position; v: `14`
+--  k: length; v: `4`
+--  k: id; v: `2`
+--  k: default; v: `pepe`
+-- This is while modifying the placeholder ??
+-- update_lcode()
+-- update_lcode()
+-- update_lcode()
+-- update_lcode()
+-- update_lcode()
+
+function snippet:update_lcode()
+    print('update_lcode()')
+    for s, ph in self:each_placeholder(nil, 'lcode') do
+        print_obj(s)
+        print_obj(ph)
+    end
 end
 
 --- Updates transforms in place based on the current placeholder's text.
@@ -815,7 +863,10 @@ end
 -- Update snippet transforms when text is added or deleted.
 events.connect(events.UPDATE_UI, function(updated)
 	if not active_snippet then return end
-	if updated & buffer.UPDATE_CONTENT > 0 then active_snippet:update_transforms() end
+	if updated & buffer.UPDATE_CONTENT > 0 then
+        active_snippet:update_transforms()
+        active_snippet:update_lcode()
+    end
 	if #keys.keychain == 0 then ui.statusbar_text = _L['Snippet active'] end
 end)
 
