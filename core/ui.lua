@@ -205,7 +205,7 @@ function ui.switch_buffer()
 		items[#items + 1], items[#items + 2] = (buffers[i].modify and '*' or '') .. basename, filename
 	end
 	local i = ui.dialogs.list{title = _L['Switch Buffers'], columns = columns, items = items}
-	if i then view:goto_buffer(buffers[not ui.buffer_list_zorder and i or i + 1]) end
+	if i then view:goto_buffer(buffers[(not ui.buffer_list_zorder or #_BUFFERS == 1) and i or i + 1]) end
 end
 
 --- Switches to the existing view whose buffer's filename is *filename*.
