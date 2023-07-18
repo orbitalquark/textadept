@@ -114,7 +114,7 @@ local function highlight(buffer, start_pos, end_pos)
 	local set_styling, tags, pos = buffer.set_styling, buffer.lexer._TAGS, 1
 	for i = 1, #styles, 2 do
 		local e = styles[i + 1]
-		set_styling(buffer, e - pos, tags[styles[i]])
+		set_styling(buffer, e - pos, tags[styles[i]] or view.STYLE_DEFAULT) -- support legacy lexers
 		pos = e
 	end
 	buffer:set_styling(end_pos - (start_pos + pos - 1), view.STYLE_DEFAULT)
