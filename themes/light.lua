@@ -91,6 +91,8 @@ styles.environment_math = styles[lexer.NUMBER]
 -- styles.target = {}
 -- Markdown.
 -- styles.hr = {}
+-- Python.
+styles.keyword_soft = {}
 -- XML.
 -- styles.cdata = {}
 -- YAML.
