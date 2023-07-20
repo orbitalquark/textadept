@@ -93,14 +93,21 @@
           <li><a href="faq.html">FAQ</a></li>
         </ul>
 
-        <h2><a href="https://gum.co/textadept?wanted=true">Donate</a></h2>
-        <ul>
-          <li>
-            <a href="https://gum.co/textadept?wanted=true">
-              <img src="images/icon.png" alt="donate"/>
-            </a>
-          </li>
-        </ul>
+        <div id="donate-button-container">
+        <div id="donate-button"></div>
+        <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
+        <script>
+          PayPal.Donation.Button({
+            env:'production',
+            hosted_button_id:'NQMHMV5BGQ2LU',
+            image: {
+              src:'https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif',
+              alt:'Donate with PayPal button',
+              title:'Donate with PayPal',
+            }
+          }).render('#donate-button');
+          </script>
+        </div>
       </div>
 
       <div id="main" style="margin-left: 0em;">

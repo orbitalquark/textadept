@@ -4,7 +4,7 @@
 
 **Please [donate][] to help fund continuous development.**
 
-[donate]: https://gum.co/textadept
+[donate]: https://www.paypal.com/donate/?hosted_button_id=KUBN96K3TRAGN
 
 ### 12.0 beta (01 Jul 2023)
 
