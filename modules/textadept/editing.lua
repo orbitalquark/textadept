@@ -621,7 +621,7 @@ M.autocompleters.word = function()
 	for _, buffer in ipairs(_BUFFERS) do
 		if buffer == _G.buffer or M.autocomplete_all_words then
 			buffer.search_flags = buffer.FIND_WORDSTART |
-				(not buffer.auto_c_ignore_case and buffer.FIND_MATCHCASE or 0)
+				(not _G.buffer.auto_c_ignore_case and buffer.FIND_MATCHCASE or 0)
 			buffer:target_whole_document()
 			while buffer:search_in_target(word_part) ~= -1 do
 				local e = buffer:word_end_position(buffer.target_end, true)

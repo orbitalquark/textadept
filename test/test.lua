@@ -2577,13 +2577,13 @@ function test_editing_autocomplete_word()
 	buffer.auto_c_ignore_case = true
 	textadept.editing.autocomplete('word')
 	assert_equal(buffer:get_text(), 'foo foobar foobar Bar Bar')
-	buffer.auto_c_ignore_case = ignore_case
 	buffer.new()
-	buffer:add_text('foob')
+	buffer:add_text('b')
 	textadept.editing.autocomplete_all_words = true
 	textadept.editing.autocomplete('word')
+	assert_equal(buffer:get_text(), 'Bar')
 	textadept.editing.autocomplete_all_words = all_words
-	assert_equal(buffer:get_text(), 'foobar')
+	buffer.auto_c_ignore_case = ignore_case
 	buffer:close(true)
 	buffer:close(true)
 end
