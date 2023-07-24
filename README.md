@@ -120,10 +120,7 @@ For more information on compiling Textadept, please see the [manual][].
 
 ## Contribute
 
-Your [donation][] helps fund Textadept's continuous development.
-
 Textadept is [open source][]. Feel free to discuss features, report bugs, and submit patches. You
 can also contact me personally (orbitalquark att triplequasar.com).
 
-[donation]: https://www.paypal.com/donate/?hosted_button_id=KUBN96K3TRAGN
 [open source]: https://github.com/orbitalquark/textadept
