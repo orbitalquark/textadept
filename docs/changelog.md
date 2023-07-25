@@ -2,10 +2,6 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
-**Please [donate][] to help fund continuous development.**
-
-[donate]: https://www.paypal.com/donate/?hosted_button_id=KUBN96K3TRAGN
-
 ### 12.0 beta (01 Jul 2023)
 
 Please see the [migration guide][] for migrating from Textadept 11 to 12.
