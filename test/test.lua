@@ -2583,8 +2583,8 @@ function test_editing_autocomplete_word()
 	textadept.editing.autocomplete('word')
 	assert_equal(buffer:get_text(), 'Bar')
 	textadept.editing.autocomplete_all_words = all_words
-	buffer.auto_c_ignore_case = ignore_case
 	buffer:close(true)
+	buffer.auto_c_ignore_case = ignore_case
 	buffer:close(true)
 end
 
@@ -2897,16 +2897,16 @@ function test_ui_find_find_in_files_interactive()
 	local results = buffer:get_text()
 	assert(results:find('Directory: '), 'directory not shown')
 	assert(results:find('Filter: /test\n'), 'no filter defined')
-	assert(results:find('src/foo.c'), 'foo.c not found')
-	assert(results:find('include/foo.h'), 'foo.h not found')
+	assert(results:find('find/foo.c'), 'foo.c not found')
+	assert(results:find('find/foo.h'), 'foo.h not found')
 	assert_equal(table.concat(ui.find.find_in_files_filters[_HOME], ','), '/test')
 	buffer:clear_all()
 	ui.find.replace_entry_text = '/test,.c'
 	events.emit(events.FIND, ui.find.find_entry_text, true)
 	results = buffer:get_text()
 	assert(results:find('Filter: /test,.c\n'), 'no filter defined')
-	assert(results:find('src/foo.c'), 'foo.c not found')
-	assert(not results:find('include/foo.h'), 'foo.h found')
+	assert(results:find('find/foo.c'), 'foo.c not found')
+	assert(not results:find('find/foo.h'), 'foo.h found')
 	assert_equal(table.concat(ui.find.find_in_files_filters[_HOME], ','), '/test,.c')
 	if not CURSES then
 		-- Verify save and restore of replacement text and directory filters.
@@ -4664,15 +4664,15 @@ function test_debugger_ansi_c()
 	assert_equal(buffer.filename, filename) -- still in file being debugged
 	assert(msg_buf:get_text():find('\n0\n'), 'evaluation of i failed')
 	run_and_wait(debugger.step_into)
-	assert_equal(buffer:line_from_position(buffer.current_pos), 3)
+	assert_equal(buffer:line_from_position(buffer.current_pos), 4)
 	run_and_wait(debugger.set_frame, 2)
 	assert_equal(buffer:line_from_position(buffer.current_pos), 10)
 	textadept.history.back()
-	assert_equal(buffer:line_from_position(buffer.current_pos), 3)
+	assert_equal(buffer:line_from_position(buffer.current_pos), 4)
 	textadept.history.forward()
 	assert_equal(buffer:line_from_position(buffer.current_pos), 10)
 	run_and_wait(debugger.set_frame, 1)
-	assert_equal(buffer:line_from_position(buffer.current_pos), 3)
+	assert_equal(buffer:line_from_position(buffer.current_pos), 4)
 	buffer:search_anchor()
 	local pos = buffer:search_next(buffer.FIND_MATCHCASE | buffer.FIND_WHOLEWORD, 'i')
 	assert(pos > 0, "'i' not found")
@@ -5668,7 +5668,7 @@ local function check_property_usage(filename, buffer_props, view_props, errors)
 			if prop == 'new' and (id == 'Foo' or id == 'Array' or id == 'Server' or id == 'snippet') then
 				goto continue
 			end
-			if id == 'snip' then goto continue end
+			if id == 'snippets' then goto continue end
 			if prop == 'indent' and id == 'state' then goto continue end
 			if prop == 'line_length' and id == 'format' then goto continue end
 			if prop == 'tag' and id == 'styles' then goto continue end
