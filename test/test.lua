@@ -4067,7 +4067,8 @@ function test_snippets_placeholders()
 		'mirror: $2$3', --
 		'transform: ${1/.+/${0:/upcase}/}', --
 		'variable: $TM_LINE_NUMBER', --
-		'Shell: `echo $TM_LINE_INDEX` `' .. date_cmd .. '`', --
+		string.format('Shell: `echo %s` `%s`', not WIN32 and '$TM_LINE_INDEX' or '%TM_LINE_INDEX%',
+			date_cmd), --
 		'Lua: ```os.date()```', --
 		'escape: \\$1 \\${4} \\`\\`'
 	}, '\n'))
