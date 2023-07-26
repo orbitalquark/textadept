@@ -56,18 +56,17 @@ bool emit(const char *name, ...) {
 	if (lua_getglobal(lua, "events") != LUA_TTABLE) return (lua_pop(lua, 1), ret);
 	if (lua_getfield(lua, -1, "emit") != LUA_TFUNCTION) return (lua_pop(lua, 2), ret);
 	lua_pushstring(lua, name);
-	int n = 1;
+	int n = 1, ref;
 	va_list ap;
 	va_start(ap, name);
-	sptr_t arg;
 	for (int type = va_arg(ap, int); type != -1; type = va_arg(ap, int), n++) switch (type) {
 		case LUA_TBOOLEAN: lua_pushboolean(lua, va_arg(ap, int)); break;
 		case LUA_TNUMBER: lua_pushinteger(lua, va_arg(ap, int)); break;
 		case LUA_TSTRING: lua_pushstring(lua, va_arg(ap, char *)); break;
 		case LUA_TLIGHTUSERDATA:
 		case LUA_TTABLE:
-			arg = va_arg(ap, sptr_t);
-			lua_rawgeti(lua, LUA_REGISTRYINDEX, arg), luaL_unref(lua, LUA_REGISTRYINDEX, arg);
+			ref = va_arg(ap, int);
+			lua_rawgeti(lua, LUA_REGISTRYINDEX, ref), luaL_unref(lua, LUA_REGISTRYINDEX, ref);
 			break;
 		default: lua_pushnil(lua);
 		}
