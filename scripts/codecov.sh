@@ -9,8 +9,8 @@ tests="-locale,-buffer_view_usage"
 cd ..
 export TEXTADEPT_HOME=`pwd`
 if [[ ! -z "$delete_previous_coverage" ]]; then
-  find build -name "*.gcda" -delete
-  rm luacov.*.out
+	find build -name "*.gcda" -delete
+	rm luacov.*.out
 fi
 cmake build -D PROFILE=1
 cmake --build build -j

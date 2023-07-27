@@ -1,4 +1,4 @@
 ignore = {
-  '*.hg', '*.git', '*build', 'test', 'modules/debugger/lua', 'modules/lsp/doc', 'modules/lsp/ldoc*',
-  'modules/lsp/pl', 'modules/lsp/logging*'
+	'*.hg', '*.git', '*build', 'test', 'modules/debugger/lua', 'modules/lsp/doc', 'modules/lsp/ldoc*',
+	'modules/lsp/pl', 'modules/lsp/logging*'
 }

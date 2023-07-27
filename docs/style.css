@@ -1,21 +1,21 @@
 /* Copyright 2012-2023 Mitchell. See LICENSE. */
 
 * {
-  border: 0 solid #999999;
-  margin: 0;
-  padding: 0;
+	border: 0 solid #999999;
+	margin: 0;
+	padding: 0;
 }
 
 a {
-  color: #0066cc;
-  text-decoration: none;
+	color: #0066cc;
+	text-decoration: none;
 }
 a:hover { text-decoration: underline; }
 a:visited { color: #990099; }
 
 body {
-  background-color: #ffffff;
-  color: #1a1a1a;
+	background-color: #ffffff;
+	color: #1a1a1a;
 }
 
 code { font-size: 1.2em; }
@@ -31,14 +31,14 @@ h4 { font-size: 1.0em; }
 h5 { font-size: 0.9em; }
 
 hr {
-  border: 1px solid #cccccc;
-  border-width: 1px 0 0 0;
-  margin: 1em 0 1em 0;
+	border: 1px solid #cccccc;
+	border-width: 1px 0 0 0;
+	margin: 1em 0 1em 0;
 }
 
 input, textarea {
-  border-width: 1px;
-  font-size: 1em;
+	border-width: 1px;
+	font-size: 1em;
 }
 
 ins { color: #009900; }
@@ -46,43 +46,43 @@ ins { color: #009900; }
 li > code, p > code, em > code, td > code { color: #666666; }
 
 pre {
-  color: #666666;
-  margin: 0 2.5em 0 2.5em;
-  white-space: pre-wrap;
+	color: #666666;
+	margin: 0 2.5em 0 2.5em;
+	white-space: pre-wrap;
 }
 
 table, th, td {
-  border-width: 1px;
-  border-collapse: collapse;
-  margin-left: 1em;
-  padding: 0.25em;
+	border-width: 1px;
+	border-collapse: collapse;
+	margin-left: 1em;
+	padding: 0.25em;
 }
 
 #content {
-  border-width: 0 1px 0 1px;
-  font-size: 1.2em;
-  margin: 0 auto 0 auto;
-  max-width: 1000px;
+	border-width: 0 1px 0 1px;
+	font-size: 1.2em;
+	margin: 0 auto 0 auto;
+	max-width: 1000px;
 }
 
 #content img { max-width: 100%; }
 
 #header h1 {
-  background-color: #cccccc;
-  border-width: 0 0 1px 0;
-  margin: 0;
-  padding: 0.25em;
+	background-color: #cccccc;
+	border-width: 0 0 1px 0;
+	margin: 0;
+	padding: 0.25em;
 }
 #header img { vertical-align: text-bottom; }
 #header ul, #header p {
-  border-width: 0 0 1px 0;
-  margin-bottom: 1.5em;
-  padding: 0.25em;
+	border-width: 0 0 1px 0;
+	margin-bottom: 1.5em;
+	padding: 0.25em;
 }
 #header ul { list-style: none; }
 #header li {
-  color: #666666;
-  display: inline;
+	color: #666666;
+	display: inline;
 }
 #header li form { display: inline; }
 
@@ -92,9 +92,9 @@ table, th, td {
 #main ol p, #main ul p { margin-left: 0; }
 
 #footer {
-  background-color: #cccccc;
-  border-width: 1px 0 1px 0;
-  clear: both;
-  padding: 0.25em;
-  margin-top: 1.5em;
+	background-color: #cccccc;
+	border-width: 1px 0 1px 0;
+	clear: both;
+	padding: 0.25em;
+	margin-top: 1.5em;
 }

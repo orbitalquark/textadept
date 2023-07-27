@@ -12,7 +12,7 @@ sed -i -e "1,$(( $line - 1 ))d" ../docs/api.md
 # Generate HTML from Markdown (docs/*.html from docs/*.md)
 cd ../docs
 for file in `ls *.md`; do
-  cat _layouts/default.html | ../scripts/fill_layout.lua $file > `basename -s .md $file`.html
+	cat _layouts/default.html | ../scripts/fill_layout.lua $file > `basename -s .md $file`.html
 done
 
 # Update version information in Manual and API documentation.

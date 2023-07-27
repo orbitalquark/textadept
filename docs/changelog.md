@@ -8,10 +8,10 @@ Please see the [migration guide][] for migrating from Textadept 11 to 12.
 
 Download:
 
-- [Textadept 12.0 beta  -- Windows][]
-- [Textadept 12.0 beta  -- macOS 11+][]
-- [Textadept 12.0 beta  -- Linux][]
-- [Textadept 12.0 beta  -- Modules][]
+- [Textadept 12.0 beta -- Windows][]
+- [Textadept 12.0 beta -- macOS 11+][]
+- [Textadept 12.0 beta -- Linux][]
+- [Textadept 12.0 beta -- Modules][]
 
 Bugfixes:
 
@@ -44,10 +44,10 @@ Changes:
 - LSP: support per-project language servers.
 
 [migration guide]: manual.html#migrating-from-textadept-11-to-12
-[Textadept 12.0 beta  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.win.zip
-[Textadept 12.0 beta  -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.macOS.zip
-[Textadept 12.0 beta  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.linux.tgz
-[Textadept 12.0 beta  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.modules.zip
+[Textadept 12.0 beta -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.win.zip
+[Textadept 12.0 beta -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.macOS.zip
+[Textadept 12.0 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.linux.tgz
+[Textadept 12.0 beta -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.modules.zip
 [macro registers]: manual.html#macros
 [lua-std-regex]: https://github.com/orbitalquark/lua-std-regex
 
@@ -154,11 +154,11 @@ Changes:
 
 - Language modules are no longer auto-loaded when their files are opened.
 - All language autocompletion and documentation has been delegated to the external LSP module.
-  - Deprecated C, CSS, Go, HTML, Lua, Python, and Ruby language modules.
-  - Textadept no longer generates or uses Lua tags and api documentation files.
-  - Deprecated the ctags module.
-  - Removed "Tools > Complete Symbol" and "Tools > Show Documentation" menu items.
-  - Removed `textadept.editing.api_files` and `textadept.editing.show_documentation()`.
+	- Deprecated C, CSS, Go, HTML, Lua, Python, and Ruby language modules.
+	- Textadept no longer generates or uses Lua tags and api documentation files.
+	- Deprecated the ctags module.
+	- Removed "Tools > Complete Symbol" and "Tools > Show Documentation" menu items.
+	- Removed `textadept.editing.api_files` and `textadept.editing.show_documentation()`.
 - Hide the Find & Replace pane after an "In Files" search.
 - Allow lexers to dictate what constitutes a word character.
 - Added [`lexer.names()`][].
@@ -199,10 +199,10 @@ Changes:
 
 Download:
 
-- [Textadept 12.0 alpha  -- Windows][]
-- [Textadept 12.0 alpha  -- macOS 10.13+][]
-- [Textadept 12.0 alpha  -- Linux][]
-- [Textadept 12.0 alpha  -- Modules][]
+- [Textadept 12.0 alpha -- Windows][]
+- [Textadept 12.0 alpha -- macOS 10.13+][]
+- [Textadept 12.0 alpha -- Linux][]
+- [Textadept 12.0 alpha -- Modules][]
 
 Bugfixes:
 
@@ -255,10 +255,10 @@ Changes:
 - Added [`textadept.run.INDIC_WARNING`][] and [`textadept.run.INDIC_ERROR`][] for underlining
   compile, run, build, and test warning and error messages.
 
-[Textadept 12.0 alpha  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.win.zip
-[Textadept 12.0 alpha  -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.macOS.zip
-[Textadept 12.0 alpha  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.linux.tgz
-[Textadept 12.0 alpha  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.modules.zip
+[Textadept 12.0 alpha -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.win.zip
+[Textadept 12.0 alpha -- macOS 10.13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.macOS.zip
+[Textadept 12.0 alpha -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.linux.tgz
+[Textadept 12.0 alpha -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_alpha/textadept_12.0_alpha.modules.zip
 [CMake-based build]: manual.html#compiling
 [`ui.buffer_list_zorder`]: api.html#ui.buffer_list_zorder
 [`ui.suspend()`]: api.html#ui.suspend
@@ -269,10 +269,10 @@ Changes:
 
 Download:
 
-- [Textadept 11.5 alpha 2  -- Windows][]
-- [Textadept 11.5 alpha 2  -- Mac OSX 10.10+][]
-- [Textadept 11.5 alpha 2  -- Linux][]
-- [Textadept 11.5 alpha 2  -- Modules][]
+- [Textadept 11.5 alpha 2 -- Windows][]
+- [Textadept 11.5 alpha 2 -- Mac OSX 10.10+][]
+- [Textadept 11.5 alpha 2 -- Linux][]
+- [Textadept 11.5 alpha 2 -- Modules][]
 
 Bugfixes:
 
@@ -292,18 +292,18 @@ Changes:
 - `_G.OSX` is now always true on macOS, not just in the GUI version.
 - `buffer.tab_label` is now write-only.
 - Replaced gtDialog with smaller set of built-in dialogs.
-  - Deprecated `ui.dialogs.*msgbox()` in favor of [`ui.dialogs.message()`][],
-    `ui.dialogs.*inputbox()` in favor of [`ui.dialogs.input()`][], `ui.dialogs.fileselect()` in
-    favor of [`ui.dialogs.open()`][], `ui.dialogs.filesave()` in favor of [`ui.dialogs.save()`][],
-    `ui.dialogs.progressbar()` in favor of [`ui.dialogs.progress()`][], and
-    `ui.dialogs.filteredlist()` in favor of [`ui.dialogs.list()`][].
-  - Removed `ui.dialogs.textbox()`, `ui.dialogs.*dropdown()`, `ui.dialogs.optionselect()`,
-  `ui.dialogs.colorselect()`, and `ui.dialogs.fontselect()`.
-  - Input and list dialogs return text and selections first before button indices.
-  - Input dialogs no longer accept multiple text entries and labels.
-  - Removed `string_output` option from dialogs.
-  - Renamed the following dialog options: `with_directory` &rarr; `dir`, `with_file` &rarr; `file`,
-    `select_multiple` &rarr; `multiple`, `select_only_directories` &rarr; `only_dirs`.
+	- Deprecated `ui.dialogs.*msgbox()` in favor of [`ui.dialogs.message()`][],
+	  `ui.dialogs.*inputbox()` in favor of [`ui.dialogs.input()`][], `ui.dialogs.fileselect()` in
+	  favor of [`ui.dialogs.open()`][], `ui.dialogs.filesave()` in favor of [`ui.dialogs.save()`][],
+	  `ui.dialogs.progressbar()` in favor of [`ui.dialogs.progress()`][], and
+	  `ui.dialogs.filteredlist()` in favor of [`ui.dialogs.list()`][].
+	- Removed `ui.dialogs.textbox()`, `ui.dialogs.*dropdown()`, `ui.dialogs.optionselect()`,
+	`ui.dialogs.colorselect()`, and `ui.dialogs.fontselect()`.
+	- Input and list dialogs return text and selections first before button indices.
+	- Input dialogs no longer accept multiple text entries and labels.
+	- Removed `string_output` option from dialogs.
+	- Renamed the following dialog options: `with_directory` &rarr; `dir`, `with_file` &rarr; `file`,
+	  `select_multiple` &rarr; `multiple`, `select_only_directories` &rarr; `only_dirs`.
 - Removed `opts` argument from `io.quick_open()`.
 - Find in Files' file scanning is shown with a progress dialog and can be stopped.
 - Deprecated `ui._print` in favor of [`ui.print_to()`][].
@@ -311,10 +311,10 @@ Changes:
 - `textadept.run.stop()` presents a list dialog if there is more than one process running.
 - Moved process spawning into platform C code.
 
-[Textadept 11.5 alpha 2  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha_2/textadept_11.5_alpha_2.win.zip
-[Textadept 11.5 alpha 2  -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha_2/textadept_11.5_alpha_2.macOS.zip
-[Textadept 11.5 alpha 2  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha_2/textadept_11.5_alpha_2.linux.tgz
-[Textadept 11.5 alpha 2  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha_2/textadept_11.5_alpha_2.modules.zip
+[Textadept 11.5 alpha 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha_2/textadept_11.5_alpha_2.win.zip
+[Textadept 11.5 alpha 2 -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha_2/textadept_11.5_alpha_2.macOS.zip
+[Textadept 11.5 alpha 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha_2/textadept_11.5_alpha_2.linux.tgz
+[Textadept 11.5 alpha 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha_2/textadept_11.5_alpha_2.modules.zip
 [`ui.dialogs.message()`]: api.html#ui.dialogs.message
 [`ui.dialogs.input()`]: api.html#ui.dialogs.input
 [`ui.dialogs.open()`]: api.html#ui.dialogs.open
@@ -327,10 +327,10 @@ Changes:
 
 Download:
 
-- [Textadept 11.5 alpha  -- Windows][]
-- [Textadept 11.5 alpha  -- Mac OSX 10.10+][]
-- [Textadept 11.5 alpha  -- Linux][]
-- [Textadept 11.5 alpha  -- Modules][]
+- [Textadept 11.5 alpha -- Windows][]
+- [Textadept 11.5 alpha -- Mac OSX 10.10+][]
+- [Textadept 11.5 alpha -- Linux][]
+- [Textadept 11.5 alpha -- Modules][]
 
 Bugfixes:
 
@@ -373,7 +373,7 @@ Changes:
 - `lexer.word_match()` can be used as an instance method for enabling users to set, replace,
   or extend word lists.
 - Added [`lexer.number_()`][] and friends for creating patterns that match numbers separated
-   by arbitrary characters.
+  by arbitrary characters.
 - Allow prefix to be optional in `lexer.to_eol()`.
 - Added "output" lexer for recognizing tool errors and warnings.
 - Removed `lexer.fold_line_groups`.
@@ -383,10 +383,10 @@ Changes:
 - Scintilla: allow large fonts to be used in `view.STYLE_CALLTIP` without affecting text display.
 - Updated to [Scintilla][] 5.3.0.
 
-[Textadept 11.5 alpha  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha.win.zip
-[Textadept 11.5 alpha  -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha.macOS.zip
-[Textadept 11.5 alpha  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha.linux.tgz
-[Textadept 11.5 alpha  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha.modules.zip
+[Textadept 11.5 alpha -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha.win.zip
+[Textadept 11.5 alpha -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha.macOS.zip
+[Textadept 11.5 alpha -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha.linux.tgz
+[Textadept 11.5 alpha -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.5_alpha/textadept_11.5_alpha.modules.zip
 [`view.colors`]: api.html#view.colors
 [`view.styles`]: api.html#view.styles
 [`view:set_styles()`]: api.html#view.set_styles
@@ -405,14 +405,14 @@ Changes:
 [`lexer.number_()`]: api.html#lexer.number_
 [Scintilla]: https://scintilla.org
 
-### 11.4  (01 Aug 2022)
+### 11.4 (01 Aug 2022)
 
 Download:
 
-- [Textadept 11.4  -- Windows][]
-- [Textadept 11.4  -- Mac OSX 10.7+][]
-- [Textadept 11.4  -- Linux][]
-- [Textadept 11.4  -- Modules][]
+- [Textadept 11.4 -- Windows][]
+- [Textadept 11.4 -- Mac OSX 10.7+][]
+- [Textadept 11.4 -- Linux][]
+- [Textadept 11.4 -- Modules][]
 
 Bugfixes:
 
@@ -437,10 +437,10 @@ Changes:
 - Updated R, Fortran, and Go lexers.
 - Updated to [Scintilla][] 5.2.4.
 
-[Textadept 11.4  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.win.zip
-[Textadept 11.4  -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.macOS.zip
-[Textadept 11.4  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.linux.tgz
-[Textadept 11.4  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.modules.zip
+[Textadept 11.4 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.win.zip
+[Textadept 11.4 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.macOS.zip
+[Textadept 11.4 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.linux.tgz
+[Textadept 11.4 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.modules.zip
 [`ui.popup_menu()`]: api.html#ui.popup_menu
 [Scintilla]: https://scintilla.org
 
@@ -448,10 +448,10 @@ Changes:
 
 Download:
 
-- [Textadept 11.4 beta  -- Windows][]
-- [Textadept 11.4 beta  -- Mac OSX 10.10+][]
-- [Textadept 11.4 beta  -- Linux][]
-- [Textadept 11.4 beta  -- Modules][]
+- [Textadept 11.4 beta -- Windows][]
+- [Textadept 11.4 beta -- Mac OSX 10.10+][]
+- [Textadept 11.4 beta -- Linux][]
+- [Textadept 11.4 beta -- Modules][]
 
 Bugfixes:
 
@@ -467,20 +467,20 @@ Changes:
 - Scintilla: Improved performance of `view:fold_all(view.FOLDACTION_EXPAND)`.
 - Updated to [Scintilla][] 5.2.3.
 
-[Textadept 11.4 beta  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_beta/textadept_11.4_beta.win.zip
-[Textadept 11.4 beta  -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_beta/textadept_11.4_beta.macOS.zip
-[Textadept 11.4 beta  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_beta/textadept_11.4_beta.linux.tgz
-[Textadept 11.4 beta  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_beta/textadept_11.4_beta.modules.zip
+[Textadept 11.4 beta -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_beta/textadept_11.4_beta.win.zip
+[Textadept 11.4 beta -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_beta/textadept_11.4_beta.macOS.zip
+[Textadept 11.4 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_beta/textadept_11.4_beta.linux.tgz
+[Textadept 11.4 beta -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_beta/textadept_11.4_beta.modules.zip
 [Scintilla]: https://scintilla.org
 
 ### 11.4 alpha (01 Apr 2022)
 
 Download:
 
-- [Textadept 11.4 alpha  -- Windows][]
-- [Textadept 11.4 alpha  -- Mac OSX 10.10+][]
-- [Textadept 11.4 alpha  -- Linux][]
-- [Textadept 11.4 alpha  -- Modules][]
+- [Textadept 11.4 alpha -- Windows][]
+- [Textadept 11.4 alpha -- Mac OSX 10.10+][]
+- [Textadept 11.4 alpha -- Linux][]
+- [Textadept 11.4 alpha -- Modules][]
 
 Bugfixes:
 
@@ -522,10 +522,10 @@ Files searches.
 - Updated to [Lua][] 5.4.4.
 - Updated to libtermkey 0.22.
 
-[Textadept 11.4 alpha  -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_alpha/textadept_11.4_alpha.win.zip
-[Textadept 11.4 alpha  -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_alpha/textadept_11.4_alpha.macOS.zip
-[Textadept 11.4 alpha  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_alpha/textadept_11.4_alpha.linux.tgz
-[Textadept 11.4 alpha  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_alpha/textadept_11.4_alpha.modules.zip
+[Textadept 11.4 alpha -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_alpha/textadept_11.4_alpha.win.zip
+[Textadept 11.4 alpha -- Mac OSX 10.10+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_alpha/textadept_11.4_alpha.macOS.zip
+[Textadept 11.4 alpha -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_alpha/textadept_11.4_alpha.linux.tgz
+[Textadept 11.4 alpha -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.4_alpha/textadept_11.4_alpha.modules.zip
 [GTK]: https://gtk.org
 [Docker image]: manual.html#compiling-using-docker
 [`ui.find.show_filenames_in_progressbar`]: api.html#ui.find.show_filenames_in_progressbar
@@ -533,14 +533,14 @@ Files searches.
 [Scintilla]: https://scintilla.org
 [Lua]: https://lua.org
 
-### 11.3  (01 Feb 2022)
+### 11.3 (01 Feb 2022)
 
 Download:
 
-- [Textadept 11.3  -- Win32][]
-- [Textadept 11.3  -- Mac OSX 10.7+][]
-- [Textadept 11.3  -- Linux][]
-- [Textadept 11.3  -- Modules][]
+- [Textadept 11.3 -- Win32][]
+- [Textadept 11.3 -- Mac OSX 10.7+][]
+- [Textadept 11.3 -- Linux][]
+- [Textadept 11.3 -- Modules][]
 
 Bugfixes:
 
@@ -554,10 +554,10 @@ Changes:
 - Improve repeated building of Textadept.app on macOS.
 - Updated Perl lexer to recognize more numbers.
 
-[Textadept 11.3  -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3/textadept_11.3.win32.zip
-[Textadept 11.3  -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3/textadept_11.3.macOS.zip
-[Textadept 11.3  -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3/textadept_11.3.linux.tgz
-[Textadept 11.3  -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3/textadept_11.3.modules.zip
+[Textadept 11.3 -- Win32]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3/textadept_11.3.win32.zip
+[Textadept 11.3 -- Mac OSX 10.7+]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3/textadept_11.3.macOS.zip
+[Textadept 11.3 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3/textadept_11.3.linux.tgz
+[Textadept 11.3 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_11.3/textadept_11.3.modules.zip
 
 ### 11.3 beta 3 (01 Dec 2021)
 
@@ -3313,12 +3313,12 @@ Changes:
 - Handle mouse [dwell events][] `DWELL_START` and `DWELL_END`.
 - Rearranged `Tools` menu slightly.
 - Slight API changes:
-  + [`_BUFFERS`][] and [`_VIEWS`][] structure changed.
-  + Removed `buffer.doc_pointer` and `view.doc_pointer`.
-  + Added [`view.buffer`][] field.
-  + Renamed `gui.check_focused_buffer()` to `buffer:check_global()`.
-  + [`view:goto_buffer()`][] and [`gui.goto_view()`][] arguments make sense now.
-    (May require changes to custom key bindings.)
+	+ [`_BUFFERS`][] and [`_VIEWS`][] structure changed.
+	+ Removed `buffer.doc_pointer` and `view.doc_pointer`.
+	+ Added [`view.buffer`][] field.
+	+ Renamed `gui.check_focused_buffer()` to `buffer:check_global()`.
+	+ [`view:goto_buffer()`][] and [`gui.goto_view()`][] arguments make sense now.
+	  (May require changes to custom key bindings.)
 - Directory is remembered in file chooser dialog after open or save as.
 - Added language-specific context menu support.
 - Use [LuaCoco][] patch for Lua 5.1.4.
@@ -3966,11 +3966,9 @@ Changes:
 - Replaced cocoaDialog and lua_dialog with my C-based gtdialog.
 - [Incremental find][] via the Lua command entry.
 - *NO* dependencies other than [GTK][] on _all_ platforms.
-
-  + Windows no longer requires the MSVC++ 2008 Runtime.
-  + Linux no longer requires `libffi`.
-  + Mac OSX no longer requires cocoaDialog.
-
+	+ Windows no longer requires the MSVC++ 2008 Runtime.
+	+ Linux no longer requires `libffi`.
+	+ Mac OSX no longer requires cocoaDialog.
 - Can cross compile to Windows from Linux.
 - Removed confusing `local function` and `local table` LuaDoc.
 - Rewrote the manual and most of the documentation.

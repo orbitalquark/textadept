@@ -94,7 +94,7 @@ on the platform. This directory can also be configured using command line argume
 Windows systems, the default user directory is *C:\\Users\\username\\.textadept\\* or
 *C:\\Documents and Settings\\username\\.textadept\\*; on macOS, the default user directory is
 */Users/username/.textadept/*; and on Linux, it is */home/username/.textadept/*. (Substitute
-*username* for your actual user name.)  From this point forward, the manual will use
+*username* for your actual user name.) From this point forward, the manual will use
 *~/.textadept/* in place of any platform-specific user data directory.
 
 There is a special file, *~/.textadept/init.lua*, that Textadept will create for you if it does
@@ -109,43 +109,43 @@ the "Edit > Preferences" menu item.
 
 Here is a simple *~/.textadept/init.lua* for illustration:
 
-    -- Adjust the default theme's font and size.
-    if not CURSES then
-      view:set_theme('light', {font = 'Monospace', size = 12})
-    end
+	-- Adjust the default theme's font and size.
+	if not CURSES then
+		view:set_theme('light', {font = 'Monospace', size = 12})
+	end
 
-    -- Always use spaces for indentation.
-    buffer.use_tabs = false
-    buffer.tab_width = 2
+	-- Always use spaces for indentation.
+	buffer.use_tabs = false
+	buffer.tab_width = 2
 
-    -- Always strip trailing spaces on save, automatically highlight the current
-    -- word, and use C89-style block comments in C code.
-    textadept.editing.strip_trailing_spaces = true
-    textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_CURRENT
-    textadept.editing.comment_string.ansi_c = '/*|*/'
+	-- Always strip trailing spaces on save, automatically highlight the current
+	-- word, and use C89-style block comments in C code.
+	textadept.editing.strip_trailing_spaces = true
+	textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_CURRENT
+	textadept.editing.comment_string.ansi_c = '/*|*/'
 
-    -- Create a key binding to the "Edit > Preferences" menu item.
-    if not OSX and not CURSES then
-      keys['ctrl+,'] = textadept.menu.menubar['Edit/Preferences'][2]
-    end
+	-- Create a key binding to the "Edit > Preferences" menu item.
+	if not OSX and not CURSES then
+		keys['ctrl+,'] = textadept.menu.menubar['Edit/Preferences'][2]
+	end
 
-    -- Load an external module and bind a key to it.
-    local lsp = require('lsp')
-    keys['ctrl+f12'] = lsp.goto_declaration
+	-- Load an external module and bind a key to it.
+	local lsp = require('lsp')
+	keys['ctrl+f12'] = lsp.goto_declaration
 
-    -- Recognize .luadoc files as Lua code.
-    lexer.detect_extensions.luadoc = 'lua'
+	-- Recognize .luadoc files as Lua code.
+	lexer.detect_extensions.luadoc = 'lua'
 
-    -- Change the run commands for Lua and Python
-    textadept.run.run_commands.lua = 'lua5.1 "%f"'
-    textadept.run.run_commands.python = 'python3 "%f"'
+	-- Change the run commands for Lua and Python
+	textadept.run.run_commands.lua = 'lua5.1 "%f"'
+	textadept.run.run_commands.python = 'python3 "%f"'
 
-    -- Always use PEP-8 indentation style for Python files.
-    events.connect(events.LEXER_LOADED, function(name)
-      if name ~= 'python' then return end
-      buffer.use_tabs = false
-      buffer.tab_width = 4
-    end)
+	-- Always use PEP-8 indentation style for Python files.
+	events.connect(events.LEXER_LOADED, function(name)
+		if name ~= 'python' then return end
+		buffer.use_tabs = false
+		buffer.tab_width = 4
+	end)
 
 **Note:** *~/.textadept/init.lua* must not call any functions that create buffers and views
 (e.g. `ui.print()`, `io.open_file()`, and `buffer.new()`) at file-level scope. Buffers and
@@ -214,9 +214,9 @@ the modules there (thus creating or merging the *modules/* directory).
 **Note:** Textadept generally does not auto-load [modules](#modules), so you will need to load
 at least some of those extra modules manually. For example, in your *~/.textadept/init.lua*:
 
-    require('lsp')
-    require('file_diff')
-    require('spellcheck')
+	require('lsp')
+	require('file_diff')
+	require('spellcheck')
 
 #### Updating
 
@@ -278,12 +278,12 @@ Option | Arguments | Description
 You can add your own command line arguments using [`args.register()`][]. For example, in your
 *~/.textadept/init.lua*:
 
-    args.register('-r', '--read-only', 0, function()
-      events.connect(events.FILE_OPENED, function()
-        buffer.read_only = true -- make all opened buffers read-only
-      end)
-      textadept.menu.menubar = nil -- hide the menubar
-    end, "Read-only mode")
+	args.register('-r', '--read-only', 0, function()
+		events.connect(events.FILE_OPENED, function()
+			buffer.read_only = true -- make all opened buffers read-only
+		end)
+		textadept.menu.menubar = nil -- hide the menubar
+	end, "Read-only mode")
 
 [`args.register()`]: api.html#args.register
 
@@ -297,14 +297,14 @@ line options or its default `package.path` and `package.cpath` settings.
 
 Textadept can also open files and projects using the command line. For example:
 
-    textadept /path/to/file1 ../relative/path/to/file2
-    textadept /path/to/project/ relative/path/to/file1 relative/file2
+	textadept /path/to/file1 ../relative/path/to/file2
+	textadept /path/to/project/ relative/path/to/file1 relative/file2
 
 Unless a filename is specified as an absolute path, Textadept assumes it is relative to
 the application's current working directory (cwd). Textadept's cwd is initially the command
 line's cwd. (If Textadept is not being run from the command line, its cwd is unspecified.) If a
 project directory is specified, it becomes Textadept's cwd. (Textadept does not open all files
-in that directory.)  If multiple project directories are specified, the last one becomes the cwd.
+in that directory.) If multiple project directories are specified, the last one becomes the cwd.
 
 By default, Textadept saves its state when it exits. (This state consists of buffers and split
 views that are open, the list of recently opened files, the application window's size and
@@ -347,7 +347,7 @@ automatically invokes a user-created *~/.textadept/osx_env.sh* file when the app
 starts. This script should export all of the environment variables you need Textadept to
 see. For example:
 
-    export PATH=$PATH
+	export PATH=$PATH
 
 **Linux Note:** providing a single binary that runs on all Linux systems proves challenging,
 since the versions of software installed vary widely from distribution to distribution. If
@@ -394,9 +394,9 @@ You can extend Textadept's menu with your own menus, sub-menus, and menu items b
 the [`textadept.menu.menubar`][] table. Any modifications will show up in the selection dialog
 mentioned previously, even in the terminal version. For example, in your *~/.textadept/init.lua*:
 
-    local tools = textadept.menu.menubar['Tools']
-    tools[#tools + 1] = {''} -- separator
-    tools[#tools + 1] = {'Reset L&ua State', reset}
+	local tools = textadept.menu.menubar['Tools']
+	tools[#tools + 1] = {''} -- separator
+	tools[#tools + 1] = {'Reset L&ua State', reset}
 
 [`textadept.menu.menubar`]: api.html#textadept.menu.menubar
 
@@ -412,7 +412,7 @@ a configurable context menu that is defined by [`textadept.menu.tab_context_menu
 be rearranged by clicking, dragging, and dropping them. You can turn off the tab bar by setting
 [`ui.tabs`][]. For example, in your *~/.textadept/init.lua*:
 
-    ui.tabs = false
+	ui.tabs = false
 
 [`textadept.menu.tab_context_menu`]: api.html#textadept.menu.tab_context_menu
 [`ui.tabs`]: api.html#ui.tabs
@@ -438,7 +438,7 @@ list to show buffers in the same order as the tab bar (the most recently opened 
 shown towards the bottom) by changing the [`ui.buffer_list_zorder`][]. For example, in your
 *~/.textadept/init.lua*:
 
-    ui.buffer_list_zorder = false
+	ui.buffer_list_zorder = false
 
 [`ui.buffer_list_zorder`]: api.html#ui.buffer_list_zorder
 
@@ -453,19 +453,19 @@ a view brings up a configurable context menu that is defined by [`textadept.menu
 Split views can be dynamically resized by clicking and dragging on the splitter bar that
 separates them. The following key bindings apply for split views:
 
--  Split a view horizontally into top and bottom views via `Ctrl+Alt+_` on Windows and Linux,
+- Split a view horizontally into top and bottom views via `Ctrl+Alt+_` on Windows and Linux,
   `^⌘_` on macOS, and `M-_` in the terminal version.
--  Split a view vertically into side-by-side views via `Ctrl+Alt+|` on Windows and Linux,
+- Split a view vertically into side-by-side views via `Ctrl+Alt+|` on Windows and Linux,
   `^⌘|` on macOS, and `M-|` in the terminal version.
--  Cycle to the next split view via `Ctrl+Alt+PgDn` on Windows and Linux, `^⌘⇟` on macOS,
+- Cycle to the next split view via `Ctrl+Alt+PgDn` on Windows and Linux, `^⌘⇟` on macOS,
   and `M-^PgDn` in the terminal version.
--  Cycle to the previous split view via `Ctrl+Alt+PgUp` on Windows and Linux, `^⌘⇞` on macOS,
+- Cycle to the previous split view via `Ctrl+Alt+PgUp` on Windows and Linux, `^⌘⇞` on macOS,
   and `M-^PgUp` in the terminal version.
--  Grow or shrink a view via `Ctrl+Alt++` or `Ctrl+Alt+-`, respectively, on Windows and Linux;
+- Grow or shrink a view via `Ctrl+Alt++` or `Ctrl+Alt+-`, respectively, on Windows and Linux;
   `^⌘+` or `^⌘-`, respectively, on macOS; and `M-+` or `M--` in the terminal version.
--  Unsplit the current view by removing its complement view(s) via `Ctrl+Alt+W` on Windows and
+- Unsplit the current view by removing its complement view(s) via `Ctrl+Alt+W` on Windows and
   Linux, `^⌘W` on macOS, and `M-W` in the terminal version.
--  Unsplit the current view by removing all other views via `Ctrl+Alt+Shift+W` on Windows and
+- Unsplit the current view by removing all other views via `Ctrl+Alt+Shift+W` on Windows and
   Linux, `^⌘⇧W` on macOS, and `M-S-W` in the terminal version.
 
 **Note:** depending on the split sequence, the order when cycling between views may not be linear.
@@ -487,7 +487,7 @@ expect, along with "Match Case", "Whole Word", "[Regex](#regex-and-lua-pattern-s
 can automatically highlight all instances of found text in the current buffer by setting
 [`ui.find.highlight_all_matches`][]. For example, in your *~/.textadept/init.lua*:
 
-    ui.find.highlight_all_matches = true
+	ui.find.highlight_all_matches = true
 
 **Note:** Textadept does not support multi-line regex searches.
 
@@ -545,8 +545,8 @@ excludes many common binary files and version control directories from searches.
 **Tip:** Textadept keeps track of filters set per-directory. You can also set per-directory filters
 in Lua by modifying [`ui.find_in_files_filters`][]. For example, in your *~/.textadept/init.lua*:
 
-    -- Only search in certain source directories.
-    ui.find.find_in_files_filters['/path/to/project'] = {'/include', '/src'}
+	-- Only search in certain source directories.
+	ui.find.find_in_files_filters['/path/to/project'] = {'/include', '/src'}
 
 After performing a "Find in Files" search, a temporary buffer lists the search results. You can
 use the arrow keys to navigate within the list and press `Enter` to go to a result's location
@@ -610,8 +610,8 @@ do not belong in *~/.textadept/init.lua*.
 **Tip:** a side-effect of single-instance functionality in the GTK version of Textadept is that
 you can remotely control the original instance of Textadept. For example:
 
-    textadept ~/.textadept/init.lua &
-    textadept -e "events.emit(events.FIND, 'require')"
+	textadept ~/.textadept/init.lua &
+	textadept -e "events.emit(events.FIND, 'require')"
 
 This will search for the first instance of the word "require" in the current file.
 
@@ -697,10 +697,10 @@ a recognized form of version control (Git, Mercurial, SVN, Bazaar, and Fossil). 
 project depends largely on context. The current project is determined as follows:
 
 1. If the current buffer is a file, its parent directory is searched for a version control
-   directory. If none is found, that directory's parent directory is searched next, and so
-   on. If a version control directory is found, its parent directory is the current project.
+  directory. If none is found, that directory's parent directory is searched next, and so
+  on. If a version control directory is found, its parent directory is the current project.
 2. If Textadept's current working directory (cwd) contains a version control directory, that cwd
-   is the current project. Otherwise, the cwd's parent directory is searched, just like in step 1.
+  is the current project. Otherwise, the cwd's parent directory is searched, just like in step 1.
 3. If no version control directory is found, there is no current project.
 
 **Tip:** you can specify Textadept's current working directory by passing it on the command
@@ -712,8 +712,8 @@ files to display for that project or directory by modifying [`io.quick_open_filt
 you can specify a different maximum file list size that applies to all projects and directories
 by setting [`io.quick_open_max`][]. For example, in your *~/.textadept/init.lua*:
 
-    io.quick_open_filters['/path/to/project'] = {'/include', '/src'}
-    io.quick_open_max = 10000 -- support huge projects
+	io.quick_open_filters['/path/to/project'] = {'/include', '/src'}
+	io.quick_open_max = 10000 -- support huge projects
 
 A filter consists of a comma-separated list of glob patterns that match filenames and directories
 to include or exclude. Patterns are inclusive by default. Exclusive patterns begin with a
@@ -735,19 +735,19 @@ associated with that file and assigns a lexer to perform syntax highlighting of 
 contents. The identification process is as follows:
 
 1. The first line of the file is checked against any [Lua patterns](#regex-and-lua-pattern-syntax)
-   in [`lexer.detect_patterns`][]. If there is a match, the lexer associated with that matching
-   pattern is used.
+  in [`lexer.detect_patterns`][]. If there is a match, the lexer associated with that matching
+  pattern is used.
 2. The file's extension is checked against any of the extensions in
-   [`lexer.detect_extensions`][]. If there is a match, the lexer associated with that matching
-   extension is used. If the file does not have an extension, the entire file name is used in
-   the check.
+  [`lexer.detect_extensions`][]. If there is a match, the lexer associated with that matching
+  extension is used. If the file does not have an extension, the entire file name is used in
+  the check.
 
 You can associate first line patterns, file extensions, and file names with lexers by
 modifying [`lexer.detect_patterns`][] and [`lexer.detect_extensions`][]. For example, in your
 *~/.textadept/init.lua*:
 
-    lexer.detect_patterns['^#!.+/zsh'] = 'bash'
-    lexer.detect_extensions.luadoc = 'lua'
+	lexer.detect_patterns['^#!.+/zsh'] = 'bash'
+	lexer.detect_extensions.luadoc = 'lua'
 
 Textadept has lexers for more than 100 different programming languages and recognizes hundreds
 of file types. In the event that your programming language is not understood, you can write a
@@ -781,16 +781,16 @@ default it only attempts to read UTF-8, ASCII, CP1252, and UTF-16 files, in that
 with files that have other encodings, you will need to add them to [`io.encodings`][], Textadept's
 known encoding list, before attempting to open one. For example, in your *~/.textadept/init.lua*:
 
-    io.encodings[#io.encodings + 1] = 'UTF-32'
-    table.insert(io.encodings, 3, 'Macintosh') -- before CP1252
+	io.encodings[#io.encodings + 1] = 'UTF-32'
+	table.insert(io.encodings, 3, 'Macintosh') -- before CP1252
 
 You can convert a buffer's encoding using the "Buffer > Encoding" menu or
 [`buffer:set_encoding()`][]. You can extend the menu to include more encodings. For example,
 in your *~/.textadept/init.lua*:
 
-    local menu = textadept.menu.menubar['Buffer/Encoding']
-    local encoding = 'UTF-32'
-    menu[#menu + 1] = {encoding, function() buffer:set_encoding(encoding) end}
+	local menu = textadept.menu.menubar['Buffer/Encoding']
+	local encoding = 'UTF-32'
+	menu[#menu + 1] = {encoding, function() buffer:set_encoding(encoding) end}
 
 The default encoding for new buffers is UTF-8, due to its wide support in other text editors
 and all modern operating systems.
@@ -808,25 +808,25 @@ Textadept does not attempt to auto-detect a file's indentation. The default inde
 is a tab representing 8 spaces, but you can specify your preferred indentation settings globally,
 and on a language-specific basis. For example, in your *~/.textadept/init.lua*:
 
-    -- Default indentation settings for all buffers.
-    buffer.use_tabs = false
-    buffer.tab_width = 2
+	-- Default indentation settings for all buffers.
+	buffer.use_tabs = false
+	buffer.tab_width = 2
 
-    -- Indentation settings for individual languages.
-    events.connect(events.LEXER_LOADED, function(name)
-      if name == 'python' then
-        buffer.use_tabs = false
-        buffer.tab_width = 4
-      elseif name == 'go' then
-        buffer.use_tabs = true
-        buffer.tab_width = 4
-      end
-    end)
+	-- Indentation settings for individual languages.
+	events.connect(events.LEXER_LOADED, function(name)
+		if name == 'python' then
+			buffer.use_tabs = false
+			buffer.tab_width = 4
+		elseif name == 'go' then
+			buffer.use_tabs = true
+			buffer.tab_width = 4
+		end
+	end)
 
 You can manually change a buffer's indentation using the following process:
 
 1. Toggle between using tabs and spaces via `Ctrl+Alt+T` on Windows and Linux, `^⌘T` on macOS,
-   and `M-T` in the terminal version.
+  and `M-T` in the terminal version.
 2. Set the indentation size via the "Buffer > Indentation" menu.
 3. Optionally convert existing indentation to the new indentation settings via the "Buffer >
   Indentation > Convert Indentation" menu item.
@@ -881,14 +881,14 @@ exhibits this behavior for single and double quote characters ('&apos;' and '&qu
 can configure or disable this behavior by modifying [`textadept.editing.auto_pairs`][] and
 [`textadept.editing.typeover_auto_paired`][]. For example, in your *~/.textadept/init.lua*:
 
-    -- Auto-pair and typeover '*' (Markdown emphasis/strong).
-    textadept.editing.auto_pairs['*'] = '*'
+	-- Auto-pair and typeover '*' (Markdown emphasis/strong).
+	textadept.editing.auto_pairs['*'] = '*'
 
-    -- Disable only typeover.
-    textadept.editing.typeover_auto_paired = false
+	-- Disable only typeover.
+	textadept.editing.typeover_auto_paired = false
 
-    -- Disable auto-pair and typeover.
-    textadept.editing.auto_pairs = nil
+	-- Disable auto-pair and typeover.
+	textadept.editing.auto_pairs = nil
 
 [`textadept.editing.auto_pairs`]: api.html#textadept.editing.auto_pairs
 [`textadept.editing.typeover_auto_paired`]: api.html#textadept.editing.typeover_auto_paired
@@ -899,10 +899,10 @@ Textadept can be configured to automatically highlight all occurrences of the wo
 the caret, or all occurrences of the selected word (e.g. a variable name), by setting
 [`textadept.editing.highlight_words`][]. For example, in your *~/.textadept/init.lua*:
 
-    -- Highlight all occurrences of the current word.
-    textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_CURRENT
-    -- Highlight all occurrences of the selected word.
-    textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_SELECTED
+	-- Highlight all occurrences of the current word.
+	textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_CURRENT
+	-- Highlight all occurrences of the selected word.
+	textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_SELECTED
 
 Pressing `Esc` clears highlighting. By default, Textadept does not perform any automatic
 highlighting.
@@ -924,7 +924,7 @@ changes the suggested completion. Use the arrow keys to navigate within the list
 from the current buffer. You can configure Textadept to look in all open buffers by setting
 [`textadept.editing.autocomplete_all_words`][]. For example, in *~/.textadept/init.lua*:
 
-    textadept.editing.autocomplete_all_words = true
+	textadept.editing.autocomplete_all_words = true
 
 ![Word Completion](images/wordcompletion.png)
 
@@ -1041,7 +1041,7 @@ You can auto-enclose selected text between any typed punctuation character (taki
 [`textadept.editing.auto_pairs`][]) by setting [`textadept.editing.auto_enclose`][]. For example,
 in your *~/.textadept/init.lua*:
 
-    textadept.editing.auto_enclose = true
+	textadept.editing.auto_enclose = true
 
 [`textadept.editing.auto_pairs`]: api.html#textadept.editing.auto_pairs
 [`textadept.editing.auto_enclose`]: api.html#textadept.editing.auto_enclose
@@ -1226,14 +1226,14 @@ the [`textadept.run.compile_commands`][], [`textadept.run.run_commands`][],
 [`textadept.run.run_project_commands`][] tables, respectively. For example, in your
 *~/.textadept/init.lua*:
 
-    textadept.run.compile_commands.foo = 'foo "%f"'
-    textadept.run.run_commands.foo = './"%e"'
+	textadept.run.compile_commands.foo = 'foo "%f"'
+	textadept.run.run_commands.foo = './"%e"'
 
-    textadept.run.build_commands['/path/to/project'] = 'make -C src -j4'
-    textadept.run.test_commands['/path/to/project'] = 'lua tests.lua'
-    textadept.run.run_project_commands['/path/to/project'] = function()
+	textadept.run.build_commands['/path/to/project'] = 'make -C src -j4'
+	textadept.run.test_commands['/path/to/project'] = 'lua tests.lua'
+	textadept.run.run_project_commands['/path/to/project'] = function()
 
-    end
+	end
 
 **Tip:** you can set compile and run commands on a per-filename basis.
 
@@ -1248,7 +1248,7 @@ When you execute a compile, run, build, test, or project command, that command's
 to a temporary buffer in real-time. You can configure Textadept to print output in the background
 by setting [`textadept.run.run_in_background`][]. For example, in your *~/.textadept/init.lua*:
 
-    textadept.run.run_in_background = true
+	textadept.run.run_in_background = true
 
 ---
 ### Modules
@@ -1270,14 +1270,14 @@ with Textadept.
 Textadept will only load modules it is explicitly told to load (e.g. from your
 *~/.textadept/init.lua*). For example, in your *~/.textadept/init.lua*:
 
-    local lsp = require('lsp')
-    lsp.server_commands.cpp = 'clangd'
+	local lsp = require('lsp')
+	lsp.server_commands.cpp = 'clangd'
 
 You can automatically load a "language module" (if it exists) after opening a file of that type:
 
-    events.connect(events.LEXER_LOADED, function(name)
-      if package.searchpath(name, package.path) then require(name) end
-    end)
+	events.connect(events.LEXER_LOADED, function(name)
+		if package.searchpath(name, package.path) then require(name) end
+	end)
 
 **Note:** lexer language names are typically the names of lexer files in your
 *~/.textadept/lexers/* directory and Textadept's *lexers/* directory.
@@ -1303,10 +1303,10 @@ for developing modules and some things to keep in mind:
 features. You can simply put language-specific features inside an [`events.LEXER_LOADED`][]
 event handler. For example, in your *~/.textadept/init.lua*:
 
-    -- Setup language-specific indentation settings.
-    events.connect(events.LEXER_LOADED, function(name)
-      if name == 'python' then buffer.use_tabs, buffer.tab_width = false, 4 end
-    end)
+	-- Setup language-specific indentation settings.
+	events.connect(events.LEXER_LOADED, function(name)
+		if name == 'python' then buffer.use_tabs, buffer.tab_width = false, 4 end
+	end)
 
 [`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
 
@@ -1350,18 +1350,18 @@ with Textadept.
 You can set Textadept's theme using [`view:set_theme()`][]. You can also tweak a theme's styles
 on a per-language basis. For example, in your *~/.textadept/init.lua*:
 
-    if not CURSES then
-      view:set_theme('light', {font = 'Monospace', size = 12})
-      -- You can alternatively use the following to keep the default theme:
-      -- view:set_theme{font = 'Monospace', size = 12}
-    end
+	if not CURSES then
+		view:set_theme('light', {font = 'Monospace', size = 12})
+		-- You can alternatively use the following to keep the default theme:
+		-- view:set_theme{font = 'Monospace', size = 12}
+	end
 
-    -- Color Java class names black instead of the default yellow.
-    events.connect(events.LEXER_LOADED, function(name)
-      if name ~= 'java' then return end
-      local default_fore = view.style_fore[view.STYLE_DEFAULT]
-      view.style_fore[buffer:style_of_name(lexer.CLASS)] = default_fore
-    end)
+	-- Color Java class names black instead of the default yellow.
+	events.connect(events.LEXER_LOADED, function(name)
+		if name ~= 'java' then return end
+		local default_fore = view.style_fore[view.STYLE_DEFAULT]
+		view.style_fore[buffer:style_of_name(lexer.CLASS)] = default_fore
+	end)
 
 **Tip:** you can experiment with themes without having to restart Textadept by using the
 [`reset()`][] command in the [Lua Command Entry](#lua-command-entry). Once you make changes
@@ -1447,13 +1447,13 @@ Requirements:
 
 - [CMake][] 3.16+
 - A C and C++ compiler, such as:
-  - [GNU C compiler][] (*gcc*) 7.1+
-  - [Microsoft Visual Studio][] 2019+
-  - [Clang][] 13+
+	- [GNU C compiler][] (*gcc*) 7.1+
+	- [Microsoft Visual Studio][] 2019+
+	- [Clang][] 13+
 - A UI toolkit (at least one of the following):
-  - [Qt][] 5 or Qt 6 development libraries for the GUI version
-  - [GTK][] 3 development libraries for the GUI version (GTK 2.24 is also supported)
-  - [ncurses][](w) development libraries (wide character support) for the terminal version
+	- [Qt][] 5 or Qt 6 development libraries for the GUI version
+	- [GTK][] 3 development libraries for the GUI version (GTK 2.24 is also supported)
+	- [ncurses][](w) development libraries (wide character support) for the terminal version
 
 **macOS Note:** [XCode][] provides Clang.
 
@@ -1475,15 +1475,15 @@ for example, these dependencies would be provided by the `build-essential`, `qtb
 Basic procedure:
 
 1. Configure CMake to build Textadept by pointing it to Textadept's source directory (where
-   *CMakeLists.txt* is) and specifying a binary directory to compile to.
+  *CMakeLists.txt* is) and specifying a binary directory to compile to.
 2. Build Textadept.
 3. Either copy the built Textadept binaries to Textadept's directory or use CMake to install it.
 
 For example:
 
-    cmake -S . -B build_dir -D CMAKE_INSTALL_PREFIX=build_dir/install
-    cmake --build build_dir -j # compiled binaries are in build_dir/
-    cmake --install build_dir # self-contained installation is in build_dir/install/
+	cmake -S . -B build_dir -D CMAKE_INSTALL_PREFIX=build_dir/install
+	cmake --build build_dir -j # compiled binaries are in build_dir/
+	cmake --install build_dir # self-contained installation is in build_dir/install/
 
 On Windows, you can either use the Visual Studio solution to build Textadept, or run `cmake
 --build -j` from the build directory in Visual Studio's developer command prompt.
@@ -1498,12 +1498,12 @@ should be in your `%PATH%` or `$PATH`, respectively.
 CMake boolean variables that affect the build:
 
 - `NIGHTLY`: Whether or not to build Textadept with bleeding-edge dependencies (i.e. the nightly
-   version). Defaults to off.
+  version). Defaults to off.
 - `QT`: Unless off, builds the Qt version of Textadept. The default is auto-detected.
 - `GTK3`: Unless off, builds the Gtk 3 version of Textadept. The default is auto-detected.
 - `GTK2`: Unless off, builds the Gtk 2 version of Textadept. The default is auto-detected.
 - `CURSES`: Unless off, builds the Curses (terminal) version of Textadept. The default is
-   auto-detected.
+  auto-detected.
 
 ---
 ### Appendix
@@ -1535,7 +1535,7 @@ Regex | Lua | Meaning
 {*m*,} | | Matches the previous item at least *m* times
 {*m*} | | Matches the previous item exactly *m* times
 \| | | Matches either the previous item or the next item
-&nbsp;  | %b*xy* | Matches a balanced string bounded by *x* and *y*
+&nbsp; | %b*xy* | Matches a balanced string bounded by *x* and *y*
 &nbsp; | %f[*set*] | Matches a position between characters not in and in *set*
 \\< | | Matches the beginning of a word
 \\> | | Matches the end of a word
@@ -1853,34 +1853,34 @@ Textadept no longer automatically loads language modules. They need to be manual
 other modules. You can either do this directly on startup from your *~/.textadept/init.lua*,
 or lazy load them from an `events.LEXER_LOADED` event handler in your *~/.textadept/init.lua*:
 
-    require('lua') -- load language module on startup
+	require('lua') -- load language module on startup
 
-    -- Lazy-load language modules as files are opened.
-    events.connect(events.LEXER_LOADED, function(name)
-      if package.searchpath(name, package.path) then require(name) end
-    end)
+	-- Lazy-load language modules as files are opened.
+	events.connect(events.LEXER_LOADED, function(name)
+		if package.searchpath(name, package.path) then require(name) end
+	end)
 
 If you prefer old behavior that loads all language modules into a global `_M` table, then you
 can do this:
 
-    _M = {}
-    events.connect(events.LEXER_LOADED, function(name)
-      if package.searchpath(name, package.path) then _M[name] = require(name) end
-    end)
+	_M = {}
+	events.connect(events.LEXER_LOADED, function(name)
+		if package.searchpath(name, package.path) then _M[name] = require(name) end
+	end)
 
 ###### Menubar Access Changes
 
 Accessing and changing menu items from top-level menus (menubar, context menu, and tab menu)
 has a new shorthand notation:
 
-    local select_word = textadept.menu.menubar['Edit/Select/Select Word'][2]
-    local find = textadept.menu.menubar['Search/Find']
-    find[1], find[2] = 'Custom Find', custom_find_function
+	local select_word = textadept.menu.menubar['Edit/Select/Select Word'][2]
+	local find = textadept.menu.menubar['Search/Find']
+	find[1], find[2] = 'Custom Find', custom_find_function
 
 Previously, you had to perform cumbersome one-at-a-time indexing:
 
-    local select_word = textadept.menu.menubar[_L['Edit']][_L['Select']][_L['Select Word']][2]
-    local find = textadept.menu.menubar[_L['Search']][_L['Find']]
-    find[1], find[2] = 'Custom Find', custom_find_function
+	local select_word = textadept.menu.menubar[_L['Edit']][_L['Select']][_L['Select Word']][2]
+	local find = textadept.menu.menubar[_L['Search']][_L['Find']]
+	find[1], find[2] = 'Custom Find', custom_find_function
 
 Also, menu labels are auto-localized. You can use your locale's labels or Textadept's English ones.

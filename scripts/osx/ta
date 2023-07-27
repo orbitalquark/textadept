@@ -2,13 +2,13 @@
 # Copyright 2007-2023 Mitchell. See LICENSE.
 
 if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-  echo "ta - shell script to launch Textadept.app"
-  echo "Usage:"
-  echo "ta [filenames]         open the given filenames in Textadept"
-  echo "ta [args] [filenames]  open the given filenames in a new instance of"
-  echo "                       Textadept with the given arguments"
+	echo "ta - shell script to launch Textadept.app"
+	echo "Usage:"
+	echo "ta [filenames]         open the given filenames in Textadept"
+	echo "ta [args] [filenames]  open the given filenames in a new instance of"
+	echo "                       Textadept with the given arguments"
 elif [ "${1:0:1}" == "-" ]; then
-  open -n -a Textadept.app --args "$@"
+	open -n -a Textadept.app --args "$@"
 else
-  open -a Textadept.app "$@"
+	open -a Textadept.app "$@"
 fi

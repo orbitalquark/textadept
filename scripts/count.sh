@@ -5,7 +5,7 @@
 # Requires cloc.
 
 files="core modules/textadept src/textadept.c src/textadept.h src/textadept_platform.h \
-  CMakeLists.txt init.lua"
+	CMakeLists.txt init.lua"
 opts="--exclude-lang=SVG --force-lang=C,h --quiet"
 
 cd ..

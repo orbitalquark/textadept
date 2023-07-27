@@ -1,320 +1,320 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Textadept</title>
-    <link rel="stylesheet" href="style.css" type="text/css" />
-    <link rel="icon" href="icon.png" type="image/png" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <style type="text/css">
-      #left, #right {
-        margin: -1em 0 1em 0;
-        width: 10em;
-      }
-      #left { float: left; }
-      #right { float: right; }
-      #left h2, #right h2 {
-        font-size: 0.9em;
-        margin: 0;
-        padding-left: 0.5em;
-      }
-      #left ul, #right ul {
-        list-style-type: none;
-        margin: 0.25em 0.25em 0.25em 0.75em;
-      }
-      #main div.head-col hr {
-        clear: both;
-        margin: 0;
-      }
-      #main div.head-col h2 {
-        font-size: 1.5em;
-        margin: 0.5em;
-        text-align: center;
-      }
-      #main div.left-col, #main div.right-col, #main div.mid-col { width: 500px; }
-      #main div.left-col { float: left; }
-      #main div.right-col { float: right; }
-      #main div.mid-col {
-        margin-left: auto;
-        margin-right: auto;
-      }
-      #main div.clear-col { clear: both; }
-      #main div.left-col h3, #main div.right-col h3, #main div.mid-col h3 { text-align: center; }
-      #main div.left-col .center, #main div.right-col .center { text-align: center; }
+	<head>
+		<title>Textadept</title>
+		<link rel="stylesheet" href="style.css" type="text/css" />
+		<link rel="icon" href="icon.png" type="image/png" />
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+		<style type="text/css">
+			#left, #right {
+				margin: -1em 0 1em 0;
+				width: 10em;
+			}
+			#left { float: left; }
+			#right { float: right; }
+			#left h2, #right h2 {
+				font-size: 0.9em;
+				margin: 0;
+				padding-left: 0.5em;
+			}
+			#left ul, #right ul {
+				list-style-type: none;
+				margin: 0.25em 0.25em 0.25em 0.75em;
+			}
+			#main div.head-col hr {
+				clear: both;
+				margin: 0;
+			}
+			#main div.head-col h2 {
+				font-size: 1.5em;
+				margin: 0.5em;
+				text-align: center;
+			}
+			#main div.left-col, #main div.right-col, #main div.mid-col { width: 500px; }
+			#main div.left-col { float: left; }
+			#main div.right-col { float: right; }
+			#main div.mid-col {
+				margin-left: auto;
+				margin-right: auto;
+			}
+			#main div.clear-col { clear: both; }
+			#main div.left-col h3, #main div.right-col h3, #main div.mid-col h3 { text-align: center; }
+			#main div.left-col .center, #main div.right-col .center { text-align: center; }
 
-      @media screen and (max-width: 1000px) {
-        #main div.left-col, #main div.right-col { width: 100%; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="content">
-      <div id="header" style="text-align: center;">
-        <h1 style="background-image:url('images/header.png'); background-position: bottom; font-size: 2em;">
-          Textadept
-        </h1>
-        <p>A fast, minimalist, and remarkably extensible cross-platform text editor</p>
-      </div>
+			@media screen and (max-width: 1000px) {
+				#main div.left-col, #main div.right-col { width: 100%; }
+			}
+		</style>
+	</head>
+	<body>
+		<div id="content">
+			<div id="header" style="text-align: center;">
+				<h1 style="background-image:url('images/header.png'); background-position: bottom; font-size: 2em;">
+					Textadept
+				</h1>
+				<p>A fast, minimalist, and remarkably extensible cross-platform text editor</p>
+			</div>
 
-      <div id="left">
-        <a id="download"></a>
-        <h2>Download (v11.4)</h2>
-        <a href="https://github.com/orbitalquark/textadept/releases.atom">
-          <img src="images/feed.png" style="float: right; margin: 0.25em;" alt="Atom" />
-        </a>
-        <ul>
-          <li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.win.zip">Windows</a></li>
-          <li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.macOS.zip">macOS</a></li>
-          <li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.linux.tgz">Linux</a></li>
-          <li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.modules.zip">Modules</a></li>
-        </ul>
-        <hr style="margin: 0.25em 0.5em 0.25em 0.5em;" />
-        <ul>
-          <li><a href="https://github.com/orbitalquark/textadept">Source</a></li>
-          <li><a href="changelog.html">Other versions</a></li>
-        </ul>
+			<div id="left">
+				<a id="download"></a>
+				<h2>Download (v11.4)</h2>
+				<a href="https://github.com/orbitalquark/textadept/releases.atom">
+					<img src="images/feed.png" style="float: right; margin: 0.25em;" alt="Atom" />
+				</a>
+				<ul>
+					<li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.win.zip">Windows</a></li>
+					<li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.macOS.zip">macOS</a></li>
+					<li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.linux.tgz">Linux</a></li>
+					<li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_11.4/textadept_11.4.modules.zip">Modules</a></li>
+				</ul>
+				<hr style="margin: 0.25em 0.5em 0.25em 0.5em;" />
+				<ul>
+					<li><a href="https://github.com/orbitalquark/textadept">Source</a></li>
+					<li><a href="changelog.html">Other versions</a></li>
+				</ul>
 
-        <h2>Nightly<a href="#nightly">*</a> Builds</h2>
-        <ul>
-          <li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.win.zip">Windows</a></li>
-          <li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.macOS.zip">macOS</a></li>
-          <li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.linux.tgz">Linux</a></li>
-          <li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.modules.zip">Modules</a></li>
-        </ul>
-      </div>
+				<h2>Nightly<a href="#nightly">*</a> Builds</h2>
+				<ul>
+					<li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.win.zip">Windows</a></li>
+					<li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.macOS.zip">macOS</a></li>
+					<li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.linux.tgz">Linux</a></li>
+					<li><a href="https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.modules.zip">Modules</a></li>
+				</ul>
+			</div>
 
-      <div id="right">
-        <h2>Support</h2>
-        <ul>
-          <li><a href="manual.html">Manual</a></li>
-          <li><a href="api.html">API</a></li>
-          <li><a href="https://github.com/orbitalquark/textadept/discussions">Forum</a></li>
-          <li><a href="https://github.com/orbitalquark/textadept/wiki">Wiki</a></li>
-          <li><a href="faq.html">FAQ</a></li>
-        </ul>
-      </div>
+			<div id="right">
+				<h2>Support</h2>
+				<ul>
+					<li><a href="manual.html">Manual</a></li>
+					<li><a href="api.html">API</a></li>
+					<li><a href="https://github.com/orbitalquark/textadept/discussions">Forum</a></li>
+					<li><a href="https://github.com/orbitalquark/textadept/wiki">Wiki</a></li>
+					<li><a href="faq.html">FAQ</a></li>
+				</ul>
+			</div>
 
-      <div id="main" style="margin-left: 0em;">
-        <p style="text-align: center; margin-top: -0.75em;">
-          <img src="images/textadept.gif" alt="Textadept Platforms" />
-        </p>
+			<div id="main" style="margin-left: 0em;">
+				<p style="text-align: center; margin-top: -0.75em;">
+					<img src="images/textadept.gif" alt="Textadept Platforms" />
+				</p>
 
-        <div class="head-col">
-          <hr />
-          <h2>Features</h2>
-          <hr />
-          <p style="text-align: center">
-            Textadept is a fast, minimalist, and remarkably extensible cross-platform text editor.
-          </p>
-        </div>
+				<div class="head-col">
+					<hr />
+					<h2>Features</h2>
+					<hr />
+					<p style="text-align: center">
+						Textadept is a fast, minimalist, and remarkably extensible cross-platform text editor.
+					</p>
+				</div>
 
-        <div class="left-col">
-          <h3>Fast and Minimalist</h3>
-          <p>
-            Textadept&rsquo;s user interface is sleek and simple. Relentlessly optimized for
-            speed and minimalism over the years, the editor consists of less than 2000 lines
-            of C and C++ code, and less than 4000 lines of <a href="https://lua.org">Lua</a> code.
-          </p>
-          <p class="center"><img src="images/textadept.png" alt="Textadept" /></p>
-        </div>
-        <div class="right-col">
-          <h3>Cross Platform</h3>
-          <p>
-            Textadept runs on Windows, macOS and Linux. It also has a terminal version, which
-            is ideal for work on remote machines.
-          </p>
-          <p class="center">
-            <img src="images/linux.png" alt="Linux" width="45%" height="45%" />&nbsp;&nbsp;
-            <img src="images/macosx.png" alt="macOS" width="45%" height="45%" />
-          </p>
-          <p class="center">
-            <img src="images/win32.png" alt="Windows" width="45%" height="45%"/>&nbsp;&nbsp;
-            <img src="images/ncurses.png" alt="curses" width="45%" height="45%" />
-          </p>
-        </div>
-        <div class="clear-col"></div>
-        <div class="left-col">
-          <h3>Remarkably Extensible</h3>
-          <p>
-            Textadept is an ideal editor for programmers who want endless extensibility
-            without sacrificing speed or succumbing to code bloat and featuritis. The editor
-            gives you complete control over the entire application using the Lua programming
-            language. Everything from moving the caret to changing menus and key bindings
-            on-the-fly to handling core events is possible. Its potential is vast.
-          </p>
-        </div>
-        <div class="right-col">
-          <h3>Multiple Language Support</h3>
-          <p>
-            Being a programmer&rsquo;s editor, Textadept excels at editing source code. It
-            understands the syntax and structure of more than 100 different programming languages
-            and recognizes hundreds of file types. Textadept uses this knowledge to make viewing
-            and editing code faster and easier. It can also compile and run simple source files.
-          </p>
-        </div>
-        <div class="clear-col"></div>
-        <div class="left-col">
-          <h3>Unlimited Split Views</h3>
-          <p>
-            Both the graphical version and the terminal version of Textadept support unlimited
-            vertical and horizontal view splitting, even of the same file.
-          </p>
-          <p class="center"><img src="images/splitviews.png" alt="Split Views" /></p>
-        </div>
-        <div class="right-col">
-          <h3>Customizable Themes</h3>
-          <p>
-            Textadept uses themes to customize its look and feel. It comes with built-in light,
-            dark, and terminal themes.
-          </p>
-          <p class="center">
-            <img src="images/lighttheme.png" alt="Light Theme" width="45%" height="45%"/>
-            &nbsp;&nbsp;
-            <img src="images/darktheme.png" alt="Dark Theme" width="45%" height="45%"/>
-          </p>
-          <p class="center">
-            <img src="images/termtheme.png" alt="Term Theme" width="45%" height="45%"/>
-          </p>
-        </div>
-        <div class="clear-col"></div>
-        <div class="left-col">
-          <h3>Code Autocompletion</h3>
-          <p>
-            Not only can Textadept autocomplete words in files, but it can also autocomplete
-            symbols for programming languages and display API documentation.
-          </p>
-          <p class="center">
-            <img src="images/adeptsense_lua.png" alt="Adeptsense Lua" />&nbsp;
-            <img src="images/adeptsense_string.png" alt="Adeptsense Lua String" />
-          </p>
-        </div>
-        <div class="right-col">
-          <h3>Keyboard Driven</h3>
-          <p>
-            Textadept can be entirely keyboard driven. The editor defines key bindings for many
-            common actions. You can easily reassign existing bindings or create new ones. Keys
-            may be chained together or grouped into language-specific keys or key modes.
-          </p>
-          <h3>Self Contained</h3>
-          <p>
-            Textadept&rsquo;s binary packages are self-contained and need not be installed. No
-            administrator privileges are required either.
-          </p>
-        </div>
+				<div class="left-col">
+					<h3>Fast and Minimalist</h3>
+					<p>
+						Textadept&rsquo;s user interface is sleek and simple. Relentlessly optimized for
+						speed and minimalism over the years, the editor consists of less than 2000 lines
+						of C and C++ code, and less than 4000 lines of <a href="https://lua.org">Lua</a> code.
+					</p>
+					<p class="center"><img src="images/textadept.png" alt="Textadept" /></p>
+				</div>
+				<div class="right-col">
+					<h3>Cross Platform</h3>
+					<p>
+						Textadept runs on Windows, macOS and Linux. It also has a terminal version, which
+						is ideal for work on remote machines.
+					</p>
+					<p class="center">
+						<img src="images/linux.png" alt="Linux" width="45%" height="45%" />&nbsp;&nbsp;
+						<img src="images/macosx.png" alt="macOS" width="45%" height="45%" />
+					</p>
+					<p class="center">
+						<img src="images/win32.png" alt="Windows" width="45%" height="45%"/>&nbsp;&nbsp;
+						<img src="images/ncurses.png" alt="curses" width="45%" height="45%" />
+					</p>
+				</div>
+				<div class="clear-col"></div>
+				<div class="left-col">
+					<h3>Remarkably Extensible</h3>
+					<p>
+						Textadept is an ideal editor for programmers who want endless extensibility
+						without sacrificing speed or succumbing to code bloat and featuritis. The editor
+						gives you complete control over the entire application using the Lua programming
+						language. Everything from moving the caret to changing menus and key bindings
+						on-the-fly to handling core events is possible. Its potential is vast.
+					</p>
+				</div>
+				<div class="right-col">
+					<h3>Multiple Language Support</h3>
+					<p>
+						Being a programmer&rsquo;s editor, Textadept excels at editing source code. It
+						understands the syntax and structure of more than 100 different programming languages
+						and recognizes hundreds of file types. Textadept uses this knowledge to make viewing
+						and editing code faster and easier. It can also compile and run simple source files.
+					</p>
+				</div>
+				<div class="clear-col"></div>
+				<div class="left-col">
+					<h3>Unlimited Split Views</h3>
+					<p>
+						Both the graphical version and the terminal version of Textadept support unlimited
+						vertical and horizontal view splitting, even of the same file.
+					</p>
+					<p class="center"><img src="images/splitviews.png" alt="Split Views" /></p>
+				</div>
+				<div class="right-col">
+					<h3>Customizable Themes</h3>
+					<p>
+						Textadept uses themes to customize its look and feel. It comes with built-in light,
+						dark, and terminal themes.
+					</p>
+					<p class="center">
+						<img src="images/lighttheme.png" alt="Light Theme" width="45%" height="45%"/>
+						&nbsp;&nbsp;
+						<img src="images/darktheme.png" alt="Dark Theme" width="45%" height="45%"/>
+					</p>
+					<p class="center">
+						<img src="images/termtheme.png" alt="Term Theme" width="45%" height="45%"/>
+					</p>
+				</div>
+				<div class="clear-col"></div>
+				<div class="left-col">
+					<h3>Code Autocompletion</h3>
+					<p>
+						Not only can Textadept autocomplete words in files, but it can also autocomplete
+						symbols for programming languages and display API documentation.
+					</p>
+					<p class="center">
+						<img src="images/adeptsense_lua.png" alt="Adeptsense Lua" />&nbsp;
+						<img src="images/adeptsense_string.png" alt="Adeptsense Lua String" />
+					</p>
+				</div>
+				<div class="right-col">
+					<h3>Keyboard Driven</h3>
+					<p>
+						Textadept can be entirely keyboard driven. The editor defines key bindings for many
+						common actions. You can easily reassign existing bindings or create new ones. Keys
+						may be chained together or grouped into language-specific keys or key modes.
+					</p>
+					<h3>Self Contained</h3>
+					<p>
+						Textadept&rsquo;s binary packages are self-contained and need not be installed. No
+						administrator privileges are required either.
+					</p>
+				</div>
 
-        <div class="head-col"><hr /><h2>Learn More</h2><hr /></div>
+				<div class="head-col"><hr /><h2>Learn More</h2><hr /></div>
 
-        <div class="left-col">
-          <h3>Comprehensive Manual</h3>
-          <p>
-            Textadept comes with a comprehensive <a href="manual.html">user manual</a> in the
-            application&rsquo;s <em>docs/</em> directory. It covers all of Textadept&rsquo;s
-            main features, including installation, usage, configuration, theming, scripting,
-            and compilation.
-          </p>
-        </div>
-        <div class="right-col">
-          <h3>Exhaustive API Documentation</h3>
-          <p>
-            Since Textadept is entirely scriptable with Lua, its API is heavily <a
-            href="api.html">documented</a>. This documentation is also located in <em>docs/</em>
-            and is the ultimate resource on scripting Textadept. (The editor&rsquo;s Lua
-            internals also provide abundant scripting examples.)
-          </p>
-        </div>
-        <div class="clear-col"></div>
-        <div class="mid-col">
-          <h3>Try It Yourself</h3>
-          <p>
-            Learn even more about Textadept by downloading and trying
-            it out yourself. If you&rsquo;re not completely satisfied, <a
-            href="https://github.com/orbitalquark/textadept/discussions">contact us</a> or e-mail
-            me personally (orbitalquark att triplequasar.com). You may also fork the project,
-            submit patches, or <a href="thanks.html#sponsors">sponsor a feature</a>. Textadept
-            is 100% open source.
-          </p>
-          <p style="background-color: #009900; color: #ffffff; font-size: 1.5em;
-            margin: 0 auto 1em auto; padding: 0.25em; text-align: center; width: 6em;">
-            <a href="#download" style="color: inherit; display: block; text-decoration: none;">
-              Download
-            </a>
-          </p>
-        </div>
+				<div class="left-col">
+					<h3>Comprehensive Manual</h3>
+					<p>
+						Textadept comes with a comprehensive <a href="manual.html">user manual</a> in the
+						application&rsquo;s <em>docs/</em> directory. It covers all of Textadept&rsquo;s
+						main features, including installation, usage, configuration, theming, scripting,
+						and compilation.
+					</p>
+				</div>
+				<div class="right-col">
+					<h3>Exhaustive API Documentation</h3>
+					<p>
+						Since Textadept is entirely scriptable with Lua, its API is heavily <a
+						href="api.html">documented</a>. This documentation is also located in <em>docs/</em>
+						and is the ultimate resource on scripting Textadept. (The editor&rsquo;s Lua
+						internals also provide abundant scripting examples.)
+					</p>
+				</div>
+				<div class="clear-col"></div>
+				<div class="mid-col">
+					<h3>Try It Yourself</h3>
+					<p>
+						Learn even more about Textadept by downloading and trying
+						it out yourself. If you&rsquo;re not completely satisfied, <a
+						href="https://github.com/orbitalquark/textadept/discussions">contact us</a> or e-mail
+						me personally (orbitalquark att triplequasar.com). You may also fork the project,
+						submit patches, or <a href="thanks.html#sponsors">sponsor a feature</a>. Textadept
+						is 100% open source.
+					</p>
+					<p style="background-color: #009900; color: #ffffff; font-size: 1.5em;
+						margin: 0 auto 1em auto; padding: 0.25em; text-align: center; width: 6em;">
+						<a href="#download" style="color: inherit; display: block; text-decoration: none;">
+							Download
+						</a>
+					</p>
+				</div>
 
-        <div class="head-col"><hr /><h2>Still Not Convinced?</h2><hr /></div>
+				<div class="head-col"><hr /><h2>Still Not Convinced?</h2><hr /></div>
 
-        <ul style="margin: 1em 1em 1em 2em;">
-          <li>
-            Textadept has a <a href="changelog.html">proven track record</a>, with at least
-            one release every 2 months for 12+ years and no signs of inactivity. Also, as an
-            open-source project, the editor remain freely available.
-          </li>
-          <li>
-            Textadept is a real cross-platform desktop application, backed by a world-class editing
-            engine that <a href="https://www.scintilla.org/ScintillaRelated.html">dozens</a>
-            of editors and IDEs have depended on for <a
-            href="https://www.scintilla.org/ScintillaHistory.html">over 20 years</a>.
-          </li>
-          <li>
-            Textadept is scriptable in a language that was <em><a
-            href="https://www.lua.org/history.html">carefully designed</a></em> to run on
-            any platform at high speed and with a minimal memory footprint. Lua is used <a
-            href="https://www.lua.org/uses.html">everywhere</a> from video games to embedded
-            devices. It is easy to <a href="https://www.lua.org/start.html">learn</a> too!
-          </li>
-          <li>
-            Textadept is resource efficient, consuming tens of MB of RAM at startup and hardly
-            any CPU while under load. Even with over 30 of its own source files open at once,
-            Textadept does not add more than 30MB of RAM to its overall usage and has no input
-            lag at all.
-          </li>
-          <li>
-            Textadept does not rely on external packages to provide its functionality and does
-            not depend on a package ecosystem to thrive. The editor gives you plenty of the
-            tools you need out of the box.
-          </li>
-          <li>
-            Textadept has sensible defaults and does not expect you to spend hours customizing
-            it before you can start being productive.
-          </li>
-          <li>
-            With about 30 main source files comprising roughly 6000 lines of heavily documented
-            code, Textadept&rsquo;s internals are remarkably easy to read, understand, keep
-            track of, and extend to your liking.
-          </li>
-          <li>
-            Did you see that there is a terminal version in case you need to do work on a
-            remote server?
-          </li>
-          <li>
-            Textadept does not track you. It does not attempt to connect to the internet. <em>It
-            is just a text editor</em>.
-          </li>
-        </ul>
+				<ul style="margin: 1em 1em 1em 2em;">
+					<li>
+						Textadept has a <a href="changelog.html">proven track record</a>, with at least
+						one release every 2 months for 12+ years and no signs of inactivity. Also, as an
+						open-source project, the editor remain freely available.
+					</li>
+					<li>
+						Textadept is a real cross-platform desktop application, backed by a world-class editing
+						engine that <a href="https://www.scintilla.org/ScintillaRelated.html">dozens</a>
+						of editors and IDEs have depended on for <a
+						href="https://www.scintilla.org/ScintillaHistory.html">over 20 years</a>.
+					</li>
+					<li>
+						Textadept is scriptable in a language that was <em><a
+						href="https://www.lua.org/history.html">carefully designed</a></em> to run on
+						any platform at high speed and with a minimal memory footprint. Lua is used <a
+						href="https://www.lua.org/uses.html">everywhere</a> from video games to embedded
+						devices. It is easy to <a href="https://www.lua.org/start.html">learn</a> too!
+					</li>
+					<li>
+						Textadept is resource efficient, consuming tens of MB of RAM at startup and hardly
+						any CPU while under load. Even with over 30 of its own source files open at once,
+						Textadept does not add more than 30MB of RAM to its overall usage and has no input
+						lag at all.
+					</li>
+					<li>
+						Textadept does not rely on external packages to provide its functionality and does
+						not depend on a package ecosystem to thrive. The editor gives you plenty of the
+						tools you need out of the box.
+					</li>
+					<li>
+						Textadept has sensible defaults and does not expect you to spend hours customizing
+						it before you can start being productive.
+					</li>
+					<li>
+						With about 30 main source files comprising roughly 6000 lines of heavily documented
+						code, Textadept&rsquo;s internals are remarkably easy to read, understand, keep
+						track of, and extend to your liking.
+					</li>
+					<li>
+						Did you see that there is a terminal version in case you need to do work on a
+						remote server?
+					</li>
+					<li>
+						Textadept does not track you. It does not attempt to connect to the internet. <em>It
+						is just a text editor</em>.
+					</li>
+				</ul>
 
-        <p id="plots" style="text-align: center;">
-          <img src="images/loc.png" alt="loc"/>
-          <img src="images/languages.png" alt="languages"/>
-        </p>
+				<p id="plots" style="text-align: center;">
+					<img src="images/loc.png" alt="loc"/>
+					<img src="images/languages.png" alt="languages"/>
+				</p>
 
-        <hr style="clear: both;" />
-        <p style="text-align: center;"><a href="thanks.html">Credits</a></p>
+				<hr style="clear: both;" />
+				<p style="text-align: center;"><a href="thanks.html">Credits</a></p>
 
-        <hr style="clear: both;" />
-        <div class="clear-col"></div>
-        <p style="color: #990000;">
-          <a id="nightly"></a>
-          *<em>Warning</em>: nightly builds may be untested, may have bugs, and are the
-          absolute cutting-edge versions of Textadept. Please exercise caution if using them
-          in a production environment.
-        </p>
-      </div>
+				<hr style="clear: both;" />
+				<div class="clear-col"></div>
+				<p style="color: #990000;">
+					<a id="nightly"></a>
+					*<em>Warning</em>: nightly builds may be untested, may have bugs, and are the
+					absolute cutting-edge versions of Textadept. Please exercise caution if using them
+					in a production environment.
+				</p>
+			</div>
 
-      <div id="footer">
-        <p style="text-align:center;">
-          &copy; 2007-2023 <a href="https://github.com/orbitalquark">Mitchell</a>
-        </p>
-      </div>
-    </div>
-  </body>
+			<div id="footer">
+				<p style="text-align:center;">
+					&copy; 2007-2023 <a href="https://github.com/orbitalquark">Mitchell</a>
+				</p>
+			</div>
+		</div>
+	</body>
 </html>
