@@ -140,11 +140,12 @@ Here is a simple *~/.textadept/init.lua* for illustration:
 	textadept.run.run_commands.lua = 'lua5.1 "%f"'
 	textadept.run.run_commands.python = 'python3 "%f"'
 
-	-- Always use PEP-8 indentation style for Python files.
+	-- Always use PEP-8 indentation style for Python files, and spaces for YAML files.
 	events.connect(events.LEXER_LOADED, function(name)
-		if name ~= 'python' then return end
-		buffer.use_tabs = false
-		buffer.tab_width = 4
+		if name == 'python' or name = 'yaml' then
+			buffer.use_tabs = false
+			buffer.tab_width = 4
+		end
 	end)
 
 **Note:** *~/.textadept/init.lua* must not call any functions that create buffers and views
@@ -814,7 +815,7 @@ and on a language-specific basis. For example, in your *~/.textadept/init.lua*:
 
 	-- Indentation settings for individual languages.
 	events.connect(events.LEXER_LOADED, function(name)
-		if name == 'python' then
+		if name == 'python' or name == 'yaml' then
 			buffer.use_tabs = false
 			buffer.tab_width = 4
 		elseif name == 'go' then
