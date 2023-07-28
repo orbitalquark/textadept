@@ -438,6 +438,7 @@ if(NOT (WIN32 OR APPLE))
 	install(DIRECTORY core docs ${scilua_dir}/lexers modules themes DESTINATION ${ta_data_dir})
 	install(FILES core/images/textadept.svg
 		DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
+	# Note: can use file(ARCHIVE_CREATE) in CMake 3.18.
 	install(CODE "execute_process(
 		COMMAND ${CMAKE_COMMAND} -E tar czf ${CMAKE_BINARY_DIR}/textadept_${version}.tgz textadept
 		WORKING_DIRECTORY ${CMAKE_INSTALL_FULL_DATADIR})")
@@ -455,6 +456,8 @@ elseif(WIN32)
 	if(NOT (EXISTS ${ta_dir}/${qt_major}Core.dll OR EXISTS ${ta_dir}/${qt_major}Cored.dll))
 		install(CODE
 			"execute_process(COMMAND windeployqt --no-compiler-runtime ${ta_dir}/textadept.exe)")
+		install(CODE
+			"file(REMOVE ${ta_dir}/d3dcompiler_47.dll ${ta_dir}/opengl32sw.dll ${ta_dir}/Qt6Network.dll)")
 		if(DEFINED ENV{VCINSTALLDIR})
 			execute_process(COMMAND $ENV{COMSPEC} /C dir /S $ENV{VCINSTALLDIR}\\Redist /B
 				OUTPUT_FILE ${CMAKE_BINARY_DIR}/vcrun_dlls.txt)

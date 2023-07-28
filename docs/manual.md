@@ -189,7 +189,7 @@ The following table lists Textadept's approximate download and installation size
 Platform | Download Size | Installed Size
 -|-|-
 Linux | 7 MB | 23 MB
-Windows | 25 MB | 57 MB (7 MB without bundled Qt Runtime)
+Windows | 16 MB | 37 MB (7 MB without bundled Qt Runtime)
 macOS | 23 MB | 59 MB (14 MB without bundled Qt Runtime)
 
 **Note:** the Windows and macOS platform packages each contain two executables: one for the
