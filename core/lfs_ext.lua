@@ -69,9 +69,9 @@ end
 -- @param dir The directory path to iterate over.
 -- @param[opt=lfs.default_filter] filter Optional filter for files and directories to include
 --	and exclude.
--- @param[opt] n Optional maximum number of directory levels to descend into. The default value
---	is `nil`, which indicates no limit.
--- @param[opt=false] include_dirs Optional flag indicating whether or not to yield directory
+-- @param[optchain] n Optional maximum number of directory levels to descend into. The default
+--	is to have no limit.
+-- @param[optchain=false] include_dirs Optional flag indicating whether or not to yield directory
 --	names too.  Directory names are passed with a trailing '/' or '\', depending on the
 --	current platform.
 function lfs.walk(dir, filter, n, include_dirs)

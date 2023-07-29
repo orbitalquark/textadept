@@ -200,12 +200,10 @@ end
 -- @param[opt] keys Optional table of key bindings to respond to. This is in addition to the
 --	basic editing and movement keys defined in `ui.command_entry.editing_keys`. `Esc` and
 --	`Enter` are automatically defined to cancel and finish the command entry, respectively.
---	This parameter may be omitted completely.
--- @param[opt="text"] lang Optional string lexer name to use for command entry text. This
---	parameter may only be omitted if there are no more parameters.
--- @param[opt] initial_text Optional string of text to initially show in the command entry. The
+-- @param[opt='text'] lang Optional string lexer name to use for command entry text.
+-- @param[optchain] initial_text Optional string of text to initially show in the command entry. The
 --	default value comes from the command history for *f*.
--- @param[opt] ... Optional additional arguments to pass to *f*.
+-- @param[optchain] ... Optional additional arguments to pass to *f*.
 -- @usage ui.command_entry.run('echo:', ui.print)
 function M.run(label, f, keys, lang, initial_text, ...)
 	if _G.keys.mode == '_command_entry' then return end -- already in command entry

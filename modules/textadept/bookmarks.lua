@@ -30,9 +30,8 @@ end
 -- *next* is given.
 -- If *next* is `true` or `false`, moves the caret to the beginning of the next or previously
 -- bookmarked line, respectively.
--- @param[opt] next Optional flag indicating whether to go to the next or previous bookmarked
---	line relative to the current line. The default value is `nil`, prompting the user for
---	a bookmarked line to go to.
+-- @param[opt] next Optional flag indicating whether to go to the next or previous bookmarked line
+--	relative to the current line. If `nil`, the user is prompted for a bookmarked line to go to.
 function M.goto_mark(next)
 	if next ~= nil then
 		local f = next and buffer.marker_next or buffer.marker_previous

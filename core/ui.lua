@@ -217,13 +217,13 @@ end
 -- @param filename The filename of the buffer to go to.
 -- @param[opt=false] split Optional flag that indicates whether or not to open the buffer in
 --	a split view if there is only one view.
--- @param[opt] preferred_view Optional view to open the desired buffer in if the buffer is not
---	visible in any other view.
--- @param[opt=false] sloppy Optional flag that indicates whether or not to not match *filename*
---	to `buffer.filename` exactly. When `true`, matches *filename* to only the last part of
---	`buffer.filename` This is useful for run and compile commands which output relative
---	filenames and paths instead of full ones and it is likely that the file in question is
---	already open.
+-- @param[optchain] preferred_view Optional view to open the desired buffer in if the buffer
+--	is not visible in any other view.
+-- @param[optchain=false] sloppy Optional flag that indicates whether or not to not match
+--	*filename* to `buffer.filename` exactly. When `true`, matches *filename* to only the
+--	last part of `buffer.filename` This is useful for run and compile commands which output
+--	relative filenames and paths instead of full ones and it is likely that the file in
+--	question is already open.
 function ui.goto_file(filename, split, preferred_view, sloppy)
 	assert_type(filename, 'string', 1)
 	local patt = string.format('%s%s$', not sloppy and '^' or '',

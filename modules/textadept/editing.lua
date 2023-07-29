@@ -416,7 +416,7 @@ end, 1)
 -- specified in `textadept.editing.auto_pairs` and are inferred from the current position
 -- or selection.
 -- @param[opt] left Optional left part of the enclosure.
--- @param[opt] right Optional right part of the enclosure.
+-- @param[optchain] right Optional right part of the enclosure.
 function M.select_enclosed(left, right)
 	local s, e, anchor, pos = -1, -1, buffer.anchor, buffer.current_pos
 	if assert_type(left, 'string/nil', 1) and assert_type(right, 'string', 2) then

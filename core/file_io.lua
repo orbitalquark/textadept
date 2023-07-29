@@ -68,7 +68,7 @@ io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}
 -- Emits `events.FILE_OPENED`.
 -- @param[opt] filenames Optional string filename or table of filenames to open. If `nil`,
 --	the user is prompted with a fileselect dialog.
--- @param[opt] encodings Optional string encoding or table of encodings file contents are in
+-- @param[optchain] encodings Optional string encoding or table of encodings file contents are in
 --	(one encoding per file). If `nil`, encoding auto-detection is attempted via `io.encodings`.
 function io.open_file(filenames, encodings)
 	assert_type(encodings, 'string/table/nil', 2)
@@ -329,8 +329,7 @@ local vcs = {'.bzr', '.git', '.hg', '.svn', '_FOSSIL_'}
 -- In order to be recognized, projects must be under version control. Recognized VCSes are
 -- Bazaar, Fossil, Git, Mercurial, and SVN.
 -- @param[opt] path Optional filesystem path to a project or a file contained within a project. The
---	default value is the buffer's filename or the current working directory. This parameter
---	may be omitted.
+--	default value is the buffer's filename or the current working directory.
 -- @param[opt=false] submodule Optional flag that indicates whether or not to return the root
 --	of the current submodule (if applicable).
 -- @return string root or nil
@@ -367,9 +366,9 @@ io.quick_open_filters = {}
 -- is used.
 -- @param[opt] paths Optional string directory path or table of directory paths to search. The
 --	default value is the current project's root directory, if available.
--- @param[opt] filter Optional filter for files and directories to include and/or exclude. The
---	default value is `lfs.default_filter` unless a filter for *paths* is defined in
---	`io.quick_open_filters`.
+-- @param[optchain] filter Optional filter for files and directories to include and/or
+--	exclude. The default value is `lfs.default_filter` unless a filter for *paths* is
+--	defined in `io.quick_open_filters`.
 -- @usage io.quick_open(buffer.filename:match('^(.+)[/\\]')) -- list all files in the current
 --	file's directory, subject to the default filter
 -- @usage io.quick_open(io.get_current_project(), '.lua') -- list all Lua files in the current

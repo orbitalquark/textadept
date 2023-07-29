@@ -34,7 +34,7 @@
 -- If *vertical* is `false`, splits the view vertically into left and right views.
 -- Emits `events.VIEW_NEW`.
 -- @param[opt=false] vertical Optional flag indicating whether or not to split the view
---	vertically. The default value is `false`, for horizontal.
+--	vertically. The default is to split horizontally.
 -- @return old view and new view.
 -- @function view:split
 
@@ -2410,8 +2410,8 @@
 -- @param[opt] name Optional string name or absolute path of a theme to set. The default value
 --	is either 'light' or 'dark', depending on whether light mode or dark mode, respectively,
 --	is enabled.
--- @param[opt] env Optional table of global variables themes can utilize to override default
---	settings such as font and size.
+-- @param[optchain] env Optional table of global variables themes can utilize to override
+--	default settings such as font and size.
 -- @usage view:set_theme{font = 'Monospace', size = 12}
 -- @usage view:set_theme('my_theme', {font = 'Monospace', size = 12})
 -- @function view:set_theme

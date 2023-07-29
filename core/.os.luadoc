@@ -22,11 +22,11 @@
 --	blocks (depending on the platform), or however much data is available at the time.
 --	At the moment, only the Windows terminal version sends all output, whether it be stdout
 --	or stderr, to this callback after the process finishes.
--- @param[opt] stderr_cb Optional Lua function that accepts a string parameter for a block of
---	standard error read from the child. Stderr is read asynchronously in 1KB or 0.5kB blocks
---	(depending on the platform), or however much data is available at the time.
--- @param[opt] exit_cb Optional Lua function that is called when the child process finishes. The
---	child's exit status is passed.
+-- @param[optchain] stderr_cb Optional Lua function that accepts a string parameter for a block
+--	of standard error read from the child. Stderr is read asynchronously in 1KB or 0.5kB
+--	blocks (depending on the platform), or however much data is available at the time.
+-- @param[optchain] exit_cb Optional Lua function that is called when the child process
+--	finishes. The child's exit status is passed.
 -- @return proc or nil plus an error message on failure
 -- @usage os.spawn('lua ' .. buffer.filename, print)
 -- @usage proc = os.spawn('lua -e "print(io.read())"', print)
@@ -50,8 +50,8 @@ function spawn_proc:wait() end
 -- an error occurs while reading, returns `nil`, an error code, and an error message.
 -- Ensure any read operations read all stdout available, as the stdout callback function passed
 -- to `os.spawn()` will not be called until the stdout buffer is clear.
--- @param[opt="l"] arg Optional argument similar to those in Lua's `io.read()`. The default
---	value is "l", which reads a line.
+-- @param[opt='l'] arg Optional argument similar to those in Lua's `io.read()`. The default is
+--	to read a line.
 -- @return string of bytes read
 function spawn_proc:read(arg) end
 
@@ -68,6 +68,6 @@ function spawn_proc:write(...) end
 function spawn_proc:close() end
 
 --- Kills running process *spawn_proc*, or sends it Unix signal *signal*.
--- @param[opt=9] signal Optional Unix signal to send to *spawn_proc*. The default value is 9
---	(`SIGKILL`), which kills the process.
+-- @param[opt=9] signal Optional Unix signal to send to *spawn_proc*. The default is to kill
+--	the process (`SIGKILL`).
 function spawn_proc:kill() end

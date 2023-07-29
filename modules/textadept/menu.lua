@@ -480,8 +480,8 @@ proxies.menubar = proxy_menu(default_menubar, function() end)
 -- ordered lists of menu items with an additional `title` key for the sub-menu's title text.
 -- @param[opt] buffer_menu Optional menu table to create the buffer context menu from. If `nil`,
 --	uses the default context menu.
--- @param[opt] tab_menu Optional menu table to create the tabbar context menu from. If `nil`,
---	uses the default tab context menu.
+-- @param[optchain] tab_menu Optional menu table to create the tabbar context menu from. If
+--	`nil`, uses the default tab context menu.
 -- @see ui.menu
 local function set_contextmenus(buffer_menu, tab_menu)
 	contextmenu_items = {} -- reset

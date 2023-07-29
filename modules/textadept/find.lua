@@ -288,7 +288,7 @@ events.connect(events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wr
 -- `ui.find.find_in_files_filters` table for *dir* is used. If that filter does not exist,
 -- `lfs.default_filter` is used.
 -- @param[opt] dir Optional directory path to search. If `nil`, the user is prompted for one.
--- @param[opt] filter Optional filter for files and directories to exclude. The
+-- @param[optchain] filter Optional filter for files and directories to exclude. The
 --	default value is `lfs.default_filter` unless a filter for *dir* is defined in
 --	`ui.find.find_in_files_filters`.
 function M.find_in_files(dir, filter)

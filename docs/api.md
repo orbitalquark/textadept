@@ -178,7 +178,7 @@ The current [view](#view).
 ### Functions defined by `_G`
 
 <a id="assert"></a>
-#### `assert`(*v*[, *message*="*assertion* *failed*!"[, ...]])
+#### `assert`(*v*[, *message*='*assertion* *failed*!'[, ...]])
 
 Asserts that value *v* is not `false` or `nil` and returns *v*, or calls `error()` with
 *message* as the error message, defaulting to "assertion failed!".
@@ -502,7 +502,7 @@ Emits [`events.VIEW_NEW`](#events.VIEW_NEW).
 Parameters:
 
 - *vertical*:  Optional flag indicating whether or not to split the view
-	vertically. The default value is `false`, for horizontal.
+	vertically. The default is to split horizontally.
 
 Return:
 
@@ -3716,8 +3716,8 @@ Parameters:
 - *name*:  Optional string name or absolute path of a theme to set. The default value
 	is either 'light' or 'dark', depending on whether light mode or dark mode, respectively,
 	is enabled.
-- *env*:  Optional table of global variables themes can utilize to override default
-	settings such as font and size.
+- *env*:  Optional table of global variables themes can utilize to override
+	default settings such as font and size.
 
 Usage:
 
@@ -5450,7 +5450,7 @@ Return:
 - `true` if user did not cancel; `nil` otherwise.
 
 <a id="io.get_project_root"></a>
-#### `io.get_project_root`([*path*[, *submodule*=*false*]])
+#### `io.get_project_root`([*path*][, *submodule*=*false*])
 
 Returns the root directory of the project that contains filesystem path *path*.
 In order to be recognized, projects must be under version control. Recognized VCSes are
@@ -5459,8 +5459,7 @@ Bazaar, Fossil, Git, Mercurial, and SVN.
 Parameters:
 
 - *path*:  Optional filesystem path to a project or a file contained within a project. The
-	default value is the buffer's filename or the current working directory. This parameter
-	may be omitted.
+	default value is the buffer's filename or the current working directory.
 - *submodule*:  Optional flag that indicates whether or not to return the root
 	of the current submodule (if applicable).
 
@@ -5512,9 +5511,9 @@ Parameters:
 
 - *paths*:  Optional string directory path or table of directory paths to search. The
 	default value is the current project's root directory, if available.
-- *filter*:  Optional filter for files and directories to include and/or exclude. The
-	default value is [`lfs.default_filter`](#lfs.default_filter) unless a filter for *paths* is defined in
-	[`io.quick_open_filters`](#io.quick_open_filters).
+- *filter*:  Optional filter for files and directories to include and/or
+	exclude. The default value is [`lfs.default_filter`](#lfs.default_filter) unless a filter for *paths* is
+	defined in [`io.quick_open_filters`](#io.quick_open_filters).
 
 Usage:
 
@@ -7004,7 +7003,7 @@ Parameters:
 - *c*: 
 
 <a id="lexer.range"></a>
-#### `lexer.range`(*s*[, *e*=*s*[, *single_line*=*false*[, *escapes*[, *balanced*]]]])
+#### `lexer.range`(*s*[, *e*=*s*[, *single_line*=*false*[, *escapes*[, *balanced*=*false*]]]])
 
 Creates and returns a pattern that matches a range of text bounded by strings or patterns *s*
 and *e*.
@@ -7019,13 +7018,13 @@ Parameters:
 
 - *s*:  String or pattern start of a range.
 - *e*:  Optional string or pattern end of a range. The default value is *s*.
-- *single_line*:  Optional flag indicating whether or not the range must be on
-   a single line.
-- *escapes*:  Optional flag indicating whether or not the range end may be escaped
-   by a '\' character. The default value is `false` unless *s* and *e* are identical,
+- *single_line*:  Optional flag indicating whether or not the range must
+   be on a single line.
+- *escapes*:  Optional flag indicating whether or not the range end may be
+   escaped by a '\' character. The default value is `false` unless *s* and *e* are identical,
    single-character strings. In that case, the default value is `true`.
-- *balanced*:  Optional flag indicating whether or not to match a balanced range,
-   like the "%b" Lua pattern. This flag only applies if *s* and *e* are different.
+- *balanced*:  Optional flag indicating whether or not to match a balanced
+   range, like the "%b" Lua pattern. This flag only applies if *s* and *e* are different.
 
 Usage:
 
@@ -7114,8 +7113,8 @@ Parameters:
 
 - *prefix*:  Optional string or pattern prefix to start matching at. The default value
    is any non-newline character.
-- *escape*:  Optional flag indicating whether or not newlines can be escaped by a
-  '\' character.
+- *escape*:  Optional flag indicating whether or not newlines can be escaped
+  by a '\' character.
 
 Usage:
 
@@ -7219,8 +7218,8 @@ Parameters:
 - *dir*:  The directory path to iterate over.
 - *filter*:  Optional filter for files and directories to include
 	and exclude.
-- *n*:  Optional maximum number of directory levels to descend into. The default value
-	is `nil`, which indicates no limit.
+- *n*:  Optional maximum number of directory levels to descend into. The default
+	is to have no limit.
 - *include_dirs*:  Optional flag indicating whether or not to yield directory
 	names too.  Directory names are passed with a trailing '/' or '\', depending on the
 	current platform.
@@ -7236,7 +7235,7 @@ Extends Lua's [`os`](#os) library to provide process spawning capabilities.
 ### Functions defined by `os`
 
 <a id="os.spawn"></a>
-#### `os.spawn`(*cmd*[, *cwd*[, *env*[, *stdout_cb*[, *stderr_cb*[, *exit_cb*]]]]])
+#### `os.spawn`(*cmd*[, *cwd*][, *env*][, *stdout_cb*[, *stderr_cb*[, *exit_cb*]]])
 
 Spawns an interactive child process *cmd* in a separate thread, returning a handle to that
 process.
@@ -7259,11 +7258,11 @@ Parameters:
 	blocks (depending on the platform), or however much data is available at the time.
 	At the moment, only the Windows terminal version sends all output, whether it be stdout
 	or stderr, to this callback after the process finishes.
-- *stderr_cb*:  Optional Lua function that accepts a string parameter for a block of
-	standard error read from the child. Stderr is read asynchronously in 1KB or 0.5kB blocks
-	(depending on the platform), or however much data is available at the time.
-- *exit_cb*:  Optional Lua function that is called when the child process finishes. The
-	child's exit status is passed.
+- *stderr_cb*:  Optional Lua function that accepts a string parameter for a block
+	of standard error read from the child. Stderr is read asynchronously in 1KB or 0.5kB
+	blocks (depending on the platform), or however much data is available at the time.
+- *exit_cb*:  Optional Lua function that is called when the child process
+	finishes. The child's exit status is passed.
 
 Usage:
 
@@ -7289,11 +7288,11 @@ Kills running process *spawn_proc*, or sends it Unix signal *signal*.
 
 Parameters:
 
-- *signal*:  Optional Unix signal to send to *spawn_proc*. The default value is 9
-	(`SIGKILL`), which kills the process.
+- *signal*:  Optional Unix signal to send to *spawn_proc*. The default is to kill
+	the process (`SIGKILL`).
 
 <a id="spawn_proc.read"></a>
-#### `spawn_proc:read`([*arg*="*l*"])
+#### `spawn_proc:read`([*arg*='*l*'])
 
 Reads and returns stdout from process *spawn_proc*, according to string format or number *arg*.
 Similar to Lua's `io.read()` and blocks for input. *spawn_proc* must still be running. If
@@ -7303,8 +7302,8 @@ to [`os.spawn()`](#os.spawn) will not be called until the stdout buffer is clear
 
 Parameters:
 
-- *arg*:  Optional argument similar to those in Lua's `io.read()`. The default
-	value is "l", which reads a line.
+- *arg*:  Optional argument similar to those in Lua's `io.read()`. The default is
+	to read a line.
 
 Return:
 
@@ -7429,9 +7428,8 @@ bookmarked line, respectively.
 
 Parameters:
 
-- *next*:  Optional flag indicating whether to go to the next or previous bookmarked
-	line relative to the current line. The default value is `nil`, prompting the user for
-	a bookmarked line to go to.
+- *next*:  Optional flag indicating whether to go to the next or previous bookmarked line
+	relative to the current line. If `nil`, the user is prompted for a bookmarked line to go to.
 
 <a id="textadept.bookmarks.toggle"></a>
 #### `textadept.bookmarks.toggle`()
@@ -7755,10 +7753,10 @@ Parameters:
 - *filename*:  Optional string filename, buffer type, or identifier of the buffer to
 	store. If `nil`, uses the current buffer.
 - *line*:  Optional Integer line number to store. If `nil`, uses the current line.
-- *column*:  Optional integer column number on line *line* to store. If `nil`, uses
-	the current column.
-- *soft*:  Optional flag that indicates whether or not this record should be
-	skipped when navigating backward towards it, and updated when navigating away from it.
+- *column*:  Optional integer column number on line *line* to store. If `nil`,
+	uses the current column.
+- *soft*:  Optional flag that indicates whether or not this record should
+	be skipped when navigating backward towards it, and updated when navigating away from it.
 
 
 ---
@@ -8237,7 +8235,7 @@ Parameters:
 - *dir*:  Optional path to the project to build. The default value is the current project.
 
 <a id="textadept.run.compile"></a>
-#### `textadept.run.compile`([*filename*])
+#### `textadept.run.compile`([*filename*=*buffer*.*filename*])
 
 Prompts the user with the command entry to compile file *filename* or the current file using
 an appropriate shell command from the [`textadept.run.compile_commands`](#textadept.run.compile_commands) table.
@@ -8246,8 +8244,7 @@ Emits [`events.COMPILE_OUTPUT`](#events.COMPILE_OUTPUT).
 
 Parameters:
 
-- *filename*:  Optional path to the file to compile. The default value is the current
-	file's filename.
+- *filename*:  Optional path to the file to compile.
 
 <a id="textadept.run.goto_error"></a>
 #### `textadept.run.goto_error`(*location*)
@@ -8263,7 +8260,7 @@ Parameters:
 	jumps to the previous one. When a line number, jumps to it.
 
 <a id="textadept.run.run"></a>
-#### `textadept.run.run`([*filename*])
+#### `textadept.run.run`([*filename*=*buffer*.*filename*])
 
 Prompts the user with the command entry to run file *filename* or the current file using an
 appropriate shell command from the [`textadept.run.run_commands`](#textadept.run.run_commands) table.
@@ -8272,8 +8269,7 @@ Emits [`events.RUN_OUTPUT`](#events.RUN_OUTPUT).
 
 Parameters:
 
-- *filename*:  Optional path to the file to run. The default value is the current
-	file's filename.
+- *filename*:  Optional path to the file to run.
 
 <a id="textadept.run.run_project"></a>
 #### `textadept.run.run_project`([*dir*[, *cmd*]])
@@ -8289,8 +8285,9 @@ Parameters:
 
 - *dir*:  Optional path to the project to run a command for. The default value is the
 	current project.
-- *cmd*:  Optional string command to run. If given, the command entry initially shows
-	this command. The default value comes from [`textadept.run.run_project_commands`](#textadept.run.run_project_commands) and *dir*.
+- *cmd*:  Optional string command to run. If given, the command entry initially
+	shows this command. The default value comes from [`textadept.run.run_project_commands`](#textadept.run.run_project_commands)
+	and *dir*.
 
 <a id="textadept.run.stop"></a>
 #### `textadept.run.stop`()
@@ -8770,13 +8767,13 @@ Parameters:
 - *filename*:  The filename of the buffer to go to.
 - *split*:  Optional flag that indicates whether or not to open the buffer in
 	a split view if there is only one view.
-- *preferred_view*:  Optional view to open the desired buffer in if the buffer is not
-	visible in any other view.
-- *sloppy*:  Optional flag that indicates whether or not to not match *filename*
-	to [`buffer.filename`](#buffer.filename) exactly. When `true`, matches *filename* to only the last part of
-	[`buffer.filename`](#buffer.filename) This is useful for run and compile commands which output relative
-	filenames and paths instead of full ones and it is likely that the file in question is
-	already open.
+- *preferred_view*:  Optional view to open the desired buffer in if the buffer
+	is not visible in any other view.
+- *sloppy*:  Optional flag that indicates whether or not to not match
+	*filename* to [`buffer.filename`](#buffer.filename) exactly. When `true`, matches *filename* to only the
+	last part of [`buffer.filename`](#buffer.filename) This is useful for run and compile commands which output
+	relative filenames and paths instead of full ones and it is likely that the file in
+	question is already open.
 
 <a id="ui.goto_view"></a>
 #### `ui.goto_view`(*view*)
@@ -9017,7 +9014,7 @@ The height in pixels of the command entry.
 Opens the command entry.
 
 <a id="ui.command_entry.run"></a>
-#### `ui.command_entry.run`(*label*, *f*[, *keys*[, *lang*="*text*"[, *initial_text*[, ...]]]])
+#### `ui.command_entry.run`(*label*, *f*[, *keys*][, *lang*='*text*'[, *initial_text*[, ...]]])
 
 Opens the command entry with label *label* (and optionally with string *initial_text*),
 subjecting it to any key bindings defined in table *keys*, highlighting text with lexer
@@ -9036,9 +9033,7 @@ Parameters:
 - *keys*:  Optional table of key bindings to respond to. This is in addition to the
 	basic editing and movement keys defined in [`ui.command_entry.editing_keys`](#ui.command_entry.editing_keys). `Esc` and
 	`Enter` are automatically defined to cancel and finish the command entry, respectively.
-	This parameter may be omitted completely.
-- *lang*:  Optional string lexer name to use for command entry text. This
-	parameter may only be omitted if there are no more parameters.
+- *lang*:  Optional string lexer name to use for command entry text.
 - *initial_text*:  Optional string of text to initially show in the command entry. The
 	default value comes from the command history for *f*.
 - *...*:  Optional additional arguments to pass to *f*.

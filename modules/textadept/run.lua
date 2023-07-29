@@ -192,8 +192,7 @@ M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc 
 -- an appropriate shell command from the `textadept.run.compile_commands` table.
 -- The shell command is determined from the file's filename, extension, or language, in that order.
 -- Emits `events.COMPILE_OUTPUT`.
--- @param[opt] filename Optional path to the file to compile. The default value is the current
---	file's filename.
+-- @param[opt=buffer.filename] filename Optional path to the file to compile.
 function M.compile(filename)
 	if assert_type(filename, 'string/nil', 1) or buffer.filename then
 		compile_or_run(filename or buffer.filename, M.compile_commands)
@@ -221,8 +220,7 @@ M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "f
 -- appropriate shell command from the `textadept.run.run_commands` table.
 -- The shell command is determined from the file's filename, extension, or language, in that order.
 -- Emits `events.RUN_OUTPUT`.
--- @param[opt] filename Optional path to the file to run. The default value is the current
---	file's filename.
+-- @param[opt=buffer.filename] filename Optional path to the file to run.
 function M.run(filename)
 	if assert_type(filename, 'string/nil', 1) or buffer.filename then
 		compile_or_run(filename or buffer.filename, M.run_commands)
@@ -302,8 +300,9 @@ M.run_project_commands = {}
 -- Emits `events.RUN_OUTPUT`.
 -- @param[opt] dir Optional path to the project to run a command for. The default value is the
 --	current project.
--- @param[opt] cmd Optional string command to run. If given, the command entry initially shows
---	this command. The default value comes from `textadept.run.run_project_commands` and *dir*.
+-- @param[optchain] cmd Optional string command to run. If given, the command entry initially
+--	shows this command. The default value comes from `textadept.run.run_project_commands`
+--	and *dir*.
 function M.run_project(dir, cmd)
 	if not assert_type(dir, 'string/nil', 1) then
 		dir = io.get_project_root()
