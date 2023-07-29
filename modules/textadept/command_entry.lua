@@ -51,7 +51,7 @@ end
 
 -- This separation is needed to prevent LDoc from parsing the following table.
 
-M.editing_keys.__index = {}
+M.editing_keys = {__index = {}}
 
 --- Fill in default key bindings for Windows/Linux, macOS, Terminal.
 local bindings = {
