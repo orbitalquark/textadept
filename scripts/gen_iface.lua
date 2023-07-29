@@ -192,9 +192,12 @@ local M = {}
 ]=])
 f:write([[
 --- Map of Scintilla constant names to their numeric values.
+-- @table constants
 -- @see _G.buffer
 -- @see _G.view
-M.constants = {} -- empty declaration to avoid LDoc processing
+
+-- This separation is needed to prevent LDoc from parsing the following table.
+
 M.constants = {]])
 f:write(table.concat(constants, ','))
 f:write('}\n\n')
@@ -211,7 +214,10 @@ f:write([[
 -- - `6`: Bitmask of Scintilla key modifiers and a key value.
 -- - `7`: String parameter.
 -- - `8`: String return value.
-M.functions = {} -- empty declaration to avoid LDoc processing
+-- @table functions
+
+-- This separation is needed to prevent LDoc from parsing the following table.
+
 M.functions = {]])
 for _, func in ipairs(functions) do
 	f:write(string.format('%s={%d,%d,%d,%d},', func, table.unpack(functions[func])))
@@ -222,7 +228,10 @@ f:write([[
 -- function IDs, return types, and wParam types.
 -- The wParam type will be non-zero if the property is indexable.
 -- Types are the same as in the `_SCINTILLA.functions` table.
-M.properties = {} -- empty declaration to avoid LDoc processing
+-- @table properties
+
+-- This separation is needed to prevent LDoc from parsing the following table.
+
 M.properties = {]])
 for _, property in ipairs(properties) do
 	f:write(string.format('%s={%d,%d,%d,%d},', property, table.unpack(properties[property])))
@@ -230,7 +239,10 @@ end
 f:write('}\n\n')
 f:write([[
 --- Map of Scintilla event IDs to tables of event names and event parameters.
-M.events = {} -- empty declaration to avoid LDoc processing
+-- @table events
+
+-- This separation is needed to prevent LDoc from parsing the following table.
+
 M.events = {]])
 for _, event in ipairs(events) do f:write(string.format('[%s]={%s},', event, events[event])) end
 f:write('}\n\n')

@@ -50,6 +50,8 @@ io.quick_open_max = 5000
 io.recent_files = {}
 
 --- List of encodings to attempt to decode files as.
+-- The default list contains UTF-8, ASCII, CP1252, and UTF-16.
+--
 -- You should add to this list if you get a "Conversion failed" error when trying to open a file
 -- whose encoding is not recognized. Valid encodings are [GNU iconv's encodings][] and include:
 --
@@ -62,6 +64,10 @@ io.recent_files = {}
 --
 -- [GNU iconv's encodings]: https://www.gnu.org/software/libiconv/
 -- @usage io.encodings[#io.encodings + 1] = 'UTF-32'
+-- @table encodings
+
+-- This comment is needed to prevent LDoc from parsing the following table.
+
 io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}
 
 --- Opens *filenames*, a string filename or list of filenames, or the user-selected filename(s).

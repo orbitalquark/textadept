@@ -5388,6 +5388,8 @@ Extends Lua's [`io`](#io) library with Textadept functions for working with file
 #### `io.encodings` &lt;table&gt;
 
 List of encodings to attempt to decode files as.
+The default list contains UTF-8, ASCII, CP1252, and UTF-16.
+
 You should add to this list if you get a "Conversion failed" error when trying to open a file
 whose encoding is not recognized. Valid encodings are [GNU iconv's encodings][] and include:
 
@@ -5399,13 +5401,6 @@ whose encoding is not recognized. Valid encodings are [GNU iconv's encodings][] 
 	UTF-16LE, UTF-32, UTF-32BE, UTF-32LE, UTF-7, C99, JAVA.
 
 [GNU iconv's encodings]: https://www.gnu.org/software/libiconv/
-
-Fields:
-
-- `UTF-8`: 
-- `ASCII`: 
-- `CP1252`: 
-- `UTF-16`: 
 
 Usage:
 

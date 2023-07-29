@@ -55,8 +55,10 @@ end
 -- @usage textadept.menu.menubar['File/New']
 -- @usage textadept.menu.menubar['File/New'][2] = function() .. end
 -- @table menubar
-local default_menubar = {} -- empty declaration to avoid LDoc processing
-default_menubar = {
+
+-- This separation is needed to prevent LDoc from parsing the following table.
+
+local default_menubar = {
 	{
 		title = _L['File'], --
 		{_L['New'], buffer.new}, --
@@ -316,8 +318,10 @@ default_menubar = {
 -- Submenus, and menu items can be retrieved by name in addition to table index number.
 -- @usage textadept.menu.context_menu[#textadept.menu.context_menu + 1] = {...}
 -- @table context_menu
-local default_context_menu = {} -- empty declaration to avoid LDoc processing
-default_context_menu = {
+
+-- This separation is needed to prevent LDoc from parsing the following table.
+
+local default_context_menu = {
 	{_L['Undo'], buffer.undo}, --
 	{_L['Redo'], buffer.redo}, --
 	SEPARATOR, --
@@ -332,8 +336,10 @@ default_context_menu = {
 --- The default tabbar context menu.
 -- Submenus, and menu items can be retrieved by name in addition to table index number.
 -- @table tab_context_menu
-local default_tab_context_menu = {} -- empty declaration to avoid LDoc processing
-default_tab_context_menu = {
+
+-- This separation is needed to prevent LDoc from parsing the following table.
+
+local default_tab_context_menu = {
 	{_L['Close'], buffer.close}, --
 	SEPARATOR, --
 	{_L['Save'], buffer.save}, --

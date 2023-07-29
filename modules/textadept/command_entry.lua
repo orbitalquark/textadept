@@ -47,7 +47,10 @@ end
 -- This metatable may be used to add basic editing and movement keys to command entry modes. It
 -- is automatically added to command entry modes unless a metatable was previously set.
 -- @usage setmetatable(mode_keys, ui.command_entry.editing_keys)
-M.editing_keys = {} -- empty declaration to avoid LDoc processing
+-- @table editing_keys
+
+-- This separation is needed to prevent LDoc from parsing the following table.
+
 M.editing_keys.__index = {}
 
 --- Fill in default key bindings for Windows/Linux, macOS, Terminal.
