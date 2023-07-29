@@ -4174,8 +4174,16 @@ of pixels away from the horizontal margins.
 
 Parameters:
 
-- *policy*:  The combination of [`view.CARET_SLOP`](#view.CARET_SLOP), [`view.CARET_STRICT`](#view.CARET_STRICT), [`view.CARET_EVEN`](#view.CARET_EVEN),
-	and [`view.CARET_JUMPS`](#view.CARET_JUMPS) policy flags to set.
+- *policy*:  The combination of the following policy flags to set:
+	- [`view.CARET_SLOP`](#view.CARET_SLOP)
+		When the caret goes out of view, scroll the view so the caret is *x* pixels
+		away from the right margin.
+	- [`view.CARET_STRICT`](#view.CARET_STRICT)
+		Scroll the view to ensure the caret stays *x* pixels away from the right margin.
+	- [`view.CARET_EVEN`](#view.CARET_EVEN)
+		Consider both horizontal margins instead of just the right one.
+	- [`view.CARET_JUMPS`](#view.CARET_JUMPS)
+		Scroll the view more than usual in order to scroll less often.
 - *x*:  The number of pixels from the horizontal margins to keep the caret.
 
 <a id="view.set_y_caret_policy"></a>
@@ -4186,22 +4194,35 @@ of lines away from the vertical margins.
 
 Parameters:
 
-- *policy*:  The combination of [`view.CARET_SLOP`](#view.CARET_SLOP), [`view.CARET_STRICT`](#view.CARET_STRICT), [`view.CARET_EVEN`](#view.CARET_EVEN),
-	and [`view.CARET_JUMPS`](#view.CARET_JUMPS) policy flags to set.
+- *policy*:  The combination of the following policy flags to set:
+	- [`view.CARET_SLOP`](#view.CARET_SLOP)
+		When the caret goes out of view, scroll the view so the caret is *y* lines
+		below from the top margin.
+	- [`view.CARET_STRICT`](#view.CARET_STRICT)
+		Scroll the view to ensure the caret stays *y* lines below from the top margin.
+	- [`view.CARET_EVEN`](#view.CARET_EVEN)
+		Consider both vertical margins instead of just the top one.
+	- [`view.CARET_JUMPS`](#view.CARET_JUMPS)
+		Scroll the view more than usual in order to scroll less often.
 - *y*:  The number of lines from the vertical margins to keep the caret.
 
 <a id="view.set_visible_policy"></a>
 #### `view:set_visible_policy`(*policy*, *y*)
 
 Defines scrolling policy bit-mask *policy* as the policy for keeping the caret *y* number
-of lines away from the vertical margins as [`view:ensure_visible_enforce_policy()`](#view.ensure_visible_enforce_policy) redisplays
+of lines away from the vertical margins when [`view:ensure_visible_enforce_policy()`](#view.ensure_visible_enforce_policy) redisplays
 hidden or folded lines.
 It is similar in operation to [`view:set_y_caret_policy()`](#view.set_y_caret_policy).
 
 Parameters:
 
-- *policy*:  The combination of [`view.VISIBLE_SLOP`](#view.VISIBLE_SLOP) and [`view.VISIBLE_STRICT`](#view.VISIBLE_STRICT) policy flags
-	to set.
+- *policy*:  The combination of the following policy flags to set:
+	- [`view.VISIBLE_SLOP`](#view.VISIBLE_SLOP)
+		When the caret is out of view, scroll the view so the caret is *y* lines away
+		from the vertical margins.
+	- [`view.VISIBLE_STRICT`](#view.VISIBLE_STRICT)
+		Scroll the view to ensure the caret stays a *y* lines away from the vertical
+		margins.
 - *y*:  The number of lines from the vertical margins to keep the caret.
 
 ### Configure Mouse Cursor Display
