@@ -4879,6 +4879,7 @@ Arguments:
 #### `events.CALL_TIP_CLICK` 
 
 Emitted when clicking on a calltip.
+This event is not emitted by the Qt version.
 Arguments:
 
 - *position*: `1` if the up arrow was clicked, `2` if the down arrow was clicked, and `0`
