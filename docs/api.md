@@ -3745,7 +3745,8 @@ color. Recognized color values are black (0x000000), red (0x000080), green (0x00
 #### `view.styles` &lt;table&gt;
 
 Map of style names to style definition tables.
-The contents of this map is typically set by a theme.
+The contents of this map is typically set by a theme. If you are setting it manually (e.g. via
+the command entry), call [`view:set_styles()`](#view.set_styles) to refresh the view and apply the styles.
 
 Style names consist of the following default names as well as the tag names defined by lexers.
 
