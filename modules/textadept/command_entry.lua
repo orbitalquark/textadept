@@ -201,8 +201,8 @@ end
 --	basic editing and movement keys defined in `ui.command_entry.editing_keys`. `Esc` and
 --	`Enter` are automatically defined to cancel and finish the command entry, respectively.
 --	This parameter may be omitted completely.
--- @param[opt] lang Optional string lexer name to use for command entry text. The default value
---	is `'text'`. This parameter may only be omitted if there are no more parameters.
+-- @param[opt="text"] lang Optional string lexer name to use for command entry text. This
+--	parameter may only be omitted if there are no more parameters.
 -- @param[opt] initial_text Optional string of text to initially show in the command entry. The
 --	default value comes from the command history for *f*.
 -- @param[opt] ... Optional additional arguments to pass to *f*.

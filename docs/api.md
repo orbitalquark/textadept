@@ -178,7 +178,7 @@ The current [view](#view).
 ### Functions defined by `_G`
 
 <a id="assert"></a>
-#### `assert`(*v*[, *message*[, ...]])
+#### `assert`(*v*[, *message*="*assertion* *failed*!"[, ...]])
 
 Asserts that value *v* is not `false` or `nil` and returns *v*, or calls `error()` with
 *message* as the error message, defaulting to "assertion failed!".
@@ -188,8 +188,7 @@ and the resulting string becomes the error message.
 Parameters:
 
 - *v*:  Value to assert.
-- *message*:  Optional error message to show on error. The default value is "assertion
-	failed!".
+- *message*:  Optional error message to show on error.
 - *...*:  If *message* is a format string, these arguments are passed to
 	`string.format()`.
 
@@ -493,7 +492,7 @@ See also:
 - [`io.open_file`](#io.open_file)
 
 <a id="view.split"></a>
-#### `view:split`([*vertical*])
+#### `view:split`([*vertical*=*false*])
 
 Splits the view into top and bottom views (unless *vertical* is `true`), focuses the new view,
 and returns both the old and new views.
@@ -502,8 +501,8 @@ Emits [`events.VIEW_NEW`](#events.VIEW_NEW).
 
 Parameters:
 
-- *vertical*:  Optional flag indicating whether or not to split the view vertically. The
-	default value is `false`, for horizontal.
+- *vertical*:  Optional flag indicating whether or not to split the view
+	vertically. The default value is `false`, for horizontal.
 
 Return:
 
@@ -573,15 +572,14 @@ Return:
 - `true` if the file was saved; `nil` otherwise.
 
 <a id="buffer.close"></a>
-#### `buffer:close`([*force*])
+#### `buffer:close`([*force*=*false*])
 
 Closes the buffer, prompting the user to continue if there are unsaved changes (unless *force*
 is `true`), and returns `true` if the buffer was closed.
 
 Parameters:
 
-- *force*:  Optional flag that discards unsaved changes without prompting the user. The
-	default value is `false`.
+- *force*:  Optional flag that discards unsaved changes without prompting the user.
 
 Return:
 
@@ -5452,7 +5450,7 @@ Return:
 - `true` if user did not cancel; `nil` otherwise.
 
 <a id="io.get_project_root"></a>
-#### `io.get_project_root`([*path*[, *submodule*]])
+#### `io.get_project_root`([*path*[, *submodule*=*false*]])
 
 Returns the root directory of the project that contains filesystem path *path*.
 In order to be recognized, projects must be under version control. Recognized VCSes are
@@ -5463,8 +5461,8 @@ Parameters:
 - *path*:  Optional filesystem path to a project or a file contained within a project. The
 	default value is the buffer's filename or the current working directory. This parameter
 	may be omitted.
-- *submodule*:  Optional flag that indicates whether or not to return the root of the
-	current submodule (if applicable). The default value is `false`.
+- *submodule*:  Optional flag that indicates whether or not to return the root
+	of the current submodule (if applicable).
 
 Return:
 
@@ -7006,7 +7004,7 @@ Parameters:
 - *c*: 
 
 <a id="lexer.range"></a>
-#### `lexer.range`(*s*[, *e*[, *single_line*[, *escapes*[, *balanced*]]]])
+#### `lexer.range`(*s*[, *e*=*s*[, *single_line*=*false*[, *escapes*[, *balanced*]]]])
 
 Creates and returns a pattern that matches a range of text bounded by strings or patterns *s*
 and *e*.
@@ -7021,8 +7019,8 @@ Parameters:
 
 - *s*:  String or pattern start of a range.
 - *e*:  Optional string or pattern end of a range. The default value is *s*.
-- *single_line*:  Optional flag indicating whether or not the range must be on a single
-   line. The default value is `false`.
+- *single_line*:  Optional flag indicating whether or not the range must be on
+   a single line.
 - *escapes*:  Optional flag indicating whether or not the range end may be escaped
    by a '\' character. The default value is `false` unless *s* and *e* are identical,
    single-character strings. In that case, the default value is `true`.
@@ -7106,7 +7104,7 @@ Return:
 - pattern
 
 <a id="lexer.to_eol"></a>
-#### `lexer.to_eol`([*prefix*[, *escape*]])
+#### `lexer.to_eol`([*prefix*[, *escape*=*false*]])
 
 Creates and returns a pattern that matches from string or pattern *prefix* until the end of
 the line.
@@ -7116,8 +7114,8 @@ Parameters:
 
 - *prefix*:  Optional string or pattern prefix to start matching at. The default value
    is any non-newline character.
-- *escape*:  Optional flag indicating whether or not newlines can be escaped by a '\'
-  character. The default value is `false`.
+- *escape*:  Optional flag indicating whether or not newlines can be escaped by a
+  '\' character.
 
 Usage:
 
@@ -7131,7 +7129,7 @@ Return:
 - pattern
 
 <a id="lexer.word_match"></a>
-#### `lexer.word_match`([*lexer*], *word_list*[, *case_insensitive*])
+#### `lexer.word_match`([*lexer*], *word_list*[, *case_insensitive*=*false*])
 
 Either returns a pattern for lexer *lexer* (if given) that matches one word in the word list
 identified by string *word_list*, ignoring case if *case_sensitive* is `true`, or, if *lexer*
@@ -7148,8 +7146,8 @@ Parameters:
    omitted for lexer-agnostic matching.
 - *word_list*:  Either a string name of the word list to match from if *lexer* is given,
    or, if *lexer* is omitted, a list of words or a string list of words separated by spaces.
-- *case_insensitive*:  Optional boolean flag indicating whether or not the word match
-   is case-insensitive. The default value is `false`.
+- *case_insensitive*:  Optional boolean flag indicating whether or not the word
+   match is case-insensitive.
 
 Usage:
 
@@ -7206,7 +7204,7 @@ Return:
 - string absolute path
 
 <a id="lfs.walk"></a>
-#### `lfs.walk`(*dir*[, *filter*[, *n*[, *include_dirs*]]])
+#### `lfs.walk`(*dir*[, *filter*=*lfs*.*default_filter*[, *n*[, *include_dirs*=*false*]]])
 
 Returns an iterator that iterates over all files and sub-directories (up to *n* levels deep)
 in directory *dir* and yields each file found.
@@ -7219,13 +7217,13 @@ separator ('[/\\]' is not needed).
 Parameters:
 
 - *dir*:  The directory path to iterate over.
-- *filter*:  Optional filter for files and directories to include and exclude. The
-	default value is [`lfs.default_filter`](#lfs.default_filter).
+- *filter*:  Optional filter for files and directories to include
+	and exclude.
 - *n*:  Optional maximum number of directory levels to descend into. The default value
 	is `nil`, which indicates no limit.
-- *include_dirs*:  Optional flag indicating whether or not to yield directory names too.
-	Directory names are passed with a trailing '/' or '\', depending on the current platform.
-	The default value is `false`.
+- *include_dirs*:  Optional flag indicating whether or not to yield directory
+	names too.  Directory names are passed with a trailing '/' or '\', depending on the
+	current platform.
 
 
 ---
@@ -7285,7 +7283,7 @@ Return:
 Closes standard input for process *spawn_proc*, effectively sending an EOF (end of file) to it.
 
 <a id="spawn_proc.kill"></a>
-#### `spawn_proc:kill`([*signal*])
+#### `spawn_proc:kill`([*signal*=*9*])
 
 Kills running process *spawn_proc*, or sends it Unix signal *signal*.
 
@@ -7295,7 +7293,7 @@ Parameters:
 	(`SIGKILL`), which kills the process.
 
 <a id="spawn_proc.read"></a>
-#### `spawn_proc:read`([*arg*])
+#### `spawn_proc:read`([*arg*="*l*"])
 
 Reads and returns stdout from process *spawn_proc*, according to string format or number *arg*.
 Similar to Lua's `io.read()` and blocks for input. *spawn_proc* must still be running. If
@@ -7305,8 +7303,8 @@ to [`os.spawn()`](#os.spawn) will not be called until the stdout buffer is clear
 
 Parameters:
 
-- *arg*:  Optional argument similar to those in Lua's `io.read()`. The default value is
-	"l", which reads a line.
+- *arg*:  Optional argument similar to those in Lua's `io.read()`. The default
+	value is "l", which reads a line.
 
 Return:
 
@@ -7590,7 +7588,7 @@ If [`buffer.use_tabs`](#buffer.use_tabs) is `true`, [`buffer.tab_width`](#buffer
 Otherwise, all indenting tabs are converted to [`buffer.tab_width`](#buffer.tab_width) spaces.
 
 <a id="textadept.editing.enclose"></a>
-#### `textadept.editing.enclose`(*left*, *right*[, *select*])
+#### `textadept.editing.enclose`(*left*, *right*[, *select*=*false*])
 
 Encloses the selected text or the current word within strings *left* and *right*, taking
 multiple selections into account.
@@ -7600,7 +7598,7 @@ Parameters:
 - *left*:  The left part of the enclosure.
 - *right*:  The right part of the enclosure.
 - *select*:  Optional flag that indicates whether or not to keep enclosed text
-	selected. The default value is `false`.
+	selected.
 
 <a id="textadept.editing.filter_through"></a>
 #### `textadept.editing.filter_through`(*command*)
@@ -7748,7 +7746,7 @@ Clears all view history.
 Navigates forwards through the current view's history.
 
 <a id="textadept.history.record"></a>
-#### `textadept.history.record`([*filename*[, *line*[, *column*[, *soft*]]]])
+#### `textadept.history.record`([*filename*[, *line*[, *column*[, *soft*=*false*]]]])
 
 Records the given location in the current view's history.
 
@@ -7759,9 +7757,8 @@ Parameters:
 - *line*:  Optional Integer line number to store. If `nil`, uses the current line.
 - *column*:  Optional integer column number on line *line* to store. If `nil`, uses
 	the current column.
-- *soft*:  Optional flag that indicates whether or not this record should be skipped
-	when navigating backward towards it, and updated when navigating away from it. The
-	default value is `false`.
+- *soft*:  Optional flag that indicates whether or not this record should be
+	skipped when navigating backward towards it, and updated when navigating away from it.
 
 
 ---
@@ -8759,7 +8756,7 @@ Return:
 	not; and `size` is the integer position of the split resizer.
 
 <a id="ui.goto_file"></a>
-#### `ui.goto_file`(*filename*[, *split*[, *preferred_view*[, *sloppy*]]])
+#### `ui.goto_file`(*filename*[, *split*=*false*[, *preferred_view*[, *sloppy*=*false*]]])
 
 Switches to the existing view whose buffer's filename is *filename*.
 If no view was found and *split* is `true`, splits the current view in order to show the
@@ -8771,15 +8768,15 @@ the desired view.
 Parameters:
 
 - *filename*:  The filename of the buffer to go to.
-- *split*:  Optional flag that indicates whether or not to open the buffer in a split
-	view if there is only one view. The default value is `false`.
+- *split*:  Optional flag that indicates whether or not to open the buffer in
+	a split view if there is only one view.
 - *preferred_view*:  Optional view to open the desired buffer in if the buffer is not
 	visible in any other view.
-- *sloppy*:  Optional flag that indicates whether or not to not match *filename* to
-	[`buffer.filename`](#buffer.filename) exactly. When `true`, matches *filename* to only the last part of
+- *sloppy*:  Optional flag that indicates whether or not to not match *filename*
+	to [`buffer.filename`](#buffer.filename) exactly. When `true`, matches *filename* to only the last part of
 	[`buffer.filename`](#buffer.filename) This is useful for run and compile commands which output relative
 	filenames and paths instead of full ones and it is likely that the file in question is
-	already open. The default value is `false`.
+	already open.
 
 <a id="ui.goto_view"></a>
 #### `ui.goto_view`(*view*)
@@ -9020,7 +9017,7 @@ The height in pixels of the command entry.
 Opens the command entry.
 
 <a id="ui.command_entry.run"></a>
-#### `ui.command_entry.run`(*label*, *f*[, *keys*[, *lang*[, *initial_text*[, ...]]]])
+#### `ui.command_entry.run`(*label*, *f*[, *keys*[, *lang*="*text*"[, *initial_text*[, ...]]]])
 
 Opens the command entry with label *label* (and optionally with string *initial_text*),
 subjecting it to any key bindings defined in table *keys*, highlighting text with lexer
@@ -9040,8 +9037,8 @@ Parameters:
 	basic editing and movement keys defined in [`ui.command_entry.editing_keys`](#ui.command_entry.editing_keys). `Esc` and
 	`Enter` are automatically defined to cancel and finish the command entry, respectively.
 	This parameter may be omitted completely.
-- *lang*:  Optional string lexer name to use for command entry text. The default value
-	is `'text'`. This parameter may only be omitted if there are no more parameters.
+- *lang*:  Optional string lexer name to use for command entry text. This
+	parameter may only be omitted if there are no more parameters.
 - *initial_text*:  Optional string of text to initially show in the command entry. The
 	default value comes from the command history for *f*.
 - *...*:  Optional additional arguments to pass to *f*.

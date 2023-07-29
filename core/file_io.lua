@@ -331,8 +331,8 @@ local vcs = {'.bzr', '.git', '.hg', '.svn', '_FOSSIL_'}
 -- @param[opt] path Optional filesystem path to a project or a file contained within a project. The
 --	default value is the buffer's filename or the current working directory. This parameter
 --	may be omitted.
--- @param[opt] submodule Optional flag that indicates whether or not to return the root of the
---	current submodule (if applicable). The default value is `false`.
+-- @param[opt=false] submodule Optional flag that indicates whether or not to return the root
+--	of the current submodule (if applicable).
 -- @return string root or nil
 function io.get_project_root(path, submodule)
 	if type(path) == 'boolean' then path, submodule = nil, path end

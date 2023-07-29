@@ -33,8 +33,8 @@ end
 -- Emits `events.ARG_NONE` when no file or directory arguments are present unless
 -- *no_emit_arg_none* is `true`.
 -- @param arg Argument table.
--- @param[opt] no_emit_arg_none When `true`, do not emit `ARG_NONE` when no arguments are present.
---	The default value is `false`.
+-- @param[opt=false] no_emit_arg_none When `true`, do not emit `ARG_NONE` when no arguments
+--	are present.
 local function process(arg, no_emit_arg_none)
 	local no_args = true
 	local i = 1

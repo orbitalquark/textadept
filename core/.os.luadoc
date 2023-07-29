@@ -50,8 +50,8 @@ function spawn_proc:wait() end
 -- an error occurs while reading, returns `nil`, an error code, and an error message.
 -- Ensure any read operations read all stdout available, as the stdout callback function passed
 -- to `os.spawn()` will not be called until the stdout buffer is clear.
--- @param[opt] arg Optional argument similar to those in Lua's `io.read()`. The default value is
---	"l", which reads a line.
+-- @param[opt="l"] arg Optional argument similar to those in Lua's `io.read()`. The default
+--	value is "l", which reads a line.
 -- @return string of bytes read
 function spawn_proc:read(arg) end
 
@@ -68,6 +68,6 @@ function spawn_proc:write(...) end
 function spawn_proc:close() end
 
 --- Kills running process *spawn_proc*, or sends it Unix signal *signal*.
--- @param[opt] signal Optional Unix signal to send to *spawn_proc*. The default value is 9
+-- @param[opt=9] signal Optional Unix signal to send to *spawn_proc*. The default value is 9
 --	(`SIGKILL`), which kills the process.
 function spawn_proc:kill() end

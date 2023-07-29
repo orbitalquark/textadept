@@ -380,8 +380,8 @@ end
 -- multiple selections into account.
 -- @param left The left part of the enclosure.
 -- @param right The right part of the enclosure.
--- @param[opt] select Optional flag that indicates whether or not to keep enclosed text
---	selected. The default value is `false`.
+-- @param[opt=false] select Optional flag that indicates whether or not to keep enclosed text
+--	selected.
 function M.enclose(left, right, select)
 	assert_type(left, 'string', 1)
 	assert_type(right, 'string', 2)

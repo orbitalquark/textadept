@@ -104,9 +104,8 @@ end
 -- @param[opt] line Optional Integer line number to store. If `nil`, uses the current line.
 -- @param[opt] column Optional integer column number on line *line* to store. If `nil`, uses
 --	the current column.
--- @param[opt] soft Optional flag that indicates whether or not this record should be skipped
---	when navigating backward towards it, and updated when navigating away from it. The
---	default value is `false`.
+-- @param[opt=false] soft Optional flag that indicates whether or not this record should be
+--	skipped when navigating backward towards it, and updated when navigating away from it.
 function M.record(filename, line, column, soft)
 	if not assert_type(filename, 'string/nil', 1) then
 		filename = buffer.filename or buffer._type or _L['Untitled']

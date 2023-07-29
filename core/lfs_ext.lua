@@ -67,13 +67,13 @@ end
 -- any path is initially considered. As a convenience, '/' also matches the Windows directory
 -- separator ('[/\\]' is not needed).
 -- @param dir The directory path to iterate over.
--- @param[opt] filter Optional filter for files and directories to include and exclude. The
---	default value is `lfs.default_filter`.
+-- @param[opt=lfs.default_filter] filter Optional filter for files and directories to include
+--	and exclude.
 -- @param[opt] n Optional maximum number of directory levels to descend into. The default value
 --	is `nil`, which indicates no limit.
--- @param[opt] include_dirs Optional flag indicating whether or not to yield directory names too.
---	Directory names are passed with a trailing '/' or '\', depending on the current platform.
---	The default value is `false`.
+-- @param[opt=false] include_dirs Optional flag indicating whether or not to yield directory
+--	names too.  Directory names are passed with a trailing '/' or '\', depending on the
+--	current platform.
 function lfs.walk(dir, filter, n, include_dirs)
 	dir = assert_type(dir, 'string', 1):match('^(..-)[/\\]?$')
 	if not assert_type(filter, 'string/table/nil', 2) then filter = lfs.default_filter end

@@ -8,8 +8,7 @@
 -- If *message* is a format string, the remaining arguments are passed to `string.format()`
 -- and the resulting string becomes the error message.
 -- @param v Value to assert.
--- @param[opt] message Optional error message to show on error. The default value is "assertion
---	failed!".
+-- @param[opt="assertion failed!"] message Optional error message to show on error.
 -- @param[opt] ... If *message* is a format string, these arguments are passed to
 --	`string.format()`.
 function assert(v, message, ...)
