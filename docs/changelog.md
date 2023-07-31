@@ -2,9 +2,49 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
-### 12.0 beta (01 Jul 2023)
+### 12.0 (01 Aug 2023)
 
 Please see the [migration guide][] for migrating from Textadept 11 to 12.
+
+Download:
+
+- [Textadept 12.0 -- Windows][]
+- [Textadept 12.0 -- macOS 11+][]
+- [Textadept 12.0 -- Linux][]
+- [Textadept 12.0 -- Modules][]
+
+Bugfixes:
+
+- Fixed potential crash when using legacy lexers.
+- Fixed error switching to the only buffer that exists.
+- Fixed case insensitive word completion from all buffers.
+- Fixed syntax highlighting glitches on Windows.
+- LSP: small fixes for language servers that do not play nicely.
+- LSP: work around Scintilla repeatedly sending hover events on Windows and Qt.
+- LSP: fixed active Lua parameter calculation if documented function uses ':'.
+- LSP: fixed inaccurate recording of 'goto' position for history navigation.
+- Export: use the correct dialog when prompting for a file to export to.
+
+Changes:
+
+- Updated Python lexer to support soft keywords.
+- Removed unnecessary Qt DLLs from Windows release.
+- LSP: query for updated diagnostics if the buffer has since been modified.
+- Scintilla: input method improvements on Qt.
+- Updated to [Lua][] 5.4.6.
+- Updated to [LPeg][] 1.1.0.
+- Updated to [Scintilla][] 5.3.6.
+
+[migration guide]: manual.html#migrating-from-textadept-11-to-12
+[Textadept 12.0 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0/textadept_12.0.win.zip
+[Textadept 12.0 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0/textadept_12.0.macOS.zip
+[Textadept 12.0 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0/textadept_12.0.linux.tgz
+[Textadept 12.0 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0/textadept_12.0.modules.zip
+[Lua]: https://lua.org
+[LPeg]: http://www.inf.puc-rio.br/~roberto/lpeg/
+[Scintilla]: https://scintilla.org
+
+### 12.0 beta (01 Jul 2023)
 
 Download:
 
@@ -43,7 +83,6 @@ Changes:
 - LSP: added support for snippet completions.
 - LSP: support per-project language servers.
 
-[migration guide]: manual.html#migrating-from-textadept-11-to-12
 [Textadept 12.0 beta -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.win.zip
 [Textadept 12.0 beta -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.macOS.zip
 [Textadept 12.0 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0_beta/textadept_12.0_beta.linux.tgz
