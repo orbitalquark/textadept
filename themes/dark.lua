@@ -44,7 +44,7 @@ styles[lexer.ANNOTATION] = {fore = colors.magenta}
 styles[lexer.ATTRIBUTE] = {fore = colors.violet}
 styles[lexer.BOLD] = {bold = true}
 styles[lexer.CLASS] = {fore = colors.yellow}
-styles[lexer.CODE] = {fore = colors.dark_grey, eolfilled = true}
+styles[lexer.CODE] = {fore = colors.dark_grey, eol_filled = true}
 styles[lexer.COMMENT] = {fore = colors.dark_grey}
 -- styles[lexer.CONSTANT] = {}
 styles[lexer.CONSTANT_BUILTIN] = {fore = colors.purple}
@@ -82,8 +82,8 @@ styles.addition = {fore = colors.green}
 styles.deletion = {fore = colors.red}
 styles.change = {fore = colors.yellow}
 -- HTML.
-styles.tag_unknown = styles.tag .. {italics = true}
-styles.attribute_unknown = styles.attribute .. {italics = true}
+styles.tag_unknown = styles.tag .. {italic = true}
+styles.attribute_unknown = styles.attribute .. {italic = true}
 -- Latex, TeX, and Texinfo.
 styles.command = styles[lexer.KEYWORD]
 styles.command_section = styles[lexer.HEADING]
