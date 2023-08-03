@@ -2410,8 +2410,8 @@
 -- @param[opt] name Optional string name or absolute path of a theme to set. The default value
 --	is either 'light' or 'dark', depending on whether light mode or dark mode, respectively,
 --	is enabled.
--- @param[optchain] env Optional table of global variables themes can utilize to override
---	default settings such as font and size.
+-- @param[opt] env Optional table of global variables themes can utilize to override default
+--	settings such as font and size.
 -- @usage view:set_theme{font = 'Monospace', size = 12}
 -- @usage view:set_theme('my_theme', {font = 'Monospace', size = 12})
 -- @function view:set_theme
@@ -2433,7 +2433,7 @@
 -- The contents of this map is typically set by a theme. If you are setting it manually (e.g. via
 -- the command entry), call `view:set_styles()` to refresh the view and apply the styles.
 --
--- Style names consist of the following default names as well as the tag names defined by lexers.
+-- Style names consist of the following:
 --
 -- - `view.STYLE_DEFAULT`: The default style all others are based on.
 -- - `view.STYLE_LINENUMBER`: The line number margin style.
@@ -2448,8 +2448,9 @@
 --	`lexer.ITALIC`, `lexer.KEYWORD`, `lexer.LABEL`, `lexer.LINK`, `lexer.NUMBER`,
 --	`lexer.OPERATOR`, `lexer.PREPROCESSOR`, `lexer.REFERENCE`, `lexer.REGEX`, `lexer.STRING`,
 --	`lexer.TAG`, `lexer.TYPE`, `lexer.UNDERLINE`, `lexer.VARIABLE`, `lexer.VARIABLE_BUILTIN`:
---	Some tag names used by lexers. Some lexers may define more tag names, so this list is
---	not exhaustive.
+--	Some common, predefined names many lexers use.
+-- - Some lexers may use their own style names. To see the name of the style under the caret,
+--	use the "Tools > Show Style" menu item.
 --
 -- Style definition tables may contain the following fields:
 --

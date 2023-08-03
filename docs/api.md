@@ -3704,7 +3704,7 @@ Map of characters to their string representation's color in "0xBBGGRR" format.
  from 0 to 0xFFFFFF. Alpha transparency values are integers that range from 0 to 255
  (`view.ALPHA_TRANSPARENT` to `view.ALPHA_OPAQUE`), or `view.ALPHA_NOALPHA`.
 <a id="view.set_theme"></a>
-#### `view:set_theme`([*name*[, *env*]])
+#### `view:set_theme`([*name*][, *env*])
 
 Sets the view's color theme to be string *name*, with the contents of table *env* available
 as global variables.
@@ -3716,8 +3716,8 @@ Parameters:
 - *name*:  Optional string name or absolute path of a theme to set. The default value
 	is either 'light' or 'dark', depending on whether light mode or dark mode, respectively,
 	is enabled.
-- *env*:  Optional table of global variables themes can utilize to override
-	default settings such as font and size.
+- *env*:  Optional table of global variables themes can utilize to override default
+	settings such as font and size.
 
 Usage:
 
@@ -3748,7 +3748,7 @@ Map of style names to style definition tables.
 The contents of this map is typically set by a theme. If you are setting it manually (e.g. via
 the command entry), call [`view:set_styles()`](#view.set_styles) to refresh the view and apply the styles.
 
-Style names consist of the following default names as well as the tag names defined by lexers.
+Style names consist of the following:
 
 - [`view.STYLE_DEFAULT`](#view.STYLE_DEFAULT): The default style all others are based on.
 - [`view.STYLE_LINENUMBER`](#view.STYLE_LINENUMBER): The line number margin style.
@@ -3763,8 +3763,9 @@ Style names consist of the following default names as well as the tag names defi
 	[`lexer.ITALIC`](#lexer.ITALIC), [`lexer.KEYWORD`](#lexer.KEYWORD), [`lexer.LABEL`](#lexer.LABEL), [`lexer.LINK`](#lexer.LINK), [`lexer.NUMBER`](#lexer.NUMBER),
 	[`lexer.OPERATOR`](#lexer.OPERATOR), [`lexer.PREPROCESSOR`](#lexer.PREPROCESSOR), [`lexer.REFERENCE`](#lexer.REFERENCE), [`lexer.REGEX`](#lexer.REGEX), [`lexer.STRING`](#lexer.STRING),
 	[`lexer.TAG`](#lexer.TAG), [`lexer.TYPE`](#lexer.TYPE), [`lexer.UNDERLINE`](#lexer.UNDERLINE), [`lexer.VARIABLE`](#lexer.VARIABLE), [`lexer.VARIABLE_BUILTIN`](#lexer.VARIABLE_BUILTIN):
-	Some tag names used by lexers. Some lexers may define more tag names, so this list is
-	not exhaustive.
+	Some common, predefined names many lexers use.
+- Some lexers may use their own style names. To see the name of the style under the caret,
+	use the "Tools > Show Style" menu item.
 
 Style definition tables may contain the following fields:
 
