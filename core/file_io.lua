@@ -328,8 +328,11 @@ function io.open_recent_file()
 	for _, i in ipairs(selected) do io.open_file(io.recent_files[i]) end
 end
 
---- List of version control directories.
-local vcs = {'.bzr', '.git', '.hg', '.svn', '_FOSSIL_'}
+--- Map of version control files to their lfs modes.
+local vcs = {
+	['.bzr'] = 'directory', ['.git'] = 'directory', ['.hg'] = 'directory', ['.svn'] = 'directory',
+	_FOSSIL_ = 'file'
+}
 
 --- Returns the root directory of the project that contains filesystem path *path*.
 -- In order to be recognized, projects must be under version control. Recognized VCSes are
@@ -344,9 +347,9 @@ function io.get_project_root(path, submodule)
 	if not assert_type(path, 'string/nil', 1) then path = buffer.filename or lfs.currentdir() end
 	local dir = path:match('^(.-)[/\\]?$')
 	while dir do
-		for i = 1, #vcs do
-			local mode = lfs.attributes(dir .. '/' .. vcs[i], 'mode')
-			if mode and (submodule or mode == 'directory') then return dir end
+		for file, expected_mode in pairs(vcs) do
+			local mode = lfs.attributes(dir .. '/' .. file, 'mode')
+			if mode and (submodule or mode == expected_mode) then return dir end
 		end
 		dir = dir:match('^(.+)[/\\]')
 	end
