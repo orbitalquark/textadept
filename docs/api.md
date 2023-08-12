@@ -8228,6 +8228,12 @@ Functions may also return a working directory and process environment table to o
 in. By default, the working directory is the project's root directory and the environment
 is Textadept's environment.
 
+<a id="textadept.run.run_without_prompt"></a>
+#### `textadept.run.run_without_prompt` 
+
+Run shell commands without prompting.
+The default value is `false`.
+
 <a id="textadept.run.test_commands"></a>
 #### `textadept.run.test_commands` &lt;table&gt;
 

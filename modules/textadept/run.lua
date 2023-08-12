@@ -14,6 +14,10 @@ local M = {}
 -- The default value is `false`.
 M.run_in_background = false
 
+--- Run shell commands without prompting.
+-- The default value is `false`.
+M.run_without_prompt = false
+
 --- The run or compile warning marker number.
 M.MARK_WARNING = _SCINTILLA.new_marker_number()
 --- The run or compile error marker number.
@@ -145,6 +149,10 @@ local function run_command(label, command, dir, event, commands, key, macros)
 			if env then table.insert(args, 3, env) end
 			procs[#procs + 1] = {proc = assert(os.spawn(table.unpack(args))), command = args[1]}
 		end
+	end
+	if M.run_without_prompt then
+		command_entry_f[id](command, working_dir or dir, env, event, commands, key, macros)
+		return
 	end
 	ui.command_entry.run(label, command_entry_f[id], 'bash', command, working_dir or dir, env, event,
 		commands, key, macros)

@@ -1219,6 +1219,11 @@ through command history via `Up` and `Down` on Windows, Linux, and the terminal 
 Textadept will remember compile and run commands on a per-filename basis as you use them,
 as well as build, test, and project commands on a per-directory basis.
 
+You can configure Textadept to run commands immediately without a prompt by setting
+[`textadept.run.run_without_prompt`][]. For example, in your *~/.textadept/init.lua*:
+
+	textadept.run.run_without_prompt = true
+
 ![Runtime Error](images/runerror.png)
 
 You can change or add compile, run, build, test, and project commands by modifying
@@ -1238,18 +1243,19 @@ the [`textadept.run.compile_commands`][], [`textadept.run.run_commands`][],
 
 **Tip:** you can set compile and run commands on a per-filename basis.
 
-[`textadept.run.run_in_background`]: api.html#textadept.run.run_in_background
-[`textadept.run.compile_commands`]: api.html#textadept.run.compile_commands
-[`textadept.run.run_commands`]: api.html#textadept.run.run_commands
-[`textadept.run.build_commands`]: api.html#textadept.run.build_commands
-[`textadept.run.test_commands`]: api.html#textadept.run.test_commands
-[`textadept.run.run_project_commands`]: api.html#textadept.run.run_project_commands
-
 When you execute a compile, run, build, test, or project command, that command's output is printed
 to a temporary buffer in real-time. You can configure Textadept to print output in the background
 by setting [`textadept.run.run_in_background`][]. For example, in your *~/.textadept/init.lua*:
 
 	textadept.run.run_in_background = true
+
+[`textadept.run.run_without_prompt`]: api.html#textadept.run.run_without_prompt
+[`textadept.run.compile_commands`]: api.html#textadept.run.compile_commands
+[`textadept.run.run_commands`]: api.html#textadept.run.run_commands
+[`textadept.run.build_commands`]: api.html#textadept.run.build_commands
+[`textadept.run.test_commands`]: api.html#textadept.run.test_commands
+[`textadept.run.run_project_commands`]: api.html#textadept.run.run_project_commands
+[`textadept.run.run_in_background`]: api.html#textadept.run.run_in_background
 
 ---
 ### Modules

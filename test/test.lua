@@ -3691,6 +3691,26 @@ function test_run_distinct_command_histories()
 	buffer:close()
 end
 
+function test_run_no_prompt()
+	if WIN32 then return end -- TODO: cannot cd to network path
+	io.open_file(_HOME .. '/test/modules/textadept/run/foo.lua')
+	local run_without_prompt = textadept.run.run_without_prompt
+	textadept.run.run_without_prompt = true
+	textadept.run.run()
+	assert_equal(ui.command_entry.active, false)
+	assert_equal(buffer._type, _L['[Output Buffer]'])
+	ui.update() -- process output
+	if QT then -- process exit
+		ui.update()
+		sleep(0.1)
+		ui.update()
+	end
+	if #_VIEWS > 1 then view:unsplit() end
+	buffer:close()
+	buffer:close()
+	textadept.run.run_without_prompt = run_without_prompt -- restore
+end
+
 function test_run_no_command()
 	if WIN32 then return end -- TODO: cannot cd to network path
 	io.open_file(_HOME .. '/test/modules/textadept/run/foo.txt')
