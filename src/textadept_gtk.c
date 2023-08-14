@@ -664,9 +664,10 @@ static void refilter(GtkEditable *_, void *view) {
 static int entry_keypress(GtkWidget *entry, GdkEventKey *event, void *treeview) {
 	if (*gtk_entry_get_text(GTK_ENTRY(entry))) return false;
 	bool down = event->keyval == GDK_KEY_Down || event->keyval == GDK_KEY_Page_Down,
-			 page = event->keyval == GDK_KEY_Page_Down || event->keyval == GDK_KEY_Page_Up, moved;
+			 page = event->keyval == GDK_KEY_Page_Down || event->keyval == GDK_KEY_Page_Up;
 	if (!down && !page && event->keyval != GDK_KEY_Up) return false;
 	gtk_widget_grab_focus(treeview);
+	int moved;
 	g_signal_emit_by_name(treeview, "move-cursor",
 		!page ? GTK_MOVEMENT_DISPLAY_LINES : GTK_MOVEMENT_PAGES, down ? 1 : -1, &moved);
 	return (gtk_widget_grab_focus(entry), moved);
