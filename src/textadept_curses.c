@@ -180,6 +180,7 @@ static void remove_views(Pane *pane_, void (*delete_view)(SciObject *view)) {
 bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
 	struct Pane *parent = get_parent_pane(root_pane, view);
 	if (!parent) return false;
+	if (view != focused_view) focus_view(view); // focused_view may not exist after unsplit
 	struct Pane *child = parent->child1->view == view ? parent->child1 : parent->child2;
 	remove_views(child == parent->child1 ? parent->child2 : parent->child1, delete_view);
 	delwin(parent->win); // delete split bar

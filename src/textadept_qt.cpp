@@ -128,8 +128,8 @@ sptr_t SS(SciObject *view, int message, uptr_t wparam, sptr_t lparam) {
 void split_view(SciObject *view, SciObject *view2, bool vertical) {
 	auto pane = new QSplitter{vertical ? Qt::Horizontal : Qt::Vertical};
 	int middle = (vertical ? pane->height() : pane->width()) / 2;
-	if (auto parentPane = qobject_cast<QSplitter *>(SCI(view)->parent()); parentPane)
-		parentPane->replaceWidget(parentPane->indexOf(SCI(view)), pane);
+	if (auto parent_pane = qobject_cast<QSplitter *>(SCI(view)->parent()); parent_pane)
+		parent_pane->replaceWidget(parent_pane->indexOf(SCI(view)), pane);
 	else
 		SCI(view)->parentWidget()->layout()->replaceWidget(SCI(view), pane);
 	pane->addWidget(SCI(view)), pane->addWidget(SCI(view2)), update_ui(); // ensure views are painted
@@ -150,16 +150,19 @@ static void remove_views(QSplitter *pane, void (*delete_view)(SciObject *view)) 
 bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
 	auto pane = qobject_cast<QSplitter *>(SCI(view)->parent());
 	if (!pane) return false;
-	SciObject *orig_focused_view = focused_view == view ? focused_view : nullptr;
+	bool view_has_focus = view == focused_view;
+	SciObject *orig_focused_view = focused_view;
 	QWidget *other = pane->widget(!pane->indexOf(SCI(view)));
-	auto otherPane = qobject_cast<QSplitter *>(other);
-	otherPane ? remove_views(otherPane, delete_view) : delete_view(other);
-	if (auto parentPane = qobject_cast<QSplitter *>(pane->parentWidget()); parentPane)
-		parentPane->replaceWidget(parentPane->indexOf(pane), SCI(view));
+	auto other_pane = qobject_cast<QSplitter *>(other);
+	other_pane ? remove_views(other_pane, delete_view) : delete_view(other);
+	if (auto parent_pane = qobject_cast<QSplitter *>(pane->parentWidget()); parent_pane)
+		parent_pane->replaceWidget(parent_pane->indexOf(pane), SCI(view));
 	else // note: cannot use ternary operator here due to distinct pointer types.
 		pane->parentWidget()->layout()->replaceWidget(pane, SCI(view));
 	// Note: the previous operation likely triggered view_focused(), changing focused_view.
-	return (SCI(orig_focused_view ? orig_focused_view : focused_view)->setFocus(), true);
+	// However, if it did not, focused_view may no longer exist, so switch to view if necessary.
+	if (!view_has_focus && focused_view == orig_focused_view) focus_view(SCI(view));
+	return (SCI(view_has_focus ? orig_focused_view : focused_view)->setFocus(), true);
 }
 
 void delete_scintilla(SciObject *view) { delete SCI(view); }

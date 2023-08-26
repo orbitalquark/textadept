@@ -4488,6 +4488,10 @@ function test_view_split_resize_unsplit()
 	ui.goto_view(_VIEWS[1])
 	view:unsplit() -- unsplits split view, leaving single view
 	assert_equal(#_VIEWS, 1)
+	view:split()
+	view:split()
+	_VIEWS[1]:unsplit()
+	assert_equal(#_VIEWS, 1)
 end
 
 function test_view_split_refresh_styles()

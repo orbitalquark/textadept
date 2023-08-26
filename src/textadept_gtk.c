@@ -259,6 +259,7 @@ static void remove_views(GtkPaned *pane, void (*delete_view)(SciObject *view)) {
 bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *view)) {
 	GtkWidget *pane = gtk_widget_get_parent(view);
 	if (!GTK_IS_PANED(pane)) return false;
+	bool view_has_focus = view == focused_view;
 	GtkWidget *other = gtk_paned_get_child1(GTK_PANED(pane)) != view ?
 		gtk_paned_get_child1(GTK_PANED(pane)) :
 		gtk_paned_get_child2(GTK_PANED(pane));
@@ -273,7 +274,7 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *view)) {
 	else
 		gtk_container_add(GTK_CONTAINER(parent), view);
 	// gtk_widget_show_all(parent);
-	gtk_widget_grab_focus(focused_view);
+	gtk_widget_grab_focus(view_has_focus ? focused_view : view); // focused_view may not exist
 	return (g_object_unref(view), g_object_unref(other), true);
 }
 
