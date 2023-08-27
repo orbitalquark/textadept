@@ -62,8 +62,8 @@ diff -r 123ae5de5bd2 qt/ScintillaEditBase/ScintillaEditBase.h
  	void horizontalScrolled(int value);
  	void verticalScrolled(int value);
  	void horizontalRangeChanged(int max, int page);
---- ScintillaEditBase.cpp.orig	2023-08-26 09:13:39.349786280 -0400
-+++ ScintillaEditBase.cpp	2023-08-26 09:13:53.373995980 -0400
+--- a/qt/ScintillaEditBase/ScintillaEditBase.cpp 2023-08-26 09:13:39.349786280 -0400
++++ b/qt/ScintillaEditBase/ScintillaEditBase.cpp	2023-08-26 09:13:53.373995980 -0400
 @@ -671,7 +671,7 @@
  
  		case Qt::ImCurrentSelection:
