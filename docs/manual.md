@@ -1854,7 +1854,7 @@ Filters for `lfs.walk()`, `io.quick_open()`, and `ui.find.find_in_files()` no lo
 patterns, but use typical shell glob patterns instead. This means special characters like '-'
 and '+' can be used literally and longer need to be escaped with '%'.
 
-###### Language Module Changes
+##### Language Module Changes
 
 Textadept no longer automatically loads language modules. They need to be manually loaded like
 other modules. You can either do this directly on startup from your *~/.textadept/init.lua*,
@@ -1875,7 +1875,7 @@ can do this:
 		if package.searchpath(name, package.path) then _M[name] = require(name) end
 	end)
 
-###### Menubar Access Changes
+##### Menubar Access Changes
 
 Accessing and changing menu items from top-level menus (menubar, context menu, and tab menu)
 has a new shorthand notation:
