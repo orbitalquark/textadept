@@ -2,6 +2,37 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+### 12.1 (01 Sep 2023)
+
+Download:
+
+- [Textadept 12.1 -- Windows][]
+- [Textadept 12.1 -- macOS 11+][]
+- [Textadept 12.1 -- Linux][]
+- [Textadept 12.1 -- Modules][]
+
+Bugfixes:
+
+- Correctly recognize projects under Fossil version control.
+- Fixed potential crash on GTK when opening a list dialog and immediately arrowing down.
+- Fixed crash unsplitting a non-focused view whose other pane contains the focused view.
+- Fixed some multi-byte characters in Julia lexer being incorrectly marked as operators.
+- Fixed lack of legacy support for `lexer.fold_consecutive_lines()`.
+- Do not highlight Bash variable pattern expansion as comments.
+- Fixed potential crash with proxy lexers like RHTML.
+- Scintilla: fixed crash when using IME with a large amount of text selected.
+
+Changes:
+
+- Added [`textadept.run.run_without_prompt`][] for running commands immediately
+- Updated Hare lexer.
+
+[Textadept 12.1 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.1/textadept_12.1.win.zip
+[Textadept 12.1 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.1/textadept_12.1.macOS.zip
+[Textadept 12.1 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.1/textadept_12.1.linux.tgz
+[Textadept 12.1 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.1/textadept_12.1.modules.zip
+[`textadept.run.run_without_prompt`]: api.html#textadept.run.run_without_prompt
+
 ### 12.0 (01 Aug 2023)
 
 Please see the [migration guide][] for migrating from Textadept 11 to 12.
