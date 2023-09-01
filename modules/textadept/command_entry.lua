@@ -211,10 +211,6 @@ end
 function M.run(label, f, keys, lang, initial_text, ...)
 	if _G.keys.mode == '_command_entry' then return end -- already in command entry
 	local args = table.pack(...)
-	if type(label) == 'function' then -- legacy
-		table.insert(args, 1, initial_text)
-		label, f, keys, lang, initial_text = '', label, f, keys, lang
-	end
 	if not assert_type(label, 'string/nil', 1) then label = _L['Lua command:'] end
 	if not assert_type(f, 'function/nil', 2) and not keys then
 		f, keys, lang = run_lua, lua_keys, 'lua'

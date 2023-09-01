@@ -170,8 +170,7 @@
 -- - "%*n*[*Shell code*]" for Shell transforms, where *n* is optional.
 -- - "%*n*{*items*}" for multiple choice placeholders.
 --
--- While Textadept currently supports legacy snippets, it will not do so forever. It is
--- recommended that you migrate your snippets using the following steps:
+-- You can migrate your snippets using the following steps:
 --
 -- 1. Substitute '%' with '$' in tab stops and mirrors.
 -- 2. Substitute "%*n*(*default*)" default placeholders with "${*n*:*default*}". The following
@@ -323,8 +322,6 @@ local function any_but(chars) return Cs((1 - S(chars .. '\\') + '\\' * C(1) / 1)
 --	format table for a capture. Format tables have 'index', 'method', 'if', and 'else' fields.
 -- @field opts Regex options for this transform.
 -- @field choice A list of options to insert from an autocompletion list for this placeholder.
--- @field lua_code The Lua code of this transform (legacy).
--- @field sh_code The Shell code of this transform (legacy).
 -- @field id This placeholder's unique ID. This field is used as an indicator's value for
 --	identification purposes.
 -- @field position This placeholder's initial position in its snapshot. This field will not
@@ -356,22 +353,6 @@ local grammar = P{
 	default = ':' * Cg(Ct((any_but('$`}') + V('placeholder') + V('code'))^0), 'default'),
 	choice = '|' * Cg(any_but('|'), 'choice') * '|'
 }
-
-local legacy_grammar = P{
-	Ct((V('text') + V('placeholder') + C(1))^0), --
-	text = Cs((P(1) - '%' + '%' * C(S('({%')) / 1)^1), --
-	placeholder = '%' *
-		Ct((V('index')^-1 * (V('angles') + V('brackets')) * Cg(Cc(true), 'transform') +
-			(V('index') * (V('parens') + V('braces') + Cg(Cc(true), 'simple')))) * Cg(Cc(true), 'legacy')),
-	index = Cg(R('09')^1 / tonumber, 'index'),
-	parens = '(' * Cg(Ct((Cs((1 - S('%)') + P('%)') / ')')^1) + V('placeholder'))^1), 'default') * ')', --
-	brackets = '[' * Cg((1 - S('[]') + V('brackets'))^0, 'sh_code') * ']',
-	braces = '{' * Cg((1 - S('{}') + V('braces'))^0, 'choice') * '}',
-	angles = '<' * -P('/') * Cg((1 - S('<>') + V('angles'))^0, 'lua_code') * '>'
-}
---- Returns whether or not snippet text *text* uses the legacy snippet grammar.
--- @param text Snippet text to check.
-local function is_legacy(text) return text:find('%%%d') or text:find('%%[%[<]') end
 
 --- Creates and returns new snippet from text *text* and trigger text *trigger*.
 -- @param text The new snippet to insert.
@@ -417,7 +398,6 @@ function snippet.new(text, trigger)
 	end
 
 	-- Parse snippet and add text and placeholders.
-	local grammar = is_legacy(text) and legacy_grammar or grammar
 	for _, part in ipairs(grammar:match(text)) do snip:add_part(part) end
 
 	return snip
@@ -447,8 +427,6 @@ function snippet:add_part(part)
 		for k, v in pairs(self.variables) do env[k] = v end
 		local f, result = load('return ' .. part.lua, nil, 't', env)
 		self:add_part(f and select(2, pcall(f)) or result or '')
-	elseif part.legacy and part.transform and not part.index then
-		self:add_part(self:legacy_execute_code(part))
 	else
 		local placeholder = setmetatable({}, {__index = part})
 		self.max_index = math.max(self.max_index, placeholder.index)
@@ -653,28 +631,6 @@ function snippet:transform(placeholder)
 	end, placeholder.opts:find('g') and 0 or 1)
 end
 
---- Returns the result of executing Lua or Shell code, in placeholder table *placeholder*,
--- in the context of this snippet.
--- @param placeholder The placeholder that contains code to execute.
--- @local
-function snippet:legacy_execute_code(placeholder)
-	local s, e = self.placeholder_pos, buffer.selection_end
-	if s > e then s, e = e, s end
-	local text = self.index and buffer:text_range(s, e) or '' -- %<...>, %[...]
-	if placeholder.lua_code then
-		local env = setmetatable({text = text, selected_text = self.original_sel_text}, {__index = _G})
-		local f, result = load('return ' .. placeholder.lua_code, nil, 't', env)
-		return f and select(2, pcall(f)) or result or ''
-	elseif placeholder.sh_code then
-		-- Note: cannot use spawn since $env variables are not expanded.
-		local command = placeholder.sh_code:gsub('%f[%%]%%%f[^%%]', text)
-		local p = io.popen(command)
-		local result = p:read('a'):sub(1, -2) -- chop '\n'
-		p:close()
-		return result
-	end
-end
-
 --- Updates transforms in place based on the current placeholder's text.
 -- @local
 function snippet:update_transforms()
@@ -684,7 +640,7 @@ function snippet:update_transforms()
 	for s, ph in self:each_placeholder(nil, 'transform') do
 		if ph.index == self.index and not processed[ph] then
 			-- Execute the code and replace any existing transform text.
-			local result = not ph.legacy and self:transform(ph) or self:legacy_execute_code(ph)
+			local result = self:transform(ph)
 			if result == '' then result = ' ' end -- fill for display
 			local id = buffer:indicator_value_at(M.INDIC_PLACEHOLDER, s)
 			buffer:set_target_range(s, buffer:indicator_end(M.INDIC_PLACEHOLDER, s))

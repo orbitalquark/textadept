@@ -1160,126 +1160,6 @@ function test_ui_dialogs_list_interactive()
 	assert_raises(function() ui.dialogs.list{search_column = 2} end, "invalid 'search_column'")
 end
 
-function test_ui_dialogs_colorselect_interactive_legacy()
-	assert_raises(ui.dialogs.colorselect, 'Unsupported dialog')
-end
-
-function test_ui_dialogs_dropdown_interactive_legacy()
-	local dropdowns = {'dropdown', 'standard_dropdown'}
-	for _, dropdown in ipairs(dropdowns) do
-		print('Running ' .. dropdown)
-		assert_raises(ui.dialogs[dropdown], 'Unsupported dialog')
-	end
-end
-
-function test_ui_dialogs_filesave_fileselect_interactive_legacy()
-	local test_filename = file(_HOME .. '/test/ui/empty')
-	local test_dir, test_file = test_filename:match('^(.+[/\\])([^/\\]+)$')
-	local filename = ui.dialogs.filesave{
-		with_directory = test_dir, with_file = test_file, no_create_directories = true
-	}
-	assert_equal(filename, test_filename)
-	filename = ui.dialogs.fileselect{
-		with_directory = test_dir, with_file = test_file, select_multiple = true
-	}
-	assert_equal(filename, {test_filename})
-	filename = ui.dialogs.fileselect{with_directory = test_dir, select_only_directories = true}
-	assert_equal(filename, test_dir:match('^(.+)[/\\]$'))
-end
-
-function test_ui_dialogs_filteredlist_interactive_legacy()
-	local button, i = ui.dialogs.filteredlist{
-		informative_text = 'foo', columns = '1', items = {'bar', 'baz', 'quux'}, text = 'b z'
-	}
-	assert_equal(type(button), 'number')
-	assert_equal(i, 2)
-	local _, text = ui.dialogs.filteredlist{
-		columns = {'1', '2'}, items = {'foo', 'foobar', 'bar', 'barbaz', 'baz', 'bazfoo'},
-		search_column = 2, text = 'baz', output_column = 2, string_output = true,
-		select_multiple = true, button1 = _L['OK'], button2 = _L['Cancel'], button3 = 'Other',
-		width = ui.size[1] / 2
-	}
-	-- assert_equal(text, {'barbaz'})
-	assert_equal(text, {2})
-end
-
-function test_ui_dialogs_fontselect_interactive_legacy()
-	assert_raises(ui.dialogs.fontselect, 'Unsupported dialog')
-end
-
-function test_ui_dialogs_inputbox_interactive_legacy()
-	local inputboxes = {
-		'inputbox', 'secure_inputbox', 'standard_inputbox', 'secure_standard_inputbox'
-	}
-	for _, inputbox in ipairs(inputboxes) do
-		print('Running ' .. inputbox)
-		local button, text = ui.dialogs[inputbox]{text = 'foo'}
-		assert_equal(type(button), 'number')
-		assert_equal(text, 'foo')
-		button, text = ui.dialogs[inputbox]{text = 'foo', string_output = true, no_cancel = true}
-		-- assert_equal(type(button), 'string')
-		assert_equal(text, 'foo')
-	end
-end
-
-function test_ui_dialogs_msgbox_interactive_legacy()
-	local msgboxes = {'msgbox', 'ok_msgbox', 'yesno_msgbox'}
-	local icons = {'dialog-information', 'dialog-warning', 'dialog-question', 'dialog-error'}
-	for i, msgbox in ipairs(msgboxes) do
-		print('Running ' .. msgbox)
-		local button = ui.dialogs[msgbox]{icon = icons[i]}
-		assert_equal(type(button), 'number')
-		button = ui.dialogs[msgbox]{icon = 'textadept', string_output = true, no_cancel = true}
-		-- assert_equal(type(button), 'string')
-	end
-end
-
-function test_ui_dialogs_optionselect_interactive_legacy()
-	assert_raises(ui.dialogs.optionselect, 'Unsupported dialog')
-end
-
-function test_ui_dialogs_progressbar_interactive_legacy()
-	local i = 0
-	ui.dialogs.progressbar({title = 'foo'}, function()
-		sleep(0.1)
-		i = i + 10
-		if i > 100 then return nil end
-		return i, i .. '%'
-	end)
-
-	local stopped = ui.dialogs.progressbar({title = 'foo', indeterminite = true, stoppable = true},
-		function()
-			sleep(0.1)
-			return 50
-		end)
-	assert(stopped, 'progressbar not stopped')
-
-	ui.update() -- allow GTK to remove callback for previous function
-	i = 0
-	ui.dialogs.progressbar({title = 'foo', stoppable = true}, function()
-		sleep(0.1)
-		i = i + 10
-		if i > 100 then return nil end
-		return i, i <= 50 and "stop disable" or "stop enable"
-	end)
-
-	local errmsg
-	local handler = function(message)
-		errmsg = message
-		return false -- halt propagation
-	end
-	events.connect(events.ERROR, handler, 1)
-	ui.dialogs.progressbar({}, function() error('foo') end)
-	assert(errmsg:find('foo'), 'error handler did not run')
-	-- ui.dialogs.progressbar({}, function() return true end)
-	-- assert(errmsg:find('invalid return values'), 'error handler did not run')
-	events.disconnect(events.ERROR, handler)
-end
-
-function test_ui_dialogs_textbox_interactive_legacy()
-	assert_raises(ui.dialogs.textbox, 'Unsupported dialog')
-end
-
 function test_ui_switch_buffer_interactive()
 	local buffer_list_zorder = ui.buffer_list_zorder
 	ui.buffer_list_zorder = false
@@ -1709,7 +1589,7 @@ function test_command_entry_complete_lua()
 	assert_lua_autocompletion('view:call', 'call_tip_active')
 	assert_lua_autocompletion('goto', 'goto_buffer')
 	assert_lua_autocompletion('_', '_BUFFERS')
-	assert_lua_autocompletion('fi', 'file_types') -- legacy; will eventually be filename
+	assert_lua_autocompletion('fi', 'find')
 	ui.command_entry:focus() -- hide
 end
 
@@ -4139,67 +4019,6 @@ function test_snippets_placeholders()
 	buffer:close(true)
 end
 
-function test_snippets_legacy_placeholders()
-	buffer.new()
-	buffer.eol_mode = buffer.EOL_LF
-	local date_cmd = not WIN32 and 'date' or 'date /T'
-	local lua_date = os.date()
-	local p = io.popen(date_cmd)
-	local shell_date = p:read('l')
-	p:close()
-	textadept.snippets.insert(table.concat({
-		'%0placeholder: %1(foo) %2(bar)', --
-		'choice: %3{baz,quux}', --
-		'mirror: %2%3', --
-		'Lua: %<os.date()> %1<text:upper()>', --
-		'Shell: %[' .. date_cmd .. '] %1[echo %]', --
-		'escape: %%1 %4%( %4%{'
-	}, '\n'))
-	assert_equal(buffer.selections, 1)
-	assert_equal(buffer.selection_start, 1 + 14)
-	assert_equal(buffer.selection_end, buffer.selection_start + 3)
-	assert_equal(buffer:get_sel_text(), 'foo')
-	buffer:replace_sel('baz')
-	events.emit(events.UPDATE_UI, buffer.UPDATE_CONTENT + buffer.UPDATE_SELECTION) -- simulate typing
-	assert_equal(buffer:get_text(), string.format(table.concat({
-		' placeholder: baz bar', -- placeholders to visit have 1 empty space
-		'choice:  ', -- placeholder choices are initially empty
-		'mirror:   ', -- placeholder mirrors are initially empty
-		'Lua: %s BAZ', -- verify real-time transforms
-		'Shell: %s baz', -- verify real-time transforms
-		'escape: %%1  (  { ' -- trailing space for snippet sentinel
-	}, newline()), lua_date, shell_date))
-	textadept.snippets.insert()
-	assert_equal(buffer.selections, 2)
-	assert_equal(buffer.selection_start, 1 + 18)
-	assert_equal(buffer.selection_end, buffer.selection_start + 3)
-	for i = 1, buffer.selections do
-		assert_equal(buffer.selection_n_end[i], buffer.selection_n_start[i] + 3)
-		assert_equal(buffer:text_range(buffer.selection_n_start[i], buffer.selection_n_end[i]), 'bar')
-	end
-	assert(buffer:get_text():find('mirror: bar'), 'mirror not updated')
-	textadept.snippets.insert()
-	assert_equal(buffer.selections, 2)
-	assert(buffer:auto_c_active(), 'no choice')
-	buffer:auto_c_select('quux')
-	buffer:auto_c_complete()
-	assert(buffer:get_text():find('\nmirror: barquux\n'), 'choice mirror not updated')
-	textadept.snippets.insert()
-	assert_equal(buffer.selection_start, buffer.selection_end) -- no default placeholder (escaped)
-	textadept.snippets.insert()
-	assert_equal(buffer:get_text(), string.format(table.concat({
-		'placeholder: baz bar', --
-		'choice: quux', --
-		'mirror: barquux', --
-		'Lua: %s BAZ', --
-		'Shell: %s baz', --
-		'escape: %%1 ( {'
-	}, '\n'), lua_date, shell_date))
-	assert_equal(buffer.selection_start, 1)
-	assert_equal(buffer.selection_start, 1)
-	buffer:close(true)
-end
-
 function test_snippets_irregular_placeholders()
 	buffer.new()
 	textadept.snippets.insert('${1:foo ${2:bar}}${5:quux}')
@@ -4533,16 +4352,6 @@ function test_set_theme()
 	buffer:close(true)
 	buffer:close(true)
 	ui.goto_view(_VIEWS[1])
-	view:unsplit()
-end
-
-function test_set_legacy_theme()
-	view:split()
-	view:set_theme(_HOME .. '/test/themes/tomorrow.lua')
-	local style_num = buffer:style_of_name(lexer.FUNCTION)
-	assert(view.style_fore[style_num] > 0, 'theme not set')
-	assert(view.style_fore[style_num] ~= _VIEWS[1].style_fore[style_num], 'theme not set properly')
-	ui.goto_view(-1)
 	view:unsplit()
 end
 

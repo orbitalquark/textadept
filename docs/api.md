@@ -8570,8 +8570,7 @@ Legacy snippets used the following syntax:
 - "%*n*[*Shell code*]" for Shell transforms, where *n* is optional.
 - "%*n*{*items*}" for multiple choice placeholders.
 
-While Textadept currently supports legacy snippets, it will not do so forever. It is
-recommended that you migrate your snippets using the following steps:
+You can migrate your snippets using the following steps:
 
 1. Substitute '%' with '$' in tab stops and mirrors.
 2. Substitute "%*n*(*default*)" default placeholders with "${*n*:*default*}". The following

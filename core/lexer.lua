@@ -103,7 +103,7 @@ local function highlight(buffer, start_pos, end_pos)
 	lexer.style_at = setmetatable({}, {
 		__index = function(_, pos) return name_of_style(buffer, style_at[start_pos + pos - 1]) end
 	})
-	rawset(lexer, 'fold_level', buffer.fold_level) -- override legacy compatibility
+	lexer.fold_level = buffer.fold_level
 	lexer.line_from_position =
 		function(pos) return line_from_position(buffer, start_pos + pos - 1) end
 	lexer.line_state, lexer.indent_amount = buffer.line_state, buffer.line_indentation

@@ -15,35 +15,6 @@ for name, f in pairs(io) do if name:find('^_') then buffer[name:sub(2)], io[name
 
 textadept = require('textadept')
 
--- Legacy.
--- LuaFormatter off
-for _, type in ipairs{'marker_number','indic_number','user_list_type','image_type'} do _SCINTILLA['next_'..type]=_SCINTILLA['new_'..type] end
-_M = {} -- language modules table
-ui._print = ui.print_to
-local type_map={msgbox='message',ok_msgbox='message',yesno_msgbox='message',inputbox='input',standard_inputbox='input',secure_inputbox='input',secure_standard_inputbox='input',fileselect='open',filesave='save',progressbar='progress',filteredlist='list'}
-local option_map={with_directory='dir',with_file='file',select_multiple='multiple',select_only_directories='only_dirs'}
--- LuaFormatter on
-setmetatable(ui.dialogs, {
-	__index = function(_, k)
-		return function(options, f)
-			local new_type, new_options = type_map[k], {return_button = true}
-			if not new_type then error('Unsupported dialog', 2) end
-			for k, v in pairs(options) do new_options[option_map[k] or k] = v end
-			if k == 'progressbar' then new_options.work = f end
-			local value, button = rawget(ui.dialogs, new_type)(new_options)
-			if button then return button, value end
-			return value
-		end
-	end
-})
-textadept.file_types = {extensions = lexer.detect_extensions, patterns = lexer.detect_patterns}
--- LuaFormatter off
-events.connect(events.VIEW_NEW, function() for _, k in ipairs{'colors', 'styles'} do rawset(lexer, k, view[k]) end end)
-setmetatable(lexer, {__newindex = function(t, k, v) if k:find('^fold') then view[k] = v else rawset(t, k, v) end end})
-textadept.editing.INDIC_BRACEMATCH = _SCINTILLA.new_indic_number()
-textadept.editing.brace_matches, textadept.editing.api_files = {}, setmetatable({}, {__index = function(t, k) t[k] = {} return t[k] end })
--- LuaFormatter on
-
 -- The remainder of this file defines default buffer and view properties and applies them
 -- to subsequent buffers and views. Normally, a setting like `buffer.use_tabs = false` only
 -- applies to the current (initial) buffer. However, temporarily tap into buffer and view's

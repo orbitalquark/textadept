@@ -82,14 +82,13 @@ function style_object:__concat(props)
 	return style
 end
 
-local map = {italics = 'italic', underlined = 'underline', eolfilled = 'eol_filled'} -- legacy
 --- Looks up the style settings for a style number *style_num*, and applies them to view *view*.
 -- @param view A view.
 -- @param style_num Style number to set the style for.
 local function set_style(view, style_num)
 	local styles = buffer ~= ui.command_entry and view.styles or _G.view.styles
 	local style = rawget(styles, style_num) or styles[buffer:name_of_style(style_num):gsub('%.', '_')]
-	if style then for k, v in pairs(style) do view['style_' .. (map[k] or k)][style_num] = v end end
+	if style then for k, v in pairs(style) do view['style_' .. k][style_num] = v end end
 end
 
 -- Documentation is in core/.buffer.luadoc.
