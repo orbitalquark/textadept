@@ -28,6 +28,7 @@ extern "C" {
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 #include <QProcessEnvironment>
+#include <QSessionManager>
 #if _WIN32
 #include <QStyleFactory>
 #include <windows.h> // for GetACP
@@ -705,7 +706,9 @@ Textadept::Textadept(QWidget *parent) : QMainWindow{parent}, ui{new Ui::Textadep
 }
 
 void Textadept::closeEvent(QCloseEvent *ev) {
-	if (emit("quit", -1)) ev->ignore();
+	// Note: lua may be NULL due to Qt session manager doing odd things on logout/restart while
+	// Textadept is still running.
+	if (lua && emit("quit", -1)) ev->ignore();
 }
 
 void Textadept::keyPressEvent(QKeyEvent *ev) {
@@ -728,6 +731,9 @@ public:
 				emit("focus", -1);
 		});
 		connect(this, &QGuiApplication::paletteChanged, this, mode_changed);
+		connect(this, &QGuiApplication::commitDataRequest, this, [](QSessionManager &manager) {
+			if (manager.allowsInteraction() && emit("quit", -1)) manager.cancel();
+		});
 		connect(this, &QApplication::aboutToQuit, this, &close_textadept);
 		// There is a bug in Qt where a tab scroll button could have focus at this time.
 		if (!SCI(focused_view)->hasFocus()) SCI(focused_view)->setFocus();
