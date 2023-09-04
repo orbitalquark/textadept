@@ -298,12 +298,21 @@ void *read_menu(lua_State *L, int index) {
 #endif
 			if (modifiers & SCMOD_ALT) qtModifiers += Qt::ALT;
 			menuItem->setShortcut(QKeySequence{qtModifiers + key});
-			menuItem->setShortcutContext(Qt::ShortcutContext::WidgetShortcut);
+			menuItem->setEnabled(false); // disable because Qt will handle key bindings
 		}
 		int id = get_int_field(L, -1, 2);
 		QObject::connect(
 			menuItem, &QAction::triggered, menu, [id]() { emit("menu_clicked", LUA_TNUMBER, id, -1); });
 	}
+	// Enable menu items prior to showing the menu, and then disable them prior to hiding.
+	// When key shortcuts are enabled, Qt handles key bindings, and this interferes with Textadept's
+	// key handling.
+	QObject::connect(menu, &QMenu::aboutToShow, menu, [menu]() {
+		for (auto action : menu->actions()) action->setEnabled(true);
+	});
+	QObject::connect(menu, &QMenu::aboutToHide, menu, [menu]() {
+		for (auto action : menu->actions()) action->setEnabled(false);
+	});
 	return menu;
 }
 
