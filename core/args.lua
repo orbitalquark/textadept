@@ -58,7 +58,7 @@ local function process(arg, no_emit_arg_none)
 end
 events.connect(events.INITIALIZED, function() if arg then process(arg) end end)
 -- Undocumented, single-instance event handler for forwarding arguments.
-if GTK then events.connect('command_line', function(arg) process(arg, true) end) end
+events.connect('command_line', function(arg) process(arg, true) end)
 
 if not CURSES then
 	-- Shows all registered command line options on the command line.

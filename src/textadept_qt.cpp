@@ -10,6 +10,7 @@ extern "C" {
 #include "textadept_qt.h"
 
 #include "ScintillaEditBase.h"
+#include "singleapplication.h"
 
 #include <QWindow>
 #include <QCloseEvent>
@@ -717,13 +718,35 @@ void Textadept::keyPressEvent(QKeyEvent *ev) {
 }
 
 // The Textadept application.
-class Application : public QApplication {
+class Application : public SingleApplication {
 public:
-	Application(int &argc, char **argv)
-			: QApplication{argc, argv}, inited{init_textadept(argc, argv)} {
-		if (!inited) return;
+	Application(int &argc, char **argv) : SingleApplication{argc, argv, true} {
+		const std::vector<const char *> args{"-f", "--force", "-L", "--lua"};
+		bool force =
+			std::any_of(args.begin(), args.end(), [](const char *s) { return arguments().contains(s); });
+		if (isSecondary() && !force) {
+			QByteArray bytes;
+			QDataStream out{&bytes, QIODevice::WriteOnly};
+			out << QDir::currentPath() << arguments();
+			sendMessage(bytes);
+			return;
+		}
+		if (inited = init_textadept(argc, argv); !inited) return;
 		setApplicationName("Textadept");
 		setWindowIcon(QIcon{QString{textadept_home} + "/core/images/textadept.svg"});
+		connect(this, &SingleApplication::receivedMessage, this, [](quint32, QByteArray message) {
+			ta->window()->activateWindow();
+			QDataStream in{&message, QIODevice::ReadOnly};
+			QString cwd;
+			QStringList args;
+			in >> cwd >> args;
+			if (args.size() == 0) return;
+			lua_newtable(lua);
+			lua_pushstring(lua, cwd.toLocal8Bit().data()), lua_rawseti(lua, -2, -1);
+			for (int i = 0; i < args.size(); i++)
+				lua_pushstring(lua, args[i].toLocal8Bit().data()), lua_rawseti(lua, -2, i);
+			emit("command_line", LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
+		});
 		connect(this, &QGuiApplication::applicationStateChanged, this, [](Qt::ApplicationState state) {
 			if (state == Qt::ApplicationInactive)
 				emit("unfocus", -1);

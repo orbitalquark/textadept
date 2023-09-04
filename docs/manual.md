@@ -261,20 +261,19 @@ Textadept accepts a variety of command line arguments, which are listed in the t
 Option | Arguments | Description
 -|:-:|-
 `-e`, `--execute` | 1 | Run the given Lua code
-`-f`, `--force` | 0 | Forces unique instance<sup>a</sup>
-`-h`, `--help` | 0 | Shows this<sup>b</sup>
+`-f`, `--force` | 0 | Forces unique instance
+`-h`, `--help` | 0 | Shows this<sup>a</sup>
 `-l`, `--line` | 1 | Jumps to a line in the previously opened file
 `-L`, `--lua` | 1 | Runs the given file as a Lua script and exits
 `-n`, `--nosession` | 0 | No state saving/restoring functionality
-`-p`, `--preserve` | 0 | Preserve ^Q and ^S flow control sequences<sup>c</sup>
+`-p`, `--preserve` | 0 | Preserve ^Q and ^S flow control sequences<sup>b</sup>
 `-s`, `--session` | 1 | Loads the given session on startup
 `-u`, `--userhome` | 1 | Sets alternate user data directory
-`-v`, `--version` | 0 | Prints version and copyright info<sup>b</sup>
-`-` | 0 | Read stdin into a new buffer<sup>b</sup>
+`-v`, `--version` | 0 | Prints version and copyright info<sup>a</sup>
+`-` | 0 | Read stdin into a new buffer<sup>a</sup>
 
-<sup>a</sup>GTK version only.<br/>
-<sup>b</sup>The terminal version does not support these.<br/>
-<sup>c</sup>Non-Windows terminal version only.
+<sup>a</sup>The terminal version does not support these.<br/>
+<sup>b</sup>Non-Windows terminal version only.<br/>
 
 You can add your own command line arguments using [`args.register()`][]. For example, in your
 *~/.textadept/init.lua*:
@@ -316,11 +315,12 @@ restore its state at last exit.
 command line argument. You can disable session functionality using `-n` or `--nosession`. Session
 files are stored in *~/.textadept/*, and the default session name is "session".
 
-**Linux Note:** the GTK version of Textadept is a single-instance application. (The Qt version
-is not.) This means that after you start Textadept, any time you invoke it again (e.g. opening a
-file from a file browser or command line), the action happens in the original instance. If you
-want to run separate instances of Textadept, pass the `-f` or `--force` command line flag. On
-Linux, you can set up your button or menu launchers to pass the flag to the *textadept* executable.
+The GUI version of Textadept is a single-instance application. This means that after you start
+Textadept, any time you invoke it again (e.g. opening a file from a file browser or command
+line), the action happens in the original instance. If you want to run separate instances of
+Textadept, pass the `-f` or `--force` command line flag. On Windows, you can create a shortcut
+to *textadept.exe* that passes this flag and use that shortcut to run Textadept. On Linux,
+you can set up your button or menu launchers to pass the flag to the *textadept* executable.
 
 Textadept can be run as a portable application. This is useful if, for example, you want to
 install Textadept onto a flash drive and take it with you for use on multiple machines. Normally,
@@ -1629,6 +1629,7 @@ Textadept is composed of the following technologies:
 - [LuaFileSystem][]: Lua library for accessing the host filesystem
 - [Lua-std-regex][]: Lua library for regular expressions
 - [iconv][]: library for converting text to and from Unicode
+- [SingleApplication][]: single-instance application support for Qt
 
 [Qt]: https://www.qt.io
 [GTK]: https://www.gtk.org
@@ -1645,6 +1646,7 @@ Textadept is composed of the following technologies:
 [cdk]: https://invisible-island.net/cdk
 [libtermkey]: http://www.leonerd.org.uk/code/libtermkey
 [iconv]: https://www.gnu.org/software/libiconv
+[SingleApplication]: https://github.com/itay-grudev/SingleApplication
 
 #### Migrating from Textadept 11 to 12
 
