@@ -66,6 +66,13 @@ void set_maximized(bool maximize) { maximize ? ta->showMaximized() : ta->showNor
 void get_size(int *width, int *height) { *width = ta->width(), *height = ta->height(); }
 void set_size(int width, int height) { ta->resize(width, height); }
 
+// Returns a Scintilla mask for the given Qt key modifier mask.
+static int scModMask(const Qt::KeyboardModifiers &mods) {
+	return (mods & Qt::ShiftModifier ? SCMOD_SHIFT : 0) |
+		(mods & Qt::ControlModifier ? SCMOD_CTRL : 0) | (mods & Qt::AltModifier ? SCMOD_ALT : 0) |
+		(mods & Qt::MetaModifier ? SCMOD_META : 0);
+}
+
 // Event filter for Scintilla views. This avoids the need to subclass ScintillaEditBase.
 class ScintillaEventFilter : public QObject {
 public:
@@ -91,11 +98,8 @@ protected:
 
 		// Allow Textadept the first chance at handling the keypress. Otherwise it is propagated to
 		// Scintilla.
-		int modifiers = (keyEvent->modifiers() & Qt::ShiftModifier ? SCMOD_SHIFT : 0) |
-			(keyEvent->modifiers() & Qt::ControlModifier ? SCMOD_CTRL : 0) |
-			(keyEvent->modifiers() & Qt::AltModifier ? SCMOD_ALT : 0) |
-			(keyEvent->modifiers() & Qt::MetaModifier ? SCMOD_META : 0);
-		return emit("key", LUA_TNUMBER, keyEvent->key(), LUA_TNUMBER, modifiers, -1);
+		return emit(
+			"key", LUA_TNUMBER, keyEvent->key(), LUA_TNUMBER, scModMask(keyEvent->modifiers()), -1);
 	}
 };
 
@@ -115,12 +119,11 @@ SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, vo
 }
 
 void focus_view(SciObject *view) {
-	if (SCI(view)->setFocus(); !SCI(view)->hasFocus()) {
-		// Simulate a FocusIn event so Scintilla sends an SCN_FOCUSIN notification, which emits
-		// events and sets focused_view.
-		QFocusEvent event{QEvent::FocusIn};
-		QApplication::sendEvent(SCI(view), &event);
-	}
+	if (SCI(view)->setFocus(); SCI(view)->hasFocus()) return;
+	// Simulate a FocusIn event so Scintilla sends an SCN_FOCUSIN notification, which emits
+	// events and sets focused_view.
+	QFocusEvent event{QEvent::FocusIn};
+	QApplication::sendEvent(SCI(view), &event);
 }
 
 sptr_t SS(SciObject *view, int message, uptr_t wparam, sptr_t lparam) {
@@ -220,21 +223,19 @@ const char *get_repl_text() {
 }
 void set_find_text(const char *text) { ta->ui->findCombo->setCurrentText(text); }
 void set_repl_text(const char *text) { ta->ui->replaceCombo->setCurrentText(text); }
-void add_to_find_history(const char *text) {
-	if (int n = ta->ui->findCombo->count(); ta->ui->findCombo->itemText(n - 1) != text)
-		ta->ui->findCombo->addItem(text), ta->ui->findCombo->setCurrentIndex(n);
+static void add_to_history(QComboBox *combo, const char *text) {
+	if (int n = combo->count(); combo->itemText(n - 1) != text)
+		combo->addItem(text), combo->setCurrentIndex(n);
 }
-void add_to_repl_history(const char *text) {
-	if (int n = ta->ui->replaceCombo->count(); ta->ui->replaceCombo->itemText(n - 1) != text)
-		ta->ui->replaceCombo->addItem(text), ta->ui->replaceCombo->setCurrentIndex(n);
-}
+void add_to_find_history(const char *text) { add_to_history(ta->ui->findCombo, text); }
+void add_to_repl_history(const char *text) { add_to_history(ta->ui->replaceCombo, text); }
 void set_entry_font(const char *name_) {
-	if (const char *p = strrchr(name_, ' '); p) {
-		std::string name{name_, static_cast<size_t>(p - name_)};
-		int size = atoi(p);
-		QFont font{name.c_str(), size ? size : -1};
-		ta->ui->findCombo->setFont(font), ta->ui->replaceCombo->setFont(font);
-	}
+	const char *p = strrchr(name_, ' ');
+	if (!p) return;
+	std::string name{name_, static_cast<size_t>(p - name_)};
+	int size = atoi(p);
+	QFont font{name.c_str(), size ? size : -1};
+	ta->ui->findCombo->setFont(font), ta->ui->replaceCombo->setFont(font);
 }
 bool is_checked(FindOption *option) { return static_cast<QCheckBox *>(option)->isChecked(); }
 void toggle(FindOption *option, bool on) { static_cast<QCheckBox *>(option)->setChecked(on); }
@@ -307,12 +308,11 @@ void *read_menu(lua_State *L, int index) {
 	// Enable menu items prior to showing the menu, and then disable them prior to hiding.
 	// When key shortcuts are enabled, Qt handles key bindings, and this interferes with Textadept's
 	// key handling.
-	QObject::connect(menu, &QMenu::aboutToShow, menu, [menu]() {
-		for (auto action : menu->actions()) action->setEnabled(true);
-	});
-	QObject::connect(menu, &QMenu::aboutToHide, menu, [menu]() {
-		for (auto action : menu->actions()) action->setEnabled(false);
-	});
+	auto enableMenu = [menu](bool enable) {
+		for (QAction *action : menu->actions()) action->setEnabled(enable);
+	};
+	QObject::connect(menu, &QMenu::aboutToShow, menu, [enableMenu]() { enableMenu(true); });
+	QObject::connect(menu, &QMenu::aboutToHide, menu, [enableMenu]() { enableMenu(false); });
 	return menu;
 }
 
@@ -545,15 +545,15 @@ static inline QProcess *PROCESS(Process *p) { return static_cast<struct _process
 
 bool spawn(lua_State *L, Process *proc, int /*index*/, const char *cmd, const char *cwd, int envi,
 	bool monitor_stdout, bool monitor_stderr, const char **error) {
-	// Construct argv from cmd and envp from envi.
-	QStringList args;
 #if _WIN32
 	// Use "cmd.exe /c" for more versatility (e.g. spawning batch files).
 	std::string full_cmd = std::string{getenv("COMSPEC")} + " /c " + cmd;
 	cmd = full_cmd.c_str();
 #endif
+	// Construct argv from cmd and envp from envi.
 	// TODO: Qt 5.15 introduced QProcess::splitCommand().
 	// QStringList args = QProcess::splitCommand(QString{cmd}).
+	QStringList args;
 	const char *p = cmd;
 	while (*p) {
 		while (*p == ' ') p++;
@@ -672,25 +672,20 @@ protected:
 Textadept::Textadept(QWidget *parent) : QMainWindow{parent}, ui{new Ui::Textadept} {
 	ui->setupUi(this);
 
-	auto modifiers = []() {
-		Qt::KeyboardModifiers mods = QApplication::keyboardModifiers();
-		return (mods & Qt::ShiftModifier ? SCMOD_SHIFT : 0) |
-			(mods & Qt::ControlModifier ? SCMOD_CTRL : 0) | (mods & Qt::AltModifier ? SCMOD_ALT : 0) |
-			(mods & Qt::MetaModifier ? SCMOD_META : 0);
-	};
-	connect(ui->tabbar, &QTabBar::tabBarClicked, this, [this, modifiers](int index) {
+	connect(ui->tabbar, &QTabBar::tabBarClicked, this, [this](int index) {
 		Qt::MouseButtons button = QApplication::mouseButtons();
 		// Qt emits tabBarClicked before updating the current tab for left button clicks.
 		// If the "tab_clicked" event were to be emitted here, it could update the current tab, and
 		// then Qt could do so again, but with the wrong tab index. Instead, only emit "tab_clicked"
 		// here under certain conditions, relying on currentChanged to do so otherwise.
 		if (button == Qt::LeftButton && index != ui->tabbar->currentIndex()) return;
-		emit("tab_clicked", LUA_TNUMBER, index + 1, LUA_TNUMBER, button, LUA_TNUMBER, modifiers(), -1);
+		emit("tab_clicked", LUA_TNUMBER, index + 1, LUA_TNUMBER, button, LUA_TNUMBER,
+			scModMask(QApplication::keyboardModifiers()), -1);
 		if (button == Qt::RightButton) show_context_menu("tab_context_menu", nullptr);
 	});
-	connect(ui->tabbar, &QTabBar::currentChanged, this, [modifiers](int index) {
+	connect(ui->tabbar, &QTabBar::currentChanged, this, [](int index) {
 		emit("tab_clicked", LUA_TNUMBER, index + 1, LUA_TNUMBER, Qt::LeftButton, LUA_TNUMBER,
-			modifiers(), -1);
+			scModMask(QApplication::keyboardModifiers()), -1);
 	});
 	connect(ui->tabbar, &QTabBar::tabMoved, this,
 		[](int from, int to) { move_buffer(from + 1, to + 1, false); });
@@ -777,14 +772,15 @@ public:
 		if (inited) delete ta;
 	}
 
+	int exec() { return inited ? QApplication::exec() : exit_status; }
+
+protected:
 	bool event(QEvent *event) override {
 		if (event->type() == QEvent::FileOpen)
 			emit("appleevent_odoc", LUA_TSTRING,
 				static_cast<QFileOpenEvent *>(event)->file().toStdString().c_str(), -1);
 		return QApplication::event(event);
 	}
-
-	int exec() { return inited ? QApplication::exec() : exit_status; }
 
 private:
 	bool inited;
