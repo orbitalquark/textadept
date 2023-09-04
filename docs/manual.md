@@ -267,13 +267,14 @@ Option | Arguments | Description
 `-L`, `--lua` | 1 | Runs the given file as a Lua script and exits
 `-n`, `--nosession` | 0 | No state saving/restoring functionality
 `-p`, `--preserve` | 0 | Preserve ^Q and ^S flow control sequences<sup>b</sup>
-`-s`, `--session` | 1 | Loads the given session on startup
+`-s`, `--session` | 1 | Loads the given session on startup<sup>c</sup>
 `-u`, `--userhome` | 1 | Sets alternate user data directory
 `-v`, `--version` | 0 | Prints version and copyright info<sup>a</sup>
 `-` | 0 | Read stdin into a new buffer<sup>a</sup>
 
 <sup>a</sup>The terminal version does not support these.<br/>
 <sup>b</sup>Non-Windows terminal version only.<br/>
+<sup>c</sup>Qt interprets `--session` for itself, so `-s` must be used.
 
 You can add your own command line arguments using [`args.register()`][]. For example, in your
 *~/.textadept/init.lua*:
