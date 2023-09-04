@@ -472,7 +472,7 @@ elseif(WIN32)
 		install(CODE
 			"execute_process(COMMAND windeployqt --no-compiler-runtime ${ta_dir}/textadept.exe)")
 		install(CODE
-			"file(REMOVE ${ta_dir}/d3dcompiler_47.dll ${ta_dir}/opengl32sw.dll ${ta_dir}/Qt6Network.dll)")
+			"file(REMOVE ${ta_dir}/d3dcompiler_47.dll ${ta_dir}/opengl32sw.dll)")
 		if(DEFINED ENV{VCINSTALLDIR})
 			execute_process(COMMAND $ENV{COMSPEC} /C dir /S $ENV{VCINSTALLDIR}\\Redist /B
 				OUTPUT_FILE ${CMAKE_BINARY_DIR}/vcrun_dlls.txt)
