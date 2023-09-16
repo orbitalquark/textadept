@@ -427,4 +427,5 @@ args.register('-', '-', 0, function()
 	if buffer.filename or buffer._type then buffer.new() end
 	buffer:append_text(io.read('a'))
 	buffer:set_save_point()
+	return true -- this counts as a "file"
 end, 'Read stdin into a new buffer')

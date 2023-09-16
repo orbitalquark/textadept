@@ -385,6 +385,9 @@ Processes command line arguments for Textadept.
 Registers a command line option with short and long versions *short* and *long*, respectively.
 *narg* is the number of arguments the option accepts, *f* is the function called when the
 option is set, and *description* is the option's description when displaying help.
+Normally, options are not considered command line arguments, so they do not prevent
+[`events.ARG_NONE`](#events.ARG_NONE) from being emitted. However, if *f* returns `true`, this option counts as
+an argment and it will prevent [`events.ARG_NONE`](#events.ARG_NONE) from being emitted.
 
 Parameters:
 

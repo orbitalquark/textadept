@@ -13,6 +13,9 @@ local options = {}
 --- Registers a command line option with short and long versions *short* and *long*, respectively.
 -- *narg* is the number of arguments the option accepts, *f* is the function called when the
 -- option is set, and *description* is the option's description when displaying help.
+-- Normally, options are not considered command line arguments, so they do not prevent
+-- `events.ARG_NONE` from being emitted. However, if *f* returns `true`, this option counts as
+-- an argment and it will prevent `events.ARG_NONE` from being emitted.
 -- @param short The string short version of the option.
 -- @param long The string long version of the option.
 -- @param narg The number of expected parameters for the option.
@@ -41,7 +44,7 @@ local function process(arg, no_emit_arg_none)
 	while i <= #arg do
 		local option = options[arg[i]]
 		if option then
-			option.f(table.unpack(arg, i + 1, i + option.narg))
+			if option.f(table.unpack(arg, i + 1, i + option.narg)) then no_args = false end
 			i = i + option.narg
 		else
 			local filename = lfs.abspath(arg[i], arg[-1] or lfs.currentdir())
