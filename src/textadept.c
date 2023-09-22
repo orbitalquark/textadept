@@ -928,6 +928,7 @@ static void view_focused(SciObject *view) {
 
 // Emits the given Scintilla notification to Lua.
 static void emit_notification(SCNotification *n) {
+	if (n->nmhdr.code == SCN_KEY) return; // platforms are handling key events; avoid duplicates
 	lua_newtable(lua);
 	lua_pushinteger(lua, n->nmhdr.code), lua_setfield(lua, -2, "code");
 	lua_pushinteger(lua, n->position + 1), lua_setfield(lua, -2, "position");
