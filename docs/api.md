@@ -7811,6 +7811,11 @@ In general, bindings for the terminal version are the same as for Windows/Linux 
 - `Ctrl+J` and `Ctrl+M` become `M-J` and `M-M`, respectively, because control sequences
 	involving the `J` and `M` keys are often interpreted as involving the Enter key.
 
+**Windows Note:** on international keyboard layouts, the "AltGr" key is equivalent to pressing
+"Ctrl" and "Alt", so `AltGr+`*`key`* combinations may unexpectedly trigger one of Textadept's
+`Ctrl+Alt+`*`key`* bindings. In order to avoid this, you will likely have to disable the
+`Ctrl+Alt+`*`key`* binding in your *~/.textadept/init.lua* by setting it to `nil`.
+
 ### Key Bindings
 
 Windows and Linux | macOS | Terminal | Command
