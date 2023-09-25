@@ -790,7 +790,7 @@ protected:
 	}
 
 private:
-	bool inited;
+	bool inited = false;
 };
 
 int main(int argc, char *argv[]) { return Application{argc, argv}.exec(); }
