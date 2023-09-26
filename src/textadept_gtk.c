@@ -144,7 +144,8 @@ static GtkWidget *new_findbox() {
 }
 
 void new_window(SciObject *(*get_view)(void)) {
-	gtk_window_set_default_icon_name("textadept");
+	char *icon = g_strconcat(textadept_home, "/core/images/textadept.svg", NULL);
+	gtk_window_set_default_icon_from_file(icon, NULL), free(icon);
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_widget_set_name(window, "textadept");
