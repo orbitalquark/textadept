@@ -521,8 +521,10 @@ bool is_dark_mode() {
 static GtkWidget *new_dialog(DialogOptions *opts) {
 	GtkWidget *dialog =
 		gtk_message_dialog_new(GTK_WINDOW(window), 0, GTK_MESSAGE_OTHER, 0, "%s", opts->title);
-	GtkWidget *image = gtk_image_new_from_icon_name(opts->icon, GTK_ICON_SIZE_DIALOG); // NULL is ok
-	gtk_message_dialog_set_image(GTK_MESSAGE_DIALOG(dialog), image), gtk_widget_show(image);
+	if (opts->icon && gtk_icon_theme_has_icon(gtk_icon_theme_get_default(), opts->icon)) {
+		GtkWidget *image = gtk_image_new_from_icon_name(opts->icon, GTK_ICON_SIZE_DIALOG);
+		gtk_message_dialog_set_image(GTK_MESSAGE_DIALOG(dialog), image), gtk_widget_show(image);
+	}
 	if (opts->buttons[2]) gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[2], 3);
 	if (opts->buttons[1]) gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[1], 2);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[0], 1);
