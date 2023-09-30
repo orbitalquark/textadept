@@ -2,6 +2,40 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+### 12.2 beta (01 Oct 2023)
+
+Download:
+
+- [Textadept 12.2 beta -- Windows][]
+- [Textadept 12.2 beta -- macOS 11+][]
+- [Textadept 12.2 beta -- Linux][]
+- [Textadept 12.2 beta -- Modules][]
+
+Bugfixes:
+
+- Fixed crash during logout/restart on Windows while Textadept is still running.
+- Prevent key bindings in the macOS menu from overriding user-specified bindings.
+- Fixed interpretation of '-' command line argument as reading from stdin.
+- Prevent duplicate key events from Scintilla.
+- Only show message box icons in the Gtk version if they exist.
+- Fixed display of window and dialog icons in Gtk.
+- Correctly highlight built-in Bash variables surrounded by "${...}".
+
+Changes:
+
+- Implemented single-instance functionality on Windows (and Linux with Qt).
+- Dropped legacy 11.x compatibility shims.
+- Updated Hare lexer, fstab, and Matlab lexers.
+- Updated Markdown lexer to detect code blocks delimited by `~~~`.
+- Updated Bash lexer to disable conditional and arithmetic operator highlighting due to performance.
+- Updated to [Scintilla][] 5.3.7.
+
+[Textadept 12.2 beta -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.2_beta/textadept_12.2_beta.win.zip
+[Textadept 12.2 beta -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.2_beta/textadept_12.2_beta.macOS.zip
+[Textadept 12.2 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.2_beta/textadept_12.2_beta.linux.tgz
+[Textadept 12.2 beta -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.2_beta/textadept_12.2_beta.modules.zip
+[Scintilla]: https://scintilla.org
+
 ### 12.1 (01 Sep 2023)
 
 Download:
