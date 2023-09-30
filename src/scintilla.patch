@@ -3,7 +3,6 @@ Scintilla changes:
 * Handle leading whitespace in XPM images in order to prevent crashes.
 * Do not clear per-line-values when clearing the first line of a 1-line document.
 * Use Qt macros instead of keywords in header.
-* Fixed potential crash when using IME with large amount of text selected.
 
 diff -r 22b6bbb36280 src/XPM.cxx
 --- a/src/XPM.cxx	Sat Sep 05 07:55:08 2020 +1000
@@ -62,14 +61,3 @@ diff -r 123ae5de5bd2 qt/ScintillaEditBase/ScintillaEditBase.h
  	void horizontalScrolled(int value);
  	void verticalScrolled(int value);
  	void horizontalRangeChanged(int max, int page);
---- a/qt/ScintillaEditBase/ScintillaEditBase.cpp 2023-08-26 09:13:39.349786280 -0400
-+++ b/qt/ScintillaEditBase/ScintillaEditBase.cpp	2023-08-26 09:13:53.373995980 -0400
-@@ -671,7 +671,7 @@
- 
- 		case Qt::ImCurrentSelection:
- 		{
--			QVarLengthArray<char,1024> buffer(send(SCI_GETSELTEXT));
-+			QVarLengthArray<char,1024> buffer(send(SCI_GETSELTEXT)+1);
- 			sends(SCI_GETSELTEXT, 0, buffer.data());
- 
- 			return sqt->StringFromDocument(buffer.constData());
