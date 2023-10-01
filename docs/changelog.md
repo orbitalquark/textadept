@@ -25,7 +25,8 @@ Changes:
 
 - Implemented single-instance functionality on Windows (and Linux with Qt).
 - Dropped legacy 11.x compatibility shims.
-- Updated Hare lexer, fstab, and Matlab lexers.
+- Added Brazilian Portuguese localization.
+- Updated Hare, fstab, and Matlab lexers.
 - Updated Markdown lexer to detect code blocks delimited by `~~~`.
 - Updated Bash lexer to disable conditional and arithmetic operator highlighting due to performance.
 - Updated to [Scintilla][] 5.3.7.
