@@ -19,6 +19,7 @@ amazing editor that it is today.
 - Daniel Wutke
 - Franck Guadagnini
 - Gabriel Dubatti
+- Georger Araújo
 - Gilles Grégoire
 - Giovanni Salmeri
 - Heck Fy
