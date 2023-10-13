@@ -37,7 +37,12 @@ local function to_lua_name(camel_case)
 	return to_en_us(camel_case:gsub('([a-z])([A-Z])', '%1_%2'):gsub('([A-Z])([A-Z][a-z])', '%1_%2')
 		:lower())
 end
-local function is_length(ptype, param) return ptype == 'position' and param:find('^length') end
+local function is_length(ptype, param)
+	return ptype == 'position' and (param:find('^length') or param == 'space')
+end
+local function is_rint(rtype, name)
+	return rtype == 'position' and (name:find('length$') or name:find('virtual_space$'))
+end
 local function is_index(ptype, param)
 	return ptype == 'int' and
 		(param == 'style' or param == 'markerNumber' or param == 'margin' or param == 'indicator' or
@@ -82,6 +87,7 @@ for line in io.lines('../build/_deps/scintilla-src/include/Scintilla.iface') do
 		if ltype:find('^%u') then ltype = 'int' end
 		name = to_lua_name(name)
 		if name == 'convert_eo_ls' then name = 'convert_eols' end
+		if is_rint(rtype, name) then rtype = 'int' end
 		if is_length(wtype, param) then
 			wtype = 'length'
 		elseif is_index(wtype, param) then
@@ -115,6 +121,7 @@ for line in io.lines('../build/_deps/scintilla-src/include/Scintilla.iface') do
 			properties[#properties + 1] = name
 			properties[name] = {0, 0, 0, 0}
 		end
+		if is_rint(rtype, name) then rtype = 'int' end
 		if is_index(wtype, param) then wtype = 'index' end
 		if is_index(ltype, param2) then ltype = 'index' end
 		local prop = properties[name]
@@ -139,7 +146,6 @@ functions['get_cur_line'][2] = types.position -- was interpreted as 'void'
 
 -- Manually adjust messages whose param or return types would be interpreted as 1-based numbers,
 -- but should not be, or vice-versa.
-properties['length'][3] = types.int
 properties['style_at'][3] = types.index
 functions['marker_handle_from_line'][4] = types.index
 functions['marker_number_from_line'][2] = types.index
@@ -149,7 +155,6 @@ functions['count_code_units'][2] = types.int
 properties['line_count'][3] = types.int
 functions['line_scroll'][3] = types.int
 functions['line_scroll'][4] = types.int
-properties['text_length'][3] = types.int
 functions['replace_target'][2] = types.int
 functions['replace_target_re'][2] = types.int
 functions['wrap_count'][2] = types.int
@@ -157,7 +162,6 @@ properties['edge_column'][3] = types.int
 functions['multi_edge_add_line'][3] = types.int
 properties['multi_edge_column'][3] = types.int
 properties['multi_edge_column'][4] = types.index
-functions['line_length'][2] = types.int
 properties['lines_on_screen'][3] = types.int
 properties['auto_c_current'][3] = types.index
 properties['indicator_current'][3] = types.index
