@@ -2971,6 +2971,26 @@ function test_ui_find_replace_regex_transforms()
 	buffer:close(true)
 end
 
+function test_ui_find_replace_all_anchors()
+	buffer.new()
+	buffer:set_text(table.concat({
+		'  foo', --
+		'    bar', --
+		'  baz'
+	}, newline()))
+	ui.find.find_entry_text = '^  '
+	ui.find.regex = true
+	ui.find.replace_all()
+	assert_equal(buffer:get_text(), table.concat({
+		'foo', --
+		'  bar', --
+		'baz'
+	}, newline()))
+	ui.find.find_entry_text = ''
+	ui.find.regex = false
+	buffer:close(true)
+end
+
 function test_ui_find_focus()
 	if CURSES then return end -- there are focus issues in curses
 	buffer:new()

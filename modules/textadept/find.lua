@@ -439,6 +439,7 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
 		while buffer:search_in_target(ftext) ~= -1 and
 			(not replace_in_sel or buffer.target_end <= buffer:indicator_end(INDIC_REPLACE, s) or EOF) do
 			local offset = buffer.target_start ~= buffer.target_end and 0 or 1 -- for preventing loops
+			if M.regex and ftext:find('^^') and offset == 0 then offset = 1 end -- avoid extra matches
 			buffer:replace_target(not M.regex and rtext or unescape(rtext))
 			count = count + 1
 			buffer:set_target_range(buffer.target_end + offset, buffer.length + 1)
