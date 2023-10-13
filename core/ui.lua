@@ -304,7 +304,7 @@ events.connect(events.UPDATE_UI, function(updated)
 		'%s %d/%d  %s %d  %s  %s  %s  %s'
 	local pos = buffer.current_pos
 	local line, max = buffer:line_from_position(pos), buffer.line_count
-	local col = buffer.column[pos]
+	local col = buffer.column[pos] + buffer.selection_n_caret_virtual_space[buffer.main_selection]
 	local lang = buffer.lexer_language
 	local eol = buffer.eol_mode == buffer.EOL_CRLF and _L['CRLF'] or _L['LF']
 	local tabs = string.format('%s %d', buffer.use_tabs and _L['Tabs:'] or _L['Spaces:'],
