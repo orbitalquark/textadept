@@ -702,13 +702,17 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 	char **rows = malloc((1 + num_rows) * sizeof(char *)), // include header
 		**filtered_rows = malloc(num_rows * sizeof(char *));
 	// Compute the column sizes needed to fit all row items in.
+	// Note: the computation of maximum row length is approximate, and does not take into account
+	// padding. For 1-byte characters, it is fine, but for multi-byte UTF-8 characters it may
+	// be inaccurate.
 	size_t *column_widths = malloc(num_columns * sizeof(size_t)), row_len = 0;
 	for (int i = 1; i <= num_columns; i++) {
 		const char *column = opts.columns ? (lua_rawgeti(L, opts.columns, i), lua_tostring(L, -1)) : "";
 		size_t utf8max = utf8strlen(column), max = strlen(column);
 		for (int j = i - 1; j < num_items; j += num_columns) {
-			size_t utf8len = utf8strlen(items[j]);
-			if (utf8len > utf8max) utf8max = utf8len, max = strlen(items[j]);
+			size_t utf8len = utf8strlen(items[j]), len = strlen(items[j]);
+			if (utf8len > utf8max) utf8max = utf8len;
+			if (len > max) max = len;
 		}
 		column_widths[i - 1] = utf8max, row_len += max + 1; // include space for '|' separator or '\0'
 	}
@@ -716,14 +720,16 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 	// with '|'s.
 	// The column headers are a special case and need to be underlined too.
 	for (int i = -num_columns; i < num_items; i += num_columns) {
-		char *row = malloc((i < 0) ? row_len + 4 : row_len);
-		char *p = (i < 0) ? strcpy(row, "</U>") + 4 : row;
+		size_t alloc_len = (i < 0) ? row_len + 4 : row_len;
+		char *row = malloc(alloc_len), *p = (i < 0) ? strcpy(row, "</U>") + 4 : row;
 		for (int j = i; j < i + num_columns && j < num_items; j++) {
 			const char *item = (i < 0) ?
 				(opts.columns ? (lua_rawgeti(L, opts.columns, j - i + 1), lua_tostring(L, -1)) : "") :
 				items[j];
-			p = strcpy(p, item) + strlen(item);
-			size_t padding = column_widths[j - i] - utf8strlen(item);
+			size_t item_len = strlen(item), padding = column_widths[j - i] - utf8strlen(item),
+						 offset = p - row, len = offset + item_len + padding + 1;
+			if (len > alloc_len) alloc_len = len, row = realloc(row, alloc_len), p = row + offset;
+			p = strcpy(p, item) + item_len;
 			while (padding-- > 0) *p++ = ' ';
 			*p++ = (i < 0) ? '|' : ' ';
 			if (i < 0 && opts.columns) lua_pop(L, 1); // header
