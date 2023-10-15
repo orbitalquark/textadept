@@ -702,15 +702,29 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 	char **rows = malloc((1 + num_rows) * sizeof(char *)), // include header
 		**filtered_rows = malloc(num_rows * sizeof(char *));
 	// Compute the column sizes needed to fit all row items in.
-	size_t *column_widths = malloc(num_columns * sizeof(size_t)), row_len = 0;
+	size_t *column_widths = malloc(num_columns * sizeof(size_t));
 	for (int i = 1; i <= num_columns; i++) {
 		const char *column = opts.columns ? (lua_rawgeti(L, opts.columns, i), lua_tostring(L, -1)) : "";
-		size_t utf8max = utf8strlen(column), max = strlen(column);
+		size_t utf8max = utf8strlen(column);
 		for (int j = i - 1; j < num_items; j += num_columns) {
 			size_t utf8len = utf8strlen(items[j]);
-			if (utf8len > utf8max) utf8max = utf8len, max = strlen(items[j]);
+			if (utf8len > utf8max) utf8max = utf8len;
 		}
-		column_widths[i - 1] = utf8max, row_len += max + 1; // include space for '|' separator or '\0'
+		column_widths[i - 1] = utf8max;
+	}
+	size_t row_len = 0;
+	for (int i = -num_columns; i < num_items; i += num_columns) {
+		size_t curr_row_len = 0;
+		for (int j = i; j < i + num_columns && j < num_items; j++) {
+			const char *item = (i < 0) ?
+				(opts.columns ? (lua_rawgeti(L, opts.columns, j - i + 1), lua_tostring(L, -1)) : "") :
+				items[j];
+			curr_row_len += strlen(item);
+			size_t padding = column_widths[j - i] - utf8strlen(item);
+			curr_row_len += padding;
+			curr_row_len += 1; // include space for '|' separator or '\0'
+		}
+		if (curr_row_len > row_len) row_len = curr_row_len;
 	}
 	// Generate the display rows, padding row items to fit column widths and separating columns
 	// with '|'s.
