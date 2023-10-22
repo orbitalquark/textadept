@@ -541,6 +541,7 @@ int message_dialog(DialogOptions opts, lua_State *L) {
 
 int input_dialog(DialogOptions opts, lua_State *L) {
 	GtkWidget *dialog = new_dialog(&opts), *entry = gtk_entry_new();
+	gtk_window_set_resizable(GTK_WINDOW(dialog), true);
 	GtkWidget *box = gtk_message_dialog_get_message_area(GTK_MESSAGE_DIALOG(dialog));
 	gtk_box_pack_start(GTK_BOX(box), entry, false, true, 0), gtk_widget_show(entry);
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), true);
