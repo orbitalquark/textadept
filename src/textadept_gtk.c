@@ -522,10 +522,11 @@ bool is_dark_mode() {
 static GtkWidget *new_dialog(DialogOptions *opts) {
 	GtkWidget *dialog =
 		gtk_message_dialog_new(GTK_WINDOW(window), 0, GTK_MESSAGE_OTHER, 0, "%s", opts->title);
-	if (opts->icon && gtk_icon_theme_has_icon(gtk_icon_theme_get_default(), opts->icon)) {
-		GtkWidget *image = gtk_image_new_from_icon_name(opts->icon, GTK_ICON_SIZE_DIALOG);
-		gtk_message_dialog_set_image(GTK_MESSAGE_DIALOG(dialog), image), gtk_widget_show(image);
-	}
+	GtkWidget *image = NULL;
+	if (opts->icon && gtk_icon_theme_has_icon(gtk_icon_theme_get_default(), opts->icon))
+		image = gtk_image_new_from_icon_name(opts->icon, GTK_ICON_SIZE_DIALOG);
+	gtk_message_dialog_set_image(GTK_MESSAGE_DIALOG(dialog), image);
+	if (image) gtk_widget_show(image);
 	if (opts->buttons[2]) gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[2], 3);
 	if (opts->buttons[1]) gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[1], 2);
 	gtk_dialog_add_button(GTK_DIALOG(dialog), opts->buttons[0], 1);
@@ -717,10 +718,10 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 						*treeview = gtk_tree_view_new_with_model(filter);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), true);
 	GtkDialog *dlg = GTK_DIALOG(dialog);
-	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dlg)), entry, false, true, 0);
+	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dlg)), entry, false, true, 5);
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), true);
 	GtkWidget *scrolled = gtk_scrolled_window_new(NULL, NULL);
-	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dlg)), scrolled, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dlg)), scrolled, true, true, 5);
 	gtk_container_add(GTK_CONTAINER(scrolled), treeview);
 	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(filter), visible, treeview, NULL);
 	for (int i = 1; i <= num_columns; i++) {
