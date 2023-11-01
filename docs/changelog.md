@@ -2,6 +2,32 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+### 12.2 (01 Oct 2023)
+
+Download:
+
+- [Textadept 12.2 -- Windows][]
+- [Textadept 12.2 -- macOS 11+][]
+- [Textadept 12.2 -- Linux][]
+- [Textadept 12.2 -- Modules][]
+
+Bugfixes:
+
+- Regex replacements with '^' anchors should only match once per line.
+- Fix statusbar column number not including virtual space.
+- Fixed terminal version crash in some list dialogs with UTF-8 characters in them.
+- Gtk input dialogs are resizable.
+- Fixed default Gtk icon dialog when none was specified.
+
+Changes:
+
+- Updated Brazilian Portuguese and Spanish localizations.
+
+[Textadept 12.2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.2/textadept_12.2.win.zip
+[Textadept 12.2 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.2/textadept_12.2.macOS.zip
+[Textadept 12.2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.2/textadept_12.2.linux.tgz
+[Textadept 12.2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.2/textadept_12.2.modules.zip
+
 ### 12.2 beta (01 Oct 2023)
 
 Download:
