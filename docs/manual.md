@@ -142,7 +142,7 @@ Here is a simple *~/.textadept/init.lua* for illustration:
 
 	-- Always use PEP-8 indentation style for Python files, and spaces for YAML files.
 	events.connect(events.LEXER_LOADED, function(name)
-		if name == 'python' or name = 'yaml' then
+		if name == 'python' or name == 'yaml' then
 			buffer.use_tabs = false
 			buffer.tab_width = 4
 		end
