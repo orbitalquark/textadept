@@ -2,7 +2,7 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
-### 12.2 (01 Oct 2023)
+### 12.2 (01 Nov 2023)
 
 Download:
 
