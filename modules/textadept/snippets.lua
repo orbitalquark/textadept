@@ -735,6 +735,13 @@ function M.select()
 	if i then M.insert(items[i * 2]) end
 end
 
+---
+-- Whether or not a snippet is active.
+-- @field active
+
+setmetatable(M,
+	{__index = function(_, k) if k == 'active' then return active_snippet ~= nil end end})
+
 -- Update snippet transforms when text is added or deleted.
 events.connect(events.UPDATE_UI, function(updated)
 	if not active_snippet then return end

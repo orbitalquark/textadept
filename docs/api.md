@@ -8598,6 +8598,11 @@ You can migrate your snippets using the following steps:
 
 The snippet placeholder indicator number.
 
+<a id="textadept.snippets.active"></a>
+#### `textadept.snippets.active` 
+
+Whether or not a snippet is active.
+
 <a id="textadept.snippets.paths"></a>
 #### `textadept.snippets.paths` &lt;table&gt;
 
