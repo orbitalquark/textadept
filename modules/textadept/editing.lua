@@ -565,7 +565,7 @@ function M.filter_through(command)
 			return
 		end
 	end
-	inout = inout:iconv('UTF-8', _CHARSET)
+	if not utf8.len(inout) then inout = inout:iconv('UTF-8', _CHARSET) end
 	if buffer.selections == 1 then
 		if buffer:get_text() == inout then return end -- do not perform no-op
 		buffer:replace_target(inout)
