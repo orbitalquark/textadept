@@ -668,7 +668,7 @@ protected:
 	bool eventFilter(QObject *watched, QEvent *event) override {
 		if (event->type() != QEvent::KeyPress) return false;
 		auto keyEvent = static_cast<QKeyEvent *>(event);
-		if (keyEvent->key() != Qt::Key_Return) return false;
+		if (keyEvent->key() != Qt::Key_Return && keyEvent->key() != Qt::Key_Enter) return false;
 		auto button = (keyEvent->modifiers() & Qt::ShiftModifier) == 0 ?
 			(watched == ta->ui->findCombo ? ta->ui->findNext : ta->ui->replace) :
 			(watched == ta->ui->findCombo ? ta->ui->findPrevious : ta->ui->replaceAll);
