@@ -302,7 +302,7 @@ end)
 events.connect(events.FILE_OPENED, function()
 	if #_BUFFERS > 2 then return end
 	local buf = _BUFFERS[1]
-	if not (buf.filename or buf._type or buf.modify) then buf:close() end
+	if not (buf.filename or buf._type or buf.modify or buf.length > 0) then buf:close() end
 end)
 
 --- Prompts the user to select a recently opened file to be reopened.
