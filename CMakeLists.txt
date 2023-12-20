@@ -184,7 +184,7 @@ if(QT)
 	# SingleApplication
 	set(singleapp_zip v3.4.0.zip)
 	set(singleapp_url file://${deps_dir}/${singleapp_zip})
-	if(NOT EXISTS ${deps_dir/${singleapp_zip}})
+	if(NOT EXISTS ${deps_dir}/${singleapp_zip})
 		set(singleapp_url
 			https://github.com/itay-grudev/SingleApplication/archive/refs/tags/${singleapp_zip})
 	endif()
