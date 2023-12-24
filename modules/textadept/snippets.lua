@@ -735,8 +735,7 @@ function M.select()
 	if i then M.insert(items[i * 2]) end
 end
 
----
--- Whether or not a snippet is active.
+--- Whether or not a snippet is active.
 -- @field active
 
 setmetatable(M,
