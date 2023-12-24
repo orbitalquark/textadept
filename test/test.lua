@@ -5385,6 +5385,8 @@ function test_open_file_mode()
 	buffer:close()
 end
 
+-- TODO: scratch module
+
 function test_spellcheck()
 	local spellcheck = require('spellcheck')
 	local SPELLING_ID = 1 -- not accessible

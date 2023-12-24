@@ -122,7 +122,7 @@ jobs:
         shell: bash
         run: |
           mkdir textadept-modules
-          modules="debugger export file_diff format lsp lua_repl open_file_mode spellcheck"
+          modules="debugger export file_diff format lsp lua_repl open_file_mode scratch spellcheck"
           for module in $modules; do
             gh_name="`echo -n $module | sed -e 's/_/-/g;'`"
             gh_prefix="https://github.com/orbitalquark/textadept-$gh_name"
