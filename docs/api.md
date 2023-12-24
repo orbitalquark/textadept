@@ -1518,8 +1518,8 @@ Moves the caret to the end of the buffer, extending the selected text to the new
 <a id="buffer.move_extends_selection"></a>
 #### `buffer.move_extends_selection` 
 
-Whether or not regular caret movement alters the selected text. (Read-only)
-[`buffer.selection_mode`](#buffer.selection_mode) dictates this property.
+Whether or not regular caret movement alters the selected text.
+Setting [`buffer.selection_mode`](#buffer.selection_mode) also alters this property.
 
 ### Modal Selection
 
@@ -1541,6 +1541,21 @@ The selection mode.
 
 	When set, caret movement alters the selected text until this field is set again to the
 	same value or until [`buffer:cancel()`](#buffer.cancel) is called.
+
+<a id="buffer.change_selection_mode"></a>
+#### `buffer:change_selection_mode`(*mode*)
+
+Changes the selection mode without subsequent caret movement altering selected text
+(i.e. setting [`buffer.move_extends_selection`](#buffer.move_extends_selection)).
+
+Parameters:
+
+- *mode*:  The selection mode to change to. Valid values are:
+
+	- [`buffer.SEL_STREAM`](#buffer.SEL_STREAM)
+	- [`buffer.SEL_RECTANGLE`](#buffer.SEL_RECTANGLE)
+	- [`buffer.SEL_LINES`](#buffer.SEL_LINES)
+	- [`buffer.SEL_THIN`](#buffer.SEL_THIN)
 
 ### Make and Modify Multiple Selections
 

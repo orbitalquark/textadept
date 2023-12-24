@@ -258,9 +258,10 @@ events.connect(events.FIND_RESULT_FOUND, function(text, wrapped)
 		if M.highlight_all_matches and e - s > 1 and not is_ff_buf(buffer) then
 			buffer:indicator_fill_range(s, e - s)
 		end
-		buffer:set_target_range(e, buffer.length + 1)
 		count = count + 1
 		if s == buffer.current_pos then current = count end
+		if e > buffer.length then break end
+		buffer:set_target_range(e, buffer.length + 1)
 	end
 	local message = string.format('%s %d/%d', _L['Match'], current, count)
 	if wrapped then message = string.format('%s (%s)', message, _L['Search wrapped']) end
@@ -442,6 +443,7 @@ events.connect(events.REPLACE_ALL, function(ftext, rtext)
 			if M.regex and ftext:find('^^') and offset == 0 then offset = 1 end -- avoid extra matches
 			buffer:replace_target(not M.regex and rtext or unescape(rtext))
 			count = count + 1
+			if buffer.target_end + offset > buffer.length then break end
 			buffer:set_target_range(buffer.target_end + offset, buffer.length + 1)
 		end
 		buffer:end_undo_action()

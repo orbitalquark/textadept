@@ -990,7 +990,8 @@ You can create multiple selections as follows:
 - Select as an additional selection the next occurrence of the current word via `Ctrl+D`
   on Windows and Linux, `⌘D` on macOS, and `^D` in the terminal version.
 
-Textadept mirrors any typed or pasted text at each selection.
+Textadept mirrors any typed or pasted text at each selection. You can deselect a particular
+additional selection by holding down `Ctrl` and clicking it with the mouse.
 
 You can create a rectangular selection as follows:
 

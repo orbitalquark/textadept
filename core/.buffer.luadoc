@@ -658,8 +658,8 @@
 --- Moves the caret to the end of the buffer, extending the selected text to the new position.
 -- @function document_end_extend
 
---- Whether or not regular caret movement alters the selected text. (Read-only)
--- `buffer.selection_mode` dictates this property.
+--- Whether or not regular caret movement alters the selected text.
+-- Setting `buffer.selection_mode` also alters this property.
 -- @field move_extends_selection
 
 --- Modal Selection.
@@ -693,6 +693,16 @@
 --- Thin rectangular selection. This is the mode after a rectangular selection has been typed
 -- into and ensures that no characters are selected.
 -- @field SEL_THIN
+
+--- Changes the selection mode without subsequent caret movement altering selected text
+-- (i.e. setting `buffer.move_extends_selection`).
+-- @param mode The selection mode to change to. Valid values are:
+--
+--	- `buffer.SEL_STREAM`
+--	- `buffer.SEL_RECTANGLE`
+--	- `buffer.SEL_LINES`
+--	- `buffer.SEL_THIN`
+-- @function change_selection_mode
 
 --- Make and Modify Multiple Selections.
 -- **Note:** the `buffer.selection_n_`\* fields cannot be used to create selections.
@@ -3643,6 +3653,7 @@
 -- - release_line_character_index
 -- - replace_target_minimal
 -- - sel_alpha
+-- - selection_from_point
 -- - set_font_locale
 -- - set_hotspot_active_back
 -- - set_hotspot_active_fore
