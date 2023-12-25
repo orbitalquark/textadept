@@ -2,6 +2,47 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+### 12.3 beta (01 Jan 2024)
+
+Download:
+
+- [Textadept 12.3 beta -- Windows][]
+- [Textadept 12.3 beta -- macOS 11+][]
+- [Textadept 12.3 beta -- Linux][]
+- [Textadept 12.3 beta -- Modules][]
+
+Bugfixes:
+
+- Do not assume filter through command output is encoded in `_CHARSET`.
+- Only close the initial buffer if it is blank too.
+- Fixed CMake constantly redownloading Qt SingleApplication module.
+- Qt version: Allow keypad Enter to invoke action in Find & Replace pane entries
+- Scintilla: fixed regex reverse search bug where a shortened match was returned.
+- Scintilla: avoid character fragments in regular expression search results.
+- Scintilla: fixed excessive memory use when deleting contiguous ranges backwards.
+- Scintilla: fixed incorrect substitution when searching for a regular expression backwards.
+- Scintilla: fix potential Qt crash when using IME with a large amount of text selected.
+
+Changes:
+
+- Added [`textadept.snippets.active`][].
+- Scratch: New module for treating untitled buffers as persistent scratch buffers.
+- Scintilla: Ctrl+Click on a selection deselects it in multiple selection mode.
+- Scintilla: added [`buffer:change_selection_mode()`][].
+- Scintilla: allow setting of `buffer.move_extends_selection`.
+- Scintilla: improve global replace performance.
+- Scintilla: make `buffer:move_selected_lines_up()` and `buffer:move_selected_lines_down()`
+  work for regular selections.
+- Updated to [Scintilla][] 5.4.1.
+
+[Textadept 12.3 beta -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.3_beta/textadept_12.3_beta.win.zip
+[Textadept 12.3 beta -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.3_beta/textadept_12.3_beta.macOS.zip
+[Textadept 12.3 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.3_beta/textadept_12.3_beta.linux.tgz
+[Textadept 12.3 beta -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.3_beta/textadept_12.3_beta.modules.zip
+[`textadept.snippets.active`]: api.html#textadept.snippets.active
+[`buffer:change_selection_mode()`]: api.html#buffer.change_selection_mode
+[Scintilla]: https://scintilla.org
+
 ### 12.2 (01 Nov 2023)
 
 Download:
