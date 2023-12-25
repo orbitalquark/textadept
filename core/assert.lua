@@ -1,4 +1,4 @@
--- Copyright 2020-2023 Mitchell. See LICENSE.
+-- Copyright 2020-2024 Mitchell. See LICENSE.
 
 --- Extends Lua's _G table to provide extra functions and fields for Textadept.
 -- @module _G

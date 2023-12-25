@@ -1,4 +1,4 @@
--- Copyright 2007-2023 Mitchell. See LICENSE.
+-- Copyright 2007-2024 Mitchell. See LICENSE.
 
 --- @module lexer
 local M = dofile(_HOME .. '/lexers/lexer.lua')

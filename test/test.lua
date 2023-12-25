@@ -1,4 +1,4 @@
--- Copyright 2020-2023 Mitchell. See LICENSE.
+-- Copyright 2020-2024 Mitchell. See LICENSE.
 
 --- Overloads tostring() to print more user-friendly output for `assert_equal()`.
 local function tostring(value)

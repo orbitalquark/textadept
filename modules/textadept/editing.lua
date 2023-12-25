@@ -1,4 +1,4 @@
--- Copyright 2007-2023 Mitchell. See LICENSE.
+-- Copyright 2007-2024 Mitchell. See LICENSE.
 
 --- Editing features for Textadept.
 -- @module textadept.editing

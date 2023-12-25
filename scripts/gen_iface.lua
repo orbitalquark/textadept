@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2007-2023 Mitchell. See LICENSE.
+-- Copyright 2007-2024 Mitchell. See LICENSE.
 
 -- Generates Lua to C interface for Scintilla by parsing Scintilla.iface and turning it into
 -- a set of data tables. Whenever Textadept is to communicate with Scintilla using a given
@@ -186,7 +186,7 @@ table.sort(events)
 
 local f = io.open('../core/iface.lua', 'wb')
 f:write([=[
--- Copyright 2007-2023 Mitchell. See LICENSE.
+-- Copyright 2007-2024 Mitchell. See LICENSE.
 
 --- Scintilla constants, functions, and properties.
 -- Do not modify anything in this module. Doing so will have unpredictable consequences.

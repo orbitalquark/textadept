@@ -1,4 +1,4 @@
--- Copyright 2019-2023 Mitchell. See LICENSE.
+-- Copyright 2019-2024 Mitchell. See LICENSE.
 
 --- Records buffer positions within Textadept views over time and allows for navigating through
 -- that history.

@@ -1,4 +1,4 @@
--- Copyright 2007-2023 Mitchell. See LICENSE.
+-- Copyright 2007-2024 Mitchell. See LICENSE.
 -- Contributions from Robert Gieseke.
 
 --- Defines the menus used by Textadept.

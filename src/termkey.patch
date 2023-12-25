@@ -6,7 +6,7 @@ diff -r e0a74e8d32b3 driver-win-pdcurses.c
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
 +++ b/driver-win-pdcurses.c	Thu Mar 24 11:45:45 2022 -0400
 @@ -0,0 +1,108 @@
-+// Copyright 2014-2023 Mitchell. See LICENSE.
++// Copyright 2014-2024 Mitchell. See LICENSE.
 +
 +#include "termkey.h"
 +#include "termkey-internal.h"

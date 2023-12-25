@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2020-2023 Mitchell. See LICENSE.
+-- Copyright 2020-2024 Mitchell. See LICENSE.
 
 -- Filters the given file through markdown, inserts it into the template specified by stdin by
 -- replacing simple {{ variable }} tags, and outputs the result to stdout.

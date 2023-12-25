@@ -1,4 +1,4 @@
--- Copyright 2007-2023 Mitchell. See LICENSE.
+-- Copyright 2007-2024 Mitchell. See LICENSE.
 
 --- Markdown filter for LDoc and doclet for Luadoc.
 -- @usage ldoc --filter markdowndoc.ldoc [ldoc opts] > api.md

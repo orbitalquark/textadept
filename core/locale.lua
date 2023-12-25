@@ -1,4 +1,4 @@
--- Copyright 2007-2023 Mitchell. See LICENSE.
+-- Copyright 2007-2024 Mitchell. See LICENSE.
 
 --- Map of all messages used by Textadept to their localized form.
 -- If the localized version of a given message does not exist, the non-localized message is

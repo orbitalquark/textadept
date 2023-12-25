@@ -1,4 +1,4 @@
--- Copyright 2007-2023 Mitchell. See LICENSE.
+-- Copyright 2007-2024 Mitchell. See LICENSE.
 -- This is a DUMMY FILE used for making LuaDoc for built-in functions in the os table.
 
 --- Extends Lua's `os` library to provide process spawning capabilities.

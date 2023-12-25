@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2007-2023 Mitchell. See LICENSE.
+# Copyright 2007-2024 Mitchell. See LICENSE.
 
 if [[ "$1" == "-h" || "$1" == "--help" ]]; then
 	echo "ta - shell script to launch Textadept.app"

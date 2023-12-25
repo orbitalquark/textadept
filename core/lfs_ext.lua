@@ -1,4 +1,4 @@
--- Copyright 2007-2023 Mitchell. See LICENSE.
+-- Copyright 2007-2024 Mitchell. See LICENSE.
 
 --- Extends the `lfs` library to find files in directories and determine absolute file paths.
 -- @module lfs

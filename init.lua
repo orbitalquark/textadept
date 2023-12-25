@@ -1,4 +1,4 @@
--- Copyright 2007-2023 Mitchell. See LICENSE.
+-- Copyright 2007-2024 Mitchell. See LICENSE.
 
 package.path = table.concat({
 	_USERHOME .. '/modules/?.lua', _USERHOME .. '/modules/?/init.lua', _HOME .. '/modules/?.lua',
