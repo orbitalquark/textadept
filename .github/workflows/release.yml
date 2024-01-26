@@ -105,7 +105,8 @@ jobs:
           if [[ -f textadept_$version.win.zip ]]; then
             zip -r textadept_$version.win.zip textadept/docs/*.html
           fi
-          if [[ -f textadept_$version.linux.tar.gz ]]; then
+          if [[ -f textadept_$version.linux.tgz ]]; then
+            mv textadept_$version.linux.tgz textadept_$version.linux.tar.gz
             gunzip textadept_$version.linux.tar.gz
             tar --append -f textadept_$version.linux.tar textadept/docs/*.html
             gzip textadept_$version.linux.tar
