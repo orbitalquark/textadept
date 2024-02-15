@@ -291,14 +291,13 @@ void *read_menu(lua_State *L, int index) {
 		if (*label && get_int_field(L, -1, 3) > 0) {
 			int key = get_int_field(L, -1, 3), modifiers = get_int_field(L, -1, 4), qtModifiers = 0;
 			if (modifiers & SCMOD_SHIFT) qtModifiers += Qt::SHIFT;
-			if (modifiers & SCMOD_ALT) qtModifiers += Qt::ALT;
 #if !__APPLE__
 			if (modifiers & SCMOD_CTRL) qtModifiers += Qt::CTRL;
 #else
 			if (modifiers & SCMOD_CTRL) qtModifiers += Qt::META;
 			if (modifiers & SCMOD_META) qtModifiers += Qt::CTRL;
-			menuItem->setEnabled(false); // disable because Qt will handle key bindings on its own
 #endif
+			if (modifiers & SCMOD_ALT) qtModifiers += Qt::ALT;
 			menuItem->setShortcut(QKeySequence{qtModifiers + key});
 			menuItem->setShortcutContext(Qt::ShortcutContext::WidgetShortcut);
 		}
@@ -306,20 +305,6 @@ void *read_menu(lua_State *L, int index) {
 		QObject::connect(
 			menuItem, &QAction::triggered, menu, [id]() { emit("menu_clicked", LUA_TNUMBER, id, -1); });
 	}
-#if __APPLE__
-	// Enable menu items prior to showing the menu, and then disable them after hiding.
-	// When key shortcuts are enabled, Qt handles key bindings, and this interferes with Textadept's
-	// key handling.
-	// Note: disabling needs to happen after QMenu::aboutToHide and after the action is
-	// triggered (disabled actions cannot be triggered), so do this in a subsequent event
-	// in the Qt event loop (kind of like deleteLater()).
-	auto enableMenu = [menu](bool enable) {
-		for (QAction *action : menu->actions()) action->setEnabled(enable);
-	};
-	QObject::connect(menu, &QMenu::aboutToShow, menu, std::bind(enableMenu, true));
-	QObject::connect(menu, &QMenu::aboutToHide, menu,
-		[enableMenu]() { QTimer::singleShot(1, std::bind(enableMenu, false)); });
-#endif
 	return menu;
 }
 
