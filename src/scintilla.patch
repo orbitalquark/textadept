@@ -3,6 +3,7 @@ Scintilla changes:
 * Handle leading whitespace in XPM images in order to prevent crashes.
 * Do not clear per-line-values when clearing the first line of a 1-line document.
 * Use Qt macros instead of keywords in header.
+* Disable crashing assertion that fails when a line contains both LTR and RTL text.
 
 diff -r 22b6bbb36280 src/XPM.cxx
 --- a/src/XPM.cxx	Sat Sep 05 07:55:08 2020 +1000
@@ -61,3 +62,15 @@ diff -r 123ae5de5bd2 qt/ScintillaEditBase/ScintillaEditBase.h
  	void horizontalScrolled(int value);
  	void verticalScrolled(int value);
  	void horizontalRangeChanged(int max, int page);
+diff -r 205473f91379 gtk/PlatGTK.cxx
+--- a/gtk/PlatGTK.cxx	Sat Dec 23 17:20:20 2023 +1100
++++ b/gtk/PlatGTK.cxx	Fri Feb 23 15:07:20 2024 -0500
+@@ -1095,7 +1095,7 @@
+ 				i++;
+ 			}
+ 		}
+-		PLATFORM_ASSERT(static_cast<size_t>(i) == text.length());
++		//PLATFORM_ASSERT(static_cast<size_t>(i) == text.length());
+ 	} else {
+ 		// No font so return an ascending range of values
+ 		for (size_t i = 0; i < text.length(); i++) {
