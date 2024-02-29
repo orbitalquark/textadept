@@ -2,6 +2,32 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+### 12.3 (01 Mar 2024)
+
+Download:
+
+- [Textadept 12.3 -- Windows][]
+- [Textadept 12.3 -- macOS 11+][]
+- [Textadept 12.3 -- Linux][]
+- [Textadept 12.3 -- Modules][]
+
+Bugfixes:
+
+- Fixed help files not showing up in Linux releases.
+- Fixed `^⌘` key sequences not working on macOS.
+- LSP: fixed diagnostics for some language servers that expect client diagnostic capababilities.
+- Scintilla: workaround potential crash when a line contains both left-to-right and right-to-left
+  text.
+
+Changes:
+
+- None.
+
+[Textadept 12.3 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.3/textadept_12.3.win.zip
+[Textadept 12.3 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.3/textadept_12.3.macOS.zip
+[Textadept 12.3 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.3/textadept_12.3.linux.tgz
+[Textadept 12.3 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.3/textadept_12.3.modules.zip
+
 ### 12.3 beta (01 Jan 2024)
 
 Download:
