@@ -375,8 +375,9 @@ int message_dialog(DialogOptions opts, lua_State *L) {
 	dialog.setDefaultButton(
 		dialog.addButton(opts.buttons[0], static_cast<QMessageBox::ButtonRole>(0)));
 	for (auto &button : dialog.buttons()) button->setFocusPolicy(Qt::StrongFocus);
-	// Note: QMessageBox returns an opaque value from dialog.exec().
-	return (dialog.exec(), lua_pushinteger(L, dialog.buttonRole(dialog.clickedButton()) + 1), 1);
+	dialog.exec(); // QMessageBox returns an opaque value
+	ta->window()->activateWindow(); // macOS does not restore main window focus, so force it.
+	return (lua_pushinteger(L, dialog.buttonRole(dialog.clickedButton()) + 1), 1);
 }
 
 int input_dialog(DialogOptions opts, lua_State *L) {
