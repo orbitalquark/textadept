@@ -501,8 +501,7 @@ elseif(WIN32)
 		install(FILES ${vcrun_dlls} DESTINATION ${ta_dir})
 	endif()
 	install(CODE "execute_process(
-		COMMAND ${CMAKE_COMMAND} -E tar cf ${CMAKE_BINARY_DIR}/textadept_${version}.zip --format=zip
-			textadept
+		COMMAND 7z a ${CMAKE_BINARY_DIR}/textadept_${version}.zip textadept
 		WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX})")
 elseif(APPLE)
 	set(ta_bin_dir ${CMAKE_INSTALL_PREFIX}/Textadept.app/Contents/MacOS)
