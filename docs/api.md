@@ -3929,6 +3929,10 @@ If the alpha byte is omitted, it is assumed to be `0xFF` (opaque).
 	The text color of selections when another window has focus.
 - [`view.ELEMENT_SELECTION_INACTIVE_BACK`](#view.ELEMENT_SELECTION_INACTIVE_BACK)
 	The background color of selections when another window has focus.
+- `view.ELEMENT_SELECTION_INACTIVE_ADDITIONAL_TEXT`
+The text color of additional selections when another window has focus.
+- `view.ELEMENT_SELECTION_INACTIVE_ADDITIONAL_BACK`
+The background color of additional selections when another window has focus.
 - [`view.ELEMENT_CARET`](#view.ELEMENT_CARET)
 	The main selection's caret color.
 - [`view.ELEMENT_CARET_ADDITIONAL`](#view.ELEMENT_CARET_ADDITIONAL)
@@ -4816,6 +4820,8 @@ Arguments:
 
 - *text*: The selection's text.
 - *position*: The autocompleted word's beginning position.
+- *code*: The code of the character from [`buffer.auto_c_fill_ups`](#buffer.auto_c_fill_ups) that made the selection,
+	or `0` if no character was used.
 
 <a id="events.AUTO_C_SELECTION"></a>
 #### `events.AUTO_C_SELECTION` 
@@ -4828,6 +4834,8 @@ Arguments:
 
 - *text*: The selection's text.
 - *position*: The autocompleted word's beginning position.
+- *code*: The code of the character from [`buffer.auto_c_fill_ups`](#buffer.auto_c_fill_ups) that made the selection,
+	or `0` if no character was used.
 
 <a id="events.AUTO_C_SELECTION_CHANGE"></a>
 #### `events.AUTO_C_SELECTION_CHANGE` 

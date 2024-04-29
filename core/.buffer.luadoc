@@ -2602,6 +2602,10 @@
 --	The text color of selections when another window has focus.
 -- - `view.ELEMENT_SELECTION_INACTIVE_BACK`
 --	The background color of selections when another window has focus.
+-- - `view.ELEMENT_SELECTION_INACTIVE_ADDITIONAL_TEXT`
+-- The text color of additional selections when another window has focus.
+-- - `view.ELEMENT_SELECTION_INACTIVE_ADDITIONAL_BACK`
+-- The background color of additional selections when another window has focus.
 -- - `view.ELEMENT_CARET`
 --	The main selection's caret color.
 -- - `view.ELEMENT_CARET_ADDITIONAL`
@@ -3548,7 +3552,15 @@
 -- - tab_minimum_width
 -- - technology
 -- - two_phase_draw
+-- - undo_action_position
+-- - undo_action_text
+-- - undo_action_type
+-- - undo_actions
 -- - undo_collection
+-- - undo_current
+-- - undo_detach
+-- - undo_save_point
+-- - undo_tentative
 -- - INDICATOR_CONTAINER
 -- - MOD_NORM
 -- - CP_UTF8
@@ -3595,6 +3607,7 @@
 -- - caret_line_back
 -- - caret_line_back_alpha
 -- - change_insertion
+-- - change_last_undo_action_text
 -- - change_lexer_state
 -- - char_position_from_point
 -- - char_position_from_point_close
@@ -3648,6 +3661,7 @@
 -- - property_expanded
 -- - property_names
 -- - property_type
+-- - push_undo_action_type
 -- - release_all_extended_styles
 -- - release_document
 -- - release_line_character_index
