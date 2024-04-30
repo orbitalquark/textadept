@@ -2,6 +2,35 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+### 12.4 (01 May 2024)
+
+Download:
+
+- [Textadept 12.4 -- Windows][]
+- [Textadept 12.4 -- macOS 11+][]
+- [Textadept 12.4 -- Linux][]
+- [Textadept 12.4 -- Modules][]
+
+Bugfixes:
+
+- Fixed macOS bug where message dialogs did not return focus to the editor.
+- Fixed Bash lexer to not highlight escaped '#' as comments.
+
+Changes:
+
+- Updated AutoHotkey, Perl, and Rust lexers with minor improvements.
+- LSP: notify servers that diagnostics are supported.
+- Scintilla: significantly reduce memory used for undo actions.
+- Scintilla: added additional selection inactive colors to `view.element_color`.
+- Scintilla: scale reverse arrow margin cursor to match user's cursor size.
+- Updated to [Scintilla][] 5.5.0.
+
+[Textadept 12.4 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.4/textadept_12.4.win.zip
+[Textadept 12.4 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.4/textadept_12.4.macOS.zip
+[Textadept 12.4 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.4/textadept_12.4.linux.tgz
+[Textadept 12.4 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.4/textadept_12.4.modules.zip
+[Scintilla]: https://scintilla.org
+
 ### 12.3 (01 Mar 2024)
 
 Download:
