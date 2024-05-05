@@ -286,6 +286,16 @@ local default_menubar = {
 				view:line_scroll(0, first_visible_line - display_line)
 			end
 		}, {
+			_L['Toggle Margins'], function()
+				local widths, width_n = view._margin_widths or {}, view.margin_width_n
+				if not view._margin_widths then
+					for i = 1, view.margins do widths[i], width_n[i] = width_n[i], 0 end
+				else
+					for i = 1, view.margins do width_n[i] = widths[i] end
+				end
+				view._margin_widths = not view._margin_widths and widths or nil
+			end
+		}, {
 			_L['Toggle Show Indent Guides'],
 			function()
 				view.indentation_guides = view.indentation_guides == 0 and view.IV_LOOKBOTH or 0

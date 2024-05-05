@@ -3417,6 +3417,11 @@ function test_menu_menu_functions()
 	local wrap_mode = view.wrap_mode
 	textadept.menu.menubar['View/Toggle Wrap Mode'][2]()
 	assert(view.wrap_mode ~= wrap_mode, 'wrap mode not toggled')
+	local line_margin_width = view.margin_width_n[1]
+	textadept.menu.menubar['View/Toggle Margins'][2]()
+	assert(view.margin_width_n[1] == 0, 'margins not hidden')
+	textadept.menu.menubar['View/Toggle Margins'][2]()
+	assert(view.margin_width_n[1] == line_margin_width, 'margins not hidden')
 	local indentation_guides = view.indentation_guides
 	textadept.menu.menubar['View/Toggle Show Indent Guides'][2]()
 	assert(view.indentation_guides ~= indentation_guides, 'indentation guides not toggled')
