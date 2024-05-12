@@ -331,7 +331,7 @@ end
 --- Map of version control files to their lfs modes.
 local vcs = {
 	['.bzr'] = 'directory', ['.git'] = 'directory', ['.hg'] = 'directory', ['.svn'] = 'directory',
-	_FOSSIL_ = 'file'
+	_FOSSIL_ = 'file', ['.fslckout'] = 'file'
 }
 
 --- Returns the root directory of the project that contains filesystem path *path*.
