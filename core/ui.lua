@@ -54,6 +54,20 @@ local function get_print_buffer(type)
 	for _, buffer in ipairs(_BUFFERS) do if buffer._type == type then return buffer end end
 end
 
+--- Returns the given buffer's UTF-8 filename and basename for display.
+-- If the buffer does not have a filename, returns its type or 'Untitled'.
+local function get_display_names(buffer)
+	local filename = buffer.filename or buffer._type or _L['Untitled']
+	if buffer.filename then filename = select(2, pcall(string.iconv, filename, 'UTF-8', _CHARSET)) end
+	return filename, buffer.filename and filename:match('[^/\\]+$') or filename
+end
+
+--- Sets the buffer's tab label based on its saved status.
+local function set_tab_label(buffer)
+	if not buffer then buffer = _G.buffer end
+	buffer.tab_label = select(2, get_display_names(buffer)) .. (buffer.modify and '*' or '')
+end
+
 --- Helper function for printing to buffers.
 -- @see ui.print_to
 -- @see ui.print_silent_to
@@ -84,6 +98,7 @@ local function print_to(buffer_type, silent, format, ...)
 	if format then buffer:append_text('\n') end
 	buffer:goto_pos(buffer.length + 1)
 	buffer:set_save_point()
+	if silent then set_tab_label(buffer) end -- events.SAVE_POINT_REACHED does not pass this buffer
 	for _, view in ipairs(_VIEWS) do
 		-- Scroll all views showing this buffer (if any).
 		if view.buffer == buffer and view ~= _G.view then view:goto_pos(buffer.length + 1) end
@@ -182,14 +197,6 @@ events.connect(events.BUFFER_DELETED, update_zorder)
 events.connect(events.RESET_BEFORE, function(persist) persist.ui_zorder = buffers_zorder end)
 events.connect(events.RESET_AFTER, function(persist) buffers_zorder = persist.ui_zorder end)
 
---- Returns the given buffer's UTF-8 filename and basename for display.
--- If the buffer does not have a filename, returns its type or 'Untitled'.
-local function get_display_names(buffer)
-	local filename = buffer.filename or buffer._type or _L['Untitled']
-	if buffer.filename then filename = select(2, pcall(string.iconv, filename, 'UTF-8', _CHARSET)) end
-	return filename, buffer.filename and filename:match('[^/\\]+$') or filename
-end
-
 --- Prompts the user to select a buffer to switch to.
 -- Buffers are listed in the order they were opened unless `ui.buffer_list_zorder` is `true`, in
 -- which case buffers are listed by their z-order (most recently viewed to least recently viewed).
@@ -274,10 +281,6 @@ events.connect(events.SAVE_POINT_REACHED, set_title)
 events.connect(events.SAVE_POINT_LEFT, set_title)
 
 --- Sets the buffer's tab label based on its saved status.
-local function set_tab_label(buffer)
-	if not buffer then buffer = _G.buffer end
-	buffer.tab_label = select(2, get_display_names(buffer)) .. (buffer.modify and '*' or '')
-end
 events.connect(events.BUFFER_NEW, set_tab_label)
 events.connect(events.SAVE_POINT_REACHED, set_tab_label)
 events.connect(events.SAVE_POINT_LEFT, set_tab_label)
