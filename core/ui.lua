@@ -280,7 +280,7 @@ end
 events.connect(events.SAVE_POINT_REACHED, set_title)
 events.connect(events.SAVE_POINT_LEFT, set_title)
 
---- Sets the buffer's tab label based on its saved status.
+-- Sets the buffer's tab label based on its saved status.
 events.connect(events.BUFFER_NEW, set_tab_label)
 events.connect(events.SAVE_POINT_REACHED, set_tab_label)
 events.connect(events.SAVE_POINT_LEFT, set_tab_label)
