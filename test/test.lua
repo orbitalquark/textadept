@@ -4210,6 +4210,22 @@ function test_snippets_transform_options()
 	snippets.foo = nil
 end
 
+function test_snippets_lexer_specific()
+	buffer.new()
+	snippets.ansi_c = {lgg = 'lua_getglobal(${1:lua}, "${2:name}")'}
+	snippets.lua = {}
+	buffer:set_lexer('ansi_c')
+	buffer:add_text('lgg')
+	textadept.snippets.insert()
+	assert_equal(buffer:get_sel_text(), 'lua')
+	textadept.snippets.insert()
+	assert_equal(buffer:get_sel_text(), 'name')
+	textadept.snippets.insert()
+	assert_equal(buffer:get_text(), 'lua_getglobal(lua, "name")')
+	buffer:close(true)
+	snippets.ansi_c, snippets.lua = nil, nil
+end
+
 function test_lexer_api()
 	buffer.new()
 	buffer:set_lexer('lua')

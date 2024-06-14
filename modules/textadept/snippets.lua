@@ -679,7 +679,7 @@ function M.insert(text)
 	local trigger
 	if not assert_type(text, 'string/nil', 1) then
 		trigger, text = find_snippet()
-		if type(text) == 'table' then return false end -- assume lexer table and ignore
+		if type(text) == 'table' then text = nil end -- assume lexer table and ignore
 		if type(text) == 'function' then text = text() end
 		assert_type(text, 'string/nil', trigger or '?')
 	end
