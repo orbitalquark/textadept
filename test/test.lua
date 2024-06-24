@@ -846,6 +846,7 @@ function test_lfs_ext_walk()
 
 	assert_raises(function() lfs.walk() end, 'string expected, got nil')
 	assert_raises(function() lfs.walk(_HOME, 1) end, 'string/table/nil expected, got number')
+	assert_raises(function() lfs.walk('does-not-exist') end, 'directory not found: does-not-exist')
 	assert_raises(function() lfs.walk(_HOME, nil, true) end, 'number/nil expected, got boolean')
 end
 
