@@ -843,6 +843,10 @@ buffer via the "View > Toggle View Whitespace" menu item. Visible spaces are rep
 dots, and visible tabs are represented by arrows. (The terminal version does not have default
 key bindings for either of these actions.)
 
+On the left side of each editor view are margins that show line numbers, [bookmarks](#bookmarks),
+and [fold markers](#code-folding). You can toggle the visibility of these margins using the
+"View > Toggle Margins" menu item.
+
 The GUI version of Textadept can show small guiding lines based on indentation level, and does so
 by default. You can toggle the visibility of these guides for the current view via the "View >
 Toggle Show Indent Guides" menu item.
