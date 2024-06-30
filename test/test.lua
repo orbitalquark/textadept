@@ -3402,6 +3402,9 @@ function test_menu_menu_functions()
 	local use_tabs = buffer.use_tabs
 	textadept.menu.menubar['Buffer/Indentation/Toggle Use Tabs'][2]()
 	assert(buffer.use_tabs ~= use_tabs, 'use tabs not toggled')
+	local tabs = ui.tabs
+	textadept.menu.menubar['Buffer/Toggle Tab Bar'][2]()
+	assert(ui.tabs ~= tabs, 'tab bar not toggled')
 	view:split()
 	ui.update()
 	local size = view.size
