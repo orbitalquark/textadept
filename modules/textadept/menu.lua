@@ -249,6 +249,8 @@ local default_menubar = {
 			{_L['CP-1252 Encoding'], function() set_encoding('CP1252') end},
 			{_L['UTF-16 Encoding'], function() set_encoding('UTF-16LE') end}
 		}, --
+		SEPARATOR, --
+		{_L['Toggle Tab Bar'], function() ui.tabs = not ui.tabs end}, --
 		SEPARATOR, {
 			_L['Select Lexer...'], function()
 				local lexers = lexer.names()

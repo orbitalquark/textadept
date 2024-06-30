@@ -404,15 +404,16 @@ mentioned previously, even in the terminal version. For example, in your *~/.tex
 
 #### Tab Bar
 
-The GUI version of Textadept has a tab bar that displays all of Textadept's open buffers
-by name, though it is only visible when two or more buffers are open. A '\*' character, if
-present, indicates there are unsaved changes in the marked buffer. There is only one tab bar
-for the entire application, even if there are multiple split views. When two or more views
-are open, the state of the tab bar applies only to the active view, and using the tab bar to
-switch between files also applies only to that view. Right-clicking on the tab bar brings up
-a configurable context menu that is defined by [`textadept.menu.tab_context_menu`][]. Tabs can
-be rearranged by clicking, dragging, and dropping them. You can turn off the tab bar by setting
-[`ui.tabs`][]. For example, in your *~/.textadept/init.lua*:
+The GUI version of Textadept has a tab bar that displays all of Textadept's open buffers by name,
+though it is only visible when two or more buffers are open. A '\*' character, if present,
+indicates there are unsaved changes in the marked buffer. There is only one tab bar for the
+entire application, even if there are multiple split views. When two or more views are open, the
+state of the tab bar applies only to the active view, and using the tab bar to switch between
+files also applies only to that view. Right-clicking on the tab bar brings up a configurable
+context menu that is defined by [`textadept.menu.tab_context_menu`][]. Tabs can be rearranged
+by clicking, dragging, and dropping them. You can toggle the visibility of the tab bar (as long
+as more than one buffer is open) using the "Buffer > Toggle Tab Bar" menu item. You can turn
+it off by default by setting [`ui.tabs`][]. For example, in your *~/.textadept/init.lua*:
 
 	ui.tabs = false
 
