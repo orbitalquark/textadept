@@ -4482,6 +4482,22 @@ function test_buffer_view_settings_segregation()
 	buffer:close()
 end
 
+function test_scroll_width_reset()
+	buffer.new()
+	local scroll_width = view.scroll_width
+	io.open_file(_HOME .. '/README.md')
+	ui.update()
+	assert(view.scroll_width > scroll_width, 'scroll width did not increase')
+	view:goto_buffer(-1)
+	ui.update()
+	assert_equal(view.scroll_width, scroll_width)
+	view:goto_buffer(1)
+	buffer:close()
+	ui.update()
+	assert_equal(view.scroll_width, scroll_width)
+	buffer:close()
+end
+
 function test_debugger_ansi_c()
 	if WIN32 or OSX then return end -- TODO:
 	local debugger = require('debugger')

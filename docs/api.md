@@ -4160,7 +4160,7 @@ The default is `0`.
 #### `view.h_scroll_bar` 
 
 Display the horizontal scroll bar.
-The default value is `true`.
+The default value is `true` in the GUI version and `false` in the terminal version.
 
 <a id="view.v_scroll_bar"></a>
 #### `view.v_scroll_bar` 
@@ -4172,17 +4172,18 @@ The default value is `true`.
 #### `view.scroll_width` 
 
 The horizontal scrolling pixel width.
-For performance, the view does not measure the display width of the buffer to determine
-the properties of the horizontal scroll bar, but uses an assumed width instead. To ensure
-the width of the currently visible lines can be scrolled use [`view.scroll_width_tracking`](#view.scroll_width_tracking).
-The default value is `2000`.
+If [`view.scroll_width_tracking`](#view.scroll_width_tracking) is `false`, the view uses this static width for horizontal
+scrolling instead of measuring the width of buffer lines.
+The default value is `1` in conjunction with [`view.scroll_width_tracking`](#view.scroll_width_tracking) being `true`. A
+value of `2000` is reasonable if [`view.scroll_width_tracking`](#view.scroll_width_tracking) is `false`.
 
 <a id="view.scroll_width_tracking"></a>
 #### `view.scroll_width_tracking` 
 
-Continuously update the horizontal scrolling width to match the maximum width of a displayed
-line beyond [`view.scroll_width`](#view.scroll_width).
-The default value is `false`.
+Grow (but never shrink) [`view.scroll_width`](#view.scroll_width) as needed to match the maximum width of a
+displayed line.
+Enabling this may have performance implications for buffers with long lines.
+The default value is `true`.
 
 <a id="view.end_at_last_line"></a>
 #### `view.end_at_last_line` 
