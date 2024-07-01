@@ -354,6 +354,38 @@ function test_locale_use_userhome()
 	for filename in lfs.walk(_USERHOME, '.lua') do check_localizations(filename, L) end
 end
 
+function test_file_io_open_file_detect_indentation()
+	local detect = io.detect_indentation
+
+	io.detect_indentation = true
+	local function set_spaces() buffer.use_tabs = false end
+	events.connect(events.BUFFER_NEW, set_spaces)
+	io.open_file(_HOME .. '/test/file_io/tabs')
+	assert(buffer.use_tabs, 'tabs were not detected')
+	buffer:close()
+	io.detect_indentation = false
+	io.open_file(_HOME .. '/test/file_io/tabs')
+	assert(not buffer.use_tabs, 'should not have detected tabs')
+	buffer:close()
+	events.disconnect(events.BUFFER_NEW, set_spaces)
+
+	io.detect_indentation = true
+	local function set_tabs() buffer.use_tabs, buffer.tab_width = true, 4 end
+	events.connect(events.BUFFER_NEW, set_tabs)
+	io.open_file(_HOME .. '/test/file_io/spaces')
+	assert(not buffer.use_tabs, 'spaces were not detected')
+	assert_equal(buffer.tab_width, 2)
+	buffer:close()
+	io.detect_indentation = false
+	io.open_file(_HOME .. '/test/file_io/spaces')
+	assert(buffer.use_tabs, 'should not have detected spaces')
+	assert_equal(buffer.tab_width, 4)
+	buffer:close()
+	events.disconnect(events.BUFFER_NEW, set_tabs)
+
+	io.detect_indentation = detect -- restore
+end
+
 function test_file_io_open_file_detect_encoding()
 	io.recent_files = {} -- clear
 	local recent_files = {}

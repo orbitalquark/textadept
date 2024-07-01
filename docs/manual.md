@@ -115,6 +115,7 @@ Here is a simple *~/.textadept/init.lua* for illustration:
 	end
 
 	-- Always use spaces for indentation.
+	io.detect_indentation = false
 	buffer.use_tabs = false
 	buffer.tab_width = 2
 
@@ -807,9 +808,16 @@ Textadept attempts to auto-detect a file's line end mode (EOL mode), falling bac
 ("\r\n") by default on Windows, and LF ('\n') on all other platforms. You can manually change
 the line ending mode using the "Buffer > EOL Mode" menu.
 
-Textadept does not attempt to auto-detect a file's indentation. The default indentation setting
-is a tab representing 8 spaces, but you can specify your preferred indentation settings globally,
-and on a language-specific basis. For example, in your *~/.textadept/init.lua*:
+Textadept attempts to auto-detect a file's indentation settings, but it is a very rudimentary
+check: if any non-blank line starts with a tab, then tabs are used; otherwise, for the first
+non-blank line that starts with two or more spaces, that number of spaces is used. (Files with
+mixed indentation are more prone to having their indentation settings incorrectly detected.) If
+Textadept cannot detect a file's indentation, the default setting is a tab representing
+8 spaces. However, you can specify your preferred indentation settings globally, and on a
+language-specific basis. For example, in your *~/.textadept/init.lua*:
+
+	-- Disallow auto-detection of indentation.
+	io.detect_indentation = false
 
 	-- Default indentation settings for all buffers.
 	buffer.use_tabs = false

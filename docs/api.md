@@ -5435,6 +5435,14 @@ Extends Lua's [`io`](#io) library with Textadept functions for working with file
 
 ### Fields defined by `io`
 
+<a id="io.detect_indentation"></a>
+#### `io.detect_indentation` 
+
+Whether or not to attempt to detect indentation settings for opened files.
+If any non-blank line starts with a tab, tabs are used. Otherwise, for the first non-blank
+line that starts with two or more spaces, that number of spaces is used.
+The default value is `true`.
+
 <a id="io.encodings"></a>
 #### `io.encodings` &lt;table&gt;
 
