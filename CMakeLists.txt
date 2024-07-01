@@ -98,7 +98,7 @@ endif()
 FetchContent_Declare(scinterm URL ${scinterm_url})
 FetchContent_MakeAvailable(scinterm)
 # Scintillua.
-set(scintillua_zip scintillua_6.3.zip)
+set(scintillua_zip 0c9294695920daa397a67d960e003908c5979bb3.zip)
 set(scintillua_url file://${deps_dir}/${scintillua_zip})
 if(NIGHTLY)
 	set(scintillua_zip default.zip)
