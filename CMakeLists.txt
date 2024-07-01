@@ -109,7 +109,7 @@ endif()
 FetchContent_Declare(scintillua URL ${scintillua_url})
 FetchContent_MakeAvailable(scintillua)
 # Lua.
-set(lua_tgz lua-5.4.6.tar.gz)
+set(lua_tgz lua-5.4.7.tar.gz)
 set(lua_url file://${deps_dir}/${lua_tgz})
 if(NOT EXISTS ${deps_dir}/${lua_tgz})
 	set(lua_url https://www.lua.org/ftp/${lua_tgz})
