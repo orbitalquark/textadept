@@ -521,9 +521,23 @@ function test_file_io_set_encoding()
 	assert_equal(buffer.encoding, 'CP1252')
 	assert_equal(buffer.code_page, buffer.CP_UTF8)
 	assert_equal(buffer:get_text(), text) -- fundamentally the same
+	assert(buffer.modify, 'buffer should be dirty')
 	assert_equal(buffer.current_pos, pos)
-	buffer:reload()
-	buffer:close()
+	buffer:close(true)
+
+	io.open_file(_HOME .. '/test/file_io/cp936')
+	assert_equal(buffer.encoding, 'CP1252')
+	text = '中文\n'
+	assert(buffer:get_text() ~= text, 'unexpected characters')
+	buffer:set_encoding('CP936')
+	assert_equal(buffer.encoding, 'CP936')
+	assert_equal(buffer:get_text(), text)
+	assert(not buffer.modify, 'buffer should not be dirty')
+	buffer:set_encoding('UTF-16')
+	assert_equal(buffer.encoding, 'UTF-16')
+	assert_equal(buffer:get_text(), text)
+	assert(buffer.modify, 'buffer should be dirty')
+	buffer:close(true)
 
 	assert_raises(function() buffer:set_encoding(true) end, 'string/nil expected, got boolean')
 end

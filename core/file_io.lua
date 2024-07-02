@@ -183,17 +183,22 @@ local function set_encoding(buffer, encoding)
 	assert_type(encoding, 'string/nil', 1)
 	local pos, first_visible_line = buffer.current_pos, view.first_visible_line
 	local text = buffer:get_text()
-	if buffer.encoding then
-		text = text:iconv(buffer.encoding, 'UTF-8')
-		if encoding then text = text:iconv(encoding, buffer.encoding) end
+	local bytes = buffer.encoding and text:iconv(buffer.encoding, 'UTF-8') or text
+	if buffer.encoding and encoding then
+		-- Some single-byte to multi-byte transforms need an extra conversion step
+		-- (e.g. CP1252 to UTF-16), but other single-byte to single-byte transforms do
+		-- not (e.g. CP1252 to CP936).
+		local ok, conv = pcall(string.iconv, bytes, encoding, buffer.encoding)
+		text = ok and conv or bytes
 	end
+	local changed = text ~= bytes
 	if encoding then text = text:iconv('UTF-8', encoding) end
 	buffer:target_whole_document()
 	buffer:replace_target(text)
 	buffer:goto_pos(pos)
 	view.first_visible_line = first_visible_line
-	buffer.encoding = encoding
-	buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
+	buffer.encoding, buffer.code_page = encoding, encoding and buffer.CP_UTF8 or 0
+	if not changed then buffer:set_save_point() end
 end
 
 -- LuaDoc is in core/.buffer.luadoc.
