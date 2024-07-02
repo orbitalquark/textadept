@@ -780,16 +780,24 @@ terminal requires pressing `Enter`.)
 
 ##### Encoding
 
-Textadept has the ability to work with files encoded in one of many different encodings, but by
-default it only attempts to read UTF-8, ASCII, CP1252, and UTF-16 files, in that order. If you work
-with files that have other encodings, you will need to add them to [`io.encodings`][], Textadept's
-known encoding list, before attempting to open one. For example, in your *~/.textadept/init.lua*:
+Textadept has the ability to work with files encoded in one of many different encodings,
+but by default it only attempts to read UTF-8, ASCII, CP1252, and UTF-16 files, in that
+order. If you often work with files that have other encodings, you ought to add them to
+[`io.encodings`][], Textadept's known encoding list, before attempting to open one. For example,
+in your *~/.textadept/init.lua*:
 
 	io.encodings[#io.encodings + 1] = 'UTF-32'
 	table.insert(io.encodings, 3, 'Macintosh') -- before CP1252
 
-You can convert a buffer's encoding using the "Buffer > Encoding" menu or
-[`buffer:set_encoding()`][]. You can extend the menu to include more encodings. For example,
+If you open a file whose encoding was detected incorrectly, but you do not wish to alter
+`io.encodings`, you can try picking one of the encodings in the "Buffer > Encoding" menu, or you
+can use the [Lua Command Entry](#lua-command-entry) in conjunction with [`buffer:set_encoding()`][]
+to specify a different encoding. For example, if Textadept incorrectly detected a CP936 file
+as CP1252, running `set_encoding('CP936')` switches to CP936.
+
+Both the "Buffer > Encoding" menu and `buffer:set_encoding()` allow you to change a buffer's
+encoding in place. If the buffer's contents on disk would change, the buffer will be marked
+as having unsaved changes. You can extend the menu to include more encodings. For example,
 in your *~/.textadept/init.lua*:
 
 	local menu = textadept.menu.menubar['Buffer/Encoding']
