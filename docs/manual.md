@@ -809,12 +809,12 @@ Textadept attempts to auto-detect a file's line end mode (EOL mode), falling bac
 the line ending mode using the "Buffer > EOL Mode" menu.
 
 Textadept attempts to auto-detect a file's indentation settings, but it is a very rudimentary
-check: if any non-blank line starts with a tab, then tabs are used; otherwise, for the first
-non-blank line that starts with two or more spaces, that number of spaces is used. (Files with
-mixed indentation are more prone to having their indentation settings incorrectly detected.) If
-Textadept cannot detect a file's indentation, the default setting is a tab representing
-8 spaces. However, you can specify your preferred indentation settings globally, and on a
-language-specific basis. For example, in your *~/.textadept/init.lua*:
+check: if any non-blank line starts with a tab, then tabs are used; otherwise, for the
+first non-blank line that starts with between two and eight spaces, that number of spaces
+is used. (Files with mixed indentation are more prone to having their indentation settings
+incorrectly detected.) If Textadept cannot detect a file's indentation, the default setting
+is a tab representing 8 spaces. However, you can specify your preferred indentation settings
+globally, and on a language-specific basis. For example, in your *~/.textadept/init.lua*:
 
 	-- Disallow auto-detection of indentation.
 	io.detect_indentation = false

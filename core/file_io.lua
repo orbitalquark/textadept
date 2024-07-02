@@ -39,7 +39,7 @@ for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 
 --- Whether or not to attempt to detect indentation settings for opened files.
 -- If any non-blank line starts with a tab, tabs are used. Otherwise, for the first non-blank
--- line that starts with two or more spaces, that number of spaces is used.
+-- line that starts with between two and eight spaces, that number of spaces is used.
 -- The default value is `true`.
 io.detect_indentation = true
 
@@ -135,7 +135,7 @@ function io.open_file(filenames, encodings)
 			if text:find('\n\t+%S') then
 				buffer.use_tabs = true
 			else
-				local s, e = text:find('\n()[ ][ ]+()%S')
+				local s, e = text:find('\n()   ? ? ? ? ? ?()%S')
 				if s and e then buffer.use_tabs, buffer.tab_width = false, e - 1 - s end
 			end
 		end

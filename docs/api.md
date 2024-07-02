@@ -5440,7 +5440,7 @@ Extends Lua's [`io`](#io) library with Textadept functions for working with file
 
 Whether or not to attempt to detect indentation settings for opened files.
 If any non-blank line starts with a tab, tabs are used. Otherwise, for the first non-blank
-line that starts with two or more spaces, that number of spaces is used.
+line that starts with between two and eight spaces, that number of spaces is used.
 The default value is `true`.
 
 <a id="io.encodings"></a>
