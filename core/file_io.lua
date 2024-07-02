@@ -171,16 +171,17 @@ end
 local function set_encoding(buffer, encoding)
 	assert_type(encoding, 'string/nil', 1)
 	local pos, first_visible_line = buffer.current_pos, view.first_visible_line
-	local text = buffer:get_text()
-	local bytes = buffer.encoding and text:iconv(buffer.encoding, 'UTF-8') or text
-	if buffer.encoding and encoding then
+	local text, changed = buffer:get_text(), false
+	if buffer.encoding then
+		text = text:iconv(buffer.encoding, 'UTF-8')
 		-- Some single-byte to multi-byte transforms need an extra conversion step
 		-- (e.g. CP1252 to UTF-16), but other single-byte to single-byte transforms do
 		-- not (e.g. CP1252 to CP936).
-		local ok, conv = pcall(string.iconv, bytes, encoding, buffer.encoding)
-		text = ok and conv or bytes
+		if encoding then
+			local ok, conv = pcall(string.iconv, text, encoding, buffer.encoding)
+			if ok then text, changed = conv, true end
+		end
 	end
-	local changed = text ~= bytes
 	if encoding then text = text:iconv('UTF-8', encoding) end
 	buffer:target_whole_document()
 	buffer:replace_target(text)
