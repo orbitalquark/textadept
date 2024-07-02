@@ -417,9 +417,6 @@ function test_file_io_open_file_detect_encoding()
 	assert_equal(io.recent_files, recent_files)
 
 	assert_raises(function() io.open_file(1) end, 'string/table/nil expected, got number')
-	assert_raises(function() io.open_file('/tmp/foo', true) end,
-		'string/table/nil expected, got boolean')
-	-- TODO: encoding failure
 end
 
 function test_file_io_open_file_detect_newlines()
@@ -430,24 +427,6 @@ function test_file_io_open_file_detect_newlines()
 	for filename, mode in pairs(files) do
 		io.open_file(filename)
 		assert_equal(buffer.eol_mode, mode)
-		buffer:close()
-	end
-end
-
-function test_file_io_open_file_with_encoding()
-	local num_buffers = #_BUFFERS
-	local files = {
-		file(_HOME .. '/test/file_io/utf8'), --
-		file(_HOME .. '/test/file_io/cp1252'), --
-		file(_HOME .. '/test/file_io/utf16')
-	}
-	local encodings = {nil, 'CP1252', 'UTF-16'}
-	io.open_file(files, encodings)
-	assert_equal(#_BUFFERS, num_buffers + #files)
-	for i = #files, 1, -1 do
-		view:goto_buffer(_BUFFERS[num_buffers + i])
-		assert_equal(buffer.filename, files[i])
-		if encodings[i] then assert_equal(buffer.encoding, encodings[i]) end
 		buffer:close()
 	end
 end

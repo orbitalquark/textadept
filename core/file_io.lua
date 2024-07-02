@@ -80,10 +80,7 @@ io.encodings = {'UTF-8', 'ASCII', 'CP1252', 'UTF-16'}
 -- Emits `events.FILE_OPENED`.
 -- @param[opt] filenames Optional string filename or table of filenames to open. If `nil`,
 --	the user is prompted with a fileselect dialog.
--- @param[optchain] encodings Optional string encoding or table of encodings file contents are in
---	(one encoding per file). If `nil`, encoding auto-detection is attempted via `io.encodings`.
-function io.open_file(filenames, encodings)
-	assert_type(encodings, 'string/table/nil', 2)
+function io.open_file(filenames)
 	if not assert_type(filenames, 'string/table/nil', 1) then
 		filenames = ui.dialogs.open{
 			title = _L['Open File'], multiple = true,
@@ -92,7 +89,6 @@ function io.open_file(filenames, encodings)
 		if not filenames then return end
 	end
 	if type(filenames) == 'string' then filenames = {filenames} end
-	if type(encodings) ~= 'table' then encodings = {encodings} end
 	for i = 1, #filenames do
 		local filename = lfs.abspath((filenames[i]:gsub('^file://', '')))
 		for _, buffer in ipairs(_BUFFERS) do
@@ -111,25 +107,18 @@ function io.open_file(filenames, encodings)
 			if not text then goto continue end -- filename exists, but cannot read it
 		end
 		local buffer = buffer.new()
-		if encodings[i] then
-			buffer.encoding, text = encodings[i], text:iconv('UTF-8', encodings[i])
-		else
-			-- Try to detect character encoding and convert to UTF-8.
-			local has_zeroes = text:sub(1, 65535):find('\0')
-			for _, encoding in ipairs(io.encodings) do
-				if not has_zeroes or encoding:find('^UTF') then
-					local ok, conv = pcall(string.iconv, text, 'UTF-8', encoding)
-					if ok then
-						buffer.encoding, text = encoding, conv
-						goto encoding_detected
-					end
-				end
-			end
-			assert(has_zeroes, _L['Encoding conversion failed.'])
-			buffer.encoding = nil -- binary (default was 'UTF-8')
+		-- Try to detect character encoding and convert to UTF-8.
+		-- A nil encoding means the file is treated as a binary file.
+		local encoding, has_zeroes = nil, text:sub(1, 65535):find('\0')
+		for _, enc in ipairs(io.encodings) do
+			if has_zeroes and not enc:find('^UTF') then goto continue end -- non-UTF cannot handle \0
+			local ok, conv = pcall(string.iconv, text, 'UTF-8', enc)
+			if not ok then goto continue end
+			encoding, text = enc, conv
+			break
+			::continue::
 		end
-		::encoding_detected::
-		buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
+		buffer.encoding, buffer.code_page = encoding, encoding and buffer.CP_UTF8 or 0
 		-- Detect indentation.
 		if io.detect_indentation then
 			if text:find('\n\t+%S') then

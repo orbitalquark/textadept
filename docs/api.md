@@ -5522,7 +5522,7 @@ Return:
 - string root or nil
 
 <a id="io.open_file"></a>
-#### `io.open_file`([*filenames*[, *encodings*]])
+#### `io.open_file`([*filenames*])
 
 Opens *filenames*, a string filename or list of filenames, or the user-selected filename(s).
 Emits [`events.FILE_OPENED`](#events.FILE_OPENED).
@@ -5531,8 +5531,6 @@ Parameters:
 
 - *filenames*:  Optional string filename or table of filenames to open. If `nil`,
 	the user is prompted with a fileselect dialog.
-- *encodings*:  Optional string encoding or table of encodings file contents are in
-	(one encoding per file). If `nil`, encoding auto-detection is attempted via [`io.encodings`](#io.encodings).
 
 <a id="io.open_recent_file"></a>
 #### `io.open_recent_file`()
