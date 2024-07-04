@@ -170,6 +170,12 @@ local M = {}
 -- This event is never emitted when Textadept is running in the terminal.
 -- @field FOCUS
 
+--- Emitted after code folding is done by the lexer.
+-- This is useful for performing manual folding and manipulation of the folding table 
+-- `buffer.fold_level` after lexer is done folding the code, where the built-in facilities for
+-- code folding doesn't suffice.
+-- @field FOLDED
+
 --- Emitted when clicking the mouse on text that has an indicator present.
 -- Arguments:
 --
