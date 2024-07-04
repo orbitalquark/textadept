@@ -1,4 +1,4 @@
-## Textadept 12.4 Manual
+## Textadept 12.5 beta Manual
 
 **Contents**
 
@@ -115,6 +115,7 @@ Here is a simple *~/.textadept/init.lua* for illustration:
 	end
 
 	-- Always use spaces for indentation.
+	io.detect_indentation = false
 	buffer.use_tabs = false
 	buffer.tab_width = 2
 
@@ -404,15 +405,16 @@ mentioned previously, even in the terminal version. For example, in your *~/.tex
 
 #### Tab Bar
 
-The GUI version of Textadept has a tab bar that displays all of Textadept's open buffers
-by name, though it is only visible when two or more buffers are open. A '\*' character, if
-present, indicates there are unsaved changes in the marked buffer. There is only one tab bar
-for the entire application, even if there are multiple split views. When two or more views
-are open, the state of the tab bar applies only to the active view, and using the tab bar to
-switch between files also applies only to that view. Right-clicking on the tab bar brings up
-a configurable context menu that is defined by [`textadept.menu.tab_context_menu`][]. Tabs can
-be rearranged by clicking, dragging, and dropping them. You can turn off the tab bar by setting
-[`ui.tabs`][]. For example, in your *~/.textadept/init.lua*:
+The GUI version of Textadept has a tab bar that displays all of Textadept's open buffers by name,
+though it is only visible when two or more buffers are open. A '\*' character, if present,
+indicates there are unsaved changes in the marked buffer. There is only one tab bar for the
+entire application, even if there are multiple split views. When two or more views are open, the
+state of the tab bar applies only to the active view, and using the tab bar to switch between
+files also applies only to that view. Right-clicking on the tab bar brings up a configurable
+context menu that is defined by [`textadept.menu.tab_context_menu`][]. Tabs can be rearranged
+by clicking, dragging, and dropping them. You can toggle the visibility of the tab bar (as long
+as more than one buffer is open) using the "Buffer > Toggle Tab Bar" menu item. You can turn
+it off by default by setting [`ui.tabs`][]. For example, in your *~/.textadept/init.lua*:
 
 	ui.tabs = false
 
@@ -806,9 +808,16 @@ Textadept attempts to auto-detect a file's line end mode (EOL mode), falling bac
 ("\r\n") by default on Windows, and LF ('\n') on all other platforms. You can manually change
 the line ending mode using the "Buffer > EOL Mode" menu.
 
-Textadept does not attempt to auto-detect a file's indentation. The default indentation setting
-is a tab representing 8 spaces, but you can specify your preferred indentation settings globally,
-and on a language-specific basis. For example, in your *~/.textadept/init.lua*:
+Textadept attempts to auto-detect a file's indentation settings, but it is a very rudimentary
+check: if any non-blank line starts with a tab, then tabs are used; otherwise, for the first
+non-blank line that starts with two or more spaces, that number of spaces is used. (Files with
+mixed indentation are more prone to having their indentation settings incorrectly detected.) If
+Textadept cannot detect a file's indentation, the default setting is a tab representing
+8 spaces. However, you can specify your preferred indentation settings globally, and on a
+language-specific basis. For example, in your *~/.textadept/init.lua*:
+
+	-- Disallow auto-detection of indentation.
+	io.detect_indentation = false
 
 	-- Default indentation settings for all buffers.
 	buffer.use_tabs = false
@@ -841,6 +850,10 @@ macOS, and `M-\` in the terminal version. You can toggle whitespace visibility f
 buffer via the "View > Toggle View Whitespace" menu item. Visible spaces are represented by
 dots, and visible tabs are represented by arrows. (The terminal version does not have default
 key bindings for either of these actions.)
+
+On the left side of each editor view are margins that show line numbers, [bookmarks](#bookmarks),
+and [fold markers](#code-folding). You can toggle the visibility of these margins using the
+"View > Toggle Margins" menu item.
 
 The GUI version of Textadept can show small guiding lines based on indentation level, and does so
 by default. You can toggle the visibility of these guides for the current view via the "View >

@@ -112,25 +112,26 @@
 -- Sometimes mirrors are not quite good enough. For example, perhaps the mirror's content needs to
 -- deviate slightly from its linked placeholder, like capitalizing the first letter. Or perhaps
 -- the mirror's contents should depend on the presence (or absence) of text in its linked
--- placeholder. This is where placeholder transforms come in handy. They have the following
--- syntax: "${*n*/*regex*/*format*/*options*}". *regex* is a [regular expression][] (regex)
--- to match against the content of placeholder *n*, *format* is a formatted replacement for
--- matched content, and *options* are regex options to use when matching. *format* may contain
--- any of the following:
+-- placeholder. This is where placeholder transforms come in handy.
+--
+-- Transforms use the "${*n*/*regex*/*format*/*options*}" syntax, where *regex* is a [regular
+-- expression][] (regex) to match against the content of placeholder *n*, *format* is a formatted
+-- replacement for matched content, and *options* are regex options to use when matching. *format*
+-- may contain any of the following:
 --
 -- - Plain text.
--- - "$*n*" and "${*n*}" sequences, which represent the content of the *n*th capture (*n*=0 is
+-- - "$*m*" and "${*m*}" sequences, which represent the content of the *m*th capture (*m*=0 is
 --	the entire match for this and all subsequent sequences).
--- - "${*n*:/upcase}", "${*n*:/downcase}", and "${*n*:/capitalize}" sequences, which
+-- - "${*m*:/upcase}", "${*m*:/downcase}", and "${*m*:/capitalize}" sequences, which
 --	represent the uppercase, lowercase, and capitalized forms, respectively, of the
---	content of the *n*th capture. You can define your own transformation function in
+--	content of the *m*th capture. You can define your own transformation function in
 --	`textadept.snippets.transform_methods`.
--- - A "${*n*:?*if*:*else*}" sequence, which inserts *if* if the content of capture *n* is
+-- - A "${*m*:?*if*:*else*}" sequence, which inserts *if* if the content of capture *m* is
 --	non-empty. Otherwise, *else* is used.
--- - A "${*n*:+*if*}" sequence, which inserts *if* if the content of capture *n* is
+-- - A "${*m*:+*if*}" sequence, which inserts *if* if the content of capture *m* is
 --	non-empty. Otherwise nothing is inserted.
--- - "${*n*:*default*}" and "${*n*:-*default*}" sequences, which insert *default* if the content
---	of capture *n* is empty. Otherwise, capture *n* is mirrored.
+-- - "${*m*:*default*}" and "${*m*:-*default*}" sequences, which insert *default* if the content
+--	of capture *m* is empty. Otherwise, capture *m* is mirrored.
 --
 -- *options* may include any of the following letters:
 --
@@ -678,7 +679,7 @@ function M.insert(text)
 	local trigger
 	if not assert_type(text, 'string/nil', 1) then
 		trigger, text = find_snippet()
-		if type(text) == 'table' then return false end -- assume lexer table and ignore
+		if type(text) == 'table' then text = nil end -- assume lexer table and ignore
 		if type(text) == 'function' then text = text() end
 		assert_type(text, 'string/nil', trigger or '?')
 	end

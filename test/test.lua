@@ -354,6 +354,38 @@ function test_locale_use_userhome()
 	for filename in lfs.walk(_USERHOME, '.lua') do check_localizations(filename, L) end
 end
 
+function test_file_io_open_file_detect_indentation()
+	local detect = io.detect_indentation
+
+	io.detect_indentation = true
+	local function set_spaces() buffer.use_tabs = false end
+	events.connect(events.BUFFER_NEW, set_spaces)
+	io.open_file(_HOME .. '/test/file_io/tabs')
+	assert(buffer.use_tabs, 'tabs were not detected')
+	buffer:close()
+	io.detect_indentation = false
+	io.open_file(_HOME .. '/test/file_io/tabs')
+	assert(not buffer.use_tabs, 'should not have detected tabs')
+	buffer:close()
+	events.disconnect(events.BUFFER_NEW, set_spaces)
+
+	io.detect_indentation = true
+	local function set_tabs() buffer.use_tabs, buffer.tab_width = true, 4 end
+	events.connect(events.BUFFER_NEW, set_tabs)
+	io.open_file(_HOME .. '/test/file_io/spaces')
+	assert(not buffer.use_tabs, 'spaces were not detected')
+	assert_equal(buffer.tab_width, 2)
+	buffer:close()
+	io.detect_indentation = false
+	io.open_file(_HOME .. '/test/file_io/spaces')
+	assert(buffer.use_tabs, 'should not have detected spaces')
+	assert_equal(buffer.tab_width, 4)
+	buffer:close()
+	events.disconnect(events.BUFFER_NEW, set_tabs)
+
+	io.detect_indentation = detect -- restore
+end
+
 function test_file_io_open_file_detect_encoding()
 	io.recent_files = {} -- clear
 	local recent_files = {}
@@ -846,6 +878,7 @@ function test_lfs_ext_walk()
 
 	assert_raises(function() lfs.walk() end, 'string expected, got nil')
 	assert_raises(function() lfs.walk(_HOME, 1) end, 'string/table/nil expected, got number')
+	assert_raises(function() lfs.walk('does-not-exist') end, 'directory not found: does-not-exist')
 	assert_raises(function() lfs.walk(_HOME, nil, true) end, 'number/nil expected, got boolean')
 end
 
@@ -3401,6 +3434,9 @@ function test_menu_menu_functions()
 	local use_tabs = buffer.use_tabs
 	textadept.menu.menubar['Buffer/Indentation/Toggle Use Tabs'][2]()
 	assert(buffer.use_tabs ~= use_tabs, 'use tabs not toggled')
+	local tabs = ui.tabs
+	textadept.menu.menubar['Buffer/Toggle Tab Bar'][2]()
+	assert(ui.tabs ~= tabs, 'tab bar not toggled')
 	view:split()
 	ui.update()
 	local size = view.size
@@ -4210,6 +4246,22 @@ function test_snippets_transform_options()
 	snippets.foo = nil
 end
 
+function test_snippets_lexer_specific()
+	buffer.new()
+	snippets.ansi_c = {lgg = 'lua_getglobal(${1:lua}, "${2:name}")'}
+	snippets.lua = {}
+	buffer:set_lexer('ansi_c')
+	buffer:add_text('lgg')
+	textadept.snippets.insert()
+	assert_equal(buffer:get_sel_text(), 'lua')
+	textadept.snippets.insert()
+	assert_equal(buffer:get_sel_text(), 'name')
+	textadept.snippets.insert()
+	assert_equal(buffer:get_text(), 'lua_getglobal(lua, "name")')
+	buffer:close(true)
+	snippets.ansi_c, snippets.lua = nil, nil
+end
+
 function test_lexer_api()
 	buffer.new()
 	buffer:set_lexer('lua')
@@ -4459,6 +4511,22 @@ function test_buffer_view_settings_segregation()
 	assert(buffer.use_tabs ~= use_tabs, 'custom buffer settings carried over to new buffer')
 	assert(buffer.tab_width ~= tab_width, 'custom buffer settings carried over to new buffer')
 	buffer:close()
+	buffer:close()
+end
+
+function test_scroll_width_reset()
+	buffer.new()
+	local scroll_width = view.scroll_width
+	io.open_file(_HOME .. '/README.md')
+	ui.update()
+	assert(view.scroll_width > scroll_width, 'scroll width did not increase')
+	view:goto_buffer(-1)
+	ui.update()
+	assert_equal(view.scroll_width, scroll_width)
+	view:goto_buffer(1)
+	buffer:close()
+	ui.update()
+	assert_equal(view.scroll_width, scroll_width)
 	buffer:close()
 end
 

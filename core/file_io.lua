@@ -37,6 +37,12 @@ for _, v in ipairs(file_io_events) do events[v:upper()] = v end
 -- - *filename*: The filename externally modified.
 -- @field _G.events.FILE_CHANGED
 
+--- Whether or not to attempt to detect indentation settings for opened files.
+-- If any non-blank line starts with a tab, tabs are used. Otherwise, for the first non-blank
+-- line that starts with two or more spaces, that number of spaces is used.
+-- The default value is `true`.
+io.detect_indentation = true
+
 --- Whether or not to ensure there is a final newline when saving text files.
 -- This has no effect on binary files.
 -- The default value is `false` on Windows, and `true` on Linux and macOS.
@@ -124,6 +130,15 @@ function io.open_file(filenames, encodings)
 		end
 		::encoding_detected::
 		buffer.code_page = buffer.encoding and buffer.CP_UTF8 or 0
+		-- Detect indentation.
+		if io.detect_indentation then
+			if text:find('\n\t+%S') then
+				buffer.use_tabs = true
+			else
+				local s, e = text:find('\n()[ ][ ]+()%S')
+				if s and e then buffer.use_tabs, buffer.tab_width = false, e - 1 - s end
+			end
+		end
 		-- Detect EOL mode.
 		local s, e = text:find('\r?\n')
 		if s then buffer.eol_mode = buffer[s ~= e and 'EOL_CRLF' or 'EOL_LF'] end

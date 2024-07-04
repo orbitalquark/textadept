@@ -2,6 +2,39 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+### 12.5 beta (01 Jul 2024)
+
+Download:
+
+- [Textadept 12.5 beta -- Windows][]
+- [Textadept 12.5 beta -- macOS 11+][]
+- [Textadept 12.5 beta -- Linux][]
+- [Textadept 12.5 beta -- Modules][]
+
+Bugfixes:
+
+- Fixed tab label not updating for silently created buffers.
+- Skip to next snippet placeholder if the word behind the caret is a lexer name with no snippet
+  text.
+- Fixed infinite loop when passing nonexistant directory to `lfs.walk()`.
+
+Changes:
+
+- Added menu item to toggle showing line margins.
+- Improve Fossil SCM support.
+- Updated Spanish and Portuguese translations.
+- Added menu item to toggle showing the tab bar.
+- Support dynamic horizontal scrollbar resizing.
+- Added basic auto-detection of file indentation, conrtrolled with [`io.detect_indentation`][].
+- Updated to [Lua][] 5.4.7.
+
+[Textadept 12.5 beta -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.5_beta/textadept_12.5_beta.win.zip
+[Textadept 12.5 beta -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.5_beta/textadept_12.5_beta.macOS.zip
+[Textadept 12.5 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.5_beta/textadept_12.5_beta.linux.tgz
+[Textadept 12.5 beta -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.5_beta/textadept_12.5_beta.modules.zip
+[`io.detect_indentation`]: api.html#io.detect_indentation
+[Lua]: https://lua.org
+
 ### 12.4 (01 May 2024)
 
 Download:
@@ -44,7 +77,7 @@ Bugfixes:
 
 - Fixed help files not showing up in Linux releases.
 - Fixed `^⌘` key sequences not working on macOS.
-- LSP: fixed diagnostics for some language servers that expect client diagnostic capababilities.
+- LSP: fixed diagnostics for some language servers that expect client diagnostic capabilities.
 - Scintilla: workaround potential crash when a line contains both left-to-right and right-to-left
   text.
 

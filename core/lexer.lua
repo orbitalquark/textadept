@@ -7,6 +7,7 @@ local M = dofile(_HOME .. '/lexers/lexer.lua')
 _G._LEXERPATH = string.format('%s/lexers;%s/lexers', _USERHOME, _HOME)
 
 M.property = setmetatable({}, {__index = function() return '' end}) -- avoid auto-initialization
+M.FOLD_BASE, M.FOLD_HEADER, M.FOLD_BLANK = 0x400, 0x2000, 0x1000 -- set in auto-initialization
 local names = M.names
 M.names = function(path) return names(path or _LEXERPATH) end
 

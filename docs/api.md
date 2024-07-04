@@ -1,4 +1,4 @@
-## Textadept 12.4 API Documentation
+## Textadept 12.5 beta API Documentation
 
 1. [_G](#_G)
 1. [_L](#_L)
@@ -4160,7 +4160,7 @@ The default is `0`.
 #### `view.h_scroll_bar` 
 
 Display the horizontal scroll bar.
-The default value is `true`.
+The default value is `true` in the GUI version and `false` in the terminal version.
 
 <a id="view.v_scroll_bar"></a>
 #### `view.v_scroll_bar` 
@@ -4172,17 +4172,18 @@ The default value is `true`.
 #### `view.scroll_width` 
 
 The horizontal scrolling pixel width.
-For performance, the view does not measure the display width of the buffer to determine
-the properties of the horizontal scroll bar, but uses an assumed width instead. To ensure
-the width of the currently visible lines can be scrolled use [`view.scroll_width_tracking`](#view.scroll_width_tracking).
-The default value is `2000`.
+If [`view.scroll_width_tracking`](#view.scroll_width_tracking) is `false`, the view uses this static width for horizontal
+scrolling instead of measuring the width of buffer lines.
+The default value is `1` in conjunction with [`view.scroll_width_tracking`](#view.scroll_width_tracking) being `true`. A
+value of `2000` is reasonable if [`view.scroll_width_tracking`](#view.scroll_width_tracking) is `false`.
 
 <a id="view.scroll_width_tracking"></a>
 #### `view.scroll_width_tracking` 
 
-Continuously update the horizontal scrolling width to match the maximum width of a displayed
-line beyond [`view.scroll_width`](#view.scroll_width).
-The default value is `false`.
+Grow (but never shrink) [`view.scroll_width`](#view.scroll_width) as needed to match the maximum width of a
+displayed line.
+Enabling this may have performance implications for buffers with long lines.
+The default value is `true`.
 
 <a id="view.end_at_last_line"></a>
 #### `view.end_at_last_line` 
@@ -5441,6 +5442,14 @@ Return:
 Extends Lua's [`io`](#io) library with Textadept functions for working with files.
 
 ### Fields defined by `io`
+
+<a id="io.detect_indentation"></a>
+#### `io.detect_indentation` 
+
+Whether or not to attempt to detect indentation settings for opened files.
+If any non-blank line starts with a tab, tabs are used. Otherwise, for the first non-blank
+line that starts with two or more spaces, that number of spaces is used.
+The default value is `true`.
 
 <a id="io.encodings"></a>
 #### `io.encodings` &lt;table&gt;
@@ -8551,25 +8560,26 @@ The end tag mirrors whatever name you type into the start tag.
 Sometimes mirrors are not quite good enough. For example, perhaps the mirror's content needs to
 deviate slightly from its linked placeholder, like capitalizing the first letter. Or perhaps
 the mirror's contents should depend on the presence (or absence) of text in its linked
-placeholder. This is where placeholder transforms come in handy. They have the following
-syntax: "${*n*/*regex*/*format*/*options*}". *regex* is a [regular expression][] (regex)
-to match against the content of placeholder *n*, *format* is a formatted replacement for
-matched content, and *options* are regex options to use when matching. *format* may contain
-any of the following:
+placeholder. This is where placeholder transforms come in handy.
+
+Transforms use the "${*n*/*regex*/*format*/*options*}" syntax, where *regex* is a [regular
+expression][] (regex) to match against the content of placeholder *n*, *format* is a formatted
+replacement for matched content, and *options* are regex options to use when matching. *format*
+may contain any of the following:
 
 - Plain text.
-- "$*n*" and "${*n*}" sequences, which represent the content of the *n*th capture (*n*=0 is
+- "$*m*" and "${*m*}" sequences, which represent the content of the *m*th capture (*m*=0 is
 	the entire match for this and all subsequent sequences).
-- "${*n*:/upcase}", "${*n*:/downcase}", and "${*n*:/capitalize}" sequences, which
+- "${*m*:/upcase}", "${*m*:/downcase}", and "${*m*:/capitalize}" sequences, which
 	represent the uppercase, lowercase, and capitalized forms, respectively, of the
-	content of the *n*th capture. You can define your own transformation function in
+	content of the *m*th capture. You can define your own transformation function in
 	[`textadept.snippets.transform_methods`](#textadept.snippets.transform_methods).
-- A "${*n*:?*if*:*else*}" sequence, which inserts *if* if the content of capture *n* is
+- A "${*m*:?*if*:*else*}" sequence, which inserts *if* if the content of capture *m* is
 	non-empty. Otherwise, *else* is used.
-- A "${*n*:+*if*}" sequence, which inserts *if* if the content of capture *n* is
+- A "${*m*:+*if*}" sequence, which inserts *if* if the content of capture *m* is
 	non-empty. Otherwise nothing is inserted.
-- "${*n*:*default*}" and "${*n*:-*default*}" sequences, which insert *default* if the content
-	of capture *n* is empty. Otherwise, capture *n* is mirrored.
+- "${*m*:*default*}" and "${*m*:-*default*}" sequences, which insert *default* if the content
+	of capture *m* is empty. Otherwise, capture *m* is mirrored.
 
 *options* may include any of the following letters:
 
