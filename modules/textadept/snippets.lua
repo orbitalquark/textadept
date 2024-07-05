@@ -187,7 +187,7 @@
 local M = {}
 
 --- The snippet placeholder indicator number.
-M.INDIC_PLACEHOLDER = _SCINTILLA.new_indic_number()
+M.INDIC_PLACEHOLDER = view.new_indic_number()
 
 --- List of directory paths to look for snippet files in.
 -- Filenames are of the form *lexer.trigger.ext* or *trigger.ext* (*.ext* is an optional,
@@ -221,8 +221,8 @@ M.transform_methods = {
 	end
 }
 
-local INDIC_SNIPPET = _SCINTILLA.new_indic_number()
-local INDIC_CURRENTPLACEHOLDER = _SCINTILLA.new_indic_number()
+local INDIC_SNIPPET = view.new_indic_number()
+local INDIC_CURRENTPLACEHOLDER = view.new_indic_number()
 
 --- Map of [snippet](#textadept.snippets) triggers with their snippet text or functions that
 -- return such text, with language-specific snippets tables assigned to a lexer name key.

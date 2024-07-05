@@ -460,20 +460,15 @@ static void get_property(lua_State *L) {
 
 // `buffer.__index` metamethod.
 static int buffer_index(lua_State *L) {
-	// If the key is a Scintilla function, return a callable closure.
-	if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions"), lua_pushvalue(L, 2),
-		lua_rawget(L, -2) == LUA_TTABLE)
-		return (lua_pushcclosure(L, call_scintilla_lua, 1), 1);
-	// If the key is a Scintilla property, determine if it is an indexible one or not. If so,
-	// return a table with the appropriate metatable; otherwise call Scintilla to get the
-	// property's value.
-	if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"), lua_pushvalue(L, 2),
-		lua_rawget(L, -2) == LUA_TTABLE)
-		return (get_property(L), 1);
-	// If the key is a Scintilla constant, return its value.
-	if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants"), lua_pushvalue(L, 2),
-		lua_rawget(L, -2) == LUA_TNUMBER)
-		return 1; // already pushed
+	if (lua_getglobal(L, "_SCINTILLA"), lua_pushvalue(L, 2), lua_rawget(L, -2)) {
+		if (lua_type(L, -1) != LUA_TTABLE) return 1; // constant
+		// If the key is a Scintilla function (4 iface values), return a callable closure.
+		// If the key is a Scintilla property, determine if it is an indexible one or not. If so,
+		// return a table with the appropriate metatable; otherwise call Scintilla to get the
+		// property's value.
+		return (
+			lua_rawlen(L, -1) == 4 ? lua_pushcclosure(L, call_scintilla_lua, 1) : get_property(L), 1);
+	}
 	if (strcmp(lua_tostring(L, 2), "tab_label") == 0 &&
 		lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
 		return luaL_argerror(L, 3, "write-only property");
@@ -501,9 +496,9 @@ static void set_property(lua_State *L) {
 
 // `buffer.__newindex` metamethod.
 static int buffer_newindex(lua_State *L) {
-	// If the key is a Scintilla property, call Scintilla to set its value.
-	if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"), lua_pushvalue(L, 2),
-		lua_rawget(L, -2) == LUA_TTABLE)
+	// If the key is a Scintilla property (more than 4 iface values), call Scintilla to set its value.
+	if (lua_getglobal(L, "_SCINTILLA"), lua_pushvalue(L, 2),
+		lua_rawget(L, -2) == LUA_TTABLE && lua_rawlen(L, -1) > 4)
 		return (set_property(L), 0);
 	if (strcmp(lua_tostring(L, 2), "tab_label") == 0 &&
 		lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
@@ -861,12 +856,6 @@ static bool init_lua(int argc, char **argv) {
 
 	if (lua = L, !run_file("core/init.lua"))
 		return (lua_close(L), lua = NULL, exit_status = 1, false);
-	// Store iface into the registry for quick access.
-	lua_getglobal(L, "_SCINTILLA");
-	lua_getfield(L, -1, "constants"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_constants");
-	lua_getfield(L, -1, "functions"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_functions");
-	lua_getfield(L, -1, "properties"), lua_setfield(L, LUA_REGISTRYINDEX, "ta_properties");
-	lua_pop(L, 1); // pop _SCINTILLA
 	return (exit_status = 0, true);
 }
 
@@ -1114,20 +1103,15 @@ static int view_index(lua_State *L) {
 		PaneInfo info = get_pane_info_from_view(lua_toview(L, 1));
 		return (info.is_split ? lua_pushinteger(L, info.size) : lua_pushnil(L), 1);
 	}
-	// If the key is a Scintilla function, return a callable closure.
-	if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_functions"), lua_pushvalue(L, 2),
-		lua_rawget(L, -2) == LUA_TTABLE)
-		return (lua_pushcclosure(L, call_scintilla_lua, 1), 1);
-	// If the key is a Scintilla property, determine if it is an indexible one or not. If so,
-	// return a table with the appropriate metatable; otherwise call Scintilla to get the
-	// property's value.
-	if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"), lua_pushvalue(L, 2),
-		lua_rawget(L, -2) == LUA_TTABLE)
-		return (get_property(L), 1);
-	// If the key is a Scintilla constant, return its value.
-	if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_constants"), lua_pushvalue(L, 2),
-		lua_rawget(L, -2) == LUA_TNUMBER)
-		return 1; // already pushed
+	if (lua_getglobal(L, "_SCINTILLA"), lua_pushvalue(L, 2), lua_rawget(L, -2)) {
+		if (lua_type(L, -1) != LUA_TTABLE) return 1; // constant or function
+		// If the key is a Scintilla function (4 iface values), return a callable closure.
+		// If the key is a Scintilla property, determine if it is an indexible one or not. If so,
+		// return a table with the appropriate metatable; otherwise call Scintilla to get the
+		// property's value.
+		return (
+			lua_rawlen(L, -1) == 4 ? lua_pushcclosure(L, call_scintilla_lua, 1) : get_property(L), 1);
+	}
 	return (lua_settop(L, 2), lua_rawget(L, 1), 1);
 }
 
@@ -1140,8 +1124,9 @@ static int view_newindex(lua_State *L) {
 		if (info.is_split) set_pane_size(info.self, fmax(luaL_checkinteger(L, 3), 0));
 		return 0;
 	}
-	if (lua_getfield(L, LUA_REGISTRYINDEX, "ta_properties"), lua_pushvalue(L, 2),
-		lua_rawget(L, -2) == LUA_TTABLE)
+	// If the key is a Scintilla property (more than 4 iface values), call Scintilla to set its value.
+	if (lua_getglobal(L, "_SCINTILLA"), lua_pushvalue(L, 2),
+		lua_rawget(L, -2) == LUA_TTABLE && lua_rawlen(L, -1) > 4)
 		return (set_property(L), 0);
 	return (lua_settop(L, 3), lua_rawset(L, 1), 0);
 }

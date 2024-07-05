@@ -89,7 +89,7 @@ M.highlight_all_matches = false
 M.show_filenames_in_progressbar = false
 
 --- The find results highlight indicator number.
-M.INDIC_FIND = _SCINTILLA.new_indic_number()
+M.INDIC_FIND = view.new_indic_number()
 
 -- Events.
 local find_events = {'find_result_found', 'find_wrapped'}
@@ -416,7 +416,7 @@ events.connect(events.REPLACE, function(text)
 	buffer:set_sel(buffer.target_start, buffer.target_end)
 end)
 
-local INDIC_REPLACE = _SCINTILLA.new_indic_number()
+local INDIC_REPLACE = view.new_indic_number()
 -- Replaces all found text in the current buffer (ignores "Find in Files").
 -- If any text is selected (other than text just found), only found text in that selection
 -- is replaced.

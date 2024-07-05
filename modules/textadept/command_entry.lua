@@ -142,14 +142,15 @@ local function complete_lua()
 	local XPM = textadept.editing.XPM_IMAGES
 	local sep = string.char(M.auto_c_type_separator)
 	if not ok or symbol == 'buffer' or symbol == 'view' then
-		local sci = _SCINTILLA
-		local global_envs = not ok and
-			{buffer, view, ui, _G, textadept, sci.functions, sci.properties, sci.constants} or op == ':' and
-			{sci.functions} or {sci.properties, sci.constants}
+		local sci, is_sci_func = _SCINTILLA, function(v) return type(v) == 'table' and #v == 4 end
+		local global_envs = not ok and {buffer, view, ui, _G, textadept, sci} or {sci}
 		for _, t in ipairs(global_envs) do
 			for k, v in pairs(t) do
 				if type(k) ~= 'string' or not k:find(part) then goto continue end
-				local xpm = (type(v) == 'function' or t == sci.functions) and XPM.METHOD or XPM.VARIABLE
+				if t == sci and op == ':' and not is_sci_func(v) then goto continue end
+				if t == sci and op == '.' and is_sci_func(v) then goto continue end
+				local xpm = (type(v) == 'function' or (t == sci and is_sci_func(v))) and XPM.METHOD or
+					XPM.VARIABLE
 				cmpls[#cmpls + 1] = k .. sep .. xpm
 				::continue::
 			end

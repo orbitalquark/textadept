@@ -2,7 +2,6 @@
 
 1. [_G](#_G)
 1. [_L](#_L)
-1. [_SCINTILLA](#_SCINTILLA)
 1. [args](#args)
 1. [buffer](#buffer)
 1. [events](#events)
@@ -265,112 +264,6 @@ Map of all messages used by Textadept to their localized form.
 If the localized version of a given message does not exist, the non-localized message is
 returned. Use `rawget()` to check if a localization exists.
 Note: the terminal version ignores any "_" or "&" mnemonics the GUI version would use.
-
----
-<a id="_SCINTILLA"></a>
-## The `_SCINTILLA` Module
----
-
-Scintilla constants, functions, and properties.
-Do not modify anything in this module. Doing so will have unpredictable consequences.
-
-### Fields defined by `_SCINTILLA`
-
-<a id="_SCINTILLA.constants"></a>
-#### `_SCINTILLA.constants` &lt;table&gt;
-
-Map of Scintilla constant names to their numeric values.
-
-See also:
-
-- [`buffer`](#buffer)
-- [`view`](#view)
-
-<a id="_SCINTILLA.events"></a>
-#### `_SCINTILLA.events` &lt;table&gt;
-
-Map of Scintilla event IDs to tables of event names and event parameters.
-
-<a id="_SCINTILLA.functions"></a>
-#### `_SCINTILLA.functions` &lt;table&gt;
-
-Map of Scintilla function names to tables containing their IDs, return types, wParam types,
-and lParam types. Types are as follows:
-
-- `0`: Void.
-- `1`: Integer.
-- `2`: Length of the given lParam string.
-- `3`: Integer position.
-- `4`: Color, in "0xBBGGRR" format or "0xAABBGGRR" format where supported.
-- `5`: Boolean `true` or `false`.
-- `6`: Bitmask of Scintilla key modifiers and a key value.
-- `7`: String parameter.
-- `8`: String return value.
-
-<a id="_SCINTILLA.properties"></a>
-#### `_SCINTILLA.properties` &lt;table&gt;
-
-Map of Scintilla property names to table values containing their "get" function IDs, "set"
-function IDs, return types, and wParam types.
-The wParam type will be non-zero if the property is indexable.
-Types are the same as in the [`_SCINTILLA.functions`](#_SCINTILLA.functions) table.
-
-
-### Functions defined by `_SCINTILLA`
-
-<a id="_SCINTILLA.new_image_type"></a>
-#### `_SCINTILLA.new_image_type`()
-
-Returns a unique image type identier number for use with [`view:register_image()`](#view.register_image) and
-[`view:register_rgba_image()`](#view.register_rgba_image).
-Use this function for custom image types in order to prevent clashes with identifiers of
-other custom image types.
-
-Usage:
-
-- `local image_type = _SCINTILLA.new_image_type()
-`
-
-<a id="_SCINTILLA.new_indic_number"></a>
-#### `_SCINTILLA.new_indic_number`()
-
-Returns a unique indicator number for use with custom indicators.
-Use this function for custom indicators in order to prevent clashes with identifiers of
-other custom indicators.
-
-Usage:
-
-- `local indic_num = _SCINTILLA.new_indic_number()
-`
-
-See also:
-
-- [`view.indic_style`](#view.indic_style)
-
-<a id="_SCINTILLA.new_marker_number"></a>
-#### `_SCINTILLA.new_marker_number`()
-
-Returns a unique marker number for use with [`view:marker_define()`](#view.marker_define).
-Use this function for custom markers in order to prevent clashes with identifiers of other
-custom markers.
-
-Usage:
-
-- `local marknum = _SCINTILLA.new_marker_number()
-`
-
-<a id="_SCINTILLA.new_user_list_type"></a>
-#### `_SCINTILLA.new_user_list_type`()
-
-Returns a unique user list identier number for use with [`buffer:user_list_show()`](#buffer.user_list_show).
-Use this function for custom user lists in order to prevent clashes with list identifiers
-of other custom user lists.
-
-Usage:
-
-- `local list_type = _SCINTILLA.new_user_list_type()
-`
-
 
 ---
 <a id="args"></a>
@@ -2392,6 +2285,13 @@ The default value is `1`.
  one another in ascending order. Markers move in sync with the lines they were added to as
  text is inserted and deleted. When a line that has a marker on it is deleted, that marker
  moves to the previous line.
+<a id="view.new_marker_number"></a>
+#### `view.new_marker_number`()
+
+Returns a unique marker number for use with [`view:marker_define()`](#view.marker_define).
+Use this function for custom markers in order to prevent clashes with identifiers of other
+custom markers.
+
 <a id="view.marker_define"></a>
 #### `view:marker_define`(*marker*, *symbol*)
 
@@ -2402,10 +2302,6 @@ Parameters:
 
 - *marker*:  The marker number in the range of `1` to `32` to set *symbol* for.
 - *symbol*:  The marker symbol: `view.MARK_*`.
-
-See also:
-
-- [`_SCINTILLA.new_marker_number`](#_SCINTILLA.new_marker_number)
 
 <a id="view.marker_define_pixmap"></a>
 #### `view:marker_define_pixmap`(*marker*, *pixmap*)
@@ -2776,6 +2672,13 @@ List of the number of annotation text lines per line number. (Read-only)
  Indicators have an assigned indicator style and are displayed along with any existing
  styles text may already have. They can be hovered over and clicked on. Indicators move along
  with text.
+<a id="view.new_indic_number"></a>
+#### `view.new_indic_number`()
+
+Returns a unique indicator number for use with custom indicators.
+Use this function for custom indicators in order to prevent clashes with identifiers of
+other custom indicators.
+
 <a id="view.indic_style"></a>
 #### `view.indic_style` &lt;table&gt;
 
@@ -2836,7 +2739,7 @@ List of styles for indicator numbers from `1` to `32`.
 - [`view.INDIC_POINT_TOP`](#view.INDIC_POINT_TOP)
 	A triangle above the start of the indicator range.
 
-Use [`_SCINTILLA.new_indic_number()`](#_SCINTILLA.new_indic_number) for custom indicators.
+Use [`view.new_indic_number()`](#view.new_indic_number) for custom indicators.
 Changing an indicator's style resets that indicator's hover style.
 
 <a id="view.indic_under"></a>
@@ -3007,6 +2910,13 @@ See also:
 - [`textadept.editing.autocompleters`](#textadept.editing.autocompleters)
 - [`textadept.editing.autocomplete`](#textadept.editing.autocomplete)
 
+<a id="view.new_user_list_type"></a>
+#### `view.new_user_list_type`()
+
+Returns a unique user list identier number for use with [`buffer:user_list_show()`](#buffer.user_list_show).
+Use this function for custom user lists in order to prevent clashes with list identifiers
+of other custom user lists.
+
 <a id="buffer.user_list_show"></a>
 #### `buffer:user_list_show`(*id*, *items*)
 
@@ -3021,10 +2931,6 @@ Parameters:
 - *id*:  The list identifier number greater than zero to use.
 - *items*:  The sorted string of words to show, separated by [`buffer.auto_c_separator`](#buffer.auto_c_separator)
 	characters (initially spaces).
-
-See also:
-
-- [`_SCINTILLA.new_user_list_type`](#_SCINTILLA.new_user_list_type)
 
 <a id="buffer.auto_c_select"></a>
 #### `buffer:auto_c_select`(*prefix*)
@@ -3169,6 +3075,14 @@ The multiple selection autocomplete mode.
  Autocompletion and user lists can render images next to items by appending to each list
  item the type separator character specific to lists followed by an image's type number,
  which uniquely identifies a registered image.
+<a id="view.new_image_type"></a>
+#### `view.new_image_type`()
+
+Returns a unique image type identifier number for use with [`view:register_image()`](#view.register_image) and
+[`view:register_rgba_image()`](#view.register_rgba_image).
+Use this function for custom image types in order to prevent clashes with identifiers of
+other custom image types.
+
 <a id="view.register_image"></a>
 #### `view:register_image`(*type*, *xpm_data*)
 
@@ -3181,7 +3095,6 @@ Parameters:
 
 See also:
 
-- [`_SCINTILLA.new_image_type`](#_SCINTILLA.new_image_type)
 - [`textadept.editing.XPM_IMAGES`](#textadept.editing.XPM_IMAGES)
 
 <a id="view.rgba_image_width"></a>

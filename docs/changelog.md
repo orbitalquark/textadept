@@ -2517,7 +2517,7 @@ Changes:
 [terminal version incompatibilities]: manual.html#terminal-version-compatibility
 [`_G.LINUX`]: api.html#LINUX
 [Rectangular selections]: manual.html#rectangular-selection
-[`_SCINTILLA.next_image_type()`]: api.html#_SCINTILLA.new_image_type
+[`_SCINTILLA.next_image_type()`]: api.html#view.new_image_type
 
 ### 7.7 (01 Oct 2014)
 
@@ -3690,7 +3690,7 @@ Bugfixes:
 Changes:
 
 - Added support for [GTK][] 3.0.
-- Use ID generator [functions][] for marker, indicator, and user list IDs.
+- Use ID generator functions for marker, indicator, and user list IDs.
 - Scintilla: added [`buffer:set_empty_selection()`][] for setting selections without scrolling
   or redrawing.
 - Scintilla: added new `buffer.INDIC_DASH`, `buffer.INDIC_DOTS`, and `buffer.INDIC_SQUIGGLELOW`
@@ -3707,7 +3707,6 @@ Changes:
 - Multiple single-line comments can be folded with the `fold.line.comments` property set to `1`.
 
 [GTK]: https://gtk.org
-[functions]: api.html#_SCINTILLA
 [`buffer:set_empty_selection()`]: api.html#buffer.set_empty_selection
 [Scintilla]: https://scintilla.org
 [emit events]: api.html#events.COMPILE_OUTPUT

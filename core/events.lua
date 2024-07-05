@@ -433,14 +433,14 @@ end
 
 -- Handles Scintilla notifications.
 M.connect('SCN', function(notification)
-	local iface = _SCINTILLA.events[notification.code]
+	local iface = _SCINTILLA[notification.code]
 	local args = {}
 	for i = 2, #iface do args[i - 1] = notification[iface[i]] end
 	return M.emit(iface[1], table.unpack(args))
 end)
 
--- Set event constants.
-for _, v in pairs(_SCINTILLA.events) do M[v[1]:upper()] = v[1] end
+-- Set event constants (events are numeric ID keys).
+for k, v in pairs(_SCINTILLA) do if type(k) == 'number' then M[v[1]:upper()] = v[1] end end
 -- LuaFormatter off
 local textadept_events = {'appleevent_odoc','buffer_after_replace_text','buffer_after_switch','buffer_before_replace_text','buffer_before_switch','buffer_deleted','buffer_new','csi','command_text_changed','error','find','find_text_changed','focus','initialized','keypress','menu_clicked','mode_changed','mouse','quit','replace','replace_all','reset_after','reset_before','resume','suspend', 'tab_clicked','tab_close_clicked','unfocus','view_after_switch','view_before_switch','view_new'}
 -- LuaFormatter on
@@ -448,8 +448,8 @@ for _, v in pairs(textadept_events) do M[v:upper()] = v end
 
 -- Implement `events.BUFFER_{BEFORE,AFTER}_REPLACE_TEXT` as a convenience in lieu of the
 -- undocumented `events.MODIFIED`.
-local DELETE, INSERT, UNDOREDO = _SCINTILLA.constants.MOD_BEFOREDELETE,
-	_SCINTILLA.constants.MOD_INSERTTEXT, _SCINTILLA.constants.MULTILINEUNDOREDO
+local DELETE, INSERT, UNDOREDO = _SCINTILLA.MOD_BEFOREDELETE, _SCINTILLA.MOD_INSERTTEXT,
+	_SCINTILLA.MULTILINEUNDOREDO
 --- Helper function for emitting `events.BUFFER_AFTER_REPLACE_TEXT` after a full-buffer undo/redo
 -- operation, e.g. after reloading buffer contents and then performing an undo.
 local function emit_after_replace_text()

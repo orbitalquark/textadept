@@ -188,26 +188,19 @@ local f = io.open('../core/iface.lua', 'wb')
 f:write([=[
 -- Copyright 2007-2024 Mitchell. See LICENSE.
 
---- Scintilla constants, functions, and properties.
+-- Scintilla constants, functions, and properties.
 -- Do not modify anything in this module. Doing so will have unpredictable consequences.
--- @module _SCINTILLA
-local M = {}
+local M = {
 
 ]=])
 f:write([[
---- Map of Scintilla constant names to their numeric values.
--- @table constants
--- @see _G.buffer
--- @see _G.view
-
--- This separation is needed to prevent LDoc from parsing the following table.
-
-M.constants = {]])
+-- Scintilla constant names to their numeric values.
+]])
 f:write(table.concat(constants, ','))
-f:write('}\n\n')
+f:write(',\n\n')
 f:write([[
---- Map of Scintilla function names to tables containing their IDs, return types, wParam types,
--- and lParam types. Types are as follows:
+-- Scintilla function names to tables containing their IDs, return types, wParam types, and
+-- lParam types. Types are as follows:
 --
 -- - `0`: Void.
 -- - `1`: Integer.
@@ -218,76 +211,51 @@ f:write([[
 -- - `6`: Bitmask of Scintilla key modifiers and a key value.
 -- - `7`: String parameter.
 -- - `8`: String return value.
--- @table functions
-
--- This separation is needed to prevent LDoc from parsing the following table.
-
-M.functions = {]])
+]])
 for _, func in ipairs(functions) do
 	f:write(string.format('%s={%d,%d,%d,%d},', func, table.unpack(functions[func])))
 end
-f:write('}\n\n')
+f:write('\n\n')
 f:write([[
---- Map of Scintilla property names to table values containing their "get" function IDs, "set"
--- function IDs, return types, and wParam types.
+-- Scintilla property names to table values containing their "get" function IDs, "set" function
+-- IDs, return types, and wParam types. (The last field is currently unused and merely serves
+-- to distinguish between a function or property table.)
 -- The wParam type will be non-zero if the property is indexable.
--- Types are the same as in the `_SCINTILLA.functions` table.
--- @table properties
-
--- This separation is needed to prevent LDoc from parsing the following table.
-
-M.properties = {]])
+-- Types are the same as in the functions tables.
+]])
 for _, property in ipairs(properties) do
-	f:write(string.format('%s={%d,%d,%d,%d},', property, table.unpack(properties[property])))
+	f:write(string.format('%s={%d,%d,%d,%d,0},', property, table.unpack(properties[property])))
 end
-f:write('}\n\n')
+f:write('\n\n')
 f:write([[
---- Map of Scintilla event IDs to tables of event names and event parameters.
--- @table events
-
--- This separation is needed to prevent LDoc from parsing the following table.
-
-M.events = {]])
+-- Scintilla event IDs to tables of event names and event parameters.
+]])
 for _, event in ipairs(events) do f:write(string.format('[%s]={%s},', event, events[event])) end
-f:write('}\n\n')
+f:write('\n\n}\n\n')
 f:write([[
 local marker_number, indic_number, list_type, image_type = 0, 0, 0, 0
 
---- Returns a unique marker number for use with `view:marker_define()`.
--- Use this function for custom markers in order to prevent clashes with identifiers of other
--- custom markers.
--- @usage local marknum = _SCINTILLA.new_marker_number()
+-- Documentation is in core/.buffer.luadoc.
 function M.new_marker_number()
-  assert(marker_number < M.constants.MARKER_MAX, 'too many markers in use')
+  assert(marker_number < M.MARKER_MAX, 'too many markers in use')
   marker_number = marker_number + 1
   return marker_number
 end
 
---- Returns a unique indicator number for use with custom indicators.
--- Use this function for custom indicators in order to prevent clashes with identifiers of
--- other custom indicators.
--- @usage local indic_num = _SCINTILLA.new_indic_number()
--- @see view.indic_style
+-- Documentation is in core/.buffer.luadoc.
 function M.new_indic_number()
-  assert(indic_number < M.constants.INDICATOR_MAX, 'too many indicators in use')
+  assert(indic_number < M.INDICATOR_MAX, 'too many indicators in use')
   indic_number = indic_number + 1
   return indic_number
 end
 
---- Returns a unique user list identier number for use with `buffer:user_list_show()`.
--- Use this function for custom user lists in order to prevent clashes with list identifiers
--- of other custom user lists.
--- @usage local list_type = _SCINTILLA.new_user_list_type()
+-- Documentation is in core/.buffer.luadoc.
 function M.new_user_list_type()
   list_type = list_type + 1
   return list_type
 end
 
---- Returns a unique image type identier number for use with `view:register_image()` and
--- `view:register_rgba_image()`.
--- Use this function for custom image types in order to prevent clashes with identifiers of
--- other custom image types.
--- @usage local image_type = _SCINTILLA.new_image_type()
+-- Documentation is in core/.buffer.luadoc.
 function M.new_image_type()
   image_type = image_type + 1
   return image_type
