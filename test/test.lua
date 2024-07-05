@@ -1375,14 +1375,36 @@ function test_spawn_kill()
 	assert_equal(p:status(), 'terminated')
 end
 
-function test_spawn_errors_interactive()
-	local ok, errmsg = os.spawn('does not exist')
-	assert(not ok, 'no spawn error')
-	assert(type(errmsg) == 'string' and errmsg:find('^does not exist:'), 'incorrect spawn error')
-	os.spawn('echo foo', error)
-	os.spawn('echo foo', nil, nil, error)
+function test_spawn_errors()
+	if not CURSES then
+		local ok, errmsg = os.spawn('does not exist')
+		assert(not ok, 'no spawn error')
+		assert(type(errmsg) == 'string' and errmsg:find('^does not exist:'), 'incorrect spawn error')
+	else
+		local ok, errmsg = os.spawn('does not exist', nil, ui.print)
+		assert(ok, 'spawn error')
+		sleep(0.1)
+		ui.update()
+		assert_equal(buffer._type, _L['[Message Buffer]'])
+		assert(buffer:get_text():find("spawn 'does' failed:"), 'incorrect spawn error')
+		buffer:close()
+		if #_VIEWS > 1 then view:unsplit() end
+	end
+	os.spawn('echo foo', function(output) error('error: ' .. output) end)
+	sleep(0.1)
+	ui.update()
+	assert_equal(buffer._type, _L['[Output Buffer]'])
+	assert(buffer:get_text():find('error: foo'), 'no spawn stdout error')
+	buffer:close()
+	if #_VIEWS > 1 then view:unsplit() end
+	os.spawn('echo foo', nil, nil, function(code) error('error: ' .. code) end)
+	sleep(0.1)
+	ui.update()
+	assert_equal(buffer._type, _L['[Output Buffer]'])
+	assert(buffer:get_text():find('error: 0'), 'no spawn exit error')
+	buffer:close()
+	if #_VIEWS > 1 then view:unsplit() end
 end
-if CURSES then expected_failure(test_spawn_errors_interactive) end
 
 function test_buffer_text_range()
 	buffer.new()

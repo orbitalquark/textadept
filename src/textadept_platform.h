@@ -292,6 +292,8 @@ int save_dialog(DialogOptions opts, lua_State *L);
  * The platform is expected to repeatedly call the given `work()` function for as long as it
  * returns `true`. The `update()` function given to `work()` will be called back with progress
  * made so the platform can update its progress bar.
+ * If the work was stopped prior to completion, the platform should push onto the Lua stack the
+ * the boolean true and return 1. Otherwise, the platform should push nothing and return 0.
  */
 int progress_dialog(DialogOptions opts, lua_State *L,
 	bool (*work)(void (*update)(double percent, const char *text, void *userdata), void *userdata));
