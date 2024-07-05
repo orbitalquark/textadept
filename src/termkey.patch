@@ -35,7 +35,7 @@ diff -r e0a74e8d32b3 driver-win-pdcurses.c
 +  }
 +
 +  int c = wgetch((WINDOW *)tk->fd), shift = 0, ctrl = 0, alt = 0;
-+  if (c == ERR) return TERMKEY_RES_EOF;
++  if (c == ERR) return TERMKEY_RES_NONE;
 +  int codepoint = c, number = 0, button = 0;
 +  TermKeyType type = TERMKEY_TYPE_UNICODE;
 +  TermKeySym sym = TERMKEY_SYM_UNKNOWN;

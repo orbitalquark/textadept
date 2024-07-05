@@ -211,6 +211,8 @@ end, 1)
 --- Calls function *f* with the given arguments after *interval* seconds.
 -- If *f* returns `true`, calls *f* repeatedly every *interval* seconds as long as *f* returns
 -- `true`. A `nil` or `false` return value stops repetition.
+-- Note: in the terminal version, timeout functions will not be called until an active Find &
+-- Replace pane session finishes, and until an active dialog closes.
 -- @param interval The interval in seconds to call *f* after.
 -- @param f The function to call.
 -- @param[opt] ... Additional arguments to pass to *f*.

@@ -246,6 +246,8 @@ State. Any scripts that need to differentiate between startup and reset can test
 Calls function *f* with the given arguments after *interval* seconds.
 If *f* returns `true`, calls *f* repeatedly every *interval* seconds as long as *f* returns
 `true`. A `nil` or `false` return value stops repetition.
+Note: in the terminal version, timeout functions will not be called until an active Find &
+Replace pane session finishes, and until an active dialog closes.
 
 Parameters:
 

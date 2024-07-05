@@ -4357,11 +4357,6 @@ function test_reset()
 end
 
 function test_timeout()
-	if CURSES then
-		assert_raises(function() timeout(1, function() end) end, 'could not add timeout')
-		return
-	end
-
 	local count = 0
 	local function f()
 		count = count + 1
@@ -4762,14 +4757,13 @@ end
 -- TODO: debug status buffers
 
 function test_export_interactive()
-	if CURSES then return end -- cannot add timeout
 	local export = require('export')
 	buffer.new()
 	buffer:add_text("_G.foo=table.concat{1,'bar',true,print}\nbar=[[<>& ]]")
 	buffer:set_lexer('lua')
 	local filename = os.tmpname()
 	export.to_html(nil, filename)
-	_G.timeout(0.5, function() os.remove(filename) end)
+	timeout(0.5, function() os.remove(filename) end)
 	buffer:close(true)
 end
 

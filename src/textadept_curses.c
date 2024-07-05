@@ -471,7 +471,48 @@ static int read_fds(fd_set *fds) {
 
 char *get_clipboard_text(int *len) { return scintilla_get_clipboard(focused_view, len); }
 
-bool add_timeout(double interval, bool (*f)(int *), int *refs) { return false; }
+// Contains information about an active timeout.
+typedef struct {
+	double s, interval;
+	bool (*f)(int *);
+	int *refs;
+} TimeoutData;
+
+// Returns a number of seconds for use in computing time deltas.
+static double get_seconds() {
+#if !_WIN32
+	struct timeval time;
+	gettimeofday(&time, NULL);
+	return time.tv_sec + time.tv_usec / 1.0e6;
+#else
+	FILETIME time;
+	GetSystemTimeAsFileTime(&time);
+	// Note: interval is time.Low | (time.High << 32) in 100's of nanoseconds.
+	return (time.dwLowDateTime + time.dwHighDateTime * 4294967296.0) / 1.0e7;
+#endif
+}
+
+// Iterates over all timeout functions, calling them if enough time has passed (and removing
+// them if they should not run again), and returns the number of functions called.
+static int lua_processtimeouts(lua_State *L) {
+	int n = 0;
+	luaL_getsubtable(L, LUA_REGISTRYINDEX, "timeouts");
+	for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
+		TimeoutData *timeout = lua_touserdata(L, -2);
+		if (get_seconds() - timeout->s < timeout->interval) continue;
+		if (timeout->s = get_seconds(), n++, !timeout->f(timeout->refs))
+			lua_pushvalue(L, -2), lua_pushnil(L), lua_settable(L, -5); // t[timeout] = nil
+	}
+	return (lua_pop(L, 1), n); // timeouts
+}
+
+bool add_timeout(double interval, bool (*f)(int *), int *refs) {
+	luaL_getsubtable(lua, LUA_REGISTRYINDEX, "timeouts");
+	TimeoutData *timeout = lua_newuserdata(lua, sizeof(TimeoutData));
+	timeout->s = get_seconds(), timeout->interval = interval, timeout->f = f, timeout->refs = refs;
+	lua_pushboolean(lua, 1), lua_settable(lua, -3); // t[timeout] = true
+	return (lua_pop(lua, 1), true); // timeouts
+}
 
 void update_ui() {
 #if !_WIN32
@@ -482,6 +523,7 @@ void update_ui() {
 		if (read_fds(fds) >= 0) refresh_all();
 	free(fds);
 #endif
+	if (lua_processtimeouts(lua)) refresh_all();
 }
 
 bool is_dark_mode() { return true; } // TODO:
@@ -910,31 +952,32 @@ static void signalled(int signal) {
 // Replacement for `termkey_waitkey()` that handles asynchronous I/O.
 static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
 	refresh_all();
-#if !_WIN32
 	bool force = false;
-	struct timeval timeout = {0, termkey_get_waittime(tk)};
 	while (true) {
+#if !_WIN32
 		TermKeyResult res = !force ? termkey_getkey(tk, key) : termkey_getkey_force(tk, key);
 		if (res != TERMKEY_RES_AGAIN && res != TERMKEY_RES_NONE) return res;
 		force = res == TERMKEY_RES_AGAIN;
 		// Wait for input.
 		int nfds;
 		fd_set *fds = new_fds(&nfds);
-		FD_SET(0, fds); // monitor stdin (note: this is a do/while macro on OSX)
-		nfds = fmax(nfds, 1);
-		if (select(nfds, fds, NULL, NULL, force ? &timeout : NULL) > 0) {
+		FD_SET(0, fds), nfds = fmax(nfds, 1); // monitor stdin
+		struct timeval timeout = {0, termkey_get_waittime(tk) * 1000}; // 50 ms
+		if (select(nfds, fds, NULL, NULL, &timeout) > 0) {
 			if (FD_ISSET(0, fds)) termkey_advisereadable(tk);
 			if (read_fds(fds) > 0) refresh_all();
 		}
 		free(fds);
-	}
 #else
-	// TODO: ideally computation of view would not be done twice.
-	SciObject *view = !command_entry_active ? focused_view : command_entry;
-	termkey_set_fd(ta_tk, scintilla_get_window(view));
-	mouse_set(ALL_MOUSE_EVENTS); // _popen() and system() change console mode
-	return termkey_getkey(tk, key);
+		WINDOW *win = scintilla_get_window(!command_entry_active ? focused_view : command_entry);
+		termkey_set_fd(ta_tk, win);
+		mouse_set(ALL_MOUSE_EVENTS); // _popen() and system() change console mode
+		TermKeyResult res;
+		wtimeout(win, 1), res = termkey_getkey(tk, key), wtimeout(win, -1); // 50 ms
+		if (res != TERMKEY_RES_NONE) return res;
 #endif
+		if (lua_processtimeouts(lua) > 0) refresh_all();
+	}
 }
 
 // Runs Textadept.
