@@ -270,5 +270,6 @@ end)
 
 -- The function below is a Lua C function.
 
---- Opens the command entry.
+--- Opens the command entry. This is a low-level function. You probably want to use the higher-level
+-- `ui.command_entry.run()`.
 -- @function focus

@@ -494,7 +494,7 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 -- @function popup_menu
 
 --- Processes pending UI events, including reading from spawned processes.
--- This function is primarily used in unit tests.
+-- This function is primarily used in Textadept's own unit tests.
 -- @function update
 
 --- Suspends Textadept.

@@ -8950,7 +8950,7 @@ Buffers in the same project as the current buffer are shown with relative paths.
 #### `ui.update`()
 
 Processes pending UI events, including reading from spawned processes.
-This function is primarily used in unit tests.
+This function is primarily used in Textadept's own unit tests.
 
 
 ---
@@ -8994,7 +8994,8 @@ The height in pixels of the command entry.
 <a id="ui.command_entry.focus"></a>
 #### `ui.command_entry.focus`()
 
-Opens the command entry.
+Opens the command entry. This is a low-level function. You probably want to use the higher-level
+[`ui.command_entry.run()`](#ui.command_entry.run).
 
 <a id="ui.command_entry.run"></a>
 #### `ui.command_entry.run`(*label*, *f*[, *keys*][, *lang*='*text*'[, *initial_text*[, ...]]])
