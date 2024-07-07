@@ -3528,6 +3528,7 @@ function test_run_compile_run()
 	events.emit(events.KEYPRESS, '\n')
 	assert_equal(#_BUFFERS, 2)
 	assert_equal(buffer._type, _L['[Output Buffer]'])
+	if CURSES then sleep(0.1) end -- process output
 	ui.update() -- process output
 	assert(buffer:get_text():find("'end' expected"), 'no compile error')
 	assert(buffer:get_text():find('> exit status: %d+'), 'no compile error')
@@ -3604,6 +3605,7 @@ function test_run_distinct_command_histories()
 	textadept.run.run()
 	local orig_run_command = ui.command_entry:get_text()
 	events.emit(events.KEYPRESS, '\n')
+	if CURSES then sleep(0.1) end -- process output
 	ui.update() -- process output
 	assert(buffer:get_text():find('nil'), 'unexpected argument was passed to run command')
 	if #_VIEWS > 1 then view:unsplit() end
@@ -3665,6 +3667,7 @@ function test_run_no_command()
 	assert_equal(ui.command_entry:get_text(), '')
 	ui.command_entry:set_text(not WIN32 and 'cat %f' or 'type %f')
 	events.emit(events.KEYPRESS, '\n')
+	if CURSES then sleep(0.1) end -- process output
 	ui.update() -- process output
 	assert(buffer:get_text():find('bar'), 'did not run command')
 	if QT then -- process exit
@@ -3722,6 +3725,7 @@ function test_run_build_no_command()
 	assert_equal(ui.command_entry:get_text(), '')
 	ui.command_entry:set_text(not WIN32 and 'ls' or 'dir')
 	events.emit(events.KEYPRESS, '\n')
+	if CURSES then sleep(0.1) end -- process output
 	ui.update() -- process output
 	assert(buffer:get_text():find('BuildFile'), 'did not run command')
 	if QT then -- process exit
@@ -3759,6 +3763,7 @@ function test_run_test()
 		sleep(0.1)
 		ui.update()
 	end
+	if CURSES then sleep(0.1) end -- process exit
 	if #_VIEWS > 1 then view:unsplit() end
 	ui.update() -- process output
 	assert(buffer:get_text():find('test%.lua'), 'did not run test command')
@@ -3788,6 +3793,7 @@ function test_run_run_project()
 	textadept.run.run_project(_HOME)
 	assert_equal(ui.command_entry:get_text(), run_command)
 	events.emit(events.KEYPRESS, '\n')
+	if CURSES then sleep(0.1) end -- process output
 	ui.update() -- process output
 	assert(buffer:get_text():find('README.md'), 'did not run project command')
 	if QT then -- process exit
