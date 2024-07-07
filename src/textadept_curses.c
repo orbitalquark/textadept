@@ -801,7 +801,7 @@ bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *
 	int envc = envi ? lua_rawlen(L, envi) : 0;
 	char **argv = calloc(argc + 1, sizeof(char *)), **envp = calloc(envc + 1, sizeof(char *));
 	for (int i = 0; i < argc; i++) argv[i] = (char *)lua_tostring(L, top + 1 + i);
-	if (lua_checkstack(L, envc), envi)
+	if (lua_checkstack(L, envc + 2), envi) // extra stack slots needed for key-value pairs
 		for (int i = (lua_pushnil(L), 0); lua_next(L, envi); lua_pop(L, 1), i++)
 			envp[i] = (char *)(lua_pushvalue(L, -1), lua_insert(L, -3), lua_tostring(L, -3));
 
