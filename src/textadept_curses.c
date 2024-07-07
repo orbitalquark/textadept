@@ -494,7 +494,7 @@ bool add_timeout(double interval, bool (*f)(int *), int *refs) {
 	TimeoutData *timeout = lua_newuserdata(lua, sizeof(TimeoutData));
 	timeout->s = get_seconds(), timeout->interval = interval, timeout->f = f, timeout->refs = refs;
 	lua_pushboolean(lua, 1), lua_settable(lua, -3); // t[timeout] = true
-	return (lua_pop(lua, 1), true); // timeouts
+	return (lua_pop(lua, 1), true); // pop timeouts
 }
 
 void update_ui() {
@@ -543,8 +543,8 @@ int message_dialog(DialogOptions opts, lua_State *L) {
 
 // Returns a new dialog with given specified dimensions.
 static Dialog new_dialog(DialogOptions *opts, int height, int width) {
-	Dialog dialog;
-	dialog.border = newwin(height, width, 1, 1), dialog.content = newwin(height - 2, width - 2, 2, 2),
+	Dialog dialog = {
+		.border = newwin(height, width, 1, 1), .content = newwin(height - 2, width - 2, 2, 2)};
 	dialog.screen = initCDKScreen(dialog.content);
 	const char *rtl_buttons[3];
 	int num_buttons = read_buttons(opts, rtl_buttons);
@@ -691,7 +691,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 	char **items = malloc(num_items * sizeof(char *));
 	for (int i = 1; i <= num_items; i++) {
 		const char *item = (lua_rawgeti(L, opts.items, i), lua_tostring(L, -1));
-		items[i - 1] = strcpy(malloc(strlen(item) + 1), item), lua_pop(L, 1); // item
+		items[i - 1] = strcpy(malloc(strlen(item) + 1), item), lua_pop(L, 1); // pop item
 	}
 	int num_rows = (num_items + num_columns - 1) / num_columns; // account for non-full rows
 	char **rows = malloc((1 + num_rows) * sizeof(char *)), // include header
@@ -723,7 +723,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 			size_t padding = column_widths[j - i] - utf8strlen(item);
 			while (padding-- > 0) *p++ = ' ';
 			*p++ = (i < 0) ? '|' : ' ';
-			if (i < 0 && opts.columns) lua_pop(L, 1); // header
+			if (i < 0 && opts.columns) lua_pop(L, 1); // pop header
 		}
 		if (p > row) *(p - 1) = '\0';
 		rows[i / num_columns + 1] = row;
@@ -935,8 +935,7 @@ int main(int argc, char **argv) {
 #if !_WIN32
 	freopen("/dev/null", "w", stderr); // redirect stderr
 	// Set terminal resume and resize handlers.
-	struct sigaction act;
-	memset(&act, 0, sizeof(struct sigaction)), act.sa_handler = signalled;
+	struct sigaction act = {.sa_handler = signalled};
 	sigfillset(&act.sa_mask), sigaction(SIGCONT, &act, NULL), sigaction(SIGWINCH, &act, NULL);
 #else
 	freopen("NUL", "w", stdout), freopen("NUL", "w", stderr); // redirect
