@@ -1653,6 +1653,7 @@ Textadept is composed of the following technologies:
 - [Lua-std-regex][]: Lua library for regular expressions
 - [iconv][]: library for converting text to and from Unicode
 - [SingleApplication][]: single-instance application support for Qt
+- [reproc][]: process spawning library for the terminal version
 
 [Qt]: https://www.qt.io
 [GTK]: https://www.gtk.org
@@ -1670,6 +1671,7 @@ Textadept is composed of the following technologies:
 [libtermkey]: http://www.leonerd.org.uk/code/libtermkey
 [iconv]: https://www.gnu.org/software/libiconv
 [SingleApplication]: https://github.com/itay-grudev/SingleApplication
+[reproc]: https://github.com/DaanDeMeyer/reproc
 
 #### Migrating from Textadept 11 to 12
 

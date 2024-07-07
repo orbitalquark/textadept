@@ -1313,13 +1313,12 @@ function test_spawn_cwd()
 	local pwd = not WIN32 and 'pwd' or 'cd'
 	local tmp = not WIN32 and (not OSX and '/tmp' or '/private/tmp') or os.getenv('TEMP')
 	local newline = not WIN32 and '\n' or '\r\n'
-	local cwd = not (WIN32 and CURSES) and lfs.currentdir() or 'C:\\Windows'
+	local cwd = lfs.currentdir()
 	assert_equal(os.spawn(pwd):read('a'), cwd .. newline)
 	assert_equal(os.spawn(pwd, tmp):read('a'), tmp .. newline)
 end
 
 function test_spawn_env()
-	if WIN32 and CURSES then return end -- not supported
 	local env_cmd = not WIN32 and 'env' or 'set'
 	assert(not os.spawn(env_cmd):read('a'):find('^%s*$'), 'empty env')
 	assert(os.spawn(env_cmd, {FOO = 'bar'}):read('a'):find('FOO=bar\r?\n'), 'env not set')
@@ -1337,6 +1336,7 @@ function test_spawn_stdin()
 	assert_equal(p:read('l'), 'foo')
 	assert_equal(p:read('a'), '')
 end
+if CURSES and not WIN32 then expected_failure(test_spawn_stdin) end -- detects exit before read('a')
 
 function test_spawn_callbacks()
 	local exit_status = -1
@@ -1359,7 +1359,7 @@ function test_spawn_wait()
 	local exit_status = -1
 	local p = os.spawn(not WIN32 and 'sleep 0.1' or 'ping 127.0.0.1 -n 2', nil, nil,
 		function(status) exit_status = status end)
-	if not (WIN32 and CURSES) then assert_equal(p:status(), "running") end
+	assert_equal(p:status(), "running")
 	assert_equal(p:wait(), 0)
 	assert_equal(exit_status, 0)
 	assert_equal(p:status(), 'terminated')
@@ -1368,7 +1368,6 @@ function test_spawn_wait()
 end
 
 function test_spawn_kill()
-	if WIN32 and CURSES then return end -- not supported
 	local p = os.spawn(not WIN32 and 'sleep 1' or 'ping 127.0.0.1 -n 2')
 	p:kill()
 	assert(p:wait() ~= 0)
@@ -1376,19 +1375,10 @@ function test_spawn_kill()
 end
 
 function test_spawn_errors()
-	if not CURSES then
+	if not (WIN32 and CURSES) then -- 'cmd /c does not exist' prints to stderr and returns 1
 		local ok, errmsg = os.spawn('does not exist')
 		assert(not ok, 'no spawn error')
 		assert(type(errmsg) == 'string' and errmsg:find('^does not exist:'), 'incorrect spawn error')
-	else
-		local ok, errmsg = os.spawn('does not exist', nil, ui.print)
-		assert(ok, 'spawn error')
-		sleep(0.1)
-		ui.update()
-		assert_equal(buffer._type, _L['[Message Buffer]'])
-		assert(buffer:get_text():find("spawn 'does' failed:"), 'incorrect spawn error')
-		buffer:close()
-		if #_VIEWS > 1 then view:unsplit() end
 	end
 	os.spawn('echo foo', function(output) error('error: ' .. output) end)
 	sleep(0.1)

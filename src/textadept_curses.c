@@ -5,12 +5,14 @@
 
 #include "lauxlib.h"
 #include "ScintillaCurses.h"
-#include "termkey.h"
 #include "cdk_int.h"
+#include "reproc/run.h"
+#include "termkey.h"
 
 #include <locale.h>
 #include <math.h> // for fmax
 #if !_WIN32
+#include <poll.h>
 #include <signal.h> // needed on macOS
 #include <sys/ioctl.h>
 #include <sys/time.h> // for gettimeofday
@@ -398,39 +400,24 @@ void popup_menu(void *menu, void *userdata) {}
 
 void set_menubar(lua_State *L, int index) {}
 
+char *get_clipboard_text(int *len) { return scintilla_get_clipboard(focused_view, len); }
+
 // Contains information about an active process.
 struct Process {
-	int pid, fstdin, fstdout, fstderr, exit_status;
-	bool monitor_stdout, monitor_stderr;
+	reproc_t *reproc;
+	bool running, monitor_stdout, monitor_stderr;
 };
 static inline struct Process *PROCESS(struct Process *proc) { return proc; }
-
-#if !_WIN32
-// Creates and returns an `fd_set` for all spawned processes that can be used with `select()`
-// and `read_fds()` to wait for input or output.
-// The caller is expected to free the returned pointer.
-static fd_set *new_fds(int *nfds) {
-	*nfds = 0;
-	fd_set *fds = calloc(1, sizeof(fd_set)); // avoids call to FD_ZERO(fds)
-	luaL_getsubtable(lua, LUA_REGISTRYINDEX, "spawn_procs");
-	for (lua_pushnil(lua); lua_next(lua, -2); lua_pop(lua, 1)) {
-		struct Process *proc = lua_touserdata(lua, -2);
-		// Note: need to read from pipes so they do not get clogged, even if monitoring is not
-		// requested.
-		FD_SET(proc->fstdout, fds), FD_SET(proc->fstderr, fds);
-		*nfds = fmax(*nfds, fmax(proc->fstdout, proc->fstderr) + 1);
-	}
-	return (lua_pop(lua, 1), fds); // spawned processes
-}
 
 // Signal that a process has output to read.
 static void read_proc(struct Process *proc, bool is_stdout) {
 	char buf[BUFSIZ];
-	ssize_t len;
+	int len;
 	do {
 		// Note: need to read from pipes to prevent clogging, but only report output if monitoring.
+		REPROC_STREAM stream = is_stdout ? REPROC_STREAM_OUT : REPROC_STREAM_ERR;
 		bool monitoring = is_stdout ? proc->monitor_stdout : proc->monitor_stderr;
-		if ((len = read(is_stdout ? proc->fstdout : proc->fstderr, buf, BUFSIZ)) > 0 && monitoring)
+		if ((len = reproc_read(proc->reproc, stream, (uint8_t *)buf, BUFSIZ)) > 0 && monitoring)
 			process_output(proc, buf, len, is_stdout);
 	} while (len == BUFSIZ);
 }
@@ -440,36 +427,31 @@ static void process_finished(struct Process *proc, int status) {
 	// Stop tracking and monitoring this proc.
 	luaL_getsubtable(lua, LUA_REGISTRYINDEX, "spawn_procs");
 	for (lua_pushnil(lua); lua_next(lua, -2); lua_pop(lua, 1))
-		if (((struct Process *)lua_touserdata(lua, -2))->pid == proc->pid) {
+		if (PROCESS(lua_touserdata(lua, -2))->reproc == proc->reproc) {
 			lua_pushnil(lua), lua_replace(lua, -2), lua_settable(lua, -3); // t[proc] = nil
 			break;
 		}
-	lua_pop(lua, 1); // spawned processes
-	proc->pid = 0, close(proc->fstdin), close(proc->fstdout), close(proc->fstderr);
-	process_exited(proc, proc->exit_status = status);
+	lua_pop(lua, 1), process_exited(proc, status), proc->running = false; // pop spawn_procs
 }
 
-// Reads output from the given fd_set and returns the number of fds read from.
-// Also monitors child processes for completion and cleans up after them.
-static int read_fds(fd_set *fds) {
-	int n = 0;
-	luaL_getsubtable(lua, LUA_REGISTRYINDEX, "spawn_procs");
-	for (lua_pushnil(lua); lua_next(lua, -2); lua_pop(lua, 1)) {
-		struct Process *proc = lua_touserdata(lua, -2);
-		// Read output if any is available.
-		if (FD_ISSET(proc->fstdout, fds)) read_proc(proc, true), n++;
-		if (FD_ISSET(proc->fstderr, fds)) read_proc(proc, false), n++;
-		// Check process status. If finished, read anything left and cleanup.
-		int status;
-		if (waitpid(proc->pid, &status, WNOHANG) == 0) continue; // still running
-		read_proc(proc, true), read_proc(proc, false), process_finished(proc, status);
-		lua_pushnil(lua), lua_replace(lua, -3); // key no longer exists
+// Iterates over all spawned processes, reads any unread output, monitors for process exit,
+// and returns true if it did something that may warrant a call to `refresh_all()`.
+static bool lua_processprocs(lua_State *L) {
+	bool refresh = false;
+	luaL_getsubtable(L, LUA_REGISTRYINDEX, "spawn_procs");
+	for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
+		struct Process *proc = lua_touserdata(L, -2);
+		reproc_event_source event = {proc->reproc, REPROC_EVENT_OUT | REPROC_EVENT_ERR, 0};
+		reproc_poll(&event, 1, 0);
+		if (event.events & REPROC_EVENT_OUT) read_proc(proc, true), refresh = true;
+		if (event.events & REPROC_EVENT_ERR) read_proc(proc, false), refresh = true;
+		int status = reproc_wait(proc->reproc, 0);
+		if (status == REPROC_ETIMEDOUT) continue; // still running
+		read_proc(proc, true), read_proc(proc, false), process_finished(proc, status), refresh = true;
+		lua_pushnil(L), lua_replace(L, -3); // key no longer exists
 	}
-	return (lua_pop(lua, 1), n); // spawned processes
+	return (lua_pop(L, 1), refresh); // pop spawn_procs
 }
-#endif
-
-char *get_clipboard_text(int *len) { return scintilla_get_clipboard(focused_view, len); }
 
 // Contains information about an active timeout.
 typedef struct {
@@ -493,17 +475,18 @@ static double get_seconds() {
 }
 
 // Iterates over all timeout functions, calling them if enough time has passed (and removing
-// them if they should not run again), and returns the number of functions called.
-static int lua_processtimeouts(lua_State *L) {
-	int n = 0;
+// them if they should not run again), and returns true if it did something that may warrant
+// a call to `refresh_all()`.
+static bool lua_processtimeouts(lua_State *L) {
+	bool refresh = false;
 	luaL_getsubtable(L, LUA_REGISTRYINDEX, "timeouts");
 	for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
 		TimeoutData *timeout = lua_touserdata(L, -2);
 		if (get_seconds() - timeout->s < timeout->interval) continue;
-		if (timeout->s = get_seconds(), n++, !timeout->f(timeout->refs))
+		if (timeout->s = get_seconds(), refresh = true, !timeout->f(timeout->refs))
 			lua_pushvalue(L, -2), lua_pushnil(L), lua_settable(L, -5); // t[timeout] = nil
 	}
-	return (lua_pop(L, 1), n); // timeouts
+	return (lua_pop(L, 1), refresh); // pop timeouts
 }
 
 bool add_timeout(double interval, bool (*f)(int *), int *refs) {
@@ -515,14 +498,7 @@ bool add_timeout(double interval, bool (*f)(int *), int *refs) {
 }
 
 void update_ui() {
-#if !_WIN32
-	int nfds;
-	fd_set *fds = new_fds(&nfds);
-	struct timeval timeout = {0, 1e5}; // 0.1s
-	while (select(nfds, fds, NULL, NULL, &timeout) > 0)
-		if (read_fds(fds) >= 0) refresh_all();
-	free(fds);
-#endif
+	if (lua_processprocs(lua)) refresh_all();
 	if (lua_processtimeouts(lua)) refresh_all();
 }
 
@@ -799,9 +775,11 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 
 bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *cwd, int envi,
 	bool monitor_stdout, bool monitor_stderr, const char **error) {
-#if !_WIN32
 	int argc = 0, top = lua_gettop(L);
 	// Construct argv from cmd and envp from envi.
+#if _WIN32
+	lua_pushstring(L, getenv("COMSPEC")), lua_pushstring(L, "/c"), argc += 2;
+#endif
 	const char *p = cmd;
 	while (*p) {
 		while (*p == ' ') p++;
@@ -821,76 +799,48 @@ bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *
 		lua_checkstack(L, 1), luaL_pushresult(&buf), argc++;
 	}
 	int envc = envi ? lua_rawlen(L, envi) : 0;
-	char *argv[argc + 1], *envp[envc + 1];
+	char **argv = calloc(argc + 1, sizeof(char *)), **envp = calloc(envc + 1, sizeof(char *));
 	for (int i = 0; i < argc; i++) argv[i] = (char *)lua_tostring(L, top + 1 + i);
-	argv[argc] = NULL;
 	if (lua_checkstack(L, envc), envi)
 		for (int i = (lua_pushnil(L), 0); lua_next(L, envi); lua_pop(L, 1), i++)
 			envp[i] = (char *)(lua_pushvalue(L, -1), lua_insert(L, -3), lua_tostring(L, -3));
-	envp[envc] = NULL;
 
-	// Adapted from Chris Emerson and GLib.
-	// Attempt to create pipes for stdin, stdout, and stderr and fork process.
-	int pstdin[2] = {-1, -1}, pstdout[2] = {-1, -1}, pstderr[2] = {-1, -1}, pid = -1;
-	if (pipe(pstdin) == 0 && pipe(pstdout) == 0 && pipe(pstderr) == 0 && (pid = fork()) < 0) {
-		if (pstdin[0] >= 0) close(pstdin[0]), close(pstdin[1]);
-		if (pstdout[0] >= 0) close(pstdout[0]), close(pstdout[1]);
-		if (pstderr[0] >= 0) close(pstderr[0]), close(pstderr[1]);
-		return (*error = strerror(errno), false);
-	}
-	if (pid > 0) {
-		// Parent process: register child for monitoring its fds and pid.
-		close(pstdin[0]), close(pstdout[1]), close(pstderr[1]);
-		struct Process *p = proc;
-		p->pid = pid, p->fstdin = pstdin[1], p->fstdout = pstdout[0], p->fstderr = pstderr[0],
-		p->monitor_stdout = monitor_stdout, p->monitor_stderr = monitor_stderr;
-		lua_checkstack(L, 3), luaL_getsubtable(L, LUA_REGISTRYINDEX, "spawn_procs"),
-			lua_pushvalue(L, index), lua_pushboolean(L, 1), lua_settable(L, -3); // t[proc] = true
-		return true;
-	}
-	// Child process: redirect stdin, stdout, and stderr, chdir, and exec.
-	close(pstdin[1]), close(pstdout[0]), close(pstderr[0]), close(0), close(1), close(2);
-	dup2(pstdin[0], 0), dup2(pstdout[1], 1), dup2(pstderr[1], 2);
-	close(pstdin[0]), close(pstdout[1]), close(pstderr[1]);
-	if (cwd && chdir(cwd) != 0) fprintf(stderr, "cd '%s' failed: %s", cwd, strerror(errno)), exit(1);
-	extern char **environ;
-#if __linux__
-	execvpe(argv[0], argv, envi ? envp : environ); // does not return on success
-#else
-	if (envi) environ = envp;
-	execvp(argv[0], argv); // does not return on success
-#endif
-	fprintf(stderr, "spawn '%s' failed: %s", argv[0], strerror(errno)), exit(1);
-#else // _WIN32
-	return (*error = "not implemented in this environment", false);
-#endif
+	struct Process *pr = memset(proc, 0, sizeof(struct Process));
+	pr->reproc = reproc_new();
+	reproc_options opts = {.working_directory = cwd, .redirect.err.type = REPROC_REDIRECT_PIPE};
+	if (envi) opts.env.behavior = REPROC_ENV_EMPTY, opts.env.extra = (const char **)envp;
+	int status = reproc_start(pr->reproc, (const char **)argv, opts);
+	free(argv), free(envp);
+	if (status < 0) return (*error = reproc_strerror(status), false);
+	pr->running = true, pr->monitor_stdout = monitor_stdout, pr->monitor_stderr = monitor_stderr;
+	lua_checkstack(L, 3), luaL_getsubtable(L, LUA_REGISTRYINDEX, "spawn_procs"),
+		lua_pushvalue(L, index), lua_pushboolean(L, 1), lua_settable(L, -3); // t[proc] = true
+	return true;
 }
 
 size_t process_size() { return sizeof(struct Process); }
 
-bool is_process_running(Process *proc) { return PROCESS(proc)->pid; }
+// Note: do not use `reproc_wait(proc, 0) == REPROC_ETIMEDOUT` because `proc:read()` calls this
+// first, and the process may exit before there's a chance to read its output.
+bool is_process_running(Process *proc) { return PROCESS(proc)->running; }
 
 void wait_process(Process *proc) {
-#if !_WIN32
-	int status;
-	waitpid(PROCESS(proc)->pid, &status, 0), status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
-	process_finished(proc, status);
-#endif
+	process_finished(proc, reproc_wait(PROCESS(proc)->reproc, REPROC_INFINITE));
 }
 
 char *read_process_output(Process *proc, char option, size_t *len, const char **error, int *code) {
-#if !_WIN32
 	char *buf;
 	if (option == 'n') {
-		*len = read(PROCESS(proc)->fstdout, buf = malloc(*len), *len);
-		return (!*len ? (*error = NULL, NULL) : buf);
+		int n =
+			reproc_read(PROCESS(proc)->reproc, REPROC_STREAM_OUT, (uint8_t *)(buf = malloc(*len)), *len);
+		return (n > 0 ? (*len = n, buf) : (*error = reproc_strerror(n), NULL));
 	}
 	int n;
 	char ch;
 	luaL_Buffer lbuf;
 	luaL_buffinit(lua, &lbuf);
 	*len = 0;
-	while ((n = read(PROCESS(proc)->fstdout, &ch, 1)) > 0) {
+	while ((n = reproc_read(PROCESS(proc)->reproc, REPROC_STREAM_OUT, (uint8_t *)&ch, 1)) > 0) {
 		if ((ch != '\r' && ch != '\n') || option == 'L' || option == 'a')
 			luaL_addchar(&lbuf, ch), (*len)++;
 		if (ch == '\n' && option != 'a') break;
@@ -900,32 +850,25 @@ char *read_process_output(Process *proc, char option, size_t *len, const char **
 	if (n == 0 && !*len && option != 'a') return (lua_pop(lua, 1), *error = NULL, NULL); // EOF
 	buf = strcpy(malloc(*len + 1), lua_tostring(lua, -1));
 	return (lua_pop(lua, 1), *error = NULL, buf); // pop buf
-#else
-	return NULL;
-#endif
 }
 
 void write_process_input(Process *proc, const char *s, size_t len) {
-#if !_WIN32
-	write(PROCESS(proc)->fstdin, s, len);
-#endif
+	reproc_write(PROCESS(proc)->reproc, (const uint8_t *)s, len);
 }
 
-void close_process_input(Process *proc) {
-#if !_WIN32
-	close(PROCESS(proc)->fstdin);
-#endif
-}
+void close_process_input(Process *proc) { reproc_close(PROCESS(proc)->reproc, REPROC_STREAM_IN); }
 
 void kill_process(Process *proc, int signal) {
+	if (!signal) reproc_kill(PROCESS(proc)->reproc);
 #if !_WIN32
-	kill(PROCESS(proc)->pid, signal ? signal : SIGKILL);
+	else
+		kill(reproc_pid(PROCESS(proc)->reproc), signal);
 #endif
 }
 
-int get_process_exit_status(Process *proc) { return PROCESS(proc)->exit_status; }
+int get_process_exit_status(Process *proc) { return reproc_wait(PROCESS(proc)->reproc, 0); }
 
-void cleanup_process(Process *proc) {}
+void cleanup_process(Process *proc) { reproc_destroy(PROCESS(proc)->reproc); }
 
 void suspend() {
 #if !_WIN32
@@ -955,19 +898,11 @@ static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
 	bool force = false;
 	while (true) {
 #if !_WIN32
+		struct pollfd fd = {.fd = 0, .events = POLLIN};
+		if (poll(&fd, 1, 50) > 0) termkey_advisereadable(tk); // 50 ms
 		TermKeyResult res = !force ? termkey_getkey(tk, key) : termkey_getkey_force(tk, key);
 		if (res != TERMKEY_RES_AGAIN && res != TERMKEY_RES_NONE) return res;
 		force = res == TERMKEY_RES_AGAIN;
-		// Wait for input.
-		int nfds;
-		fd_set *fds = new_fds(&nfds);
-		FD_SET(0, fds), nfds = fmax(nfds, 1); // monitor stdin
-		struct timeval timeout = {0, termkey_get_waittime(tk) * 1000}; // 50 ms
-		if (select(nfds, fds, NULL, NULL, &timeout) > 0) {
-			if (FD_ISSET(0, fds)) termkey_advisereadable(tk);
-			if (read_fds(fds) > 0) refresh_all();
-		}
-		free(fds);
 #else
 		WINDOW *win = scintilla_get_window(!command_entry_active ? focused_view : command_entry);
 		termkey_set_fd(ta_tk, win);
@@ -976,7 +911,7 @@ static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
 		wtimeout(win, 1), res = termkey_getkey(tk, key), wtimeout(win, -1); // 50 ms
 		if (res != TERMKEY_RES_NONE) return res;
 #endif
-		if (lua_processtimeouts(lua) > 0) refresh_all();
+		update_ui(); // monitor spawned processes and timeouts
 	}
 }
 

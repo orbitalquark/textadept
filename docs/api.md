@@ -7207,7 +7207,6 @@ Extends Lua's [`os`](#os) library to provide process spawning capabilities.
 Spawns an interactive child process *cmd* in a separate thread, returning a handle to that
 process.
 On Windows, *cmd* is passed to `cmd.exe`: `%COMSPEC% /c [cmd]`.
-At the moment, only the Windows terminal version spawns processes in the same thread.
 
 Parameters:
 
@@ -7223,8 +7222,6 @@ Parameters:
 - *stdout_cb*:  Optional Lua function that accepts a string parameter for a block of
 	standard output read from the child. Stdout is read asynchronously in 1KB or 0.5KB
 	blocks (depending on the platform), or however much data is available at the time.
-	At the moment, only the Windows terminal version sends all output, whether it be stdout
-	or stderr, to this callback after the process finishes.
 - *stderr_cb*:  Optional Lua function that accepts a string parameter for a block
 	of standard error read from the child. Stderr is read asynchronously in 1KB or 0.5kB
 	blocks (depending on the platform), or however much data is available at the time.

@@ -24,30 +24,6 @@ require('lfs_ext')
 require('ui')
 keys = require('keys')
 
--- pdcurses compatibility.
-if CURSES and WIN32 then
-	function os.spawn(cmd, ...)
-		local cwd = lfs.currentdir()
-		local args, i = {...}, 1
-		if type(args[i]) == 'string' then
-			lfs.chdir(args[i]) -- cwd
-			i = i + 1
-		end
-		if type(args[i]) == 'table' then i = i + 1 end -- env (ignore)
-		local p = io.popen(assert_type(cmd, 'string', 1) .. ' 2>&1')
-		local output = p:read('a'):gsub('\r?\n', '\r\n') -- ensure \r\n
-		if type(args[i]) == 'function' then args[i](output) end -- stdout_cb
-		local status = select(3, p:close())
-		if type(args[i + 2]) == 'function' then args[i + 2](status) end -- exit_cb
-		lfs.chdir(cwd) -- restore
-		local noop = function() end
-		return {
-			read = function() return output end, status = function() return 'terminated' end,
-			wait = function() return status end, write = noop, close = noop, kill = noop
-		}
-	end
-end
-
 --- Replacement for original `buffer:text_range()`, which has a C struct for an argument.
 -- Documentation is in core/.buffer.luadoc.
 local function text_range(buffer, start_pos, end_pos)

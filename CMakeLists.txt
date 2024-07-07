@@ -160,6 +160,14 @@ endif()
 FetchContent_Declare(termkey
 	URL ${termkey_url} PATCH_COMMAND patch -N -p1 < ${ta}/src/termkey.patch)
 FetchContent_MakeAvailable(termkey)
+# reproc
+set(reproc_zip v14.2.5.zip)
+set(reproc_url file://${deps_dir}/${reproc_zip})
+if(NOT EXISTS ${deps_dir}/${reproc_zip})
+	set(reproc_url https://github.com/DaanDeMeyer/reproc/archive/refs/tags/${reproc_zip})
+endif()
+FetchContent_Declare(reproc URL ${reproc_url})
+FetchContent_MakeAvailable(reproc)
 if(WIN32)
 	# PDCurses.
 	set(pdcurses_zip PDCurses-3.9.zip)
@@ -320,6 +328,10 @@ if(CURSES)
 	target_include_directories(cdk PUBLIC ${cdk_dir}/include)
 	target_link_directories(cdk PRIVATE ${CURSES_LIBRARY_DIRS})
 	target_link_libraries(cdk PRIVATE termkey ${CURSES_LIBRARIES})
+
+	# reproc.
+	# Note: no need to do anything because reproc uses CMake and FetchContent_MakeAvailable() set it
+	# all up!
 endif()
 
 # iconv
@@ -391,7 +403,7 @@ if(CURSES)
 		$<$<NOT:$<OR:$<BOOL:${WIN32}>,$<BOOL:${APPLE}>>>:_GNU_SOURCE>) # for execvpe from unistd.h
 	target_link_directories(textadept_curses PRIVATE ${CURSES_LIBRARY_DIRS})
 	target_link_libraries(textadept_curses
-		PRIVATE scintilla_curses lua termkey cdk ${CURSES_LIBRARIES})
+		PRIVATE scintilla_curses lua termkey cdk reproc ${CURSES_LIBRARIES})
 
 	add_executable(textadept-curses)
 	target_sources(textadept-curses PRIVATE ${ta_src})
