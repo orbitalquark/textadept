@@ -32,6 +32,7 @@ for _, mt in ipairs{buffer_mt, view_mt} do
 	mt.__index = function(t, k)
 		local v = mt.__orig_index(t, k)
 		if type(v) == 'function' then
+			if k:find('^new_') and (k:find('_number$') or k:find('_type$')) then return v end
 			return function(...)
 				local args = {...}
 				if type(args[1]) == 'table' then table.remove(args, 1) end -- self
