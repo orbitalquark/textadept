@@ -711,7 +711,7 @@ static int move_buffer_lua(lua_State *L) {
 }
 
 // `_G.quit()` Lua function.
-static int quit_lua(lua_State *L) { return (quit(), 0); }
+static int quit_lua(lua_State *L) { return (quit(), exit_status = luaL_optnumber(L, 1, 0), 0); }
 
 // Runs the given Lua file, which is relative to `textadept_home`, and returns `true` on success.
 // If there are errors, shows an error dialog and returns `false`.

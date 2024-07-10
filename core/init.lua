@@ -176,6 +176,7 @@ end, 1)
 -- @function move_buffer
 
 --- Emits `events.QUIT`, and unless any handler returns `false`, quits Textadept.
+-- @param[opt] status Optional status code for Textadept to exit with. The default value is 0.
 -- @function quit
 
 --- Resets the Lua State by reloading all initialization scripts.

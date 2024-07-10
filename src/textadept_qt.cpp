@@ -765,7 +765,7 @@ public:
 		if (inited) delete ta;
 	}
 
-	int exec() { return inited ? QApplication::exec() : exit_status; }
+	int exec() { return inited ? (QApplication::exec(), exit_status) : exit_status; }
 
 protected:
 	bool event(QEvent *event) override {

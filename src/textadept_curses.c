@@ -991,5 +991,5 @@ int main(int argc, char **argv) {
 		if (repl_history[i]) free(repl_history[i]);
 		if (i < 4) free(button_labels[i]), free(option_labels[i] - (find_options[i] ? 0 : 4));
 	}
-	return 0;
+	return exit_status;
 }

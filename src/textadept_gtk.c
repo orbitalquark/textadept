@@ -928,5 +928,5 @@ int main(int argc, char **argv) {
 		gtk_settings_get_default(), "notify::gtk-theme-name", G_CALLBACK(mode_changed), NULL);
 	gtk_main();
 
-	return (g_object_unref(app), 0); // close_textadept() was called before gtk_main_quit()
+	return (g_object_unref(app), exit_status); // close_textadept() was called before gtk_main_quit()
 }
