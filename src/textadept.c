@@ -168,13 +168,20 @@ static int proc_kill(lua_State *L) {
 // `proc:__gc()` Lua metamethod.
 static int proc_gc(lua_State *L) { return (cleanup_process(luaL_checkudata(L, 1, "ta_spawn")), 0); }
 
+// Returns whether or not the value at the given index is callable (i.e. it is either a function
+// or a table with a `__call` metafield).
+static int lua_iscallable(lua_State *L, int index) {
+	if (lua_isfunction(L, index)) return true;
+	return luaL_getmetafield(L, index, "__call") ? (lua_pop(L, 1), 1) : 0;
+}
+
 // `os.spawn()` Lua function.
 static int spawn_lua(lua_State *L) {
 	int narg = 1, top = lua_gettop(L);
 	const char *cmd = luaL_checkstring(L, narg++),
 						 *cwd = lua_isstring(L, narg) ? lua_tostring(L, narg++) : NULL;
 	// Replace optional environment table with a pure "key=value" list for platform processing.
-	int envi = lua_istable(L, narg) ? narg++ : 0;
+	int envi = lua_istable(L, narg) && !lua_iscallable(L, narg) ? narg++ : 0;
 	if (envi) {
 		lua_newtable(L);
 		for (lua_pushnil(L); lua_next(L, envi); lua_pop(L, 1)) {
@@ -190,7 +197,7 @@ static int spawn_lua(lua_State *L) {
 	// Create process object to be returned and link callback functions from optional function params.
 	Process *proc = lua_newuserdatauv(L, process_size(), 3);
 	for (int i = narg; i <= top && i < narg + 3; i++)
-		luaL_argcheck(L, lua_isfunction(L, i) || lua_isnil(L, i), i, "function or nil expected"),
+		luaL_argcheck(L, lua_iscallable(L, i) || lua_isnil(L, i), i, "function or nil expected"),
 			lua_pushvalue(L, i), lua_setiuservalue(L, -2, i - narg + 1);
 
 	// Spawn the process and return it.

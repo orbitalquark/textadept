@@ -173,7 +173,7 @@ local function key_command(prefix)
 		key = key[keychain[i]]
 	end
 	if type(key) ~= 'function' and type(key) ~= 'table' then return INVALID end
-	if type(key) == 'table' then
+	if type(key) == 'table' and (not getmetatable(key) or not getmetatable(key).__call) then
 		ui.statusbar_text = string.format('%s %s', _L['Keychain:'], table.concat(keychain, ' '))
 		return CHAIN
 	end

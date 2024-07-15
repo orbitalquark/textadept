@@ -38,7 +38,10 @@ function assert_type(v, expected_type, narg)
 		error(string.format("bad argument #3 to '%s' (value expected, got %s)",
 			debug.getinfo(1, 'n').name, type(narg)), 2)
 	end
-	for type_option in expected_type:gmatch('%a+') do if type(v) == type_option then return v end end
+	for type_option in expected_type:gmatch('%a+') do
+		if type(v) == type_option then return v end
+		if type_option == 'function' and getmetatable(v) and getmetatable(v).__call then return v end
+	end
 	error(string.format("bad argument #%s to '%s' (%s expected, got %s)", narg,
 		debug.getinfo(2, 'n').name or '?', expected_type, type(v)), 3)
 end
