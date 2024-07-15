@@ -275,6 +275,17 @@ events.connect(events.VIEW_AFTER_SWITCH, update_modified_file)
 events.connect(events.FOCUS, update_modified_file)
 events.connect(events.RESUME, update_modified_file)
 
+-- Prompts the user to reload the current file if it has been externally modified.
+events.connect(events.FILE_CHANGED, function(filename)
+	local button = ui.dialogs.message{
+		title = _L['Reload modified file?'],
+		text = string.format('"%s"\n%s', filename:iconv('UTF-8', _CHARSET),
+			_L['has been modified. Reload it?']), icon = 'dialog-question', button1 = _L['Yes'],
+		button2 = _L['No']
+	}
+	if button == 1 then buffer:reload() end
+end)
+
 --- Closes all open buffers, prompting the user to continue if there are unsaved buffers, and
 -- returns `true` if the user did not cancel.
 -- No buffers are saved automatically. They must be saved manually.
@@ -296,17 +307,6 @@ end)
 -- Cannot rely on `events.BUFFER_NEW` because init scripts (e.g. menus and key bindings) can
 -- access buffer functions before the first `events.BUFFER_NEW` is emitted.
 io._reload, io._save, io._save_as, io._close = reload, save, save_as, close
-
--- Prompts the user to reload the current file if it has been externally modified.
-events.connect(events.FILE_CHANGED, function(filename)
-	local button = ui.dialogs.message{
-		title = _L['Reload modified file?'],
-		text = string.format('"%s"\n%s', filename:iconv('UTF-8', _CHARSET),
-			_L['has been modified. Reload it?']), icon = 'dialog-question', button1 = _L['Yes'],
-		button2 = _L['No']
-	}
-	if button == 1 then buffer:reload() end
-end)
 
 -- Closes the initial "Untitled" buffer when another buffer is opened.
 events.connect(events.FILE_OPENED, function()

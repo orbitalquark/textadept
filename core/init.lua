@@ -34,7 +34,6 @@ local function text_range(buffer, start_pos, end_pos)
 	buffer:set_target_range(target_start, target_end) -- restore
 	return text
 end
-
 events.connect(events.BUFFER_NEW, function() buffer.text_range = text_range end, 1)
 
 --- A table of style properties that can be concatenated with other tables of properties.
