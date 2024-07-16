@@ -53,22 +53,25 @@ M.log = setmetatable({clear = function(self) for i = 1, #self do self[i] = nil e
 	__call = function(self, message) self[#self + 1] = assert_type(message, 'string', 1) end
 })
 
---- Returns a callable stub that tracks how many times it has been called, and with what
--- arguments it was called with; it returns value *ret* when called.
+--- Returns a callable stub that tracks whether (or how many multiple times) it has been called,
+-- and with what arguments it was called with; it returns value *ret* when called.
 -- The returned stub has the following fields:
 --
--- - `called`: The number of times the stub has been called, or `nil` for no calls.
--- - `args`: Table of arguments from the most recent call.
--- - `reset`: Function to reset the `called` and `args` fields to their initial state.
--- @param ret The value to return when called. The default value is `nil`.
+-- - `called`: Either a flag that indicates whether or not the stub has been called, or the
+-- 	number of times it has been called if it is more than 1.
+-- - `args`: Table of arguments from the most recent call, or `nil` if it has not been called.
+-- - `reset`: Function to reset the `called` and `args` fields to their initial values.
+-- @param[opt] ret Value to return when called. The default value is `nil`.
 -- @return callable stub
 -- @usage local f = stub()
 -- @usage assert(f.called)
 -- @usage f:reset()
 function M.stub(ret)
-	return setmetatable({reset = function(self) self.called, self.args = nil, nil end}, {
+	return setmetatable({
+		called = false, reset = function(self) self.called, self.args = false, nil end
+	}, {
 		__call = function(self, ...)
-			self.called = (self.called or 0) + 1
+			self.called = type(self.called) == 'number' and self.called + 1 or self.called and 2 or true
 			self.args = {...}
 			return ret
 		end
