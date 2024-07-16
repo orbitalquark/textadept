@@ -22,7 +22,7 @@ for rev in `hg tags | awk "{print $2}" | cut -d: -f1 | tac`; do
 	fi
 	counts=`cloc --force-lang=C,h --include-lang=C,Lua,make,C++,CMake --quiet --csv \
 		--exclude-dir=doc,docs,scripts,themes,test,.github \
-		--not-match-f="adeptsensedoc|tadoc|$other_platforms" . | \
+		--not-match-f="adeptsensedoc|tadoc|$other_platforms|_test" . | \
 		tail -n +3 | head -n -1 | cut -d, -f2- | sort | tr '\n' ,`
 	echo $timestamp,$counts
 done | lua -e "

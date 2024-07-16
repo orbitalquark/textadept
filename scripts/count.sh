@@ -6,7 +6,7 @@
 
 files="core modules/textadept src/textadept.c src/textadept.h src/textadept_platform.h \
 	CMakeLists.txt init.lua"
-opts="--exclude-lang=SVG --force-lang=C,h --quiet"
+opts="--exclude-lang=SVG --force-lang=C,h --not-match-f=_test --quiet"
 
 cd ..
 echo -n === Gtk ===
