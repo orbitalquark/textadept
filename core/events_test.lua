@@ -5,38 +5,38 @@ local event = 'event'
 
 test('events.connect api should raise errors for invalid argument types', function()
 	local no_event_name = function() events.connect() end
-	test.assert_raises(no_event_name, 'string expected')
-
 	local no_event_handler = function() events.connect(event, nil) end
-	test.assert_raises(no_event_handler, 'function expected')
-
 	local f = test.stub()
 	local invalid_index = function() events.connect(event, f, 'invalid') end
+
+	test.assert_raises(no_event_name, 'string expected')
+	test.assert_raises(no_event_handler, 'function expected')
 	test.assert_raises(invalid_index, 'number/nil expected')
 end)
 
 test('events.disconnect api should raise errors for invalid argument types', function()
 	local no_event_name = function() events.disconnect() end
-	test.assert_raises(no_event_name, 'expected, got nil')
-
 	local no_event_handler = function() events.disconnect(event) end
+
+	test.assert_raises(no_event_name, 'expected, got nil')
 	test.assert_raises(no_event_handler, 'function expected')
 end)
 
 test('events.emit api should raise errors for an invalid argument type', function()
 	local no_event_name = function() events.emit() end
+
 	test.assert_raises(no_event_name, 'string expected')
 end)
 
-test('events.emit should call handlers connected with events.connect', function()
+test('events.emit should call a handler connected with events.connect', function()
 	local handler = test.stub()
 	local _<close> = test.connect(event, handler)
-	test.assert_equal(handler.called, false)
+
 	events.emit(event)
 	test.assert_equal(handler.called, true)
 end)
 
-test('events.emit should not call disconnected handlers', function()
+test('events.emit should not call a disconnected handler', function()
 	local handler = test.stub()
 	local _<close> = test.connect(event, handler)
 	events.disconnect(event, handler)
@@ -52,7 +52,7 @@ test('events.connect should only connect a handler once', function()
 	test.assert_equal(handler.called, true)
 end)
 
-test('events.connect should allow inserting event handlers before others', function()
+test('events.connect should allow inserting an event handler before others', function()
 	local call_order = {}
 	local add1 = function() call_order[#call_order + 1] = 1 end
 	local add2 = function() call_order[#call_order + 1] = 2 end
@@ -89,7 +89,7 @@ test('events.emit should emit events.ERROR if a handler errors', function()
 	test.assert(error_handler.args[1]:find('error!'), 'should have emitted error event')
 end)
 
-test('events.emit should write to io.stderr if the error handler errors', function()
+test('events.emit should write to io.stderr if an error handler errors', function()
 	local stderr = io.stderr
 	local _<close> = test.defer(function() io.stderr = stderr end)
 	local stderr_writer = test.stub()
@@ -114,6 +114,7 @@ test('emit events prior to and after replacing text', function()
 	local after = test.stub()
 	local _<close> = test.connect(events.BUFFER_BEFORE_REPLACE_TEXT, before)
 	local _<close> = test.connect(events.BUFFER_AFTER_REPLACE_TEXT, after)
+
 	buffer:set_text('replacement')
 	test.assert_equal(before.called, true)
 	test.assert_equal(after.called, true)
@@ -124,8 +125,10 @@ for _, method in ipairs{'undo', 'redo'} do
 		buffer:set_text('text')
 		buffer:set_text('multi-line\ntext')
 		if method == 'redo' then buffer:undo() end
+
 		local after = test.stub()
 		local _<close> = test.connect(events.BUFFER_AFTER_REPLACE_TEXT, after)
+
 		buffer[method](buffer)
 		test.assert_equal(after.called, false) -- Scintilla would overwrite any changes by handlers
 		ui.update() -- invokes events.UPDATE_UI
