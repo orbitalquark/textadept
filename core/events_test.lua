@@ -30,81 +30,96 @@ end)
 
 test('events.emit should call a handler connected with events.connect', function()
 	local handler = test.stub()
-	local _<close> = test.connect(event, handler)
 
+	local _<close> = test.connect(event, handler)
 	events.emit(event)
+
 	test.assert_equal(handler.called, true)
 end)
 
 test('events.emit should not call a disconnected handler', function()
 	local handler = test.stub()
-	local _<close> = test.connect(event, handler)
+
+	events.connect(event, handler)
 	events.disconnect(event, handler)
 	events.emit(event)
+
 	test.assert_equal(handler.called, false)
 end)
 
 test('events.connect should only connect a handler once', function()
 	local handler = test.stub()
+
 	local _<close> = test.connect(event, handler)
 	local _<close> = test.connect(event, handler) -- should disconnect the first connection
 	events.emit(event)
-	test.assert_equal(handler.called, true)
+
+	test.assert_equal(handler.called, true) -- would be 2 if called twice
 end)
 
 test('events.connect should allow inserting an event handler before others', function()
 	local call_order = {}
-	local add1 = function() call_order[#call_order + 1] = 1 end
-	local add2 = function() call_order[#call_order + 1] = 2 end
-	local _<close> = test.connect(event, add2)
-	local _<close> = test.connect(event, add1, 1)
+	local record = function(name) call_order[#call_order + 1] = name end
+	local f1 = function() record('f1') end
+	local f2 = function() record('f2') end
+
+	local _<close> = test.connect(event, f1)
+	local _<close> = test.connect(event, f2, 1)
 	events.emit(event)
-	test.assert_equal(call_order, {1, 2})
+
+	test.assert_equal(call_order, {'f2', 'f1'})
 end)
 
 test('events.emit should stop calling handlers when one returns a value', function()
 	local returns_value = test.stub(true)
-	local ignored = test.stub()
+	local should_ignore = test.stub()
+
 	local _<close> = test.connect(event, returns_value)
-	local _<close> = test.connect(event, ignored)
+	local _<close> = test.connect(event, should_ignore)
 	events.emit(event)
-	test.assert_equal(ignored.called, false)
+
+	test.assert_equal(should_ignore.called, false)
 end)
 
 test('events.emit should not skip calling handlers if one removes itself', function()
 	local function disconnects_self() events.disconnect(event, disconnects_self) end
-	local not_skipped = test.stub()
+	local should_not_skip = test.stub()
+
 	local _<close> = test.connect(event, disconnects_self)
-	local _<close> = test.connect(event, not_skipped)
+	local _<close> = test.connect(event, should_not_skip)
 	events.emit(event)
-	test.assert_equal(not_skipped.called, true)
+
+	test.assert_equal(should_not_skip.called, true)
 end)
 
 test('events.emit should emit events.ERROR if a handler errors', function()
 	local error_handler = test.stub(false) -- halt propagation to default error handler
 	local _<close> = test.connect(events.ERROR, error_handler, 1)
 	local raise_error = function() error('error!') end
+
 	local _<close> = test.connect(event, raise_error)
 	events.emit(event)
+
 	test.assert(error_handler.args[1]:find('error!'), 'should have emitted error event')
 end)
 
 test('events.emit should write to io.stderr if an error handler errors', function()
-	local stderr = io.stderr
-	local _<close> = test.defer(function() io.stderr = stderr end)
 	local stderr_writer = test.stub()
-	io.stderr = {write = function(self, ...) return stderr_writer(...) end}
+	local _<close> = test.mock(io, 'stderr', {write = stderr_writer})
+	local raise_error = function() error('error!') end
 
-	local raises_error = function() error('error!') end
-	local _<close> = test.connect(events.ERROR, raises_error, 1)
+	local _<close> = test.connect(events.ERROR, raise_error, 1)
 	events.emit(events.ERROR)
-	test.assert(stderr_writer.args[1]:find('error!'), 'should have written error to io.stderr')
+
+	test.assert(stderr_writer.args[2]:find('error!'), 'should have written error to io.stderr')
 end)
 
 test('events.emit should return the value returned by a handler (if any)', function()
-	local throw = function() return 'catch' end
+	local throw = test.stub('catch')
+
 	local _<close> = test.connect(event, throw)
 	local catch = events.emit(event)
+
 	test.assert_equal(catch, 'catch')
 end)
 
@@ -112,10 +127,11 @@ test('emit events prior to and after replacing text', function()
 	buffer:set_text('text')
 	local before = test.stub()
 	local after = test.stub()
+
 	local _<close> = test.connect(events.BUFFER_BEFORE_REPLACE_TEXT, before)
 	local _<close> = test.connect(events.BUFFER_AFTER_REPLACE_TEXT, after)
-
 	buffer:set_text('replacement')
+
 	test.assert_equal(before.called, true)
 	test.assert_equal(after.called, true)
 end)
@@ -125,13 +141,17 @@ for _, method in ipairs{'undo', 'redo'} do
 		buffer:set_text('text')
 		buffer:set_text('multi-line\ntext')
 		if method == 'redo' then buffer:undo() end
-
 		local after = test.stub()
-		local _<close> = test.connect(events.BUFFER_AFTER_REPLACE_TEXT, after)
 
+		local _<close> = test.connect(events.BUFFER_AFTER_REPLACE_TEXT, after)
 		buffer[method](buffer)
-		test.assert_equal(after.called, false) -- Scintilla would overwrite any changes by handlers
+		local overwritten_by_scintilla = after.called
 		ui.update() -- invokes events.UPDATE_UI
-		test.assert_equal(after.called, true) -- handlers can overwrite any Scintilla changes
+		local overwrites_scintilla = after.called
+
+		-- Scintilla would overwrite any changes by handlers if those handlers were called too soon.
+		-- Instead, they should be called later to overwrite any Scintilla changes.
+		test.assert_equal(overwritten_by_scintilla, false)
+		test.assert_equal(overwrites_scintilla, true)
 	end)
 end
