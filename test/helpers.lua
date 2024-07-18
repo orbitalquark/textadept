@@ -53,27 +53,42 @@ M.log = setmetatable({clear = function(self) for i = 1, #self do self[i] = nil e
 	__call = function(self, message) self[#self + 1] = assert_type(message, 'string', 1) end
 })
 
+--- Returns whether or not the given value is callable, that is, whether or not it is a function
+-- or a table with a `__call` metamethod.
+local function is_callable(f)
+	return type(f) == 'function' or getmetatable(f) and getmetatable(f).__call
+end
+
 --- Returns a callable stub that tracks whether (or how many multiple times) it has been called,
--- and with what arguments it was called with; it returns value *ret* when called.
+-- and with what arguments it was called with; it returns any given values it was originally
+-- given when called.
+-- If function *callback* is given, calls it when the stub is called.
 -- The returned stub has the following fields:
 --
 -- - `called`: Either a flag that indicates whether or not the stub has been called, or the
 -- 	number of times it has been called if it is more than 1.
 -- - `args`: Table of arguments from the most recent call, or `nil` if it has not been called.
 -- - `reset`: Function to reset the `called` and `args` fields to their initial values.
--- @param[opt] ret Value to return when called. The default value is `nil`.
+-- @param[opt] callback Optional callback to call when the stub is called.
+-- @param[opt] ... Optional values to return when called. The default value is `nil`.
 -- @return callable stub
 -- @usage local f = stub()
 -- @usage assert(f.called)
 -- @usage f:reset()
-function M.stub(ret)
+function M.stub(callback, ...)
+	local returns = {...}
+	if not is_callable(callback) then
+		table.insert(returns, 1, callback)
+		callback = nil
+	end
 	return setmetatable({
 		called = false, reset = function(self) self.called, self.args = false, nil end
 	}, {
 		__call = function(self, ...)
 			self.called = type(self.called) == 'number' and self.called + 1 or self.called and 2 or true
 			self.args = {...}
-			return ret
+			if callback then callback() end
+			return table.unpack(returns)
 		end
 	})
 end
@@ -112,14 +127,17 @@ function M.tempfile(ext)
 	return filename, M.defer(function() os.remove(filename) end)
 end
 
---- Creates a temporary directory (with optional structure table *structure*) and returns its
--- path along with a to-be-closed value for deleting that directory and all of its contents.
+--- Creates a temporary directory (with optional structure table *structure*), optionally changes
+-- to it if *chdir* is `true`, and returns its path along with a to-be-closed value for deleting
+-- that directory and all of its contents, and changing back to the original directory.
 -- @param structure Optional directory structure for the temporary directory. Folder names are
 --	keys assigned to table subdirectories. Filenames are string values. The default is an
 --	empty directory.
+-- @param chdir Optional flag that indicates whether or not to change the current working
+--	directory to the temporary directory. The default value is `false`.
 -- @return path, to-be-closed value
 -- @usage local dir, _<close> = tempdir{foo = {'bar.lua'}, 'baz.txt'}
-function M.tempdir(structure)
+function M.tempdir(structure, chdir)
 	local dir = os.tmpname()
 	if not WIN32 then os.remove(dir) end
 
@@ -135,7 +153,14 @@ function M.tempdir(structure)
 	end
 
 	mkdir(dir, assert_type(structure, 'table/nil', 1) or {})
-	return dir, M.defer(function() os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q ') .. dir) end)
+
+	local cwd = lfs.currentdir()
+	if chdir then lfs.chdir(dir) end
+
+	return dir, M.defer(function()
+		if chdir then lfs.chdir(cwd) end
+		os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q ') .. dir)
+	end)
 end
 
 --- Connects function *f* to event *event* at index *index* and returns a to-be-closed value
@@ -146,6 +171,41 @@ end
 function M.connect(event, f, index)
 	events.connect(event, f, index)
 	return M.defer(function() events.disconnect(event, f) end)
+end
+
+--- Mocks the value assigned to string *name* in module *module* (`module.name`) with *mock*,
+-- and returns a to-be-closed value that restores the original value.
+-- If *mock* is a function, it can be conditionally called depending on the return value of
+-- optional function *condition*.
+-- @param module Table module to mock inside of.
+-- @param name String field name in *module* to mock.
+-- @param[opt] condition Optional function that returns whether or not a mock function will
+--	be called (if it is not called, the original function is). If omitted, the mock will
+--	always be used, regardless of whether or not it is a function.
+-- @param mock Value to replace `module.name` with.
+-- @return to-be-closed value
+-- @usage local _<close> = mock(module, 'name', function() return ... end)
+function M.mock(module, name, condition, mock)
+	assert_type(module, 'table', 1)
+	assert_type(name, 'string', 2)
+	if mock ~= nil then
+		assert_type(condition, 'function', 3)
+	else
+		condition, mock = nil, condition
+	end
+
+	local original_value = module[name]
+	if is_callable(mock) then
+		module[name] = function(...)
+			if not condition or condition(...) then return mock(...) end
+			if is_callable(original_value) then return original_value(...) end
+			return original_value
+		end
+	else
+		module[name] = mock
+	end
+
+	return M.defer(function() module[name] = original_value end)
 end
 
 --- Repeatedly calls function *condition* until it either returns a truthy value, or a timeout

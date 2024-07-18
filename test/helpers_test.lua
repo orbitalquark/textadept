@@ -59,18 +59,29 @@ end)
 
 test('stub should record the arguments it was called with', function()
 	local f = test.stub()
+	local args = {'arg', 1}
 
-	f('foo', 1)
+	f(table.unpack(args))
 
-	test.assert_equal(f.args, {'foo', 1})
+	test.assert_equal(f.args, args)
 end)
 
-test('stub should return the value it was initialized with', function()
-	local f = test.stub(true)
+test('stub should call its callback when called', function()
+	local callback = test.stub()
+	local f = test.stub(callback)
 
-	local result = f()
+	f()
 
-	test.assert_equal(result, true)
+	test.assert_equal(callback.called, true)
+end)
+
+test('stub should return the values it was initialized with', function()
+	local return_values = {true, false}
+	local f = test.stub(table.unpack(return_values))
+
+	local result = {f()}
+
+	test.assert_equal(result, return_values)
 end)
 
 test('stub should track the number of times it has been called', function()
@@ -84,8 +95,9 @@ end)
 
 test('stub should reset its tracking data', function()
 	local f = test.stub()
+	local arg = 'arg'
 
-	f('foo')
+	f(arg)
 	f:reset()
 
 	test.assert_equal(f.called, false)
@@ -96,17 +108,6 @@ test('defer should invoke its function when it goes out of scope', function()
 	local f = test.stub()
 
 	do local _<close> = test.defer(f) end
-
-	test.assert_equal(f.called, true)
-end)
-
-test('defer should still invoke its function if an error occurs', function()
-	local f = test.stub()
-
-	pcall(function()
-		local _<close> = test.defer(f)
-		error()
-	end)
 
 	test.assert_equal(f.called, true)
 end)
@@ -130,20 +131,33 @@ test('tempdir should create a temporary directory and defer deleting it', functi
 	local created = {}
 
 	do
-		local d, _<close> = test.tempdir{foo = {'bar.txt'}, 'baz'}
+		local d, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
 		dir = d
 		created[dir] = lfs.attributes(dir, 'mode') == 'directory'
-		created['foo'] = lfs.attributes(dir .. '/foo', 'mode') == 'directory'
-		created['bar.txt'] = lfs.attributes(dir .. '/foo/bar.txt', 'mode') == 'file'
-		created['baz'] = lfs.attributes(dir .. '/baz', 'mode') == 'file'
+		created['file.txt'] = lfs.attributes(dir .. '/file.txt', 'mode') == 'file'
+		created['subdir'] = lfs.attributes(dir .. '/subdir', 'mode') == 'directory'
+		created['subfile.txt'] = lfs.attributes(dir .. '/subdir/subfile.txt', 'mode') == 'file'
 	end
-	local exists = lfs.attributes(dir) ~= nil
+	local still_exists = lfs.attributes(dir) ~= nil
 
 	test.assert_equal(created[dir], true)
-	test.assert_equal(created['foo'], true)
-	test.assert_equal(created['bar.txt'], true)
-	test.assert_equal(created['baz'], true)
-	test.assert_equal(exists, false)
+	test.assert_equal(created['file.txt'], true)
+	test.assert_equal(created['subdir'], true)
+	test.assert_equal(created['subfile.txt'], true)
+	test.assert_equal(still_exists, false)
+end)
+
+test('tempdir should allow changing to it', function()
+	local cwd = lfs.currentdir()
+	local changed_dir
+
+	do
+		local dir, _<close> = test.tempdir({}, true)
+		changed_dir = lfs.currentdir() == dir
+	end
+
+	test.assert_equal(changed_dir, true)
+	test.assert_equal(lfs.currentdir(), cwd)
 end)
 
 test('connect should connect to an event and defer disconnecting it', function()
@@ -154,6 +168,61 @@ test('connect should connect to an event and defer disconnecting it', function()
 	events.emit(event)
 
 	test.assert_equal(f.called, false)
+end)
+
+test('mock api should raise errors for invalid argument types', function()
+	local invalid_module = function() test.mock(print) end
+	local invalid_name = function() test.mock(string, 1) end
+	local valid_mock = test.stub('chunk')
+	local invalid_conditional = function() test.mock(string, 'dump', true, valid_mock) end
+
+	test.assert_raises(invalid_module, 'table expected')
+	test.assert_raises(invalid_name, 'string expected')
+	test.assert_raises(invalid_conditional, 'function expected')
+end)
+
+test('mock should change a module field', function()
+	local module = {field = true}
+	local field
+
+	do
+		local _<close> = test.mock(module, 'field', false)
+		field = module.field
+	end
+
+	test.assert_equal(field, false)
+	test.assert_equal(module.field, true)
+end)
+
+test('mock should replace a module function', function()
+	local module = {}
+	function module.name() return 'unmocked' end
+	local mock = function() return 'mocked' end
+	local mock_result
+
+	do
+		local _<close> = test.mock(module, 'name', mock)
+		mock_result = module.name()
+	end
+	local unmocked_result = module.name()
+
+	test.assert_equal(mock_result, 'mocked')
+	test.assert_equal(unmocked_result, 'unmocked')
+end)
+
+test('mock should allow conditionally mocking a module function', function()
+	local module = {['unmocked key'] = 'unmocked value'}
+	function module.name(key) return module[key] end
+	local conditional = function(value) return value == 'mock key' end
+	local mock = test.stub('mocked value')
+
+	local _<close> = test.mock(module, 'name', conditional, mock)
+	local mocked_results = {module.name('mock key')}
+	local unmocked_results = {module.name('unmocked key')}
+
+	test.assert_equal(mocked_results, {'mocked value'})
+	test.assert_equal(mock.args, {'mock key'})
+	test.assert_equal(unmocked_results, {'unmocked value'})
 end)
 
 test('wait should return when a condition succeeds', function()

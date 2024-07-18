@@ -103,6 +103,12 @@ for i, option in ipairs(arg) do
 	if (option == '-u' or option == '--userhome') and arg[i + 1] then
 		_USERHOME = arg[i + 1]
 		break
+	elseif option == '-t' or option == '--test' then
+		-- Run unit tests using a temporary _USERHOME (deleting it when done).
+		local dir = os.tmpname()
+		if not WIN32 then os.remove(dir) end
+		_USERHOME = dir
+		break
 	end
 end
 local mode = lfs.attributes(_USERHOME, 'mode')
@@ -119,29 +125,23 @@ M.register('-f', '--force', 0, function() end, 'Forces unique instance')
 M.register('-p', '--preserve', 0, function() end, 'Preserve ^Q (XON) and ^S (XOFF) flow control')
 M.register('-L', '--lua', 1, function() end, 'Runs the given file as a Lua script and exits')
 
--- Run unit tests using a temporary _USERHOME (deleting it when done).
+-- Run unit tests.
 -- Note: have them run after the last `events.INITIALIZED` handler so everything is completely
 -- initialized (e.g. menus, macro module, etc.).
-M.register('-t', '--test', 1, function(patterns)
-	local dir = os.tmpname()
-	if not WIN32 then os.remove(dir) end
-	lfs.mkdir(dir)
-	assert(io.open(dir .. '/init.lua', 'w')):close()
-	_USERHOME = dir
+M.register('-t', '--test', 1, function(tags)
 	events.connect(events.QUIT, function()
 		textadept.session.save_on_quit = false
-		os.remove(_USERHOME .. '/init.lua')
-		os.remove(_USERHOME)
+		os.execute(string.format('%s "%s"', not WIN32 and 'rm -r' or 'rmdir /Q', _USERHOME))
 	end, 1)
 
 	events.connect(events.INITIALIZED, function()
 		local arg = {}
-		for patt in (patterns or ''):gmatch('[^,]+') do arg[#arg + 1] = patt end
+		for patt in (tags or ''):gmatch('[^,]+') do arg[#arg + 1] = patt end
 		local env = setmetatable({arg = arg}, {__index = _G})
 		assert(loadfile(_HOME .. '/test/test.lua', 't', env))()
 	end)
 
 	return true -- prevent events.ARG_NONE
-end, 'Runs unit tests indicated by comma-separated list of patterns (or all)')
+end, 'Runs unit tests indicated by comma-separated list of tags (or all)')
 
 return M
