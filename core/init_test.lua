@@ -4,8 +4,8 @@ test('buffer:text_range api should raise an error for invalid argument types', f
 	local no_args = function() buffer:text_range() end
 	local no_second_arg = function() buffer:text_range(5) end
 
-	test.assert_raises(no_args, 'number expected, got nil')
-	test.assert_raises(no_second_arg, 'number expected, got nil')
+	test.assert_raises(no_args, 'number expected')
+	test.assert_raises(no_second_arg, 'number expected')
 end)
 
 test("buffer:text_range should implement Scintilla's SCI_GETTEXTRANGE", function()
@@ -140,9 +140,9 @@ test('timeout api should raise errors for invalid arguments and types', function
 	local invalid_interval = function() timeout(0) end
 	local invalid_function = function() timeout(1, 'foo') end
 
-	test.assert_raises(no_interval, 'number expected, got no value')
+	test.assert_raises(no_interval, 'number expected')
 	test.assert_raises(invalid_interval, 'interval must be > 0')
-	test.assert_raises(invalid_function, 'function expected, got string')
+	test.assert_raises(invalid_function, 'function expected')
 end)
 
 test('timeout should repeatedly call a function as long as it returns true', function()

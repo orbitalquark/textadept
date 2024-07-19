@@ -29,10 +29,10 @@ test('io.open_file should prompt for a file to open if none was given', function
 end)
 
 test('io.open_file should emit a file opened event', function()
-	local event = test.stub()
-	local _<close> = test.connect(events.FILE_OPENED, event)
 	local filename, _<close> = test.tempfile()
+	local event = test.stub()
 
+	local _<close> = test.connect(events.FILE_OPENED, event)
 	io.open_file(filename)
 
 	test.assert_equal(event.called, true)
