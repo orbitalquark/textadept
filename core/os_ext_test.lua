@@ -153,7 +153,7 @@ test('proc:kill should kill a spawned process', function()
 end)
 
 test('os.spawn should emit an error when a stdout/stderr callback errors', function()
-	local event = test.stub()
+	local event = test.stub(false) -- halt propagation to default error handler
 	local _<close> = test.connect(events.ERROR, event, 1)
 
 	local raises_error = function(output) error('error: ' .. output) end
@@ -164,7 +164,7 @@ test('os.spawn should emit an error when a stdout/stderr callback errors', funct
 end)
 
 test('os.spawn should emit an error when an exit callback errors', function()
-	local event = test.stub()
+	local event = test.stub(false) -- halt propagation to default error handler
 	local _<close> = test.connect(events.ERROR, event, 1)
 
 	local raises_error = function(code) error('error: ' .. code) end
