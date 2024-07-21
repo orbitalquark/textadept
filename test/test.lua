@@ -158,4 +158,5 @@ if package.loaded['luacov'] then
 end
 
 -- Quit Textadept with exit status depending on whether any tests failed.
-timeout(0.01, function() quit(tests_failed, false) end)
+textadept.session.save_on_quit = false -- do not clobber default session
+timeout(0.01, function() quit(tests_failed) end)
