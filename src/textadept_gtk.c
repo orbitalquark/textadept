@@ -31,7 +31,7 @@ const char *get_charset() {
 // Signal for exiting Textadept.
 // Generates a 'quit' event. If that event does not return `true`, quits the application.
 static bool exiting(GtkWidget *_, GdkEventAny *__, void *___) {
-	if (emit("quit", -1)) return true; // halt
+	if (!can_quit()) return true; // halt
 	return (close_textadept(), scintilla_release_resources(), gtk_main_quit(), false);
 }
 

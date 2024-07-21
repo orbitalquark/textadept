@@ -81,6 +81,13 @@ void process_output(Process *proc, const char *s, size_t len, bool is_stdout);
  */
 void process_exited(Process *proc, int code);
 
+/** Asks Textadept if the platform can quit.
+ * If the return value is `false`, something is preventing Textadept from quitting (e.g. unsaved
+ * changes) and the platform should not quit yet.
+ * @return true or false depending on whether Textadept is ready to quit
+ */
+bool can_quit();
+
 /** Closes Textadept.
  * Unsplits panes, closes buffers, deletes Scintilla views, and closes Lua. During this process,
  * Textadept may still call `SS()`, so platforms should take care to call this while Scintilla

@@ -175,8 +175,12 @@ end, 1)
 -- @param to Index to move the buffer to.
 -- @function move_buffer
 
---- Emits `events.QUIT`, and unless any handler returns `false`, quits Textadept.
+--- Attempts to quit Textadept.
+-- Emits `events.QUIT` unless *events* is `false`.
 -- @param[opt] status Optional status code for Textadept to exit with. The default value is 0.
+-- @param[optchain] events Optional flag that indicates whether or not to emit `events.QUIT`,
+-- which could prevent quitting. Passing `false` is not recommended and could result in data
+-- loss. The default value is `true`.
 -- @function quit
 
 --- Resets the Lua State by reloading all initialization scripts.

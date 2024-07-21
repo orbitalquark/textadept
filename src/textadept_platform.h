@@ -386,7 +386,7 @@ void cleanup_process(Process *proc);
 /** Asks the platform to suspend execution of Textadept, if possible. */
 void suspend();
 
-/** Asks the platform to emit a "quit" event, and if that event does not return `true`, quit
- * the application.
- */
+/** Asks the platform quit the application.
+ * The user has already been prompted to handle unsaved changes, etc. `can_quit()` will return
+ * `true`.
 void quit();
