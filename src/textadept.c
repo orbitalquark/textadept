@@ -717,8 +717,15 @@ static int move_buffer_lua(lua_State *L) {
 	return (move_buffer(from, to, true), 0);
 }
 
+// Note: lua may be NULL, e.g. Qt session manager doing odd things on logout/restart while
+// Textadept is still running.
+bool can_quit() { return closing || !lua || !emit("quit", -1); }
+
 // `_G.quit()` Lua function.
-static int quit_lua(lua_State *L) { return (quit(), exit_status = luaL_optnumber(L, 1, 0), 0); }
+static int quit_lua(lua_State *L) {
+	if ((lua_isnone(L, 2) || lua_toboolean(L, 2)) && !can_quit()) return 0;
+	return (closing = true, quit(), exit_status = luaL_optnumber(L, 1, 0), 0);
+}
 
 // Runs the given Lua file, which is relative to `textadept_home`, and returns `true` on success.
 // If there are errors, shows an error dialog and returns `false`.

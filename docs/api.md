@@ -227,13 +227,17 @@ Parameters:
 - *to*:  Index to move the buffer to.
 
 <a id="quit"></a>
-#### `quit`([*status*])
+#### `quit`([*status*[, *events*]])
 
-Emits [`events.QUIT`](#events.QUIT), and unless any handler returns `false`, quits Textadept.
+Attempts to quit Textadept.
+Emits [`events.QUIT`](#events.QUIT) unless *events* is `false`.
 
 Parameters:
 
 - *status*:  Optional status code for Textadept to exit with. The default value is 0.
+- *events*:  Optional flag that indicates whether or not to emit [`events.QUIT`](#events.QUIT),
+ which could prevent quitting. Passing `false` is not recommended and could result in data
+ loss. The default value is `true`.
 
 <a id="reset"></a>
 #### `reset`()

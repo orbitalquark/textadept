@@ -704,9 +704,7 @@ Textadept::Textadept(QWidget *parent) : QMainWindow{parent}, ui{new Ui::Textadep
 }
 
 void Textadept::closeEvent(QCloseEvent *ev) {
-	// Note: lua may be NULL due to Qt session manager doing odd things on logout/restart while
-	// Textadept is still running.
-	if (lua && emit("quit", -1)) ev->ignore();
+	if (!can_quit()) ev->ignore();
 }
 
 void Textadept::keyPressEvent(QKeyEvent *ev) {

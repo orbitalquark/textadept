@@ -876,7 +876,7 @@ void suspend() {
 #endif
 }
 
-void quit() { quitting = !emit("quit", -1); }
+void quit() { quitting = true; }
 
 #if !_WIN32
 // Signal for a terminal continue or resize.
