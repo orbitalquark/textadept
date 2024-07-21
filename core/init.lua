@@ -3,6 +3,8 @@
 --- Extends Lua's _G table to provide extra functions and fields for Textadept.
 -- @module _G
 
+for _, arg in ipairs(arg) do if arg == '-T' or arg == '--cov' then require('luacov') end end
+
 --- The Textadept release version string.
 _RELEASE = 'Textadept 12.5 nightly'
 --- Textadept's copyright information.
@@ -10,8 +12,6 @@ _COPYRIGHT = 'Copyright © 2007-2024 Mitchell. See LICENSE.\n' ..
 	'https://orbitalquark.github.io/textadept'
 
 package.path = string.format('%s/core/?.lua;%s', _HOME, package.path)
-
-for _, arg in ipairs(arg) do if arg == '-T' or arg == '--cov' then pcall(require, 'luacov') end end
 
 require('assert')
 _SCINTILLA = require('iface')
