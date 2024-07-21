@@ -115,27 +115,27 @@ test('move_buffer should move a buffer forwards', function()
 	test.assert(_BUFFERS[buffer2] < _BUFFERS[buffer4], 'buffer2 should be before buffer4')
 end)
 
--- Note: testing reset creates extra temporary _USERHOMEs and discards the test runner's events.QUIT
--- handler.
--- test('reset should reset the Lua state', function()
---	_G.variable = ''
---
---	reset()
---
---	test.assert_equal(_G.variable, nil)
--- end)
+-- Note: testing reset creates extra temporary _USERHOMEs and discards the test runner's
+-- events.QUIT handler.
+test('reset should reset the Lua state #skip', function()
+	_G.variable = ''
+
+	reset()
+
+	test.assert_equal(_G.variable, nil)
+end)
 
 -- Note: cannot test events.RESET_AFTER because there is no opportunity to connect to it
 -- during reset.
--- test('reset should emit before events with a persistent table', function()
---	local before = test.stub()
---
---	events.connect(events.RESET_BEFORE, before)
---	reset()
---
---	test.assert_equal(before.called, true)
---	test.assert_equal(type(before.args[1]), 'table')
--- end)
+test('reset should emit before events with a persistent table #skip', function()
+	local before = test.stub()
+
+	events.connect(events.RESET_BEFORE, before)
+	reset()
+
+	test.assert_equal(before.called, true)
+	test.assert_equal(type(before.args[1]), 'table')
+end)
 
 test('timeout api should raise errors for invalid arguments and types', function()
 	local no_interval = function() timeout() end
@@ -165,4 +165,4 @@ test('timeout should repeatedly call a function as long as it returns true', fun
 	test.assert(duration > expected_duration, 'should have waited %fs, but waited only %fs)',
 		expected_duration, duration)
 end)
-if not pcall(require, 'socket') then test.expected_failure() end
+if not pcall(require, 'socket') then expected_failure() end

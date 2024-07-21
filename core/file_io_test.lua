@@ -711,7 +711,7 @@ test('buffer:close for a hidden buffer should not affect buffers in existing vie
 	test.assert(_VIEWS[2].buffer == buffer3, 'buffer3 should still be visible')
 	test.assert(_VIEWS[3].buffer == buffer4, 'buffer4 should still be visible')
 end)
-if not QT then test.expected_failure() end
+if not QT then expected_failure() end
 
 test('read stdin into a new buffer as a file', function()
 	local stdin_provider = test.stub('text')

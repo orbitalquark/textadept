@@ -4,26 +4,50 @@
 local tests = {}
 
 --- Registers a unit test to run.
+-- Tests are tagged with the file they belong to. For example, tests in *core/init_test.lua*
+-- are tagged with '#core/init'. This allows individual test suites to be included or excluded
+-- when running tests.
+-- Use a '#skip' tag to skip a test by default.
 -- @param name Name or description of the unit test.
 -- @param f Unit test function.
--- @function test
+-- @function _G.test
 local test = setmetatable(dofile(_HOME .. '/test/helpers.lua'), {
-	__call = function(self, name, f) tests[#tests + 1], tests[name] = name, f end
+	__call = function(self, name, f)
+		name = string.format('%s - #%s ', name, _TESTSUITE)
+		tests[#tests + 1], tests[name] = name, f
+	end
 })
 
 --- Map of tests expected to fail to `true`.
 local expected_failures = {}
 
---- Expect the test *f* to fail. If it does not fail, that is considered a failure.
-local function expected_failure(f) expected_failures[assert_type(f, 'function', 1)] = true end
+--- Expect the most recently defined test to fail. If it does not fail, that is considered
+-- a failure.
+-- @name _G.expected_failure
+local function expected_failure() expected_failures[tests[#tests]] = true end
 
 -- Test environment.
 local env = setmetatable({expected_failure = expected_failure, test = test}, {__index = _G})
 
--- Load tests.
--- TODO: lfs.walk(_HOME, '*_test.lua')
-for test_file in lfs.walk(_HOME, '.lua') do
-	if test_file:find('_test%.lua$') then assert(loadfile(test_file, 't', env))() end
+-- Load all tests from *_test.lua files in _HOME.
+local test_files = {}
+for test_file in lfs.walk(_HOME, '.lua') do -- TODO: '*_test.lua'
+	if test_file:find('_test%.lua$') then test_files[#test_files + 1] = test_file end
+end
+table.sort(test_files)
+for _, test_file in ipairs(test_files) do
+	_TESTSUITE = test_file:sub(#_HOME + 2, -string.len('_test.lua') - 1)
+	assert(loadfile(test_file, 't', env))()
+end
+
+-- Read tags to include and exclude from arg.
+local include_tags, exclude_tags = {}, {skip = true}
+for _, tag in ipairs(arg) do
+	if tag:find('^%-') then
+		exclude_tags[tag:sub(2)] = true
+	else
+		include_tags[tag] = true
+	end
 end
 
 --- Returns a string snapshot of the current Textadept state suitable for error reporting,
@@ -47,32 +71,45 @@ local function snapshot()
 	return table.concat(lines, '\n')
 end
 
-local tests_succeeded, tests_failed, tests_failed_expected = 0, 0, 0
+local tests_passed, tests_failed, tests_skipped, tests_failed_expected = 0, 0, 0, 0
 
 if CURSES then io.output('test.log') end
 
 for _, name in ipairs(tests) do
-	-- Run the test.
-	io.output():write(name, '... '):flush()
 	local f = tests[name]
-	local ok, errmsg
+	local ok, errmsg, status
+
+	-- Determine if the test should be skipped.
+	local skip = next(include_tags)
+	for tag in name:gmatch('%#(%S+)') do
+		if exclude_tags[tag] then
+			skip = true
+			break
+		elseif skip and include_tags[tag] then
+			skip = false
+			break
+		end
+	end
+	if skip then goto skip end
+
+	-- Run the test.
 	do
 		_ENV = setmetatable({}, {__index = _G}) -- simple sandbox
 		ok, errmsg = xpcall(f, function(errmsg)
+			if expected_failures[name] then return false end -- do not print traceback
 			local text = buffer:get_text():gsub('(\r?\n)', '%1\t')
 			local s, e = buffer.selection_start, buffer.selection_end
 			return string.format('%s\nlog:\n\t%s%s', debug.traceback(errmsg, 3),
 				table.concat(test.log, '\n\t'), snapshot())
 		end)
 	end
-	if not errmsg and expected_failures[f] then
-		ok, errmsg = false, 'Test passed, but should have failed'
-		expected_failures[f] = nil
+	if errmsg == nil and expected_failures[name] then
+		ok = false
+		local info = debug.getinfo(f)
+		errmsg = string.format('%s:%d: Test passed, but should have failed', info.short_src,
+			info.linedefined)
+		expected_failures[name] = nil
 	end
-
-	-- Write test output.
-	io.output():write(ok and 'PASS' or 'FAIL', '\n'):flush()
-	if not ok then print(errmsg) end
 
 	-- Clean up after the test.
 	test.log:clear()
@@ -80,18 +117,33 @@ for _, name in ipairs(tests) do
 	buffer:close(true) -- the last one
 	while view:unsplit() do end
 
+	-- Write test output.
+	if ok then
+		status = 'OK'
+	elseif expected_failures[name] then
+		status = 'OK*'
+	else
+		status = 'FAIL'
+		io.output():write(string.rep('-', 100), '\n')
+	end
+	io.output():write(status, ' ', name, '\n'):flush()
+	if not ok and errmsg then io.output():write(errmsg, '\n', string.rep('-', 100), '\n') end
+
+	::skip::
 	-- Update statistics.
 	if ok then
-		tests_succeeded = tests_succeeded + 1
-	elseif not expected_failures[f] then
+		tests_passed = tests_passed + 1
+	elseif skip then
+		tests_skipped = tests_skipped + 1
+	elseif not expected_failures[name] then
 		tests_failed = tests_failed + 1
 	else
 		tests_failed_expected = tests_failed_expected + 1
 	end
 end
 
-print(string.format('%d successes, %d failures, %d expected failures', tests_succeeded,
-	tests_failed, tests_failed_expected))
+print(string.format('%d failed, %d passed, %d skipped, %d expected failures', tests_failed,
+	tests_passed, tests_skipped, tests_failed_expected))
 
 -- Note: stock luacov crashes on hook.lua lines 56 and 63 every other run.
 -- `file.max` and `file.max_hits` are both `nil`, so change comparisons to be `(file.max or 0)`
@@ -103,9 +155,7 @@ if package.loaded['luacov'] then
 	local f = assert(io.open(report))
 	io.stdout:write('\n', 'LuaCov Summary (', report, ')', f:read('a'):match('Summary(.+)$'))
 	f:close()
-else
-	print('No LuaCov coverage to report.')
 end
 
 -- Quit Textadept with exit status depending on whether any tests failed.
-timeout(0.1, function() quit(tests_failed) end)
+timeout(0.01, function() quit(tests_failed) end)
