@@ -95,7 +95,7 @@ local function print_to(buffer_type, silent, format, ...)
 	local args = table.pack(...)
 	for i = 1, args.n do args[i] = tostring(args[i]) end
 	buffer:append_text(table.concat(args, format and '\t' or ''))
-	if format then buffer:append_text('\n') end
+	if format then buffer:append_text(buffer.eol_mode == buffer.EOL_LF and '\n' or '\r\n') end
 	buffer:goto_pos(buffer.length + 1)
 	buffer:set_save_point()
 	if silent then set_tab_label(buffer) end -- events.SAVE_POINT_REACHED does not pass this buffer
