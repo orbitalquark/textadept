@@ -63,33 +63,6 @@ events.connect(events.INITIALIZED, function() if arg then process(arg) end end)
 -- Undocumented, single-instance event handler for forwarding arguments.
 events.connect('command_line', function(arg) process(arg, true) end)
 
-if not CURSES then
-	-- Shows all registered command line options on the command line.
-	M.register('-h', '--help', 0, function()
-		print('Usage: textadept [args] [filenames]')
-		local list = {}
-		for name in pairs(options) do list[#list + 1] = name end
-		table.sort(list, function(a, b) return a:match('^%-*(.*)$') < b:match('^%-*(.*)$') end)
-		for _, name in ipairs(list) do
-			local option = options[name]
-			print(string.format('  %s [%d args]: %s', name, option.narg, option.description))
-		end
-		os.exit()
-	end, 'Shows this')
-	-- Shows Textadept version and copyright on the command line.
-	M.register('-v', '--version', 0, function()
-		print(_RELEASE .. '\n' .. _COPYRIGHT)
-		os.exit()
-	end, 'Prints Textadept version and copyright')
-	-- After Textadept finishes initializing and processes arguments, remove the help and
-	-- version options in order to prevent another instance from sending '-h', '--help', '-v',
-	-- and '--version' to the first instance, killing the latter.
-	events.connect(events.INITIALIZED, function()
-		options['-h'], options['--help'] = nil, nil
-		options['-v'], options['--version'] = nil, nil
-	end)
-end
-
 -- Set `_G._USERHOME`.
 -- This needs to be set as soon as possible since the processing of arguments is positional.
 
@@ -119,6 +92,27 @@ M.register('-f', '--force', 0, function() end, 'Forces unique instance')
 M.register('-p', '--preserve', 0, function() end, 'Preserve ^Q (XON) and ^S (XOFF) flow control')
 M.register('-L', '--lua', 1, function() end, 'Runs the given file as a Lua script and exits')
 
+-- Shows all registered command line options on the command line.
+M.register('-h', '--help', 0, function()
+	if CURSES then return end -- not supported
+	print('Usage: textadept [args] [filenames]')
+	local list = {}
+	for name in pairs(options) do list[#list + 1] = name end
+	table.sort(list, function(a, b) return a:match('^%-*(.*)$') < b:match('^%-*(.*)$') end)
+	for _, name in ipairs(list) do
+		local option = options[name]
+		print(string.format('  %s [%d args]: %s', name, option.narg, option.description))
+	end
+	timeout(0.01, function() quit(0, false) end)
+end, 'Shows this')
+
+-- Shows Textadept version and copyright on the command line.
+M.register('-v', '--version', 0, function()
+	if CURSES then return end -- not supported
+	print(_RELEASE .. '\n' .. _COPYRIGHT)
+	timeout(0.01, function() quit(0, false) end)
+end, 'Prints Textadept version and copyright')
+
 -- Run unit tests.
 -- Note: have them run after the last `events.INITIALIZED` handler so everything is completely
 -- initialized (e.g. menus, macro module, etc.).
@@ -130,5 +124,11 @@ M.register('-t', '--test', 1, function(patterns)
 		assert(loadfile(_HOME .. '/test/test.lua', 't', env))()
 	end)
 end, 'Runs unit tests indicated by comma-separated list of patterns (or all)')
+
+-- After Textadept finishes initializing and processes arguments, remove some options in order
+-- to prevent another instance from quitting the first one.
+events.connect(events.INITIALIZED, function()
+	for _, opt in ipairs{'-h', '--help', '-v', '--version'} do options[opt] = nil end
+end)
 
 return M
