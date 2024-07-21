@@ -129,11 +129,6 @@ M.register('-L', '--lua', 1, function() end, 'Runs the given file as a Lua scrip
 -- Note: have them run after the last `events.INITIALIZED` handler so everything is completely
 -- initialized (e.g. menus, macro module, etc.).
 M.register('-t', '--test', 1, function(tags)
-	events.connect(events.QUIT, function()
-		textadept.session.save_on_quit = false
-		os.execute(string.format('%s "%s"', not WIN32 and 'rm -r' or 'rmdir /Q', _USERHOME))
-	end, 1)
-
 	events.connect(events.INITIALIZED, function()
 		local arg = {}
 		for patt in (tags or ''):gmatch('[^,]+') do arg[#arg + 1] = patt end
@@ -141,7 +136,14 @@ M.register('-t', '--test', 1, function(tags)
 		assert(loadfile(_HOME .. '/test/test.lua', 't', env))()
 	end)
 
-	return true -- prevent events.ARG_NONE
+	events.connect(events.QUIT, function()
+		local info = debug.getinfo(4)
+		if GTK and info then return end -- ignore simulated quit event
+		if info and info.name ~= 'quit' then return end -- ignore simulated quit events
+		os.execute(string.format('%s "%s"', not WIN32 and 'rm -r' or 'rmdir /Q', _USERHOME))
+	end)
+
+	textadept.session.save_on_quit = false
 end, 'Runs unit tests indicated by comma-separated list of tags (or all)')
 
 return M
