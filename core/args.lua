@@ -127,9 +127,8 @@ end, 'Prints Textadept version and copyright')
 M.register('-t', '--test', 1, function(tags)
 	events.connect(events.INITIALIZED, function()
 		local arg = {}
-		for patt in (tags or ''):gmatch('[^,]+') do arg[#arg + 1] = patt end
-		local env = setmetatable({arg = arg}, {__index = _G})
-		assert(loadfile(_HOME .. '/test/test.lua', 't', env))()
+		for tag in (tags or ''):gmatch('[^,]+') do arg[#arg + 1] = tag end
+		assert(loadfile(_HOME .. '/test/test.lua', 't', setmetatable({arg = arg}, {__index = _G})))()
 	end)
 
 	events.connect(events.QUIT, function()
@@ -139,13 +138,13 @@ M.register('-t', '--test', 1, function(tags)
 		os.execute(string.format('%s "%s"', not WIN32 and 'rm -r' or 'rmdir /Q', _USERHOME))
 	end)
 
-	textadept.session.save_on_quit = false
+	return true
 end, 'Runs unit tests indicated by comma-separated list of tags (or all)')
 
 -- After Textadept finishes initializing and processes arguments, remove some options in order
 -- to prevent another instance from quitting the first one.
 events.connect(events.INITIALIZED, function()
-	for _, opt in ipairs{'-h', '--help', '-v', '--version'} do options[opt] = nil end
+	for _, opt in ipairs{'-h', '--help', '-v', '--version', '-t', '--test'} do options[opt] = nil end
 end)
 
 return M
