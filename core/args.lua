@@ -97,6 +97,7 @@ M.register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
 M.register('-f', '--force', 0, function() end, 'Forces unique instance')
 M.register('-p', '--preserve', 0, function() end, 'Preserve ^Q (XON) and ^S (XOFF) flow control')
 M.register('-L', '--lua', 1, function() end, 'Runs the given file as a Lua script and exits')
+M.register('-T', '--cov', 0, function() end, 'Runs unit tests with code coverage')
 
 -- Shows all registered command line options on the command line.
 M.register('-h', '--help', 0, function()

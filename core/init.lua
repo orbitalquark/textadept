@@ -11,7 +11,7 @@ _COPYRIGHT = 'Copyright © 2007-2024 Mitchell. See LICENSE.\n' ..
 
 package.path = string.format('%s/core/?.lua;%s', _HOME, package.path)
 
--- for _, arg in ipairs(arg) do if arg == '-t' or arg == '--test' then pcall(require, 'luacov') end end
+for _, arg in ipairs(arg) do if arg == '-T' or arg == '--cov' then pcall(require, 'luacov') end end
 
 require('assert')
 _SCINTILLA = require('iface')
