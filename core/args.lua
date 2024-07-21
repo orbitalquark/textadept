@@ -110,6 +110,7 @@ M.register('-h', '--help', 0, function()
 		print(string.format('  %s [%d args]: %s', name, option.narg, option.description))
 	end
 	timeout(0.01, function() quit(0, false) end)
+	return true
 end, 'Shows this')
 
 -- Shows Textadept version and copyright on the command line.
@@ -117,6 +118,7 @@ M.register('-v', '--version', 0, function()
 	if CURSES then return end -- not supported
 	print(_RELEASE .. '\n' .. _COPYRIGHT)
 	timeout(0.01, function() quit(0, false) end)
+	return true
 end, 'Prints Textadept version and copyright')
 
 -- Run unit tests.

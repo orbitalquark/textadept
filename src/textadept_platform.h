@@ -389,4 +389,5 @@ void suspend();
 /** Asks the platform quit the application.
  * The user has already been prompted to handle unsaved changes, etc. `can_quit()` will return
  * `true`.
+ */
 void quit();
