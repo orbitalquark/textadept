@@ -122,10 +122,19 @@ M.register('-v', '--version', 0, function()
 	return true
 end, 'Prints Textadept version and copyright')
 
+-- After Textadept finishes initializing and processes arguments, remove some options in order
+-- to prevent another instance from quitting the first one.
+local function remove_options_that_quit()
+	for _, opt in ipairs{'-h', '--help', '-v', '--version', '-t', '--test'} do options[opt] = nil end
+end
+events.connect(events.INITIALIZED, remove_options_that_quit)
+
 -- Run unit tests.
 -- Note: have them run after the last `events.INITIALIZED` handler so everything is completely
 -- initialized (e.g. menus, macro module, etc.).
 M.register('-t', '--test', 1, function(tags)
+	events.disconnect(events.INITIALIZED, remove_options_that_quit)
+
 	events.connect(events.INITIALIZED, function()
 		local arg = {}
 		for tag in (tags or ''):gmatch('[^,]+') do arg[#arg + 1] = tag end
@@ -141,11 +150,5 @@ M.register('-t', '--test', 1, function(tags)
 
 	return true
 end, 'Runs unit tests indicated by comma-separated list of tags (or all)')
-
--- After Textadept finishes initializing and processes arguments, remove some options in order
--- to prevent another instance from quitting the first one.
-events.connect(events.INITIALIZED, function()
-	for _, opt in ipairs{'-h', '--help', '-v', '--version', '-t', '--test'} do options[opt] = nil end
-end)
 
 return M
