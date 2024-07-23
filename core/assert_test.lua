@@ -1,51 +1,46 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-test('assert should return a truthy first argument', function()
-	local result = test.assert(1, 'okay')
+test('assert should return its argument on success', function()
+	local result = test.assert(1)
 
 	test.assert_equal(result, 1)
 end)
 
-test('assert should use the second argument as an error message', function()
-	local false_assertion = function() test.assert(false, 'not okay') end
+test('assert should raise an error on fail', function()
+	local error_message = 'error!'
+	local false_assertion = function() test.assert(false, error_message) end
 
-	test.assert_raises(false_assertion, 'not okay')
+	test.assert_raises(false_assertion, error_message)
 end)
 
-test('assert should format an error message using additional arguments', function()
-	local false_assertion = function() test.assert(false, 'not okay: %s', 0) end
+test('assert should format a given error message', function()
+	local false_assertion = function() test.assert(false, 'error: %s', 0) end
 
-	test.assert_raises(false_assertion, 'not okay: 0')
+	test.assert_raises(false_assertion, 'error: 0')
 end)
 
-test('assert should allow a non-string error object', function()
-	local false_assertion = function() test.assert(false, 1234) end
-
-	test.assert_raises(false_assertion, '1234')
-end)
-
-test("assert should fall back on Lua assert's default error message", function()
+test('assert should fall back on a default error message', function()
 	local false_assertion = function() test.assert(false) end
 
 	test.assert_raises(false_assertion, 'assertion failed!')
 end)
 
-test('assert_type api should raise errors if any of its argument types are invalid', function()
-	local invalid_second_arg = function() assert_type(nil, string) end
-	local omitted_third_arg = function() assert_type(nil, 'string') end
+test('assert_type should raise errors for invalid arguments', function()
+	local invalid_type_name = function() assert_type(nil, {}) end
+	local missing_narg = function() assert_type(nil, '') end
 
-	test.assert_raises(function() invalid_second_arg() end,
+	test.assert_raises(function() invalid_type_name() end,
 		"bad argument #2 to 'assert_type' (string expected, got table")
-	test.assert_raises(function() omitted_third_arg() end,
+	test.assert_raises(function() missing_narg() end,
 		"bad argument #3 to 'assert_type' (value expected, got nil")
 end)
 
-test('assert_type should return the given argument if its type matches the assertion', function()
+test('assert_type should return its argument on success', function()
 	local needs_string = function(s) return assert_type(s, 'string', 1) end
 
-	local result = needs_string('bar')
+	local result = needs_string('')
 
-	test.assert_equal(result, 'bar')
+	test.assert_equal(result, '')
 end)
 
 test('assert_type should recognize more than one type', function()
@@ -73,7 +68,7 @@ test('assert_type should consider an object with a __call metamethod to be a fun
 	test.assert_equal(callable, f)
 end)
 
-test('assert_type should raise an error if a type assertion fails', function()
+test('assert_type should raise an error on fail', function()
 	local needs_string = function(s) assert_type(s, 'string', 1) end
 	local optional_second_boolean = function(_, b) assert_type(b, 'boolean/nil', 2) end
 

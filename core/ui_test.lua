@@ -1,6 +1,6 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-test('ui.print_to api should raise an error for an invalid argument type', function()
+test('ui.print_to should raise errors for invalid arguments', function()
 	local not_a_string = function() ui.print_to(1) end
 
 	test.assert_raises(not_a_string, 'string expected')
@@ -29,7 +29,7 @@ test('ui.print_to should print multiple values separated by tabs', function()
 	test.assert_equal(buffer:get_text(), '1\t2' .. test.newline())
 end)
 
-test('ui.print_to should switch to the printed buffer', function()
+test('ui.print_to should switch to the print buffer', function()
 	local type = '[Typed Buffer]'
 
 	local _<close> = test.mock(ui, 'tabs', true)
@@ -40,7 +40,7 @@ test('ui.print_to should switch to the printed buffer', function()
 	test.assert_equal(buffer._type, type)
 end)
 
-test('ui.print_to should print to a typed buffer in another view', function()
+test('ui.print_to should print to a typed buffer in another view if ui.tabs is disabled', function()
 	local type = '[Typed Buffer]'
 
 	local _<close> = test.mock(ui, 'tabs', false)
@@ -53,18 +53,19 @@ test('ui.print_to should print to a typed buffer in another view', function()
 	test.assert(_VIEWS[1].buffer == _BUFFERS[1], 'should not have switched buffers')
 end)
 
-test('ui.print_to should switch to the printed buffer in another view', function()
-	local type = '[Typed Buffer]'
+test('ui.print_to should switch to the print buffer, but in another view if ui.tabs is disabled',
+	function()
+		local type = '[Typed Buffer]'
 
-	local _<close> = test.mock(ui, 'tabs', false)
-	ui.print_to(type)
-	ui.goto_view(-1)
-	ui.print_to(type)
+		local _<close> = test.mock(ui, 'tabs', false)
+		ui.print_to(type)
+		ui.goto_view(-1)
+		ui.print_to(type)
 
-	test.assert_equal(_VIEWS[view], 2)
-end)
+		test.assert_equal(_VIEWS[view], 2)
+	end)
 
-test('ui.print_to should print to another split view', function()
+test('ui.print_to should print to another split view if it is showing the print buffer', function()
 	view:split()
 	ui.print_to('[Typed Buffer]')
 
@@ -80,14 +81,14 @@ test('ui.print_silent_to should print to a buffer without switching to it', func
 	test.assert_equal(buf:get_text(), 'silent' .. test.newline())
 end)
 
-test('ui.print_silent_to should not split the view', function()
+test('ui.print_silent_to should not split the view if ui.tabs is disabled', function()
 	local _<close> = test.mock(ui, 'tabs', false)
 	ui.print_silent_to('[Typed Buffer]', 'silent')
 
 	test.assert_equal(#_VIEWS, 1)
 end)
 
-test('ui.print_silent_to should scroll any views showing the buffer printed to', function()
+test('ui.print_silent_to should scroll any views showing the print buffer', function()
 	local type = '[Typed Buffer]'
 	view:split()
 	ui.print_to(type)
@@ -156,18 +157,20 @@ test('ui.switch_buffer should prompt to switch between buffers', function()
 	test.assert_equal(_BUFFERS[buffer], 1)
 end)
 
-test('ui.switch_buffer should prompt to switch between recent buffers', function()
-	buffer:append_text('1')
-	buffer.new():append_text('2')
-	buffer.new():append_text('3')
+test(
+	'ui.switch_buffer should prompt to switch between recent buffers if ui.buffer_list_zorder is enabled',
+	function()
+		buffer:append_text('1')
+		buffer.new():append_text('2')
+		buffer.new():append_text('3')
 
-	local _<close> = test.mock(ui, 'buffer_list_zorder', true)
-	local select_first_item = test.stub(1)
-	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
-	ui.switch_buffer()
+		local _<close> = test.mock(ui, 'buffer_list_zorder', true)
+		local select_first_item = test.stub(1)
+		local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
+		ui.switch_buffer()
 
-	test.assert_equal(_BUFFERS[buffer], 2)
-end)
+		test.assert_equal(_BUFFERS[buffer], 2)
+	end)
 
 test('ui.switch_buffer should prompt with relative paths of buffers in the current project',
 	function()
@@ -202,7 +205,7 @@ test('ui.switch_buffer should persist recent buffers over reset #skip', function
 	test.assert_equal(_BUFFERS[buffer], 3)
 end)
 
-test('ui.goto_file api should raise an error for an invalid argument type', function()
+test('ui.goto_file should raise errors for invalid arguments', function()
 	local invalid_filename = function() ui.goto_file(1) end
 
 	test.assert_raises(invalid_filename, 'string expected')
@@ -217,7 +220,7 @@ test('ui.goto_file should open a file in the current view', function()
 	test.assert_equal(#_VIEWS, 1)
 end)
 
-test('ui.goto_file should switch to the opened file in the same view', function()
+test('ui.goto_file should switch to an already opened file in the same view', function()
 	local filename, _<close> = test.tempfile()
 	io.open_file(filename)
 
@@ -240,7 +243,7 @@ test('ui.goto_file should match filenames case-insensitively on WIN32', function
 	test.assert_equal(buffer.filename, filename)
 end)
 
-test('ui.goto_file should open a file in a split view', function()
+test('ui.goto_file should optionally open a file in a split view', function()
 	local filename, _<close> = test.tempfile()
 	buffer.new()
 
@@ -263,7 +266,8 @@ test('ui.goto_file should go to the view showing the file', function()
 	test.assert_equal(_VIEWS[view], 1)
 end)
 
-test('ui.goto_file should switch to an opened file with the same basename, and in the same view',
+test(
+	'ui.goto_file should switch to an already opened file with the same basename, and in the same view',
 	function()
 		local filename, _<close> = test.tempfile()
 		local dir, name = filename:match('^(.+[/\\])([^/\\]+)')
@@ -277,7 +281,8 @@ test('ui.goto_file should switch to an opened file with the same basename, and i
 		test.assert_equal(#_BUFFERS, 2)
 	end)
 
-test('ui.goto_file should switch to an opened file with the same basename, and in a split view',
+test(
+	'ui.goto_file should switch to an already opened file with the same basename, but optionally in a split view',
 	function()
 		local filename, _<close> = test.tempfile()
 		local dir, name = filename:match('^(.+[/\\])([^/\\]+)$')
@@ -291,18 +296,19 @@ test('ui.goto_file should switch to an opened file with the same basename, and i
 		test.assert_equal(_VIEWS[view], 1)
 	end)
 
-test('ui.goto_file should switch to the opened file, and in a preferred split view', function()
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
-	buffer.new()
-	view:split()
+test('ui.goto_file should switch to an already opened file, and in a preferred split view',
+	function()
+		local filename, _<close> = test.tempfile()
+		io.open_file(filename)
+		buffer.new()
+		view:split()
 
-	view:split()
-	ui.goto_file(filename, false, _VIEWS[2])
+		view:split()
+		ui.goto_file(filename, false, _VIEWS[2])
 
-	test.assert_equal(buffer.filename, filename)
-	test.assert_equal(_VIEWS[view], 2)
-end)
+		test.assert_equal(buffer.filename, filename)
+		test.assert_equal(_VIEWS[view], 2)
+	end)
 
 test("clicking a buffer's tab should switch to that buffer", function()
 	buffer.new()
@@ -342,20 +348,20 @@ end)
 -- TODO: OSX APPLEEVENT_ODOC
 
 test('switching between buffers should save/restore buffer state', function()
-	for i = 1, 100 do buffer:append_text(i .. '\n') end
+	for i = 1, 100 do buffer:append_text(i .. test.newline()) end
 	buffer:set_sel(buffer:position_from_line(50), buffer:position_from_line(51))
 	local first_line = view.first_visible_line
 	view.x_offset = 10
 
 	buffer.new():close()
 
-	test.assert_equal(buffer:get_sel_text(), '50\n')
+	test.assert_equal(buffer:get_sel_text(), '50' .. test.newline())
 	test.assert_equal(view.first_visible_line, first_line)
 	test.assert_equal(view.x_offset, 10)
 end)
 
 test('switching between buffers should save/restore fold state', function()
-	buffer:set_text('if true then\n\tprint()\nend')
+	buffer:set_text(test.lines{'if true then', '\tprint()', 'end'})
 	buffer:set_lexer('lua')
 	view:fold_line(1, view.FOLDACTION_CONTRACT)
 
@@ -414,7 +420,7 @@ test('closing a buffer should switch back to the previously shown one', function
 end)
 
 if CURSES then
-	test('mouse click in view should focus it', function()
+	test('clicking in a view should focus it', function()
 		view:split(true)
 
 		events.emit(events.MOUSE, view.MOUSE_PRESS, 1, 0, 2, 2)
@@ -427,7 +433,7 @@ if CURSES then
 		test.assert_equal(should_be_right_view, 2)
 	end)
 
-	test('mouse click and drag on splitter bar should resize split view', function()
+	test('clicking and dragging on a splitter bar should resize split view', function()
 		view:split(true)
 		view:split()
 		_VIEWS[1].size = 1
@@ -487,13 +493,13 @@ test('ui.get_split_table should report the current split view state', function()
 	test.assert_equal(_VIEWS[3], splits[2][2])
 end)
 
-test('ui.goto_view api should raise an error for an invalid argument type', function()
+test('ui.goto_view should raise errors for invalid arguments', function()
 	local not_a_view = function() ui.goto_view(buffer) end
 
 	test.assert_raises(not_a_view, 'View expected')
 end)
 
-test('ui.goto_view should focus a view', function()
+test('ui.goto_view should focus a given view', function()
 	view:split()
 	ui.goto_view(_VIEWS[1])
 

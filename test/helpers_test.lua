@@ -12,28 +12,28 @@ test('assert_equal should assert two tables are equal', function()
 	test.assert_equal(equal, true)
 end)
 
-test('assert_equal should assert two values are not equal', function()
+test('assert_equal should raise an error if two values are unequal', function()
 	local failed_assertion = function() test.assert_equal('foo', 1) end
 
 	test.assert_raises(failed_assertion, 'foo ~= 1')
 end)
 
-test('assert_equal should assert that two tables are not equal', function()
+test('assert_equal should raise an error if two tables are unequal', function()
 	local failed_assertion = function() test.assert_equal({1, 2, 3}, {1, 2}) end
 
 	test.assert_raises(failed_assertion, '{1, 2, 3} ~= {1, 2}')
 end)
 
 test('assert_raises should catch an error', function()
-	local errmsg = 'error!'
-	local raises_error = function() error(errmsg) end
+	local error_message = 'error!'
+	local raises_error = function() error(error_message) end
 
-	local caught = pcall(test.assert_raises, raises_error, errmsg)
+	local caught = pcall(test.assert_raises, raises_error, error_message)
 
 	test.assert_equal(caught, true)
 end)
 
-test('assert_raises should error if it did not catch an error', function()
+test('assert_raises should raise an error if it did not catch an error', function()
 	local no_error = function() end
 
 	local silent, errmsg = pcall(test.assert_raises, no_error)
@@ -91,17 +91,6 @@ test('stub should track the number of times it has been called', function()
 	f()
 
 	test.assert_equal(f.called, 2)
-end)
-
-test('stub should reset its tracking data', function()
-	local f = test.stub()
-	local arg = 'arg'
-
-	f(arg)
-	f:reset()
-
-	test.assert_equal(f.called, false)
-	test.assert_equal(f.args, nil)
 end)
 
 test('defer should invoke its function when it goes out of scope', function()
@@ -170,7 +159,7 @@ test('connect should connect to an event and defer disconnecting it', function()
 	test.assert_equal(f.called, false)
 end)
 
-test('mock api should raise errors for invalid argument types', function()
+test('mock should raise errors for invalid arguments', function()
 	local invalid_module = function() test.mock(print) end
 	local invalid_name = function() test.mock(string, 1) end
 	local valid_mock = test.stub('chunk')
@@ -181,7 +170,7 @@ test('mock api should raise errors for invalid argument types', function()
 	test.assert_raises(invalid_conditional, 'function expected')
 end)
 
-test('mock should change a module field', function()
+test('mock should change a module field for as long as it is in scope', function()
 	local module = {field = true}
 	local field
 
@@ -194,7 +183,7 @@ test('mock should change a module field', function()
 	test.assert_equal(module.field, true)
 end)
 
-test('mock should replace a module function', function()
+test('mock should replace a module function for as long as it is in scope', function()
 	local module = {}
 	function module.name() return 'unmocked' end
 	local mock = function() return 'mocked' end

@@ -1,6 +1,6 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-test('a file passed on the command line should be opened', function()
+test('a command-line filename should be opened', function()
 	local filename, _<close> = test.tempfile()
 
 	events.emit('command_line', {filename}) -- simulate
@@ -9,7 +9,7 @@ test('a file passed on the command line should be opened', function()
 	test.assert_equal(buffer.filename, filename)
 end)
 
-test('a directory passed on the command line should change the working dir', function()
+test('a command-line directory should change the working directory', function()
 	local dir, _<close> = test.tempdir()
 	local cwd = lfs.currentdir()
 	local _<close> = test.defer(function() lfs.chdir(cwd) end)

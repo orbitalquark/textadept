@@ -1,6 +1,6 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-test('os.spawn api should raise errors for invalid arguments and types', function()
+test('os.spawn should raise errors for invalid arguments', function()
 	local invalid_command = function() os.spawn(true) end
 	local invalid_callback = function() os.spawn('echo', false) end
 	local command_does_not_exist = function() assert(os.spawn('does-not-exist')) end
@@ -27,7 +27,7 @@ test('os.spawn should spawn from the current working directory', function()
 	test.assert_equal(cwd, dir .. test.newline())
 end)
 
-test('os.spawn should spawn from a working directory', function()
+test('os.spawn should spawn from a given working directory', function()
 	local pwd = not WIN32 and 'pwd' or 'cd'
 	local dir, _<close> = test.tempdir()
 
@@ -44,7 +44,7 @@ test('os.spawn should inherit from the current environment', function()
 	test.assert(output ~= test.newline(), 'should have a non-empty, inherited env')
 end)
 
-test('os.spawn should set an environment from a map', function()
+test('os.spawn should allow setting an environment from a map', function()
 	local env_cmd = not WIN32 and 'env' or 'set'
 	local env = {NAME = 'value'}
 
@@ -53,7 +53,7 @@ test('os.spawn should set an environment from a map', function()
 	test.assert_equal(output, 'NAME=value' .. test.newline())
 end)
 
-test('os.spawn should set an environment from a list', function()
+test('os.spawn should allow setting an environment from a list', function()
 	local env_cmd = not WIN32 and 'env' or 'set'
 	local env = {'NAME=value'}
 
@@ -62,7 +62,7 @@ test('os.spawn should set an environment from a list', function()
 	test.assert_equal(output, 'NAME=value' .. test.newline())
 end)
 
-test('os.spawn should ignore non-environment assignments', function()
+test('os.spawn environment should ignore non-environment assignments', function()
 	local env_cmd = not WIN32 and 'env' or 'set'
 	local env = {[true] = false}
 
@@ -106,7 +106,7 @@ test('proc:wait should wait for process exit and return its code', function()
 	test.assert_equal(code, 0)
 end)
 
-test('proc:wait should allow multiple calls and return the same exit code', function()
+test('proc:wait should allow multiple calls to it and return the same exit code', function()
 	local p = os.spawn('echo output')
 
 	p:wait()

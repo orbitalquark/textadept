@@ -3,32 +3,33 @@
 -- Test event
 local event = 'event'
 
-test('events.connect api should raise errors for invalid argument types', function()
+test('events.connect should raise errors for invalid arguments', function()
 	local no_event_name = function() events.connect() end
 	local no_event_handler = function() events.connect(event, nil) end
 	local f = test.stub()
-	local invalid_index = function() events.connect(event, f, 'invalid') end
+	local invalid_index = function() events.connect(event, f, '') end
 
 	test.assert_raises(no_event_name, 'string expected')
 	test.assert_raises(no_event_handler, 'function expected')
 	test.assert_raises(invalid_index, 'number/nil expected')
 end)
 
-test('events.disconnect api should raise errors for invalid argument types', function()
-	local no_event_name = function() events.disconnect() end
+test('events.disconnect should raise errors for invalid argument', function()
+	local f = test.stub()
+	local no_event_name = function() events.disconnect(nil, f) end
 	local no_event_handler = function() events.disconnect(event) end
 
-	test.assert_raises(no_event_name, 'expected, got nil')
+	test.assert_raises(no_event_name, 'string expected')
 	test.assert_raises(no_event_handler, 'function expected')
 end)
 
-test('events.emit api should raise errors for an invalid argument type', function()
+test('events.emit should raise errors for invalid arguments', function()
 	local no_event_name = function() events.emit() end
 
 	test.assert_raises(no_event_name, 'string expected')
 end)
 
-test('events.emit should call a handler connected with events.connect', function()
+test('events.emit should call a connected handler', function()
 	local handler = test.stub()
 
 	local _<close> = test.connect(event, handler)
@@ -57,7 +58,7 @@ test('events.connect should only connect a handler once', function()
 	test.assert_equal(handler.called, true) -- would be 2 if called twice
 end)
 
-test('events.connect should allow inserting an event handler before others', function()
+test('events.connect should allow for inserting a handler before another', function()
 	local call_order = {}
 	local record = function(name) call_order[#call_order + 1] = name end
 	local f1 = function() record('f1') end
@@ -92,29 +93,31 @@ test('events.emit should not skip calling handlers if one removes itself', funct
 	test.assert_equal(should_not_skip.called, true)
 end)
 
-test('events.emit should emit events.ERROR if a handler errors', function()
+test('events.emit should emit an event if a handler errors', function()
 	local error_handler = test.stub(false) -- halt propagation to default error handler
 	local _<close> = test.connect(events.ERROR, error_handler, 1)
-	local raise_error = function() error('error!') end
+	local error_message = 'error!'
+	local raise_error = function() error(error_message) end
 
 	local _<close> = test.connect(event, raise_error)
 	events.emit(event)
 
-	test.assert(error_handler.args[1]:find('error!'), 'should have emitted error event')
+	test.assert(error_handler.args[1]:find(error_message), 'should have emitted error event')
 end)
 
-test('events.emit should write to io.stderr if an error handler errors', function()
+test('events.emit should write to io.stderr if the default error handler itself errors', function()
 	local stderr_writer = test.stub()
 	local _<close> = test.mock(io, 'stderr', {write = stderr_writer})
-	local raise_error = function() error('error!') end
+	local error_message = 'error!'
+	local raise_error = function() error(error_message) end
 
 	local _<close> = test.connect(events.ERROR, raise_error, 1)
 	events.emit(events.ERROR)
 
-	test.assert(stderr_writer.args[2]:find('error!'), 'should have written error to io.stderr')
+	test.assert(stderr_writer.args[2]:find(error_message), 'should have written to io.stderr')
 end)
 
-test('events.emit should return the value returned by a handler (if any)', function()
+test("events.emit should return a handler's non-nil value (if any)", function()
 	local throw = test.stub('catch')
 
 	local _<close> = test.connect(event, throw)
@@ -123,7 +126,7 @@ test('events.emit should return the value returned by a handler (if any)', funct
 	test.assert_equal(catch, 'catch')
 end)
 
-test('emit events prior to and after replacing text', function()
+test('replacing buffer text should emit before and after events', function()
 	buffer:set_text('text')
 	local before = test.stub()
 	local after = test.stub()
@@ -137,9 +140,9 @@ test('emit events prior to and after replacing text', function()
 end)
 
 for _, method in ipairs{'undo', 'redo'} do
-	test('emit replacement event after updating UI after a multi-line ' .. method, function()
+	test('multi-line ' .. method .. ' should emit an event after updating UI', function()
 		buffer:set_text('text')
-		buffer:set_text('multi-line\ntext')
+		buffer:set_text(test.lines{'multi-line', 'text'})
 		if method == 'redo' then buffer:undo() end
 		local after = test.stub()
 

@@ -9,11 +9,11 @@ end)
 test('buffer:get_lexer should distinguish between child languages in multi-language lexers',
 	function()
 		local filename, _<close> = test.tempfile('html')
-		io.open(filename, 'wb'):write(table.concat({
+		io.open(filename, 'wb'):write(test.lines{
 			'<html><head><style type="text/css">', --
 			'h1 { color: red; }', --
 			'</style></head></html>'
-		}, '\n')):close()
+		}):close()
 		io.open_file(filename)
 
 		buffer:goto_pos(buffer:position_from_line(2))
@@ -22,7 +22,7 @@ test('buffer:get_lexer should distinguish between child languages in multi-langu
 		test.assert_equal(buffer:get_lexer(true), 'css')
 	end)
 
-test('buffer:set_lexet api should raise an error for an invalid type', function()
+test('buffer:set_lexer should raise errors for invalid arguments', function()
 	local invalid_name = function() buffer:set_lexer(true) end
 
 	test.assert_raises(invalid_name, 'string/nil expected')
@@ -51,7 +51,7 @@ test('buffer:set_lexer should auto-detect a lexer by the first line of text like
 		test.assert_equal(buffer.lexer_language, 'bash')
 	end)
 
-test('buffer:set_lexer should emit a loaded event', function()
+test('buffer:set_lexer should emit an event', function()
 	local event = test.stub()
 
 	local _<close> = test.connect(events.LEXER_LOADED, event)
@@ -61,7 +61,7 @@ test('buffer:set_lexer should emit a loaded event', function()
 	test.assert_equal(event.args, {'lua'})
 end)
 
-test('buffer:name_of_style should raise an error for an invalid argument type', function()
+test('buffer:name_of_style should raise errors for invalid arguments', function()
 	local not_style_number = function() buffer:name_of_style('whitespace') end
 
 	test.assert_raises(not_style_number, 'number expected')
@@ -74,7 +74,7 @@ test('buffer:name_of_style should link style numbers with style names', function
 	test.assert_equal(style_name, 'whitespace')
 end)
 
-test('buffer:style_of_name should raise an error for an invalid argument type', function()
+test('buffer:style_of_name should raises errors for invalid arguments', function()
 	local not_style_name = function() buffer:style_of_name(33) end
 
 	test.assert_raises(not_style_name, 'string expected')
@@ -88,7 +88,7 @@ test('buffer:style_of_name should link style names with style numbers', function
 	test.assert(non_default_style_num ~= view.STYLE_DEFAULT, 'style should be defined')
 end)
 
-test('buffer:style_of_name should return the default style for unknown style names', function()
+test('buffer:style_of_name should return the default style for an unknown style name', function()
 	local style_num = buffer:style_of_name('unknown')
 
 	test.assert_equal(style_num, view.STYLE_DEFAULT)
@@ -105,13 +105,13 @@ test('buffer:style_of_name should handle underscore and dot notation in style na
 end)
 
 test('syntax highlighting should invoke Scintillua and style the buffer with the result', function()
-	buffer:set_text(table.concat({
+	buffer:set_text(test.lines{
 		'function foo(z)', --
 		'	local x = 1', --
 		'	local y = [[2]]', --
 		'	print(x + y)', --
 		'end'
-	}, '\n'))
+	})
 	buffer:set_lexer('lua')
 
 	-- Construct a tag table from buffer styling of the same form as the one returned
@@ -134,13 +134,13 @@ test('syntax highlighting should invoke Scintillua and style the buffer with the
 end)
 
 test('syntax highlighting should be performed incrementally', function()
-	buffer:set_text(table.concat({
+	buffer:set_text(test.lines{
 		'function foo(z)', --
 		'	local x = 1', --
 		'local y = [[2]]', -- intentional unindent
 		'	print(x + y)', --
 		'end'
-	}, '\n'))
+	})
 	buffer:set_lexer('lua')
 
 	local event = test.stub()
@@ -176,7 +176,8 @@ test('lexer errors should style the entire buffer the default style', function()
 	local error_handler = test.stub(false) -- halt propagation to default error handler
 	local _<close> = test.connect(events.ERROR, error_handler, 1)
 
-	local raise_error = function() error('error!') end
+	local error_message = 'error!'
+	local raise_error = function() error(error_message) end
 	local _<close> = test.mock(buffer.lexer, 'lex', raise_error)
 	buffer:set_text('text')
 	ui.update() -- trigger style needed
@@ -184,17 +185,17 @@ test('lexer errors should style the entire buffer the default style', function()
 
 	test.assert_equal(style, view.STYLE_DEFAULT)
 	test.assert_equal(buffer.end_styled, buffer.length + 1)
-	test.assert(error_handler.args[1]:find('error!'), 'should have emitted error event')
+	test.assert(error_handler.args[1]:find(error_message), 'should have emitted error event')
 end)
 
 test('code folding should invoke Scintillua and mark fold headers with the result', function()
-	buffer:set_text(table.concat({
+	buffer:set_text(test.lines{
 		'function foo(z)', --
 		'	local x = 1', --
 		'	local y = [[2]]', --
 		'	print(x + y)', --
 		'end'
-	}, '\n'))
+	})
 	buffer:set_lexer('lua')
 
 	-- Construct a fold table from fold levels of the same form as the one returned by

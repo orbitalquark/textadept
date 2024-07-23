@@ -68,22 +68,18 @@ end
 -- - `called`: Either a flag that indicates whether or not the stub has been called, or the
 -- 	number of times it has been called if it is more than 1.
 -- - `args`: Table of arguments from the most recent call, or `nil` if it has not been called.
--- - `reset`: Function to reset the `called` and `args` fields to their initial values.
 -- @param[opt] callback Optional callback to call when the stub is called.
 -- @param[opt] ... Optional values to return when called. The default value is `nil`.
 -- @return callable stub
 -- @usage local f = stub()
 -- @usage assert(f.called)
--- @usage f:reset()
 function M.stub(callback, ...)
 	local returns = {...}
 	if not is_callable(callback) then
 		table.insert(returns, 1, callback)
 		callback = nil
 	end
-	return setmetatable({
-		called = false, reset = function(self) self.called, self.args = false, nil end
-	}, {
+	return setmetatable({called = false}, {
 		__call = function(self, ...)
 			self.called = type(self.called) == 'number' and self.called + 1 or self.called and 2 or true
 			self.args = {...}
@@ -233,5 +229,8 @@ function M.removedir(dir) os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q') .. d
 local newlines = ({[buffer.EOL_LF] = '\n', [buffer.EOL_CRLF] = '\r\n'})
 --- Returns a string containing a single newline depending on the current buffer EOL mode.
 function M.newline() return newlines[buffer.eol_mode] end
+
+--- Returns the given lines separated by newlines depending on the current buffer EOL mode.
+function M.lines(lines) return table.concat(lines, M.newline()) end
 
 return M

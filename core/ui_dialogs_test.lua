@@ -21,7 +21,7 @@ test('ui.dialogs should prompt for input', function()
 	test.assert_equal(input, 'input')
 end)
 
-test('ui.dialogs should prompt for input and return button clicked', function()
+test('ui.dialogs should prompt for input and optionally return the button clicked', function()
 	local input_text_and_click_ok = test.stub('input', 1)
 
 	local _<close> = test.mock(ui.dialogs, 'input', input_text_and_click_ok)
@@ -34,19 +34,19 @@ end)
 test('ui.dialogs.open should prompt for a file to open', function()
 	local filename, _<close> = test.tempfile()
 	local test_dir, test_file = filename:match('^(.+[/\\])([^/\\]+)$')
-	local select_filename = test.stub({filename})
 
+	local select_filename = test.stub({filename})
 	local _<close> = test.mock(ui.dialogs, 'open', select_filename)
 	local filenames = ui.dialogs.open{dir = test_dir, file = test_file, multiple = true}
 
 	test.assert_equal(filenames, {filename})
 end)
 
-test('ui.dialogs.open should prompt for a directory to open', function()
+test('ui.dialogs.open should allow prompting for a directory to open', function()
 	if CURSES then return end -- not supported by CDK
 	local dir, _<close> = test.tempdir()
-	local select_directory = test.stub(dir)
 
+	local select_directory = test.stub(dir)
 	local _<close> = test.mock(ui.dialogs, 'open', select_directory)
 	local directory = ui.dialogs.open{dir = test_dir, only_dirs = true}
 
@@ -55,20 +55,19 @@ end)
 
 test('ui.dialots.save should prompt for a file to save', function()
 	local filename, _<close> = test.tempfile()
-	local select_filename = test.stub(filename)
 
+	local select_filename = test.stub(filename)
 	local _<close> = test.mock(ui.dialogs, 'save', select_filename)
 	local selected_filename = ui.dialogs.save{dir = test_dir, file = test_file}
 
 	test.assert_equal(selected_filename, filename)
 end)
 
-test('ui.dialogs.progress api should raise an error for an invalid or missing argument type',
-	function()
-		local no_work_function = function() ui.dialogs.progress{} end
+test('ui.dialogs.progress should raise errors for invalid arguments', function()
+	local no_work_function = function() ui.dialogs.progress{} end
 
-		test.assert_raises(no_work_function, "'work' function expected")
-	end)
+	test.assert_raises(no_work_function, "'work' function expected")
+end)
 
 test('ui.dialogs.progress should show progress for work done', function()
 	local i = 0
@@ -84,9 +83,8 @@ test('ui.dialogs.progress should show progress for work done', function()
 	test.assert_equal(not stopped, true)
 end)
 
-test('ui.dialogs.progress should cancel work', function()
+test('ui.dialogs.progress should allow for cancelling work', function()
 	local stop = test.stub(true)
-
 	local _<close> = test.mock(ui.dialogs, 'progress', stop)
 	local stopped = ui.dialogs.progress{
 		title = 'Title', work = function()
@@ -101,16 +99,17 @@ end)
 test('ui.dialogs.progress should emit errors when work errors', function()
 	local event = test.stub(false) -- halt propagation to default error handler
 	local _<close> = test.connect(events.ERROR, event, 1)
-	local raises_error = function() error('error!') end
 
+	local error_message = 'error!'
+	local raises_error = function() error(error_message) end
 	local stopped = ui.dialogs.progress{work = raises_error}
 
 	test.assert_equal(not stopped, true) -- user did not click stop
 	test.assert_equal(event.called, true)
-	test.assert(event.args[1]:find('error!'), 'should have included error message')
+	test.assert(event.args[1]:find(error_message), 'should have included error message')
 end)
 
-test('ui.dialogs.list api should raise errors invalid argument types', function()
+test('ui.dialogs.list should raise errors for invalid arguments', function()
 	local no_items = function() ui.dialogs.list{} end
 	local invalid_search_column = function() ui.dialogs.list{search_column = 2} end
 
@@ -120,16 +119,14 @@ end)
 
 test('ui.dialogs.list should prompt for a selection from a list', function()
 	local select_item = test.stub(2, 1)
-
 	local _<close> = test.mock(ui.dialogs, 'list', select_item)
 	local i = ui.dialogs.list{title = 'Title', items = {'foo', 'bar', 'baz'}, text = 'b z'}
 
 	test.assert_equal(i, 2)
 end)
 
-test('ui.dialogs.list should prompt for multiple selections from a list', function()
+test('ui.dialogs.list should optionally prompt for multiple selections from a list', function()
 	local select_item = test.stub({2}, 1)
-
 	local _<close> = test.mock(ui.dialogs, 'list', select_item)
 	local i, button = ui.dialogs.list{
 		columns = {'1', '2'}, items = {'foo', 'foobar', 'bar', 'barbaz', 'baz', 'bazfoo'},

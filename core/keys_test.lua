@@ -39,7 +39,7 @@ test('key commands should be bound to specific key sequences', function()
 	test.assert_equal(command_called_by_ctrl_a, true)
 end)
 
-test('keys.keychain api should be read-only', function()
+test('keys.keychain should be read-only', function()
 	local set_key = function() keys.keychain[1] = 'ctrl+a' end
 
 	test.assert_raises(set_key, 'read-only')
@@ -55,7 +55,7 @@ test('keys.keychain should contain the current key chain', function()
 	test.assert_equal(keys.keychain, {ctrl_a})
 end)
 
-test('key chains can be cancelled', function()
+test('key chains should be cancellable', function()
 	local ctrl_a = 'ctrl+a'
 
 	local _<close> = test.mock(keys, ctrl_a, {})
@@ -65,7 +65,7 @@ test('key chains can be cancelled', function()
 	test.assert_equal(keys.keychain, {})
 end)
 
-test('key chains should run their key commands when the entire chain is typed', function()
+test('key chains should only run their key commands when the entire chain is typed', function()
 	local ctrl_a = 'ctrl+a'
 	local command = test.stub()
 
@@ -106,7 +106,7 @@ test('language-specific keys should have priority over global keys', function()
 	test.assert_equal(ignored.called, false)
 end)
 
-test('language-specific keys should propagate to global keys', function()
+test('language-specific keys should be allowed to propagate to global keys', function()
 	local ctrl_a = 'ctrl+a'
 	local propagate = test.stub(false)
 	local command = test.stub()
@@ -136,7 +136,7 @@ test('mode keys should have priority over language-specific and global keys', fu
 	test.assert_equal(global_command.called, false)
 end)
 
-test('mode keys should not be able to propagate to language-specific or global keys', function()
+test('mode keys should not be allowed to propagate to language-specific or global keys', function()
 	local ctrl_a = 'ctrl+a'
 	local propagate = test.stub(false)
 	local language_command = test.stub(false)

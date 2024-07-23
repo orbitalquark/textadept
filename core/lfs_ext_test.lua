@@ -1,6 +1,6 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-test('lfs.walk api should raise errors for invalid arguments and types', function()
+test('lfs.walk should raise errors for invalid arguments', function()
 	local no_dir_given = function() lfs.walk() end
 	local invalid_filter = function() lfs.walk(_HOME, 1) end
 	local dir_does_not_exist = function() lfs.walk('does-not-exist') end
@@ -12,7 +12,7 @@ test('lfs.walk api should raise errors for invalid arguments and types', functio
 	test.assert_raises(invalid_depth, 'number/nil expected')
 end)
 
-test('lfs.walk should walk a basic directory tree', function()
+test('lfs.walk should walk a directory tree', function()
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
 
 	local files, dirs = {}, {}
@@ -38,7 +38,7 @@ test('lfs.walk should not include extra slashes in paths', function()
 	test.assert_equal(files, {test.file(dir .. '/file.txt')})
 end)
 
-test('lfs.walk should include files by extension', function()
+test('lfs.walk should allow filters to include files by extension', function()
 	local dir, _<close> = test.tempdir{'file.luadoc', subdir = {'file.lua'}}
 
 	local files = {}
@@ -47,7 +47,7 @@ test('lfs.walk should include files by extension', function()
 	test.assert_equal(files, {test.file(dir .. '/subdir/file.lua')})
 end)
 
-test('lfs.walk should exclude files by extension', function()
+test('lfs.walk should allow filters to exclude files by extension', function()
 	local dir, _<close> = test.tempdir{'file.lua', subdir = {'subfile.lua', 'subfile.txt'}}
 
 	local files = {}
@@ -56,7 +56,7 @@ test('lfs.walk should exclude files by extension', function()
 	test.assert_equal(files, {test.file(dir .. '/subdir/subfile.txt')})
 end)
 
-test('lfs.walk should include directories', function()
+test('lfs.walk should allow filters to include directories', function()
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
 
 	local files = {}
@@ -67,7 +67,7 @@ test('lfs.walk should include directories', function()
 end)
 expected_failure()
 
-test('lfs.walk should handle mixed filters', function()
+test('lfs.walk should allow mixed filters', function()
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
 
 	local files = {}
@@ -137,15 +137,15 @@ test('lfs.walk should be able to handle symlinks to parent dirs, even recursive 
 	test.assert_equal(files, expected_files)
 end)
 
-test('lfs.walk should be able to from the root directory', function()
+test('lfs.walk should be able to walk from the root directory', function()
 	local filename = lfs.walk(not WIN32 and '/' or 'C:\\', nil, 0, true)()
 
 	test.assert(not filename:find('lfs_ext.lua:'), 'should not error')
 end)
 
-test('lfs.abspath api should raise an error for invalid argument types', function()
+test('lfs.abspath should raise errors for invalid arguments', function()
 	local no_path_given = function() lfs.abspath() end
-	local invalid_prefix = function() lfs.abspath('foo', 1) end
+	local invalid_prefix = function() lfs.abspath('file', 1) end
 
 	test.assert_raises(no_path_given, 'string expected')
 	test.assert_raises(invalid_prefix, 'string/nil expected')
@@ -169,7 +169,7 @@ test('lfs.abspath should produce paths relative to the current working directory
 	test.assert_equal(path, test.file(dir .. '/subdir'))
 end)
 
-test('lfs.abspath should produce paths relative to a prefix', function()
+test('lfs.abspath should produce paths relative to a given prefix', function()
 	local dir, _<close> = test.tempdir()
 
 	local path = lfs.abspath('subdir', dir)

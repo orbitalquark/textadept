@@ -1,6 +1,6 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-test('buffer:text_range api should raise an error for invalid argument types', function()
+test('buffer:text_range should raise errors for invalid arguments', function()
 	local no_args = function() buffer:text_range() end
 	local no_second_arg = function() buffer:text_range(5) end
 
@@ -22,7 +22,7 @@ test("buffer:text_range should implement Scintilla's SCI_GETTEXTRANGE", function
 	test.assert_equal(clamp_end_range, '789')
 end)
 
-test('buffer:text_range should not modify target_range', function()
+test('buffer:text_range should not modify buffer.target_range', function()
 	buffer:set_text('123456789')
 	buffer:set_target_range(4, 7)
 
@@ -31,18 +31,18 @@ test('buffer:text_range should not modify target_range', function()
 	test.assert_equal(buffer.target_text, '456')
 end)
 
-test('view.styles[k] = v api should raise an error for an invalid value type', function()
+test('view.styles[k] = v should raise errors for invalid values', function()
 	local not_a_style = 1
-	local invalid_assignment = function() view.styles.foo = 1 end
+	local invalid_assignment = function() view.styles.name = not_a_style end
 
 	test.assert_raises(invalid_assignment, 'table expected')
 	-- TODO: error when setting existing style like view.styles.default = 1?
 end)
 
-test('view.styles[k] .. style api should raise an error for an invalid value', function()
+test('view.styles[k] .. style should raise errors for invalid values', function()
 	local style = view.styles[view.STYLE_DEFAULT]
 	local not_a_style = 1
-	local invalid_concat = function() view.styles.foo = style .. not_a_style end
+	local invalid_concat = function() view.styles.name = style .. not_a_style end
 
 	test.assert_raises(invalid_concat, 'table expected')
 end)
@@ -63,7 +63,7 @@ test('view:set_theme should set the theme for a view, leaving others alone', fun
 	test.assert(view2_style ~= view3_style, 'views should have different styles')
 end)
 
-test('move_buffer should raise errors for invalid arguments and types', function()
+test('move_buffer should raise errors for invalid arguments', function()
 	local invalid_from_index = function() move_buffer('') end
 	local no_to_index = function() move_buffer(1) end
 	local invalid_to_index = function() move_buffer(1, true) end
@@ -81,7 +81,7 @@ test('move_buffer should raise errors for invalid arguments and types', function
 	test.assert_raises(negative_from_index, 'out of bounds')
 end)
 
-test('move_buffer should move a buffer backwards', function()
+test('move_buffer should allow moving a buffer backwards', function()
 	local buffer1 = buffer.new()
 	buffer1:set_text('1')
 	local buffer2 = buffer.new()
@@ -98,7 +98,7 @@ test('move_buffer should move a buffer backwards', function()
 	test.assert(_BUFFERS[buffer2] < _BUFFERS[buffer3], 'buffer2 should be before buffer3')
 end)
 
-test('move_buffer should move a buffer forwards', function()
+test('move_buffer should allow moving a buffer forwards', function()
 	local buffer1 = buffer.new()
 	buffer1:set_text('1')
 	local buffer2 = buffer.new()
@@ -127,7 +127,7 @@ end)
 
 -- Note: cannot test events.RESET_AFTER because there is no opportunity to connect to it
 -- during reset.
-test('reset should emit before events with a persistent table #skip', function()
+test('reset should emit before events with a table to persist #skip', function()
 	local before = test.stub()
 
 	events.connect(events.RESET_BEFORE, before)
@@ -137,10 +137,10 @@ test('reset should emit before events with a persistent table #skip', function()
 	test.assert_equal(type(before.args[1]), 'table')
 end)
 
-test('timeout api should raise errors for invalid arguments and types', function()
+test('timeout should raise errors for invalid arguments', function()
 	local no_interval = function() timeout() end
 	local invalid_interval = function() timeout(0) end
-	local invalid_function = function() timeout(1, 'foo') end
+	local invalid_function = function() timeout(1, '') end
 
 	test.assert_raises(no_interval, 'number expected')
 	test.assert_raises(invalid_interval, 'interval must be > 0')

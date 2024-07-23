@@ -1,6 +1,6 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-test('io.open_file api should raise an error for an invalid argument type', function()
+test('io.open_file should raise errors for invalid arguments', function()
 	local invalid_filename = function() io.open_file(1) end
 
 	test.assert_raises(invalid_filename, 'string/table/nil expected')
@@ -28,7 +28,7 @@ test('io.open_file should prompt for a file to open if none was given', function
 	test.assert_equal(buffer.filename, filename)
 end)
 
-test('io.open_file should emit a file opened event', function()
+test('io.open_file should emit an event', function()
 	local filename, _<close> = test.tempfile()
 	local event = test.stub()
 
@@ -44,11 +44,10 @@ test('io.open_file should switch to an already open file instead of opening a ne
 
 	io.open_file(filename)
 	buffer.new()
-	local num_buffers = #_BUFFERS
 	io.open_file(filename)
 
 	test.assert_equal(buffer.filename, filename)
-	test.assert_equal(#_BUFFERS, num_buffers)
+	test.assert_equal(#_BUFFERS, 2)
 end)
 
 test('io.open_file should raise an error if it cannot open or read a file', function()
@@ -63,7 +62,6 @@ end)
 for file, encoding in pairs{utf8 = 'UTF-8', cp1252 = 'CP1252', utf16 = 'UTF-16', binary = 'binary'} do
 	test('io.open_file should detect encoding: ' .. encoding, function()
 		local filename = _HOME .. '/test/file_io/' .. file
-		test.log(string.format('opening file: %s', filename))
 		local f<close> = io.open(filename, 'rb')
 		local contents = f:read('a')
 
@@ -81,7 +79,7 @@ for file, encoding in pairs{utf8 = 'UTF-8', cp1252 = 'CP1252', utf16 = 'UTF-16',
 	end)
 end
 
-test('io.open_file should detect tabs and switch indentation from spaces', function()
+test('io.open_file should detect and switch to tabs if io.detect_indentation is enabled', function()
 	local set_indentation_spaces = function() buffer.use_tabs = false end
 	local _<close> = test.connect(events.BUFFER_NEW, set_indentation_spaces) -- temporary
 
@@ -91,42 +89,44 @@ test('io.open_file should detect tabs and switch indentation from spaces', funct
 	test.assert_equal(buffer.use_tabs, true)
 end)
 
-test('io.open_file should not detect tabs and should not switch indentation from spaces', function()
-	local set_indentation_spaces = function() buffer.use_tabs = false end
-	local _<close> = test.connect(events.BUFFER_NEW, set_indentation_spaces) -- temporary
+test('io.open_file should not detect and switch to tabs if io.detect_indentation is disabled',
+	function()
+		local set_indentation_spaces = function() buffer.use_tabs = false end
+		local _<close> = test.connect(events.BUFFER_NEW, set_indentation_spaces) -- temporary
 
-	local _<close> = test.mock(io, 'detect_indentation', false)
-	io.open_file(_HOME .. '/test/file_io/tabs')
+		local _<close> = test.mock(io, 'detect_indentation', false)
+		io.open_file(_HOME .. '/test/file_io/tabs')
 
-	test.assert_equal(buffer.use_tabs, false)
-end)
+		test.assert_equal(buffer.use_tabs, false)
+	end)
 
-test('io.open_file should detect spaces and switch indentation from tabs', function()
-	local set_indentation_tabs = function() buffer.use_tabs, buffer.tab_width = true, 4 end
-	local _<close> = test.connect(events.BUFFER_NEW, set_indentation_tabs) -- temporary
+test('io.open_file should detect and switch to spaces if io.detect_indentation is enabled',
+	function()
+		local set_indentation_tabs = function() buffer.use_tabs, buffer.tab_width = true, 4 end
+		local _<close> = test.connect(events.BUFFER_NEW, set_indentation_tabs) -- temporary
 
-	local _<close> = test.mock(io, 'detect_indentation', true)
-	io.open_file(_HOME .. '/test/file_io/spaces')
+		local _<close> = test.mock(io, 'detect_indentation', true)
+		io.open_file(_HOME .. '/test/file_io/spaces')
 
-	test.assert_equal(buffer.use_tabs, false)
-	test.assert_equal(buffer.tab_width, 2)
-end)
+		test.assert_equal(buffer.use_tabs, false)
+		test.assert_equal(buffer.tab_width, 2)
+	end)
 
-test('io.open_file should not detect spaces and should not switch indentation from tabs', function()
-	local set_indentation_tabs = function() buffer.use_tabs, buffer.tab_width = true, 4 end
-	local _<close> = test.connect(events.BUFFER_NEW, set_indentation_tabs) -- temporary
+test('io.open_file should not detect and switch to spaces if io.detect_indentation is disabled',
+	function()
+		local set_indentation_tabs = function() buffer.use_tabs, buffer.tab_width = true, 4 end
+		local _<close> = test.connect(events.BUFFER_NEW, set_indentation_tabs) -- temporary
 
-	local _<close> = test.mock(io, 'detect_indentation', false)
-	io.open_file(_HOME .. '/test/file_io/spaces')
+		local _<close> = test.mock(io, 'detect_indentation', false)
+		io.open_file(_HOME .. '/test/file_io/spaces')
 
-	test.assert_equal(buffer.use_tabs, true)
-	test.assert_equal(buffer.tab_width, 4)
-end)
+		test.assert_equal(buffer.use_tabs, true)
+		test.assert_equal(buffer.tab_width, 4)
+	end)
 
 for file, mode in pairs{lf = buffer.EOL_LF, crlf = buffer.EOL_CRLF} do
 	test('io.open_file should detect end-of-line (EOL) mode: ' .. file:upper(), function()
 		local filename = _HOME .. '/test/file_io/' .. file
-		test.log(string.format('opening file: %s', filename))
 
 		io.open_file(filename)
 
@@ -139,8 +139,8 @@ test('io.open_file should scroll to the beginning of the file', function()
 	local filename2, _<close> = test.tempfile()
 	local f1, f2 = io.open(filename1, 'wb'), io.open(filename2, 'wb')
 	for i = 1, 100 do
-		f1:write(i, '\n')
-		f2:write(i, '\n')
+		f1:write(i, test.newline())
+		f2:write(i, test.newline())
 	end
 	f1:close()
 	f2:close()
@@ -155,7 +155,7 @@ test('io.open_file should scroll to the beginning of the file', function()
 	test.assert_equal(view.x_offset, 0)
 end)
 
-test('io.open_file should auto-detect and set the lexer for the file', function()
+test("io.open_file should auto-detect and set the file's lexer", function()
 	local filename, _<close> = test.tempfile('lua')
 
 	io.open_file(filename)
@@ -163,7 +163,7 @@ test('io.open_file should auto-detect and set the lexer for the file', function(
 	test.assert_equal(buffer.lexer_language, 'lua')
 end)
 
-test('io.open_file should keep track of the most recent files open', function()
+test('io.open_file should keep track of the most recently opened files', function()
 	local file1, _<close> = test.tempfile('1')
 	local file2, _<close> = test.tempfile('2')
 
@@ -174,7 +174,7 @@ test('io.open_file should keep track of the most recent files open', function()
 	test.assert_equal(io.recent_files, {file2, file1})
 end)
 
-test('io.open_file should not duplicate recently opened files', function()
+test('io.open_file should not duplicate any recently opened files', function()
 	local file1, _<close> = test.tempfile('1')
 	local file2, _<close> = test.tempfile('2')
 
@@ -187,7 +187,7 @@ test('io.open_file should not duplicate recently opened files', function()
 	test.assert_equal(io.recent_files, {file1, file2})
 end)
 
-test('buffer:reload should discard any changes', function()
+test('buffer:reload should discard any unsaved changes', function()
 	io.open_file(_HOME .. '/test/file_io/utf8')
 	local text = buffer:get_text()
 
@@ -198,13 +198,13 @@ test('buffer:reload should discard any changes', function()
 	test.assert_equal(buffer.modify, false)
 end)
 
-test('buffer:set_encoding api should raise an error for an invalid argument type', function()
+test('buffer:set_encoding should raise errors for invalid arguments', function()
 	local invalid_encoding = function() buffer:set_encoding(true) end
 
 	test.assert_raises(invalid_encoding, 'string/nil expected')
 end)
 
-test('buffer:set_encoding should change from multi- to single-byte and mark the buffer as dirty',
+test('buffer:set_encoding should handle multi- to single-byte changes and mark the buffer as dirty',
 	function()
 		io.open_file(_HOME .. '/test/file_io/utf8')
 		local text = buffer:get_text()
@@ -217,7 +217,7 @@ test('buffer:set_encoding should change from multi- to single-byte and mark the 
 		test.assert_equal(buffer.modify, true)
 	end)
 
-test('buffer:set_encoding should switch between single-byte encodings without marking buffer dirty',
+test('buffer:set_encoding should handle single-byte changes without marking buffer dirty',
 	function()
 		io.open_file(_HOME .. '/test/file_io/cp936')
 		local initially_detected_cp1252 = buffer.encoding == 'CP1252' -- incorrectly detected
@@ -233,7 +233,7 @@ test('buffer:set_encoding should switch between single-byte encodings without ma
 		test.assert_equal(buffer.modify, false)
 	end)
 
-test('buffer:set_encoding should change from single- to multi-byte and mark the buffer as dirty',
+test('buffer:set_encoding should handle single- to multi-byte changes and mark the buffer as dirty',
 	function()
 		io.open_file(_HOME .. '/test/file_io/cp1252')
 		local text = buffer:get_text()
@@ -270,21 +270,22 @@ test('buffer:save should mark the file as having no changes', function()
 	test.assert_equal(buffer.modify, false)
 end)
 
-test('buffer:save should not ensure a trailing newline', function()
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
+test('buffer:save should not write a trailing newline if io.ensure_final_newline is disabled',
+	function()
+		local filename, _<close> = test.tempfile()
+		io.open_file(filename)
 
-	local _<close> = test.mock(io, 'ensure_final_newline', false)
-	buffer:append_text('text')
-	buffer:save()
-	local f<close> = io.open(filename, 'rb')
-	local file_contents = f:read('a')
+		local _<close> = test.mock(io, 'ensure_final_newline', false)
+		buffer:append_text('text')
+		buffer:save()
+		local f<close> = io.open(filename, 'rb')
+		local file_contents = f:read('a')
 
-	test.assert_equal(buffer:get_text(), 'text')
-	test.assert_equal(file_contents, 'text')
-end)
+		test.assert_equal(buffer:get_text(), 'text')
+		test.assert_equal(file_contents, 'text')
+	end)
 
-test('buffer:save should ensure a trailing newline', function()
+test('buffer:save should write a trailing newline if io.ensure_final_newline is enabled', function()
 	local filename, _<close> = test.tempfile()
 	io.open_file(filename)
 
@@ -298,7 +299,7 @@ test('buffer:save should ensure a trailing newline', function()
 	test.assert_equal(file_contents, 'text' .. test.newline())
 end)
 
-test('buffer:save should emit before and after save events at the right times', function()
+test('buffer:save should emit before and after events', function()
 	local filename, _<close> = test.tempfile()
 	io.open_file(filename)
 	os.remove(filename) -- delete for tracking before and after events
@@ -321,7 +322,7 @@ test('buffer:save should emit before and after save events at the right times', 
 	test.assert_equal(file_exists, {false, true})
 end)
 
-test('buffer:save should remove the buffer type once it has a filename', function()
+test("buffer:save should remove a buffer's type once it has a filename", function()
 	local filename, _<close> = test.tempfile()
 	buffer._type = '[Typed Buffer]'
 
@@ -332,13 +333,13 @@ test('buffer:save should remove the buffer type once it has a filename', functio
 	test.assert_equal(buffer._type, nil)
 end)
 
-test('buffer:save_as should raise an error for an invalid argument type', function()
+test('buffer:save_as should raise errors for invalid arguments', function()
 	local invalid_filename = function() buffer:save_as(1) end
 
 	test.assert_raises(invalid_filename, 'string/nil expected')
 end)
 
-test('buffer:save_as should save the untitled file as a named file', function()
+test('buffer:save_as should save with a given filename', function()
 	local filename, _<close> = test.tempfile()
 	os.remove(filename) -- should not exist yet
 
@@ -349,7 +350,7 @@ test('buffer:save_as should save the untitled file as a named file', function()
 	test.assert(lfs.attributes(filename, 'mode'), 'file')
 end)
 
-test('buffer:save_as should prompt for a file to save to', function()
+test('buffer:save_as should prompt for a file to save to if none was given', function()
 	local filename, _<close> = test.tempfile()
 
 	local select_filename = test.stub(filename)
@@ -367,7 +368,7 @@ test('buffer:save_as should update the lexer', function()
 	test.assert_equal(buffer.lexer_language, 'lua')
 end)
 
-test('buffer:save_as should emit a distinct after save event', function()
+test('buffer:save_as should emit a distinct event afterwards', function()
 	local filename, _<close> = test.tempfile()
 	local event = test.stub()
 
@@ -408,7 +409,7 @@ end)
 
 test('io.save_all_files should switch to untitled buffers and prompt for files to save to',
 	function()
-		buffer:append_text('save me')
+		buffer:append_text('modified')
 
 		-- Open another file to verify the untitled buffer is switched to prior to saving.
 		local filename, _<close> = test.tempfile()
@@ -425,7 +426,7 @@ test('io.save_all_files should switch to untitled buffers and prompt for files t
 		test.assert_equal(switched_to_untitled_buffer, true)
 	end)
 
-test('buffer:close should close a buffer without changes', function()
+test('buffer:close should immediately close a buffer without changes', function()
 	buffer.new()
 
 	local closed = buffer:close()
@@ -445,7 +446,7 @@ test('buffer:close should prompt before closing a modified buffer', function()
 	test.assert_equal(#_BUFFERS, 2)
 end)
 
-test('buffer:close should close a modified buffer', function()
+test('buffer:close should allow closing a modified buffer without prompting', function()
 	buffer.new():append_text('text')
 
 	local closed = buffer:close(true)
@@ -453,7 +454,7 @@ test('buffer:close should close a modified buffer', function()
 	test.assert_equal(closed, true)
 end)
 
-test('detect external file modifications', function()
+test('external file modifications should be detected', function()
 	local file_changed = test.stub(false) -- halt propagation to default, prompting handler
 	local _<close> = test.connect(events.FILE_CHANGED, file_changed, 1)
 	local filename, _<close> = test.tempfile()
@@ -469,12 +470,12 @@ test('detect external file modifications', function()
 	test.assert_equal(file_changed.args, {filename})
 end)
 
-test('prompt to reload files modified externally', function()
+test('externally modified files should prompt for reload', function()
 	local filename, _<close> = test.tempfile()
 	io.open_file(filename)
 
 	io.open(filename, 'wb'):write('reloaded'):close()
-	buffer.mod_time = buffer.mod_time - 1 -- simulate sleep
+	buffer.mod_time = buffer.mod_time - 1 -- simulate modification in the past
 	local reload = test.stub(1)
 	local _<close> = test.mock(ui.dialogs, 'message', reload)
 	buffer.new():close() -- trigger check
@@ -490,8 +491,7 @@ test('io.close_all_buffers should close all unmodified buffers without checking 
 
 		io.open_file(filename)
 		buffer.mod_time = buffer.mod_time - 1 -- simulate file modified
-
-		buffer.new()._type = '[Foo Buffer]'
+		buffer.new()
 
 		local closed_all = io.close_all_buffers()
 
@@ -563,7 +563,7 @@ test('io.open_recent_file should allow clearing the list during prompt', functio
 	io.open_file(filename)
 	buffer:close()
 
-	local clear_recent_files = test.stub({}, 3)
+	local clear_recent_files = test.stub({1}, 3)
 	local _<close> = test.mock(ui.dialogs, 'list', clear_recent_files)
 
 	io.open_recent_file()
@@ -572,13 +572,13 @@ test('io.open_recent_file should allow clearing the list during prompt', functio
 	test.assert_equal(#_BUFFERS, 1)
 end)
 
-test('io.get_project_root should raise an error for an invalid argument type', function()
+test('io.get_project_root should raise errors for invalid arguments', function()
 	local invalid_path = function() io.get_project_root(1) end
 
 	test.assert_raises(invalid_path, 'string/nil expected')
 end)
 
-test('io.get_project_root should detect the project root directory from the working dir', function()
+test('io.get_project_root should detect the project root from the working directory', function()
 	local dir, _<close> = test.tempdir({['.hg'] = {}}, true)
 
 	local root = io.get_project_root()
@@ -586,17 +586,16 @@ test('io.get_project_root should detect the project root directory from the work
 	test.assert_equal(root, dir)
 end)
 
-test('io.get_project_root should detect the project root directory from the current file',
-	function()
-		local dir, _<close> = test.tempdir{['.hg'] = {}, subdir = {'file.txt'}}
+test('io.get_project_root should detect the project root from the current file', function()
+	local dir, _<close> = test.tempdir{['.hg'] = {}, subdir = {'file.txt'}}
 
-		io.open_file(dir .. '/subdir/file.txt')
-		local root = io.get_project_root()
+	io.open_file(dir .. '/subdir/file.txt')
+	local root = io.get_project_root()
 
-		test.assert_equal(root, dir)
-	end)
+	test.assert_equal(root, dir)
+end)
 
-test('io.get_project_root should detect the project root directory from a path', function()
+test('io.get_project_root should detect the project root from a given path', function()
 	local dir, _<close> = test.tempdir{['.hg'] = {}, subdir = {}}
 
 	local root = io.get_project_root(dir)
@@ -606,7 +605,7 @@ test('io.get_project_root should detect the project root directory from a path',
 	test.assert_equal(same_root, dir)
 end)
 
-test('io.get_project_root should handle not detecting the project root directory', function()
+test('io.get_project_root should handle not detecting the project root', function()
 	local dir, _<close> = test.tempdir()
 
 	local root = io.get_project_root(dir)
@@ -614,17 +613,16 @@ test('io.get_project_root should handle not detecting the project root directory
 	test.assert_equal(root, nil)
 end)
 
-test('io.get_project_root should consider a submodule directory as the project root directory',
-	function()
-		local dir, _<close> = test.tempdir{['.git'] = {}, subdir = {'.git', 'file.txt'}}
+test('io.get_project_root should allow a submodule directory to be the project root', function()
+	local dir, _<close> = test.tempdir{['.git'] = {}, subdir = {'.git', 'file.txt'}}
 
-		io.open_file(dir .. '/subdir/bar.txt')
-		local root = io.get_project_root(true)
+	io.open_file(dir .. '/subdir/bar.txt')
+	local root = io.get_project_root(true)
 
-		test.assert_equal(root, dir .. '/subdir')
-	end)
+	test.assert_equal(root, dir .. '/subdir')
+end)
 
-test('io.quick_open should raise errors for invalid argument types', function()
+test('io.quick_open should raise errors for invalid arguments', function()
 	local invalid_path = function() io.quick_open(1) end
 	local invalid_filter = function() io.quick_open({}, true) end
 
@@ -642,7 +640,7 @@ test('io.quick_open should prompt for a project file to open', function()
 	test.assert(buffer.filename, 'should have found file to open')
 end)
 
-test('io.quick_open should prompt for a file to open from a directory', function()
+test('io.quick_open should prompt for a file to open from a given directory', function()
 	local dir, _<close> = test.tempdir{['.hg'] = {}, 'file.txt'}
 
 	local select_first_item = test.stub({1})
@@ -713,7 +711,7 @@ test('buffer:close for a hidden buffer should not affect buffers in existing vie
 end)
 if not QT then expected_failure() end
 
-test('read stdin into a new buffer as a file', function()
+test('- should read stdin into a new buffer as a file', function()
 	local stdin_provider = test.stub('text')
 
 	local _<close> = test.mock(io, 'read', stdin_provider)
