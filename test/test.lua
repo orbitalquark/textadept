@@ -55,7 +55,7 @@ end
 local function snapshot()
 	local lines = {''} -- leading newline
 	for i, buffer in ipairs(_BUFFERS) do
-		local text = buffer:get_text():gsub('(\r?\n)', '\t%1')
+		local text = buffer:get_text():gsub('(\r?\n)', '%1\t')
 		if text == '' and #_BUFFERS == 1 then return '' end -- shortcut
 		lines[#lines + 1] = string.format('buffer %d (%s):\n\t%s\n', i,
 			buffer.filename or buffer._type or _L['Untitled'], text)
