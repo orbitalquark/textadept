@@ -7,43 +7,47 @@ test('ui.print_to should raise errors for invalid arguments', function()
 end)
 
 test('ui.print_to should print to a typed buffer', function()
-	local type = '[Typed Buffer]'
-
 	local _<close> = test.mock(ui, 'tabs', true)
-	local buf = ui.print_to(type, 'output')
+	local type = '[Typed Buffer]'
+	local output = 'output'
+
+	local buf = ui.print_to(type, output)
 
 	test.assert_equal(#_BUFFERS, 2)
 	test.assert_equal(#_VIEWS, 1)
 	test.assert(buf == buffer, 'should have returned print buffer')
 	test.assert_equal(buffer._type, type)
-	test.assert_equal(buffer:get_text(), 'output' .. test.newline())
+	test.assert_equal(buffer:get_text(), output .. test.newline())
 	test.assert_equal(buffer:line_from_position(buffer.current_pos), 2)
 	test.assert_equal(buffer.modify, false)
 end)
 
 test('ui.print_to should print multiple values separated by tabs', function()
-	local type = '[Typed Buffer]'
-
 	local _<close> = test.mock(ui, 'tabs', true)
-	ui.print_to(type, 1, 2)
-	test.assert_equal(buffer:get_text(), '1\t2' .. test.newline())
+	local type = '[Typed Buffer]'
+	local output = {1, 2}
+	local text_output = table.concat(output, '\t')
+
+	ui.print_to(type, table.unpack(output))
+
+	test.assert_equal(buffer:get_text(), text_output .. test.newline())
 end)
 
 test('ui.print_to should switch to the print buffer', function()
-	local type = '[Typed Buffer]'
-
 	local _<close> = test.mock(ui, 'tabs', true)
+	local type = '[Typed Buffer]'
 	ui.print_to(type)
 	view:goto_buffer(-1)
+
 	ui.print_to(type)
 
 	test.assert_equal(buffer._type, type)
 end)
 
 test('ui.print_to should print to a typed buffer in another view if ui.tabs is disabled', function()
+	local _<close> = test.mock(ui, 'tabs', false)
 	local type = '[Typed Buffer]'
 
-	local _<close> = test.mock(ui, 'tabs', false)
 	ui.print_to(type)
 
 	test.assert_equal(#_BUFFERS, 2)
@@ -55,19 +59,21 @@ end)
 
 test('ui.print_to should switch to the print buffer, but in another view if ui.tabs is disabled',
 	function()
-		local type = '[Typed Buffer]'
-
 		local _<close> = test.mock(ui, 'tabs', false)
+		local type = '[Typed Buffer]'
 		ui.print_to(type)
 		ui.goto_view(-1)
+
 		ui.print_to(type)
 
 		test.assert_equal(_VIEWS[view], 2)
 	end)
 
 test('ui.print_to should print to another split view if it is showing the print buffer', function()
+	local type = '[Typed Buffer]'
 	view:split()
-	ui.print_to('[Typed Buffer]')
+
+	ui.print_to(type)
 
 	test.assert_equal(#_VIEWS, 2)
 	test.assert_equal(_VIEWS[view], 1)
@@ -75,15 +81,20 @@ end)
 
 test('ui.print_silent_to should print to a buffer without switching to it', function()
 	local _<close> = test.mock(ui, 'tabs', true)
-	local buf = ui.print_silent_to('[Typed Buffer]', 'silent')
+	local type = '[Typed Buffer]'
+	local silent_output = 'silent'
+
+	local buf = ui.print_silent_to(type, silent_output)
 
 	test.assert(buffer ~= buf, 'should not have switched buffers')
-	test.assert_equal(buf:get_text(), 'silent' .. test.newline())
+	test.assert_equal(buf:get_text(), silent_output .. test.newline())
 end)
 
 test('ui.print_silent_to should not split the view if ui.tabs is disabled', function()
 	local _<close> = test.mock(ui, 'tabs', false)
-	ui.print_silent_to('[Typed Buffer]', 'silent')
+	local type = '[Typed Buffer]'
+
+	ui.print_silent_to(type)
 
 	test.assert_equal(#_VIEWS, 1)
 end)
@@ -101,10 +112,12 @@ test('ui.print_silent_to should scroll any views showing the print buffer', func
 end)
 
 test('ui.print should print to the message buffer', function()
-	ui.print('message')
+	local message = 'message'
+
+	ui.print(message)
 
 	test.assert_equal(buffer._type, _L['[Message Buffer]'])
-	test.assert_equal(buffer:get_text(), 'message' .. test.newline())
+	test.assert_equal(buffer:get_text(), message .. test.newline())
 end)
 
 test('ui.print_silent should silently print to the message buffer', function()
@@ -122,9 +135,12 @@ test('ui.output should print to the output buffer', function()
 end)
 
 test('ui.output should not print tabs between values', function()
-	ui.output(1, 2, 3)
+	local output = {1, 2, 3}
+	local text_output = table.concat(output)
 
-	test.assert_equal(buffer:get_text(), '123')
+	ui.output(table.unpack(output))
+
+	test.assert_equal(buffer:get_text(), text_output)
 end)
 
 test('ui.output should highlight recognized error messages', function()
@@ -134,10 +150,13 @@ test('ui.output should highlight recognized error messages', function()
 	local message_pos = output:find(': ') + 2
 
 	ui.output(output, test.newline())
+	local style_at_file_pos = buffer:name_of_style(buffer.style_at[file_pos])
+	local style_at_line_pos = buffer:name_of_style(buffer.style_at[line_pos])
+	local style_at_message_pos = buffer:name_of_style(buffer.style_at[message_pos])
 
-	test.assert_equal(buffer:name_of_style(buffer.style_at[file_pos]), 'filename')
-	test.assert_equal(buffer:name_of_style(buffer.style_at[line_pos]), 'line')
-	test.assert_equal(buffer:name_of_style(buffer.style_at[message_pos]), 'message')
+	test.assert_equal(style_at_file_pos, 'filename')
+	test.assert_equal(style_at_line_pos, 'line')
+	test.assert_equal(style_at_message_pos, 'message')
 end)
 
 test('ui.output_silent should silently print to the output buffer', function()
@@ -147,11 +166,11 @@ test('ui.output_silent should silently print to the output buffer', function()
 end)
 
 test('ui.switch_buffer should prompt to switch between buffers', function()
+	local select_first_item = test.stub(1)
+	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 	buffer:append_text('1')
 	buffer.new():append_text('2')
 
-	local select_first_item = test.stub(1)
-	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 	ui.switch_buffer()
 
 	test.assert_equal(_BUFFERS[buffer], 1)
@@ -160,13 +179,13 @@ end)
 test(
 	'ui.switch_buffer should prompt to switch between recent buffers if ui.buffer_list_zorder is enabled',
 	function()
+		local _<close> = test.mock(ui, 'buffer_list_zorder', true)
+		local select_first_item = test.stub(1)
+		local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 		buffer:append_text('1')
 		buffer.new():append_text('2')
 		buffer.new():append_text('3')
 
-		local _<close> = test.mock(ui, 'buffer_list_zorder', true)
-		local select_first_item = test.stub(1)
-		local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 		ui.switch_buffer()
 
 		test.assert_equal(_BUFFERS[buffer], 2)
@@ -184,22 +203,24 @@ test('ui.switch_buffer should prompt with relative paths of buffers in the curre
 		local _<close> = test.mock(ui, 'buffer_list_zorder', true)
 		local select_first_item = test.stub(1)
 		local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
+
 		ui.switch_buffer() -- back to init.lua
 		ui.switch_buffer() -- back to temp file
 	end)
 
 -- Note: reset() causes the same trouble described in *init_test.lua*.
 test('ui.switch_buffer should persist recent buffers over reset #skip', function()
+	local _<close> = test.mock(ui, 'buffer_list_zorder', true)
+	local select_first_item = test.stub(1)
+	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 	buffer:append_text('1')
 	buffer.new():append_text('2')
 	buffer.new():append_text('3')
 
-	local _<close> = test.mock(ui, 'buffer_list_zorder', true)
-	local select_first_item = test.stub(1)
-	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 	ui.switch_buffer()
 	reset()
 	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
+
 	ui.switch_buffer()
 
 	test.assert_equal(_BUFFERS[buffer], 3)
@@ -223,8 +244,8 @@ end)
 test('ui.goto_file should switch to an already opened file in the same view', function()
 	local filename, _<close> = test.tempfile()
 	io.open_file(filename)
-
 	buffer.new()
+
 	ui.goto_file(filename)
 
 	test.assert_equal(buffer.filename, filename)
@@ -235,9 +256,9 @@ end)
 test('ui.goto_file should match filenames case-insensitively on WIN32', function()
 	local filename, _<close> = test.tempfile()
 	io.open_file(filename)
-
 	buffer.new()
 	local _<close> = test.mock(_G, 'WIN32', true)
+
 	ui.goto_file(filename:upper())
 
 	test.assert_equal(buffer.filename, filename)
@@ -258,8 +279,8 @@ test('ui.goto_file should go to the view showing the file', function()
 	local filename, _<close> = test.tempfile()
 	io.open_file(filename)
 	view:split()
-
 	buffer.new()
+
 	ui.goto_file(filename)
 
 	test.assert_equal(buffer.filename, filename)
@@ -272,8 +293,8 @@ test(
 		local filename, _<close> = test.tempfile()
 		local dir, name = filename:match('^(.+[/\\])([^/\\]+)')
 		io.open_file(filename)
-
 		buffer.new()
+
 		ui.goto_file(dir .. '/does-not-exist/' .. name, false, nil, true)
 
 		test.assert_equal(buffer.filename, filename)
@@ -288,8 +309,8 @@ test(
 		local dir, name = filename:match('^(.+[/\\])([^/\\]+)$')
 		io.open_file(filename)
 		buffer.new()
-
 		view:split()
+
 		ui.goto_file(dir .. '/does-not-exist/' .. name, true, nil, true)
 
 		test.assert_equal(buffer.filename, filename)
@@ -302,8 +323,8 @@ test('ui.goto_file should switch to an already opened file, and in a preferred s
 		io.open_file(filename)
 		buffer.new()
 		view:split()
-
 		view:split()
+
 		ui.goto_file(filename, false, _VIEWS[2])
 
 		test.assert_equal(buffer.filename, filename)
@@ -312,6 +333,7 @@ test('ui.goto_file should switch to an already opened file, and in a preferred s
 
 test("clicking a buffer's tab should switch to that buffer", function()
 	buffer.new()
+
 	events.emit(events.TAB_CLICKED, 1) -- simulate
 
 	test.assert_equal(_BUFFERS[buffer], 1)
@@ -324,17 +346,18 @@ test("clicking a buffer's tab close button should close that buffer", function()
 	events.emit(events.TAB_CLOSE_CLICKED, 1) -- simulate
 
 	test.assert_equal(#_BUFFERS, 1)
-	test.assert_equal(buffer:get_text(), 'modified')
+	test.assert_equal(buffer.modify, true)
 end)
 
 test('dropping a file URI should open it', function()
 	local dir, _<close> = test.tempdir{'dropped file.txt'}
-	io.open(dir .. '/dropped file.txt', 'wb'):write('dropped'):close()
-
+	local contents = 'dropped'
+	io.open(dir .. '/dropped file.txt', 'wb'):write(contents):close()
 	local uri = 'file://' .. dir:gsub('\\', '/') .. '/dropped%20file.txt'
+
 	events.emit(events.URI_DROPPED, uri) -- simulate
 
-	test.assert_equal(buffer:get_text(), 'dropped')
+	test.assert_equal(buffer:get_text(), contents)
 end)
 
 test('dropping a directory URI should do nothing', function()
@@ -349,15 +372,17 @@ end)
 
 test('switching between buffers should save/restore buffer state', function()
 	for i = 1, 100 do buffer:append_text(i .. test.newline()) end
-	buffer:set_sel(buffer:position_from_line(50), buffer:position_from_line(51))
+	buffer:set_sel(buffer:position_from_line(50), buffer.line_end_position[50])
+	local selected_text = buffer:get_sel_text()
 	local first_line = view.first_visible_line
-	view.x_offset = 10
+	local x_offset = 10
+	view.x_offset = x_offset
 
 	buffer.new():close()
 
-	test.assert_equal(buffer:get_sel_text(), '50' .. test.newline())
+	test.assert_equal(buffer:get_sel_text(), selected_text)
 	test.assert_equal(view.first_visible_line, first_line)
-	test.assert_equal(view.x_offset, 10)
+	test.assert_equal(view.x_offset, x_offset)
 end)
 
 test('switching between buffers should save/restore fold state', function()
@@ -374,12 +399,13 @@ test('reloading a buffer should restore its state', function()
 	local filename, _<close> = test.tempfile()
 	io.open(filename, 'wb'):write('123456'):close()
 	io.open_file(filename)
-	buffer:set_sel(4, 7) -- '456'
+	buffer:set_sel(4, 7)
+	local selected_text = buffer:get_sel_text()
 	io.open(filename, 'wb'):write('123456789'):close()
 
 	buffer:reload()
 
-	test.assert_equal(buffer:get_sel_text(), '456')
+	test.assert_equal(buffer:get_sel_text(), selected_text)
 end)
 
 test('quitting should be unimpeded by unmodified buffers', function()
@@ -396,6 +422,7 @@ test('quitting with modified buffers should prompt for save', function()
 	local is_confirm_quit = function(opts) return opts.title == _L['Quit without saving?'] end
 	local cancel_quit = test.stub(2)
 	local _<close> = test.mock(ui.dialogs, 'message', is_confirm_quit, cancel_quit)
+
 	local cancelled = events.emit(events.QUIT) -- simulate
 
 	test.assert_equal(cancelled, true)
@@ -403,6 +430,7 @@ end)
 
 test('quitting should be unimpeded by modified, typed buffers', function()
 	ui.print_silent():append_text('modified')
+
 	local halt = events.emit(events.QUIT) -- simulate
 
 	test.assert_equal(not halt, true)
@@ -412,8 +440,8 @@ test('closing a buffer should switch back to the previously shown one', function
 	buffer:append_text('1')
 	buffer.new():append_text('2')
 	buffer.new():append_text('3')
-
 	view:goto_buffer(_BUFFERS[1])
+
 	buffer:close(true) -- should switch back to 3
 
 	test.assert_equal(buffer:get_text(), '3')
@@ -440,6 +468,7 @@ if CURSES then
 
 		events.emit(events.MOUSE, view.MOUSE_PRESS, 1, 0, 2, 1)
 		events.emit(events.MOUSE, view.MOUSE_DRAG, 1, 0, 2, 2)
+
 		test.assert_equal(_VIEWS[1].size, 2)
 	end)
 end
@@ -469,8 +498,8 @@ end)
 
 test('ui.size = {width, height} should resize the window', function()
 	if CURSES then return end -- not applicable
-
 	local new_size = {ui.size[1] - 50, ui.size[2] + 50}
+
 	local _<close> = test.mock(ui, 'size', new_size)
 
 	-- For some reason, reading ui.size fails, even though the window has been resized.
@@ -482,6 +511,7 @@ if LINUX and GTK then expected_failure() end
 test('ui.get_split_table should report the current split view state', function()
 	view:split(true)
 	view:split()
+
 	local splits = ui.get_split_table()
 
 	test.assert_equal(splits.vertical, true)
@@ -501,6 +531,7 @@ end)
 
 test('ui.goto_view should focus a given view', function()
 	view:split()
+
 	ui.goto_view(_VIEWS[1])
 
 	test.assert_equal(_VIEWS[view], 1)

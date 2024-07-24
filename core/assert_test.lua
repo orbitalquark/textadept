@@ -37,18 +37,20 @@ end)
 
 test('assert_type should return its argument on success', function()
 	local needs_string = function(s) return assert_type(s, 'string', 1) end
+	local s = ''
 
-	local result = needs_string('')
+	local result = needs_string(s)
 
-	test.assert_equal(result, '')
+	test.assert_equal(result, s)
 end)
 
 test('assert_type should recognize more than one type', function()
 	local needs_string_or_number = function(v) return assert_type(v, 'string/number', 1) end
+	local n = 1
 
-	local result = needs_string_or_number(1)
+	local result = needs_string_or_number(n)
 
-	test.assert_equal(result, 1)
+	test.assert_equal(result, n)
 end)
 
 test('assert_type should allow a value to be optional', function()

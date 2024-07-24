@@ -38,6 +38,7 @@ test('bookmarks.goto_mark should prompt for a bookmark to go to', function()
 
 	local select_first_item = test.stub(1)
 	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
+
 	textadept.bookmarks.goto_mark()
 	local line = buffer:line_from_position(buffer.current_pos)
 
@@ -102,6 +103,7 @@ test('bookmarks.goto_mark prompt should include bookmarks from other buffers', f
 
 	local select_second_item = test.stub(2)
 	local _<close> = test.mock(ui.dialogs, 'list', select_second_item)
+
 	textadept.bookmarks.goto_mark()
 	local line = buffer:line_from_position(buffer.current_pos)
 

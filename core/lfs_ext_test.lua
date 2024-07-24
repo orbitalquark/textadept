@@ -14,8 +14,8 @@ end)
 
 test('lfs.walk should walk a directory tree', function()
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
-
 	local files, dirs = {}, {}
+
 	for filename in lfs.walk(dir, nil, nil, true) do
 		if not filename:find('[/\\]$') then
 			files[#files + 1] = filename
@@ -23,16 +23,16 @@ test('lfs.walk should walk a directory tree', function()
 			dirs[#dirs + 1] = filename
 		end
 	end
-	table.sort(files)
 
+	table.sort(files)
 	test.assert_equal(files, {test.file(dir .. '/file.txt'), test.file(dir .. '/subdir/subfile.txt')})
 	test.assert_equal(dirs, {test.file(dir .. '/subdir/')})
 end)
 
 test('lfs.walk should not include extra slashes in paths', function()
 	local dir, _<close> = test.tempdir{'file.txt'}
-
 	local files = {}
+
 	for filename in lfs.walk(dir .. '/') do files[#files + 1] = filename end
 
 	test.assert_equal(files, {test.file(dir .. '/file.txt')})
@@ -40,8 +40,8 @@ end)
 
 test('lfs.walk should allow filters to include files by extension', function()
 	local dir, _<close> = test.tempdir{'file.luadoc', subdir = {'file.lua'}}
-
 	local files = {}
+
 	for filename in lfs.walk(dir, '.lua') do files[#files + 1] = filename end
 
 	test.assert_equal(files, {test.file(dir .. '/subdir/file.lua')})
@@ -49,8 +49,8 @@ end)
 
 test('lfs.walk should allow filters to exclude files by extension', function()
 	local dir, _<close> = test.tempdir{'file.lua', subdir = {'subfile.lua', 'subfile.txt'}}
-
 	local files = {}
+
 	for filename in lfs.walk(dir, '!.lua') do files[#files + 1] = filename end
 
 	test.assert_equal(files, {test.file(dir .. '/subdir/subfile.txt')})
@@ -58,19 +58,19 @@ end)
 
 test('lfs.walk should allow filters to include directories', function()
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
-
 	local files = {}
-	for filename in lfs.walk(dir, '/subdir') do files[#files + 1] = filename end
-	table.sort(files)
 
+	for filename in lfs.walk(dir, '/subdir') do files[#files + 1] = filename end
+
+	table.sort(files)
 	test.assert_equal(files, {test.file(dir .. '/subdir/subfile.txt')})
 end)
 expected_failure()
 
 test('lfs.walk should allow mixed filters', function()
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
-
 	local files = {}
+
 	for filename in lfs.walk(dir, {'!/subdir', '.txt'}) do files[#files + 1] = filename end
 
 	test.assert_equal(files, {test.file(dir .. '/file.txt')})
@@ -78,8 +78,8 @@ end)
 
 test('lfs.walk should stop after reaching a maximum depth', function()
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
-
 	local files = {}
+
 	for filename in lfs.walk(dir, '.txt', 0) do files[#files + 1] = filename end
 
 	test.assert_equal(files, {test.file(dir .. '/file.txt')})
@@ -101,8 +101,8 @@ test('lfs.walk should be able to handle directory symlinks, even recursive ones'
 	lfs.link('.', 'bar', true)
 	lfs.chdir(dir .. '/baz/quux')
 	lfs.link('../../baz', 'foobar', true)
-
 	local files = {}
+
 	for filename in lfs.walk(dir) do files[#files + 1] = filename end
 
 	test.assert_equal(files, {dir .. '/foo'})
@@ -125,11 +125,11 @@ test('lfs.walk should be able to handle symlinks to parent dirs, even recursive 
 	assert(lfs.link(dir .. '/1', dir .. '/1/bar/quux', true))
 	assert(lfs.link(dir .. '/2/foobar', dir .. '/2/foobaz', true))
 	assert(lfs.link(dir .. '/2', dir .. '/1/2', true))
-
 	local files = {}
-	for filename in lfs.walk(dir .. '/1') do files[#files + 1] = filename end
-	table.sort(files)
 
+	for filename in lfs.walk(dir .. '/1') do files[#files + 1] = filename end
+
+	table.sort(files)
 	local expected_files = {
 		dir .. '/1/foo', dir .. '/1/bar/baz', dir .. '/1/2/foobar', dir .. '/1/2/foobaz'
 	}

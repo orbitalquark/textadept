@@ -15,11 +15,13 @@ test('buffer:get_lexer should distinguish between child languages in multi-langu
 			'</style></head></html>'
 		}):close()
 		io.open_file(filename)
-
 		buffer:goto_pos(buffer:position_from_line(2))
 
-		test.assert_equal(buffer:get_lexer(), 'html')
-		test.assert_equal(buffer:get_lexer(true), 'css')
+		local lexer = buffer:get_lexer()
+		local child = buffer:get_lexer(true)
+
+		test.assert_equal(lexer, 'html')
+		test.assert_equal(child, 'css')
 	end)
 
 test('buffer:set_lexer should raise errors for invalid arguments', function()
@@ -38,6 +40,7 @@ end)
 
 test('buffer:set_lexer should auto-detect a lexer by filename', function()
 	buffer.filename = 'CMakeLists.txt'
+
 	buffer:set_lexer()
 
 	test.assert_equal(buffer.lexer_language, 'cmake')
@@ -46,6 +49,7 @@ end)
 test('buffer:set_lexer should auto-detect a lexer by the first line of text like a shebang',
 	function()
 		buffer:set_text('#!/bin/sh')
+
 		buffer:set_lexer()
 
 		test.assert_equal(buffer.lexer_language, 'bash')
@@ -53,8 +57,8 @@ test('buffer:set_lexer should auto-detect a lexer by the first line of text like
 
 test('buffer:set_lexer should emit an event', function()
 	local event = test.stub()
-
 	local _<close> = test.connect(events.LEXER_LOADED, event)
+
 	buffer:set_lexer('lua')
 
 	test.assert_equal(event.called, true)
@@ -69,6 +73,7 @@ end)
 
 test('buffer:name_of_style should link style numbers with style names', function()
 	local style_num = buffer.style_at[buffer.current_pos]
+
 	local style_name = buffer:name_of_style(style_num)
 
 	test.assert_equal(style_name, 'whitespace')
@@ -104,6 +109,26 @@ test('buffer:style_of_name should handle underscore and dot notation in style na
 	test.assert_equal(style_num_from_dot_notation, style_num_from_underscore_notation)
 end)
 
+--- Returns the current buffer's syntax highlighting as a tag table:
+--	{'function', 9, 'whitespace', 10, ...}.
+-- @param offset Optional offset position to start at. The default value is 1.
+-- @return tag table
+local function get_syntax_highlighting(offset)
+	local tags = {}
+	if not offset then offset = 1 end
+	local style_num = buffer.style_at[offset]
+	local i = offset + 1
+	while i <= buffer.length + 1 do
+		if buffer.style_at[i] == style_num then goto continue end
+		tags[#tags + 1] = buffer:name_of_style(style_num)
+		tags[#tags + 1] = i
+		style_num = buffer.style_at[i]
+		::continue::
+		i = i + 1
+	end
+	return tags
+end
+
 test('syntax highlighting should invoke Scintillua and style the buffer with the result', function()
 	buffer:set_text(test.lines{
 		'function foo(z)', --
@@ -112,24 +137,11 @@ test('syntax highlighting should invoke Scintillua and style the buffer with the
 		'	print(x + y)', --
 		'end'
 	})
+
 	buffer:set_lexer('lua')
 
-	-- Construct a tag table from buffer styling of the same form as the one returned
-	-- by lex:lex(), which looks like {'function', 9, 'whitespace', 10, ...}.
-	local actual_tags = {}
-	local style_num = buffer.style_at[1]
-	local i = 2
-	while i <= buffer.length + 1 do
-		if buffer.style_at[i] == style_num then goto continue end
-		actual_tags[#actual_tags + 1] = buffer:name_of_style(style_num)
-		actual_tags[#actual_tags + 1] = i
-		style_num = buffer.style_at[i]
-		::continue::
-		i = i + 1
-	end
-
+	local actual_tags = get_syntax_highlighting()
 	local expected_tags = buffer.lexer:lex(buffer:get_text())
-
 	test.assert_equal(actual_tags, expected_tags)
 end)
 
@@ -142,48 +154,36 @@ test('syntax highlighting should be performed incrementally', function()
 		'end'
 	})
 	buffer:set_lexer('lua')
-
 	local event = test.stub()
 	local _<close> = test.connect(events.STYLE_NEEDED, event, 1)
 	buffer.line_indentation[3] = buffer.tab_width
-	ui.update() -- trigger style needed
-	local offset = buffer:position_from_line(3) -- lexing starts here
 
-	-- Construct a tag table from buffer styling of the same form as the one returned
-	-- by lex:lex(), which looks like {'whitespace', 31, 'keyword', 36, ...}.
-	local actual_tags = {}
-	local style_num = buffer.style_at[offset]
-	local i = offset + 1
-	while i <= buffer.length + 1 do
-		if buffer.style_at[i] == style_num then goto continue end
-		actual_tags[#actual_tags + 1] = buffer:name_of_style(style_num)
-		actual_tags[#actual_tags + 1] = i
-		style_num = buffer.style_at[i]
-		::continue::
-		i = i + 1
-	end
+	ui.update() -- trigger style needed
+
+	test.assert_equal(event.called, true)
+
+	local offset = buffer:position_from_line(3) -- lexing starts here
+	local actual_tags = get_syntax_highlighting(offset)
 
 	local text = buffer:get_text():sub(offset)
 	local start_style_num = buffer:style_of_name('whitespace_lua')
 	local expected_tags = buffer.lexer:lex(text, start_style_num)
 	for i = 2, #expected_tags, 2 do expected_tags[i] = expected_tags[i] + offset - 1 end
 
-	test.assert_equal(event.called, true)
 	test.assert_equal(actual_tags, expected_tags)
 end)
 
 test('lexer errors should style the entire buffer the default style', function()
 	local error_handler = test.stub(false) -- halt propagation to default error handler
 	local _<close> = test.connect(events.ERROR, error_handler, 1)
-
 	local error_message = 'error!'
 	local raise_error = function() error(error_message) end
 	local _<close> = test.mock(buffer.lexer, 'lex', raise_error)
 	buffer:set_text('text')
-	ui.update() -- trigger style needed
-	local style = buffer.style_at[1]
 
-	test.assert_equal(style, view.STYLE_DEFAULT)
+	ui.update() -- trigger style needed
+
+	test.assert_equal(buffer.style_at[1], view.STYLE_DEFAULT)
 	test.assert_equal(buffer.end_styled, buffer.length + 1)
 	test.assert(error_handler.args[1]:find(error_message), 'should have emitted error event')
 end)
@@ -196,6 +196,7 @@ test('code folding should invoke Scintillua and mark fold headers with the resul
 		'	print(x + y)', --
 		'end'
 	})
+
 	buffer:set_lexer('lua')
 
 	-- Construct a fold table from fold levels of the same form as the one returned by

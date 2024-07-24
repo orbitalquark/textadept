@@ -9,26 +9,28 @@ test('buffer:text_range should raise errors for invalid arguments', function()
 end)
 
 test("buffer:text_range should implement Scintilla's SCI_GETTEXTRANGE", function()
-	buffer:set_text('123456789')
+	local text = '123456789'
+	buffer:append_text(text)
 
 	local sub_range = buffer:text_range(4, 7)
 	local full_range = buffer:text_range(1, buffer.length + 1)
 	local clamp_start_range = buffer:text_range(-1, 4)
 	local clamp_end_range = buffer:text_range(7, 11)
 
-	test.assert_equal(sub_range, '456')
-	test.assert_equal(full_range, buffer:get_text())
-	test.assert_equal(clamp_start_range, '123')
-	test.assert_equal(clamp_end_range, '789')
+	test.assert_equal(sub_range, text:sub(4, 6))
+	test.assert_equal(full_range, text)
+	test.assert_equal(clamp_start_range, text:sub(1, 3))
+	test.assert_equal(clamp_end_range, text:sub(7))
 end)
 
 test('buffer:text_range should not modify buffer.target_range', function()
-	buffer:set_text('123456789')
+	local text = '123456789'
+	buffer:append_text(text)
 	buffer:set_target_range(4, 7)
 
 	buffer:text_range(1, 4) -- 123
 
-	test.assert_equal(buffer.target_text, '456')
+	test.assert_equal(buffer.target_text, text:sub(4, 6))
 end)
 
 test('view.styles[k] = v should raise errors for invalid values', function()
@@ -57,9 +59,9 @@ test('view:set_theme should set the theme for a view, leaving others alone', fun
 
 	_VIEWS[2]:set_theme('dark')
 	_VIEWS[3]:set_theme('light')
+
 	local view2_style = _VIEWS[2].style_fore[view.STYLE_DEFAULT]
 	local view3_style = _VIEWS[3].style_fore[view.STYLE_DEFAULT]
-
 	test.assert(view2_style ~= view3_style, 'views should have different styles')
 end)
 
@@ -159,8 +161,8 @@ test('timeout should repeatedly call a function as long as it returns true', fun
 
 	timeout(interval, counter)
 	test.wait(function() return count == stop end)
-	local duration = socket.gettime() - start_time
 
+	local duration = socket.gettime() - start_time
 	local expected_duration = interval * stop
 	test.assert(duration > expected_duration, 'should have waited %fs, but waited only %fs)',
 		expected_duration, duration)
