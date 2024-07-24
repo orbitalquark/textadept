@@ -299,6 +299,18 @@ test('buffer:save should write a trailing newline if io.ensure_final_newline is 
 	test.assert_equal(file_contents, 'text' .. test.newline())
 end)
 
+test('buffer:save should never write a trailing newline for binary files', function()
+	local filename, _<close> = test.tempfile()
+	io.open_file(filename)
+	buffer:append_text('binary')
+	buffer.encoding = nil -- pretend it was detected as a binary file
+
+	local _<close> = test.mock(io, 'ensure_final_newline', true)
+	buffer:save()
+
+	test.assert_equal(buffer:get_text(), 'binary')
+end)
+
 test('buffer:save should emit before and after events', function()
 	local filename, _<close> = test.tempfile()
 	io.open_file(filename)
