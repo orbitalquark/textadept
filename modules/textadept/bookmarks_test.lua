@@ -19,8 +19,8 @@ test("bookmarks.toggle should remove a line's existing bookmark", function()
 end)
 
 test('bookmarks.clear should remove all buffer bookmarks', function()
-	-- Note: toggling a bookmark and then calling buffer:new_line() will move the bookmark down.
-	buffer:new_line()
+	-- Note: toggling a bookmark and then typing Enter will move the bookmark down.
+	test.type('\n')
 	textadept.bookmarks.toggle()
 	buffer:line_up()
 	textadept.bookmarks.toggle()
@@ -45,7 +45,7 @@ test('bookmarks.goto_mark should prompt for a bookmark to go to', function()
 end)
 
 test('bookmarks.goto_mark should be able to go to the next bookmark', function()
-	buffer:new_line()
+	test.type('\n')
 	textadept.bookmarks.toggle()
 	buffer:line_up()
 
@@ -56,7 +56,7 @@ test('bookmarks.goto_mark should be able to go to the next bookmark', function()
 end)
 
 test('bookmarks.goto_mark should be able to go to the next (wrapped) bookmark', function()
-	buffer:new_line()
+	test.type('\n')
 	buffer:line_up()
 	textadept.bookmarks.toggle()
 	buffer:line_down()
@@ -68,7 +68,7 @@ test('bookmarks.goto_mark should be able to go to the next (wrapped) bookmark', 
 end)
 
 test('bookmarks.goto_mark should be able to go to the previous bookmark', function()
-	buffer:new_line()
+	test.type('\n')
 	buffer:line_up()
 	textadept.bookmarks.toggle()
 	buffer:line_down()
@@ -80,7 +80,7 @@ test('bookmarks.goto_mark should be able to go to the previous bookmark', functi
 end)
 
 test('bookmarks.goto_mark should be able to go to the previous (wrapped) bookmark', function()
-	buffer:new_line()
+	test.type('\n')
 	textadept.bookmarks.toggle()
 	buffer:line_up()
 

@@ -233,4 +233,38 @@ function M.newline() return newlines[buffer.eol_mode] end
 --- Returns the given lines separated by newlines depending on the current buffer EOL mode.
 function M.lines(lines) return table.concat(lines, M.newline()) end
 
+--- Emulates typing the given key or text.
+function M.type(text)
+	if text:find('^ctrl%+') or text:find('^alt%+') or text:find('^meta%+') or text:find('^cmd%+') or
+		text:find('^shift%+') then
+		M.log('emitting keypress: ' .. text)
+		events.emit(events.KEYPRESS, text)
+		return
+	elseif text ~= '\n' then
+		for _, v in pairs(keys.KEYSYMS) do
+			if v == text then
+				M.log('emitting keypress: ' .. text)
+				events.emit(events.KEYPRESS, text)
+				return
+			end
+		end
+	end
+
+	for _, code in utf8.codes(text) do
+		local char = utf8.char(code)
+		if char == '\n' then char = M.newline() end
+		if events.emit(events.KEYPRESS, char) then return end
+		buffer:begin_undo_action()
+		for i = 1, buffer.selections do
+			local pos = buffer.selection_n_caret[i]
+			buffer:set_target_range(pos, pos)
+			buffer:replace_target(char)
+			buffer.selection_n_anchor[i] = pos + #char
+			buffer.selection_n_caret[i] = pos + #char
+		end
+		buffer:end_undo_action()
+		events.emit(events.CHAR_ADDED, code)
+	end
+end
+
 return M

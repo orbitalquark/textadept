@@ -233,3 +233,11 @@ test('wait should timeout if a condition fails for long enough', function()
 
 	test.assert_raises(loop, 'timed out waiting')
 end)
+
+test('typing \\n should include \\r in CR+LF EOL mode', function()
+	local _<close> = test.mock(buffer, 'eol_mode', buffer.EOL_CRLF)
+
+	test.type('\n')
+
+	test.assert_equal(buffer:get_text(), '\r\n')
+end)

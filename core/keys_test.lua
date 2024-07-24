@@ -21,17 +21,14 @@ test('symbolic keys should come from keys.KEYSYMS', function()
 end)
 
 test('key commands should be bound to specific key sequences', function()
-	local ctrl_a = 'ctrl+a'
-	local a = 'a'
-	local ctrl_A = 'ctrl+A'
 	local command = test.stub()
 
-	local _<close> = test.mock(keys, ctrl_a, command)
-	events.emit(events.KEYPRESS, a)
+	local _<close> = test.mock(keys, 'ctrl+a', command)
+	test.type('a')
 	local command_called_by_a = command.called
-	events.emit(events.KEYPRESS, ctrl_A)
+	test.type('ctrl+A')
 	local command_called_by_ctrl_A = command.called
-	events.emit(events.KEYPRESS, ctrl_a)
+	test.type('ctrl+a')
 	local command_called_by_ctrl_a = command.called
 
 	test.assert_equal(command_called_by_a, false)
@@ -46,33 +43,28 @@ test('keys.keychain should be read-only', function()
 end)
 
 test('keys.keychain should contain the current key chain', function()
-	local ctrl_a = 'ctrl+a'
-
-	local _<close> = test.mock(keys, ctrl_a, {})
-	events.emit(events.KEYPRESS, ctrl_a)
+	local _<close> = test.mock(keys, 'ctrl+a', {})
+	test.type('ctrl+a')
 	local _<close> = test.defer(function() events.emit(events.KEYPRESS, keys.CLEAR) end)
 
-	test.assert_equal(keys.keychain, {ctrl_a})
+	test.assert_equal(keys.keychain, {'ctrl+a'})
 end)
 
 test('key chains should be cancellable', function()
-	local ctrl_a = 'ctrl+a'
-
-	local _<close> = test.mock(keys, ctrl_a, {})
-	events.emit(events.KEYPRESS, ctrl_a)
+	local _<close> = test.mock(keys, 'ctrl+a', {})
+	test.type('ctrl+a')
 	events.emit(events.KEYPRESS, 'esc')
 
 	test.assert_equal(keys.keychain, {})
 end)
 
 test('key chains should only run their key commands when the entire chain is typed', function()
-	local ctrl_a = 'ctrl+a'
 	local command = test.stub()
 
-	local _<close> = test.mock(keys, ctrl_a, {[ctrl_a] = command})
-	events.emit(events.KEYPRESS, ctrl_a)
+	local _<close> = test.mock(keys, 'ctrl+a', {['ctrl+a'] = command})
+	test.type('ctrl+a')
 	local called_early = command.called
-	events.emit(events.KEYPRESS, ctrl_a)
+	test.type('ctrl+a')
 
 	test.assert_equal(called_early, false)
 	test.assert_equal(command.called, true)
@@ -80,14 +72,12 @@ test('key chains should only run their key commands when the entire chain is typ
 end)
 
 test('key chains with invalid sequences should be cancelled', function()
-	local ctrl_a = 'ctrl+a'
-	local ctrl_b = 'ctrl+b'
 	local command = test.stub()
 
-	local _<close> = test.mock(keys, ctrl_a, {})
-	local _<close> = test.mock(keys, ctrl_b, command)
-	events.emit(events.KEYPRESS, ctrl_a)
-	events.emit(events.KEYPRESS, ctrl_b)
+	local _<close> = test.mock(keys, 'ctrl+a', {})
+	local _<close> = test.mock(keys, 'ctrl+b', command)
+	test.type('ctrl+a')
+	test.type('ctrl+b')
 
 	test.assert_equal(keys.keychain, {})
 	test.assert_equal(command.called, false)
