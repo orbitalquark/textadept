@@ -26,7 +26,7 @@ test('os.spawn should spawn from the current working directory', function()
 
 	local cwd = os.spawn(pwd):read('a')
 
-	test.assert_equal(cwd, dir .. test.newline())
+	test.assert_equal(cwd, test.lines{dir, ''})
 end)
 
 test('os.spawn should spawn from a given working directory', function()
@@ -35,7 +35,7 @@ test('os.spawn should spawn from a given working directory', function()
 
 	local cwd = os.spawn(pwd, dir):read('a')
 
-	test.assert_equal(cwd, dir .. test.newline())
+	test.assert_equal(cwd, test.lines{dir, ''})
 end)
 
 test('os.spawn should inherit from the current environment', function()
@@ -52,7 +52,7 @@ test('os.spawn should allow setting an environment from a map', function()
 
 	local output = os.spawn(env_cmd, env):read('a')
 
-	test.assert_equal(output, 'NAME=value' .. test.newline())
+	test.assert_equal(output, test.lines{'NAME=value', ''})
 end)
 
 test('os.spawn should allow setting an environment from a list', function()
@@ -61,7 +61,7 @@ test('os.spawn should allow setting an environment from a list', function()
 
 	local output = os.spawn(env_cmd, env):read('a')
 
-	test.assert_equal(output, 'NAME=value' .. test.newline())
+	test.assert_equal(output, test.lines{'NAME=value', ''})
 end)
 
 test('os.spawn environment should ignore non-environment assignments', function()

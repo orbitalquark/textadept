@@ -256,11 +256,17 @@ function M.type(text)
 		if events.emit(events.KEYPRESS, char) then return end
 		buffer:begin_undo_action()
 		for i = 1, buffer.selections do
-			local pos = buffer.selection_n_caret[i]
-			buffer:set_target_range(pos, pos)
-			buffer:replace_target(char)
-			buffer.selection_n_anchor[i] = pos + #char
-			buffer.selection_n_caret[i] = pos + #char
+			if buffer.selections > 1 then
+				local pos = buffer.selection_n_caret[i]
+				buffer:set_target_range(pos, pos)
+				buffer:replace_target(char)
+				buffer.selection_n_anchor[i] = pos + #char
+				buffer.selection_n_caret[i] = pos + #char
+			elseif not buffer.selection_empty then
+				buffer:replace_sel(char)
+			else
+				buffer:add_text(char)
+			end
 		end
 		buffer:end_undo_action()
 		events.emit(events.CHAR_ADDED, code)
