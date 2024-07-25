@@ -250,6 +250,8 @@ function M.type(text)
 		end
 	end
 
+	local buffer = not ui.command_entry.active and buffer or ui.command_entry
+
 	for _, code in utf8.codes(text) do
 		local char = utf8.char(code)
 		if char == '\n' then char = M.newline() end

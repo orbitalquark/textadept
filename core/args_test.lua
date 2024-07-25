@@ -20,6 +20,7 @@ test('a command-line directory should change the working directory', function()
 end)
 
 test('--help should show command line options and then quit', function()
+	if CURSES then return end -- not supported
 	local print = test.stub()
 	local _<close> = test.mock(_G, 'print', print)
 	local quit = test.stub()
@@ -33,6 +34,7 @@ test('--help should show command line options and then quit', function()
 end)
 
 test('--version should show version information and then quit', function()
+	if CURSES then return end -- not supported
 	local print = test.stub()
 	local _<close> = test.mock(_G, 'print', print)
 	local quit = test.stub()

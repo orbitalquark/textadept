@@ -151,6 +151,7 @@ for _, method in ipairs{'undo', 'redo'} do
 		buffer[method](buffer)
 		local overwritten_by_scintilla = after.called
 		ui.update() -- invokes events.UPDATE_UI
+		if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
 		local overwrites_scintilla = after.called
 
 		-- Scintilla would overwrite any changes by handlers if those handlers were called too soon.

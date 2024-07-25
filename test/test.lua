@@ -113,9 +113,11 @@ for _, name in ipairs(tests) do
 
 	-- Clean up after the test.
 	test.log:clear()
+	while view:unsplit() do end
 	while #_BUFFERS > 1 do buffer:close(true) end
 	buffer:close(true) -- the last one
-	while view:unsplit() do end
+	ui.update()
+	if ui.command_entry.active then test.type('esc') end
 
 	-- Write test output.
 	if ok then
@@ -142,8 +144,8 @@ for _, name in ipairs(tests) do
 	end
 end
 
-print(string.format('%d failed, %d passed, %d skipped, %d expected failures', tests_failed,
-	tests_passed, tests_skipped, tests_failed_expected))
+io.output():write(string.format('%d failed, %d passed, %d skipped, %d expected failures\n',
+	tests_failed, tests_passed, tests_skipped, tests_failed_expected))
 
 -- Note: stock luacov crashes on hook.lua lines 56 and 63 every other run.
 -- `file.max` and `file.max_hits` are both `nil`, so change comparisons to be `(file.max or 0)`
