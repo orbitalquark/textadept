@@ -201,7 +201,7 @@ local function find(text, next, flags, no_wrap, wrapped)
 		if type(M.incremental) == 'boolean' then
 			-- Starting a new incremental search, anchor at current pos.
 			M.incremental, incremental_orig_pos = pos, pos
-		elseif text == find_text then
+		elseif text == find_text and found_text ~= '' then
 			-- "Find Next" or "Find Prev" clicked, anchor at new current pos.
 			M.incremental = buffer:position_relative(pos, next and 1 or -1)
 		end
