@@ -156,8 +156,7 @@ end
 -- @return search flag bit-mask
 local function get_flags()
 	return (M.match_case and buffer.FIND_MATCHCASE or 0) |
-		(M.whole_word and buffer.FIND_WHOLEWORD or 0) | (M.regex and buffer.FIND_REGEXP or 0) |
-		(M.in_files and 1 << 31 or 0)
+		(M.whole_word and buffer.FIND_WHOLEWORD or 0) | (M.regex and buffer.FIND_REGEXP or 0)
 end
 
 --- Returns whether or not the given buffer is a files found buffer.
@@ -188,11 +187,11 @@ local incremental_orig_pos
 local function find(text, next, flags, no_wrap, wrapped)
 	-- Note: cannot use assert_type(), as event errors are handled silently.
 	if text == '' then return end
-	if not flags then flags = get_flags() end
-	if flags >= 1 << 31 then
+	if M.in_files then
 		M.find_in_files() -- performed here
 		return
 	end
+	if not flags then flags = get_flags() end
 	local first_visible_line = view.first_visible_line -- for 'no results found'
 	if not is_ff_buf(buffer) then clear_highlighted_matches() end
 
@@ -306,17 +305,18 @@ function M.find_in_files(dir, filter)
 		end
 		filter = M.find_in_files_filters[dir] or lfs.default_filter
 	end
-	if not CURSES then
+	if not CURSES and ui.find.active then
+		ui.find.in_files = false
 		orig_focus() -- attempt to hide
 		ui.update() -- register widget focus/visibility changes
 		if ui.find.active then orig_focus() end -- hide
 	end
 
 	if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
-	ui.print_to(_L['[Files Found Buffer]'],
-		string.format('%s %s\n%s %s\n%s %s', _L['Find:']:gsub('[_&]', ''), M.find_entry_text,
-			_L['Directory:'], dir, _L['Filter:']:gsub('[_&]', ''),
-			type(filter) == 'string' and filter or table.concat(filter, ',')))
+	ui.print_to(_L['[Files Found Buffer]'], _L['Find:']:gsub('[_&]', '') .. ' ' .. M.find_entry_text)
+	ui.print_to(_L['[Files Found Buffer]'], _L['Directory:'] .. ' ' .. dir)
+	ui.print_to(_L['[Files Found Buffer]'], _L['Filter:']:gsub('[_&]', '') .. ' ' ..
+		(type(filter) == 'string' and filter or table.concat(filter, ',')))
 	buffer.indicator_current = M.INDIC_FIND
 
 	-- Determine which files to search.
@@ -357,8 +357,8 @@ function M.find_in_files(dir, filter)
 				found = true
 				if binary == nil then binary = buffer:text_range(1, 65536):find('\0') end
 				if binary then
-					_G.buffer:add_text(string.format('%s:1:%s\n', utf8_filenames[i],
-						_L['Binary file matches.']))
+					_G.buffer:add_text(string.format('%s:1:%s', utf8_filenames[i], _L['Binary file matches.']))
+					_G.buffer:new_line()
 					break
 				end
 				local line_num = buffer:line_from_position(buffer.target_start)
@@ -367,7 +367,7 @@ function M.find_in_files(dir, filter)
 				local pos = _G.buffer.current_pos - #line + buffer.target_start -
 					buffer:position_from_line(line_num)
 				_G.buffer:indicator_fill_range(pos, buffer.target_end - buffer.target_start)
-				if not line:find('\n$') then _G.buffer:add_text('\n') end
+				if not line:find('\n$') then _G.buffer:new_line() end
 				buffer:set_target_range(buffer.target_end, buffer.length + 1)
 			end
 			buffer:clear_all()
@@ -524,7 +524,7 @@ function M.goto_file_found(location)
 	else
 		s, e = 0, 0 -- binary file notice, or highlighting was somehow removed
 	end
-	ui.goto_file(utf8_filename:iconv(_CHARSET, 'UTF-8'), true, preferred_view)
+	ui.goto_file(utf8_filename:iconv(_CHARSET, 'UTF-8'), ff_view, preferred_view)
 	textadept.editing.goto_line(line_num)
 	if buffer:line_from_position(buffer.current_pos + s) == line_num then
 		buffer:set_sel(buffer.current_pos + e, buffer.current_pos + s)

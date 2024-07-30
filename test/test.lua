@@ -118,6 +118,10 @@ for _, name in ipairs(tests) do
 	buffer:close(true) -- the last one
 	ui.update()
 	if ui.command_entry.active then test.type('esc') end
+	if ui.find.active then
+		ui.find.incremental, ui.find.in_files = false, false
+		ui.find.focus()
+	end
 
 	-- Write test output.
 	if ok then

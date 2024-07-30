@@ -122,17 +122,7 @@ end
 
 --- Returns a list of words highlighted by editing.INDIC_HIGHLIGHT.
 local function get_highlighted_words()
-	local words = {}
-	local indic = textadept.editing.INDIC_HIGHLIGHT
-	local s = buffer:indicator_all_on_for(1) & 1 << indic - 1 == indic and 1 or
-		buffer:indicator_end(indic, 1)
-	while true do
-		local e = buffer:indicator_end(indic, s)
-		if e == 1 or e == s then break end
-		words[#words + 1] = buffer:text_range(s, e)
-		s = buffer:indicator_end(indic, e)
-	end
-	return words
+	return test.get_indicated_text(textadept.editing.INDIC_HIGHLIGHT)
 end
 
 test('editing.highlight_words should allow highlighting all instances of the current word',

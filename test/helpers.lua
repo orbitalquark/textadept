@@ -254,8 +254,25 @@ function M.type(text)
 
 	for _, code in utf8.codes(text) do
 		local char = utf8.char(code)
-		if char == '\n' then char = M.newline() end
+		if ui.find.active then
+			if char == '\n' then
+				M.log('calling ui.find.find_next')
+				ui.find.find_next()
+			else
+				if char == '\b' then
+					ui.find.find_entry_text = ui.find.find_entry_text:sub(1, -2)
+				else
+					ui.find.find_entry_text = ui.find.find_entry_text .. char
+				end
+				M.log('ui.find.find_entry_text = ' .. ui.find.find_entry_text)
+				if CURSES then events.emit(events.FIND_TEXT_CHANGED) end
+			end
+			goto continue
+		end
+
 		if events.emit(events.KEYPRESS, char) then return end
+		if char == '\n' and char ~= M.newline() then char = M.newline() end
+
 		buffer:begin_undo_action()
 		for i = 1, buffer.selections do
 			if buffer.selections > 1 then
@@ -272,7 +289,22 @@ function M.type(text)
 		end
 		buffer:end_undo_action()
 		events.emit(events.CHAR_ADDED, code)
+
+		::continue::
 	end
+end
+
+function M.get_indicated_text(indic)
+	local words = {}
+	local s = buffer:indicator_all_on_for(1) & 1 << indic - 1 == indic and 1 or
+		buffer:indicator_end(indic, 1)
+	while true do
+		local e = buffer:indicator_end(indic, s)
+		if e == 1 or e == s then break end
+		words[#words + 1] = buffer:text_range(s, e)
+		s = buffer:indicator_end(indic, e)
+	end
+	return words
 end
 
 return M
