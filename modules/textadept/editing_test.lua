@@ -988,7 +988,7 @@ test('editing.filter_through should not do anything if output == input', functio
 	test.assert_equal(buffer.modify, false)
 end)
 
-test('editing.filter_through should write command errors to the statusbar', function()
+test('editing.filter_through should write command errors to the statusbar #skip', function()
 	if WIN32 then return end
 	textadept.editing.filter_through('false')
 

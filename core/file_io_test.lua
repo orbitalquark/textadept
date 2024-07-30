@@ -714,15 +714,11 @@ end)
 
 test('buffer:close for a hidden buffer should not affect buffers in existing views', function()
 	local buffer1 = buffer.new()
-	buffer1:append_text('1')
 	view:split(true)
 	local buffer2 = buffer.new()
-	buffer2:append_text('2')
 	local buffer3 = buffer.new()
-	buffer3:append_text('3')
 	view:split()
 	local buffer4 = buffer.new()
-	buffer4:append_text('4')
 
 	local buffer1_was_visible = _VIEWS[1].buffer == buffer1
 	local buffer3_was_visible = _VIEWS[2].buffer == buffer3

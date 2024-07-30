@@ -168,8 +168,7 @@ end)
 test('ui.switch_buffer should prompt to switch between buffers', function()
 	local select_first_item = test.stub(1)
 	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
-	buffer:append_text('1')
-	buffer.new():append_text('2')
+	buffer.new()
 
 	ui.switch_buffer()
 
@@ -182,9 +181,8 @@ test(
 		local _<close> = test.mock(ui, 'buffer_list_zorder', true)
 		local select_first_item = test.stub(1)
 		local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
-		buffer:append_text('1')
-		buffer.new():append_text('2')
-		buffer.new():append_text('3')
+		buffer.new()
+		buffer.new()
 
 		ui.switch_buffer()
 
@@ -213,9 +211,8 @@ test('ui.switch_buffer should persist recent buffers over reset #skip', function
 	local _<close> = test.mock(ui, 'buffer_list_zorder', true)
 	local select_first_item = test.stub(1)
 	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
-	buffer:append_text('1')
-	buffer.new():append_text('2')
-	buffer.new():append_text('3')
+	buffer.new()
+	buffer.new()
 
 	ui.switch_buffer()
 	reset()
