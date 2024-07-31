@@ -77,11 +77,6 @@ function M.play(filename)
 	end
 end
 
---- Returns an absolute path for the given path, relative to `macro_path` if necessary.
-local function make_absolute(path)
-	return (path:find('^[/\\]') or path:find('^%a:[/\\]')) and path or macro_path .. '/' .. path
-end
-
 --- Saves a recorded macro to file *filename* or the user-selected file.
 -- @param[opt] filename Optional filename to save the recorded macro to. If `nil`, the user
 --	is prompted for one. If the filename is a relative path, it will be relative to
@@ -92,7 +87,7 @@ function M.save(filename)
 		filename = ui.dialogs.save{title = _L['Save Macro'], dir = macro_path}
 		if not filename then return end
 	end
-	local f = assert(io.open(make_absolute(filename), 'w'))
+	local f = assert(io.open(lfs.abspath(filename, macro_path), 'w'))
 	f:write('return {\n')
 	for _, event in ipairs(macro) do
 		f:write(string.format('{%q,', event[1]))
@@ -113,7 +108,7 @@ function M.load(filename)
 		filename = ui.dialogs.open{title = _L['Load Macro'], dir = macro_path}
 		if not filename then return end
 	end
-	local loaded = assert(loadfile(make_absolute(filename), 't', {}))()
+	local loaded = assert(loadfile(lfs.abspath(filename, macro_path), 't', {}))()
 	M.save('0') -- store previous macro in register 0
 	macro = loaded
 end
