@@ -37,6 +37,8 @@ local event_recorders = {
 		if #keys.keychain == 0 then ui.statusbar_text = _L['Macro recording'] end
 	end
 }
+--- Prevents `events.FIND` from being emitted immediately after `events.REPLACE`.
+local function inhibit_find_next() return true end
 
 --- Toggles between starting and stopping macro recording.
 function M.record()
@@ -44,9 +46,11 @@ function M.record()
 		if macro then M.save('0') end -- store most recently recorded macro in register 0
 		macro = {}
 		for event, f in pairs(event_recorders) do events.connect(event, f, 1) end
+		events.connect(events.REPLACE, inhibit_find_next)
 		ui.statusbar_text = _L['Macro recording']
 	else
 		for event, f in pairs(event_recorders) do events.disconnect(event, f) end
+		events.disconnect(events.REPLACE, inhibit_find_next)
 		ui.statusbar_text = _L['Macro stopped recording']
 	end
 	recording = not recording

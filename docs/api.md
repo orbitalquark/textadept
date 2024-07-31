@@ -4957,6 +4957,7 @@ Arguments:
 #### `events.FIND` 
 
 Emitted to find text via the Find & Replace Pane.
+Emitted by [`ui.find.find_next()`](#ui.find.find_next) and [`ui.find.find_prev()`](#ui.find.find_prev).
 Arguments:
 
 - *text*: The text to search for.
@@ -5102,6 +5103,7 @@ Emitted by [`quit()`](#quit).
 #### `events.REPLACE` 
 
 Emitted to replace selected (found) text.
+Emitted by [`ui.find.replace()`](#ui.find.replace).
 Arguments:
 
 - *text*: The replacement text.
@@ -5110,6 +5112,7 @@ Arguments:
 #### `events.REPLACE_ALL` 
 
 Emitted to replace all occurrences of found text.
+Emitted by [`ui.find.replace_all()`](#ui.find.replace_all).
 Arguments:
 
 - *find_text*: The text to search for.
@@ -9390,11 +9393,13 @@ Parameters:
 #### `ui.find.find_next`()
 
 Mimics pressing the "Find Next" button.
+Emits [`events.FIND`](#events.FIND).
 
 <a id="ui.find.find_prev"></a>
 #### `ui.find.find_prev`()
 
 Mimics pressing the "Find Prev" button.
+Emits [`events.FIND`](#events.FIND).
 
 <a id="ui.find.focus"></a>
 #### `ui.find.focus`([*options*])
@@ -9420,11 +9425,14 @@ Parameters:
 #### `ui.find.replace`()
 
 Mimics pressing the "Replace" button.
+Emits [`events.REPLACE`](#events.REPLACE) followed by [`events.FIND`](#events.FIND) unless any [`events.REPLACE`](#events.REPLACE) handler returns
+`true`.
 
 <a id="ui.find.replace_all"></a>
 #### `ui.find.replace_all`()
 
 Mimics pressing the "Replace All" button.
+Emits [`events.REPLACE_ALL`](#events.REPLACE_ALL).
 
 
 ---

@@ -156,6 +156,7 @@ local M = {}
 -- @field ERROR
 
 --- Emitted to find text via the Find & Replace Pane.
+-- Emitted by `ui.find.find_next()` and `ui.find.find_prev()`.
 -- Arguments:
 --
 -- - *text*: The text to search for.
@@ -242,12 +243,14 @@ local M = {}
 -- @field QUIT
 
 --- Emitted to replace selected (found) text.
+-- Emitted by `ui.find.replace()`.
 -- Arguments:
 --
 -- - *text*: The replacement text.
 -- @field REPLACE
 
 --- Emitted to replace all occurrences of found text.
+-- Emitted by `ui.find.replace_all()`.
 -- Arguments:
 --
 -- - *find_text*: The text to search for.

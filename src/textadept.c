@@ -229,10 +229,10 @@ void find_clicked(FindButton *button) {
 																								 add_to_repl_history(repl_text);
 	if (button == find_next || button == find_prev)
 		emit("find", LUA_TSTRING, find_text, LUA_TBOOLEAN, button == find_next, -1);
-	else if (button == replace)
-		emit("replace", LUA_TSTRING, repl_text, -1),
+	else if (button == replace) {
+		if (!emit("replace", LUA_TSTRING, repl_text, -1))
 			emit("find", LUA_TSTRING, find_text, LUA_TBOOLEAN, true, -1);
-	else if (button == replace_all)
+	} else if (button == replace_all)
 		emit("replace_all", LUA_TSTRING, find_text, LUA_TSTRING, repl_text, -1);
 }
 

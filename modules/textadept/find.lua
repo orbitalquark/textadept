@@ -541,13 +541,18 @@ events.connect(events.DOUBLE_CLICK,
 -- The functions below are Lua C functions.
 
 --- Mimics pressing the "Find Next" button.
+-- Emits `events.FIND`.
 -- @function find_next
 
 --- Mimics pressing the "Find Prev" button.
+-- Emits `events.FIND`.
 -- @function find_prev
 
 --- Mimics pressing the "Replace" button.
+-- Emits `events.REPLACE` followed by `events.FIND` unless any `events.REPLACE` handler returns
+-- `true`.
 -- @function replace
 
 --- Mimics pressing the "Replace All" button.
+-- Emits `events.REPLACE_ALL`.
 -- @function replace_all
