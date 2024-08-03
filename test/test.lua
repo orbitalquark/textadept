@@ -113,6 +113,7 @@ for _, name in ipairs(tests) do
 
 	-- Clean up after the test.
 	test.log:clear()
+	while textadept.snippets.active do textadept.snippets.cancel() end
 	while view:unsplit() do end
 	while #_BUFFERS > 1 do buffer:close(true) end
 	buffer:close(true) -- the last one

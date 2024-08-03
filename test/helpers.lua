@@ -142,8 +142,10 @@ function M.tempdir(structure, chdir)
 		for k, v in pairs(structure) do
 			if type(v) == 'table' then
 				mkdir(root .. '/' .. k, v)
+			elseif type(k) == 'string' then
+				io.open(root .. '/' .. k, 'wb'):write(v):close()
 			else
-				io.open(root .. '/' .. v, 'wb'):close()
+				io.open(root .. '/' .. v, 'w'):close()
 			end
 		end
 	end
@@ -270,14 +272,14 @@ function M.type(text)
 			goto continue
 		end
 
-		if events.emit(events.KEYPRESS, char) then return end
+		if events.emit(events.KEYPRESS, char) then goto continue end
 		if char == '\n' and char ~= M.newline() then char = M.newline() end
 
 		buffer:begin_undo_action()
 		for i = 1, buffer.selections do
 			if buffer.selections > 1 then
-				local pos = buffer.selection_n_caret[i]
-				buffer:set_target_range(pos, pos)
+				local pos = buffer.selection_n_start[i]
+				buffer:set_target_range(pos, buffer.selection_n_end[i])
 				buffer:replace_target(char)
 				buffer.selection_n_anchor[i] = pos + #char
 				buffer.selection_n_caret[i] = pos + #char
@@ -291,7 +293,9 @@ function M.type(text)
 		events.emit(events.CHAR_ADDED, code)
 
 		::continue::
+		ui.update() -- emit events.UPDATE_UI
 	end
+
 end
 
 function M.get_indicated_text(indic)
