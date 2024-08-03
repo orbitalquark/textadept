@@ -204,7 +204,7 @@ local default_menubar = {
 			{_L['Previous Snippet Placeholder'], textadept.snippets.previous},
 			{_L['Cancel Snippet'], textadept.snippets.cancel}, --
 			SEPARATOR, --
-			{_L['Complete Trigger Word'], function() textadept.editing.autocomplete('snippets') end}
+			{_L['Complete Trigger Word'], function() textadept.editing.autocomplete('snippet') end}
 		}, --
 		SEPARATOR, {
 			_L['Show Style'], function()
