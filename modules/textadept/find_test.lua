@@ -665,6 +665,12 @@ test('replace all should count the number of replacements made #skip', function(
 	-- TODO: how to assert ui.statusbar_text was written to? Cannot mock it.
 end)
 
+test('ui.find.goto_file_found should raise errors for invalid arguments', function()
+	local invalid_location = function() ui.find.goto_file_found('') end
+
+	test.assert_raises(invalid_location, 'boolean/number expected')
+end)
+
 test('ui.find.goto_file_found(true) should go to the next file found in the list', function()
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
 	local file = test.file(dir .. '/file.txt')

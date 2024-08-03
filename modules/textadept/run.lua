@@ -203,9 +203,8 @@ M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc 
 -- Emits `events.COMPILE_OUTPUT`.
 -- @param[opt=buffer.filename] filename Optional path to the file to compile.
 function M.compile(filename)
-	if assert_type(filename, 'string/nil', 1) or buffer.filename then
-		compile_or_run(filename or buffer.filename, M.compile_commands)
-	end
+	if not assert_type(filename, 'string/nil', 1) and not buffer.filename then return end
+	compile_or_run(filename or buffer.filename, M.compile_commands)
 end
 
 --- Map of filenames, file extensions, and lexer names to their associated "run" shell command
@@ -232,9 +231,8 @@ M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "f
 -- Emits `events.RUN_OUTPUT`.
 -- @param[opt=buffer.filename] filename Optional path to the file to run.
 function M.run(filename)
-	if assert_type(filename, 'string/nil', 1) or buffer.filename then
-		compile_or_run(filename or buffer.filename, M.run_commands)
-	end
+	if not assert_type(filename, 'string/nil', 1) and not buffer.filename then return end
+	compile_or_run(filename or buffer.filename, M.run_commands)
 end
 
 --- Map of project root paths and "makefiles" to their associated "build" shell command line

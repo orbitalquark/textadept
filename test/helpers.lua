@@ -112,7 +112,7 @@ function M.defer(f) return setmetatable({}, {__close = assert_type(f, 'function'
 -- @param ext Optional file extension to use for the temporary file. The default is no file
 --	extension.
 -- @return filename, to-be-closed value
--- @usage local filename, _<close> = tempfile('.lua')
+-- @usage local filename, _<close> = tempfile('lua')
 function M.tempfile(ext)
 	local filename = os.tmpname()
 	if assert_type(ext, 'string/nil', 1) then
