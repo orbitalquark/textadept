@@ -343,9 +343,8 @@ test("clicking a buffer's tab close button should close that buffer", function()
 end)
 
 test('dropping a file URI should open it', function()
-	local dir, _<close> = test.tempdir{'dropped file.txt'}
 	local contents = 'dropped'
-	io.open(dir .. '/dropped file.txt', 'wb'):write(contents):close()
+	local dir, _<close> = test.tempdir{['dropped file.txt'] = contents}
 	local uri = 'file://' .. dir:gsub('\\', '/') .. '/dropped%20file.txt'
 
 	events.emit(events.URI_DROPPED, uri) -- simulate

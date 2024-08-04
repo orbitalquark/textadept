@@ -381,12 +381,10 @@ end)
 
 test('find should allow searching in files and output results to a new buffer', function()
 	if CURSES then return end -- blocks the UI
-	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
-	io.open(dir .. '/file.txt', 'w'):write('contents'):close()
-	io.open(dir .. '/subdir/subfile.txt', 'w'):write('contents'):close()
+	local dir, _<close> = test.tempdir{['file.txt'] = find, subdir = {['subfile.txt'] = find}}
 	local select_directory = test.stub(dir)
 	local _<close> = test.mock(ui.dialogs, 'open', select_directory)
-	ui.find.focus{find_entry_text = 'contents', in_files = true}
+	ui.find.focus{find_entry_text = find, in_files = true}
 
 	ui.find.find_next()
 	local highlighted_results = test.get_indicated_text(ui.find.INDIC_FIND)
@@ -399,10 +397,10 @@ test('find should allow searching in files and output results to a new buffer', 
 	test.assert(output:find(_L['Directory:'] .. ' ' .. dir), 'should have output directory searched')
 	test.assert(output:find(_L['Filter:']:gsub('[_&]', '')), 'should have output search filter')
 
-	test.assert(output:find('file%.txt:1:contents'), 'should have found file.txt')
-	test.assert(output:find('subfile%.txt:1:contents'), 'should have found subfile.txt')
+	test.assert(output:find('file%.txt:1:' .. find), 'should have found file.txt')
+	test.assert(output:find('subfile%.txt:1:' .. find), 'should have found subfile.txt')
 
-	test.assert_equal(highlighted_results, {'contents', 'contents'})
+	test.assert_equal(highlighted_results, {find, find})
 end)
 
 test('ui.find.find_in_files should raise errors for invalid arguments', function()
@@ -444,8 +442,7 @@ test('ui.find.find_in_files should indicate if nothing was found', function()
 end)
 
 test('ui.find.find_in_files should handle binary files', function()
-	local dir, _<close> = test.tempdir{'binary'}
-	io.open(dir .. '/binary', 'wb'):write('\0' .. find):close()
+	local dir, _<close> = test.tempdir{binary = '\0' .. find}
 	ui.find.find_entry_text = find
 
 	ui.find.find_in_files(dir)
@@ -681,11 +678,9 @@ test('ui.find.goto_file_found should raise errors for invalid arguments', functi
 end)
 
 test('ui.find.goto_file_found(true) should go to the next file found in the list', function()
-	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
+	local dir, _<close> = test.tempdir{['file.txt'] = find, subdir = {['subfile.txt'] = find}}
 	local file = test.file(dir .. '/file.txt')
 	local subfile = test.file(dir .. '/subdir/subfile.txt')
-	io.open(file, 'w'):write(find):close()
-	io.open(subfile, 'w'):write(find):close()
 
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir)
@@ -700,8 +695,7 @@ test('ui.find.goto_file_found(true) should go to the next file found in the list
 end)
 
 test('ui.find.goto_file_found should select the occurrence', function()
-	local dir, _<close> = test.tempdir{'file.txt'}
-	io.open(dir .. '/file.txt', 'w'):write(find):close()
+	local dir, _<close> = test.tempdir{['file.txt'] = find}
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir)
 
@@ -711,8 +705,7 @@ test('ui.find.goto_file_found should select the occurrence', function()
 end)
 
 test('ui.find.goto_file_found should not select in binary files', function()
-	local dir, _<close> = test.tempdir{'binary'}
-	io.open(dir .. '/binary', 'wb'):write('\0' .. find)
+	local dir, _<close> = test.tempdir{binary = '\0' .. find}
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir)
 
@@ -724,11 +717,9 @@ end)
 
 test('ui.find.goto_file_found should work if neither the ff view nor buffer is visible', function()
 	local _<close> = test.mock(ui, 'tabs', true)
-	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
+	local dir, _<close> = test.tempdir{['file.txt'] = find, subdir = {['subfile.txt'] = find}}
 	local file = test.file(dir .. '/file.txt')
 	local subfile = test.file(dir .. '/subdir/subfile.txt')
-	io.open(file, 'w'):write(find):close()
-	io.open(subfile, 'w'):write(find):close()
 
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir)
@@ -742,11 +733,9 @@ test('ui.find.goto_file_found should work if neither the ff view nor buffer is v
 end)
 
 test('ui.find.goto_file_found(false) should go to the previous file in the list', function()
-	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
+	local dir, _<close> = test.tempdir{['file.txt'] = find, subdir = {['subfile.txt'] = find}}
 	local file = test.file(dir .. '/file.txt')
 	local subfile = test.file(dir .. '/subdir/subfile.txt')
-	io.open(file, 'w'):write(find):close()
-	io.open(subfile, 'w'):write(find):close()
 
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir)
@@ -757,9 +746,8 @@ test('ui.find.goto_file_found(false) should go to the previous file in the list'
 end)
 
 test('Enter in the files found list should jump to that file', function()
-	local dir, _<close> = test.tempdir{'file.txt'}
+	local dir, _<close> = test.tempdir{['file.txt'] = find}
 	local file = test.file(dir .. '/file.txt')
-	io.open(file, 'w'):write(find):close()
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir)
 	buffer:line_up()
@@ -771,9 +759,8 @@ test('Enter in the files found list should jump to that file', function()
 end)
 
 test('double-clicking in the files found list should jump to that file', function()
-	local dir, _<close> = test.tempdir{'file.txt'}
+	local dir, _<close> = test.tempdir{['file.txt'] = find}
 	local file = test.file(dir .. '/file.txt')
-	io.open(file, 'w'):write(find):close()
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir)
 	buffer:line_up()

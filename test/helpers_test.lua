@@ -138,6 +138,17 @@ test('tempdir should create a temporary directory and defer deleting it', functi
 	test.assert_equal(still_exists, false)
 end)
 
+test("tempdir should allow a file's contents to be given", function()
+	local contents = 'contents'
+
+	local dir, _<close> = test.tempdir{'empty.txt', ['file.txt'] = contents}
+
+	local empty_f<close> = io.open(dir .. '/empty.txt')
+	local f<close> = io.open(dir .. '/file.txt')
+	test.assert_equal(empty_f:read('a'), '')
+	test.assert_equal(f:read('a'), contents)
+end)
+
 test('tempdir should allow changing to it', function()
 	local cwd = lfs.currentdir()
 	local changed_dir
