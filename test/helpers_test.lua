@@ -69,10 +69,12 @@ end)
 test('stub should call its callback when called', function()
 	local callback = test.stub()
 	local f = test.stub(callback)
+	local args = {'arg', 1}
 
-	f()
+	f(table.unpack(args))
 
 	test.assert_equal(callback.called, true)
+	test.assert_equal(callback.args, args)
 end)
 
 test('stub should return the values it was initialized with', function()

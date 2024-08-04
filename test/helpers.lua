@@ -94,7 +94,7 @@ function M.stub(callback, ...)
 		__call = function(self, ...)
 			self.called = type(self.called) == 'number' and self.called + 1 or self.called and 2 or true
 			self.args = {...}
-			if callback then callback() end
+			if callback then callback(...) end
 			return table.unpack(returns)
 		end
 	})

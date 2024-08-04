@@ -326,7 +326,7 @@ test('buffer:save should emit before and after events', function()
 	os.remove(filename) -- delete for tracking before and after events
 
 	local file_exists = {}
-	local check_file_exists = function()
+	local check_file_exists = function(filename)
 		file_exists[#file_exists + 1] = lfs.attributes(filename, 'mode') == 'file'
 	end
 	local before = test.stub(check_file_exists)
