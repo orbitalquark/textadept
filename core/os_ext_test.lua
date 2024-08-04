@@ -128,8 +128,7 @@ test('os.spawn should invoke an exit callback even if proc:wait is called', func
 end)
 
 test('os.spawn should allow two-way communication with a spawned process', function()
-	local filename, _<close> = test.tempfile('.lua')
-	io.open(filename, 'wb'):write('print(io.read())'):close()
+	local filename, _<close> = test.tempfile('.lua', 'print(io.read())')
 	local input = 'input'
 
 	local textadept = arg[0]

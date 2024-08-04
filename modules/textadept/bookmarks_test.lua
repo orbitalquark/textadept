@@ -92,8 +92,7 @@ test('bookmarks.goto_mark should be able to go to the previous (wrapped) bookmar
 end)
 
 test('bookmarks.goto_mark prompt should include bookmarks from other buffers', function()
-	local filename, _<close> = test.tempfile()
-	io.open(filename, 'wb'):write(test.newline()):close()
+	local filename, _<close> = test.tempfile('\n')
 	io.open_file(filename)
 	buffer:goto_line(2)
 	textadept.bookmarks.toggle()
@@ -112,8 +111,7 @@ test('bookmarks.goto_mark prompt should include bookmarks from other buffers', f
 end)
 
 test('bookmarks should restore upon file reload', function()
-	local filename, _<close> = test.tempfile()
-	io.open(filename, 'wb'):write(test.newline()):close()
+	local filename, _<close> = test.tempfile('\n')
 	io.open_file(filename)
 	buffer:goto_line(2)
 	textadept.bookmarks.toggle()

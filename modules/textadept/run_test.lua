@@ -48,7 +48,7 @@ end)
 test('run.compile/run should allow commands based on file extension', function()
 	local run = test.stub()
 	local _<close> = test.mock(ui.command_entry, 'run', run)
-	local filename, _<close> = test.tempfile('txt')
+	local filename, _<close> = test.tempfile('.txt')
 	local command = 'command'
 	local _<close> = test.mock(textadept.run.compile_commands, 'txt', command)
 
@@ -112,8 +112,8 @@ end)
 
 test('run.compile should mark recognized errors', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
-	local filename, _<close> = test.tempfile()
-	local command = 'echo file.txt:1: error!'
+	local filename, _<close> = test.tempfile('file.txt:1: error!')
+	local command = (not WIN32 and 'cat ' or 'type ') .. filename
 	textadept.run.compile_commands[filename] = command
 
 	textadept.run.compile(filename)
@@ -212,7 +212,7 @@ end)
 -- TODO: test env
 
 test('run.compile/run should allow macros in commands', function()
-	local filename, _<close> = test.tempfile('txt')
+	local filename, _<close> = test.tempfile('.txt')
 	textadept.run.run_commands[filename] = 'echo %p\t%d\t%f\t%e'
 
 	local output = capture_output(textadept.run.run, filename)
@@ -313,8 +313,7 @@ end)
 
 test('run.* should send the output buffer line as stdin on Enter', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
-	local filename, _<close> = test.tempfile('lua')
-	io.open(filename, 'w'):write('print("read: " .. io.read())'):close()
+	local filename, _<close> = test.tempfile('.lua', 'print("read: " .. io.read())')
 	local textadept_exe = arg[0]
 	textadept.run.run_commands[filename] = textadept_exe .. ' -L "%f"'
 	textadept.run.run(filename)

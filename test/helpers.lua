@@ -118,19 +118,28 @@ end
 -- @usage local _<close> = defer(function() ... end)
 function M.defer(f) return setmetatable({}, {__close = assert_type(f, 'function', 1)}) end
 
---- Creates a temporary file (with optional extension *ext*) and returns its filename along
--- with a to-be-closed value for deleting that file.
--- @param ext Optional file extension to use for the temporary file. The default is no file
+--- Creates a temporary file (with optional extension *ext* and *contents*) and returns its
+-- filename along with a to-be-closed value for deleting that file.
+-- @param[opt] ext Optional file extension to use for the temporary file. The default is no file
 --	extension.
+-- @param[opt] contents Optional contents of the temporary file. The default is an empty file.
 -- @return filename, to-be-closed value
--- @usage local filename, _<close> = tempfile('lua')
-function M.tempfile(ext)
+-- @usage local filename, _<close> = tempfile('.lua')
+function M.tempfile(ext, contents)
+	assert_type(ext, 'string/nil', 1)
+	assert_type(contents, 'string/nil', 2)
+	if ext and not ext:find('^%.') then ext, contents = nil, ext end
+
 	local filename = os.tmpname()
-	if assert_type(ext, 'string/nil', 1) then
+	if ext then
 		if not WIN32 then os.remove(filename) end
-		filename = filename .. '.' .. ext
+		filename = filename .. ext
 	end
-	if WIN32 then io.open(filename, 'wb'):close() end -- create the file too, just like on Linux
+	if contents then
+		io.open(filename, 'wb'):write(contents):close()
+	elseif WIN32 then
+		io.open(filename, 'w'):close() -- create the file too, just like on Linux
+	end
 	return filename, M.defer(function() os.remove(filename) end)
 end
 

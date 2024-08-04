@@ -8,12 +8,11 @@ end)
 
 test('buffer:get_lexer should distinguish between child languages in multi-language lexers',
 	function()
-		local filename, _<close> = test.tempfile('html')
-		io.open(filename, 'wb'):write(test.lines{
+		local filename, _<close> = test.tempfile('.html', table.concat({
 			'<html><head><style type="text/css">', --
 			'h1 { color: red; }', --
 			'</style></head></html>'
-		}):close()
+		}, '\n'))
 		io.open_file(filename)
 		buffer:goto_pos(buffer:position_from_line(2))
 

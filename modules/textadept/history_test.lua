@@ -78,10 +78,8 @@ test('history.back should not consider edits within history.minimum_line_distanc
 	end)
 
 test('history.back should not be affected by reload, undo, or redo', function()
-	local filename, _<close> = test.tempfile()
-	local f = io.open(filename, 'wb')
-	for i = 1, textadept.history.minimum_line_distance * 2 do f:write('\n') end
-	f:close()
+	local contents = string.rep('\n', textadept.history.minimum_line_distance * 2)
+	local filename, _<close> = test.tempfile(contents)
 	io.open_file(filename)
 	buffer:line_down()
 	local pos = buffer.current_pos
@@ -197,16 +195,9 @@ test('history.record should raise errors for invalid arguments', function()
 end)
 
 test('history.back/forward should update soft records', function()
-	local filename1, _<close> = test.tempfile()
-	local filename2, _<close> = test.tempfile()
-	local f1 = io.open(filename1, 'wb')
-	local f2 = io.open(filename1, 'wb')
-	for i = 1, textadept.history.minimum_line_distance do
-		f1:write('\n')
-		f2:write('\n')
-	end
-	f1:close()
-	f2:close()
+	local contents = string.rep('\n', textadept.history.minimum_line_distance * 2)
+	local filename1, _<close> = test.tempfile(contents)
+	local filename2, _<close> = test.tempfile(contents)
 
 	io.open_file(filename1)
 	io.open_file(filename2)
@@ -221,16 +212,15 @@ test('history.back/forward should update soft records', function()
 	textadept.history.forward()
 	local filename2_pos = buffer.current_pos
 
+	test.assert_equal(buffer.filename, filename2)
 	test.assert_equal(filename1_pos, _BUFFERS[1].length + 1)
 	test.assert_equal(filename2_pos, _BUFFERS[2].length + 1)
 end)
 
 test('edits should replace soft records', function()
-	local filename1, _<close> = test.tempfile()
+	local contents = string.rep('\n', textadept.history.minimum_line_distance)
+	local filename1, _<close> = test.tempfile(contents)
 	local filename2, _<close> = test.tempfile()
-	local f = io.open(filename1, 'wb')
-	for i = 1, textadept.history.minimum_line_distance do f:write('\n') end
-	f:close()
 	io.open_file(filename1)
 	io.open_file(filename2)
 	textadept.history.back()

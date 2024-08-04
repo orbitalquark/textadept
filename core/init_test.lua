@@ -50,8 +50,8 @@ test('view.styles[k] .. style should raise errors for invalid values', function(
 end)
 
 test('view:set_theme should set the theme for a view, leaving others alone', function()
-	local lua_file, _<close> = test.tempfile('lua')
-	local c_file, _<close> = test.tempfile('c')
+	local lua_file, _<close> = test.tempfile('.lua')
+	local c_file, _<close> = test.tempfile('.c')
 	view:split()
 	io.open_file(lua_file)
 	view:split(true)

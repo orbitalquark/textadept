@@ -117,6 +117,21 @@ test('tempfile should create a temporary file and defer deleting it', function()
 	test.assert_equal(still_exists, false)
 end)
 
+test('tempfile should allow an optional file extension', function()
+	local ext = '.txt'
+	local filename, _<close> = test.tempfile(ext)
+
+	test.assert(filename:match('%' .. ext .. '$'), ext)
+end)
+
+test('tempfile should allow optional file contents', function()
+	local contents = 'contents'
+	local filename, _<close> = test.tempfile(contents)
+
+	local f<close> = io.open(filename)
+	test.assert_equal(f:read('a'), contents)
+end)
+
 test('tempdir should create a temporary directory and defer deleting it', function()
 	local dir
 	local created = {}

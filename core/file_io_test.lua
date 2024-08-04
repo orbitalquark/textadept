@@ -7,9 +7,8 @@ test('io.open_file should raise errors for invalid arguments', function()
 end)
 
 test('io.open_file should open a file and set it up for editing', function()
-	local filename, _<close> = test.tempfile()
 	local contents = 'text'
-	io.open(filename, 'wb'):write(contents):close()
+	local filename, _<close> = test.tempfile(contents)
 
 	io.open_file(filename)
 
@@ -133,15 +132,9 @@ for file, mode in pairs{lf = buffer.EOL_LF, crlf = buffer.EOL_CRLF} do
 end
 
 test('io.open_file should scroll to the beginning of the file', function()
-	local filename1, _<close> = test.tempfile()
-	local filename2, _<close> = test.tempfile()
-	local f1, f2 = io.open(filename1, 'wb'), io.open(filename2, 'wb')
-	for i = 1, 100 do
-		f1:write(i, test.newline())
-		f2:write(i, test.newline())
-	end
-	f1:close()
-	f2:close()
+	local contents = string.rep('\n', 100)
+	local filename1, _<close> = test.tempfile(contents)
+	local filename2, _<close> = test.tempfile(contents)
 
 	io.open_file(filename1)
 	buffer:goto_line(100)
@@ -154,7 +147,7 @@ test('io.open_file should scroll to the beginning of the file', function()
 end)
 
 test("io.open_file should auto-detect and set the file's lexer", function()
-	local filename, _<close> = test.tempfile('lua')
+	local filename, _<close> = test.tempfile('.lua')
 
 	io.open_file(filename)
 
@@ -163,8 +156,8 @@ end)
 
 test('io.open_file should keep track of the most recently opened files', function()
 	local _<close> = test.mock(io, 'recent_files', {})
-	local file1, _<close> = test.tempfile('1')
-	local file2, _<close> = test.tempfile('2')
+	local file1, _<close> = test.tempfile('.1')
+	local file2, _<close> = test.tempfile('.2')
 
 	io.open_file(file1)
 	io.open_file(file2)
@@ -174,8 +167,8 @@ end)
 
 test('io.open_file should not duplicate any recently opened files', function()
 	local _<close> = test.mock(io, 'recent_files', {})
-	local file1, _<close> = test.tempfile('1')
-	local file2, _<close> = test.tempfile('2')
+	local file1, _<close> = test.tempfile('.1')
+	local file2, _<close> = test.tempfile('.2')
 
 	io.open_file(file1)
 	buffer:close()
@@ -380,7 +373,7 @@ test('buffer:save_as should prompt for a file to save to if none was given', fun
 end)
 
 test('buffer:save_as should update the lexer', function()
-	local filename, _<close> = test.tempfile('lua')
+	local filename, _<close> = test.tempfile('.lua')
 
 	buffer:save_as(filename)
 

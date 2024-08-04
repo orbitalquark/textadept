@@ -939,8 +939,7 @@ test('editing.filter_through should allow pipes', function()
 end)
 
 test('editing.filter_through should not do anything if output == input', function()
-	local filename, _<close> = test.tempfile()
-	io.open(filename, 'w'):write(test.lines{'input', ''}):close()
+	local filename, _<close> = test.tempfile(test.lines{'input', ''})
 	io.open_file(filename)
 
 	textadept.editing.filter_through('sort')

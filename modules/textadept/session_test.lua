@@ -69,11 +69,7 @@ end)
 
 test('sessions should save open buffers and their states', function()
 	local session, _<close> = test.tempfile()
-	local filename, _<close> = test.tempfile()
-	local newline = test.newline()
-	local f = io.open(filename, 'wb')
-	for i = 1, 100 do f:write(i .. newline) end
-	f:close()
+	local filename, _<close> = test.tempfile(string.rep('\n', 100))
 	io.open_file(filename)
 	buffer:goto_line(50)
 	textadept.editing.select_line()
