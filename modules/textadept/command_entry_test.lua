@@ -86,7 +86,6 @@ end)
 test('ui.command_entry.run should wrap pretty-printed tables longer than view.edge_column',
 	function()
 		local _<close> = test.mock(view, 'edge_column', 10)
-		local _<close> = test.mock(buffer, 'use_tabs', true)
 
 		local result = run("{key='value'}")
 
@@ -94,8 +93,6 @@ test('ui.command_entry.run should wrap pretty-printed tables longer than view.ed
 	end)
 
 test('ui.command_entry.run should consider Scintilla fields/functions as globals', function()
-	local _<close> = test.mock(view, 'view_eol', false)
-
 	local length = run('length')
 	run('view_eol=not view_eol')
 	local view_eol = view.view_eol
@@ -129,8 +126,6 @@ test('ui.command_entry.run should consider ui fields/functions as globals', func
 end)
 
 test('ui.command_entry.run should consider textadept modules as globals', function()
-	local _<close> = test.mock(textadept.editing, 'auto_indent', true)
-
 	local auto_indent = run('editing.auto_indent')
 
 	test.assert_equal(auto_indent, true)

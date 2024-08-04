@@ -278,8 +278,7 @@ test('find should not highlight single-character matches (for performance)', fun
 	test.assert_equal(no_highlights, {})
 end)
 
-test('find should not highlight results if ui.find.highlight_all_matches is disabled', function()
-	local _<close> = test.mock(ui.find, 'highlight_all_matches', false)
+test('find should not highlight results if by default', function()
 	buffer:append_text(find .. ' ' .. find)
 	ui.find.find_entry_text = find
 

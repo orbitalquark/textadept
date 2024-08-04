@@ -176,19 +176,16 @@ test('ui.switch_buffer should prompt to switch between buffers', function()
 	test.assert_equal(_BUFFERS[buffer], 1)
 end)
 
-test(
-	'ui.switch_buffer should prompt to switch between recent buffers if ui.buffer_list_zorder is enabled',
-	function()
-		local _<close> = test.mock(ui, 'buffer_list_zorder', true)
-		local select_first_item = test.stub(1)
-		local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
-		buffer.new()
-		buffer.new()
+test('ui.switch_buffer should prompt to switch between recent buffers', function()
+	local select_first_item = test.stub(1)
+	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
+	buffer.new()
+	buffer.new()
 
-		ui.switch_buffer()
+	ui.switch_buffer()
 
-		test.assert_equal(_BUFFERS[buffer], 2)
-	end)
+	test.assert_equal(_BUFFERS[buffer], 2)
+end)
 
 test('ui.switch_buffer should prompt with relative paths of buffers in the current project',
 	function()
@@ -199,7 +196,6 @@ test('ui.switch_buffer should prompt with relative paths of buffers in the curre
 		io.open_file(filename) -- absolute path
 
 		-- TODO: how to actually test this?
-		local _<close> = test.mock(ui, 'buffer_list_zorder', true)
 		local select_first_item = test.stub(1)
 		local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 
@@ -209,7 +205,6 @@ test('ui.switch_buffer should prompt with relative paths of buffers in the curre
 
 -- Note: reset() causes the same trouble described in *init_test.lua*.
 test('ui.switch_buffer should persist recent buffers over reset #skip', function()
-	local _<close> = test.mock(ui, 'buffer_list_zorder', true)
 	local select_first_item = test.stub(1)
 	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 	buffer.new()

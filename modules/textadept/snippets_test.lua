@@ -69,7 +69,6 @@ test('snippets.insert should convert indentation (tabs to spaces)', function()
 end)
 
 test('snippets.insert should convert indentation (spaces to tabs)', function()
-	local _<close> = test.mock(buffer, 'use_tabs', true)
 	local _<close> = test.mock(buffer, 'tab_width', 4)
 
 	local indent = string.rep(' ', buffer.tab_width)
@@ -79,7 +78,6 @@ test('snippets.insert should convert indentation (spaces to tabs)', function()
 end)
 
 test('snippets.insert should increase indent to match', function()
-	local _<close> = test.mock(buffer, 'use_tabs', true)
 	local _<close> = test.mock(buffer, 'tab_width', 4)
 	buffer:add_text('\t')
 

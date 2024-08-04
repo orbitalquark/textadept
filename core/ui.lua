@@ -31,7 +31,7 @@ local ui = ui
 -- @field maximized
 
 --- Whether or not to display the tab bar when multiple buffers are open.
--- The default value is `true`.
+-- The default value is `true` in the GUI version, and `false` in the terminal version.
 -- A third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar, even if only one
 -- buffer is open.
 -- @field tabs

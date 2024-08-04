@@ -20,16 +20,14 @@ test("some languages like HTML should consider '-' to be a word character", func
 	test.assert(buffer.word_chars:find('%-'), "'-' should be a word character")
 end)
 
-test('parentheses should auto-pair if editing.auto_pairs is enabled', function()
-	local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
-
+test('editing.auto_pairs should auto-pair parentheses', function()
 	test.type('(')
 
 	test.assert_equal(buffer:get_text(), '()')
 	test.assert_equal(buffer.current_pos, 2)
 end)
 
-test('parentheses should not auto-pair if editing.auto_pairs is disabled', function()
+test('editing.auto_pairs should not auto-pair parentheses if disabled', function()
 	local _<close> = test.mock(textadept.editing, 'auto_pairs', nil)
 
 	test.type('(')
@@ -37,8 +35,7 @@ test('parentheses should not auto-pair if editing.auto_pairs is disabled', funct
 	test.assert_equal(buffer:get_text(), '(')
 end)
 
-test('parentheses should auto-pair in all selections if editing.auto_pairs is enabled', function()
-	local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
+test('editing.auto_pairs should auto-pair parentheses in all selections', function()
 	buffer:new_line()
 	buffer:line_up_rect_extend()
 
@@ -52,8 +49,7 @@ test('parentheses should auto-pair in all selections if editing.auto_pairs is en
 	test.assert_equal(buffer.selection_n_end[2], 2)
 end)
 
-test('auto-pair should have atomic undo', function()
-	local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
+test('editing.auto_pairs should have atomic undo', function()
 	buffer:new_line()
 	buffer:line_up_rect_extend()
 	test.type('(')
@@ -63,36 +59,30 @@ test('auto-pair should have atomic undo', function()
 	test.assert_equal(buffer:get_text(), test.lines{'(', '('})
 end)
 
-test('backspace after auto-pair should remove both chars if editing.auto_pairs is enabled',
-	function()
-		local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
-		test.type('(')
+test('editing.auto_pairs should remove both chars after backspace', function()
+	test.type('(')
 
-		test.type('\b')
+	test.type('\b')
 
-		test.assert_equal(buffer.length, 0)
-	end)
+	test.assert_equal(buffer.length, 0)
+end)
 
-test(
-	'backspace after auto-pair should remove both chars in all selections if editing.auto_pairs is enabled',
-	function()
-		local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
-		buffer:new_line()
-		buffer:line_up_rect_extend()
-		test.type('(')
+test('editing.auto_pairs should remove both chars in all selections after backspace', function()
+	buffer:new_line()
+	buffer:line_up_rect_extend()
+	test.type('(')
 
-		test.type('\b')
+	test.type('\b')
 
-		test.assert_equal(buffer:get_text(), test.lines{'', ''})
-		test.assert_equal(buffer.selections, 2)
-		test.assert_equal(buffer.selection_n_start[1], buffer:position_from_line(2))
-		test.assert_equal(buffer.selection_n_end[1], buffer:position_from_line(2))
-		test.assert_equal(buffer.selection_n_start[2], 1)
-		test.assert_equal(buffer.selection_n_end[2], 1)
-	end)
+	test.assert_equal(buffer:get_text(), test.lines{'', ''})
+	test.assert_equal(buffer.selections, 2)
+	test.assert_equal(buffer.selection_n_start[1], buffer:position_from_line(2))
+	test.assert_equal(buffer.selection_n_end[1], buffer:position_from_line(2))
+	test.assert_equal(buffer.selection_n_start[2], 1)
+	test.assert_equal(buffer.selection_n_end[2], 1)
+end)
 
-test('removing auto-pairs should have atomic undo', function()
-	local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
+test('editing.auto_pairs should have atomic undo when removing chars', function()
 	buffer:new_line()
 	buffer:line_up_rect_extend()
 	test.type('(')
@@ -104,15 +94,13 @@ test('removing auto-pairs should have atomic undo', function()
 	test.assert_equal(buffer:get_text(), test.lines{'()', '()'})
 end)
 
-test('backspacing multi-byte chars should not cause trouble when editing.auto_pairs is enabled',
-	function()
-		local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
-		buffer:add_text('(⌘⇧')
-		buffer:goto_pos(buffer:position_before(buffer.current_pos)) -- char left
+test('editing.auto_pairs should not cause trouble when backspacing multi-byte chars', function()
+	buffer:add_text('(⌘⇧')
+	buffer:goto_pos(buffer:position_before(buffer.current_pos)) -- char left
 
-		test.type('\b') -- ⌘ does not have a complement
-		test.type('\b') -- ⇧ is not a complement
-	end)
+	test.type('\b') -- ⌘ does not have a complement
+	test.type('\b') -- ⇧ is not a complement
+end)
 
 --- Gives Scintilla a chance to process any cursor/selection changes and emit SCN_UPDATEUI.
 local function process_selection_update()
@@ -230,9 +218,7 @@ test('editing.highlight_words should clear any previous highlighting when select
 		test.assert_equal(no_highlights, {})
 	end)
 
-test('editing.highlight_words should do nothing if disabled', function()
-	local _<close> = test.mock(textadept.editing, 'highlight_words', textadept.editing.HIGHLIGHT_NONE)
-
+test('editing.highlight_words should do nothing by default', function()
 	buffer:add_text('word')
 	process_selection_update()
 	local current_word_highlights = get_highlighted_words()
@@ -245,35 +231,27 @@ test('editing.highlight_words should do nothing if disabled', function()
 	test.assert_equal(selected_word_highlights, {})
 end)
 
-test('editing.typeover_auto_paired should type over auto-pairs if enabled', function()
-	local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
-	local _<close> = test.mock(textadept.editing, 'typeover_auto_paired', true)
-
+test('editing.typeover_auto_paired should type over auto-pairs', function()
 	test.type('()')
 
 	test.assert_equal(buffer:get_text(), '()')
 end)
 
-test('editing.typeover_auto_paired should type over auto-pairs in all selections if enabled',
-	function()
-		local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
-		local _<close> = test.mock(textadept.editing, 'typeover_auto_paired', true)
-		buffer:new_line()
-		buffer:line_up_rect_extend()
+test('editing.typeover_auto_paired should type over auto-pairs in all selections', function()
+	buffer:new_line()
+	buffer:line_up_rect_extend()
 
-		test.type('()')
+	test.type('()')
 
-		test.assert_equal(buffer:get_text(), test.lines{'()', '()'})
-		test.assert_equal(buffer.selections, 2)
-		test.assert_equal(buffer.selection_n_start[1], buffer.line_end_position[2])
-		test.assert_equal(buffer.selection_n_end[1], buffer.line_end_position[2])
-		test.assert_equal(buffer.selection_n_start[2], 3)
-		test.assert_equal(buffer.selection_n_end[2], 3)
-	end)
+	test.assert_equal(buffer:get_text(), test.lines{'()', '()'})
+	test.assert_equal(buffer.selections, 2)
+	test.assert_equal(buffer.selection_n_start[1], buffer.line_end_position[2])
+	test.assert_equal(buffer.selection_n_end[1], buffer.line_end_position[2])
+	test.assert_equal(buffer.selection_n_start[2], 3)
+	test.assert_equal(buffer.selection_n_end[2], 3)
+end)
 
 test('editing.typeover_auto_paired should not type over non-paired characters', function()
-	local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
-	local _<close> = test.mock(textadept.editing, 'typeover_auto_paired', true)
 	local contents = 'text'
 	buffer:append_text(contents)
 
@@ -282,8 +260,7 @@ test('editing.typeover_auto_paired should not type over non-paired characters', 
 	test.assert_equal(buffer:get_text(), ')' .. contents)
 end)
 
-test('editing.typeover_auto_paired should not type over auto-pairs if enabled', function()
-	local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
+test('editing.typeover_auto_paired should not type over auto-pairs if disabled', function()
 	local _<close> = test.mock(textadept.editing, 'typeover_auto_paired', false)
 
 	test.type('()')
@@ -292,8 +269,6 @@ test('editing.typeover_auto_paired should not type over auto-pairs if enabled', 
 end)
 
 test('editing.auto_indent should preserve indentation on Enter', function()
-	local _<close> = test.mock(textadept.editing, 'auto_indent', true)
-
 	buffer:new_line()
 	local no_indent = buffer.line_indentation[2]
 
@@ -307,7 +282,6 @@ test('editing.auto_indent should preserve indentation on Enter', function()
 end)
 
 test('editing.auto_indent should preserve indentation over blank lines', function()
-	local _<close> = test.mock(textadept.editing, 'auto_indent', true)
 	buffer:tab()
 	buffer:new_line()
 	buffer:back_tab()
@@ -319,7 +293,6 @@ test('editing.auto_indent should preserve indentation over blank lines', functio
 end)
 
 test('editing.auto_indent should not auto-indent an already indented line', function()
-	local _<close> = test.mock(textadept.editing, 'auto_indent', true)
 	buffer:tab()
 	buffer:new_line()
 	buffer:home()
@@ -342,8 +315,6 @@ end)
 
 if CURSES and not WIN32 then
 	test('bracketed paste should disable auto-pair and auto-indent #now', function()
-		local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
-		local _<close> = test.mock(textadept.editing, 'auto_indent', true)
 		local content = '\t()\n'
 
 		events.emit(events.CSI, string.byte('~'), {200})
@@ -383,22 +354,19 @@ test('buffer:save should never strip trailing spaces for binary files', function
 	test.assert_equal(buffer:get_text(), binary_contents)
 end)
 
-test('buffer:save should not strip trailing spaces if editing.strip_trailing_spaces is disabled',
-	function()
-		local _<close> = test.mock(textadept.editing, 'strip_trailing_spaces', false)
-		local _<close> = test.mock(io, 'ensure_final_newline', false)
-		local filename, _<close> = test.tempfile()
-		io.open_file(filename)
-		local contents = ' '
-		buffer:append_text(contents)
+test('buffer:save should not strip trailing spaces by default', function()
+	local _<close> = test.mock(io, 'ensure_final_newline', false)
+	local filename, _<close> = test.tempfile()
+	io.open_file(filename)
+	local contents = ' '
+	buffer:append_text(contents)
 
-		buffer:save()
+	buffer:save()
 
-		test.assert_equal(buffer:get_text(), contents)
-	end)
+	test.assert_equal(buffer:get_text(), contents)
+end)
 
 test('editing.paste_reindent should decrease incoming indent to match (tabs to tabs)', function()
-	local _<close> = test.mock(buffer, 'use_tabs', true)
 	buffer:add_text('1')
 	buffer:new_line()
 	local _<close> = test.mock(ui, 'clipboard_text', test.lines{'\t2', '\t\t3', '\t4', ''})
@@ -409,7 +377,6 @@ test('editing.paste_reindent should decrease incoming indent to match (tabs to t
 end)
 
 test('editing.paste_reindent should convert incoming newlines (LF to CRLF)', function()
-	local _<close> = test.mock(buffer, 'use_tabs', true)
 	local _<close> = test.mock(buffer, 'eol_mode', buffer.EOL_CRLF)
 	local _<close> = test.mock(ui, 'clipboard_text', '1\n2')
 
@@ -419,7 +386,6 @@ test('editing.paste_reindent should convert incoming newlines (LF to CRLF)', fun
 end)
 
 test('editing.paste_reindent should increase incoming indent to match (tabs to tabs)', function()
-	local _<close> = test.mock(buffer, 'use_tabs', true)
 	buffer:add_text('\t1')
 	buffer:new_line()
 	local _<close> = test.mock(ui, 'clipboard_text', test.lines{'2', '\t3', '4', ''})
@@ -445,7 +411,6 @@ test('editing.paste_reindent should convert incoming 4-space indentation to 2 sp
 end)
 
 test('editing.paste_reindent should indent extra below a fold header', function()
-	local _<close> = test.mock(buffer, 'use_tabs', true)
 	buffer:append_text(test.lines{'if true then', 'end'})
 	buffer:set_lexer('lua')
 	buffer:line_down()
@@ -458,7 +423,6 @@ end)
 if GTK or LINUX and CURSES then expected_failure() end -- TODO:
 
 test('editing.paste_reindent should have atomic undo', function()
-	local _<close> = test.mock(buffer, 'use_tabs', true)
 	local contents = '\t'
 	buffer:add_text(contents)
 	local _<close> = test.mock(ui, 'clipboard_text', test.lines{'1', '2'})
@@ -728,7 +692,6 @@ test('editing.auto_enclose should wrap selections in typed punctuation', functio
 end)
 
 test('editing.auto_enclose should consider auto-pairs when wrapping', function()
-	local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
 	local _<close> = test.mock(textadept.editing, 'auto_enclose', true)
 	buffer:append_text('word')
 	buffer:select_all()
@@ -738,8 +701,7 @@ test('editing.auto_enclose should consider auto-pairs when wrapping', function()
 	test.assert_equal(buffer:get_text(), '(word)')
 end)
 
-test('editing.auto_pair should do nothing if disabled', function()
-	local _<close> = test.mock(textadept.editing, 'auto_enclose', false)
+test('editing.auto_enclose should do nothing by default', function()
 	buffer:append_text('word')
 	buffer:select_all()
 
@@ -764,7 +726,6 @@ test('editing.select_enclosed should select between given delimiters', function(
 end)
 
 test("editing.select_enclosed should recognize when it's between auto-pairs", function()
-	local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
 	buffer:append_text('(word)')
 	buffer:char_right()
 
@@ -774,7 +735,6 @@ test("editing.select_enclosed should recognize when it's between auto-pairs", fu
 end)
 
 test('editing.select_enclosed should not select a range before the current position', function()
-	local _<close> = test.mock(textadept.editing, 'auto_pairs', {['('] = ')'})
 	buffer:append_text('((word) word)')
 	buffer:line_end()
 	buffer:char_left()
@@ -889,7 +849,6 @@ test('editing.convert_indentation should convert from tabs to spaces', function(
 end)
 
 test('editing.convert_indentation should convert from spaces to tabs', function()
-	local _<close> = test.mock(buffer, 'use_tabs', true)
 	local _<close> = test.mock(buffer, 'tab_width', 4)
 	buffer:append_text(test.lines{'1', '    2', '3'})
 
@@ -1035,7 +994,6 @@ test("editing.autocomplete('word') should allow for case-insensitive completions
 end)
 
 test('editing.autocomplete should return true even if an item was auto-selected', function()
-	local _<close> = test.mock(buffer, 'auto_c_choose_single', true)
 	buffer:add_text('word w')
 
 	local completions_found = textadept.editing.autocomplete('word')

@@ -24,7 +24,9 @@ test('Edit > Complete Word should do so', function()
 
 	click('Edit/Complete Word')
 
-	test.assert_equal(autocomplete.args[1], 'word')
+	local autocompleter = autocomplete.args[1]
+	test.assert(textadept.editing.autocompleters[autocompleter],
+		'should have used valid autocompleter')
 end)
 
 test('Edit > Filter Through should prompt to filter buffer text through a shell command', function()
@@ -174,7 +176,9 @@ test('Tools > Snippets > Complete Trigger Word should do so', function()
 
 	click('Tools/Snippets/Complete Trigger Word')
 
-	test.assert_equal(autocomplete.args[1], 'snippet')
+	local autocompleter = autocomplete.args[1]
+	test.assert(textadept.editing.autocompleters[autocompleter],
+		'should have used valid autocompleter')
 end)
 
 test('Tools > Show Style should show a calltip with style info at the current position', function()

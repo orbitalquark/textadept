@@ -8718,7 +8718,7 @@ This is a low-level field. You probably want to use the higher-level
 #### `ui.tabs` 
 
 Whether or not to display the tab bar when multiple buffers are open.
-The default value is `true`.
+The default value is `true` in the GUI version, and `false` in the terminal version.
 A third option, [`ui.SHOW_ALL_TABS`](#ui.SHOW_ALL_TABS) may be used to always show the tab bar, even if only one
 buffer is open.
 

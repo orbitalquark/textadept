@@ -80,8 +80,7 @@ for file, encoding in pairs{utf8 = 'UTF-8', cp1252 = 'CP1252', utf16 = 'UTF-16',
 	end)
 end
 
-test('io.open_file should detect and switch to tabs if io.detect_indentation is enabled', function()
-	local _<close> = test.mock(io, 'detect_indentation', true)
+test('io.open_file should detect and switch to tabs', function()
 	local set_indentation_spaces = function() buffer.use_tabs = false end
 	local _<close> = test.connect(events.BUFFER_NEW, set_indentation_spaces) -- temporary
 
@@ -101,17 +100,15 @@ test('io.open_file should not detect and switch to tabs if io.detect_indentation
 		test.assert_equal(buffer.use_tabs, false)
 	end)
 
-test('io.open_file should detect and switch to spaces if io.detect_indentation is enabled',
-	function()
-		local _<close> = test.mock(io, 'detect_indentation', true)
-		local set_indentation_tabs = function() buffer.use_tabs, buffer.tab_width = true, 4 end
-		local _<close> = test.connect(events.BUFFER_NEW, set_indentation_tabs) -- temporary
+test('io.open_file should detect and switch to spaces', function()
+	local set_indentation_tabs = function() buffer.use_tabs, buffer.tab_width = true, 4 end
+	local _<close> = test.connect(events.BUFFER_NEW, set_indentation_tabs) -- temporary
 
-		io.open_file(_HOME .. '/test/file_io/spaces')
+	io.open_file(_HOME .. '/test/file_io/spaces')
 
-		test.assert_equal(buffer.use_tabs, false)
-		test.assert_equal(buffer.tab_width, 2)
-	end)
+	test.assert_equal(buffer.use_tabs, false)
+	test.assert_equal(buffer.tab_width, 2)
+end)
 
 test('io.open_file should not detect and switch to spaces if io.detect_indentation is disabled',
 	function()

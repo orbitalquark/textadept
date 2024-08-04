@@ -107,7 +107,7 @@ function M.load(filename)
 	session_file = filename
 	return true
 end
---- Load session when no args are present.
+-- Load session when no args are present.
 events.connect(events.ARG_NONE, function() if M.save_on_quit then M.load(session_file) end end)
 
 --- Returns value *val* serialized as a string.
