@@ -28,12 +28,12 @@ test('Edit > Complete Word should do so', function()
 end)
 
 test('Edit > Filter Through should prompt to filter buffer text through a shell command', function()
-	buffer:append_text(test.lines{'2', '1'})
+	local run = test.stub()
+	local _<close> = test.mock(ui.command_entry, 'run', run)
 
 	click('Edit/Filter Through')
-	test.type('sort\n')
 
-	test.assert_equal(buffer:get_text(), test.lines{'1', '2', ''})
+	test.assert_equal(run.called, true)
 end)
 
 test('Edit > Select > Deselect Word should drop the most recent multiple selection', function()

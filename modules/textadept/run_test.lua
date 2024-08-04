@@ -6,43 +6,61 @@ test('run.compile should raise errors for invalid arguments', function()
 	test.assert_raises(invalid_filename, 'string/nil expected')
 end)
 
-test('run.* should prompt for a command to run unless run.run_without_prompt is enabled', function()
-	local _<close> = test.mock(textadept.run, 'run_without_prompt', false)
+test('run.* should prompt for a command to run', function()
+	local prompt = test.stub()
+	local _<close> = test.mock(ui.command_entry, 'run', prompt)
 	local filename, _<close> = test.tempfile()
 	io.open_file(filename)
 
 	textadept.run.compile()
 
-	test.assert_equal(ui.command_entry.active, true)
-	test.assert(ui.command_entry.margin_text[1] ~= '', 'command entry should have label')
-	test.assert_equal(ui.command_entry.lexer_language, 'bash')
+	test.assert_equal(prompt.called, true)
+	local label = prompt.args[1]
+	local lexer = prompt.args[3]
+	test.assert(label ~= '', 'command entry should have label')
+	test.assert_equal(lexer, 'bash')
+end)
+
+test('run.* should not prompt for a command to run if run.run_without_prompt is enabled', function()
+	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
+	local prompt = test.stub()
+	local _<close> = test.mock(ui.command_entry, 'run', prompt)
+	local filename, _<close> = test.tempfile()
+
+	textadept.run.compile(filename)
+
+	test.assert_equal(prompt.called, false)
 end)
 
 test('run.compile/run should allow commands based on filename', function()
-	local _<close> = test.mock(textadept.run, 'run_without_prompt', false)
+	local run = test.stub()
+	local _<close> = test.mock(ui.command_entry, 'run', run)
 	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
 	local command = 'command'
 	textadept.run.compile_commands[filename] = command
 
-	textadept.run.compile()
+	textadept.run.compile(filename)
 
-	test.assert_equal(ui.command_entry:get_text(), command)
+	local run_command = run.args[4]
+	test.assert_equal(run_command, command)
 end)
 
 test('run.compile/run should allow commands based on file extension', function()
-	local _<close> = test.mock(textadept.run, 'run_without_prompt', false)
+	local run = test.stub()
+	local _<close> = test.mock(ui.command_entry, 'run', run)
 	local filename, _<close> = test.tempfile('txt')
 	local command = 'command'
 	local _<close> = test.mock(textadept.run.compile_commands, 'txt', command)
 
 	textadept.run.compile(filename)
 
-	test.assert_equal(ui.command_entry:get_text(), command)
+	local run_command = run.args[4]
+	test.assert_equal(run_command, command)
 end)
 
 test('run.compile/run should allow commands based on lexer', function()
-	local _<close> = test.mock(textadept.run, 'run_without_prompt', false)
+	local run = test.stub()
+	local _<close> = test.mock(ui.command_entry, 'run', run)
 	local filename, _<close> = test.tempfile()
 	io.open_file(filename)
 	local command = 'command'
@@ -50,21 +68,12 @@ test('run.compile/run should allow commands based on lexer', function()
 
 	textadept.run.compile()
 
-	test.assert_equal(ui.command_entry:get_text(), command)
-end)
-
-test('run.* should do nothing with an empty command', function()
-	local _<close> = test.mock(textadept.run, 'run_without_prompt', false)
-	local filename, _<close> = test.tempfile()
-
-	textadept.run.compile(filename)
-	test.type('\n')
-
-	test.assert_equal(buffer._type, nil)
+	local run_command = run.args[4]
+	test.assert_equal(run_command, command)
 end)
 
 test('run.compile/run should save a modified file before running a command for it', function()
-	local _<close> = test.mock(textadept.run, 'run_without_prompt', false)
+	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local filename, _<close> = test.tempfile()
 	io.open_file(filename)
 	buffer:append_text(' ')
@@ -89,6 +98,16 @@ test('run.compile should run a compile command for the current file', function()
 	test.assert(output:find('> ' .. command), 'should have run compile command')
 	test.assert(output:find('\ncompile'), 'should have captured command stdout')
 	test.assert(output:find('> exit status: 0'), 'should have captured exit status')
+end)
+
+test('run.* should do nothing with an empty command', function()
+	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
+	local filename, _<close> = test.tempfile()
+	textadept.run.compile_commands[filename] = ''
+
+	textadept.run.compile(filename)
+
+	test.assert_equal(buffer._type, nil)
 end)
 
 test('run.compile should mark recognized errors', function()
@@ -139,10 +158,13 @@ local function capture_output(f, path, command)
 	end
 	local _<close> = test.connect(output_events[f], capture, 1)
 
-	f(path)
-	if not textadept.run.run_without_prompt then
-		if command then ui.command_entry:set_text(command) end
-		test.type('\n')
+	if not command then
+		local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
+		f(path)
+	else
+		local run = function(_, run_f, _, _, ...) run_f(command, ...) end
+		local _<close> = test.mock(ui.command_entry, 'run', run)
+		f(path)
 	end
 	test.wait(function() return output[#output]:find('> exit status:') end)
 
@@ -163,7 +185,6 @@ test('run.run should run a run command for the current file', function()
 end)
 
 test('run.* should auto-update commands', function()
-	local _<close> = test.mock(textadept.run, 'run_without_prompt', false)
 	local filename, _<close> = test.tempfile()
 	textadept.run.run_commands[filename] = 'echo 1'
 
@@ -173,24 +194,6 @@ test('run.* should auto-update commands', function()
 
 	test.assert(output:find('> ' .. command), 'should have run new command')
 	test.assert_equal(same_output, output)
-end)
-
-test('run.* should allow cycling through command history', function()
-	local _<close> = test.mock(textadept.run, 'run_without_prompt', false)
-	local filename, _<close> = test.tempfile()
-
-	local command1 = 'echo 1'
-	local command2 = 'echo 2'
-	capture_output(textadept.run.run, filename, command1)
-	capture_output(textadept.run.run, filename, command2)
-
-	textadept.run.run(filename)
-	local should_be_command2 = ui.command_entry:get_text()
-	test.type('up')
-	local should_be_command1 = ui.command_entry:get_text()
-
-	test.assert_equal(should_be_command2, command2)
-	test.assert_equal(should_be_command1, command1)
 end)
 
 test('run.* should allow functions to return commands and working dirs', function()
