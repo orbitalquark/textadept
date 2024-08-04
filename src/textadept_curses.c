@@ -846,7 +846,8 @@ char *read_process_output(Process *proc, char option, size_t *len, const char **
 		if (ch == '\n' && option != 'a') break;
 	}
 	luaL_pushresult(&lbuf);
-	if (n < 0 && !*len) return (lua_pop(lua, 1), *error = strerror(errno), *code = errno, NULL);
+	if (n == REPROC_EPIPE) n = 0; // EOF
+	if (n < 0 && !*len) return (lua_pop(lua, 1), *error = reproc_strerror(n), *code = n, NULL);
 	if (n == 0 && !*len && option != 'a') return (lua_pop(lua, 1), *error = NULL, NULL); // EOF
 	buf = strcpy(malloc(*len + 1), lua_tostring(lua, -1));
 	return (lua_pop(lua, 1), *error = NULL, buf); // pop buf
