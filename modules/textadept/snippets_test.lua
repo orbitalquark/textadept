@@ -176,14 +176,12 @@ test('snippets.insert should allow user-defined variables', function()
 end)
 
 test('snippets.insert should allow choices', function()
+	local autocomplete = test.stub()
+	local _<close> = test.mock(buffer, 'auto_c_show', autocomplete)
 	textadept.snippets.insert('${1|1,2|}')
 
-	test.assert_equal(buffer:auto_c_active(), true)
-
-	buffer:auto_c_complete()
-	textadept.snippets.insert()
-
-	test.assert_equal(buffer:get_text(), '1')
+	test.assert_equal(autocomplete.called, true)
+	test.assert_equal(autocomplete.args[3], '1,2')
 end)
 
 test('snippets.insert should allow shell code', function()

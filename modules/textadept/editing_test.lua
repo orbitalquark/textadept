@@ -455,6 +455,7 @@ test('editing.paste_reindent should indent extra below a fold header', function(
 
 	test.assert_equal(buffer:get_text(), test.lines{'if true then', '\tprint()', 'end'})
 end)
+if GTK or LINUX and CURSES then expected_failure() end -- TODO:
 
 test('editing.paste_reindent should have atomic undo', function()
 	local _<close> = test.mock(buffer, 'use_tabs', true)

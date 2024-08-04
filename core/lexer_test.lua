@@ -159,8 +159,9 @@ test('syntax highlighting should be performed incrementally', function()
 	buffer.line_indentation[3] = buffer.tab_width
 
 	ui.update() -- trigger style needed
+	if CURSES then events.emit(events.STYLE_NEEDED, buffer.length + 1, buffer) end
 
-	test.assert_equal(event.called, true)
+	test.wait(function() return event.called end)
 
 	local offset = buffer:position_from_line(3) -- lexing starts here
 	local actual_tags = get_syntax_highlighting(offset)
@@ -182,7 +183,10 @@ test('lexer errors should style the entire buffer the default style', function()
 	buffer:set_text('text')
 
 	ui.update() -- trigger style needed
+	if CURSES then events.emit(events.STYLE_NEEDED, buffer.length + 1, buffer) end
 
+	if GTK then test.wait(function() return error_handler.called end) end
+	test.assert_equal(error_handler.called, true)
 	test.assert_equal(buffer.style_at[1], view.STYLE_DEFAULT)
 	test.assert_equal(buffer.end_styled, buffer.length + 1)
 	test.assert(error_handler.args[1]:find(error_message), 'should have emitted error event')

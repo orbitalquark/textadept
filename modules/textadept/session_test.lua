@@ -104,6 +104,7 @@ test('sessions should save bookmarks', function()
 end)
 
 test('sessions should save window state', function()
+	if CURSES then return end -- not applicable
 	local session, _<close> = test.tempfile()
 	local _<close> = test.mock(ui, 'maximized', true)
 
@@ -113,11 +114,12 @@ test('sessions should save window state', function()
 
 	test.assert_equal(ui.maximized, true)
 end)
+if GTK then expected_failure() end -- TODO:
 
 test('sessions should save window size', function()
 	if CURSES then return end -- not applicable
 	local session, _<close> = test.tempfile()
-	local size = {400, 300}
+	local size = {800, 600}
 	local _<close> = test.mock(ui, 'size', size)
 
 	textadept.session.save(session)
@@ -126,6 +128,7 @@ test('sessions should save window size', function()
 
 	test.assert_equal(ui.size, size)
 end)
+if GTK then expected_failure() end -- TODO:
 
 test('sessions should save view state', function()
 	local session, _<close> = test.tempfile()

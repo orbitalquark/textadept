@@ -142,7 +142,6 @@ test('os.spawn should allow two-way communication with a spawned process', funct
 	test.assert_equal(output, input)
 	test.assert_equal(eof, '')
 end)
-if CURSES and not WIN32 then expected_failure() end -- detects exit before read('a')
 
 test('proc:kill should kill a spawned process', function()
 	local sleep = not WIN32 and 'sleep 1' or 'timeout /T 1'
@@ -162,9 +161,9 @@ test('os.spawn should emit an error when a stdout/stderr callback errors', funct
 	local raises_error = function(output) error('error: ' .. output) end
 	local output = 'output'
 
-	os.spawn('echo ' .. output, raises_error):wait()
+	os.spawn('echo ' .. output, raises_error)
 
-	test.assert_equal(event.called, true)
+	test.wait(function() return event.called end)
 	test.assert(event.args[1]:find('error: ' .. output), 'should have included stdout error message')
 end)
 

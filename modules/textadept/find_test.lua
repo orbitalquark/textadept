@@ -5,12 +5,14 @@ local find = 'word'
 local replace = find:upper()
 
 test('ui.find.focus should raise an error for invalid arguments', function()
+	if CURSES then return end -- blocks the UI
 	local invalid_argment = function() ui.find.focus(true) end
 
 	test.assert_raises(invalid_argment, 'table/nil expected')
 end)
 
 test('ui.find.focus activates the find & replace pane', function()
+	if CURSES then return end -- blocks the UI
 	ui.find.focus()
 
 	test.assert_equal(ui.find.active, true)
@@ -298,6 +300,7 @@ test('find should not affect buffer.tag for regex searches', function()
 end)
 
 test('find should allow searching incrementally with typing', function()
+	if CURSES then return end -- blocks the UI
 	buffer:append_text(find)
 	ui.find.focus{find_entry_text = '', incremental = true}
 
@@ -307,6 +310,7 @@ test('find should allow searching incrementally with typing', function()
 end)
 
 test('find should retain the incremental search anchor even for failures', function()
+	if CURSES then return end -- blocks the UI
 	buffer:append_text(find)
 	ui.find.focus{find_entry_text = '', incremental = true}
 
@@ -322,6 +326,7 @@ test('find should retain the incremental search anchor even for failures', funct
 end)
 
 test('find should move the incremental search anchor on successful Enter/find next', function()
+	if CURSES then return end -- blocks the UI
 	buffer:append_text(find .. find)
 	ui.find.focus{find_entry_text = '', incremental = true}
 
@@ -335,6 +340,7 @@ test('find should move the incremental search anchor on successful Enter/find ne
 end)
 
 test('find should not move the incremental search anchor on failed Enter/find next', function()
+	if CURSES then return end -- blocks the UI
 	buffer:append_text(find .. find)
 	ui.find.focus{find_entry_text = '', incremental = true}
 
@@ -346,12 +352,14 @@ test('find should not move the incremental search anchor on failed Enter/find ne
 end)
 
 test('ui.find.focus with in_files should show the default filter in the replace entry', function()
+	if CURSES then return end -- blocks the UI
 	ui.find.focus{in_files = true}
 
 	test.assert_equal(ui.find.replace_entry_text, table.concat(lfs.default_filter, ','))
 end)
 
 test('ui.find.focus without in_files should restore replace entry text', function()
+	if CURSES then return end -- blocks the UI
 	ui.find.replace_entry_text = ''
 	ui.find.focus{in_files = true}
 
@@ -362,6 +370,7 @@ test('ui.find.focus without in_files should restore replace entry text', functio
 end)
 
 test('ui.find.focus with in_files should use a project-specific filter if possible', function()
+	if CURSES then return end -- blocks the UI
 	local dir, _<close> = test.tempdir{['.hg'] = {}, 'file.txt'}
 	ui.find.find_in_files_filters[dir] = '*.txt'
 	io.open_file(test.file(dir .. '/file.txt'))
@@ -372,6 +381,7 @@ test('ui.find.focus with in_files should use a project-specific filter if possib
 end)
 
 test('find should allow searching in files and output results to a new buffer', function()
+	if CURSES then return end -- blocks the UI
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
 	io.open(dir .. '/file.txt', 'w'):write('contents'):close()
 	io.open(dir .. '/subdir/subfile.txt', 'w'):write('contents'):close()
@@ -714,6 +724,7 @@ test('ui.find.goto_file_found should not select in binary files', function()
 end)
 
 test('ui.find.goto_file_found should work if neither the ff view nor buffer is visible', function()
+	local _<close> = test.mock(ui, 'tabs', true)
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
 	local file = test.file(dir .. '/file.txt')
 	local subfile = test.file(dir .. '/subdir/subfile.txt')

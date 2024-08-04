@@ -45,12 +45,23 @@ function M.assert_raises(f, expected_errmsg)
 	end
 end
 
---- Logs string *message* to the current test's log.
+--- Logs the given arguments to the current test's log.
 -- If a test errors, its test log will be displayed.
--- @param message String message to log.
+-- @param ... Arguments to log. Tables have their contents logged (non-recursively).
 -- @function log
 M.log = setmetatable({clear = function(self) for i = 1, #self do self[i] = nil end end}, {
-	__call = function(self, message) self[#self + 1] = assert_type(message, 'string', 1) end
+	__call = function(self, ...)
+		local args = {}
+		for _, arg in pairs{...} do
+			if type(arg) == 'table' then
+				local kvs = {}
+				for k, v in pairs(arg) do kvs[#kvs] = tostring(k) .. ' = ' .. tostring(v) end
+				arg = '{' .. table.concat(kvs) .. '}'
+			end
+			args[#args + 1] = tostring(arg)
+		end
+		self[#self + 1] = table.concat(args)
+	end
 })
 
 --- Returns whether or not the given value is callable, that is, whether or not it is a function
@@ -239,13 +250,13 @@ function M.lines(lines) return table.concat(lines, M.newline()) end
 function M.type(text)
 	if text:find('^ctrl%+') or text:find('^alt%+') or text:find('^meta%+') or text:find('^cmd%+') or
 		text:find('^shift%+') then
-		M.log('emitting keypress: ' .. text)
+		M.log('emitting keypress: ', text)
 		events.emit(events.KEYPRESS, text)
 		return
 	elseif text ~= '\n' then
 		for _, v in pairs(keys.KEYSYMS) do
 			if v == text then
-				M.log('emitting keypress: ' .. text)
+				M.log('emitting keypress: ', text)
 				events.emit(events.KEYPRESS, text)
 				return
 			end
@@ -266,7 +277,7 @@ function M.type(text)
 				else
 					ui.find.find_entry_text = ui.find.find_entry_text .. char
 				end
-				M.log('ui.find.find_entry_text = ' .. ui.find.find_entry_text)
+				M.log('ui.find.find_entry_text = ', ui.find.find_entry_text)
 				if CURSES then events.emit(events.FIND_TEXT_CHANGED) end
 			end
 			goto continue
@@ -294,6 +305,7 @@ function M.type(text)
 
 		::continue::
 		ui.update() -- emit events.UPDATE_UI
+		if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_CONTENT | buffer.UPDATE_SELECTION) end
 	end
 
 end

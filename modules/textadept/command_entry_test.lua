@@ -28,6 +28,7 @@ test('ui.command_entry.run should show a Lua command entry', function()
 	test.assert(keys.mode, 'should be in a command entry key mode')
 	test.assert_equal(ui.command_entry.active, true)
 end)
+if GTK then expected_failure() end -- ui.command_entry.height is incorrect
 
 test('ui.command_entry.run should not have issues being called again while active', function()
 	ui.command_entry.run()

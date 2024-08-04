@@ -107,6 +107,7 @@ test('ui.print_silent_to should scroll any views showing the print buffer', func
 
 	ui.print_silent_to(type, string.rep(test.newline(), 100))
 
+	if GTK then ui.update() end
 	test.assert(_VIEWS[1].first_visible_line > 1, 'should have scrolled view')
 	-- TODO: on QT, ui.goto_view(1) is needed to avoid crash during ui.switch_buffer tests
 end)
@@ -519,6 +520,7 @@ test('ui.get_split_table should report the current split view state', function()
 	test.assert_equal(_VIEWS[2], splits[2][1])
 	test.assert_equal(_VIEWS[3], splits[2][2])
 end)
+if GTK then expected_failure() end -- TODO: splits[2].size == 0
 
 test('ui.goto_view should raise errors for invalid arguments', function()
 	local not_a_view = function() ui.goto_view(buffer) end

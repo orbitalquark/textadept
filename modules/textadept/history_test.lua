@@ -1,6 +1,7 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
 test('history.back should jump to the previous buffer after switching between buffers', function()
+	textadept.history.clear()
 	buffer.new()
 
 	textadept.history.back()

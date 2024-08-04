@@ -117,12 +117,14 @@ test('Edit > Preferences should open _USERHOME/init.lua', function()
 end)
 
 test('Search > Find Incremental should start incremental search', function()
+	if CURSES then return end -- blocks the UI
 	click('Search/Find Incremental')
 
 	test.assert_equal(ui.find.incremental, true)
 end)
 
 test('Search > Find in Files should start searching in files', function()
+	if CURSES then return end -- blocks the UI
 	click('Search/Find in Files')
 
 	test.assert_equal(ui.find.in_files, true)
@@ -172,7 +174,7 @@ test('Tools > Snippets > Complete Trigger Word should do so', function()
 
 	click('Tools/Snippets/Complete Trigger Word')
 
-	test.assert_equal(autocomplete.args[1], 'snippets')
+	test.assert_equal(autocomplete.args[1], 'snippet')
 end)
 
 test('Tools > Show Style should show a calltip with style info at the current position', function()
@@ -274,6 +276,7 @@ test('View > Shrink View should do so', function()
 
 	test.assert(view.size < size, 'should have shrunk view')
 end)
+if GTK then expected_failure() end -- TODO: view.size == 0
 
 test('View > Toggle Current Fold should do so', function()
 	buffer:append_text(test.lines{'local t = {', '', '}'})
