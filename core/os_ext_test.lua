@@ -22,7 +22,7 @@ end)
 
 test('os.spawn should spawn from the current working directory', function()
 	local pwd = not WIN32 and 'pwd' or 'cd'
-	local dir, _<close> = test.tempdir(nil, true)
+	local dir, _<close> = test.tempdir(true)
 
 	local cwd = os.spawn(pwd):read('a')
 

@@ -154,7 +154,7 @@ test('tempdir should allow changing to it', function()
 	local changed_dir
 
 	do
-		local dir, _<close> = test.tempdir({}, true)
+		local dir, _<close> = test.tempdir(true)
 		changed_dir = lfs.currentdir() == dir
 	end
 

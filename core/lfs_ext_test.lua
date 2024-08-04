@@ -152,7 +152,7 @@ test('lfs.abspath should raise errors for invalid arguments', function()
 end)
 
 test('lfs.abspath should not produce relative paths for absolute paths', function()
-	local dir, _<close> = test.tempdir(nil, true)
+	local dir, _<close> = test.tempdir(true)
 	local root = dir
 	repeat root = root:gsub('[^/\\]+$', '') until not root:find('[^/\\]$')
 
@@ -162,7 +162,7 @@ test('lfs.abspath should not produce relative paths for absolute paths', functio
 end)
 
 test('lfs.abspath should produce paths relative to the current working directory', function()
-	local dir, _<close> = test.tempdir(nil, true)
+	local dir, _<close> = test.tempdir(true)
 
 	local path = lfs.abspath('subdir')
 

@@ -137,10 +137,10 @@ end
 --- Creates a temporary directory (with optional structure table *structure*), optionally changes
 -- to it if *chdir* is `true`, and returns its path along with a to-be-closed value for deleting
 -- that directory and all of its contents, and changing back to the original directory.
--- @param structure Optional directory structure for the temporary directory. Folder names are
---	keys assigned to table subdirectories. Filenames are string values. The default is an
---	empty directory.
--- @param chdir Optional flag that indicates whether or not to change the current working
+-- @param[opt] structure Optional directory structure for the temporary directory. Folder names
+--	are keys assigned to table subdirectories. Filenames are string values. The default is
+--	an empty directory.
+-- @param[opt] chdir Optional flag that indicates whether or not to change the current working
 --	directory to the temporary directory. The default value is `false`.
 -- @return path, to-be-closed value
 -- @usage local dir, _<close> = tempdir{foo = {'bar.lua'}, 'baz.txt'}
@@ -161,6 +161,7 @@ function M.tempdir(structure, chdir)
 		end
 	end
 
+	if type(structure) == 'boolean' then structure, chdir = nil, structure end
 	mkdir(dir, assert_type(structure, 'table/nil', 1) or {})
 
 	local cwd = lfs.currentdir()

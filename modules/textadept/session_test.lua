@@ -58,10 +58,10 @@ end)
 test('sessions should save the current working directory', function()
 	local session, _<close> = test.tempfile()
 
-	local dir1, _<close> = test.tempdir(nil, true)
+	local dir1, _<close> = test.tempdir(true)
 	textadept.session.save(session)
 
-	local dir2, _<close> = test.tempdir(nil, true)
+	local dir2, _<close> = test.tempdir(true)
 	textadept.session.load(session)
 
 	test.assert_equal(lfs.currentdir(), dir1)
