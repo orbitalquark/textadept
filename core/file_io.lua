@@ -84,7 +84,7 @@ function io.open_file(filenames)
 	if not assert_type(filenames, 'string/table/nil', 1) then
 		filenames = ui.dialogs.open{
 			title = _L['Open File'], multiple = true,
-			dir = (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir()
+			dir = (buffer.filename or ''):match('^(.+)[/\\]') or lfs.currentdir()
 		}
 		if not filenames then return end
 	end
@@ -213,7 +213,7 @@ end
 -- LuaDoc is in core/.buffer.luadoc.
 local function save_as(buffer, filename)
 	if not buffer then buffer = _G.buffer end
-	local dir, name = (buffer.filename or lfs.currentdir() .. '/'):match('^(.-[/\\]?)([^/\\]*)$')
+	local dir, name = (buffer.filename or lfs.currentdir() .. '/'):match('^(.-)[/\\]?([^/\\]*)$')
 	if not assert_type(filename, 'string/nil', 1) then
 		filename = ui.dialogs.save{title = _L['Save File'], dir = dir, file = name}
 		if not filename then return end

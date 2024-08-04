@@ -14,6 +14,9 @@ end)
 
 test('lfs.walk should walk a directory tree', function()
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
+	local file = lfs.abspath(dir .. '/file.txt')
+	local subdir = lfs.abspath(dir .. '/subdir/') -- trailing slash is intentional
+	local subfile = lfs.abspath(dir .. '/subdir/subfile.txt')
 	local files, dirs = {}, {}
 
 	for filename in lfs.walk(dir, nil, nil, true) do
@@ -25,64 +28,70 @@ test('lfs.walk should walk a directory tree', function()
 	end
 
 	table.sort(files)
-	test.assert_equal(files, {test.file(dir .. '/file.txt'), test.file(dir .. '/subdir/subfile.txt')})
-	test.assert_equal(dirs, {test.file(dir .. '/subdir/')})
+	test.assert_equal(files, {file, subfile})
+	test.assert_equal(dirs, {subdir})
 end)
 
 test('lfs.walk should not include extra slashes in paths', function()
 	local dir, _<close> = test.tempdir{'file.txt'}
+	local file = lfs.abspath(dir .. '/file.txt')
 	local files = {}
 
 	for filename in lfs.walk(dir .. '/') do files[#files + 1] = filename end
 
-	test.assert_equal(files, {test.file(dir .. '/file.txt')})
+	test.assert_equal(files, {file})
 end)
 
 test('lfs.walk should allow filters to include files by extension', function()
 	local dir, _<close> = test.tempdir{'file.luadoc', subdir = {'file.lua'}}
+	local subfile = lfs.abspath(dir .. '/subdir/file.lua')
 	local files = {}
 
 	for filename in lfs.walk(dir, '.lua') do files[#files + 1] = filename end
 
-	test.assert_equal(files, {test.file(dir .. '/subdir/file.lua')})
+	test.assert_equal(files, {subfile})
 end)
 
 test('lfs.walk should allow filters to exclude files by extension', function()
 	local dir, _<close> = test.tempdir{'file.lua', subdir = {'subfile.lua', 'subfile.txt'}}
+	local subfile = lfs.abspath(dir .. '/subdir/subfile.txt')
 	local files = {}
 
 	for filename in lfs.walk(dir, '!.lua') do files[#files + 1] = filename end
 
-	test.assert_equal(files, {test.file(dir .. '/subdir/subfile.txt')})
+	test.assert_equal(files, {subfile})
 end)
 
 test('lfs.walk should allow filters to include directories', function()
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
+	local subfile = lfs.abspath(dir .. '/subdir/subfile.txt')
 	local files = {}
 
 	for filename in lfs.walk(dir, '/subdir') do files[#files + 1] = filename end
 
 	table.sort(files)
-	test.assert_equal(files, {test.file(dir .. '/subdir/subfile.txt')})
+	test.assert_equal(files, {subfile})
 end)
 expected_failure()
 
 test('lfs.walk should allow mixed filters', function()
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
+	local file = lfs.abspath(dir .. '/file.txt')
 	local files = {}
 
 	for filename in lfs.walk(dir, {'!/subdir', '.txt'}) do files[#files + 1] = filename end
 
-	test.assert_equal(files, {test.file(dir .. '/file.txt')})
+	test.assert_equal(files, {file})
 end)
 
 test('lfs.walk should stop after reaching a maximum depth', function()
 	local dir, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
+	local file = lfs.abspath(dir .. '/file.txt')
 	local files = {}
 
 	for filename in lfs.walk(dir, '.txt', 0) do files[#files + 1] = filename end
 
-	test.assert_equal(files, {test.file(dir .. '/file.txt')})
+	test.assert_equal(files, {file})
 end)
 
 test('lfs.walk should be able to handle directory symlinks, even recursive ones', function()
@@ -166,7 +175,7 @@ test('lfs.abspath should produce paths relative to the current working directory
 
 	local path = lfs.abspath('subdir')
 
-	test.assert_equal(path, test.file(dir .. '/subdir'))
+	test.assert_equal(path, lfs.abspath(dir .. '/subdir'))
 end)
 
 test('lfs.abspath should produce paths relative to a given prefix', function()
@@ -174,23 +183,23 @@ test('lfs.abspath should produce paths relative to a given prefix', function()
 
 	local path = lfs.abspath('subdir', dir)
 
-	test.assert_equal(path, test.file(dir .. '/subdir'))
+	test.assert_equal(path, lfs.abspath(dir .. '/subdir'))
 end)
 
 test('lfs.abspath should resolve ./', function()
 	local dir, _<close> = test.tempdir()
 
-	local path = lfs.abspath(test.file('./subdir/./'), dir)
+	local path = lfs.abspath('./subdir/./', dir)
 
-	test.assert_equal(path, test.file(dir .. '/subdir/'))
+	test.assert_equal(path, lfs.abspath(dir .. '/subdir/'))
 end)
 
 test('lfs.abspath should resolve ../', function()
 	local dir, _<close> = test.tempdir()
 
-	local path = lfs.abspath(test.file('subdir/../subdir/../'), dir)
+	local path = lfs.abspath('subdir/../subdir/../', dir)
 
-	test.assert_equal(path, test.file(dir .. '/'))
+	test.assert_equal(path, lfs.abspath(dir .. '/'))
 end)
 
 test('lfs.abspath should capitalize Windows drive letters', function()

@@ -115,7 +115,7 @@ end
 test('Edit > Preferences should open _USERHOME/init.lua', function()
 	click('Edit/Preferences')
 
-	test.assert_equal(buffer.filename, test.file(_USERHOME .. '/init.lua'))
+	test.assert_equal(buffer.filename, lfs.abspath(_USERHOME .. '/init.lua'))
 end)
 
 test('Search > Find Incremental should start incremental search', function()

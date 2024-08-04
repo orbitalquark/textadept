@@ -284,7 +284,7 @@ test(
 	'ui.goto_file should switch to an already opened file with the same basename, and in the same view',
 	function()
 		local filename, _<close> = test.tempfile()
-		local dir, name = filename:match('^(.+[/\\])([^/\\]+)')
+		local dir, name = filename:match('^(.+)[/\\]([^/\\]+)')
 		io.open_file(filename)
 		buffer.new()
 
@@ -299,7 +299,7 @@ test(
 	'ui.goto_file should switch to an already opened file with the same basename, but optionally in a split view',
 	function()
 		local filename, _<close> = test.tempfile()
-		local dir, name = filename:match('^(.+[/\\])([^/\\]+)$')
+		local dir, name = filename:match('^(.+)[/\\]([^/\\]+)$')
 		io.open_file(filename)
 		buffer.new()
 		view:split()

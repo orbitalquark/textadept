@@ -35,7 +35,7 @@ test('ui.dialogs.open should prompt for a file to open', function()
 	local filename, _<close> = test.tempfile()
 	local select_filename = test.stub({filename})
 	local _<close> = test.mock(ui.dialogs, 'open', select_filename)
-	local test_dir, test_file = filename:match('^(.+[/\\])([^/\\]+)$')
+	local test_dir, test_file = filename:match('^(.+)[/\\]([^/\\]+)$')
 
 	local filenames = ui.dialogs.open{dir = test_dir, file = test_file, multiple = true}
 

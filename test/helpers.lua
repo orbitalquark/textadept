@@ -100,12 +100,6 @@ function M.stub(callback, ...)
 	})
 end
 
---- Returns the filename *filename* with directory separators matching the current platform.
--- This is only needed for filename comparisons. Filenames passed to functions like
--- `io.open_file()` do not need to be converted if no later filename tests are performed.
--- @param filename Filename to normalize.
-function M.file(filename) return not WIN32 and filename or filename:gsub('/', '\\') end
-
 --- Returns a to-be-closed value will call function *f* when the that value goes out of scope.
 -- @usage local _<close> = defer(function() ... end)
 function M.defer(f) return setmetatable({}, {__close = assert_type(f, 'function', 1)}) end

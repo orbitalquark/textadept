@@ -372,7 +372,7 @@ test('ui.find.focus with in_files should use a project-specific filter if possib
 	if CURSES then return end -- blocks the UI
 	local dir, _<close> = test.tempdir{['.hg'] = {}, 'file.txt'}
 	ui.find.find_in_files_filters[dir] = '*.txt'
-	io.open_file(test.file(dir .. '/file.txt'))
+	io.open_file(dir .. '/file.txt')
 
 	ui.find.focus{in_files = true}
 
@@ -679,8 +679,8 @@ end)
 
 test('ui.find.goto_file_found(true) should go to the next file found in the list', function()
 	local dir, _<close> = test.tempdir{['file.txt'] = find, subdir = {['subfile.txt'] = find}}
-	local file = test.file(dir .. '/file.txt')
-	local subfile = test.file(dir .. '/subdir/subfile.txt')
+	local file = lfs.abspath(dir .. '/file.txt')
+	local subfile = lfs.abspath(dir .. '/subdir/subfile.txt')
 
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir)
@@ -718,8 +718,7 @@ end)
 test('ui.find.goto_file_found should work if neither the ff view nor buffer is visible', function()
 	local _<close> = test.mock(ui, 'tabs', true)
 	local dir, _<close> = test.tempdir{['file.txt'] = find, subdir = {['subfile.txt'] = find}}
-	local file = test.file(dir .. '/file.txt')
-	local subfile = test.file(dir .. '/subdir/subfile.txt')
+	local subfile = lfs.abspath(dir .. '/subdir/subfile.txt')
 
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir)
@@ -734,8 +733,7 @@ end)
 
 test('ui.find.goto_file_found(false) should go to the previous file in the list', function()
 	local dir, _<close> = test.tempdir{['file.txt'] = find, subdir = {['subfile.txt'] = find}}
-	local file = test.file(dir .. '/file.txt')
-	local subfile = test.file(dir .. '/subdir/subfile.txt')
+	local subfile = lfs.abspath(dir .. '/subdir/subfile.txt')
 
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir)
@@ -747,7 +745,7 @@ end)
 
 test('Enter in the files found list should jump to that file', function()
 	local dir, _<close> = test.tempdir{['file.txt'] = find}
-	local file = test.file(dir .. '/file.txt')
+	local file = lfs.abspath(dir .. '/file.txt')
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir)
 	buffer:line_up()
@@ -760,7 +758,7 @@ end)
 
 test('double-clicking in the files found list should jump to that file', function()
 	local dir, _<close> = test.tempdir{['file.txt'] = find}
-	local file = test.file(dir .. '/file.txt')
+	local file = lfs.abspath(dir .. '/file.txt')
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir)
 	buffer:line_up()

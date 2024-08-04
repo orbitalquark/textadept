@@ -40,7 +40,7 @@ local session_file = _USERHOME .. (not CURSES and '/session' or '/session_term')
 -- @return `true` if the session file was opened and read; `nil` otherwise.
 -- @usage textadept.session.load(filename)
 function M.load(filename)
-	local dir, name = session_file:match('^(.-[/\\]?)([^/\\]+)$')
+	local dir, name = session_file:match('^(.-)[/\\]?([^/\\]+)$')
 	if not assert_type(filename, 'string/nil', 1) then
 		filename = ui.dialogs.open{title = _L['Load Session'], dir = dir, file = name}
 		if not filename then return end
@@ -132,7 +132,7 @@ end
 --	is prompted for one.
 -- @usage textadept.session.save(filename)
 function M.save(filename)
-	local dir, name = session_file:match('^(.-[/\\]?)([^/\\]+)$')
+	local dir, name = session_file:match('^(.-)[/\\]?([^/\\]+)$')
 	if not assert_type(filename, 'string/nil', 1) then
 		filename = ui.dialogs.save{title = _L['Save Session'], dir = dir, file = name}
 		if not filename then return end

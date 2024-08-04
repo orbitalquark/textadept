@@ -127,7 +127,7 @@ local find_text, found_text, repl_text = nil, nil, ui.find.replace_entry_text
 
 --- Returns a reasonable initial directory for use with Find in Files.
 local function ff_dir()
-	return io.get_project_root() or (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir()
+	return io.get_project_root() or (buffer.filename or ''):match('^(.+)[/\\]') or lfs.currentdir()
 end
 
 local orig_focus = M.focus
