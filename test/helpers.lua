@@ -106,14 +106,6 @@ end
 -- @param filename Filename to normalize.
 function M.file(filename) return not WIN32 and filename or filename:gsub('/', '\\') end
 
---- Sleeps for *n* number of seconds.
--- On Windows this has to be an integer so *n* is rounded up as necessary.
--- @param n Number of seconds to sleep for.
-function M.sleep(n)
-	if WIN32 then n = math.ceil(n) end
-	os.execute(not WIN32 and 'sleep ' .. n or 'timeout /T ' .. n)
-end
-
 --- Returns a to-be-closed value will call function *f* when the that value goes out of scope.
 -- @usage local _<close> = defer(function() ... end)
 function M.defer(f) return setmetatable({}, {__close = assert_type(f, 'function', 1)}) end
@@ -238,16 +230,13 @@ function M.wait(condition, timeout)
 	assert_type(condition, 'function', 1)
 	local interval = not WIN32 and 0.1 or 1
 	for i = 1, (assert_type(timeout, 'number/nil', 2) or 1) // interval do
-		M.sleep(interval)
+		os.execute(not WIN32 and 'sleep ' .. interval or 'timeout /T ' .. interval)
 		ui.update()
 		local result = condition()
 		if result then return result end
 	end
 	error('timed out waiting', 2)
 end
-
---- Removes directory *dir* and its contents.
-function M.removedir(dir) os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q') .. dir) end
 
 local newlines = ({[buffer.EOL_LF] = '\n', [buffer.EOL_CRLF] = '\r\n'})
 --- Returns *lines* number of lines, or table of lines *lines*, separated by newlines depending
