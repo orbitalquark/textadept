@@ -133,7 +133,7 @@ local function run_command(label, command, dir, event, commands, key, macros)
 	local id = event .. key
 	if not command_entry_f[id] then
 		command_entry_f[id] = function(command, dir, env, event, commands, key, macros)
-			if command:find('^%s*$') then return end
+			if not command or command:find('^%s*$') then return end
 			if not is_func then commands[key] = command end -- update if not originally a function
 			if macros then command = command:gsub('%%%a', macros) end
 			preferred_view = view
