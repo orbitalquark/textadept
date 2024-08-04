@@ -138,7 +138,7 @@ test('find should display a statusbar message if it could not find anything #ski
 end)
 
 test('find should not scroll the view if it could not find anything', function()
-	for i = 1, 100 do buffer:append_text(i .. test.newline()) end
+	buffer:append_text(test.lines(100))
 	buffer:goto_pos(buffer.length)
 	local first_visible_line = view.first_visible_line
 	ui.find.find_entry_text = 'will not be found'

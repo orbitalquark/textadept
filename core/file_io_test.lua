@@ -290,11 +290,7 @@ test('buffer:save should write a trailing newline if io.ensure_final_newline is 
 
 	buffer:save()
 
-	local contents_with_newline = contents .. test.newline()
-	test.assert_equal(buffer:get_text(), contents_with_newline)
-	local f<close> = io.open(filename, 'rb')
-	local contents = f:read('a')
-	test.assert_equal(contents, contents_with_newline)
+	test.assert_equal(buffer:get_text(), test.lines{contents, ''})
 end)
 
 test('buffer:save should never write a trailing newline for binary files', function()

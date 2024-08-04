@@ -293,8 +293,7 @@ test('View > Toggle Current Fold should do so', function()
 end)
 
 test('View > Toggle Wrap Mode should do so and retain the first visible line', function()
-	local newline = test.newline()
-	for i = 1, 100 do buffer:append_text(newline) end
+	buffer:append_text(test.lines(100))
 	buffer:goto_line(50)
 	local first_visible_line = view.first_visible_line
 

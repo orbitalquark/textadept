@@ -15,9 +15,9 @@ end)
 
 test("os.spawn should act like Lua's io.popen", function()
 	local output = 'output'
-	local stdout = os.spawn('echo ' .. output):read('a')
+	local stdout = os.spawn('echo ' .. output):read()
 
-	test.assert_equal(stdout, output .. test.newline())
+	test.assert_equal(stdout, output)
 end)
 
 test('os.spawn should spawn from the current working directory', function()
@@ -41,9 +41,9 @@ end)
 test('os.spawn should inherit from the current environment', function()
 	local env = not WIN32 and 'env' or 'set'
 
-	local output = os.spawn(env):read('a')
+	local output = os.spawn(env):read() or ''
 
-	test.assert(output ~= test.newline(), 'should have a non-empty, inherited env')
+	test.assert(output ~= '', 'should have a non-empty, inherited env')
 end)
 
 test('os.spawn should allow setting an environment from a map', function()
@@ -84,7 +84,7 @@ test('os.spawn should report stdout, stderr, and exit status using callbacks', f
 	if QT then p:wait() end
 
 	test.assert_equal(stdout.called, true)
-	test.assert_equal(stdout.args, {output .. test.newline()})
+	test.assert_equal(stdout.args[1], test.lines{output, ''})
 	test.assert_equal(stderr.called, false)
 	test.assert_equal(exit.called, true)
 	test.assert_equal(exit.args, {0})

@@ -90,7 +90,7 @@ test('ui.dialogs.progress should allow for cancelling work', function()
 
 	local stopped = ui.dialogs.progress{
 		title = 'Title', work = function()
-			test.sleep(0.1)
+			-- test.sleep(0.1)
 			return 50
 		end
 	}

@@ -31,8 +31,7 @@ test('history.back should do nothing without more history', function()
 end)
 
 test('history.back should navigate back to the last edit position when far enough away', function()
-	local newline = test.newline()
-	for i = 1, textadept.history.minimum_line_distance do buffer:append_text(newline) end
+	buffer:append_text(test.lines(textadept.history.minimum_line_distance))
 	test.type(' ')
 	local pos = buffer.current_pos
 	buffer:document_end()
@@ -44,10 +43,9 @@ end)
 
 test('history.back should navigate back to the last main edit position for multiple selections',
 	function()
-		local lines = {'word'}
-		for i = 1, textadept.history.minimum_line_distance + 1 do lines[#lines + 1] = '' end
-		lines[#lines + 1] = 'word'
-		buffer:append_text(test.lines(lines))
+		buffer:append_text('word')
+		buffer:append_text(test.lines(textadept.history.minimum_line_distance + 1))
+		buffer:append_text('word')
 		textadept.editing.select_word(true)
 		buffer.main_selection = 1 -- make the first selection the main one
 		test.type('\b')
@@ -61,8 +59,7 @@ test('history.back should navigate back to the last main edit position for multi
 
 test('history.back should not consider edits within history.minimum_line_distance as distinct',
 	function()
-		local newline = test.newline()
-		for i = 1, textadept.history.minimum_line_distance * 2 do buffer:append_text(newline) end
+		buffer:append_text(test.lines(textadept.history.minimum_line_distance * 2))
 		test.type(' ')
 		buffer:goto_line(textadept.history.minimum_line_distance)
 		test.type(' ')
@@ -124,8 +121,7 @@ test('history.forward should do nothing without more history', function()
 end)
 
 test('history.forward should not return to a position without edits', function()
-	local newline = test.newline()
-	for i = 1, textadept.history.minimum_line_distance do buffer:append_text(newline) end
+	buffer:append_text(test.lines(textadept.history.minimum_line_distance + 1))
 	test.type(' ')
 	local pos = buffer.current_pos
 	buffer:document_end()
@@ -149,9 +145,8 @@ test('history should be finite', function()
 end)
 
 test('history should be over-writeable', function()
+	buffer:append_text(test.lines(10))
 	local filename, _<close> = test.tempfile()
-	local newline = test.newline()
-	for i = 1, 10 do buffer:append_text(newline) end
 	test.type(' ')
 	io.open_file(filename)
 	textadept.history.back()

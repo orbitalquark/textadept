@@ -17,7 +17,7 @@ test('ui.print_to should print to a typed buffer', function()
 	test.assert_equal(#_VIEWS, 1)
 	test.assert(buf == buffer, 'should have returned print buffer')
 	test.assert_equal(buffer._type, type)
-	test.assert_equal(buffer:get_text(), output .. test.newline())
+	test.assert_equal(buffer:get_text(), test.lines{output, ''})
 	test.assert_equal(buffer:line_from_position(buffer.current_pos), 2)
 	test.assert_equal(buffer.modify, false)
 end)
@@ -30,7 +30,7 @@ test('ui.print_to should print multiple values separated by tabs', function()
 
 	ui.print_to(type, table.unpack(output))
 
-	test.assert_equal(buffer:get_text(), text_output .. test.newline())
+	test.assert_equal(buffer:get_text(), test.lines{text_output, ''})
 end)
 
 test('ui.print_to should switch to the print buffer', function()
@@ -87,7 +87,7 @@ test('ui.print_silent_to should print to a buffer without switching to it', func
 	local buf = ui.print_silent_to(type, silent_output)
 
 	test.assert(buffer ~= buf, 'should not have switched buffers')
-	test.assert_equal(buf:get_text(), silent_output .. test.newline())
+	test.assert_equal(buf:get_text(), test.lines{silent_output, ''})
 end)
 
 test('ui.print_silent_to should not split the view if ui.tabs is disabled', function()
@@ -105,7 +105,7 @@ test('ui.print_silent_to should scroll any views showing the print buffer', func
 	ui.print_to(type)
 	ui.goto_view(1)
 
-	ui.print_silent_to(type, string.rep(test.newline(), 100))
+	ui.print_silent_to(type, test.lines(100))
 
 	if GTK then ui.update() end
 	test.assert(_VIEWS[1].first_visible_line > 1, 'should have scrolled view')
@@ -118,7 +118,7 @@ test('ui.print should print to the message buffer', function()
 	ui.print(message)
 
 	test.assert_equal(buffer._type, _L['[Message Buffer]'])
-	test.assert_equal(buffer:get_text(), message .. test.newline())
+	test.assert_equal(buffer:get_text(), test.lines{message, ''})
 end)
 
 test('ui.print_silent should silently print to the message buffer', function()
@@ -150,7 +150,7 @@ test('ui.output should highlight recognized error messages', function()
 	local line_pos = output:find('%d')
 	local message_pos = output:find(': ') + 2
 
-	ui.output(output, test.newline())
+	ui.output(output, '\n')
 	local style_at_file_pos = buffer:name_of_style(buffer.style_at[file_pos])
 	local style_at_line_pos = buffer:name_of_style(buffer.style_at[line_pos])
 	local style_at_message_pos = buffer:name_of_style(buffer.style_at[message_pos])
@@ -363,7 +363,7 @@ end)
 -- TODO: OSX APPLEEVENT_ODOC
 
 test('switching between buffers should save/restore buffer state', function()
-	for i = 1, 100 do buffer:append_text(i .. test.newline()) end
+	buffer:append_text(test.lines(100))
 	buffer:set_sel(buffer:position_from_line(50), buffer.line_end_position[50])
 	local selected_text = buffer:get_sel_text()
 	local first_line = view.first_visible_line

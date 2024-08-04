@@ -355,7 +355,7 @@ end)
 test('run.goto_error should allow going to columns if available', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local filename, _<close> = test.tempfile()
-	io.open(filename, 'wb'):write(filename, ':1:2: error!', test.newline()):close()
+	io.open(filename, 'wb'):write(filename, ':1:2: error!', '\n'):close()
 
 	local command = not WIN32 and 'cat' or 'type'
 	textadept.run.run_commands[filename] = command .. ' "%f"'
@@ -371,7 +371,7 @@ test('run.goto_error should show an annotation with the error message', function
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local filename, _<close> = test.tempfile()
 	local errmsg = 'error!'
-	io.open(filename, 'wb'):write(filename, ':1: ', errmsg, test.newline()):close()
+	io.open(filename, 'wb'):write(filename, ':1: ', errmsg, '\n'):close()
 
 	local command = not WIN32 and 'cat' or 'type'
 	textadept.run.run_commands[filename] = command .. ' "%f"'
@@ -387,7 +387,7 @@ test('run.goto_error should work with relative file names', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local filename, _<close> = test.tempfile()
 	local basename = filename:match('[^/\\]+$')
-	io.open(filename, 'wb'):write(basename, ':1: error!', test.newline()):close()
+	io.open(filename, 'wb'):write(basename, ':1: error!', '\n'):close()
 
 	local command = not WIN32 and 'cat' or 'type'
 	textadept.run.run_commands[filename] = command .. ' "%f"'
@@ -402,7 +402,7 @@ end)
 test('run.goto_error should work if neither the output view nor buffer is visible', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local filename, _<close> = test.tempfile()
-	io.open(filename, 'w'):write(filename, ':1: error!', test.newline()):close()
+	io.open(filename, 'w'):write(filename, ':1: error!', '\n'):close()
 
 	local command = not WIN32 and 'cat' or 'type'
 	textadept.run.run_commands[filename] = command .. ' "%f"'
@@ -441,7 +441,7 @@ end)
 test('Enter in an output buffer error should jump to that error', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local filename, _<close> = test.tempfile()
-	io.open(filename, 'w'):write(filename, ':1: error!', test.newline()):close()
+	io.open(filename, 'w'):write(filename, ':1: error!', '\n'):close()
 
 	local command = not WIN32 and 'cat' or 'type'
 	textadept.run.run_commands[filename] = command .. ' "%f"'
@@ -459,7 +459,7 @@ end)
 test('double-clicking an error in the output buffer should jump to it', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local filename, _<close> = test.tempfile()
-	io.open(filename, 'w'):write(filename, ':1: error!', test.newline()):close()
+	io.open(filename, 'w'):write(filename, ':1: error!', '\n'):close()
 
 	local command = not WIN32 and 'cat' or 'type'
 	textadept.run.run_commands[filename] = command .. ' "%f"'

@@ -414,7 +414,7 @@ test('editing.paste_reindent should indent extra below a fold header', function(
 	buffer:append_text(test.lines{'if true then', 'end'})
 	buffer:set_lexer('lua')
 	buffer:line_down()
-	local _<close> = test.mock(ui, 'clipboard_text', 'print()' .. test.newline())
+	local _<close> = test.mock(ui, 'clipboard_text', test.lines{'print()', ''})
 
 	textadept.editing.paste_reindent()
 

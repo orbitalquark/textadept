@@ -250,11 +250,14 @@ end
 function M.removedir(dir) os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q') .. dir) end
 
 local newlines = ({[buffer.EOL_LF] = '\n', [buffer.EOL_CRLF] = '\r\n'})
---- Returns a string containing a single newline depending on the current buffer EOL mode.
-function M.newline() return newlines[buffer.eol_mode] end
-
---- Returns the given lines separated by newlines depending on the current buffer EOL mode.
-function M.lines(lines) return table.concat(lines, M.newline()) end
+--- Returns *lines* number of lines, or table of lines *lines*, separated by newlines depending
+-- on the current buffer EOL mode.
+-- @param lines Number of lines to produce or table of lines to use.
+-- @return string
+function M.lines(lines)
+	if type(lines) == 'number' then return string.rep(newlines[buffer.eol_mode], lines) end
+	return table.concat(lines, newlines[buffer.eol_mode])
+end
 
 --- Emulates typing the given key or text.
 function M.type(text)
@@ -294,7 +297,7 @@ function M.type(text)
 		end
 
 		if events.emit(events.KEYPRESS, char) then goto continue end
-		if char == '\n' and char ~= M.newline() then char = M.newline() end
+		if char == '\n' and buffer.eol_mode == buffer.EOL_CRLF then char = '\r\n' end
 
 		buffer:begin_undo_action()
 		for i = 1, buffer.selections do
