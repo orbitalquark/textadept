@@ -819,7 +819,7 @@ bool spawn(lua_State *L, Process *proc_, int index, const char *cmd, const char 
 	char **argv, *envp[envc + 1];
 	GError *err = NULL;
 	if (!g_shell_parse_argv(cmd, NULL, &argv, &err)) return (*error = err->message, false);
-	if (lua_checkstack(L, envc), envi)
+	if (lua_checkstack(L, envc + 2), envi) // extra stack slots needed for key-value pairs
 		for (int i = (lua_pushnil(L), 0); lua_next(L, envi); lua_pop(L, 1), i++)
 			envp[i] = (char *)(lua_pushvalue(L, -1), lua_insert(L, -3), lua_tostring(L, -3));
 	envp[envc] = NULL;
