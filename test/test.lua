@@ -113,16 +113,16 @@ for _, name in ipairs(tests) do
 
 	-- Clean up after the test.
 	test.log:clear()
-	while textadept.snippets.active do textadept.snippets.cancel() end
-	while view:unsplit() do end
-	while #_BUFFERS > 1 do buffer:close(true) end
-	buffer:close(true) -- the last one
 	ui.update()
 	if ui.command_entry.active then test.type('esc') end
 	if ui.find.active then
 		ui.find.incremental, ui.find.in_files = false, false
 		ui.find.focus()
 	end
+	while textadept.snippets.active do textadept.snippets.cancel() end
+	while view:unsplit() do end
+	while #_BUFFERS > 1 do buffer:close(true) end
+	buffer:close(true) -- the last one
 
 	-- Write test output.
 	if ok then
