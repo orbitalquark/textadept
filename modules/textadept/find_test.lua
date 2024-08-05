@@ -4,6 +4,12 @@
 local find = 'word'
 local replace = find:upper()
 
+events.connect(events.TEST_CLEANUP, function()
+	if not ui.find.active then return end
+	ui.find.incremental, ui.find.in_files = false, false
+	ui.find.focus()
+end)
+
 test('ui.find.focus should raise an error for invalid arguments', function()
 	if CURSES then return end -- blocks the UI
 	local invalid_argment = function() ui.find.focus(true) end

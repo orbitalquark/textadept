@@ -18,6 +18,9 @@ local test = setmetatable(dofile(_HOME .. '/test/helpers.lua'), {
 	end
 })
 
+--- Emitted to clean up after a unit test.
+events.TEST_CLEANUP = 'test_cleanup'
+
 --- Map of tests expected to fail to `true`.
 local expected_failures = {}
 
@@ -114,15 +117,11 @@ for _, name in ipairs(tests) do
 	-- Clean up after the test.
 	test.log:clear()
 	ui.update()
-	if ui.command_entry.active then test.type('esc') end
-	if ui.find.active then
-		ui.find.incremental, ui.find.in_files = false, false
-		ui.find.focus()
-	end
-	while textadept.snippets.active do textadept.snippets.cancel() end
+	events.emit(events.TEST_CLEANUP)
 	while view:unsplit() do end
 	while #_BUFFERS > 1 do buffer:close(true) end
 	buffer:close(true) -- the last one
+	ui.update()
 
 	-- Write test output.
 	if ok then

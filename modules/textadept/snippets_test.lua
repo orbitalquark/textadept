@@ -1,5 +1,9 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
+events.connect(events.TEST_CLEANUP, function()
+	while textadept.snippets.active do textadept.snippets.cancel() end
+end)
+
 test('snippets.insert should raise errors for invalid arguments', function()
 	local invalid_text = function() textadept.snippets.insert{} end
 

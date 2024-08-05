@@ -1,5 +1,9 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
+events.connect(events.TEST_CLEANUP, function()
+	if ui.command_entry.active then test.type('esc') end
+end)
+
 test('ui.command_entry.run should raise errors for invalid arguments', function()
 	local not_a_label = function() ui.command_entry.run(1) end
 	local not_a_function = function() ui.command_entry.run('', '') end
