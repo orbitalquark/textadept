@@ -296,14 +296,16 @@ end)
 
 test('ui.command_entry.run should not cycle history when autocomplete is active', function()
 	ui.command_entry.run()
-	test.type('nil\n')
+	test.type('nil\n') -- add a command to the history
 	ui.command_entry.run()
-	test.type('s\t')
+	test.type('s')
+	local active = test.stub(true)
+	local _<close> = test.mock(ui.command_entry, 'auto_c_active', active) -- simulate tab-completion
 
 	test.type('up')
 
 	test.assert_equal(ui.command_entry:auto_c_active(), true)
-	test.assert_equal(ui.command_entry:get_text(), 's')
+	test.assert_equal(ui.command_entry:get_text(), 's') -- not previous command, 'nil'
 end)
 
 test('ui.command_entry.run should add non-existing esc key to the given keybindings', function()
