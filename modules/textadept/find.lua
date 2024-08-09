@@ -313,10 +313,10 @@ function M.find_in_files(dir, filter)
 	end
 
 	if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
-	local function ffprint(...) ui.print_to(_L['[Files Found Buffer]'], ...) end
-	ffprint(_L['Find:']:gsub('[_&]', '') .. ' ' .. M.find_entry_text)
-	ffprint(_L['Directory:'] .. ' ' .. dir)
-	ffprint(_L['Filter:']:gsub('[_&]', '') .. ' ' ..
+	local function print(message) ui.print_to(_L['[Files Found Buffer]'], message) end
+	print(_L['Find:']:gsub('[_&]', '') .. ' ' .. M.find_entry_text)
+	print(_L['Directory:'] .. ' ' .. dir)
+	print(_L['Filter:']:gsub('[_&]', '') .. ' ' ..
 		(type(filter) == 'string' and filter or table.concat(filter, ',')))
 	buffer.indicator_current = M.INDIC_FIND
 
@@ -335,14 +335,14 @@ function M.find_in_files(dir, filter)
 		end
 	}
 	if stopped then
-		ffprint(_L['Find in Files aborted'])
-		ffprint() -- blank line
+		print(_L['Find in Files aborted'])
+		print() -- blank line
 		return
 	end
 
 	-- Perform the search in a temporary buffer and print results.
-	local orig_buffer, buffer = buffer, buffer.new()
-	view:goto_buffer(orig_buffer)
+	local ff_buffer, buffer = buffer, buffer.new()
+	view:goto_buffer(ff_buffer)
 	buffer.code_page = 0 -- default is UTF-8
 	buffer.search_flags = get_flags()
 	local text, i, found, show_names = M.find_entry_text, 1, false, M.show_filenames_in_progressbar
@@ -359,17 +359,15 @@ function M.find_in_files(dir, filter)
 				found = true
 				if binary == nil then binary = buffer:text_range(1, 65536):find('\0') end
 				if binary then
-					_G.buffer:add_text(string.format('%s:1:%s', utf8_filenames[i], _L['Binary file matches.']))
-					_G.buffer:new_line()
+					print(string.format('%s:1:%s', utf8_filenames[i], _L['Binary file matches.']))
 					break
 				end
 				local line_num = buffer:line_from_position(buffer.target_start)
-				local line = buffer:get_line(line_num)
-				_G.buffer:add_text(string.format('%s:%d:%s', utf8_filenames[i], line_num, line))
-				local pos = _G.buffer.current_pos - #line + buffer.target_start -
-					buffer:position_from_line(line_num)
-				_G.buffer:indicator_fill_range(pos, buffer.target_end - buffer.target_start)
-				if not line:find('\n$') then _G.buffer:new_line() end
+				local line = buffer:get_line(line_num):match('^[^\r\n]*')
+				print(string.format('%s:%d:%s', utf8_filenames[i], line_num, line))
+				local pos = ff_buffer.line_end_position[ff_buffer.line_count - 1] - #line +
+					buffer.target_start - buffer:position_from_line(line_num)
+				ff_buffer:indicator_fill_range(pos, buffer.target_end - buffer.target_start)
 				buffer:set_target_range(buffer.target_end, buffer.length + 1)
 			end
 			buffer:clear_all()
@@ -382,8 +380,8 @@ function M.find_in_files(dir, filter)
 	}
 	buffer:close(true) -- temporary buffer
 	local status = stopped and _L['Find in Files aborted'] or not found and _L['No results found']
-	if status then ffprint(status) end
-	ffprint() -- blank line
+	if status then print(status) end
+	print() -- blank line
 end
 
 local P, V, C, upper, lower = lpeg.P, lpeg.V, lpeg.C, string.upper, string.lower

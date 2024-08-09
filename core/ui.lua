@@ -51,6 +51,7 @@ local function get_print_view(type)
 end
 --- Helper function for getting the print buffer.
 local function get_print_buffer(type)
+	if buffer._type == type then return buffer end -- optimize
 	for _, buffer in ipairs(_BUFFERS) do if buffer._type == type then return buffer end end
 end
 
@@ -119,7 +120,7 @@ function ui.print_to(type, message)
 	return print_to(assert_type(type, 'string', 1), false, message, '\n')
 end
 
--- Silently prints the given message to the buffer of string type *type*, and returns that buffer.
+--- Silently prints the given message to the buffer of string type *type*, and returns that buffer.
 -- Opens a new buffer for printing to if necessary.
 -- @param type String type of print buffer.
 -- @param message String message to print.
