@@ -80,13 +80,13 @@ M.auto_pairs = {}
 for k, v in string.gmatch([[()[]{}''""``]], '(.)(.)') do M.auto_pairs[k] = v end
 
 --- Table of brace characters to highlight.
--- The ASCII values of brace characters are keys and are assigned `true`.
+-- Brace characters and their ASCII values are assigned to `true`.
 -- Recognized characters are '(', ')', '[', ']', '{', '}', '<', and '>'. This table is updated
 -- based on a lexer's "scintillua.angle.braces" property.
 local brace_matches = {}
 
 --- Table of auto-paired characters to move over when typed.
--- The ASCII values of typeover characters are keys and are assigned `true`.
+-- Typeover characters are keys assigned to `true`.
 local typeover_chars = {}
 
 --- Map of autocompleter names to autocompletion functions.
@@ -102,11 +102,14 @@ M.autocompleters = {}
 
 --- Update auto_pairs, brace_matches, and typeover_chars based on lexer.
 local function update_language_specific_features()
-	local angles = buffer.property['scintillua.angle.braces'] ~= ''
-	if M.auto_pairs then M.auto_pairs['<'] = angles and '>' or nil end
 	brace_matches, typeover_chars = {}, {} -- clear
-	for _, c in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[c] = true end
-	if M.auto_pairs then for _, c in pairs(M.auto_pairs) do typeover_chars[string.byte(c)] = true end end
+	local angles = buffer.property['scintillua.angle.braces'] ~= ''
+	for char in string.gmatch(angles and '()[]{}<>' or '()[]{}', '.') do
+		brace_matches[char], brace_matches[string.byte(char)] = true, true
+	end
+	if not M.auto_pairs then return end
+	M.auto_pairs['<'] = angles and '>' or nil
+	for _, char in pairs(M.auto_pairs) do typeover_chars[char] = true end
 end
 events.connect(events.LEXER_LOADED, function()
 	update_language_specific_features()
@@ -118,30 +121,44 @@ events.connect(events.VIEW_AFTER_SWITCH, update_language_specific_features)
 
 -- Matches characters specified in auto_pairs, taking multiple selections into account.
 events.connect(events.CHAR_ADDED, function(code)
-	if not M.auto_pairs or code < 32 or code > 256 or not M.auto_pairs[string.char(code)] then return end
+	if not M.auto_pairs or not M.auto_pairs[utf8.char(code)] then return end
 	buffer:begin_undo_action()
 	for i = 1, buffer.selections do
 		local pos = buffer.selection_n_caret[i]
 		buffer:set_target_range(pos, pos)
-		buffer:replace_target(M.auto_pairs[string.char(code)])
+		buffer:replace_target(M.auto_pairs[utf8.char(code)])
 	end
 	buffer:end_undo_action()
 end)
 
 -- Removes matched chars on backspace, taking multiple selections into account.
 events.connect(events.KEYPRESS, function(key)
-	if M.auto_pairs and key == '\b' and not ui.command_entry.active then
-		buffer:begin_undo_action()
-		for i = 1, buffer.selections do
-			local pos = buffer.selection_n_caret[i]
-			local byte, next_byte = buffer.char_at[pos - 1], buffer.char_at[pos]
-			local complement = byte >= 32 and byte <= 256 and M.auto_pairs[string.char(byte)]
-			local next_char = next_byte >= 32 and next_byte <= 256 and string.char(next_byte)
-			if complement and next_char == complement then buffer:delete_range(pos, 1) end
-		end
-		buffer:end_undo_action()
+	if not M.auto_pairs or key ~= '\b' or ui.command_entry.active then return end
+	buffer:begin_undo_action()
+	for i = 1, buffer.selections do
+		local pos = buffer.selection_n_caret[i]
+		local char = buffer:text_range(pos, buffer:position_after(pos))
+		local char_before = buffer:text_range(buffer:position_before(pos), pos)
+		if char == M.auto_pairs[char_before] then buffer:delete_range(pos, #char) end
 	end
+	buffer:end_undo_action()
 end, 1) -- need index of 1 because default key handler halts propagation
+
+-- Moves over auto-paired complement characters when typed, taking multiple selections into
+-- account.
+events.connect(events.KEYPRESS, function(key)
+	if not M.typeover_auto_paired or not typeover_chars[key] then return end
+	if not buffer.selection_empty or ui.command_entry.active then return end
+	local handled = false
+	for i = 1, buffer.selections do
+		local pos = buffer.selection_n_caret[i]
+		if buffer:text_range(pos, buffer:position_after(pos)) == key then
+			buffer.selection_n_start[i], buffer.selection_n_end[i] = pos + 1, pos + 1
+			handled = true
+		end
+	end
+	if handled then return true end -- prevent typing
+end)
 
 -- Highlights matching braces.
 events.connect(events.UPDATE_UI, function(updated)
@@ -150,9 +167,9 @@ events.connect(events.UPDATE_UI, function(updated)
 		local match = buffer:brace_match(buffer.current_pos, 0)
 		local f = match ~= -1 and view.brace_highlight or view.brace_bad_light
 		f(buffer, buffer.current_pos, match)
-	else
-		view:brace_bad_light(-1)
+		return
 	end
+	view:brace_bad_light(-1)
 end)
 
 --- Clears highlighted word indicators.
@@ -188,22 +205,6 @@ events.connect(events.UPDATE_UI, function(updated)
 	while buffer:search_in_target(word) ~= -1 do
 		buffer:indicator_fill_range(buffer.target_start, buffer.target_end - buffer.target_start)
 		buffer:set_target_range(buffer.target_end, buffer.length + 1)
-	end
-end)
-
--- Moves over auto-paired complement characters when typed, taking multiple selections into
--- account.
-events.connect(events.KEYPRESS, function(key)
-	if M.typeover_auto_paired and typeover_chars[string.byte(key)] and not ui.command_entry.active then
-		local handled = false
-		for i = 1, buffer.selections do
-			local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
-			if s ~= e or buffer.char_at[s] ~= string.byte(key) then goto continue end
-			buffer.selection_n_start[i], buffer.selection_n_end[i] = s + 1, s + 1
-			handled = true
-			::continue::
-		end
-		if handled then return true end -- prevent typing
 	end
 end)
 
@@ -427,15 +428,13 @@ function M.select_enclosed(left, right)
 	elseif M.auto_pairs then
 		s = buffer.selection_start
 		while s >= 1 do
-			local byte = buffer.char_at[s]
-			local match = byte >= 32 and byte <= 256 and M.auto_pairs[string.char(byte)] or
-				(byte == string.byte('>') and M.auto_pairs['<'] and '<') -- in-between > and <
+			local char = buffer:text_range(s, buffer:position_after(s))
+			local match = M.auto_pairs[char] or (char == '>' and M.auto_pairs['<'] and '<') -- >...<
 			if not match then goto continue end
-			left, right = string.char(byte), match
-			if buffer:brace_match(s, 0) >= buffer.selection_end - 1 then
-				e = buffer:brace_match(s, 0)
-				break
-			elseif brace_matches[byte] or buffer.style_at[s] == buffer.style_at[buffer.selection_start] then
+			left, right = char, match
+			e = buffer:brace_match(s, 0)
+			if e >= buffer.selection_end - 1 then break end
+			if brace_matches[char] or buffer.style_at[s] == buffer.style_at[buffer.selection_start] then
 				buffer.search_flags = 0
 				buffer:set_target_range(s + 1, buffer.length + 1)
 				if buffer:search_in_target(match) >= buffer.selection_end - 1 then
@@ -444,7 +443,7 @@ function M.select_enclosed(left, right)
 				end
 			end
 			::continue::
-			s = s - 1
+			s, e = s - 1, -1
 		end
 	end
 	if s == -1 or e == -1 then return end
