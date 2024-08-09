@@ -381,7 +381,7 @@ local handlers = setmetatable({}, {
 -- @param event The string event name.
 -- @param f The Lua function to connect to *event*.
 -- @param[opt] index Optional index to insert the handler into.
--- @usage events.connect('my_event', function(msg) ui.print(msg) end)
+-- @usage events.connect('my_event', function() ... end)
 function M.connect(event, f, index)
 	assert_type(event, 'string', 1)
 	assert_type(f, 'function', 2)
@@ -448,27 +448,5 @@ for k, v in pairs(_SCINTILLA) do if type(k) == 'number' then M[v[1]:upper()] = v
 local textadept_events = {'appleevent_odoc','buffer_after_replace_text','buffer_after_switch','buffer_before_replace_text','buffer_before_switch','buffer_deleted','buffer_new','csi','command_text_changed','error','find','find_text_changed','focus','initialized','keypress','menu_clicked','mode_changed','mouse','quit','replace','replace_all','reset_after','reset_before','resume','suspend', 'tab_clicked','tab_close_clicked','unfocus','view_after_switch','view_before_switch','view_new'}
 -- LuaFormatter on
 for _, v in pairs(textadept_events) do M[v:upper()] = v end
-
--- Implement `events.BUFFER_{BEFORE,AFTER}_REPLACE_TEXT` as a convenience in lieu of the
--- undocumented `events.MODIFIED`.
-local DELETE, INSERT, UNDOREDO = _SCINTILLA.MOD_BEFOREDELETE, _SCINTILLA.MOD_INSERTTEXT,
-	_SCINTILLA.MULTILINEUNDOREDO
---- Helper function for emitting `events.BUFFER_AFTER_REPLACE_TEXT` after a full-buffer undo/redo
--- operation, e.g. after reloading buffer contents and then performing an undo.
-local function emit_after_replace_text()
-	M.disconnect(M.UPDATE_UI, emit_after_replace_text)
-	M.emit(M.BUFFER_AFTER_REPLACE_TEXT)
-end
--- Emits events prior to and after replacing buffer text.
-M.connect(M.MODIFIED, function(position, mod, text, length)
-	if mod & (DELETE | INSERT) == 0 or length ~= buffer.length then return end
-	if mod & (INSERT | UNDOREDO) == INSERT | UNDOREDO then
-		-- Cannot emit BUFFER_AFTER_REPLACE_TEXT here because Scintilla will do things like update
-		-- the selection afterwards, which could undo what event handlers do.
-		M.connect(M.UPDATE_UI, emit_after_replace_text)
-		return
-	end
-	M.emit(mod & DELETE > 0 and M.BUFFER_BEFORE_REPLACE_TEXT or M.BUFFER_AFTER_REPLACE_TEXT)
-end)
 
 return M

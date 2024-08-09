@@ -37,6 +37,29 @@ end
 
 events.connect(events.BUFFER_NEW, function() buffer.text_range = text_range end, 1)
 
+-- Implement `events.BUFFER_{BEFORE,AFTER}_REPLACE_TEXT` as a convenience in lieu of the
+-- undocumented `events.MODIFIED`.
+local DELETE, INSERT, UNDOREDO = _SCINTILLA.MOD_BEFOREDELETE, _SCINTILLA.MOD_INSERTTEXT,
+	_SCINTILLA.MULTILINEUNDOREDO
+--- Helper function for emitting `events.BUFFER_AFTER_REPLACE_TEXT` after a full-buffer undo/redo
+-- operation, e.g. after reloading buffer contents and then performing an undo.
+local function emit_after_replace_text()
+	events.disconnect(events.UPDATE_UI, emit_after_replace_text)
+	events.emit(events.BUFFER_AFTER_REPLACE_TEXT)
+end
+-- Emits events prior to and after replacing buffer text.
+events.connect(events.MODIFIED, function(position, mod, text, length)
+	if mod & (DELETE | INSERT) == 0 or length ~= buffer.length then return end
+	if mod & (INSERT | UNDOREDO) == INSERT | UNDOREDO then
+		-- Cannot emit BUFFER_AFTER_REPLACE_TEXT here because Scintilla will do things like update
+		-- the selection afterwards, which could undo what event handlers do.
+		events.connect(events.UPDATE_UI, emit_after_replace_text)
+		return
+	end
+	events.emit(mod & DELETE > 0 and events.BUFFER_BEFORE_REPLACE_TEXT or
+		events.BUFFER_AFTER_REPLACE_TEXT)
+end)
+
 --- A table of style properties that can be concatenated with other tables of properties.
 local style_object = {}
 style_object.__index = style_object

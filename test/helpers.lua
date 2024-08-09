@@ -45,6 +45,21 @@ function M.assert_raises(f, expected_errmsg)
 	end
 end
 
+--- Asserts that string or list *subject* contains value *find*.
+-- @param subject Container to search.
+-- @param find Value to search for.
+function M.assert_contains(subject, find)
+	assert_type(subject, 'string/table', 1)
+	if type(subject) == 'string' then
+		if subject:find(find) then return end
+		error(string.format("'%s' was not found in '%s'", find, subject), 2)
+	else
+		if subject[find] then return end
+		for _, value in ipairs(subject) do if value == find then return end end
+		error(string.format("'%s' was not found in {%s}", find, table.concat(subject, ',')), 2)
+	end
+end
+
 --- Logs the given arguments to the current test's log.
 -- If a test errors, its test log will be displayed.
 -- @param ... Arguments to log. Tables have their contents logged (non-recursively).
@@ -104,29 +119,111 @@ end
 -- @usage local _<close> = defer(function() ... end)
 function M.defer(f) return setmetatable({}, {__close = assert_type(f, 'function', 1)}) end
 
---- Creates a temporary file (with optional extension *ext* and *contents*) and returns its
--- filename along with a to-be-closed value for deleting that file.
+--- A temporary file
+-- @field filename The file's filename.
+local tmpfile = {}
+tmpfile.__index = tmpfile
+
+--- Creates a new temporary file object.
+-- @param filename String existing filename to assume control over.
+function tmpfile.new(filename)
+	return setmetatable({filename = assert_type(filename, 'string', 1)}, tmpfile)
+end
+
+--- Returns the contents of this temporary file on disk.
+function tmpfile:read()
+	local f<close> = io.open(self.filename)
+	return f:read('a')
+end
+
+--- Writes the contents of this temporary file to disk.
+function tmpfile:write(contents)
+	io.open(self.filename, 'wb'):write(contents):close()
+end
+
+--- Deletes this temporary file from disk.
+function tmpfile:__close()
+	os.remove(self.filename)
+end
+
+--- Creates a temporary file (with optional extension *ext* and *contents*), optionally opens
+-- it if *open* is `true`, and returns it as a to-be-closed value for deleting that file.
+-- It has a `filename` field that contains its full filename, and `read()` and `write()` methods.
 -- @param[opt] ext Optional file extension to use for the temporary file. The default is no file
 --	extension.
 -- @param[opt] contents Optional contents of the temporary file. The default is an empty file.
--- @return filename, to-be-closed value
--- @usage local filename, _<close> = tempfile('.lua')
-function M.tempfile(ext, contents)
-	assert_type(ext, 'string/nil', 1)
-	assert_type(contents, 'string/nil', 2)
-	if ext and not ext:find('^%.') then ext, contents = nil, ext end
+-- @param[opt] open Optional flag that indicates whether or not to open the temporary file.
+-- @return to-be-closed temporary file
+-- @usage local f<close> = tmpfile('.lua')
+function M.tmpfile(ext, contents, open)
+	assert_type(ext, 'string/boolean/nil', 1)
+	assert_type(contents, 'string/boolean/nil', 2)
+	if type(ext) == 'string' then
+		if not ext:find('^%.') then
+			ext, contents, open = nil, ext, contents
+		elseif type(contents) ~= 'string' then
+			contents, open = nil, contents
+		end
+	else
+		ext, contents, open = nil, nil, ext
+	end
 
 	local filename = os.tmpname()
 	if ext then
 		if not WIN32 then os.remove(filename) end
 		filename = filename .. ext
+		io.open(filename, 'w'):close()
 	end
-	if contents then
-		io.open(filename, 'wb'):write(contents):close()
-	elseif WIN32 then
-		io.open(filename, 'w'):close() -- create the file too, just like on Linux
+
+	local f = tmpfile.new(filename)
+	if contents or WIN32 then f:write(contents or '') end
+
+	if open then io.open_file(f.filename) end
+
+	return f
+end
+
+--- Recursively creates a directory at *root* with the given structure.
+local function mkdir(root, structure)
+	lfs.mkdir(root)
+	for k, v in pairs(structure) do
+		if type(v) == 'table' then
+			mkdir(root .. '/' .. k, v)
+		elseif type(k) == 'string' then
+			io.open(root .. '/' .. k, 'wb'):write(v):close()
+		else
+			io.open(root .. '/' .. v, 'w'):close()
+		end
 	end
-	return filename, M.defer(function() os.remove(filename) end)
+end
+
+--- A temporary directory.
+-- @field dirname The directory's name.
+local tmpdir = {}
+tmpdir.__index = tmpdir
+
+--- Creates a new temporary directory object.
+-- @param dirname String existing directory name to assume control over.
+function tmpdir.new(dirname)
+	return setmetatable({dirname = assert_type(dirname, 'string', 1)}, tmpdir)
+end
+
+--- Changes the current working directory to this directory.
+-- When the directory is deleted, the original working directory is restored.
+function tmpdir:cd()
+	self.oldwd = lfs.currentdir()
+	lfs.chdir(self.dirname)
+end
+
+--- Returns a canonical path for this directory and a relative path.
+-- The returned path respects directory separators on the current platform.
+-- @usage filename = dir / file
+function tmpdir:__div(path) return lfs.abspath(path, self.dirname) end
+
+--- Deletes this temporary directory and all contents from disk.
+function tmpdir:__close()
+	if self.oldwd then lfs.chdir(self.oldwd) end
+	os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q ') .. self.dirname)
 end
 
 --- Creates a temporary directory (with optional structure table *structure*), optionally changes
@@ -137,35 +234,20 @@ end
 --	an empty directory.
 -- @param[opt] chdir Optional flag that indicates whether or not to change the current working
 --	directory to the temporary directory. The default value is `false`.
--- @return path, to-be-closed value
--- @usage local dir, _<close> = tempdir{foo = {'bar.lua'}, 'baz.txt'}
-function M.tempdir(structure, chdir)
-	local dir = os.tmpname()
-	if not WIN32 then os.remove(dir) end
-
-	local function mkdir(root, structure)
-		lfs.mkdir(root)
-		for k, v in pairs(structure) do
-			if type(v) == 'table' then
-				mkdir(root .. '/' .. k, v)
-			elseif type(k) == 'string' then
-				io.open(root .. '/' .. k, 'wb'):write(v):close()
-			else
-				io.open(root .. '/' .. v, 'w'):close()
-			end
-		end
-	end
+-- @return to-be-closed temporary directory
+-- @usage local dir<close> = tempdir{foo = {'bar.lua'}, 'baz.txt'}
+function M.tmpdir(structure, chdir)
+	local dirname = os.tmpname()
+	if not WIN32 then os.remove(dirname) end
 
 	if type(structure) == 'boolean' then structure, chdir = nil, structure end
-	mkdir(dir, assert_type(structure, 'table/nil', 1) or {})
+	mkdir(dirname, assert_type(structure, 'table/nil', 1) or {})
 
-	local cwd = lfs.currentdir()
-	if chdir then lfs.chdir(dir) end
+	local dir = tmpdir.new(dirname)
 
-	return dir, M.defer(function()
-		if chdir then lfs.chdir(cwd) end
-		os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q ') .. dir)
-	end)
+	if chdir then dir:cd() end
+
+	return dir
 end
 
 --- Connects function *f* to event *event* at index *index* and returns a to-be-closed value
@@ -213,18 +295,21 @@ function M.mock(module, name, condition, mock)
 	return M.defer(function() module[name] = original_value end)
 end
 
+local function sleep(interval) os.execute((not WIN32 and 'sleep ' or 'timeout /T ' .. interval)) end
+if pcall(require, 'debugger') then sleep = require('debugger').socket.sleep end
+
 --- Repeatedly calls function *condition* until it either returns a truthy value, or a timeout
 -- of *timeout* seconds is reached.
 -- If *condition* succeeds, returns its value. Otherwise raises an error on timeout.
 -- @param condition Function to call.
 -- @param timeout Number of seconds to wait before timing out. The default value is 1.
 -- @return value returned by *condition* unless there was a timeout
--- @usage assert(wait(function() return f.called end), 'should have called f')
+-- @usage wait(function() return f.called end)
 function M.wait(condition, timeout)
 	assert_type(condition, 'function', 1)
 	local interval = not WIN32 and 0.1 or 1
 	for i = 1, (assert_type(timeout, 'number/nil', 2) or 1) // interval do
-		os.execute(not WIN32 and 'sleep ' .. interval or 'timeout /T ' .. interval)
+		sleep(interval)
 		ui.update()
 		local result = condition()
 		if result then return result end
@@ -317,6 +402,42 @@ function M.get_indicated_text(indic)
 		s = buffer:indicator_end(indic, e)
 	end
 	return words
+end
+
+-- Deprecated.
+
+function M.tempfile(ext, contents)
+	assert_type(ext, 'string/nil', 1)
+	assert_type(contents, 'string/nil', 2)
+	if ext and not ext:find('^%.') then ext, contents = nil, ext end
+
+	local filename = os.tmpname()
+	if ext then
+		if not WIN32 then os.remove(filename) end
+		filename = filename .. ext
+	end
+	if contents then
+		io.open(filename, 'wb'):write(contents):close()
+	elseif WIN32 then
+		io.open(filename, 'w'):close() -- create the file too, just like on Linux
+	end
+	return filename, M.defer(function() os.remove(filename) end)
+end
+
+function M.tempdir(structure, chdir)
+	local dir = os.tmpname()
+	if not WIN32 then os.remove(dir) end
+
+	if type(structure) == 'boolean' then structure, chdir = nil, structure end
+	mkdir(dir, assert_type(structure, 'table/nil', 1) or {})
+
+	local cwd = lfs.currentdir()
+	if chdir then lfs.chdir(dir) end
+
+	return dir, M.defer(function()
+		if chdir then lfs.chdir(cwd) end
+		os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q ') .. dir)
+	end)
 end
 
 return M

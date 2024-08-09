@@ -428,7 +428,7 @@ test('ui.find.find_in_files should update the filter if changed', function()
 	test.assert_equal(ui.find.find_in_files_filters[dir], {'*.txt'})
 end)
 
-test('ui.find.find_in_files should allow cancelling the search', function()
+test('ui.find.find_in_files should allow canceling the search', function()
 	local dir, _<close> = test.tempdir()
 	local cancel = test.stub(true)
 	local _<close> = test.mock(ui.dialogs, 'progress', cancel)

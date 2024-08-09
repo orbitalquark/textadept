@@ -1,18 +1,5 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-test('os.spawn should raise errors for invalid arguments', function()
-	local invalid_command = function() os.spawn(true) end
-	local invalid_callback = function() os.spawn('echo', false) end
-	local nonexistent_command = 'does-not-exist'
-	local command_does_not_exist = function() assert(os.spawn(nonexistent_command)) end
-
-	test.assert_raises(invalid_command, 'string expected')
-	test.assert_raises(invalid_callback, 'function or nil expected')
-	if not (WIN32 and CURSES) then -- 'cmd /c does not exist' prints to stderr and returns 1
-		test.assert_raises(command_does_not_exist, nonexistent_command .. ':')
-	end
-end)
-
 test("os.spawn should act like Lua's io.popen", function()
 	local output = 'output'
 	local stdout = os.spawn('echo ' .. output):read()
@@ -22,20 +9,20 @@ end)
 
 test('os.spawn should spawn from the current working directory', function()
 	local pwd = not WIN32 and 'pwd' or 'cd'
-	local dir, _<close> = test.tempdir(true)
+	local dir<close> = test.tmpdir(true)
 
 	local cwd = os.spawn(pwd):read('a')
 
-	test.assert_equal(cwd, test.lines{dir, ''})
+	test.assert_equal(cwd, test.lines{dir.dirname, ''})
 end)
 
-test('os.spawn should spawn from a given working directory', function()
+test('os.spawn should allow spawning from a given working directory', function()
 	local pwd = not WIN32 and 'pwd' or 'cd'
-	local dir, _<close> = test.tempdir()
+	local dir<close> = test.tmpdir()
 
-	local cwd = os.spawn(pwd, dir):read('a')
+	local cwd = os.spawn(pwd, dir.dirname):read('a')
 
-	test.assert_equal(cwd, test.lines{dir, ''})
+	test.assert_equal(cwd, test.lines{dir.dirname, ''})
 end)
 
 test('os.spawn should inherit from the current environment', function()
@@ -80,17 +67,17 @@ test('os.spawn should report stdout, stderr, and exit status using callbacks', f
 	local output = 'output'
 
 	local p = os.spawn('echo ' .. output, stdout, stderr, exit)
+
 	test.wait(function() return stdout.called end)
 	if QT then p:wait() end
-
 	test.assert_equal(stdout.called, true)
-	test.assert_equal(stdout.args[1], test.lines{output, ''})
+	test.assert_equal(stdout.args, {test.lines{output, ''}})
 	test.assert_equal(stderr.called, false)
 	test.assert_equal(exit.called, true)
 	test.assert_equal(exit.args, {0})
 end)
 
-test('proc:status should report the status of a spawned process', function()
+test('proc.status should report the status of a spawned process', function()
 	local p = os.spawn('echo')
 
 	local running = p:status()
@@ -101,24 +88,17 @@ test('proc:status should report the status of a spawned process', function()
 	test.assert_equal(terminated, 'terminated')
 end)
 
-test('proc:wait should wait for process exit and return its code', function()
+test('proc.wait should wait for process exit and return its code after each call', function()
 	local p = os.spawn('echo')
 
 	local code = p:wait()
+	local same_code = p:wait()
 
 	test.assert_equal(code, 0)
+	test.assert_equal(same_code, code)
 end)
 
-test('proc:wait should allow multiple calls to it and return the same exit code', function()
-	local p = os.spawn('echo')
-
-	p:wait()
-	local code = p:wait()
-
-	test.assert_equal(code, 0)
-end)
-
-test('os.spawn should invoke an exit callback even if proc:wait is called', function()
+test('os.spawn should invoke an exit callback even if proc.wait is called', function()
 	local exit = test.stub()
 
 	os.spawn('echo', nil, nil, exit):wait()
@@ -128,11 +108,11 @@ test('os.spawn should invoke an exit callback even if proc:wait is called', func
 end)
 
 test('os.spawn should allow two-way communication with a spawned process', function()
-	local filename, _<close> = test.tempfile('.lua', 'print(io.read())')
+	local textadept = arg[0]
+	local f<close> = test.tmpfile('.lua', 'print(io.read())')
 	local input = 'input'
 
-	local textadept = arg[0]
-	local p = os.spawn(string.format('"%s" -L "%s"', textadept, filename))
+	local p = os.spawn(string.format('"%s" -L "%s"', textadept, f.filename))
 	p:write(input .. '\n')
 	p:close()
 	local output = p:read('l')
@@ -142,7 +122,7 @@ test('os.spawn should allow two-way communication with a spawned process', funct
 	test.assert_equal(eof, '')
 end)
 
-test('proc:kill should kill a spawned process', function()
+test('proc.kill should kill a spawned process', function()
 	local sleep = not WIN32 and 'sleep 1' or 'timeout /T 1'
 	local p = os.spawn(sleep)
 
@@ -154,25 +134,44 @@ test('proc:kill should kill a spawned process', function()
 	test.assert_equal(status, 'terminated')
 end)
 
+test('os.spawn should raise errors for invalid arguments', function()
+	local invalid_command = function() os.spawn(true) end
+	local invalid_callback = function() os.spawn('echo', false) end
+	local nonexistent_command = 'does-not-exist'
+	local command_does_not_exist = function() assert(os.spawn(nonexistent_command)) end
+
+	test.assert_raises(invalid_command, 'string expected')
+	test.assert_raises(invalid_callback, 'function or nil expected')
+	if not (WIN32 and CURSES) then -- 'cmd /c does not exist' prints to stderr and returns 1
+		test.assert_raises(command_does_not_exist, nonexistent_command .. ':')
+	end
+end)
+
+-- Coverage tests.
+
 test('os.spawn should emit an error when a stdout/stderr callback errors', function()
 	local event = test.stub(false) -- halt propagation to default error handler
 	local _<close> = test.connect(events.ERROR, event, 1)
-	local raises_error = function(output) error('error: ' .. output) end
+	local error_prefix = 'error: '
+	local raises_error = function(output) error(error_prefix .. output) end
 	local output = 'output'
 
 	os.spawn('echo ' .. output, raises_error)
 
 	test.wait(function() return event.called end)
-	test.assert(event.args[1]:find('error: ' .. output), 'should have included stdout error message')
+	local error_message = event.args[1]
+	test.assert_contains(error_message, error_prefix .. output)
 end)
 
 test('os.spawn should emit an error when an exit callback errors', function()
 	local event = test.stub(false) -- halt propagation to default error handler
 	local _<close> = test.connect(events.ERROR, event, 1)
-	local raises_error = function(code) error('error: ' .. code) end
+	local error_prefix = 'error: '
+	local raises_error = function(code) error(error_prefix .. code) end
 
 	os.spawn('echo', nil, nil, raises_error):wait()
 
 	test.assert_equal(event.called, true)
-	test.assert(event.args[1]:find('error: 0'), 'should have included exit error message')
+	local error_message = event.args[1]
+	test.assert_contains(error_message, error_prefix .. '0')
 end)

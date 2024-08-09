@@ -1,30 +1,30 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-test('assert_equal should assert two values are equal', function()
+test('test.assert_equal should assert two values are equal', function()
 	local equal = pcall(test.assert_equal, 'foo', 'foo')
 
 	test.assert_equal(equal, true)
 end)
 
-test('assert_equal should assert two tables are equal', function()
+test('test.assert_equal should assert two tables are equal', function()
 	local equal = pcall(test.assert_equal, {1, 2, 3}, {1, 2, 3})
 
 	test.assert_equal(equal, true)
 end)
 
-test('assert_equal should raise an error if two values are unequal', function()
+test('test.assert_equal should raise an error if two values are unequal', function()
 	local failed_assertion = function() test.assert_equal('foo', 1) end
 
 	test.assert_raises(failed_assertion, 'foo ~= 1')
 end)
 
-test('assert_equal should raise an error if two tables are unequal', function()
+test('test.assert_equal should raise an error if two tables are unequal', function()
 	local failed_assertion = function() test.assert_equal({1, 2, 3}, {1, 2}) end
 
 	test.assert_raises(failed_assertion, '{1, 2, 3} ~= {1, 2}')
 end)
 
-test('assert_raises should catch an error', function()
+test('test.assert_raises should catch an error', function()
 	local error_message = 'error!'
 	local raises_error = function() error(error_message) end
 
@@ -33,13 +33,35 @@ test('assert_raises should catch an error', function()
 	test.assert_equal(caught, true)
 end)
 
-test('assert_raises should raise an error if it did not catch an error', function()
+test('test.assert_raises should raise an error if it did not catch an error', function()
 	local no_error = function() end
 
 	local silent, errmsg = pcall(test.assert_raises, no_error)
 
 	test.assert_equal(silent, false)
 	test.assert(errmsg:find('error expected'), 'should have errored with "error expected"')
+end)
+
+test('test.assert_contains should assert a string contains a substring', function()
+	local subject = 'string'
+	local find = 's'
+
+	test.assert_contains(subject, find)
+end)
+
+test('test.assert_contains should assert a table contains a value', function()
+	local subject = {1, 2, 3}
+	local find = 1
+
+	test.assert_contains(subject, find)
+end)
+
+test('test.assert_contains should raise an error if the value could not be found', function()
+	local subject = 'string'
+	local find = 'does not exist'
+	local failed_assertion = function() test.assert_contains(subject, find) end
+
+	test.assert_raises(failed_assertion, string.format("'%s' was not found in '%s'", find, subject))
 end)
 
 test('stub should be uncalled at first', function()
@@ -103,12 +125,12 @@ test('defer should invoke its function when it goes out of scope', function()
 	test.assert_equal(f.called, true)
 end)
 
-test('tempfile should create a temporary file and defer deleting it', function()
+test('tmpfile should create a temporary file and defer deleting it', function()
 	local filename, created
 
 	do
-		local f, _<close> = test.tempfile()
-		filename = f
+		local f<close> = test.tmpfile()
+		filename = f.filename
 		created = lfs.attributes(filename, 'mode') == 'file'
 	end
 	local still_exists = lfs.attributes(filename) ~= nil
@@ -117,64 +139,87 @@ test('tempfile should create a temporary file and defer deleting it', function()
 	test.assert_equal(still_exists, false)
 end)
 
-test('tempfile should allow an optional file extension', function()
+test('tmpfile should allow an optional file extension', function()
 	local ext = '.txt'
-	local filename, _<close> = test.tempfile(ext)
+	local f<close> = test.tmpfile(ext)
 
-	test.assert(filename:match('%' .. ext .. '$'), ext)
+	test.assert(f.filename:match('%' .. ext .. '$'), ext)
 end)
 
-test('tempfile should allow optional file contents', function()
+test('tmpfile should allow optional file contents', function()
 	local contents = 'contents'
-	local filename, _<close> = test.tempfile(contents)
+	local f<close> = test.tmpfile(contents)
 
-	local f<close> = io.open(filename)
-	test.assert_equal(f:read('a'), contents)
+	test.assert_equal(f:read(), contents)
 end)
 
-test('tempdir should create a temporary directory and defer deleting it', function()
-	local dir
+test('tmpfile should optionally open the file', function()
+	local contents = 'contents'
+	local f<close> = test.tmpfile(contents, true)
+
+	test.assert_equal(buffer.filename, f.filename)
+	test.assert_equal(buffer:get_text(), contents)
+end)
+
+test('tmpfile should allow opening an empty file with extension', function()
+	local f<close> = test.tmpfile('.txt', true)
+
+	test.assert_contains(buffer.filename, '.txt')
+	test.assert_equal(buffer.length, 0)
+end)
+
+test('tmpdir should create a temporary directory and defer deleting it', function()
+	local dirname
 	local created = {}
 
 	do
-		local d, _<close> = test.tempdir{'file.txt', subdir = {'subfile.txt'}}
-		dir = d
-		created[dir] = lfs.attributes(dir, 'mode') == 'directory'
-		created['file.txt'] = lfs.attributes(dir .. '/file.txt', 'mode') == 'file'
-		created['subdir'] = lfs.attributes(dir .. '/subdir', 'mode') == 'directory'
-		created['subfile.txt'] = lfs.attributes(dir .. '/subdir/subfile.txt', 'mode') == 'file'
+		local dir<close> = test.tmpdir{'file.txt', subdir = {'subfile.txt'}}
+		dirname = dir.dirname
+		created[dirname] = lfs.attributes(dirname, 'mode') == 'directory'
+		created['file.txt'] = lfs.attributes(dirname .. '/file.txt', 'mode') == 'file'
+		created['subdir'] = lfs.attributes(dirname .. '/subdir', 'mode') == 'directory'
+		created['subfile.txt'] = lfs.attributes(dirname .. '/subdir/subfile.txt', 'mode') == 'file'
 	end
-	local still_exists = lfs.attributes(dir) ~= nil
+	local still_exists = lfs.attributes(dirname) ~= nil
 
-	test.assert_equal(created[dir], true)
+	test.assert_equal(created[dirname], true)
 	test.assert_equal(created['file.txt'], true)
 	test.assert_equal(created['subdir'], true)
 	test.assert_equal(created['subfile.txt'], true)
 	test.assert_equal(still_exists, false)
 end)
 
-test("tempdir should allow a file's contents to be given", function()
+test("tmpdir should allow a file's contents to be given", function()
 	local contents = 'contents'
 
-	local dir, _<close> = test.tempdir{'empty.txt', ['file.txt'] = contents}
+	local dir<close> = test.tmpdir{'empty.txt', ['file.txt'] = contents}
 
-	local empty_f<close> = io.open(dir .. '/empty.txt')
-	local f<close> = io.open(dir .. '/file.txt')
+	local empty_f<close> = io.open(dir.dirname .. '/empty.txt')
+	local f<close> = io.open(dir.dirname .. '/file.txt')
 	test.assert_equal(empty_f:read('a'), '')
 	test.assert_equal(f:read('a'), contents)
 end)
 
-test('tempdir should allow changing to it', function()
+test('tmpdir should allow changing to it', function()
 	local cwd = lfs.currentdir()
 	local changed_dir
 
 	do
-		local dir, _<close> = test.tempdir(true)
-		changed_dir = lfs.currentdir() == dir
+		local dir<close> = test.tmpdir(true)
+		changed_dir = lfs.currentdir() == dir.dirname
 	end
 
 	test.assert_equal(changed_dir, true)
 	test.assert_equal(lfs.currentdir(), cwd)
+end)
+
+test('tmpdir / path should return a functional path', function()
+	local file = 'file.txt'
+	local dir<close> = test.tmpdir{file}
+
+	local path = dir / file
+
+	test.assert_equal(path, lfs.abspath(file, dir.dirname))
 end)
 
 test('connect should connect to an event and defer disconnecting it', function()

@@ -1,290 +1,319 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
+test('io.open_file should open a file and set it up for editing', function()
+	local contents = 'text'
+	local f<close> = test.tmpfile(contents)
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer.filename, f.filename)
+	test.assert_equal(buffer:get_text(), contents)
+	test.assert_equal(buffer.modify, false)
+	test.assert_equal(buffer:can_undo(), false)
+end)
+
+test("io.open_file should auto-detect and set the file's lexer", function()
+	local f<close> = test.tmpfile('.lua')
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer.lexer_language, 'lua')
+end)
+
+test('io.open_file should emit events.FILE_OPENED', function()
+	local f<close> = test.tmpfile()
+	local file_opened = test.stub()
+	local _<close> = test.connect(events.FILE_OPENED, file_opened)
+
+	io.open_file(f.filename)
+
+	test.assert_equal(file_opened.called, true)
+	test.assert_equal(file_opened.args, {f.filename})
+end)
+
+test('io.open_file should open a list of files given', function()
+	local f1<close> = test.tmpfile()
+	local f2<close> = test.tmpfile()
+
+	io.open_file{f1.filename, f2.filename}
+
+	test.assert_equal(#_BUFFERS, 2)
+	test.assert_equal(_BUFFERS[1].filename, f1.filename)
+	test.assert_equal(_BUFFERS[2].filename, f2.filename)
+end)
+
+test('io.open_file should prompt for a file(s) to open if none was given', function()
+	local f<close> = test.tmpfile()
+	local select_filename = test.stub(f.filename)
+	local _<close> = test.mock(ui.dialogs, 'open', select_filename)
+
+	io.open_file()
+
+	test.assert_equal(select_filename.called, true)
+	test.assert_equal(buffer.filename, f.filename)
+	local dialog_opts = select_filename.args[1]
+	test.assert_contains(dialog_opts, 'multiple')
+end)
+
+test("io.open_file should prompt in the current filename's directory", function()
+	local file = 'file.txt'
+	local dir<close> = test.tmpdir{file}
+	io.open_file(dir / file)
+	local cancel_open = test.stub()
+	local _<close> = test.mock(ui.dialogs, 'open', cancel_open)
+
+	io.open_file()
+
+	local dialog_opts = cancel_open.args[1]
+	test.assert_equal(dialog_opts.dir, dir.dirname)
+end)
+
+test('io.open_file should switch to an already open file instead of opening a new copy', function()
+	local f<close> = test.tmpfile()
+	io.open_file(f.filename)
+	buffer.new()
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer.filename, f.filename)
+	test.assert_equal(#_BUFFERS, 2) -- should not be 3
+end)
+
+test('io.open_file should allow opening non-existent files', function()
+	local f<close> = test.tmpfile()
+	os.remove(f.filename)
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer.filename, f.filename)
+end)
+
+test('io.open_file should handle UTF-8-encoded files', function()
+	local utf8_contents = 'Copyright ©'
+	local f<close> = test.tmpfile(utf8_contents)
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer:get_text(), utf8_contents)
+	test.assert_equal(buffer.encoding, 'UTF-8')
+	test.assert_equal(buffer.code_page, buffer.CP_UTF8)
+end)
+
+test('io.open_file should handle CP1252-encoded files', function()
+	local utf8_contents = 'Copyright ©'
+	local cp1252_contents = utf8_contents:iconv('CP1252', 'UTF-8')
+	local f<close> = test.tmpfile(cp1252_contents)
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer:get_text(), utf8_contents)
+	test.assert_equal(buffer.encoding, 'CP1252')
+end)
+
+test('io.open_file should handle UTF-16-encoded files', function()
+	local utf8_contents = 'Copyright ©'
+	local utf16_contents = utf8_contents:iconv('UTF-16', 'UTF-8')
+	local f<close> = test.tmpfile(utf16_contents)
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer:get_text(), utf8_contents)
+	test.assert_equal(buffer.encoding, 'UTF-16')
+end)
+
+test('io.open_file should handle binary files', function()
+	local binary_contents = '\x00\xff\xff'
+	local f<close> = test.tmpfile(binary_contents)
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer:get_text(), binary_contents)
+	test.assert_equal(buffer.encoding, nil)
+	test.assert_equal(buffer.code_page, 0)
+end)
+
+test('io.open_file should detect and switch to spaces', function()
+	local f<close> = test.tmpfile(test.lines{
+		'1', -- no indent
+		'    ', -- ignore blank line
+		'          2', -- too much indentation
+		'  3', -- should detect this
+		'    4' -- should ignore
+	})
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer.use_tabs, false)
+	test.assert_equal(buffer.tab_width, 2)
+end)
+
+test('io.open_file should not detect indentation if io.detect_indentation is disabled', function()
+	local _<close> = test.mock(io, 'detect_indentation', false)
+	local spaces_2 = '  spaces'
+	local f<close> = test.tmpfile(spaces_2)
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer.use_tabs, true)
+end)
+
+test('io.open_file should detect and switch to tabs if buffer.use_tabs is false', function()
+	local set_indentation_spaces = function() buffer.use_tabs = false end
+	local _<close> = test.connect(events.BUFFER_NEW, set_indentation_spaces) -- temporary
+	local f<close> = test.tmpfile(test.lines{'1', '\t2', '3'})
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer.use_tabs, true)
+end)
+
+test('io.open_file should detect LF', function()
+	local f<close> = test.tmpfile('\n')
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer.eol_mode, buffer.EOL_LF)
+end)
+
+test('io.open_file should detect CR+LF', function()
+	local f<close> = test.tmpfile('\r\n')
+
+	io.open_file(f.filename)
+
+	test.assert_equal(buffer.eol_mode, buffer.EOL_CRLF)
+end)
+
+test('io.open_file should scroll to the beginning of the file', function()
+	local contents = string.rep('\n', view.lines_on_screen * 2)
+	local f1<close> = test.tmpfile(contents)
+	local f2<close> = test.tmpfile(contents)
+
+	io.open_file(f1.filename)
+	buffer:document_end()
+	view.x_offset = 10
+
+	io.open_file(f2.filename)
+
+	test.assert_equal(view.first_visible_line, 1)
+	test.assert_equal(view.x_offset, 0)
+end)
+
+test('io.open_file should keep track of the most recently opened files', function()
+	local _<close> = test.mock(io, 'recent_files', {})
+	local f1<close> = test.tmpfile('.1')
+	local f2<close> = test.tmpfile('.2')
+
+	io.open_file{f1.filename, f2.filename}
+
+	test.assert_equal(io.recent_files, {f2.filename, f1.filename})
+end)
+
+test('io.open_file should not duplicate any recently opened files', function()
+	local _<close> = test.mock(io, 'recent_files', {})
+	local f1<close> = test.tmpfile('.1')
+	local f2<close> = test.tmpfile('.2')
+
+	io.open_file(f1.filename)
+	buffer:close()
+
+	io.open_file{f2.filename, f1.filename}
+
+	test.assert_equal(io.recent_files, {f1.filename, f2.filename})
+end)
+
 test('io.open_file should raise errors for invalid arguments', function()
 	local invalid_filename = function() io.open_file(1) end
 
 	test.assert_raises(invalid_filename, 'string/table/nil expected')
 end)
 
-test('io.open_file should open a file and set it up for editing', function()
+test('buffer.reload should discard any unsaved changes', function()
 	local contents = 'text'
-	local filename, _<close> = test.tempfile(contents)
-
-	io.open_file(filename)
-
-	test.assert_equal(buffer.filename, filename)
-	test.assert_equal(buffer:get_text(), contents)
-	test.assert_equal(buffer.modify, false)
-	test.assert_equal(buffer.lexer_language, 'text')
-end)
-
-test('io.open_file should prompt for a file to open if none was given', function()
-	local filename, _<close> = test.tempfile()
-	local select_filename = test.stub(filename)
-	local _<close> = test.mock(ui.dialogs, 'open', select_filename)
-
-	io.open_file()
-
-	test.assert_equal(buffer.filename, filename)
-end)
-
-test('io.open_file should emit an event', function()
-	local filename, _<close> = test.tempfile()
-	local event = test.stub()
-	local _<close> = test.connect(events.FILE_OPENED, event)
-
-	io.open_file(filename)
-
-	test.assert_equal(event.called, true)
-	test.assert_equal(event.args, {filename})
-end)
-
-test('io.open_file should switch to an already open file instead of opening a new copy', function()
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
-	buffer.new()
-
-	io.open_file(filename)
-
-	test.assert_equal(buffer.filename, filename)
-	test.assert_equal(#_BUFFERS, 2)
-end)
-
-test('io.open_file should raise an error if it cannot open or read a file', function()
-	if LINUX then
-		local cannot_open = function() io.open_file('/etc/gshadow-') end
-
-		test.assert_raises(cannot_open, 'cannot open /etc/gshadow-: Permission denied')
-	end
-	-- TODO: find a case where the file can be opened, but not read
-end)
-
-for file, encoding in pairs{utf8 = 'UTF-8', cp1252 = 'CP1252', utf16 = 'UTF-16', binary = 'binary'} do
-	test('io.open_file should detect encoding: ' .. encoding, function()
-		local filename = _HOME .. '/test/file_io/' .. file
-		local f<close> = io.open(filename, 'rb')
-		local contents = f:read('a')
-
-		io.open_file(filename)
-
-		if encoding ~= 'binary' then
-			test.assert_equal(buffer:get_text():iconv(encoding, 'UTF-8'), contents)
-			test.assert_equal(buffer.encoding, encoding)
-			test.assert_equal(buffer.code_page, buffer.CP_UTF8)
-		else
-			test.assert_equal(buffer:get_text(), contents)
-			test.assert_equal(buffer.encoding, nil)
-			test.assert_equal(buffer.code_page, 0)
-		end
-	end)
-end
-
-test('io.open_file should detect and switch to tabs', function()
-	local set_indentation_spaces = function() buffer.use_tabs = false end
-	local _<close> = test.connect(events.BUFFER_NEW, set_indentation_spaces) -- temporary
-
-	io.open_file(_HOME .. '/test/file_io/tabs')
-
-	test.assert_equal(buffer.use_tabs, true)
-end)
-
-test('io.open_file should not detect and switch to tabs if io.detect_indentation is disabled',
-	function()
-		local _<close> = test.mock(io, 'detect_indentation', false)
-		local set_indentation_spaces = function() buffer.use_tabs = false end
-		local _<close> = test.connect(events.BUFFER_NEW, set_indentation_spaces) -- temporary
-
-		io.open_file(_HOME .. '/test/file_io/tabs')
-
-		test.assert_equal(buffer.use_tabs, false)
-	end)
-
-test('io.open_file should detect and switch to spaces', function()
-	local set_indentation_tabs = function() buffer.use_tabs, buffer.tab_width = true, 4 end
-	local _<close> = test.connect(events.BUFFER_NEW, set_indentation_tabs) -- temporary
-
-	io.open_file(_HOME .. '/test/file_io/spaces')
-
-	test.assert_equal(buffer.use_tabs, false)
-	test.assert_equal(buffer.tab_width, 2)
-end)
-
-test('io.open_file should not detect and switch to spaces if io.detect_indentation is disabled',
-	function()
-		local _<close> = test.mock(io, 'detect_indentation', false)
-		local set_indentation_tabs = function() buffer.use_tabs, buffer.tab_width = true, 4 end
-		local _<close> = test.connect(events.BUFFER_NEW, set_indentation_tabs) -- temporary
-
-		io.open_file(_HOME .. '/test/file_io/spaces')
-
-		test.assert_equal(buffer.use_tabs, true)
-		test.assert_equal(buffer.tab_width, 4)
-	end)
-
-for file, mode in pairs{lf = buffer.EOL_LF, crlf = buffer.EOL_CRLF} do
-	test('io.open_file should detect end-of-line (EOL) mode: ' .. file:upper(), function()
-		local filename = _HOME .. '/test/file_io/' .. file
-
-		io.open_file(filename)
-
-		test.assert_equal(buffer.eol_mode, mode)
-	end)
-end
-
-test('io.open_file should scroll to the beginning of the file', function()
-	local contents = string.rep('\n', 100)
-	local filename1, _<close> = test.tempfile(contents)
-	local filename2, _<close> = test.tempfile(contents)
-
-	io.open_file(filename1)
-	buffer:goto_line(100)
-	view.x_offset = 10
-
-	io.open_file(filename2)
-
-	test.assert_equal(view.first_visible_line, 1)
-	test.assert_equal(view.x_offset, 0)
-end)
-
-test("io.open_file should auto-detect and set the file's lexer", function()
-	local filename, _<close> = test.tempfile('.lua')
-
-	io.open_file(filename)
-
-	test.assert_equal(buffer.lexer_language, 'lua')
-end)
-
-test('io.open_file should keep track of the most recently opened files', function()
-	local _<close> = test.mock(io, 'recent_files', {})
-	local file1, _<close> = test.tempfile('.1')
-	local file2, _<close> = test.tempfile('.2')
-
-	io.open_file(file1)
-	io.open_file(file2)
-
-	test.assert_equal(io.recent_files, {file2, file1})
-end)
-
-test('io.open_file should not duplicate any recently opened files', function()
-	local _<close> = test.mock(io, 'recent_files', {})
-	local file1, _<close> = test.tempfile('.1')
-	local file2, _<close> = test.tempfile('.2')
-
-	io.open_file(file1)
-	buffer:close()
-	io.open_file(file2)
-
-	io.open_file(file1)
-
-	test.assert_equal(io.recent_files, {file1, file2})
-end)
-
-test('buffer:reload should discard any unsaved changes', function()
-	io.open_file(_HOME .. '/test/file_io/utf8')
-	local file_contents = buffer:get_text()
-	buffer:append_text('changed')
+	local f<close> = test.tmpfile(contents, true)
+	buffer:clear_all()
 
 	buffer:reload()
 
-	test.assert_equal(buffer:get_text(), file_contents)
+	test.assert_equal(buffer:get_text(), contents)
 	test.assert_equal(buffer.modify, false)
 end)
 
-test('buffer:set_encoding should raise errors for invalid arguments', function()
-	local invalid_encoding = function() buffer:set_encoding(true) end
-
-	test.assert_raises(invalid_encoding, 'string/nil expected')
-end)
-
-test('buffer:set_encoding should handle multi- to single-byte changes and mark the buffer as dirty',
+test('buffer.set_encoding should handle multi- to single-byte changes and mark the buffer as dirty',
 	function()
-		io.open_file(_HOME .. '/test/file_io/utf8')
-		local file_contents = buffer:get_text()
+		local utf8_contents = 'Copyright ©'
+		local f<close> = test.tmpfile(utf8_contents, true)
 		local encoding = 'CP1252'
 
 		buffer:set_encoding(encoding)
 
 		test.assert_equal(buffer.encoding, encoding)
-		test.assert_equal(buffer.code_page, buffer.CP_UTF8)
-		test.assert_equal(buffer:get_text(), file_contents) -- fundamentally the same
+		test.assert_equal(buffer:get_text(), utf8_contents) -- only different written to disk
 		test.assert_equal(buffer.modify, true)
 	end)
 
-test('buffer:set_encoding should handle single-byte changes without marking buffer dirty',
+test('buffer.set_encoding should handle single-byte changes without marking buffer dirty',
 	function()
-		io.open_file(_HOME .. '/test/file_io/cp936')
+		local utf8_contents = '中文\n'
+		local encoding = 'CP936'
+		local cp936_contents = utf8_contents:iconv(encoding, 'UTF-8')
+		local f<close> = test.tmpfile(cp936_contents, true)
 		local initially_detected_cp1252 = buffer.encoding == 'CP1252' -- incorrectly detected
-		local correct_encoding = 'CP936'
-		local correct_contents = '中文\n'
-		local initially_showed_cp1252 = buffer:get_text() ~= correct_contents
+		local initially_showed_cp1252 = buffer:get_text() ~= utf8_contents
 
-		buffer:set_encoding(correct_encoding)
+		buffer:set_encoding(encoding)
 
 		test.assert_equal(initially_detected_cp1252, true)
 		test.assert_equal(initially_showed_cp1252, true)
-		test.assert_equal(buffer.encoding, correct_encoding)
-		test.assert_equal(buffer:get_text(), correct_contents)
+		test.assert_equal(buffer.encoding, encoding)
+		test.assert_equal(buffer:get_text(), utf8_contents)
 		test.assert_equal(buffer.modify, false)
 	end)
 
-test('buffer:set_encoding should handle single- to multi-byte changes and mark the buffer as dirty',
+test('buffer.set_encoding should handle single- to multi-byte changes and mark the buffer as dirty',
 	function()
-		io.open_file(_HOME .. '/test/file_io/cp1252')
-		local text = buffer:get_text()
+		local utf8_contents = 'Copyright ©'
+		local cp1252_contents = utf8_contents:iconv('CP1252', 'UTF-8')
+		local f<close> = test.tmpfile(cp1252_contents, true)
 		local encoding = 'UTF-16'
 
 		buffer:set_encoding(encoding)
 
 		test.assert_equal(buffer.encoding, encoding)
-		test.assert_equal(buffer:get_text(), text)
+		test.assert_equal(buffer:get_text(), utf8_contents)
 		test.assert_equal(buffer.modify, true)
 	end)
 
-test('buffer:save should save the file', function()
-	local filename, _<close> = test.tempfile()
-	os.remove(filename) -- should not exist yet
-	io.open_file(_HOME .. '/test/file_io/utf8')
-	buffer.filename = filename -- pretend this was the opened file
-	local text = buffer:get_text()
+test('buffer.set_encoding should raise errors for invalid arguments', function()
+	local invalid_encoding = function() buffer:set_encoding(true) end
+
+	test.assert_raises(invalid_encoding, 'string/nil expected')
+end)
+
+test('buffer.save should save the file and mark the buffer as unmodified', function()
+	local contents = 'text'
+	local f<close> = test.tmpfile(contents, true)
+	buffer:new_line()
 
 	local saved = buffer:save()
 
 	test.assert_equal(saved, true)
-	local f<close> = assert(io.open(filename, 'rb'))
-	local contents = f:read('a')
-	test.assert_equal(contents, text)
-end)
-
-test('buffer:save should mark the file as having no changes', function()
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
-	buffer:append_text('changed')
-
-	buffer:save()
-
+	test.assert_equal(buffer:get_text(), f:read())
 	test.assert_equal(buffer.modify, false)
 end)
 
-test('buffer:save should not write a trailing newline if io.ensure_final_newline is disabled',
-	function()
-		local _<close> = test.mock(io, 'ensure_final_newline', false)
-		local filename, _<close> = test.tempfile()
-		io.open_file(filename)
-		local contents = 'text'
-		buffer:append_text(contents)
+test('buffer.save should prompt for a filename if the buffer does not have one', function()
+	local f<close> = test.tmpfile()
+	local select_filename = test.stub(f.filename)
+	local _<close> = test.mock(ui.dialogs, 'save', select_filename)
 
-		buffer:save()
+	buffer:save()
 
-		test.assert_equal(buffer:get_text(), contents)
-		local f<close> = io.open(filename, 'rb')
-		local file_contents = f:read('a')
-		test.assert_equal(file_contents, contents)
-	end)
+	test.assert_equal(buffer.filename, f.filename)
+end)
 
-test('buffer:save should write a trailing newline if io.ensure_final_newline is enabled', function()
+test('buffer.save should write a trailing newline if io.ensure_final_newline is enabled', function()
 	local _<close> = test.mock(io, 'ensure_final_newline', true)
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
+	local f<close> = test.tmpfile(true)
 	local contents = 'text'
 	buffer:append_text(contents)
 
@@ -295,49 +324,89 @@ end)
 
 test('buffer:save should never write a trailing newline for binary files', function()
 	local _<close> = test.mock(io, 'ensure_final_newline', true)
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
-	local binary_contents = 'binary'
-	buffer:append_text(binary_contents)
-	buffer.encoding = nil -- pretend it was detected as a binary file
+	local binary_contents = '\x00\xff\xff'
+	local f<close> = test.tmpfile(binary_contents, true)
 
 	buffer:save()
 
 	test.assert_equal(buffer:get_text(), binary_contents)
 end)
 
-test('buffer:save should emit before and after events', function()
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
-	os.remove(filename) -- delete for tracking before and after events
+test('buffer.save should emit events.FILE_BEFORE_SAVE and events.FILE_AFTER_SAVE', function()
+	local f<close> = test.tmpfile(true)
+	os.remove(f.filename) -- delete for tracking before and after events
 
 	local file_exists = {}
 	local check_file_exists = function(filename)
 		file_exists[#file_exists + 1] = lfs.attributes(filename, 'mode') == 'file'
 	end
-	local before = test.stub(check_file_exists)
-	local after = test.stub(check_file_exists)
-	local _<close> = test.connect(events.FILE_BEFORE_SAVE, before)
-	local _<close> = test.connect(events.FILE_AFTER_SAVE, after)
+	local before_save = test.stub(check_file_exists)
+	local after_save = test.stub(check_file_exists)
+	local _<close> = test.connect(events.FILE_BEFORE_SAVE, before_save)
+	local _<close> = test.connect(events.FILE_AFTER_SAVE, after_save)
 
 	buffer:save()
 
-	test.assert_equal(before.called, true)
-	test.assert_equal(before.args, {filename})
-	test.assert_equal(after.called, true)
-	test.assert_equal(after.args, {filename})
+	test.assert_equal(before_save.called, true)
+	test.assert_equal(before_save.args, {f.filename})
+	test.assert_equal(after_save.called, true)
+	test.assert_equal(after_save.args, {f.filename})
 	test.assert_equal(file_exists, {false, true})
 end)
 
-test("buffer:save should remove a buffer's type once it has a filename", function()
-	local filename, _<close> = test.tempfile()
-	local select_filename = test.stub(filename)
+test('buffer.save_as should save with a given filename', function()
+	local f<close> = test.tmpfile()
+	os.remove(f.filename) -- should not exist yet
+
+	local saved = buffer:save_as(f.filename)
+	local file_exists = lfs.attributes(f.filename, 'mode') == 'file'
+
+	test.assert_equal(saved, true)
+	test.assert_equal(buffer.filename, f.filename)
+	test.assert_equal(file_exists, true)
+end)
+
+test('buffer.save_as should prompt for a file to save to if none was given', function()
+	local f<close> = test.tmpfile()
+	local select_filename = test.stub(f.filename)
 	local _<close> = test.mock(ui.dialogs, 'save', select_filename)
-	buffer._type = '[Typed Buffer]'
 
-	buffer:save()
+	local saved = buffer:save_as()
 
-	test.assert_equal(buffer._type, nil)
+	test.assert_equal(saved, true)
+end)
+
+test('buffer.save_as should prompt with the current file', function()
+	local file = 'file.txt'
+	local dir<close> = test.tmpdir{file}
+	io.open_file(dir / file)
+	local cancel_save = test.stub()
+	local _<close> = test.mock(ui.dialogs, 'save', cancel_save)
+
+	buffer:save_as()
+
+	local dialog_opts = cancel_save.args[1]
+	test.assert_equal(dialog_opts.dir, dir.dirname)
+	test.assert_equal(dialog_opts.file, file)
+end)
+
+test('buffer.save_as should update the lexer', function()
+	local f<close> = test.tmpfile('.lua')
+
+	buffer:save_as(f.filename)
+
+	test.assert_equal(buffer.lexer_language, 'lua')
+end)
+
+test('buffer:save_as should emit a distinct events.FILE_AFTER_SAVE', function()
+	local f<close> = test.tmpfile()
+	local after_save = test.stub()
+	local _<close> = test.connect(events.FILE_AFTER_SAVE, after_save)
+
+	buffer:save_as(f.filename)
+
+	test.assert_equal(after_save.called, 2) -- TODO: ideally this would only be called once
+	test.assert_equal(after_save.args, {f.filename, true})
 end)
 
 test('buffer:save_as should raise errors for invalid arguments', function()
@@ -346,58 +415,14 @@ test('buffer:save_as should raise errors for invalid arguments', function()
 	test.assert_raises(invalid_filename, 'string/nil expected')
 end)
 
-test('buffer:save_as should save with a given filename', function()
-	local filename, _<close> = test.tempfile()
-	os.remove(filename) -- should not exist yet
-
-	local saved = buffer:save_as(filename)
-	local file_exists = lfs.attributes(filename, 'mode') == 'file'
-
-	test.assert_equal(saved, true)
-	test.assert_equal(buffer.filename, filename)
-	test.assert_equal(file_exists, true)
-end)
-
-test('buffer:save_as should prompt for a file to save to if none was given', function()
-	local filename, _<close> = test.tempfile()
-	local select_filename = test.stub(filename)
-	local _<close> = test.mock(ui.dialogs, 'save', select_filename)
-
-	local saved = buffer:save_as()
-
-	test.assert_equal(saved, true)
-end)
-
-test('buffer:save_as should update the lexer', function()
-	local filename, _<close> = test.tempfile('.lua')
-
-	buffer:save_as(filename)
-
-	test.assert_equal(buffer.lexer_language, 'lua')
-end)
-
-test('buffer:save_as should emit a distinct event afterwards', function()
-	local filename, _<close> = test.tempfile()
-	local event = test.stub()
-	local _<close> = test.connect(events.FILE_AFTER_SAVE, event)
-
-	buffer:save_as(filename)
-
-	test.assert_equal(event.called, 2) -- TODO: ideally this would only be called once
-	test.assert_equal(event.args, {filename, true})
-end)
-
 test('io.save_all_files should save all modified files', function()
-	local saved = setmetatable({}, {__index = function() return false end})
-	local record_saved = function(filename) saved[filename] = true end
-	local _<close> = test.connect(events.FILE_AFTER_SAVE, record_saved)
+	local saved = test.stub()
+	local _<close> = test.connect(events.FILE_AFTER_SAVE, saved)
 
-	local modified_file, _<close> = test.tempfile()
-	io.open_file(modified_file)
+	local modified_file<close> = test.tmpfile(true)
 	buffer:append_text('modified_file')
 
-	local unmodified_file, _<close> = test.tempfile()
-	io.open_file(unmodified_file)
+	local unmodified_file<close> = test.tmpfile(true)
 
 	local modified_untitled_buffer = buffer.new()
 	buffer:append_text('new')
@@ -409,32 +434,27 @@ test('io.save_all_files should save all modified files', function()
 	local saved_all = io.save_all_files()
 
 	test.assert_equal(saved_all, true)
-	test.assert_equal(saved[modified_file], true)
-	test.assert_equal(saved[unmodified_file], false)
-	test.assert_equal(saved[modified_untitled_buffer], false)
-	test.assert_equal(saved[modified_typed_buffer], false)
+	test.assert_equal(saved.called, true) -- only one call
+	test.assert_equal(saved.args, {modified_file.filename})
 end)
 
-test('io.save_all_files should switch to untitled buffers and prompt for files to save to',
-	function()
-		buffer:append_text('modified')
+test('io.save_all_files(true) should prompt to save untitled files', function()
+	buffer:append_text('modified')
 
-		-- Open another file to verify the untitled buffer is switched to prior to saving.
-		local filename, _<close> = test.tempfile()
-		io.open_file(filename)
+	-- Open another file to verify the untitled buffer is switched to prior to saving.
+	local f<close> = test.tmpfile(true)
 
-		local switched_to_untitled_buffer = false
-		local check_for_untitled = function() switched_to_untitled_buffer = not buffer.filename end
-		local _<close> = test.connect(events.BUFFER_AFTER_SWITCH, check_for_untitled)
-		local do_not_save = test.stub()
-		local _<close> = test.mock(ui.dialogs, 'save', do_not_save)
+	local switched_to_untitled_buffer = false
+	local check_for_untitled_buffer = function() switched_to_untitled_buffer = not buffer.filename end
+	local cancel_save = test.stub(check_for_untitled_buffer)
+	local _<close> = test.mock(ui.dialogs, 'save', cancel_save)
 
-		io.save_all_files(true)
+	io.save_all_files(true)
 
-		test.assert_equal(switched_to_untitled_buffer, true)
-	end)
+	test.assert_equal(switched_to_untitled_buffer, true)
+end)
 
-test('buffer:close should immediately close a buffer without changes', function()
+test('buffer.close should immediately close a buffer without changes', function()
 	buffer.new()
 
 	local closed = buffer:close()
@@ -443,30 +463,30 @@ test('buffer:close should immediately close a buffer without changes', function(
 	test.assert_equal(#_BUFFERS, 1)
 end)
 
-test('buffer:close should prompt before closing a modified buffer', function()
+test('buffer.close should prompt before closing a modified buffer', function()
 	local cancel_close = test.stub(2)
 	local _<close> = test.mock(ui.dialogs, 'message', cancel_close)
-	buffer.new():append_text('text')
+	local contents = 'text'
+	buffer:append_text(contents)
 
 	local closed = buffer:close()
 
 	test.assert_equal(not closed, true)
-	test.assert_equal(#_BUFFERS, 2)
+	test.assert_equal(buffer:get_text(), contents)
 end)
 
-test('buffer:close should allow closing a modified buffer without prompting', function()
-	buffer.new():append_text('text')
+test('buffer.close should allow closing a modified buffer without prompting', function()
+	buffer:append_text('text')
 
 	local closed = buffer:close(true)
 
 	test.assert_equal(closed, true)
 end)
 
-test('external file modifications should be detected', function()
+test('external file modifications should emit events.FILE_CHANGED', function()
 	local file_changed = test.stub(false) -- halt propagation to default, prompting handler
 	local _<close> = test.connect(events.FILE_CHANGED, file_changed, 1)
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
+	local f<close> = test.tmpfile(true)
 
 	-- Mock an external file modification.
 	local request_mod_time = function(_, request) return request == 'modification' end
@@ -476,16 +496,19 @@ test('external file modifications should be detected', function()
 	buffer.new():close() -- trigger check
 
 	test.assert_equal(file_changed.called, true)
-	test.assert_equal(file_changed.args, {filename})
+	test.assert_equal(file_changed.args, {f.filename})
 end)
 
-test('externally modified files should prompt for reload', function()
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
-
-	local reloaded_contents = 'reloaded'
-	io.open(filename, 'wb'):write(reloaded_contents):close()
+local function open_and_externally_modify_tmpfile(new_contents)
+	local f = test.tmpfile(true)
+	if new_contents then f:write(new_contents) end
 	buffer.mod_time = buffer.mod_time - 1 -- simulate modification in the past
+	return f
+end
+
+test('externally modified files should prompt for reload', function()
+	local reloaded_contents = 'reloaded'
+	local f<close> = open_and_externally_modify_tmpfile(reloaded_contents)
 	local reload = test.stub(1)
 	local _<close> = test.mock(ui.dialogs, 'message', reload)
 
@@ -498,10 +521,7 @@ test('io.close_all_buffers should close all unmodified buffers without checking 
 	function()
 		local file_changed = test.stub(false) -- prevent propagation to default, prompting handler
 		local _<close> = test.connect(events.FILE_CHANGED, file_changed, 1)
-		local filename, _<close> = test.tempfile()
-
-		io.open_file(filename)
-		buffer.mod_time = buffer.mod_time - 1 -- simulate file modified
+		local f<close> = open_and_externally_modify_tmpfile()
 		buffer.new()
 
 		local closed_all = io.close_all_buffers()
@@ -509,14 +529,13 @@ test('io.close_all_buffers should close all unmodified buffers without checking 
 		test.assert_equal(closed_all, true)
 		test.assert_equal(file_changed.called, false)
 		test.assert_equal(#_BUFFERS, 1)
-		test.assert(not buffer.filename and not buffer._type, 'should have closed all buffers')
+		test.assert_equal(buffer.filename, nil)
 	end)
 
 test('buffer.reload should use the global buffer', function()
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
 	local contents = 'text'
-	io.open(filename, 'wb'):write(contents):close()
+	local f<close> = test.tmpfile(true)
+	f:write(contents)
 
 	buffer.reload()
 
@@ -524,41 +543,38 @@ test('buffer.reload should use the global buffer', function()
 end)
 
 test('buffer.save should use the global buffer', function()
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
+	local f<close> = test.tmpfile(true)
 
 	local saved = buffer.save()
 
 	test.assert_equal(saved, true)
 end)
 
-test('buffer.save_as should prompt for the global buffer', function()
-	local filename, _<close> = test.tempfile()
-	local select_filename = test.stub(filename)
-	local _<close> = test.mock(ui.dialogs, 'save', select_filename)
+test('buffer.save_as should prompt to save the global buffer', function()
+	local f<close> = test.tmpfile(true)
+	local name = f.filename:match('[^/\\]+$')
+	local cancel_save = test.stub()
+	local _<close> = test.mock(ui.dialogs, 'save', cancel_save)
 
-	local saved = buffer.save_as()
+	buffer.save_as()
 
-	test.assert_equal(saved, true)
+	test.assert_equal(cancel_save.args[1].file, name)
 end)
 
 test('buffer.close should use the global buffer', function()
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
+	local f<close> = test.tmpfile(true)
 
 	buffer.close()
 
-	test.assert_equal(#_BUFFERS, 1)
+	test.assert_equal(buffer.filename, nil)
 end)
 
 test('io.open_recent_file should prompt for a recently opened file if it still exists', function()
 	local _<close> = test.mock(io, 'recent_files', {})
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
+	local f<close> = test.tmpfile(true)
 	buffer:close()
 	do
-		local deleted, _<close> = test.tempfile()
-		io.open_file(deleted)
+		local _<close> = test.tmpfile(true)
 		buffer:close()
 	end -- deletes the file
 
@@ -567,13 +583,12 @@ test('io.open_recent_file should prompt for a recently opened file if it still e
 
 	io.open_recent_file()
 
-	test.assert_equal(buffer.filename, filename)
+	test.assert_equal(buffer.filename, f.filename)
 end)
 
 test('io.open_recent_file should allow clearing the list during prompt', function()
 	local _<close> = test.mock(io, 'recent_files', {})
-	local filename, _<close> = test.tempfile()
-	io.open_file(filename)
+	local f<close> = test.tmpfile(true)
 	buffer:close()
 
 	local clear_recent_files = test.stub({1}, 3)
@@ -582,7 +597,48 @@ test('io.open_recent_file should allow clearing the list during prompt', functio
 	io.open_recent_file()
 
 	test.assert_equal(io.recent_files, {})
-	test.assert_equal(#_BUFFERS, 1)
+	test.assert_equal(buffer.filename, nil)
+end)
+
+test('io.get_project_root should detect the project root from the working directory', function()
+	local dir<close> = test.tmpdir({['.hg'] = {}}, true)
+
+	local root = io.get_project_root()
+
+	test.assert_equal(root, dir.dirname)
+end)
+
+test('io.get_project_root should detect the project root from the current file', function()
+	local subdir = 'subdir'
+	local file = 'file.txt'
+	local dir<close> = test.tmpdir{['.hg'] = {}, [subdir] = {file}}
+	io.open_file(dir / subdir .. '/' .. file)
+
+	local root = io.get_project_root()
+
+	test.assert_equal(root, dir.dirname)
+end)
+
+test('io.get_project_root should detect the project root from a given path', function()
+	local subdir = 'subdir'
+	local dir<close> = test.tmpdir{['.hg'] = {}, [subdir] = {}}
+
+	local root = io.get_project_root(dir.dirname)
+	local same_root = io.get_project_root(dir / subdir)
+
+	test.assert_equal(root, dir.dirname)
+	test.assert_equal(same_root, root)
+end)
+
+test('io.get_project_root should allow a submodule directory to be the project root', function()
+	local subdir = 'subdir'
+	local file = 'file.txt'
+	local dir<close> = test.tmpdir{['.git'] = {}, [subdir] = {'.git', file}}
+	io.open_file(dir / subdir .. '/' .. file)
+
+	local root = io.get_project_root(true)
+
+	test.assert_equal(root, dir / subdir)
 end)
 
 test('io.get_project_root should raise errors for invalid arguments', function()
@@ -591,49 +647,69 @@ test('io.get_project_root should raise errors for invalid arguments', function()
 	test.assert_raises(invalid_path, 'string/nil expected')
 end)
 
-test('io.get_project_root should detect the project root from the working directory', function()
-	local dir, _<close> = test.tempdir({['.hg'] = {}}, true)
+test('io.quick_open should prompt for a project file to open', function()
+	local file = 'file.txt'
+	local dir<close> = test.tmpdir({['.hg'] = {}, file}, true)
+	local select_first_item = test.stub({1})
+	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 
-	local root = io.get_project_root()
+	io.quick_open()
 
-	test.assert_equal(root, dir)
+	test.assert_equal(buffer.filename, dir / file)
 end)
 
-test('io.get_project_root should detect the project root from the current file', function()
-	local dir, _<close> = test.tempdir{['.hg'] = {}, subdir = {'file.txt'}}
-	io.open_file(dir .. '/subdir/file.txt')
+test('io.quick_open should prompt for a file to open from a given directory', function()
+	local file = 'file.txt'
+	local dir<close> = test.tmpdir{['.hg'] = {}, file}
+	local select_first_item = test.stub({1})
+	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 
-	local root = io.get_project_root()
+	io.quick_open(dir.dirname)
 
-	test.assert_equal(root, dir)
+	test.assert_equal(buffer.filename, dir / file)
 end)
 
-test('io.get_project_root should detect the project root from a given path', function()
-	local dir, _<close> = test.tempdir{['.hg'] = {}, subdir = {}}
-	local root = io.get_project_root(dir)
+test('io.quick_open should prompt for a file to open, subject to a filter', function()
+	local file = 'file.txt'
+	local subdir = 'subdir'
+	local subfile_lua = 'subfile.lua'
+	local dir<close> = test.tmpdir{['.hg'] = {}, file, [subdir] = {subfile_lua}}
+	local select_first_item = test.stub({1})
+	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 
-	local same_root = io.get_project_root(dir .. '/subdir')
+	io.quick_open(dir.dirname, '.lua')
 
-	test.assert_equal(root, dir)
-	test.assert_equal(same_root, dir)
+	test.assert_equal(buffer.filename, dir / subdir .. '/' .. subfile_lua)
 end)
 
-test('io.get_project_root should handle not detecting the project root', function()
-	local dir, _<close> = test.tempdir()
+test('io.quick_open should prompt for a file to open, subject to an exclusive filter', function()
+	local file = 'file.txt'
+	local subdir = 'subdir'
+	local subfile_lua = 'subfile.lua'
+	local dir<close> = test.tmpdir{['.hg'] = {}, file, [subdir] = {subfile_lua}}
+	local select_first_item = test.stub({1})
+	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 
-	local root = io.get_project_root(dir)
+	io.quick_open(dir.dirname, {'!.txt'})
 
-	test.assert_equal(root, nil)
+	test.assert_equal(buffer.filename, dir / subdir .. '/' .. subfile_lua)
 end)
 
-test('io.get_project_root should allow a submodule directory to be the project root', function()
-	local dir, _<close> = test.tempdir{['.git'] = {}, subdir = {'.git', 'file.txt'}}
-	local subdir = dir .. '/subdir'
-	io.open_file(subdir .. '/bar.txt')
+test('io.quick_open should prompt for a file to open, but at a maximum depth', function()
+	local file = 'file.txt'
+	local subdir = 'subdir'
+	local subfile_lua = 'subfile.lua'
+	local dir<close> = test.tmpdir{['.hg'] = {}, file, [subdir] = {subfile_lua}}
+	local _<close> = test.mock(io, 'quick_open_max', 1)
+	local select_first_item = test.stub({1})
+	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
+	local max_reached_ok = test.stub(1)
+	local _<close> = test.mock(ui.dialogs, 'message', max_reached_ok)
 
-	local root = io.get_project_root(true)
+	io.quick_open(dir.dirname)
 
-	test.assert_equal(root, subdir)
+	test.assert_equal(buffer.filename, dir / file)
+	test.assert_equal(max_reached_ok.called, true)
 end)
 
 test('io.quick_open should raise errors for invalid arguments', function()
@@ -644,61 +720,19 @@ test('io.quick_open should raise errors for invalid arguments', function()
 	test.assert_raises(invalid_filter, 'string/table/nil expected')
 end)
 
-test('io.quick_open should prompt for a project file to open', function()
-	local dir, _<close> = test.tempdir({['.hg'] = {}, 'file.txt'}, true)
-	local select_first_item = test.stub({1})
-	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
+test('- should read stdin into a new buffer as a file', function()
+	local stdin_provider = test.stub('text')
+	local _<close> = test.mock(io, 'read', stdin_provider)
 
-	io.quick_open()
+	events.emit('command_line', {'-'}) -- simulate arg
 
-	test.assert(buffer.filename, 'should have found file to open')
+	test.assert_equal(buffer:get_text(), 'text')
+	test.assert_equal(buffer.modify, false)
 end)
 
-test('io.quick_open should prompt for a file to open from a given directory', function()
-	local dir, _<close> = test.tempdir{['.hg'] = {}, 'file.txt'}
-	local select_first_item = test.stub({1})
-	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
+-- Related tests.
 
-	io.quick_open(dir)
-
-	test.assert(buffer.filename, 'should have found file to open')
-end)
-
-test('io.quick_open should prompt for a file to open, subject to a filter', function()
-	local dir, _<close> = test.tempdir{['.hg'] = {}, 'file.txt', subdir = {'file.lua'}}
-	local select_first_item = test.stub({1})
-	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
-
-	io.quick_open(dir, '.lua')
-
-	test.assert(buffer.filename:find('%.lua$'), 'should have found lua file to open')
-end)
-
-test('io.quick_open should prompt for a file to open, subject to an exclusive filter', function()
-	local dir, _<close> = test.tempdir{['.hg'] = {}, 'file.txt', subdir = {'file.lua'}}
-	local select_first_item = test.stub({1})
-	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
-
-	io.quick_open(dir, {'!.txt'})
-
-	test.assert(buffer.filename:find('%.lua$'), 'should have found lua file to open')
-end)
-
-test('io.quick_open should prompt for a file to open, but at a maximum depth', function()
-	local dir, _<close> = test.tempdir{['.hg'] = {}, 'file.txt', subdir = {'file.lua'}}
-	local _<close> = test.mock(io, 'quick_open_max', 1)
-	local select_first_item = test.stub({1})
-	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
-	local max_reached_ok = test.stub(1)
-	local _<close> = test.mock(ui.dialogs, 'message', max_reached_ok)
-
-	io.quick_open(dir)
-
-	test.assert(buffer.filename, 'should have found file to open')
-	test.assert_equal(max_reached_ok.called, true)
-end)
-
-test('buffer:close for a hidden buffer should not affect buffers in existing views', function()
+test('buffer.delete for a hidden buffer should not affect buffers in existing views', function()
 	local buffer1 = buffer.new()
 	view:split(true)
 	local buffer2 = buffer.new()
@@ -721,12 +755,32 @@ test('buffer:close for a hidden buffer should not affect buffers in existing vie
 end)
 if not QT then expected_failure() end
 
-test('- should read stdin into a new buffer as a file', function()
-	local stdin_provider = test.stub('text')
-	local _<close> = test.mock(io, 'read', stdin_provider)
+-- Coverage tests.
 
-	events.emit('command_line', {'-'}) -- simulate arg
+test('io.open_file should raise an error if it cannot open or read a file', function()
+	if LINUX then
+		local cannot_open = function() io.open_file('/etc/gshadow-') end
 
-	test.assert_equal(buffer:get_text(), 'text')
-	test.assert_equal(buffer.modify, false)
+		test.assert_raises(cannot_open, 'cannot open /etc/gshadow-: Permission denied')
+	end
+	-- TODO: find a case where the file can be opened, but not read
+end)
+
+test("buffer.save should remove a buffer's type once it has a filename", function()
+	local f<close> = test.tmpfile()
+	local select_filename = test.stub(f.filename)
+	local _<close> = test.mock(ui.dialogs, 'save', select_filename)
+	buffer._type = '[Typed Buffer]'
+
+	buffer:save()
+
+	test.assert_equal(buffer._type, nil)
+end)
+
+test('io.get_project_root should handle not detecting the project root', function()
+	local dir, _<close> = test.tempdir()
+
+	local root = io.get_project_root(dir)
+
+	test.assert_equal(root, nil)
 end)

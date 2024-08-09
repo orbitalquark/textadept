@@ -158,13 +158,13 @@ end)
 
 test('sessions should save typed buffers', function()
 	local session, _<close> = test.tempfile()
-	ui.print()
+	ui.output()
 
 	textadept.session.save(session)
 	buffer:close()
 	textadept.session.load(session)
 
-	test.assert_equal(buffer._type, _L['[Message Buffer]'])
+	test.assert_equal(buffer._type, _L['[Output Buffer]'])
 end)
 
 -- TODO: loading a new session will save the current session under the previous session name.
