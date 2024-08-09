@@ -95,12 +95,12 @@ test('ui.print_silent_to should scroll any views showing the print buffer', func
 	test.assert(print_view.first_visible_line > 1, 'should have scrolled view')
 end)
 
-test('ui.print should print to the message buffer', function()
+test('ui.print should print to the output buffer', function()
 	local message = 'message'
 
 	ui.print(message)
 
-	test.assert_equal(buffer._type, _L['[Message Buffer]'])
+	test.assert_equal(buffer._type, _L['[Output Buffer]'])
 	test.assert_equal(buffer:get_text(), test.lines{message, ''})
 end)
 
@@ -111,12 +111,6 @@ test('ui.print should print multiple values separated by tabs', function()
 	ui.print(table.unpack(output))
 
 	test.assert_equal(buffer:get_text(), test.lines{text_output, ''})
-end)
-
-test('ui.print_silent should silently print to the message buffer', function()
-	local buf = ui.print_silent()
-
-	test.assert_equal(buf._type, _L['[Message Buffer]'])
 end)
 
 test('ui.output should print to the output buffer', function()
@@ -411,7 +405,7 @@ test('quitting with modified buffers should prompt for save', function()
 end)
 
 test('quitting should be unimpeded by modified, typed buffers', function()
-	ui.print_silent():append_text('modified')
+	ui.output_silent():append_text('modified')
 
 	local halt = events.emit(events.QUIT) -- simulate
 

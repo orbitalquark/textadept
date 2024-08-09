@@ -5314,7 +5314,7 @@ Parameters:
 
 Usage:
 
-- `events.connect('my_event', function(msg) ui.print(msg) end)
+- `events.connect('my_event', function() ... end)
 `
 
 <a id="events.disconnect"></a>
@@ -8803,13 +8803,13 @@ Usage:
 <a id="ui.output"></a>
 #### `ui.output`(...)
 
-Prints the given value(s) to the output buffer, and returns that buffer.
+Prints the given strings to the output buffer, and returns that buffer.
 Opens a new buffer if one has not already been opened for printing output. The output buffer
 attempts to understand the error messages and warnings produced by various tools.
 
 Parameters:
 
-- *...*:  Output to print.
+- *...*:  Output strings to print.
 
 Return:
 
@@ -8822,12 +8822,12 @@ See also:
 <a id="ui.output_silent"></a>
 #### `ui.output_silent`(...)
 
-Silently prints the given value(s) to the output buffer, and returns that buffer.
+Silently prints the given strings to the output buffer, and returns that buffer.
 Opens a new buffer for printing to if necessary.
 
 Parameters:
 
-- *...*:  Output to print.
+- *...*:  Output strings to print.
 
 Return:
 
@@ -8859,43 +8859,24 @@ See also:
 <a id="ui.print"></a>
 #### `ui.print`(...)
 
-Prints the given value(s) to the message buffer, along with a trailing newline.
-Opens a new buffer if one has not already been opened for printing messages.
+Prints the given value(s) to the output buffer, along with a trailing newline.
+Opens a new buffer if one has not already been opened for printing output.
 
 Parameters:
 
-- *...*:  Message or values to print. Lua's `tostring()` function is called for each value.
+- *...*:  Values to print. Lua's `tostring()` function is called for each value.
 	They will be printed as tab-separated values.
 
-<a id="ui.print_silent"></a>
-#### `ui.print_silent`(...)
-
-Silently prints the given value(s) to the message buffer, and returns that buffer.
-
-Parameters:
-
-- *...*:  Message or values to print.
-
-Return:
-
-- print buffer
-
-See also:
-
-- [`ui.print`](#ui.print)
-
 <a id="ui.print_silent_to"></a>
-#### `ui.print_silent_to`(*type*, ...)
+#### `ui.print_silent_to`(*type*, *message*)
 
-Silently prints the given value(s) to the buffer of string type *type*, and returns that
-buffer.
+Silently prints the given message to the buffer of string type *type*, and returns that buffer.
 Opens a new buffer for printing to if necessary.
 
 Parameters:
 
 - *type*:  String type of print buffer.
-- *...*:  Message or values to print. Lua's `tostring()` function is called for each value.
-	They will be printed as tab-separated values.
+- *message*:  String message to print.
 
 Return:
 
@@ -8906,23 +8887,22 @@ See also:
 - [`ui.print_to`](#ui.print_to)
 
 <a id="ui.print_to"></a>
-#### `ui.print_to`(*type*, ...)
+#### `ui.print_to`(*type*, *message*)
 
-Prints the given value(s) to the buffer of string type *type*, along with a trailing newline,
+Prints the given message to the buffer of string type *type*, along with a trailing newline,
 and returns that buffer.
 Opens a new buffer for printing to if necessary. If the print buffer is already open in a
-view, the value(s) is printed to that view. Otherwise the view is split (unless [`ui.tabs`](#ui.tabs)
+view, the message is printed to that view. Otherwise the view is split (unless [`ui.tabs`](#ui.tabs)
 is `true`) and the print buffer is displayed before being printed to.
 
 Parameters:
 
 - *type*:  String type of print buffer.
-- *...*:  Message or values to print. Lua's `tostring()` function is called for each value.
-	They will be printed as tab-separated values.
+- *message*:  String message to print.
 
 Usage:
 
-- `ui.print_to(_L['[Message Buffer]'], message)
+- `ui.print_to('[Typed Buffer]', message)
 `
 
 Return:
