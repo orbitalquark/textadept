@@ -73,7 +73,7 @@ end)
 
 local function run(lua)
 	local ui_print = test.stub()
-	local _<close> = test.mock(ui, 'print', ui_print)
+	local _<close> = test.mock(ui, 'output', ui_print)
 
 	ui.command_entry.run()
 	test.type(lua .. '\n')

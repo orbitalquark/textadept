@@ -119,13 +119,11 @@ local function run_lua(code)
 		table.sort(items)
 		result = string.format('{%s}', table.concat(items, ', '))
 		if view.edge_column > 0 and #result > view.edge_column then
-			local newline = ({[0] = '\r\n', '\r', '\n'})[buffer.eol_mode]
 			local indent = buffer.use_tabs and '\t' or string.rep(' ', buffer.tab_width)
-			result = string.format('{%s%s%s%s}', newline, indent,
-				table.concat(items, ',' .. newline .. indent), newline)
+			result = string.format('{\n%s%s\n}', indent, table.concat(items, ',\n' .. indent))
 		end
 	end
-	if result ~= nil or code:find('^return ') then ui.print(result) end
+	if result ~= nil or code:find('^return ') then ui.output(result, '\n') end
 	events.emit(events.UPDATE_UI, 1) -- update UI if necessary (e.g. statusbar)
 end
 args.register('-e', '--execute', 1, run_lua, 'Execute Lua code')
