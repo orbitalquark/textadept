@@ -123,7 +123,7 @@ local function run_lua(code)
 			result = string.format('{\n%s%s\n}', indent, table.concat(items, ',\n' .. indent))
 		end
 	end
-	if result ~= nil or code:find('^return ') then ui.output(result, '\n') end
+	if result ~= nil or code:find('^return ') then ui.output(tostring(result), '\n') end
 	events.emit(events.UPDATE_UI, 1) -- update UI if necessary (e.g. statusbar)
 end
 args.register('-e', '--execute', 1, run_lua, 'Execute Lua code')
