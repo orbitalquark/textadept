@@ -192,7 +192,6 @@ local function find(text, next, flags, no_wrap, wrapped)
 		return
 	end
 	if not flags then flags = get_flags() end
-	local first_visible_line = view.first_visible_line -- for 'no results found'
 	if not is_ff_buf(buffer) then clear_highlighted_matches() end
 
 	if M.incremental and not wrapped then
@@ -204,24 +203,26 @@ local function find(text, next, flags, no_wrap, wrapped)
 			-- "Find Next" or "Find Prev" clicked, anchor at new current pos.
 			M.incremental = buffer:position_relative(pos, next and 1 or -1)
 		end
-		buffer:goto_pos(M.incremental or 1)
+		buffer:set_empty_selection(M.incremental or 1)
 	elseif not M.incremental then
 		incremental_orig_pos = nil
 	end
 
 	-- If text is selected, assume it is from the current search and move the caret appropriately
 	-- for the next search.
-	buffer:goto_pos(next and buffer.selection_end or buffer.selection_start)
+	buffer:set_empty_selection(next and buffer.selection_end or buffer.selection_start)
 	if not M.incremental and M.regex and find_text == text and found_text == '' and next and
-		not wrapped then buffer:goto_pos(buffer.current_pos + (next and 1 or -1)) end
+		not wrapped then buffer:set_empty_selection(buffer.current_pos + (next and 1 or -1)) end
 
 	-- Scintilla search.
 	buffer:search_anchor()
 	local f = next and buffer.search_next or buffer.search_prev
 	local pos = f(buffer, flags, text)
-	view:ensure_visible_enforce_policy(buffer:line_from_position(pos))
-	view:scroll_range(buffer.anchor, buffer.current_pos)
-	if pos ~= -1 then events.emit(events.FIND_RESULT_FOUND, text, wrapped) end
+	if pos ~= -1 then
+		view:ensure_visible_enforce_policy(buffer:line_from_position(pos))
+		view:scroll_range(buffer.anchor, buffer.current_pos)
+		events.emit(events.FIND_RESULT_FOUND, text, wrapped)
+	end
 	-- Track find text and found text for "replace all" and incremental find.
 	find_text, found_text = text, buffer:get_sel_text()
 	repl_text = ui.find.replace_entry_text -- save for ui.find.focus()
@@ -229,13 +230,12 @@ local function find(text, next, flags, no_wrap, wrapped)
 	-- If nothing was found, wrap the search.
 	if pos == -1 and not no_wrap then
 		local anchor = buffer.anchor
-		buffer:goto_pos(next and 1 or buffer.length + 1)
+		buffer:set_empty_selection(next and 1 or buffer.length + 1)
 		events.emit(events.FIND_WRAPPED)
 		pos = find(text, next, flags, true, true)
 		if pos == -1 then
 			ui.statusbar_text = _L['No results found']
-			view.first_visible_line = first_visible_line
-			buffer:goto_pos(incremental_orig_pos or anchor)
+			buffer:set_empty_selection(incremental_orig_pos or anchor)
 		end
 	end
 
