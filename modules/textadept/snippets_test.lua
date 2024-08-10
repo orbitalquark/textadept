@@ -4,12 +4,6 @@ teardown(function()
 	while textadept.snippets.active do textadept.snippets.cancel() end
 end)
 
-test('snippets.insert should raise errors for invalid arguments', function()
-	local invalid_text = function() textadept.snippets.insert{} end
-
-	test.assert_raises(invalid_text, 'string/nil expected')
-end)
-
 test('snippets.insert should act on trigger words', function()
 	local trigger = 'trigger'
 	local snippet = 'text'

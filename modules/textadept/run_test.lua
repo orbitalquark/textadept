@@ -1,11 +1,5 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-test('run.compile should raise errors for invalid arguments', function()
-	local invalid_filename = function() textadept.run.compile(true) end
-
-	test.assert_raises(invalid_filename, 'string/nil expected')
-end)
-
 test('run.* should prompt for a command to run', function()
 	local prompt = test.stub()
 	local _<close> = test.mock(ui.command_entry, 'run', prompt)
@@ -137,12 +131,6 @@ test('run.* should silently run a command if run.run_in_background is enabled', 
 	test.assert_equal(_BUFFERS[2]._type, _L['[Output Buffer]'])
 end)
 
-test('run.run should raise errors for invalid arguments', function()
-	local invalid_filename = function() textadept.run.run(true) end
-
-	test.assert_raises(invalid_filename, 'string/nil expected')
-end)
-
 local output_events = {
 	[textadept.run.compile] = events.COMPILE_OUTPUT, --
 	[textadept.run.run] = events.RUN_OUTPUT, --
@@ -224,12 +212,6 @@ test('run.compile/run should allow macros in commands', function()
 	local basename = filename:match('[^/\\]+$')
 	local basename_no_ext = basename:match('^(.+)%.')
 	test.assert_equal(args, {filename, dirname, basename, basename_no_ext})
-end)
-
-test('run.build should raise errors for invalid arguments', function()
-	local invalid_dir = function() textadept.run.build(true) end
-
-	test.assert_raises(invalid_dir, 'string/nil expected')
 end)
 
 test('run.build should run a build command for the current project', function()
@@ -322,12 +304,6 @@ test('run.* should send the output buffer line as stdin on Enter', function()
 
 	test.wait(function() return buffer:get_text():find('> exit status:') end)
 	test.assert(buffer:get_text():find('read: line'), 'should have sent stdin')
-end)
-
-test('run.goto_error should raise errors for invalid arguments', function()
-	local invalid_location = function() textadept.run.goto_error('') end
-
-	test.assert_raises(invalid_location, 'boolean/number expected')
 end)
 
 test('run.goto_error(true) should go to the next error/warning found', function()

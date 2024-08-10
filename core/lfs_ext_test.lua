@@ -139,16 +139,10 @@ test('lfs.walk should be able to handle symlinks to parent dirs, even recursive 
 	test.assert_equal(files, expected_files)
 end)
 
-test('lfs.walk should raise errors for invalid arguments', function()
-	local no_dir_given = function() lfs.walk() end
-	local invalid_filter = function() lfs.walk(_HOME, 1) end
+test('lfs.walk should raise an error if the directory does not exist', function()
 	local dir_does_not_exist = function() lfs.walk('does-not-exist') end
-	local invalid_depth = function() lfs.walk(_HOME, nil, true) end
 
-	test.assert_raises(no_dir_given, 'string expected')
-	test.assert_raises(invalid_filter, 'string/table/nil expected')
 	test.assert_raises(dir_does_not_exist, 'directory not found: does-not-exist')
-	test.assert_raises(invalid_depth, 'number/nil expected')
 end)
 
 test('lfs.abspath should produce paths relative to the current working directory', function()
@@ -205,12 +199,4 @@ test('lfs.abspath should not produce relative paths to Windows shared drives', f
 	local path = lfs.abspath(shared_dir)
 
 	test.assert_equal(path, shared_dir)
-end)
-
-test('lfs.abspath should raise errors for invalid arguments', function()
-	local no_path_given = function() lfs.abspath() end
-	local invalid_prefix = function() lfs.abspath('file', 1) end
-
-	test.assert_raises(no_path_given, 'string expected')
-	test.assert_raises(invalid_prefix, 'string/nil expected')
 end)

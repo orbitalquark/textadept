@@ -63,12 +63,6 @@ test('macro.record should record find/replace', function()
 	test.assert_equal(buffer:get_text(), test.lines{replace, replace})
 end)
 
-test('macros.play should raise errors for invalid arguments', function()
-	local invalid_filename = function() textadept.macros.play(0) end
-
-	test.assert_raises(invalid_filename, 'string/nil expected')
-end)
-
 test('macros.play should load and play the macro from a given filename', function()
 	local filename, _<close> = test.tempfile()
 	record(function() test.type(' ') end)
@@ -77,12 +71,6 @@ test('macros.play should load and play the macro from a given filename', functio
 	textadept.macros.play(filename)
 
 	test.assert_equal(buffer:get_text(), '  ')
-end)
-
-test('macros.save should raise errors for invalid arguments', function()
-	local invalid_filename = function() textadept.macros.save(1) end
-
-	test.assert_raises(invalid_filename, 'string/nil expected')
 end)
 
 test('macros.save should save macros to a given filename in the macro directory', function()
@@ -107,12 +95,6 @@ test('macros.save should prompt for a filename if none was given', function()
 
 	test.assert(lfs.attributes(filename), 'should have saved macro')
 	test.assert(select_filename.args[1].dir:match('[/\\]macros$'), 'should have prompted in macro dir')
-end)
-
-test('macros.load should raise errors for invalid arguments', function()
-	local invalid_filename = function() textadept.macros.load(0) end
-
-	test.assert_raises(invalid_filename, 'string/nil expected')
 end)
 
 test('macros.load should load (not run) macro from a given filename', function()

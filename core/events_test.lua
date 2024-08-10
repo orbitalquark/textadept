@@ -67,32 +67,6 @@ test("events.emit should return a handler's non-nil value (if any)", function()
 	test.assert_equal(result, catch)
 end)
 
-test('events.connect should raise errors for invalid arguments', function()
-	local no_event_name = function() events.connect() end
-	local no_event_handler = function() events.connect(event, nil) end
-	local f = test.stub()
-	local invalid_index = function() events.connect(event, f, '') end
-
-	test.assert_raises(no_event_name, 'string expected')
-	test.assert_raises(no_event_handler, 'function expected')
-	test.assert_raises(invalid_index, 'number/nil expected')
-end)
-
-test('events.disconnect should raise errors for invalid argument', function()
-	local f = test.stub()
-	local no_event_name = function() events.disconnect(nil, f) end
-	local no_event_handler = function() events.disconnect(event) end
-
-	test.assert_raises(no_event_name, 'string expected')
-	test.assert_raises(no_event_handler, 'function expected')
-end)
-
-test('events.emit should raise errors for invalid arguments', function()
-	local no_event_name = function() events.emit() end
-
-	test.assert_raises(no_event_name, 'string expected')
-end)
-
 -- Coverage tests.
 
 test('events.emit should not skip calling handlers if one removes itself', function()

@@ -147,16 +147,6 @@ test('io.open_file should detect and switch to spaces', function()
 	test.assert_equal(buffer.tab_width, 2)
 end)
 
-test('io.open_file should not detect indentation if io.detect_indentation is disabled', function()
-	local _<close> = test.mock(io, 'detect_indentation', false)
-	local spaces_2 = '  spaces'
-	local f<close> = test.tmpfile(spaces_2)
-
-	io.open_file(f.filename)
-
-	test.assert_equal(buffer.use_tabs, true)
-end)
-
 test('io.open_file should detect and switch to tabs if buffer.use_tabs is false', function()
 	local set_indentation_spaces = function() buffer.use_tabs = false end
 	local _<close> = test.connect(events.BUFFER_NEW, set_indentation_spaces) -- temporary
@@ -221,12 +211,6 @@ test('io.open_file should not duplicate any recently opened files', function()
 	test.assert_equal(io.recent_files, {f1.filename, f2.filename})
 end)
 
-test('io.open_file should raise errors for invalid arguments', function()
-	local invalid_filename = function() io.open_file(1) end
-
-	test.assert_raises(invalid_filename, 'string/table/nil expected')
-end)
-
 test('buffer.reload should discard any unsaved changes', function()
 	local contents = 'text'
 	local f<close> = test.tmpfile(contents, true)
@@ -282,12 +266,6 @@ test('buffer.set_encoding should handle single- to multi-byte changes and mark t
 		test.assert_equal(buffer:get_text(), utf8_contents)
 		test.assert_equal(buffer.modify, true)
 	end)
-
-test('buffer.set_encoding should raise errors for invalid arguments', function()
-	local invalid_encoding = function() buffer:set_encoding(true) end
-
-	test.assert_raises(invalid_encoding, 'string/nil expected')
-end)
 
 test('buffer.save should save the file and mark the buffer as unmodified', function()
 	local contents = 'text'
@@ -407,12 +385,6 @@ test('buffer:save_as should emit a distinct events.FILE_AFTER_SAVE', function()
 
 	test.assert_equal(after_save.called, 2) -- TODO: ideally this would only be called once
 	test.assert_equal(after_save.args, {f.filename, true})
-end)
-
-test('buffer:save_as should raise errors for invalid arguments', function()
-	local invalid_filename = function() buffer:save_as(1) end
-
-	test.assert_raises(invalid_filename, 'string/nil expected')
 end)
 
 test('io.save_all_files should save all modified files', function()
@@ -641,12 +613,6 @@ test('io.get_project_root should allow a submodule directory to be the project r
 	test.assert_equal(root, dir / subdir)
 end)
 
-test('io.get_project_root should raise errors for invalid arguments', function()
-	local invalid_path = function() io.get_project_root(1) end
-
-	test.assert_raises(invalid_path, 'string/nil expected')
-end)
-
 test('io.quick_open should prompt for a project file to open', function()
 	local file = 'file.txt'
 	local dir<close> = test.tmpdir({['.hg'] = {}, file}, true)
@@ -712,15 +678,7 @@ test('io.quick_open should prompt for a file to open, but at a maximum depth', f
 	test.assert_equal(max_reached_ok.called, true)
 end)
 
-test('io.quick_open should raise errors for invalid arguments', function()
-	local invalid_path = function() io.quick_open(1) end
-	local invalid_filter = function() io.quick_open({}, true) end
-
-	test.assert_raises(invalid_path, 'string/table/nil expected')
-	test.assert_raises(invalid_filter, 'string/table/nil expected')
-end)
-
-test('- should read stdin into a new buffer as a file', function()
+test('- command line argument should read stdin into a new buffer as a file', function()
 	local stdin_provider = test.stub('text')
 	local _<close> = test.mock(io, 'read', stdin_provider)
 

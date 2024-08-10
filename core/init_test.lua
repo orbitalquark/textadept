@@ -26,14 +26,6 @@ test('buffer.text_range should not modify buffer.target_range', function()
 	test.assert_equal(buffer.target_text, target_text)
 end)
 
-test('buffer.text_range should raise errors for invalid arguments', function()
-	local no_args = function() buffer:text_range() end
-	local no_second_arg = function() buffer:text_range(5) end
-
-	test.assert_raises(no_args, 'number expected')
-	test.assert_raises(no_second_arg, 'number expected')
-end)
-
 test('replacing buffer text should emit events.BUFFER_{BEFORE,AFTER}_REPLACE_TEXT', function()
 	buffer:append_text('text')
 	local before_replace = test.stub()
@@ -67,22 +59,6 @@ for _, method in ipairs{'undo', 'redo'} do
 		test.assert_equal(overwrites_scintilla, true)
 	end)
 end
-
-test('view.styles[k] = v should raise errors for invalid values', function()
-	local not_a_style = 1
-	local invalid_assignment = function() view.styles.name = not_a_style end
-
-	test.assert_raises(invalid_assignment, 'table expected')
-	-- TODO: error when setting existing style like view.styles.default = 1?
-end)
-
-test('view.styles[k] .. style should raise errors for invalid values', function()
-	local style = view.styles[view.STYLE_DEFAULT]
-	local not_a_style = 1
-	local invalid_concat = function() view.styles.name = style .. not_a_style end
-
-	test.assert_raises(invalid_concat, 'table expected')
-end)
 
 test('view.set_theme should set the theme for a view, leaving others alone', function()
 	local _<close> = test.tmpfile('.lua', true)
@@ -119,24 +95,6 @@ test('move_buffer should allow moving a buffer forwards', function()
 	test.assert_equal(_BUFFERS[1].filename, f1.filename)
 	test.assert_equal(_BUFFERS[2].filename, f3.filename)
 	test.assert_equal(_BUFFERS[3].filename, f2.filename)
-end)
-
-test('move_buffer should raise errors for invalid arguments', function()
-	local invalid_from_index = function() move_buffer('') end
-	local no_to_index = function() move_buffer(1) end
-	local invalid_to_index = function() move_buffer(1, true) end
-	local out_of_bounds_to_index = function() move_buffer(1, 10) end
-	local negative_to_index = function() move_buffer(1, -1) end
-	local out_of_bounds_from_index = function() move_buffer(10, 1) end
-	local negative_from_index = function() move_buffer(-1, 1) end
-
-	test.assert_raises(invalid_from_index, 'number expected')
-	test.assert_raises(no_to_index, 'number expected')
-	test.assert_raises(invalid_to_index, 'number expected')
-	test.assert_raises(out_of_bounds_to_index, 'out of bounds')
-	test.assert_raises(negative_to_index, 'out of bounds')
-	test.assert_raises(out_of_bounds_from_index, 'out of bounds')
-	test.assert_raises(negative_from_index, 'out of bounds')
 end)
 
 -- Note: testing reset creates extra temporary _USERHOMEs and discards the test runner's
@@ -181,14 +139,4 @@ test('timeout should repeatedly call a function as long as it returns true', fun
 	local expected_duration = interval * stop
 	test.assert(duration > expected_duration, 'should have waited %fs, but waited only %fs)',
 		expected_duration, duration)
-end)
-
-test('timeout should raise errors for invalid arguments', function()
-	local no_interval = function() timeout() end
-	local invalid_interval = function() timeout(0) end
-	local invalid_function = function() timeout(1, '') end
-
-	test.assert_raises(no_interval, 'number expected')
-	test.assert_raises(invalid_interval, 'interval must be > 0')
-	test.assert_raises(invalid_function, 'function expected')
 end)

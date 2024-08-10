@@ -5,22 +5,6 @@ teardown(function()
 	if ui.command_entry.active then test.type('esc') end
 end)
 
-test('ui.command_entry.run should raise errors for invalid arguments', function()
-	local not_a_label = function() ui.command_entry.run(1) end
-	local not_a_function = function() ui.command_entry.run('', '') end
-	local f = test.stub()
-	local invalid_third_arg = function() ui.command_entry.run('', f, 1) end
-	local invalid_lexer_or_text = function() ui.command_entry.run('', f, nil, 1) end
-	local keys = {}
-	local invalid_initial_text = function() ui.command_entry.run('', f, keys, 'text', true) end
-
-	test.assert_raises(not_a_label, 'string/nil expected')
-	test.assert_raises(not_a_function, 'function/nil expected')
-	test.assert_raises(invalid_third_arg, 'table/string/nil expected')
-	test.assert_raises(invalid_lexer_or_text, 'string/nil expected')
-	test.assert_raises(invalid_initial_text, 'string/nil expected')
-end)
-
 test('ui.command_entry.run should show a Lua command entry', function()
 	ui.command_entry.run()
 

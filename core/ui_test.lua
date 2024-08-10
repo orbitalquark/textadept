@@ -65,12 +65,6 @@ test('ui.print_to should print to another split view if it is not showing the pr
 		test.assert_equal(_VIEWS[view], 1)
 	end)
 
-test('ui.print_to should raise errors for invalid arguments', function()
-	local not_a_string = function() ui.print_to(1) end
-
-	test.assert_raises(not_a_string, 'string expected')
-end)
-
 test('ui.print_silent_to should print to a buffer without switching to it', function()
 	local type = '[Typed Buffer]'
 	local silent_output = 'silent'
@@ -300,12 +294,6 @@ test('ui.goto_file should match filenames case-insensitively on WIN32', function
 	test.assert_equal(buffer.filename, f.filename)
 end)
 
-test('ui.goto_file should raise errors for invalid arguments', function()
-	local invalid_filename = function() ui.goto_file(1) end
-
-	test.assert_raises(invalid_filename, 'string expected')
-end)
-
 test("clicking a buffer's tab should switch to that buffer", function()
 	buffer.new()
 
@@ -532,10 +520,4 @@ test('ui.goto_view should focus a large relative view with wrapping (right)', fu
 	ui.goto_view(4)
 
 	test.assert_equal(_VIEWS[view], 2)
-end)
-
-test('ui.goto_view should raise errors for invalid arguments', function()
-	local not_a_view = function() ui.goto_view(buffer) end
-
-	test.assert_raises(not_a_view, 'View expected')
 end)

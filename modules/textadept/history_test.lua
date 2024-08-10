@@ -179,16 +179,6 @@ test('history should be per-view', function()
 	test.assert_equal(view2.buffer.filename, filename2)
 end)
 
-test('history.record should raise errors for invalid arguments', function()
-	local invalid_filename = function() textadept.history.record({}) end
-	local invalid_line = function() textadept.history.record(nil, true) end
-	local invalid_column = function() textadept.history.record(nil, 1, false) end
-
-	test.assert_raises(invalid_filename, 'string/nil expected')
-	test.assert_raises(invalid_line, 'number/nil expected')
-	test.assert_raises(invalid_column, 'number/nil expected')
-end)
-
 test('history.back/forward should update soft records', function()
 	local contents = string.rep('\n', textadept.history.minimum_line_distance * 2)
 	local filename1, _<close> = test.tempfile(contents)

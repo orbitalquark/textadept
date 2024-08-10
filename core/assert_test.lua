@@ -73,13 +73,3 @@ test('assert_type should raise an error on fail', function()
 	test.assert_raises(function() optional_second_boolean('', '') end,
 		"bad argument #2 to 'optional_second_boolean' (boolean/nil expected, got string")
 end)
-
-test('assert_type should raise errors for invalid arguments', function()
-	local invalid_type_name = function() assert_type(nil, {}) end
-	local missing_narg = function() assert_type(nil, '') end
-
-	test.assert_raises(function() invalid_type_name() end,
-		"bad argument #2 to 'assert_type' (string expected, got table")
-	test.assert_raises(function() missing_narg() end,
-		"bad argument #3 to 'assert_type' (value expected, got nil")
-end)

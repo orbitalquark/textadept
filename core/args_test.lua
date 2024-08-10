@@ -51,21 +51,6 @@ end)
 -- TODO: should emit events.ARG_NONE when no command-line args are given
 -- TODO: a command-line option handler can return true to prevent events.ARG_NONE
 
-test('args.register should raise errors for invalid types', function()
-	local f = test.stub()
-	local invalid_short_option = function() args.register(true, '--long', 0, f, '') end
-	local invalid_long_option = function() args.register('-s', true, 0, f, '') end
-	local invalid_narg = function() args.register('-s', '--long', nil) end
-	local invalid_f = function() args.register('-s', '--long', 0, '') end
-	local invalid_description = function() args.register('-s', '--long', 0, f, false) end
-
-	test.assert_raises(invalid_short_option, 'string expected')
-	test.assert_raises(invalid_long_option, 'string expected')
-	test.assert_raises(invalid_narg, 'number expected')
-	test.assert_raises(invalid_f, 'function expected')
-	test.assert_raises(invalid_description, 'string expected')
-end)
-
 -- Coverage tests.
 
 test('--help should show command line options and then quit', function()

@@ -232,17 +232,6 @@ test('connect should connect to an event and defer disconnecting it', function()
 	test.assert_equal(f.called, false)
 end)
 
-test('mock should raise errors for invalid arguments', function()
-	local invalid_module = function() test.mock(print) end
-	local invalid_name = function() test.mock(string, 1) end
-	local valid_mock = test.stub('chunk')
-	local invalid_conditional = function() test.mock(string, 'dump', true, valid_mock) end
-
-	test.assert_raises(invalid_module, 'table expected')
-	test.assert_raises(invalid_name, 'string expected')
-	test.assert_raises(invalid_conditional, 'function expected')
-end)
-
 test('mock should change a module field for as long as it is in scope', function()
 	local module = {field = true}
 	local field

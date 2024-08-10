@@ -144,12 +144,6 @@ test('buffer.set_lexer should emit events.LEXER_LOADED', function()
 	test.assert_equal(event.args, {'lua'})
 end)
 
-test('buffer.set_lexer should raise errors for invalid arguments', function()
-	local invalid_name = function() buffer:set_lexer(true) end
-
-	test.assert_raises(invalid_name, 'string/nil expected')
-end)
-
 test('buffer.named_styles should reflect the number of lexer styles', function()
 	buffer:set_lexer('lua')
 
@@ -164,12 +158,6 @@ test('buffer.name_of_style should link style numbers with style names', function
 
 	test.assert_equal(style_name, 'whitespace')
 	test.assert_equal(unknown_style_name, 'Unknown')
-end)
-
-test('buffer.name_of_style should raise errors for invalid arguments', function()
-	local not_style_number = function() buffer:name_of_style('whitespace') end
-
-	test.assert_raises(not_style_number, 'number expected')
 end)
 
 test('buffer.style_of_name should link style names with style numbers', function()

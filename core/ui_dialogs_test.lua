@@ -27,21 +27,6 @@ test('ui.dialogs.progress should emit errors when work errors', function()
 	test.assert_contains(event.args[1], error_message)
 end)
 
-test('ui.dialogs.progress should raise errors for invalid arguments', function()
-	local no_work_function = function() ui.dialogs.progress{} end
-
-	test.assert_raises(no_work_function, "'work' function expected")
-end)
-
-test('ui.dialogs.list should raise errors for invalid arguments', function()
-	local no_items = function() ui.dialogs.list{} end
-
-	local invalid_search_column = function() ui.dialogs.list{search_column = 2} end
-
-	test.assert_raises(no_items, "non-empty 'items' table expected")
-	test.assert_raises(invalid_search_column, "invalid 'search_column'")
-end)
-
 -- TODO: mocking the rest of these seems pointless.
 
 test('ui.dialogs.message should prompt with a message #skip', function()

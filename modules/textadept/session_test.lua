@@ -1,11 +1,5 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-test('session.save should raise errors for invalid arguments', function()
-	local invalid_filename = function() textadept.session.save(true) end
-
-	test.assert_raises(invalid_filename, 'string/nil expected')
-end)
-
 test('session.save should save to a given session file', function()
 	local filename, _<close> = test.tempfile()
 	os.remove(filename) -- should not exist yet

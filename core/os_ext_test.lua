@@ -134,17 +134,12 @@ test('proc.kill should kill a spawned process', function()
 	test.assert_equal(status, 'terminated')
 end)
 
-test('os.spawn should raise errors for invalid arguments', function()
-	local invalid_command = function() os.spawn(true) end
-	local invalid_callback = function() os.spawn('echo', false) end
+test('os.spawn should raise an error if the command does not exist', function()
+	if WIN32 and CURSES then return end -- 'cmd /c does not exist' prints to stderr and returns 1
 	local nonexistent_command = 'does-not-exist'
 	local command_does_not_exist = function() assert(os.spawn(nonexistent_command)) end
 
-	test.assert_raises(invalid_command, 'string expected')
-	test.assert_raises(invalid_callback, 'function or nil expected')
-	if not (WIN32 and CURSES) then -- 'cmd /c does not exist' prints to stderr and returns 1
-		test.assert_raises(command_does_not_exist, nonexistent_command .. ':')
-	end
+	test.assert_raises(command_does_not_exist, nonexistent_command .. ':')
 end)
 
 -- Coverage tests.

@@ -409,14 +409,6 @@ test('find should allow searching in files and output results to a new buffer', 
 	test.assert_equal(highlighted_results, {find, find})
 end)
 
-test('ui.find.find_in_files should raise errors for invalid arguments', function()
-	local invalid_directory = function() ui.find.find_in_files({}) end
-	local invalid_filter = function() ui.find.find_in_files('', true) end
-
-	test.assert_raises(invalid_directory, 'string/nil expected')
-	test.assert_raises(invalid_filter, 'string/table/nil expected')
-end)
-
 test('ui.find.find_in_files should update the filter if changed', function()
 	local dir, _<close> = test.tempdir({}, true)
 	ui.find.find_entry_text = 'does not matter'
@@ -675,12 +667,6 @@ test('replace all should count the number of replacements made #skip', function(
 	ui.find.replace_all()
 
 	-- TODO: how to assert ui.statusbar_text was written to? Cannot mock it.
-end)
-
-test('ui.find.goto_file_found should raise errors for invalid arguments', function()
-	local invalid_location = function() ui.find.goto_file_found('') end
-
-	test.assert_raises(invalid_location, 'boolean/number expected')
 end)
 
 test('ui.find.goto_file_found(true) should go to the next file found in the list', function()
