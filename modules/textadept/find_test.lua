@@ -4,7 +4,7 @@
 local find = 'word'
 local replace = find:upper()
 
-events.connect(events.TEST_CLEANUP, function()
+teardown(function()
 	if not ui.find.active then return end
 	ui.find.incremental, ui.find.in_files = false, false
 	ui.find.focus()

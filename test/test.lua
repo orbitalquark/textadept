@@ -13,13 +13,26 @@ local tests = {}
 -- @function _G.test
 local test = setmetatable(dofile(_HOME .. '/test/helpers.lua'), {
 	__call = function(self, name, f)
-		name = string.format('%s - #%s ', name, _TESTSUITE)
+		name = string.format('%s - #%s', name, _TESTSUITE)
 		tests[#tests + 1], tests[name] = name, f
 	end
 })
 
---- Emitted to clean up after a unit test.
-events.TEST_CLEANUP = 'test_cleanup'
+--- Map of test suites to their setup functions.
+local setups = {}
+
+--- Defines function *f* as the setup function for tests in the current suite.
+-- @param f Test setup function.
+-- @name _G.setup
+local function setup(f) setups[_TESTSUITE] = f end
+
+--- Map of test suites to their teardown functions.
+local teardowns = {}
+
+--- Defines function *f* as the teardown function for tests in the current suite.
+-- @param f Test teardown function.
+-- @name _G.teardown
+local function teardown(f) teardowns[_TESTSUITE] = f end
 
 --- Map of tests expected to fail to `true`.
 local expected_failures = {}
@@ -30,7 +43,9 @@ local expected_failures = {}
 local function expected_failure() expected_failures[tests[#tests]] = true end
 
 -- Test environment.
-local env = setmetatable({expected_failure = expected_failure, test = test}, {__index = _G})
+local env = setmetatable({
+	setup = setup, teardown = teardown, expected_failure = expected_failure, test = test
+}, {__index = _G})
 
 -- Load all tests from *_test.lua files in _HOME.
 local test_files = {}
@@ -97,6 +112,12 @@ for _, name in ipairs(tests) do
 
 	-- Run the test.
 	do
+		local suite = name:match('[^#]+$')
+		if setups[suite] then
+			local ok, errmsg = pcall(setups[suite])
+			if not ok then test.log('setup error: ', errmsg) end
+		end
+
 		_ENV = setmetatable({}, {__index = _G}) -- simple sandbox
 		ok, errmsg = xpcall(f, function(errmsg)
 			if expected_failures[name] then return false end -- do not print traceback
@@ -105,6 +126,11 @@ for _, name in ipairs(tests) do
 			return string.format('%s\nlog:\n\t%s%s', debug.traceback(errmsg, 3),
 				table.concat(test.log, '\n\t'), snapshot())
 		end)
+
+		if teardowns[suite] then
+			local ok, errmsg = pcall(teardowns[suite])
+			if not ok then test.log('teardown error: ', errmsg) end
+		end
 	end
 	if errmsg == nil and expected_failures[name] then
 		ok = false
@@ -116,12 +142,9 @@ for _, name in ipairs(tests) do
 
 	-- Clean up after the test.
 	test.log:clear()
-	ui.update()
-	events.emit(events.TEST_CLEANUP)
 	while view:unsplit() do end
 	while #_BUFFERS > 1 do buffer:close(true) end
 	buffer:close(true) -- the last one
-	ui.update()
 
 	-- Write test output.
 	if ok then

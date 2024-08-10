@@ -1,6 +1,7 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-events.connect(events.TEST_CLEANUP, function()
+teardown(function()
+	ui.update()
 	if ui.command_entry.active then test.type('esc') end
 end)
 

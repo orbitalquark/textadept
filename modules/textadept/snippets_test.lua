@@ -1,6 +1,6 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
-events.connect(events.TEST_CLEANUP, function()
+teardown(function()
 	while textadept.snippets.active do textadept.snippets.cancel() end
 end)
 
