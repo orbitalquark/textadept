@@ -15,6 +15,7 @@ test('ui.command_entry.run should show a Lua command entry', function()
 	test.assert_equal(ui.command_entry.lexer_language, 'lua')
 	test.assert_equal(ui.command_entry.height, ui.command_entry:text_height(1))
 	test.assert(keys.mode, 'should be in a command entry key mode')
+	if QT then ui.update() end
 	test.assert_equal(ui.command_entry.active, true)
 end)
 if GTK then expected_failure() end -- ui.command_entry.height is incorrect
@@ -87,9 +88,9 @@ test('ui.command_entry.run should consider Scintilla fields/functions as globals
 	local view_eol = view.view_eol
 	local auto_c_active = run('auto_c_active')
 
-	test.assert_equal(length, 0)
+	test.assert_equal(length, '0')
 	test.assert_equal(view_eol, true)
-	test.assert_equal(auto_c_active, false)
+	test.assert_equal(auto_c_active, 'false')
 end)
 
 test('ui.command_entry.run should consider view fields/functions as globals', function()
@@ -117,7 +118,7 @@ end)
 test('ui.command_entry.run should consider textadept modules as globals', function()
 	local auto_indent = run('editing.auto_indent')
 
-	test.assert_equal(auto_indent, true)
+	test.assert_equal(auto_indent, 'true')
 end)
 
 test('ui.command_entry.run should allow setting globals', function()
@@ -126,7 +127,7 @@ test('ui.command_entry.run should allow setting globals', function()
 	run('global=true')
 	local global = run('global')
 
-	test.assert_equal(global, true)
+	test.assert_equal(global, 'true')
 end)
 
 test('--execute should run Lua code via ui.command_entry.run', function()
@@ -350,7 +351,7 @@ test('ui.command_entry should emit events when its text changes', function()
 	test.assert_equal(changed.called, true)
 end)
 
-test('ui.command_entry.run should perserve margin text when the entry is blank', function()
+test('ui.command_entry.run should preserve margin text when the entry is blank', function()
 	local label = 'label:'
 	local f = test.stub()
 	ui.command_entry.run(label, f)
