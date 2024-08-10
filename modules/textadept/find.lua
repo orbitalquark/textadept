@@ -318,7 +318,6 @@ function M.find_in_files(dir, filter)
 	print(_L['Directory:'] .. ' ' .. dir)
 	print(_L['Filter:']:gsub('[_&]', '') .. ' ' ..
 		(type(filter) == 'string' and filter or table.concat(filter, ',')))
-	buffer.indicator_current = M.INDIC_FIND
 
 	-- Determine which files to search.
 	local filenames, utf8_filenames, iterator = {}, {}, lfs.walk(dir, filter)
@@ -367,6 +366,7 @@ function M.find_in_files(dir, filter)
 				print(string.format('%s:%d:%s', utf8_filenames[i], line_num, line))
 				local pos = ff_buffer.line_end_position[ff_buffer.line_count - 1] - #line +
 					buffer.target_start - buffer:position_from_line(line_num)
+				ff_buffer.indicator_current = M.INDIC_FIND
 				ff_buffer:indicator_fill_range(pos, buffer.target_end - buffer.target_start)
 				buffer:set_target_range(buffer.target_end, buffer.length + 1)
 			end
