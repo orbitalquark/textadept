@@ -19,6 +19,8 @@ test('macro.record should record keyboard macros', function()
 	test.assert_equal(buffer:get_text(), test.lines{'replacement', 'replacement'})
 end)
 
+--- Records the given function as a macro.
+-- @param f Function to record.
 local function record(f)
 	textadept.macros.record()
 	f()
@@ -64,11 +66,11 @@ test('macro.record should record find/replace', function()
 end)
 
 test('macros.play should load and play the macro from a given filename', function()
-	local filename, _<close> = test.tempfile()
+	local f<close> = test.tmpfile()
 	record(function() test.type(' ') end)
-	textadept.macros.save(filename)
+	textadept.macros.save(f.filename)
 
-	textadept.macros.play(filename)
+	textadept.macros.play(f.filename)
 
 	test.assert_equal(buffer:get_text(), '  ')
 end)
@@ -80,21 +82,25 @@ test('macros.save should save macros to a given filename in the macro directory'
 
 	textadept.macros.save(macro_file)
 
-	test.assert(lfs.attributes(_USERHOME .. '/macros/' .. macro_file), 'should have saved macro')
+	local file_exists = lfs.attributes(_USERHOME .. '/macros/' .. macro_file, 'mode') == 'file'
+	test.assert(file_exists, 'should have saved macro')
 end)
 
 test('macros.save should prompt for a filename if none was given', function()
-	local filename, _<close> = test.tempfile()
-	os.remove(filename) -- should not exist yet
-	local select_filename = test.stub(filename)
+	local f<close> = test.tmpfile()
+	f:delete() -- should not exist yet
+	local select_filename = test.stub(f.filename)
 	local _<close> = test.mock(ui.dialogs, 'save', select_filename)
 
 	record(function() test.type(' ') end)
 
 	textadept.macros.save()
 
-	test.assert(lfs.attributes(filename), 'should have saved macro')
-	test.assert(select_filename.args[1].dir:match('[/\\]macros$'), 'should have prompted in macro dir')
+	test.assert_equal(select_filename.called, true)
+	local file_exists = lfs.attributes(f.filename, 'mode') == 'file'
+	test.assert(file_exists, 'should have saved macro')
+	local dialog_opts = select_filename.args[1]
+	test.assert_equal(dialog_opts.dir, _USERHOME .. (not WIN32 and '/' or '\\') .. 'macros')
 end)
 
 test('macros.load should load (not run) macro from a given filename', function()
@@ -109,20 +115,22 @@ test('macros.load should load (not run) macro from a given filename', function()
 end)
 
 test('macros.load should prompt for a filename if none was given', function()
-	local filename, _<close> = test.tempfile()
-	local select_filename = test.stub(filename)
+	local f<close> = test.tmpfile()
+	local select_filename = test.stub(f.filename)
 	local _<close> = test.mock(ui.dialogs, 'open', select_filename)
 
 	textadept.macros.load()
 
-	test.assert(select_filename.args[1].dir:match('[/\\]macros$'), 'should have prompted in macro dir')
+	test.assert_equal(select_filename.called, true)
+	local dialog_opts = select_filename.args[1]
+	test.assert_equal(dialog_opts.dir, _USERHOME .. (not WIN32 and '/' or '\\') .. 'macros')
 end)
 
 test('macros.load should store previous macro in register 0', function()
-	local filename, _<close> = test.tempfile()
+	local f<close> = test.tmpfile()
 	record(function() test.type(' ') end)
 
-	textadept.macros.load(filename)
+	textadept.macros.load(f.filename)
 
 	textadept.macros.play('0')
 

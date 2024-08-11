@@ -1,5 +1,7 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
+--- Sends command line table *arg* for processing.
+-- @param arg Table of command line arguments to process.
 local function send_command_line(arg)
 	events.emit('command_line', assert_type(arg, 'table', 1))
 end

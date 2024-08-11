@@ -21,7 +21,7 @@ local function get_syntax_highlighting(offset)
 end
 
 test('syntax highlighting should invoke Scintillua and style the buffer with the result', function()
-	local f<close> = test.tmpfile('.lua', table.concat({
+	local _<close> = test.tmpfile('.lua', table.concat({
 		'function foo(z)', --
 		'	local x = 1', --
 		'	local y = [[2]]', --
@@ -35,7 +35,7 @@ test('syntax highlighting should invoke Scintillua and style the buffer with the
 end)
 
 test('syntax highlighting should support incremental highlighting', function()
-	local f<close> = test.tmpfile('.lua', table.concat({
+	local _<close> = test.tmpfile('.lua', table.concat({
 		'function foo(z)', --
 		'	local x = 1', --
 		'local y = [[2]]', -- intentional unindent
@@ -64,7 +64,7 @@ test('syntax highlighting should support incremental highlighting', function()
 end)
 
 test('code folding should invoke Scintillua and mark fold headers with the result', function()
-	local f<close> = test.tmpfile('.lua', table.concat({
+	local _<close> = test.tmpfile('.lua', table.concat({
 		'function foo(z)', --
 		'	local x = 1', --
 		'	local y = [[2]]', --
@@ -98,7 +98,7 @@ end
 
 test('buffer.get_lexer should allow getting the current language in multi-language lexers',
 	function()
-		local f<close> = test.tmpfile('.html', table.concat({
+		local _<close> = test.tmpfile('.html', table.concat({
 			'<html><head><style type="text/css">', --
 			'h1 {}', --
 			'</style></head></html>'
@@ -209,7 +209,7 @@ test('view should refresh its styles when switching between buffers with differe
 	function()
 		buffer:set_lexer('html')
 
-		local f<close> = test.tmpfile('.lua', '[[longstring]]', true)
+		local _<close> = test.tmpfile('.lua', '[[longstring]]', true)
 		local longstring_style_num = buffer.style_at[1]
 		local longstring_name = buffer:name_of_style(longstring_style_num)
 

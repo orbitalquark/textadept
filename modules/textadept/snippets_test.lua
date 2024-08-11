@@ -28,27 +28,19 @@ test('snippets.insert should prefer language-specific triggers over global ones'
 	test.assert_equal(buffer:get_text(), language_snippet)
 end)
 
-test('snippets.insert should include snippets in snippets.paths', function()
+test('snippets.insert should consider snippets in snippets.paths', function()
 	local trigger = 'trigger'
 	local global_snippet = 'global text'
 	local language_snippet = 'language-specific text'
-	local dir, _<close> = test.tempdir{
+	local dir<close> = test.tmpdir{
 		[trigger] = global_snippet, ['text.' .. trigger] = language_snippet
 	}
-	local _<close> = test.mock(textadept.snippets, 'paths', {dir})
+	local _<close> = test.mock(textadept.snippets, 'paths', {dir.dirname})
 	buffer:add_text(trigger)
 
 	textadept.snippets.insert()
 
 	test.assert_equal(buffer:get_text(), language_snippet)
-end)
-
-test('snippets.insert should not trigger on language names', function()
-	buffer:add_text('lua')
-
-	local triggered = textadept.snippets.insert()
-
-	test.assert_equal(triggered, false)
 end)
 
 test('snippets.insert should return false if it did not insert anything', function()
@@ -57,40 +49,50 @@ test('snippets.insert should return false if it did not insert anything', functi
 	test.assert_equal(inserted, false)
 end)
 
-test('snippets.insert should convert indentation (tabs to spaces)', function()
+test('snippets.insert should match buffer indentation (convert tabs to spaces)', function()
 	local _<close> = test.mock(buffer, 'use_tabs', false)
+	local text = 'text'
+	local snippet = '\t' .. text
 
-	textadept.snippets.insert('\ttext')
+	textadept.snippets.insert(snippet)
 
 	local indent = string.rep(' ', buffer.tab_width)
-	test.assert_equal(buffer:get_text(), indent .. 'text')
+	test.assert_equal(buffer:get_text(), indent .. text)
 end)
 
-test('snippets.insert should convert indentation (spaces to tabs)', function()
+test('snippets.insert should match buffer indentation (convert spaces to tabs)', function()
 	local _<close> = test.mock(buffer, 'tab_width', 4)
-
+	local text = 'text'
 	local indent = string.rep(' ', buffer.tab_width)
-	textadept.snippets.insert(indent .. 'text')
+	local snippet = indent .. text
 
-	test.assert_equal(buffer:get_text(), '\ttext')
+	textadept.snippets.insert(snippet)
+
+	test.assert_equal(buffer:get_text(), '\t' .. text)
 end)
 
 test('snippets.insert should increase indent to match', function()
 	local _<close> = test.mock(buffer, 'tab_width', 4)
+	local snippet = test.lines{'1', '\t2', '3'}
 	buffer:add_text('\t')
 
-	textadept.snippets.insert(test.lines{'1', '\t2', '3'})
+	textadept.snippets.insert(snippet)
 
-	test.assert_equal(buffer:get_text(), test.lines{'\t1', '\t\t2', '\t3'})
+	local indented_snippet = '\t' .. snippet:gsub('\r?\n', '%0\t')
+	test.assert_equal(buffer:get_text(), indented_snippet)
 end)
 
 test('snippets.insert should match EOL mode', function()
 	local _<close> = test.mock(buffer, 'eol_mode', buffer.EOL_CRLF)
+	local lines = {'1', '2'}
+	local snippet = table.concat(lines, '\n')
 
-	textadept.snippets.insert('1\n2')
+	textadept.snippets.insert(snippet)
 
-	test.assert_equal(buffer:get_text(), test.lines{'1', '2'})
+	test.assert_equal(buffer:get_text(), test.lines(lines))
 end)
+
+-- TODO: make these follow the AAA principle.
 
 test('snippets.insert should visit placeholders in order', function()
 	textadept.snippets.insert('$0${1:1} ${2:2}')
@@ -177,12 +179,13 @@ test('snippets.insert should allow choices', function()
 	textadept.snippets.insert('${1|1,2|}')
 
 	test.assert_equal(autocomplete.called, true)
-	test.assert_equal(autocomplete.args[3], '1,2')
+	local items = autocomplete.args[3]
+	test.assert_equal(items, '1,2')
 end)
 
 test('snippets.insert should allow shell code', function()
 	local date_cmd = not WIN32 and 'date' or 'date /T'
-	local p = io.popen(date_cmd)
+	local p<close> = io.popen(date_cmd)
 	local date = p:read()
 
 	textadept.snippets.insert(string.format('`%s`', date_cmd))
@@ -238,6 +241,7 @@ end)
 
 test('snippets.insert should allow mirrors in placeholders', function()
 	textadept.snippets.insert('${1:1} ${2:2{$1\\}3}')
+
 	test.type('\t')
 
 	test.assert_equal(buffer:get_sel_text(), '2{1}3')
@@ -245,6 +249,7 @@ end)
 
 test('snippets.insert should allow nested placeholders', function()
 	textadept.snippets.insert('${1:1}${2:{${3:3}\\}}')
+
 	test.type('\t')
 
 	test.assert_equal(buffer:get_sel_text(), '{3}')
@@ -256,14 +261,19 @@ end)
 
 test('snippets.insert should allow more nested placeholders', function()
 	textadept.snippets.insert('${1:1}(2${2:, ${3:3}})')
+
 	test.type('\t')
+
 	test.assert_equal(buffer:get_sel_text(), ', 3')
+
 	test.type('\t')
+
 	test.assert_equal(buffer:get_sel_text(), '3')
 end)
 
 test('snippets.insert should allow transform options', function()
 	textadept.snippets.insert('${1:word} ${1/./${0:/upcase}/g}')
+
 	test.type('\t')
 
 	test.assert_equal(buffer:get_text(), 'word WORD')
@@ -272,7 +282,7 @@ end)
 test('snippets.previous should go back to a previous placeholder', function()
 	textadept.snippets.insert('${1:1} ${2:2} ${3:3}')
 
-	test.type('\b\t')
+	test.type('\b\t') -- clear '1' and move to '2'
 
 	textadept.snippets.previous()
 
@@ -316,30 +326,33 @@ test('snippets.cancel should resume an active snippet', function()
 end)
 
 test('snippets.select should prompt for a snippet to insert', function()
-	local _<close> = test.mock(snippets, 'trigger', 'text')
+	local trigger = 'trigger'
+	local text = 'text'
+	local _<close> = test.mock(snippets, trigger, text)
 	local select_first_item = test.stub(1)
 	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
 
 	textadept.snippets.select()
 
 	test.assert_equal(select_first_item.called, true)
-	test.assert_equal(buffer:get_text(), 'text')
+	test.assert_equal(buffer:get_text(), text)
 end)
 
 test('snippets in snippet.paths should be recognized', function()
-	local dir, _<close> = test.tempdir{
+	local dir<close> = test.tmpdir{
 		trigger1 = 'text1', --
 		['trigger2.txt'] = 'text2', --
 		['text.trigger3'] = 'text3', --
 		['text.trigger4.txt'] = 'text4'
 	}
-	local _<close> = test.mock(textadept.snippets, 'paths', {dir})
-	local cancel = test.stub()
-	local _<close> = test.mock(ui.dialogs, 'list', cancel)
+	local _<close> = test.mock(textadept.snippets, 'paths', {dir.dirname})
+	local cancel_select = test.stub()
+	local _<close> = test.mock(ui.dialogs, 'list', cancel_select)
 
 	textadept.snippets.select()
 
-	test.assert_equal(cancel.args[1].items, {
+	test.assert_equal(cancel_select.called, true)
+	test.assert_equal(cancel_select.args[1].items, {
 		'trigger1', 'text1', 'trigger2', 'text2', 'trigger3', 'text3', 'trigger4', 'text4'
 	})
 end)

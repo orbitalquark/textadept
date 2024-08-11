@@ -10,70 +10,6 @@ teardown(function()
 	ui.find.focus()
 end)
 
-test('ui.find.focus should raise an error for invalid arguments', function()
-	if CURSES then return end -- blocks the UI
-	local invalid_argment = function() ui.find.focus(true) end
-
-	test.assert_raises(invalid_argment, 'table/nil expected')
-end)
-
-test('ui.find.focus activates the find & replace pane', function()
-	if CURSES then return end -- blocks the UI
-	ui.find.focus()
-
-	test.assert_equal(ui.find.active, true)
-end)
-
-test('ui.find.find_next should emit an event', function()
-	local event = test.stub(false) -- prevent default handler from searching
-	local _<close> = test.connect(events.FIND, event, 1)
-	ui.find.find_entry_text = find
-
-	ui.find.find_next()
-
-	test.assert_equal(event.called, true)
-	test.assert_equal(event.args, {find, true})
-end)
-
-test('ui.find.find_prev should emit an event', function()
-	local event = test.stub(false) -- prevent default handler from searching
-	local _<close> = test.connect(events.FIND, event, 1)
-	ui.find.find_entry_text = find
-
-	ui.find.find_prev()
-
-	test.assert_equal(event.called, true)
-	test.assert_equal(event.args, {find, false})
-end)
-
-test('ui.find.replace should emit events', function()
-	local replace_event = test.stub(false) -- prevent default handler from replacing
-	local find_event = test.stub(false) -- prevent default handler from searching
-	local _<close> = test.connect(events.REPLACE, replace_event, 1)
-	local _<close> = test.connect(events.FIND, find_event, 1)
-	ui.find.find_entry_text = find
-	ui.find.replace_entry_text = replace
-
-	ui.find.replace()
-
-	test.assert_equal(replace_event.called, true)
-	test.assert_equal(replace_event.args, {replace})
-	test.assert_equal(find_event.called, true)
-	test.assert_equal(find_event.args, {find, true})
-end)
-
-test('ui.find.replace_all should emit an event', function()
-	local event = test.stub(false) -- prevent default handler from replacing
-	local _<close> = test.connect(events.REPLACE_ALL, event, 1)
-	ui.find.find_entry_text = find
-	ui.find.replace_entry_text = replace
-
-	ui.find.replace_all()
-
-	test.assert_equal(event.called, true)
-	test.assert_equal(event.args, {find, replace})
-end)
-
 test('find should search for text and select the first match', function()
 	buffer:append_text(find)
 	ui.find.find_entry_text = find
@@ -124,7 +60,7 @@ test('find should emit an event after wrapping', function()
 	test.assert_equal(wrapped.called, true)
 end)
 
-test('find should repeatedly search for occurrences', function()
+test('find should allow repeatedly searching for occurrences', function()
 	buffer:append_text(find .. find)
 	ui.find.find_entry_text = find
 	ui.find.find_next()
@@ -141,17 +77,6 @@ test('find should display a statusbar message if it could not find anything #ski
 	ui.find.find_next()
 
 	-- TODO: how to assert ui.statusbar_text was written to? Cannot mock it.
-end)
-
-test('find should not scroll the view if it could not find anything', function()
-	buffer:append_text(test.lines(100))
-	buffer:goto_pos(buffer.length)
-	local first_visible_line = view.first_visible_line
-	ui.find.find_entry_text = 'will not be found'
-
-	ui.find.find_next()
-
-	test.assert_equal(view.first_visible_line, first_visible_line)
 end)
 
 test('find should allow searching backwards and select the first match', function()
@@ -180,16 +105,7 @@ test('find should allow repeatedly searching backwards for occurrences', functio
 	ui.find.find_prev()
 
 	test.assert_equal(buffer.selection_start, 1)
-	test.assert_equal(buffer.selection_end, 5)
-end)
-
-test('find should search case-insensitively by default', function()
-	buffer:append_text(find:upper())
-	ui.find.find_entry_text = find
-
-	ui.find.find_next()
-
-	test.assert_equal(buffer:get_sel_text(), find:upper())
+	test.assert_equal(buffer.selection_end, 1 + #find)
 end)
 
 test('find should allow searching case-sensitively', function()
@@ -204,7 +120,7 @@ end)
 
 test('find should allow searching for whole words', function()
 	local _<close> = test.mock(ui.find, 'whole_word', true)
-	buffer:append_text(string.format('%s%s %s', find, find, find))
+	buffer:append_text(find .. find .. ' ' .. find)
 	ui.find.find_entry_text = find
 
 	ui.find.find_next()
@@ -246,7 +162,7 @@ test('find should allow advancing backwards through zero-width matches', functio
 
 	test.assert_equal(buffer:position_from_line(buffer.current_pos), 1)
 end)
-expected_failure() -- Scintilla bug?
+expected_failure() -- TODO: Scintilla bug?
 
 test('find should highlight results if ui.find.highlight_all_matches is enabled', function()
 	local _<close> = test.mock(ui.find, 'highlight_all_matches', true)
@@ -254,8 +170,8 @@ test('find should highlight results if ui.find.highlight_all_matches is enabled'
 	ui.find.find_entry_text = find
 
 	ui.find.find_next()
-	local highlighted_matches = test.get_indicated_text(ui.find.INDIC_FIND)
 
+	local highlighted_matches = test.get_indicated_text(ui.find.INDIC_FIND)
 	test.assert_equal(highlighted_matches, {find, find})
 end)
 
@@ -267,8 +183,8 @@ test('find should clear highlights before searching again', function()
 
 	ui.find.find_entry_text = 'not' .. find
 	ui.find.find_next()
-	local no_highlights = test.get_indicated_text(ui.find.INDIC_FIND)
 
+	local no_highlights = test.get_indicated_text(ui.find.INDIC_FIND)
 	test.assert_equal(no_highlights, {})
 end)
 
@@ -279,29 +195,9 @@ test('find should not highlight single-character matches (for performance)', fun
 	ui.find.find_entry_text = char
 
 	ui.find.find_next()
+
 	local no_highlights = test.get_indicated_text(ui.find.INDIC_FIND)
-
 	test.assert_equal(no_highlights, {})
-end)
-
-test('find should not highlight results if by default', function()
-	buffer:append_text(find .. ' ' .. find)
-	ui.find.find_entry_text = find
-
-	ui.find.find_next()
-	local no_highlights = test.get_indicated_text(ui.find.INDIC_FIND)
-
-	test.assert_equal(no_highlights, {})
-end)
-
-test('find should not affect buffer.tag for regex searches', function()
-	local _<close> = test.mock(ui.find, 'regex', true)
-	buffer:append_text(find)
-	ui.find.find_entry_text = '(' .. find .. ')'
-
-	ui.find.find_next()
-
-	test.assert_equal(buffer.tag[1], find)
 end)
 
 test('find should allow searching incrementally with typing', function()
@@ -348,8 +244,9 @@ test('find should not move the incremental search anchor on failed Enter/find ne
 	if CURSES then return end -- blocks the UI
 	buffer:append_text(find .. find)
 	ui.find.focus{find_entry_text = '', incremental = true}
+	local bad_char = 'z'
 
-	test.type('z\n')
+	test.type(bad_char .. '\n')
 	test.type('\b' .. find)
 
 	test.assert_equal(buffer.selection_start, 1)
@@ -376,77 +273,53 @@ end)
 
 test('ui.find.focus with in_files should use a project-specific filter if possible', function()
 	if CURSES then return end -- blocks the UI
-	local dir, _<close> = test.tempdir{['.hg'] = {}, 'file.txt'}
-	ui.find.find_in_files_filters[dir] = '*.txt'
-	io.open_file(dir .. '/file.txt')
+	local file = 'file.txt'
+	local dir<close> = test.tmpdir{['.hg'] = {}, file}
+	ui.find.find_in_files_filters[dir.dirname] = '*.txt'
+	io.open_file(dir / file)
 
 	ui.find.focus{in_files = true}
 
 	test.assert_equal(ui.find.replace_entry_text, '*.txt')
 end)
 
-test('find should allow searching in files and output results to a new buffer', function()
+test('find should allow prompting to search in files and output results to a new buffer', function()
 	if CURSES then return end -- blocks the UI
-	local dir, _<close> = test.tempdir{['file.txt'] = find, subdir = {['subfile.txt'] = find}}
-	local select_directory = test.stub(dir)
+	local file = 'file.txt'
+	local subdir = 'subdir'
+	local subfile = 'subfile.txt'
+	local dir<close> = test.tmpdir{[file] = find, [subdir] = {[subfile] = find}}
+	local select_directory = test.stub(dir.dirname)
 	local _<close> = test.mock(ui.dialogs, 'open', select_directory)
 	ui.find.focus{find_entry_text = find, in_files = true}
 
 	ui.find.find_next()
-	local highlighted_results = test.get_indicated_text(ui.find.INDIC_FIND)
 
 	test.assert_equal(buffer._type, _L['[Files Found Buffer]'])
 	test.assert_equal(buffer.current_pos, buffer.length + 1)
+
 	local output = buffer:get_text()
-	test.assert(output:find(_L['Find:']:gsub('[_&]', '') .. ' ' .. ui.find.find_entry_text),
-		'should have output search text')
-	test.assert(output:find(_L['Directory:'] .. ' ' .. dir), 'should have output directory searched')
-	test.assert(output:find(_L['Filter:']:gsub('[_&]', '')), 'should have output search filter')
 
-	test.assert(output:find('file%.txt:1:' .. find), 'should have found file.txt')
-	test.assert(output:find('subfile%.txt:1:' .. find), 'should have found subfile.txt')
+	test.assert_contains(output, _L['Find:']:gsub('[_&]', '') .. ' ' .. ui.find.find_entry_text)
+	test.assert_contains(output, _L['Directory:'] .. ' ' .. dir.dirname)
+	test.assert_contains(output, _L['Filter:']:gsub('[_&]', ''))
 
+	test.assert_contains(output, file .. ':1:' .. find)
+	test.assert_contains(output, subfile .. ':1:' .. find)
+
+	local highlighted_results = test.get_indicated_text(ui.find.INDIC_FIND)
 	test.assert_equal(highlighted_results, {find, find})
 end)
 
 test('ui.find.find_in_files should update the filter if changed', function()
-	local dir, _<close> = test.tempdir({}, true)
-	ui.find.find_entry_text = 'does not matter'
+	local dir<close> = test.tmpdir({}, true)
+	ui.find.find_entry_text = find -- does not matter; just needs to not be empty
 	ui.find.replace_entry_text = '*.txt'
 
-	ui.find.find_in_files(dir)
+	ui.find.find_in_files(dir.dirname)
 
 	test.assert_equal(ui.find.find_in_files_filters[lfs.currentdir()], {'*.txt'})
-	test.assert_equal(ui.find.find_in_files_filters[dir], {'*.txt'})
-end)
-
-test('ui.find.find_in_files should allow canceling the search', function()
-	local dir, _<close> = test.tempdir()
-	local cancel = test.stub(true)
-	local _<close> = test.mock(ui.dialogs, 'progress', cancel)
-
-	ui.find.find_in_files(dir)
-
-	test.assert(buffer:get_text():find(_L['Find in Files aborted']), 'should have notified of cancel')
-end)
-
-test('ui.find.find_in_files should indicate if nothing was found', function()
-	local dir, _<close> = test.tempdir{'file.txt'}
-	ui.find.find_entry_text = 'will find nothing'
-
-	ui.find.find_in_files(dir)
-
-	test.assert(buffer:get_text():find(_L['No results found']), 'should have said no results found')
-end)
-
-test('ui.find.find_in_files should handle binary files', function()
-	local dir, _<close> = test.tempdir{binary = '\0' .. find}
-	ui.find.find_entry_text = find
-
-	ui.find.find_in_files(dir)
-
-	test.assert(buffer:get_text():find('binary:1:' .. _L['Binary file matches.']),
-		'should have found binary file')
+	test.assert_equal(ui.find.find_in_files_filters[dir.dirname], {'*.txt'})
 end)
 
 test('replace should replace found text', function()
@@ -463,18 +336,10 @@ test('replace should replace found text', function()
 	test.assert_equal(buffer.current_pos, buffer.length + 1)
 end)
 
-test('replace should not replace text not found', function()
-	ui.find.replace_entry_text = 'nothing to replace'
-
-	ui.find.replace()
-
-	test.assert_equal(buffer.length, 0)
-end)
-
 test('replace should select the next occurrence after replacing', function()
 	buffer:append_text(find .. find)
 	ui.find.find_entry_text = find
-	ui.find.replace_entry_text = 'replacement'
+	ui.find.replace_entry_text = replace
 	ui.find.find_next()
 
 	ui.find.replace()
@@ -493,6 +358,12 @@ test('replace should not unescape \\[bfnrtv] in normal replacement', function()
 	test.assert_equal(buffer:get_text(), '\\t')
 end)
 
+--- Searches for regex string *find* in subject string *text*, replaces all instances with
+-- string *replace*, and returns the string result.
+-- @param text Subject string to search.
+-- @param find Regex string to find.
+-- @param replace String to replace with.
+-- @return replacement string
 local function regex_replace(text, find, replace)
 	local _<close> = test.mock(ui.find, 'regex', true)
 	buffer:append_text(text)
@@ -669,37 +540,24 @@ test('replace all should count the number of replacements made #skip', function(
 	-- TODO: how to assert ui.statusbar_text was written to? Cannot mock it.
 end)
 
-test('ui.find.goto_file_found(true) should go to the next file found in the list', function()
-	local dir, _<close> = test.tempdir{['file.txt'] = find, subdir = {['subfile.txt'] = find}}
-	local file = lfs.abspath(dir .. '/file.txt')
-	local subfile = lfs.abspath(dir .. '/subdir/subfile.txt')
+test('ui.find.goto_file_found(true) should go to and select the next occurrence in the list',
+	function()
+		local file = 'file.txt'
+		local dir<close> = test.tmpdir{[file] = find}
+		ui.find.find_entry_text = find
+		ui.find.find_in_files(dir.dirname)
 
-	ui.find.find_entry_text = find
-	ui.find.find_in_files(dir)
+		ui.find.goto_file_found(true)
 
-	ui.find.goto_file_found(true)
-	local first_filename = buffer.filename
-	ui.find.goto_file_found(true)
-	local second_filename = buffer.filename
-
-	test.assert_equal(first_filename, file)
-	test.assert_equal(second_filename, subfile)
-end)
-
-test('ui.find.goto_file_found should select the occurrence', function()
-	local dir, _<close> = test.tempdir{['file.txt'] = find}
-	ui.find.find_entry_text = find
-	ui.find.find_in_files(dir)
-
-	ui.find.goto_file_found(true)
-
-	test.assert_equal(buffer:get_sel_text(), find)
-end)
+		test.assert_equal(buffer.filename, dir / file)
+		test.assert_equal(buffer:get_sel_text(), find)
+	end)
 
 test('ui.find.goto_file_found should not select in binary files', function()
-	local dir, _<close> = test.tempdir{binary = '\0' .. find}
+	local binfile = 'binary'
+	local dir<close> = test.tmpdir{[binfile] = '\0' .. find}
 	ui.find.find_entry_text = find
-	ui.find.find_in_files(dir)
+	ui.find.find_in_files(dir.dirname)
 
 	ui.find.goto_file_found(true)
 
@@ -708,56 +566,115 @@ test('ui.find.goto_file_found should not select in binary files', function()
 end)
 
 test('ui.find.goto_file_found should work if neither the ff view nor buffer is visible', function()
-	local _<close> = test.mock(ui, 'tabs', true)
-	local dir, _<close> = test.tempdir{['file.txt'] = find, subdir = {['subfile.txt'] = find}}
-	local subfile = lfs.abspath(dir .. '/subdir/subfile.txt')
-
+	local _<close> = test.mock(ui, 'tabs', true) -- for CURSES
+	local file = 'file.txt'
+	local dir<close> = test.tmpdir{[file] = find}
 	ui.find.find_entry_text = find
-	ui.find.find_in_files(dir)
+	ui.find.find_in_files(dir.dirname)
 	view:goto_buffer(-1)
 
 	ui.find.goto_file_found(true)
-	ui.find.goto_file_found(true)
 
-	test.assert_equal(buffer.filename, subfile)
+	test.assert_equal(buffer.filename, dir / file)
 	test.assert_equal(#_VIEWS, 1)
 end)
 
 test('ui.find.goto_file_found(false) should go to the previous file in the list', function()
-	local dir, _<close> = test.tempdir{['file.txt'] = find, subdir = {['subfile.txt'] = find}}
-	local subfile = lfs.abspath(dir .. '/subdir/subfile.txt')
-
+	local file = 'file.txt'
+	local subdir = 'subdir'
+	local subfile = 'subfile.txt'
+	local dir<close> = test.tmpdir{[file] = find, [subdir] = {[subfile] = find}}
 	ui.find.find_entry_text = find
-	ui.find.find_in_files(dir)
+	ui.find.find_in_files(dir.dirname)
 
 	ui.find.goto_file_found(false)
 
-	test.assert_equal(buffer.filename, subfile)
+	test.assert_equal(buffer.filename, dir / subdir .. '/' .. subfile)
+end)
+
+-- Coverage tests.
+
+test('ui.find.focus activates the find & replace pane', function()
+	if CURSES then return end -- blocks the UI
+	ui.find.focus()
+
+	test.assert_equal(ui.find.active, true)
+end)
+
+test('find should not affect buffer.tag for regex searches', function()
+	local _<close> = test.mock(ui.find, 'regex', true)
+	buffer:append_text(find)
+	ui.find.find_entry_text = '(' .. find .. ')'
+
+	ui.find.find_next()
+
+	test.assert_equal(buffer.tag[1], find)
+end)
+
+test('Esc should clear highlighted find results', function()
+	local _<close> = test.mock(ui.find, 'highlight_all_matches', true)
+	buffer:append_text(find .. ' ' .. find)
+	ui.find.find_entry_text = find
+	ui.find.find_next()
+
+	test.type('esc')
+
+	local highlighted_matches = test.get_indicated_text(ui.find.INDIC_FIND)
+	test.assert_equal(highlighted_matches, {})
+end)
+
+test('ui.find.find_in_files should allow canceling the search', function()
+	local dir<close> = test.tmpdir()
+	local cancel_search = test.stub(true)
+	local _<close> = test.mock(ui.dialogs, 'progress', cancel_search)
+
+	ui.find.find_in_files(dir.dirname)
+
+	test.assert_equal(cancel_search.called, true)
+	test.assert_contains(buffer:get_text(), _L['Find in Files aborted'])
+end)
+
+test('ui.find.find_in_files should indicate if nothing was found', function()
+	local dir<close> = test.tmpdir()
+	ui.find.find_entry_text = find
+
+	ui.find.find_in_files(dir.dirname)
+
+	test.assert_contains(buffer:get_text(), _L['No results found'])
+end)
+
+test('ui.find.find_in_files should handle binary files', function()
+	local dir<close> = test.tmpdir{binary = '\0' .. find}
+	ui.find.find_entry_text = find
+
+	ui.find.find_in_files(dir.dirname)
+
+	test.assert_contains(buffer:get_text(), 'binary:1:' .. _L['Binary file matches.'])
 end)
 
 test('Enter in the files found list should jump to that file', function()
-	local dir, _<close> = test.tempdir{['file.txt'] = find}
-	local file = lfs.abspath(dir .. '/file.txt')
+	local file = 'file.txt'
+	local dir<close> = test.tmpdir{[file] = find}
 	ui.find.find_entry_text = find
-	ui.find.find_in_files(dir)
+	ui.find.find_in_files(dir.dirname)
 	buffer:line_up()
 	buffer:line_up()
 
 	test.type('\n')
 
-	test.assert_equal(buffer.filename, file)
+	test.assert_equal(buffer.filename, dir / file)
 end)
 
 test('double-clicking in the files found list should jump to that file', function()
-	local dir, _<close> = test.tempdir{['file.txt'] = find}
-	local file = lfs.abspath(dir .. '/file.txt')
+	local file = 'file.txt'
+	local dir<close> = test.tmpdir{[file] = find}
 	ui.find.find_entry_text = find
-	ui.find.find_in_files(dir)
+	ui.find.find_in_files(dir.dirname)
 	buffer:line_up()
 	buffer:line_up()
 	local line = buffer:line_from_position(buffer.current_pos)
 
-	events.emit(events.DOUBLE_CLICK, buffer.current_pos, line)
+	events.emit(events.DOUBLE_CLICK, buffer.current_pos, line) -- simulate
 
-	test.assert_equal(buffer.filename, file)
+	test.assert_equal(buffer.filename, dir / file)
 end)

@@ -57,6 +57,10 @@ test('ui.command_entry.run should invoke functions without parentheses', functio
 	test.assert_equal(f.called, true)
 end)
 
+--- Runs Lua command *lua* using the command entry and returns the result that would be printed
+-- to the output buffer.
+-- @param lua String Lua command to run.
+-- @return string output
 local function run(lua)
 	local ui_print = test.stub()
 	local _<close> = test.mock(ui, 'output', ui_print)
@@ -139,6 +143,10 @@ test('--execute should run Lua code via ui.command_entry.run', function()
 	test.assert_equal(f.called, true)
 end)
 
+--- Returns table of tab completions for Lua command *lua*.
+-- Return completion items will contain trailing '?n' sequences, where *n* is an XPM type.
+-- @param lua String Lua command to tab-complete.
+-- @return table of completions
 local function tab_complete(lua)
 	local show = test.stub()
 	local _<close> = test.mock(ui.command_entry, 'auto_c_show', show)

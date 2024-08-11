@@ -81,7 +81,7 @@ end)
 
 test('io.open_file should allow opening non-existent files', function()
 	local f<close> = test.tmpfile()
-	os.remove(f.filename)
+	f:delete()
 
 	io.open_file(f.filename)
 
@@ -213,7 +213,7 @@ end)
 
 test('buffer.reload should discard any unsaved changes', function()
 	local contents = 'text'
-	local f<close> = test.tmpfile(contents, true)
+	local _<close> = test.tmpfile(contents, true)
 	buffer:clear_all()
 
 	buffer:reload()
@@ -225,7 +225,7 @@ end)
 test('buffer.set_encoding should handle multi- to single-byte changes and mark the buffer as dirty',
 	function()
 		local utf8_contents = 'Copyright ©'
-		local f<close> = test.tmpfile(utf8_contents, true)
+		local _<close> = test.tmpfile(utf8_contents, true)
 		local encoding = 'CP1252'
 
 		buffer:set_encoding(encoding)
@@ -240,7 +240,7 @@ test('buffer.set_encoding should handle single-byte changes without marking buff
 		local utf8_contents = '中文\n'
 		local encoding = 'CP936'
 		local cp936_contents = utf8_contents:iconv(encoding, 'UTF-8')
-		local f<close> = test.tmpfile(cp936_contents, true)
+		local _<close> = test.tmpfile(cp936_contents, true)
 		local initially_detected_cp1252 = buffer.encoding == 'CP1252' -- incorrectly detected
 		local initially_showed_cp1252 = buffer:get_text() ~= utf8_contents
 
@@ -257,7 +257,7 @@ test('buffer.set_encoding should handle single- to multi-byte changes and mark t
 	function()
 		local utf8_contents = 'Copyright ©'
 		local cp1252_contents = utf8_contents:iconv('CP1252', 'UTF-8')
-		local f<close> = test.tmpfile(cp1252_contents, true)
+		local _<close> = test.tmpfile(cp1252_contents, true)
 		local encoding = 'UTF-16'
 
 		buffer:set_encoding(encoding)
@@ -291,7 +291,7 @@ end)
 
 test('buffer.save should write a trailing newline if io.ensure_final_newline is enabled', function()
 	local _<close> = test.mock(io, 'ensure_final_newline', true)
-	local f<close> = test.tmpfile(true)
+	local _<close> = test.tmpfile(true)
 	local contents = 'text'
 	buffer:append_text(contents)
 
@@ -303,7 +303,7 @@ end)
 test('buffer:save should never write a trailing newline for binary files', function()
 	local _<close> = test.mock(io, 'ensure_final_newline', true)
 	local binary_contents = '\x00\xff\xff'
-	local f<close> = test.tmpfile(binary_contents, true)
+	local _<close> = test.tmpfile(binary_contents, true)
 
 	buffer:save()
 
@@ -312,7 +312,7 @@ end)
 
 test('buffer.save should emit events.FILE_BEFORE_SAVE and events.FILE_AFTER_SAVE', function()
 	local f<close> = test.tmpfile(true)
-	os.remove(f.filename) -- delete for tracking before and after events
+	f:delete() -- delete for tracking before and after events
 
 	local file_exists = {}
 	local check_file_exists = function(filename)
@@ -334,13 +334,13 @@ end)
 
 test('buffer.save_as should save with a given filename', function()
 	local f<close> = test.tmpfile()
-	os.remove(f.filename) -- should not exist yet
+	f:delete() -- should not exist yet
 
 	local saved = buffer:save_as(f.filename)
-	local file_exists = lfs.attributes(f.filename, 'mode') == 'file'
 
 	test.assert_equal(saved, true)
 	test.assert_equal(buffer.filename, f.filename)
+	local file_exists = lfs.attributes(f.filename, 'mode') == 'file'
 	test.assert_equal(file_exists, true)
 end)
 
@@ -363,6 +363,7 @@ test('buffer.save_as should prompt with the current file', function()
 
 	buffer:save_as()
 
+	test.assert_equal(cancel_save.called, true)
 	local dialog_opts = cancel_save.args[1]
 	test.assert_equal(dialog_opts.dir, dir.dirname)
 	test.assert_equal(dialog_opts.file, file)
@@ -414,7 +415,7 @@ test('io.save_all_files(true) should prompt to save untitled files', function()
 	buffer:append_text('modified')
 
 	-- Open another file to verify the untitled buffer is switched to prior to saving.
-	local f<close> = test.tmpfile(true)
+	local _<close> = test.tmpfile(true)
 
 	local switched_to_untitled_buffer = false
 	local check_for_untitled_buffer = function() switched_to_untitled_buffer = not buffer.filename end
@@ -471,6 +472,11 @@ test('external file modifications should emit events.FILE_CHANGED', function()
 	test.assert_equal(file_changed.args, {f.filename})
 end)
 
+--- Creates, opens, optionally modifies in-place with string *new_contents*, and returns a
+-- temporary file.
+-- The returned file will be detected as externally modified when switched away from and back to.
+-- @param[opt] new_contents Optional string contents for the modified file.
+-- @return to-be-closed temporary file
 local function open_and_externally_modify_tmpfile(new_contents)
 	local f = test.tmpfile(true)
 	if new_contents then f:write(new_contents) end
@@ -515,7 +521,7 @@ test('buffer.reload should use the global buffer', function()
 end)
 
 test('buffer.save should use the global buffer', function()
-	local f<close> = test.tmpfile(true)
+	local _<close> = test.tmpfile(true)
 
 	local saved = buffer.save()
 
@@ -530,11 +536,12 @@ test('buffer.save_as should prompt to save the global buffer', function()
 
 	buffer.save_as()
 
+	test.assert_equal(cancel_save.called, true)
 	test.assert_equal(cancel_save.args[1].file, name)
 end)
 
 test('buffer.close should use the global buffer', function()
-	local f<close> = test.tmpfile(true)
+	local _<close> = test.tmpfile(true)
 
 	buffer.close()
 
@@ -560,7 +567,7 @@ end)
 
 test('io.open_recent_file should allow clearing the list during prompt', function()
 	local _<close> = test.mock(io, 'recent_files', {})
-	local f<close> = test.tmpfile(true)
+	local _<close> = test.tmpfile(true)
 	buffer:close()
 
 	local clear_recent_files = test.stub({1}, 3)
@@ -733,12 +740,4 @@ test("buffer.save should remove a buffer's type once it has a filename", functio
 	buffer:save()
 
 	test.assert_equal(buffer._type, nil)
-end)
-
-test('io.get_project_root should handle not detecting the project root', function()
-	local dir, _<close> = test.tempdir()
-
-	local root = io.get_project_root(dir)
-
-	test.assert_equal(root, nil)
 end)

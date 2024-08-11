@@ -137,14 +137,12 @@ function tmpfile:read()
 end
 
 --- Writes the contents of this temporary file to disk.
-function tmpfile:write(contents)
-	io.open(self.filename, 'wb'):write(contents):close()
-end
+function tmpfile:write(...) io.open(self.filename, 'wb'):write(...):close() end
+
+function tmpfile:delete() os.remove(self.filename) end
 
 --- Deletes this temporary file from disk.
-function tmpfile:__close()
-	os.remove(self.filename)
-end
+function tmpfile:__close() self:delete() end
 
 --- Creates a temporary file (with optional extension *ext* and *contents*), optionally opens
 -- it if *open* is `true`, and returns it as a to-be-closed value for deleting that file.
@@ -235,7 +233,7 @@ end
 -- @param[opt] chdir Optional flag that indicates whether or not to change the current working
 --	directory to the temporary directory. The default value is `false`.
 -- @return to-be-closed temporary directory
--- @usage local dir<close> = tempdir{foo = {'bar.lua'}, 'baz.txt'}
+-- @usage local dir<close> = tmpdir{foo = {'bar.lua'}, 'baz.txt'}
 function M.tmpdir(structure, chdir)
 	local dirname = os.tmpname()
 	if not WIN32 then os.remove(dirname) end
@@ -322,8 +320,12 @@ local newlines = ({[buffer.EOL_LF] = '\n', [buffer.EOL_CRLF] = '\r\n'})
 -- on the current buffer EOL mode.
 -- @param lines Number of lines to produce or table of lines to use.
 -- @return string
-function M.lines(lines)
-	if type(lines) == 'number' then return string.rep(newlines[buffer.eol_mode], lines) end
+function M.lines(lines, blank)
+	if type(assert_type(lines, 'number/table', 1)) == 'number' then
+		local t = {}
+		for i = 1, lines do t[#t + 1] = not blank and tostring(i) or '' end
+		lines = t
+	end
 	return table.concat(lines, newlines[buffer.eol_mode])
 end
 
@@ -402,42 +404,6 @@ function M.get_indicated_text(indic)
 		s = buffer:indicator_end(indic, e)
 	end
 	return words
-end
-
--- Deprecated.
-
-function M.tempfile(ext, contents)
-	assert_type(ext, 'string/nil', 1)
-	assert_type(contents, 'string/nil', 2)
-	if ext and not ext:find('^%.') then ext, contents = nil, ext end
-
-	local filename = os.tmpname()
-	if ext then
-		if not WIN32 then os.remove(filename) end
-		filename = filename .. ext
-	end
-	if contents then
-		io.open(filename, 'wb'):write(contents):close()
-	elseif WIN32 then
-		io.open(filename, 'w'):close() -- create the file too, just like on Linux
-	end
-	return filename, M.defer(function() os.remove(filename) end)
-end
-
-function M.tempdir(structure, chdir)
-	local dir = os.tmpname()
-	if not WIN32 then os.remove(dir) end
-
-	if type(structure) == 'boolean' then structure, chdir = nil, structure end
-	mkdir(dir, assert_type(structure, 'table/nil', 1) or {})
-
-	local cwd = lfs.currentdir()
-	if chdir then lfs.chdir(dir) end
-
-	return dir, M.defer(function()
-		if chdir then lfs.chdir(cwd) end
-		os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q ') .. dir)
-	end)
 end
 
 return M
