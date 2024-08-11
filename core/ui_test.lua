@@ -11,7 +11,7 @@ test('ui.print_to should print to a typed buffer in the current view if ui.tabs 
 		test.assert_equal(#_BUFFERS, 2)
 		test.assert_equal(#_VIEWS, 1)
 		test.assert_equal(buffer._type, type)
-		test.assert_equal(buffer:get_text(), test.lines{output, ''})
+		test.assert_equal(buffer:get_text(), output .. '\n')
 		test.assert_equal(buffer:line_from_position(buffer.current_pos), 2)
 		test.assert_equal(buffer.modify, false)
 	end)
@@ -72,7 +72,7 @@ test('ui.print_silent_to should print to a buffer without switching to it', func
 	local buf = ui.print_silent_to(type, silent_output)
 
 	test.assert_equal(buffer._type, nil)
-	test.assert_equal(buf:get_text(), test.lines{silent_output, ''})
+	test.assert_equal(buf:get_text(), silent_output .. '\n')
 	test.assert_equal(#_VIEWS, 1)
 end)
 
@@ -95,7 +95,7 @@ test('ui.print should print to the output buffer', function()
 	ui.print(message)
 
 	test.assert_equal(buffer._type, _L['[Output Buffer]'])
-	test.assert_equal(buffer:get_text(), test.lines{message, ''})
+	test.assert_equal(buffer:get_text(), message .. '\n')
 end)
 
 test('ui.print should print multiple values separated by tabs', function()
@@ -104,7 +104,7 @@ test('ui.print should print multiple values separated by tabs', function()
 
 	ui.print(table.unpack(output))
 
-	test.assert_equal(buffer:get_text(), test.lines{text_output, ''})
+	test.assert_equal(buffer:get_text(), text_output .. '\n')
 end)
 
 test('ui.output should print to the output buffer', function()
@@ -315,12 +315,15 @@ end)
 
 test('dropping a file URI should open it', function()
 	local file = 'dropped file.txt'
-	local file_uriencoded = file:gsub('[^%w]',
-		function(char) tonumber(tostring(string.byte(char)), 16) end)
+	local file_uriencoded = file:gsub('[^%w.]',
+		function(char) return string.format('%%%02x', char:byte()) end)
 	local contents = 'dropped'
-	local dir<close> = test.tmpdir{[file_uriencoded] = contents}
-	local uri = 'file://' .. dir / file_uriencoded
-	if WIN32 then uri = uri:gsub('\\', '/') end
+	local dir<close> = test.tmpdir{[file] = contents}
+	local filename = dir / file_uriencoded
+	if WIN32 then filename = '\\' .. filename end -- \C:\path\to\file
+	local uri = 'file://' .. filename
+	if WIN32 then uri = uri:gsub('\\', '/') end -- file:///C:/path/to/file
+	test.log('dropping ', uri)
 
 	events.emit(events.URI_DROPPED, uri) -- simulate
 

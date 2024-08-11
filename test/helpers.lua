@@ -167,6 +167,7 @@ function M.tmpfile(ext, contents, open)
 	end
 
 	local filename = os.tmpname()
+	if WIN32 and not ext and filename:find('%.') then ext = '.txt' end -- avoid unexpected detections
 	if ext then
 		if not WIN32 then os.remove(filename) end
 		filename = filename .. ext
@@ -221,7 +222,7 @@ function tmpdir:__div(path) return lfs.abspath(path, self.dirname) end
 --- Deletes this temporary directory and all contents from disk.
 function tmpdir:__close()
 	if self.oldwd then lfs.chdir(self.oldwd) end
-	os.execute((not WIN32 and 'rm -r ' or 'rmdir /Q ') .. self.dirname)
+	os.execute((not WIN32 and 'rm -r ' or 'rmdir /S /Q ') .. self.dirname)
 end
 
 --- Creates a temporary directory (with optional structure table *structure*), optionally changes
@@ -293,8 +294,9 @@ function M.mock(module, name, condition, mock)
 	return M.defer(function() module[name] = original_value end)
 end
 
-local function sleep(interval) os.execute((not WIN32 and 'sleep ' or 'timeout /T ' .. interval)) end
-if pcall(require, 'debugger') then sleep = require('debugger').socket.sleep end
+local function sleep(interval) os.execute((not WIN32 and 'sleep ' or 'timeout /T ') .. interval) end
+local have_sleep = pcall(require, 'debugger')
+if have_sleep then sleep = require('debugger').socket.sleep end
 
 --- Repeatedly calls function *condition* until it either returns a truthy value, or a timeout
 -- of *timeout* seconds is reached.
@@ -305,8 +307,9 @@ if pcall(require, 'debugger') then sleep = require('debugger').socket.sleep end
 -- @usage wait(function() return f.called end)
 function M.wait(condition, timeout)
 	assert_type(condition, 'function', 1)
-	local interval = not WIN32 and 0.1 or 1
-	for i = 1, (assert_type(timeout, 'number/nil', 2) or 1) // interval do
+	if not assert_type(timeout, 'number/nil', 2) then timeout = (have_sleep or not WIN32) and 1 or 2 end
+	local interval = (have_sleep or not WIN32) and 0.1 or 1
+	for i = 1, timeout // interval do
 		sleep(interval)
 		ui.update()
 		local result = condition()

@@ -370,7 +370,8 @@ function M.filter_through(command)
 		for i = 1, buffer.selections do
 			inout[#inout + 1] = buffer:text_range(buffer.selection_n_start[i], buffer.selection_n_end[i])
 		end
-		inout = table.concat(inout, '\n') .. '\n'
+		local newline = not WIN32 and '\n' or '\r\n'
+		inout = table.concat(inout, newline) .. newline
 	end
 	for i = 1, #commands do
 		local p = assert(os.spawn(commands[i]:match('^%s*(.-)%s*$')))

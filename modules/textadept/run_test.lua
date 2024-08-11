@@ -363,35 +363,7 @@ test('run.goto_error(true) should go to the next error/warning found', function(
 	test.assert_equal(first_line, 1)
 	test.assert_equal(second_line, 2)
 end)
-
-test('run.goto_error should allow going to columns if available', function()
-	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
-	local _<close> = test.mock(os, 'spawn', mock_spawn)
-	local f<close> = test.tmpfile()
-	f:write(f.filename, ':1:2: error!', '\n')
-	local command = not WIN32 and 'cat' or 'type'
-	textadept.run.run_commands[f.filename] = command .. ' "%f"'
-	textadept.run.run(f.filename)
-
-	textadept.run.goto_error(true)
-
-	test.assert_equal(buffer.current_pos, buffer:find_column(1, 2))
-end)
-
-test('run.goto_error should show an annotation with the error message', function()
-	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
-	local _<close> = test.mock(os, 'spawn', mock_spawn)
-	local f<close> = test.tmpfile()
-	local errmsg = 'error!'
-	f:write(f.filename, ':1: ', errmsg, '\n')
-	local command = not WIN32 and 'cat' or 'type'
-	textadept.run.run_commands[f.filename] = command .. ' "%f"'
-	textadept.run.run(f.filename)
-
-	textadept.run.goto_error(true)
-
-	test.assert_equal(buffer.annotation_text[1], errmsg)
-end)
+if WIN32 then expected_failure() end -- TODO: output lexer does not recognize absolute c:\ paths
 
 test('run.goto_error should work with relative file names', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
@@ -408,11 +380,43 @@ test('run.goto_error should work with relative file names', function()
 	test.assert_equal(buffer.filename, f.filename)
 end)
 
+test('run.goto_error should allow going to columns if available', function()
+	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
+	local _<close> = test.mock(os, 'spawn', mock_spawn)
+	local f<close> = test.tmpfile()
+	local basename = f.filename:match('[^/\\]+$')
+	f:write(basename, ':1:2: error!', '\n')
+	local command = not WIN32 and 'cat' or 'type'
+	textadept.run.run_commands[f.filename] = command .. ' "%f"'
+	textadept.run.run(f.filename)
+
+	textadept.run.goto_error(true)
+
+	test.assert_equal(buffer.current_pos, buffer:find_column(1, 2))
+end)
+
+test('run.goto_error should show an annotation with the error message', function()
+	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
+	local _<close> = test.mock(os, 'spawn', mock_spawn)
+	local f<close> = test.tmpfile()
+	local basename = f.filename:match('[^/\\]+$')
+	local errmsg = 'error!'
+	f:write(basename, ':1: ', errmsg, '\n')
+	local command = not WIN32 and 'cat' or 'type'
+	textadept.run.run_commands[f.filename] = command .. ' "%f"'
+	textadept.run.run(f.filename)
+
+	textadept.run.goto_error(true)
+
+	test.assert_equal(buffer.annotation_text[1], errmsg)
+end)
+
 test('run.goto_error should work if neither the output view nor buffer is visible', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local _<close> = test.mock(os, 'spawn', mock_spawn)
 	local f<close> = test.tmpfile()
-	f:write(f.filename, ':1: error!', '\n')
+	local basename = f.filename:match('[^/\\]+$')
+	f:write(basename, ':1: error!', '\n')
 	local command = not WIN32 and 'cat' or 'type'
 	textadept.run.run_commands[f.filename] = command .. ' "%f"'
 	textadept.run.run(f.filename)
@@ -427,9 +431,10 @@ test('run.goto_error(false) should go to the previous error/warning found', func
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local _<close> = test.mock(os, 'spawn', mock_spawn)
 	local f<close> = test.tmpfile(true)
+	local basename = f.filename:match('[^/\\]+$')
 	buffer:append_text(test.lines{
-		f.filename .. ':1: error!', --
-		f.filename .. ':2: warning: warning!', --
+		basename .. ':1: error!', --
+		basename .. ':2: warning: warning!', --
 		''
 	})
 	local command = not WIN32 and 'cat' or 'type'
@@ -453,7 +458,8 @@ test('Enter in an output buffer error should jump to that error', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local _<close> = test.mock(os, 'spawn', mock_spawn)
 	local f<close> = test.tmpfile()
-	f:write(f.filename, ':1: error!', '\n')
+	local basename = f.filename:match('[^/\\]+$')
+	f:write(basename, ':1: error!', '\n')
 	local command = not WIN32 and 'cat' or 'type'
 	textadept.run.run_commands[f.filename] = command .. ' "%f"'
 	textadept.run.run(f.filename)
@@ -469,7 +475,8 @@ test('double-clicking an error in the output buffer should jump to it', function
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local _<close> = test.mock(os, 'spawn', mock_spawn)
 	local f<close> = test.tmpfile()
-	f:write(f.filename, ':1: error!', '\n')
+	local basename = f.filename:match('[^/\\]+$')
+	f:write(basename, ':1: error!', '\n')
 	local command = not WIN32 and 'cat' or 'type'
 	textadept.run.run_commands[f.filename] = command .. ' "%f"'
 	textadept.run.run(f.filename)

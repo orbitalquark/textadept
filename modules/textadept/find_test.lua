@@ -589,7 +589,7 @@ test('ui.find.goto_file_found(false) should go to the previous file in the list'
 
 	ui.find.goto_file_found(false)
 
-	test.assert_equal(buffer.filename, dir / subdir .. '/' .. subfile)
+	test.assert_equal(buffer.filename, dir / (subdir .. '/' .. subfile))
 end)
 
 -- Coverage tests.

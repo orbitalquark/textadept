@@ -270,7 +270,7 @@ test('buffer.set_encoding should handle single- to multi-byte changes and mark t
 test('buffer.save should save the file and mark the buffer as unmodified', function()
 	local contents = 'text'
 	local f<close> = test.tmpfile(contents, true)
-	buffer:new_line()
+	buffer:append_text(' ')
 
 	local saved = buffer:save()
 
@@ -652,7 +652,7 @@ test('io.quick_open should prompt for a file to open, subject to a filter', func
 
 	io.quick_open(dir.dirname, '.lua')
 
-	test.assert_equal(buffer.filename, dir / subdir .. '/' .. subfile_lua)
+	test.assert_equal(buffer.filename, dir / (subdir .. '/' .. subfile_lua))
 end)
 
 test('io.quick_open should prompt for a file to open, subject to an exclusive filter', function()
@@ -665,7 +665,7 @@ test('io.quick_open should prompt for a file to open, subject to an exclusive fi
 
 	io.quick_open(dir.dirname, {'!.txt'})
 
-	test.assert_equal(buffer.filename, dir / subdir .. '/' .. subfile_lua)
+	test.assert_equal(buffer.filename, dir / (subdir .. '/' .. subfile_lua))
 end)
 
 test('io.quick_open should prompt for a file to open, but at a maximum depth', function()

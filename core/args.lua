@@ -146,7 +146,7 @@ M.register('-t', '--test', 1, function(tags)
 		local info = debug.getinfo(4)
 		if GTK and info then return end -- ignore simulated quit event
 		if info and info.name ~= 'quit' then return end -- ignore simulated quit event
-		os.execute(string.format('%s "%s"', not WIN32 and 'rm -r' or 'rmdir /Q', _USERHOME))
+		os.execute(string.format('%s "%s"', not WIN32 and 'rm -r' or 'rmdir /S /Q', _USERHOME))
 	end)
 
 	return true

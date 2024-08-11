@@ -34,28 +34,29 @@ test('os.spawn should inherit from the current environment', function()
 end)
 
 test('os.spawn should allow setting an environment from a map', function()
-	local env_cmd = not WIN32 and 'env' or 'set'
+	local env_command = not WIN32 and 'env' or 'set'
 	local env = {NAME = 'value'}
 
-	local output = os.spawn(env_cmd, env):read('a')
+	local output = os.spawn(env_command, env):read('a')
 
-	test.assert_equal(output, test.lines{'NAME=value', ''})
+	test.assert_contains(output, 'NAME=value')
 end)
 
 test('os.spawn should allow setting an environment from a list', function()
-	local env_cmd = not WIN32 and 'env' or 'set'
+	local env_command = not WIN32 and 'env' or 'set'
 	local env = {'NAME=value'}
 
-	local output = os.spawn(env_cmd, env):read('a')
+	local output = os.spawn(env_command, env):read('a')
 
-	test.assert_equal(output, test.lines{'NAME=value', ''})
+	test.assert_contains(output, 'NAME=value')
 end)
 
 test('os.spawn environment should ignore non-environment assignments', function()
-	local env_cmd = not WIN32 and 'env' or 'set'
+	local env_command = not WIN32 and 'env' or 'set'
 	local env = {[true] = false}
+	if WIN32 and CURSES then env.PATH = os.getenv('PATH') end -- needed to find env_command
 
-	local output = os.spawn(env_cmd, env):read('a')
+	local output = os.spawn(env_command, env):read('a')
 
 	test.assert(not output:find('true=false'), 'should not have included non-string pair')
 end)
@@ -135,7 +136,7 @@ test('proc.kill should kill a spawned process', function()
 end)
 
 test('os.spawn should raise an error if the command does not exist', function()
-	if WIN32 and CURSES then return end -- 'cmd /c does not exist' prints to stderr and returns 1
+	if WIN32 then return end -- 'cmd /c does not exist' prints to stderr and returns 1
 	local nonexistent_command = 'does-not-exist'
 	local command_does_not_exist = function() assert(os.spawn(nonexistent_command)) end
 

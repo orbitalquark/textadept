@@ -54,7 +54,7 @@ for test_file in lfs.walk(_HOME, '.lua') do -- TODO: '*_test.lua'
 end
 table.sort(test_files)
 for _, test_file in ipairs(test_files) do
-	_TESTSUITE = test_file:sub(#_HOME + 2, -string.len('_test.lua') - 1)
+	_TESTSUITE = test_file:sub(#_HOME + 2, -string.len('_test.lua') - 1):gsub('\\', '/')
 	assert(loadfile(test_file, 't', env))()
 end
 

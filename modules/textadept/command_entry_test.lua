@@ -83,7 +83,7 @@ test('ui.command_entry.run should wrap pretty-printed tables longer than view.ed
 
 		local result = run("{key='value'}")
 
-		test.assert_equal(result, test.lines{'{', '\tkey = value', '}'})
+		test.assert_equal(result, table.concat({'{', '\tkey = value', '}'}, '\n'))
 	end)
 
 test('ui.command_entry.run should consider Scintilla fields/functions as globals', function()

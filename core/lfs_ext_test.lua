@@ -16,8 +16,8 @@ test('lfs.walk should walk a directory tree', function()
 	end
 
 	table.sort(files)
-	test.assert_equal(files, {dir / file, dir / subdir .. '/' .. subfile})
-	test.assert_equal(dirs, {dir / subdir .. '/'})
+	test.assert_equal(files, {dir / file, dir / (subdir .. '/' .. subfile)})
+	test.assert_equal(dirs, {dir / (subdir .. '/')})
 end)
 
 test('lfs.walk should allow filters to include files by extension', function()
@@ -29,7 +29,7 @@ test('lfs.walk should allow filters to include files by extension', function()
 
 	for filename in lfs.walk(dir.dirname, '.lua') do files[#files + 1] = filename end
 
-	test.assert_equal(files, {dir / subdir .. '/' .. lua_file})
+	test.assert_equal(files, {dir / (subdir .. '/' .. lua_file)})
 end)
 
 test('lfs.walk should allow filters to exclude files by extension', function()
@@ -42,7 +42,7 @@ test('lfs.walk should allow filters to exclude files by extension', function()
 
 	for filename in lfs.walk(dir.dirname, '!.lua') do files[#files + 1] = filename end
 
-	test.assert_equal(files, {dir / subdir .. '/' .. non_lua_subfile})
+	test.assert_equal(files, {dir / (subdir .. '/' .. non_lua_subfile)})
 end)
 
 test('lfs.walk should allow filters to include directories', function()
@@ -55,7 +55,7 @@ test('lfs.walk should allow filters to include directories', function()
 	for filename in lfs.walk(dir.dirname, '/' .. subdir) do files[#files + 1] = filename end
 
 	table.sort(files)
-	test.assert_equal(files, {dir / subdir .. '/' .. subfile})
+	test.assert_equal(files, {dir / (subdir .. '/' .. subfile)})
 end)
 expected_failure() -- TODO:
 
@@ -90,7 +90,7 @@ test('lfs.walk should be able to walk from the root directory', function()
 end)
 
 test('lfs.walk should be able to handle directory symlinks, even recursive ones', function()
-	if not WIN32 then return end -- not supported
+	if WIN32 then return end -- not supported
 	-- `lfs.walk()` should be able to handle symlinks, even recursive ones.
 	-- dir/
 	-- 	foo
@@ -98,9 +98,7 @@ test('lfs.walk should be able to handle directory symlinks, even recursive ones'
 	-- 	baz/
 	-- 		quux/
 	-- 			foobar -> ../../baz
-	local dir<close> = test.tmpdir{'foo', baz = {quux = {}}}
-	local cwd = lfs.currentdir()
-	local _<close> = defer(function() lfs.chdir(cwd) end)
+	local dir<close> = test.tmpdir({'foo', baz = {quux = {}}}, true)
 	lfs.chdir(dir.dirname)
 	lfs.link('.', 'bar', true)
 	lfs.chdir(dir / '/baz/quux')
@@ -169,7 +167,7 @@ test('lfs.abspath should resolve ./', function()
 
 	local path = lfs.abspath('./' .. subdir .. '/./', dir.dirname)
 
-	test.assert_equal(path, dir / subdir .. '/')
+	test.assert_equal(path, dir / (subdir .. '/'))
 end)
 
 test('lfs.abspath should resolve ../', function()
