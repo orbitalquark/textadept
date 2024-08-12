@@ -173,6 +173,7 @@ function M.tmpfile(ext, contents, open)
 		filename = filename .. ext
 		io.open(filename, 'w'):close()
 	end
+	if OSX then filename = '/private' .. filename end
 
 	local f = tmpfile.new(filename)
 	if contents or WIN32 then f:write(contents or '') end
@@ -238,6 +239,7 @@ end
 function M.tmpdir(structure, chdir)
 	local dirname = os.tmpname()
 	if not WIN32 then os.remove(dirname) end
+	if OSX then dirname = '/private' .. dirname end
 
 	if type(structure) == 'boolean' then structure, chdir = nil, structure end
 	mkdir(dirname, assert_type(structure, 'table/nil', 1) or {})

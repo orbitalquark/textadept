@@ -128,7 +128,7 @@ test('key sequences should come in via events.KEY and emit events.KEYPRESS', fun
 	events.emit(events.KEY, string.byte('A'), view.MOD_CTRL | view.MOD_SHIFT)
 
 	test.assert_equal(key.called, true)
-	test.assert_equal(key.args, {not OSX and 'ctrl+A' or 'cmd+A'})
+	test.assert_equal(key.args, {(not OSX or CURSES) and 'ctrl+A' or 'cmd+A'})
 end)
 
 test('symbolic keys should come from keys.KEYSYMS', function()

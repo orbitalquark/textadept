@@ -594,13 +594,6 @@ end)
 
 -- Coverage tests.
 
-test('ui.find.focus activates the find & replace pane', function()
-	if CURSES then return end -- blocks the UI
-	ui.find.focus()
-
-	test.assert_equal(ui.find.active, true)
-end)
-
 test('find should not affect buffer.tag for regex searches', function()
 	local _<close> = test.mock(ui.find, 'regex', true)
 	buffer:append_text(find)

@@ -1,6 +1,7 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
 test('ui.dialogs.progress should show progress for work done', function()
+	if OSX then return end -- TODO: this test appears to cause focus issues for command entry tests
 	local i = 0
 
 	local stopped = ui.dialogs.progress{
