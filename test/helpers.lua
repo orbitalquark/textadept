@@ -139,9 +139,10 @@ end
 --- Writes the contents of this temporary file to disk.
 function tmpfile:write(...) io.open(self.filename, 'wb'):write(...):close() end
 
+--- Deletes this temporary file from disk.
 function tmpfile:delete() os.remove(self.filename) end
 
---- Deletes this temporary file from disk.
+--- To-be-closed method for deleting this temporary file from disk.
 function tmpfile:__close() self:delete() end
 
 --- Creates a temporary file (with optional extension *ext* and *contents*), optionally opens
@@ -296,6 +297,8 @@ function M.mock(module, name, condition, mock)
 	return M.defer(function() module[name] = original_value end)
 end
 
+--- Sleep for *n* seconds.
+-- @param n Number of seconds to sleep for. It may be fractional.
 local function sleep(interval) os.execute((not WIN32 and 'sleep ' or 'timeout /T ') .. interval) end
 local have_sleep = pcall(require, 'debugger')
 if have_sleep then sleep = require('debugger').socket.sleep end
@@ -323,7 +326,10 @@ end
 local newlines = ({[buffer.EOL_LF] = '\n', [buffer.EOL_CRLF] = '\r\n'})
 --- Returns *lines* number of lines, or table of lines *lines*, separated by newlines depending
 -- on the current buffer EOL mode.
+-- Unless *blank* is `false`, the return list of lines is enumerated starting from 1.
 -- @param lines Number of lines to produce or table of lines to use.
+-- @param blank Optional flag that indicates whether or not to output blank lines. When `false`,
+--	lines are enumerated starting from 1. The default value is `false`.
 -- @return string
 function M.lines(lines, blank)
 	if type(assert_type(lines, 'number/table', 1)) == 'number' then
@@ -398,6 +404,10 @@ function M.type(text)
 
 end
 
+--- Returns a list of all text segments with indicator number *indic* set.
+-- The returned list contains only strings, not position information.
+-- @param indic Indicator number to get segments for.
+-- @return string list
 function M.get_indicated_text(indic)
 	local words = {}
 	local s = buffer:indicator_all_on_for(1) & 1 << indic - 1 == indic and 1 or

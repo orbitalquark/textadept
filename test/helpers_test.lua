@@ -296,10 +296,129 @@ test('wait should timeout if a condition fails for long enough', function()
 	test.assert_raises(loop, 'timed out waiting')
 end)
 
+test('type should type into the buffer', function()
+	local text = 'text'
+
+	test.type(text)
+
+	test.assert_equal(buffer:get_text(), text)
+end)
+
+test('type should emit events.CHAR_ADDED', function()
+	local char_added = test.stub()
+	local _<close> = test.connect(events.CHAR_ADDED, char_added)
+	local key = 'a'
+
+	test.type(key)
+
+	test.assert_equal(char_added.called, true)
+	test.assert_equal(char_added.args, {string.byte(key)})
+end)
+
+test('type should type into multiple selections', function()
+	buffer:append_text(test.lines(2, true))
+	buffer:line_down_rect_extend()
+	local text = 'text'
+
+	test.type(text)
+
+	test.assert_equal(buffer:get_text(), test.lines{text, text})
+end)
+
+test('type should replace selected text', function()
+	buffer:append_text('find')
+	buffer:select_all()
+	local text = 'replace'
+
+	test.type(text)
+
+	test.assert_equal(buffer:get_text(), text)
+end)
+
+test('type should not type a key handled by events.KEYPRESS', function()
+	local keypress = test.stub(true) -- do not propagate to default keypress handler
+	local _<close> = test.connect(events.KEYPRESS, keypress, 1)
+	local key = 'a'
+
+	test.type(key)
+
+	test.assert_equal(buffer.length, 0)
+end)
+
+test('type should emit events.KEYPRESS for a key shortcut with modifiers', function()
+	local keypress = test.stub(true) -- do not propagate to default keypress handler
+	local _<close> = test.connect(events.KEYPRESS, keypress, 1)
+	local key = 'ctrl+a'
+
+	test.type(key)
+
+	test.assert_equal(keypress.called, true)
+	test.assert_equal(keypress.args, {key})
+end)
+
+test('type should emit events.KEYPRESS for a non-newline key in keys.KEYSYMS', function()
+	local keypress = test.stub(true) -- do not propagate to default keypress handler
+	local _<close> = test.connect(events.KEYPRESS, keypress, 1)
+	local key = 'right'
+
+	test.type(key)
+
+	test.assert_equal(keypress.called, true)
+	test.assert_equal(keypress.args, {key})
+end)
+
+test('type should type into the command entry if ui.command_entry.active is true', function()
+	local text = 'text'
+	ui.command_entry.run()
+	local _<close> = test.defer(function() test.type('esc') end)
+
+	test.type(text)
+
+	test.assert_equal(ui.command_entry:get_text(), text)
+	test.assert_equal(buffer.length, 0)
+end)
+
+test('type should change ui.find.find_entry_text if ui.find.active is true', function()
+	ui.find.focus()
+	local _<close> = test.defer(ui.find.focus)
+	local text = 'text'
+	local typo = 'z\b'
+
+	test.type(text)
+	test.type(typo)
+
+	test.assert_equal(ui.find.find_entry_text, text)
+	test.assert_equal(buffer.length, 0)
+end)
+
+test('type should call ui.find.find_next() when typing \\n if ui.find.active is true', function()
+	local find_next = test.stub()
+	local _<close> = test.mock(ui.find, 'find_next', find_next)
+	ui.find.focus()
+	local _<close> = test.defer(ui.find.focus)
+
+	test.type('\n')
+
+	test.assert_equal(find_next.called, true)
+	test.assert_equal(buffer.length, 0)
+end)
+
 test('typing \\n should include \\r in CR+LF EOL mode', function()
 	local _<close> = test.mock(buffer, 'eol_mode', buffer.EOL_CRLF)
 
 	test.type('\n')
 
 	test.assert_equal(buffer:get_text(), '\r\n')
+end)
+
+test('get_indicated_text should identify indicated text', function()
+	local indic = view:new_indic_number()
+	local word = 'word'
+	buffer:append_text(word .. word)
+	buffer.indicator_current = indic
+	buffer:indicator_fill_range(1, #word)
+
+	local indicated = test.get_indicated_text(indic)
+
+	test.assert_equal(indicated, {word})
 end)
