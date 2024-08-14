@@ -91,7 +91,7 @@ end
 
 local tests_passed, tests_failed, tests_skipped, tests_failed_expected = 0, 0, 0, 0
 
-if CURSES then io.output('test.log') end
+if CURSES or os.getenv('CI') == 'true' then io.output('test.log') end
 
 for _, name in ipairs(tests) do
 	local f = tests[name]
