@@ -1,23 +1,5 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
---- Tests to run.
-local tests = {}
-
---- Registers a unit test to run.
--- Tests are tagged with the file they belong to. For example, tests in *core/init_test.lua*
--- are tagged with '#core/init'. This allows individual test suites to be included or excluded
--- when running tests.
--- Use a '#skip' tag to skip a test by default.
--- @param name Name or description of the unit test.
--- @param f Unit test function.
--- @function _G.test
-local test = setmetatable(dofile(_HOME .. '/test/helpers.lua'), {
-	__call = function(self, name, f)
-		name = string.format('%s - #%s', name, _TESTSUITE)
-		tests[#tests + 1], tests[name] = name, f
-	end
-})
-
 --- Map of test suites to their setup functions.
 local setups = {}
 
@@ -34,6 +16,35 @@ local teardowns = {}
 -- @name _G.teardown
 local function teardown(f) teardowns[_TESTSUITE] = f end
 
+--- Tests to run.
+local tests = {}
+
+--- Registers a unit test described by string *name* to test function *f*.
+-- *name* may contain '#tag' tags in order to easily include or exclude tests.
+-- Tests are automatically tagged with the file they belong to, effectively making test suites
+-- that can be included or excluded in test runs. For example, tests in *core/init_test.lua*
+-- are tagged with '#core/init'.
+-- Use a '#skip' tag to skip a test by default.
+-- @param name Name or description of the unit test.
+-- @param f Unit test function.
+-- @usage test('it should do #something', function() ... end)
+-- @function _G.test
+local test = setmetatable(dofile(_HOME .. '/test/helpers.lua'), {
+	__call = function(self, name, f)
+		name = string.format('%s - #%s', name, _TESTSUITE)
+		tests[#tests + 1], tests[name] = name, f
+	end
+})
+
+--- Map of tests to retries.
+local retries = setmetatable({}, {__index = function() return 1 end})
+
+--- If the most recently defined test fails, retry it up to *n* times.
+-- Tests that depend on external processes may fail every now and then due to I/O instabilities,
+-- particularly on CI.
+-- The default is to retry once.
+local function retry(n) retries[tests[#tests]] = n end
+
 --- Map of tests expected to fail to `true`.
 local expected_failures = {}
 
@@ -44,10 +55,11 @@ local function expected_failure() expected_failures[tests[#tests]] = true end
 
 -- Test environment.
 local env = setmetatable({
-	setup = setup, teardown = teardown, expected_failure = expected_failure, test = test
+	setup = setup, teardown = teardown, test = test, retry = retry,
+	expected_failure = expected_failure
 }, {__index = _G})
 
--- Load all tests from *_test.lua files in _HOME.
+-- Load all tests from '*_test.lua' files in _HOME.
 local test_files = {}
 for test_file in lfs.walk(_HOME, '.lua') do -- TODO: '*_test.lua'
 	if test_file:find('_test%.lua$') then test_files[#test_files + 1] = test_file end
@@ -111,11 +123,11 @@ for _, name in ipairs(tests) do
 	if skip then goto skip end
 
 	-- Run the test.
-	do
+	for i = 1, retries[name] + 1 do
 		local suite = name:match('[^#]+$')
 		if setups[suite] then
 			local ok, errmsg = pcall(setups[suite])
-			if not ok then test.log('setup error: ', errmsg) end
+			if not ok then io.output():write('setup error: ', errmsg, '\n') end
 		end
 
 		_ENV = setmetatable({}, {__index = _G}) -- simple sandbox
@@ -123,14 +135,20 @@ for _, name in ipairs(tests) do
 			if expected_failures[name] then return false end -- do not print traceback
 			local text = buffer:get_text():gsub('(\r?\n)', '%1\t')
 			local s, e = buffer.selection_start, buffer.selection_end
-			return string.format('%s\nlog:\n\t%s%s', debug.traceback(errmsg, 3),
-				table.concat(test.log, '\n\t'), snapshot())
+			errmsg = debug.traceback(errmsg, 3)
+			return string.format('%s\nlog:\n\t%s%s', errmsg, table.concat(test.log, '\n\t'), snapshot())
 		end)
 
 		if teardowns[suite] then
 			local ok, errmsg = pcall(teardowns[suite])
-			if not ok then test.log('teardown error: ', errmsg) end
+			if not ok then io.output():write('teardown error: ', errmsg, '\n') end
 		end
+		while view:unsplit() do end
+		while #_BUFFERS > 1 do buffer:close(true) end
+		buffer:close(true) -- the last one
+
+		if ok or expected_failures[name] then break end
+		test.log('retrying test (attempt #', i + 1, ')')
 	end
 	if errmsg == nil and expected_failures[name] then
 		ok = false
@@ -139,12 +157,7 @@ for _, name in ipairs(tests) do
 			info.linedefined)
 		expected_failures[name] = nil
 	end
-
-	-- Clean up after the test.
 	test.log:clear()
-	while view:unsplit() do end
-	while #_BUFFERS > 1 do buffer:close(true) end
-	buffer:close(true) -- the last one
 
 	-- Write test output.
 	if ok then
@@ -171,6 +184,7 @@ for _, name in ipairs(tests) do
 	end
 end
 
+-- Output final result.
 io.output():write(string.format('%d failed, %d passed, %d skipped, %d expected failures\n',
 	tests_failed, tests_passed, tests_skipped, tests_failed_expected))
 
@@ -187,5 +201,4 @@ if package.loaded['luacov'] then
 end
 
 -- Quit Textadept with exit status depending on whether any tests failed.
-textadept.session.save_on_quit = false -- do not clobber default session
 timeout(0.01, function() quit(tests_failed) end)

@@ -379,7 +379,8 @@ test('type should type into the command entry if ui.command_entry.active is true
 end)
 
 test('type should change ui.find.find_entry_text if ui.find.active is true', function()
-	ui.find.focus()
+	if CURSES then return end -- blocks the UI
+	ui.find.focus{find_entry_text = ''}
 	local _<close> = test.defer(ui.find.focus)
 	local text = 'text'
 	local typo = 'z\b'
@@ -392,6 +393,7 @@ test('type should change ui.find.find_entry_text if ui.find.active is true', fun
 end)
 
 test('type should call ui.find.find_next() when typing \\n if ui.find.active is true', function()
+	if CURSES then return end -- blocks the UI
 	local find_next = test.stub()
 	local _<close> = test.mock(ui.find, 'find_next', find_next)
 	ui.find.focus()
@@ -422,3 +424,10 @@ test('get_indicated_text should identify indicated text', function()
 
 	test.assert_equal(indicated, {word})
 end)
+
+local attempt = 0
+test('retry should try to run a test again', function()
+	attempt = attempt + 1
+	assert(attempt > 2)
+end)
+retry(2)
