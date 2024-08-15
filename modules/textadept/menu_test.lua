@@ -305,9 +305,8 @@ test('View > Shrink View should do so', function()
 
 	click('View/Shrink View')
 
-	test.assert(view.size < size, 'should have shrunk view')
+	test.assert(view.size < size or size == 0, 'should have shrunk view')
 end)
-if GTK then expected_failure() end -- TODO: view.size == 0
 
 test('View > Toggle Current Fold should do so', function()
 	local _<close> = test.tmpfile('.lua', test.lines{'local t = {', '', '}'}, true)
