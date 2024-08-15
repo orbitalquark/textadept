@@ -270,13 +270,7 @@ jobs:
       - name: Run unit tests (Linux)
         if: runner.os == 'Linux'
         shell: bash
-        run: |
-          # For Qt at least, a window manager is needed to facilitate focus events.
-          echo "matchbox-window-manager&" > run.sh
-          echo "${{ github.workspace }}/${{ matrix.exe }} -t" >> run.sh
-          xvfb-run -a xterm -e sh run.sh
-        env:
-          DISPLAY: ':99.0'
+        run: xvfb-run -a xterm -e ${{ github.workspace }}/${{ matrix.exe }} -t
 
       - name: Read test output
         shell: bash

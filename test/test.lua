@@ -105,6 +105,11 @@ local tests_passed, tests_failed, tests_skipped, tests_failed_expected = 0, 0, 0
 
 if CURSES or os.getenv('CI') == 'true' then io.output('test.log') end
 
+-- Qt on Linux needs a window manager to facilitate focus events.
+-- When running under xvfb-run, start a window manager before running tests.
+if QT and LINUX and os.getenv('DISPLAY'):find('99') then assert(os.spawn('matchbox-window-manager')) end
+
+-- Run tests.
 for _, name in ipairs(tests) do
 	local f = tests[name]
 	local ok, errmsg, status
