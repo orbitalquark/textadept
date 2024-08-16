@@ -1,0 +1,20 @@
+diff -r 2d50086c9872 src/luacov/hook.lua
+--- a/src/luacov/hook.lua	Wed Jan 05 11:59:31 2022 -0800
++++ b/src/luacov/hook.lua	Thu Aug 15 09:16:31 2024 -0400
+@@ -53,14 +53,14 @@
+          end
+       end
+ 
+-      if line_nr > file.max then
++      if line_nr > (file.max or 0) then
+          file.max = line_nr
+       end
+ 
+       local hits = (file[line_nr] or 0) + 1
+       file[line_nr] = hits
+ 
+-      if hits > file.max_hits then
++      if hits > (file.max_hits or 0) then
+          file.max_hits = hits
+       end
+ 

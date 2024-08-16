@@ -199,7 +199,7 @@ io.output():write(string.format('%d failed, %d passed, %d skipped, %d expected f
 if package.loaded['luacov'] then
 	require('luacov').save_stats()
 	os.execute('luacov -c ' .. _HOME .. '/.luacov')
-	local report = _HOME .. '/luacov.report.out'
+	local report = lfs.abspath('luacov.report.out')
 	local f = assert(io.open(report))
 	io.stdout:write('\n', 'LuaCov Summary (', report, ')', f:read('a'):match('Summary(.+)$'))
 	f:close()

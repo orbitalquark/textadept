@@ -84,7 +84,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y lua5.3 discount
+          sudo apt-get install -y lua5.4 discount
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -147,12 +147,6 @@ jobs:
           done
           zip -r textadept_${{ steps.version.outputs.version }}.modules.zip textadept-modules
 
-      - name: Upload modules
-        uses: actions/upload-artifact@v4
-        with:
-          name: artifacts-modules
-          path: textadept_${{ steps.version.outputs.version }}.modules.zip
-
       - name: Tag
         run: |
           git tag textadept_${{ steps.version.outputs.version }}
@@ -193,17 +187,25 @@ jobs:
           artifacts: textadept_*
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-release
+          path: |
+            textadept_${{ steps.version.outputs.version }}.modules.zip
+            log.md
+
   test:
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-2019]
+        os: [ubuntu-latest, windows-latest]
         exe: [textadept/textadept, textadept/textadept-curses]
         include:
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             exe: textadept/textadept-gtk
-          - os: macOS-12
+          - os: macOS-latest
             exe: Textadept.app/Contents/MacOS/textadept_osx
-          #- os: macOS-12
+          #- os: macOS-latest
           #  exe: Textadept.app/Contents/MacOS/textadept-curses
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -255,25 +257,89 @@ jobs:
       - name: Run unit tests (Windows)
         if: runner.os == 'Windows'
         shell: cmd
-        run: start "" /WAIT cmd /c ${{ github.workspace }}/${{ matrix.exe }} -t
+        run: start "" /WAIT cmd /c ${{ matrix.exe }} -t
 
       - name: Run unit tests (macOS)
         if: runner.os == 'macOS'
         shell: bash
-        run: ${{ github.workspace }}/${{ matrix.exe }} -t
+        run: ${{ matrix.exe }} -t
         #run: |
         #  echo "cd ${{ github.workspace }}" > run.sh
-        #  echo "${{ github.workspace }}/${{ matrix.exe }} -t" >> run.sh
+        #  echo "${{ matrix.exe }} -t" >> run.sh
         #  open -W -a Terminal run.sh # TODO: never exits since Terminal.app does not quit
         continue-on-error: true
 
       - name: Run unit tests (Linux)
         if: runner.os == 'Linux'
         shell: bash
-        run: xvfb-run -a xterm -e ${{ github.workspace }}/${{ matrix.exe }} -t
+        run: xvfb-run -a xterm -e ${{ matrix.exe }} -t
 
       - name: Read test output
         shell: bash
         run: |
           cat test.log
           tail test.log | grep -q "0 failed"
+
+  coverage:
+    if: github.event.inputs.nightly || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    needs: release
+    timeout-minutes: 3
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Unpack artifacts
+        shell: bash
+        run: |
+          tar xzf textadept_*.linux.tgz
+          unzip textadept_*.modules.zip
+          mv textadept-modules/* textadept/modules
+
+      - name: Checkout Textadept (for .luacov, luacov.patch)
+        uses: actions/checkout@v4
+        with:
+          path: textadept.git
+
+      - name: Checkout LuaCov
+        uses: actions/checkout@v4
+        with:
+          repository: lunarmodules/luacov
+          path: luacov
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install qtbase5-dev xterm matchbox-window-manager lua5.4 \
+            --no-install-recommends -y
+
+          patch -d luacov -p1 < textadept.git/src/luacov.patch
+          sudo mkdir -p /usr/share/lua/5.4
+          sudo cp -r luacov/src/luacov* /usr/share/lua/5.4
+          sudo cp luacov/src/bin/luacov /usr/bin
+
+      - name: Run tests
+        shell: bash
+        run: |
+          cp textadept.git/.luacov textadept
+          xvfb-run -a xterm -e textadept/textadept -t -T
+          xvfb-run -a xterm -e textadept/textadept-curses -t -T
+
+      - name: Process coverage report
+        shell: bash
+        run: |
+          echo "" >> log.md # newline
+          lua textadept.git/scripts/gen_cov.lua github luacov.report.out >> log.md
+
+      - name: Update release
+        uses: ncipollo/release-action@v1
+        with:
+          name: nightly
+          tag: textadept_nightly
+          prerelease: true
+          allowUpdates: true
+          bodyFile: log.md
+          token: ${{ secrets.GITHUB_TOKEN }}

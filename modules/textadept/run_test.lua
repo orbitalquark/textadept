@@ -330,7 +330,7 @@ end)
 test('run.* should send the output buffer line as stdin on Enter', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local f<close> = test.tmpfile('.lua', 'print("read: " .. io.read())')
-	local textadept_exe = arg[0]
+	local textadept_exe = lfs.abspath(arg[0])
 	textadept.run.run_commands[f.filename] = textadept_exe .. ' -L "%f"'
 	textadept.run.run(f.filename)
 
