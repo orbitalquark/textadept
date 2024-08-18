@@ -268,9 +268,8 @@ local function find_snippet(grep, no_trigger)
 			if not grep and (p1 == lang and p2 == trigger or p1 == trigger and p3 == '') or
 				(grep and
 					(p1 == lang and p2 and p2:find(name_patt) or p1 and p1:find(name_patt) and p3 == '')) then
-				local f = io.open(string.format('%s/%s', M.paths[i], basename))
+				local f<close> = io.open(string.format('%s/%s', M.paths[i], basename))
 				local text = f:read('a')
-				f:close()
 				if not grep and p1 == lang then return trigger, text end
 				matching_snippets[p1 == lang and p2 or p1] = text
 			end

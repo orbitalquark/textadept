@@ -100,10 +100,9 @@ function io.open_file(filenames)
 
 		local text = ''
 		if lfs.attributes(filename) then
-			local f, errmsg = io.open(filename, 'rb')
+			local f<close>, errmsg = io.open(filename, 'rb')
 			if not f then error(string.format('cannot open %s', errmsg), 2) end
 			text = f:read('a')
-			f:close()
 			if not text then goto continue end -- filename exists, but cannot read it
 		end
 		local buffer = buffer.new()
@@ -157,9 +156,8 @@ end
 local function reload(buffer)
 	if not buffer then buffer = _G.buffer end
 	if not buffer.filename then return end
-	local f = assert(io.open(buffer.filename, 'rb'))
+	local f<close> = assert(io.open(buffer.filename, 'rb'))
 	local text = f:read('a')
-	f:close()
 	if buffer.encoding then text = text:iconv('UTF-8', buffer.encoding) end
 	buffer:target_whole_document()
 	buffer:replace_target(text)

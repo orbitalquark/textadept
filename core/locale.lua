@@ -7,13 +7,13 @@
 -- @module _L
 local M = {}
 
-local f = io.open(_USERHOME .. '/locale.conf', 'rb')
-if not f then
+local locale_file = _USERHOME .. '/locale.conf'
+if not lfs.attributes(locale_file) then
 	local lang = (os.getenv('LANG') or ''):match('^[^_.@]+') -- TODO: LC_MESSAGES?
-	if lang then f = io.open(string.format('%s/core/locales/locale.%s.conf', _HOME, lang)) end
+	if lang then locale_file = string.format('%s/core/locales/locale.%s.conf', _HOME, lang) end
 end
-if not f then f = io.open(_HOME .. '/core/locale.conf', 'rb') end
-assert(f, '"core/locale.conf" not found')
+if not lfs.attributes(locale_file) then locale_file = _HOME .. '/core/locale.conf' end
+local f<close> = assert(io.open(locale_file, 'rb'), '"core/locale.conf" not found')
 for line in f:lines() do
 	-- Any line that starts with a non-word character except '[' is considered a comment.
 	if not line:find('^%s*[%w_%[]') then goto continue end
@@ -23,7 +23,6 @@ for line in f:lines() do
 	end
 	::continue::
 end
-f:close()
 
 setmetatable(M, {__index = function(_, k) return k end})
 if QT then getmetatable(M).__newindex = function(t, k, v) rawset(t, k, v:gsub('_', '&')) end end
