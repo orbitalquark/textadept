@@ -309,8 +309,9 @@ io._reload, io._save, io._save_as, io._close = reload, save, save_as, close
 -- Closes the initial "Untitled" buffer when another buffer is opened.
 events.connect(events.FILE_OPENED, function()
 	if #_BUFFERS > 2 then return end
-	local buf = _BUFFERS[1]
-	if not (buf.filename or buf._type or buf.modify or buf.length > 0) then buf:close() end
+	local buffer = _BUFFERS[1]
+	if buffer.filename or buffer._type or buffer.modify or buffer.length > 0 then return end
+	buffer:close()
 end)
 
 --- Prompts the user to select a recently opened file to be reopened.
