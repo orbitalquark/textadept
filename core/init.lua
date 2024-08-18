@@ -3,6 +3,8 @@
 --- Extends Lua's _G table to provide extra functions and fields for Textadept.
 -- @module _G
 
+for _, arg in ipairs(arg) do if arg == '-T' or arg == '--cov' then require('luacov') end end
+
 --- The Textadept release version string.
 _RELEASE = 'Textadept 12.5 nightly'
 --- Textadept's copyright information.
@@ -10,8 +12,6 @@ _COPYRIGHT = 'Copyright © 2007-2024 Mitchell. See LICENSE.\n' ..
 	'https://orbitalquark.github.io/textadept'
 
 package.path = string.format('%s/core/?.lua;%s', _HOME, package.path)
-
--- for _, arg in ipairs(arg) do if arg == '-t' or arg == '--test' then pcall(require, 'luacov') end end
 
 require('assert')
 _SCINTILLA = require('iface')
@@ -34,7 +34,31 @@ local function text_range(buffer, start_pos, end_pos)
 	buffer:set_target_range(target_start, target_end) -- restore
 	return text
 end
+
 events.connect(events.BUFFER_NEW, function() buffer.text_range = text_range end, 1)
+
+-- Implement `events.BUFFER_{BEFORE,AFTER}_REPLACE_TEXT` as a convenience in lieu of the
+-- undocumented `events.MODIFIED`.
+local DELETE, INSERT, UNDOREDO = _SCINTILLA.MOD_BEFOREDELETE, _SCINTILLA.MOD_INSERTTEXT,
+	_SCINTILLA.MULTILINEUNDOREDO
+--- Helper function for emitting `events.BUFFER_AFTER_REPLACE_TEXT` after a full-buffer undo/redo
+-- operation, e.g. after reloading buffer contents and then performing an undo.
+local function emit_after_replace_text()
+	events.disconnect(events.UPDATE_UI, emit_after_replace_text)
+	events.emit(events.BUFFER_AFTER_REPLACE_TEXT)
+end
+-- Emits events prior to and after replacing buffer text.
+events.connect(events.MODIFIED, function(position, mod, text, length)
+	if mod & (DELETE | INSERT) == 0 or length ~= buffer.length then return end
+	if mod & (INSERT | UNDOREDO) == INSERT | UNDOREDO then
+		-- Cannot emit BUFFER_AFTER_REPLACE_TEXT here because Scintilla will do things like update
+		-- the selection afterwards, which could undo what event handlers do.
+		events.connect(events.UPDATE_UI, emit_after_replace_text)
+		return
+	end
+	events.emit(mod & DELETE > 0 and events.BUFFER_BEFORE_REPLACE_TEXT or
+		events.BUFFER_AFTER_REPLACE_TEXT)
+end)
 
 --- A table of style properties that can be concatenated with other tables of properties.
 local style_object = {}

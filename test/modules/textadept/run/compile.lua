@@ -1,2 +1,0 @@
--- Missing 'end'
-function foo()

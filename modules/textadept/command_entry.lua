@@ -21,9 +21,8 @@ local M = ui.command_entry
 -- @local
 local history = setmetatable({}, {
 	__index = function(t, k)
-		if type(k) ~= 'function' then return nil end
-		t[k] = {pos = 0}
-		return t[k]
+		if type(k) == 'function' or getmetatable(k) and getmetatable(k).__call then t[k] = {pos = 0} end
+		return rawget(t, k)
 	end
 })
 
@@ -120,25 +119,25 @@ local function run_lua(code)
 		table.sort(items)
 		result = string.format('{%s}', table.concat(items, ', '))
 		if view.edge_column > 0 and #result > view.edge_column then
-			local indent = string.rep(' ', buffer.tab_width)
+			local indent = buffer.use_tabs and '\t' or string.rep(' ', buffer.tab_width)
 			result = string.format('{\n%s%s\n}', indent, table.concat(items, ',\n' .. indent))
 		end
 	end
-	if result ~= nil or code:find('^return ') then ui.print(result) end
+	if result ~= nil or code:find('^return ') then ui.output(tostring(result), '\n') end
 	events.emit(events.UPDATE_UI, 1) -- update UI if necessary (e.g. statusbar)
 end
 args.register('-e', '--execute', 1, run_lua, 'Execute Lua code')
 
 --- Shows a set of Lua code completions for the entry's text, subject to an "abbreviated"
--- environment where the contents of the `buffer`, `view`, and `ui` tables are also considered
--- as globals.
+-- environment where the contents of the `buffer`, `view`, `ui`, and `textadept` tables are
+-- also considered as globals.
 local function complete_lua()
 	local line, pos = M:get_cur_line()
 	local symbol, op, part = line:sub(1, pos - 1):match('([%w_.]-)([%.:]?)([%w_]*)$')
 	local ok, result = pcall((load(string.format('return (%s)', symbol), nil, 't', env)))
 	if (not ok or type(result) ~= 'table') and symbol ~= '' then return end
 	local cmpls = {}
-	part = '^' .. part
+	local patt = '^' .. part
 	local XPM = textadept.editing.XPM_IMAGES
 	local sep = string.char(M.auto_c_type_separator)
 	if not ok or symbol == 'buffer' or symbol == 'view' then
@@ -146,7 +145,7 @@ local function complete_lua()
 		local global_envs = not ok and {buffer, view, ui, _G, textadept, sci} or {sci}
 		for _, t in ipairs(global_envs) do
 			for k, v in pairs(t) do
-				if type(k) ~= 'string' or not k:find(part) then goto continue end
+				if type(k) ~= 'string' or not k:find(patt) then goto continue end
 				if t == sci and op == ':' and not is_sci_func(v) then goto continue end
 				if t == sci and op == '.' and is_sci_func(v) then goto continue end
 				local xpm = (type(v) == 'function' or (t == sci and is_sci_func(v))) and XPM.METHOD or
@@ -157,7 +156,7 @@ local function complete_lua()
 		end
 	else
 		for k, v in pairs(result) do
-			if type(k) == 'string' and k:find(part) and (op == '.' or type(v) == 'function') then
+			if type(k) == 'string' and k:find(patt) and (op == '.' or type(v) == 'function') then
 				local xpm = type(v) == 'function' and XPM.METHOD or XPM.VARIABLE
 				cmpls[#cmpls + 1] = k .. sep .. xpm
 			end
@@ -165,7 +164,7 @@ local function complete_lua()
 	end
 	table.sort(cmpls)
 	M.auto_c_separator, M.auto_c_order = string.byte(' '), buffer.ORDER_PRESORTED
-	M:auto_c_show(#part - 1, table.concat(cmpls, ' '))
+	M:auto_c_show(#part, table.concat(cmpls, ' '))
 end
 
 --- Mode for entering Lua commands.
@@ -173,19 +172,10 @@ local lua_keys = {['\t'] = complete_lua}
 
 local prev_key_mode
 
---- Appends string *text* to the history for command entry mode *f* or the current or most
--- recent mode.
--- This should only be called if `ui.command_entry.run()` is called with a keys table that has a
--- custom binding for the Enter key ('\n'). Otherwise, history is automatically appended as needed.
--- @param[opt] f Optional command entry mode to append history to. This is a function passed to
---	`ui.command_entry_run()`. If omitted, uses the current or most recent mode.
+--- Appends string *text* to the history for the current or most recent command entry mode.
 -- @param text String text to append to history.
-local function append_history(f, text)
-	if not assert_type(text, 'string/nil', 2) then
-		f, text = history.mode, assert_type(f, 'string', 1)
-		if not f then return end
-	end
-	local mode_history = history[assert_type(f, 'function', 1)]
+local function append_history(text)
+	local mode_history = history[history.mode]
 	if mode_history[#mode_history] == text then return end -- already exists
 	mode_history[#mode_history + 1], mode_history.pos = text, #mode_history + 1
 end

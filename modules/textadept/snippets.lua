@@ -538,7 +538,7 @@ function snippet:next()
 		buffer:indicator_clear_range(pos, e - pos)
 		buffer:set_target_range(pos, pos + 1)
 		buffer:replace_target(text)
-		buffer:add_selection(pos, pos + #text)
+		buffer:add_selection(pos + #text, pos)
 		goto redo -- indicator positions have changed
 	end
 	buffer.main_selection = 1

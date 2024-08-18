@@ -1,2 +1,2 @@
 include = {'textadept'}
-exclude = {'/lexers/', '/test/', '/%.textadept/', '/dkjson', '/mobdebug', '/socket', '/lyaml'}
+exclude = {'_test$', '/lexers/', '/test/', '/%.textadept/', '/dkjson', '/mobdebug', '/socket', '/debugger'}

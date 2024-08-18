@@ -120,7 +120,7 @@ local default_menubar = {
 					textadept.editing.enclose('<', '>')
 					for i = 1, buffer.selections do
 						local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
-						while buffer.char_at[s - 1] ~= 60 do s = s - 1 end -- '<'
+						while buffer.char_at[s - 1] ~= string.byte('<') do s = s - 1 end
 						buffer:set_target_range(e, e)
 						buffer:replace_target('</' .. buffer:text_range(s, e))
 						buffer.selection_n_start[i], buffer.selection_n_end[i] = e, e
@@ -204,7 +204,7 @@ local default_menubar = {
 			{_L['Previous Snippet Placeholder'], textadept.snippets.previous},
 			{_L['Cancel Snippet'], textadept.snippets.cancel}, --
 			SEPARATOR, --
-			{_L['Complete Trigger Word'], function() textadept.editing.autocomplete('snippets') end}
+			{_L['Complete Trigger Word'], function() textadept.editing.autocomplete('snippet') end}
 		}, --
 		SEPARATOR, {
 			_L['Show Style'], function()

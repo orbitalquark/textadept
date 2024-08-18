@@ -127,7 +127,7 @@ local find_text, found_text, repl_text = nil, nil, ui.find.replace_entry_text
 
 --- Returns a reasonable initial directory for use with Find in Files.
 local function ff_dir()
-	return io.get_project_root() or (buffer.filename or ''):match('^.+[/\\]') or lfs.currentdir()
+	return io.get_project_root() or (buffer.filename or ''):match('^(.+)[/\\]') or lfs.currentdir()
 end
 
 local orig_focus = M.focus
@@ -156,8 +156,7 @@ end
 -- @return search flag bit-mask
 local function get_flags()
 	return (M.match_case and buffer.FIND_MATCHCASE or 0) |
-		(M.whole_word and buffer.FIND_WHOLEWORD or 0) | (M.regex and buffer.FIND_REGEXP or 0) |
-		(M.in_files and 1 << 31 or 0)
+		(M.whole_word and buffer.FIND_WHOLEWORD or 0) | (M.regex and buffer.FIND_REGEXP or 0)
 end
 
 --- Returns whether or not the given buffer is a files found buffer.
@@ -188,12 +187,11 @@ local incremental_orig_pos
 local function find(text, next, flags, no_wrap, wrapped)
 	-- Note: cannot use assert_type(), as event errors are handled silently.
 	if text == '' then return end
-	if not flags then flags = get_flags() end
-	if flags >= 1 << 31 then
+	if M.in_files then
 		M.find_in_files() -- performed here
 		return
 	end
-	local first_visible_line = view.first_visible_line -- for 'no results found'
+	if not flags then flags = get_flags() end
 	if not is_ff_buf(buffer) then clear_highlighted_matches() end
 
 	if M.incremental and not wrapped then
@@ -201,28 +199,30 @@ local function find(text, next, flags, no_wrap, wrapped)
 		if type(M.incremental) == 'boolean' then
 			-- Starting a new incremental search, anchor at current pos.
 			M.incremental, incremental_orig_pos = pos, pos
-		elseif text == find_text then
+		elseif text == find_text and found_text ~= '' then
 			-- "Find Next" or "Find Prev" clicked, anchor at new current pos.
 			M.incremental = buffer:position_relative(pos, next and 1 or -1)
 		end
-		buffer:goto_pos(M.incremental or 1)
+		buffer:set_empty_selection(M.incremental or 1)
 	elseif not M.incremental then
 		incremental_orig_pos = nil
 	end
 
 	-- If text is selected, assume it is from the current search and move the caret appropriately
 	-- for the next search.
-	buffer:goto_pos(next and buffer.selection_end or buffer.selection_start)
+	buffer:set_empty_selection(next and buffer.selection_end or buffer.selection_start)
 	if not M.incremental and M.regex and find_text == text and found_text == '' and next and
-		not wrapped then buffer:goto_pos(buffer.current_pos + (next and 1 or -1)) end
+		not wrapped then buffer:set_empty_selection(buffer.current_pos + (next and 1 or -1)) end
 
 	-- Scintilla search.
 	buffer:search_anchor()
 	local f = next and buffer.search_next or buffer.search_prev
 	local pos = f(buffer, flags, text)
-	view:ensure_visible_enforce_policy(buffer:line_from_position(pos))
-	view:scroll_range(buffer.anchor, buffer.current_pos)
-	if pos ~= -1 then events.emit(events.FIND_RESULT_FOUND, text, wrapped) end
+	if pos ~= -1 then
+		view:ensure_visible_enforce_policy(buffer:line_from_position(pos))
+		view:scroll_range(buffer.anchor, buffer.current_pos)
+		events.emit(events.FIND_RESULT_FOUND, text, wrapped)
+	end
 	-- Track find text and found text for "replace all" and incremental find.
 	find_text, found_text = text, buffer:get_sel_text()
 	repl_text = ui.find.replace_entry_text -- save for ui.find.focus()
@@ -230,13 +230,12 @@ local function find(text, next, flags, no_wrap, wrapped)
 	-- If nothing was found, wrap the search.
 	if pos == -1 and not no_wrap then
 		local anchor = buffer.anchor
-		buffer:goto_pos(next and 1 or buffer.length + 1)
+		buffer:set_empty_selection(next and 1 or buffer.length + 1)
 		events.emit(events.FIND_WRAPPED)
 		pos = find(text, next, flags, true, true)
 		if pos == -1 then
 			ui.statusbar_text = _L['No results found']
-			view.first_visible_line = first_visible_line
-			buffer:goto_pos(incremental_orig_pos or anchor)
+			buffer:set_empty_selection(incremental_orig_pos or anchor)
 		end
 	end
 
@@ -306,18 +305,19 @@ function M.find_in_files(dir, filter)
 		end
 		filter = M.find_in_files_filters[dir] or lfs.default_filter
 	end
-	if not CURSES then
+	if not CURSES and ui.find.active then
+		ui.find.in_files = false
 		orig_focus() -- attempt to hide
 		ui.update() -- register widget focus/visibility changes
 		if ui.find.active then orig_focus() end -- hide
 	end
 
 	if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
-	ui.print_to(_L['[Files Found Buffer]'],
-		string.format('%s %s\n%s %s\n%s %s', _L['Find:']:gsub('[_&]', ''), M.find_entry_text,
-			_L['Directory:'], dir, _L['Filter:']:gsub('[_&]', ''),
-			type(filter) == 'string' and filter or table.concat(filter, ',')))
-	buffer.indicator_current = M.INDIC_FIND
+	local function print(message) ui.print_to(_L['[Files Found Buffer]'], message) end
+	print(_L['Find:']:gsub('[_&]', '') .. ' ' .. M.find_entry_text)
+	print(_L['Directory:'] .. ' ' .. dir)
+	print(_L['Filter:']:gsub('[_&]', '') .. ' ' ..
+		(type(filter) == 'string' and filter or table.concat(filter, ',')))
 
 	-- Determine which files to search.
 	local filenames, utf8_filenames, iterator = {}, {}, lfs.walk(dir, filter)
@@ -334,13 +334,14 @@ function M.find_in_files(dir, filter)
 		end
 	}
 	if stopped then
-		ui.print_to(_L['[Files Found Buffer]'], _L['Find in Files aborted'] .. '\n')
+		print(_L['Find in Files aborted'])
+		print() -- blank line
 		return
 	end
 
 	-- Perform the search in a temporary buffer and print results.
-	local orig_buffer, buffer = buffer, buffer.new()
-	view:goto_buffer(orig_buffer)
+	local ff_buffer, buffer = buffer, buffer.new()
+	view:goto_buffer(ff_buffer)
 	buffer.code_page = 0 -- default is UTF-8
 	buffer.search_flags = get_flags()
 	local text, i, found, show_names = M.find_entry_text, 1, false, M.show_filenames_in_progressbar
@@ -357,17 +358,16 @@ function M.find_in_files(dir, filter)
 				found = true
 				if binary == nil then binary = buffer:text_range(1, 65536):find('\0') end
 				if binary then
-					_G.buffer:add_text(string.format('%s:1:%s\n', utf8_filenames[i],
-						_L['Binary file matches.']))
+					print(string.format('%s:1:%s', utf8_filenames[i], _L['Binary file matches.']))
 					break
 				end
 				local line_num = buffer:line_from_position(buffer.target_start)
-				local line = buffer:get_line(line_num)
-				_G.buffer:add_text(string.format('%s:%d:%s', utf8_filenames[i], line_num, line))
-				local pos = _G.buffer.current_pos - #line + buffer.target_start -
-					buffer:position_from_line(line_num)
-				_G.buffer:indicator_fill_range(pos, buffer.target_end - buffer.target_start)
-				if not line:find('\n$') then _G.buffer:add_text('\n') end
+				local line = buffer:get_line(line_num):match('^[^\r\n]*')
+				print(string.format('%s:%d:%s', utf8_filenames[i], line_num, line))
+				local pos = ff_buffer.line_end_position[ff_buffer.line_count - 1] - #line +
+					buffer.target_start - buffer:position_from_line(line_num)
+				ff_buffer.indicator_current = M.INDIC_FIND
+				ff_buffer:indicator_fill_range(pos, buffer.target_end - buffer.target_start)
 				buffer:set_target_range(buffer.target_end, buffer.length + 1)
 			end
 			buffer:clear_all()
@@ -380,7 +380,8 @@ function M.find_in_files(dir, filter)
 	}
 	buffer:close(true) -- temporary buffer
 	local status = stopped and _L['Find in Files aborted'] or not found and _L['No results found']
-	ui.print_to(_L['[Files Found Buffer]'], status and status .. '\n' or '')
+	if status then print(status) end
+	print() -- blank line
 end
 
 local P, V, C, upper, lower = lpeg.P, lpeg.V, lpeg.C, string.upper, string.lower
@@ -524,7 +525,7 @@ function M.goto_file_found(location)
 	else
 		s, e = 0, 0 -- binary file notice, or highlighting was somehow removed
 	end
-	ui.goto_file(utf8_filename:iconv(_CHARSET, 'UTF-8'), true, preferred_view)
+	ui.goto_file(utf8_filename:iconv(_CHARSET, 'UTF-8'), ff_view, preferred_view)
 	textadept.editing.goto_line(line_num)
 	if buffer:line_from_position(buffer.current_pos + s) == line_num then
 		buffer:set_sel(buffer.current_pos + e, buffer.current_pos + s)
@@ -541,13 +542,18 @@ events.connect(events.DOUBLE_CLICK,
 -- The functions below are Lua C functions.
 
 --- Mimics pressing the "Find Next" button.
+-- Emits `events.FIND`.
 -- @function find_next
 
 --- Mimics pressing the "Find Prev" button.
+-- Emits `events.FIND`.
 -- @function find_prev
 
 --- Mimics pressing the "Replace" button.
+-- Emits `events.REPLACE` followed by `events.FIND` unless any `events.REPLACE` handler returns
+-- `true`.
 -- @function replace
 
 --- Mimics pressing the "Replace All" button.
+-- Emits `events.REPLACE_ALL`.
 -- @function replace_all

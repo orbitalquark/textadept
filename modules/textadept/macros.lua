@@ -6,7 +6,7 @@
 -- @module textadept.macros
 local M = {}
 
-local macro_path = _USERHOME .. '/macros'
+local macro_path = _USERHOME .. (not WIN32 and '/' or '\\') .. 'macros'
 local recording, macro
 
 -- List of commands bound to keys to ignore during macro recording, as the command(s) ultimately
@@ -37,6 +37,8 @@ local event_recorders = {
 		if #keys.keychain == 0 then ui.statusbar_text = _L['Macro recording'] end
 	end
 }
+--- Prevents `events.FIND` from being emitted immediately after `events.REPLACE`.
+local function inhibit_find_next() return true end
 
 --- Toggles between starting and stopping macro recording.
 function M.record()
@@ -44,9 +46,11 @@ function M.record()
 		if macro then M.save('0') end -- store most recently recorded macro in register 0
 		macro = {}
 		for event, f in pairs(event_recorders) do events.connect(event, f, 1) end
+		events.connect(events.REPLACE, inhibit_find_next)
 		ui.statusbar_text = _L['Macro recording']
 	else
 		for event, f in pairs(event_recorders) do events.disconnect(event, f) end
+		events.disconnect(events.REPLACE, inhibit_find_next)
 		ui.statusbar_text = _L['Macro stopped recording']
 	end
 	recording = not recording
@@ -73,11 +77,6 @@ function M.play(filename)
 	end
 end
 
---- Returns an absolute path for the given path, relative to `macro_path` if necessary.
-local function make_absolute(path)
-	return (path:find('^[/\\]') or path:find('^%a:[/\\]')) and path or macro_path .. '/' .. path
-end
-
 --- Saves a recorded macro to file *filename* or the user-selected file.
 -- @param[opt] filename Optional filename to save the recorded macro to. If `nil`, the user
 --	is prompted for one. If the filename is a relative path, it will be relative to
@@ -88,7 +87,7 @@ function M.save(filename)
 		filename = ui.dialogs.save{title = _L['Save Macro'], dir = macro_path}
 		if not filename then return end
 	end
-	local f = assert(io.open(make_absolute(filename), 'w'))
+	local f = assert(io.open(lfs.abspath(filename, macro_path), 'w'))
 	f:write('return {\n')
 	for _, event in ipairs(macro) do
 		f:write(string.format('{%q,', event[1]))
@@ -109,7 +108,7 @@ function M.load(filename)
 		filename = ui.dialogs.open{title = _L['Load Macro'], dir = macro_path}
 		if not filename then return end
 	end
-	local loaded = assert(loadfile(make_absolute(filename), 't', {}))()
+	local loaded = assert(loadfile(lfs.abspath(filename, macro_path), 't', {}))()
 	M.save('0') -- store previous macro in register 0
 	macro = loaded
 end

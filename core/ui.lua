@@ -31,7 +31,7 @@ local ui = ui
 -- @field maximized
 
 --- Whether or not to display the tab bar when multiple buffers are open.
--- The default value is `true`.
+-- The default value is `true` in the GUI version, and `false` in the terminal version.
 -- A third option, `ui.SHOW_ALL_TABS` may be used to always show the tab bar, even if only one
 -- buffer is open.
 -- @field tabs
@@ -51,6 +51,7 @@ local function get_print_view(type)
 end
 --- Helper function for getting the print buffer.
 local function get_print_buffer(type)
+	if buffer._type == type then return buffer end -- optimize
 	for _, buffer in ipairs(_BUFFERS) do if buffer._type == type then return buffer end end
 end
 
@@ -72,7 +73,7 @@ end
 -- @see ui.print_to
 -- @see ui.print_silent_to
 -- @see output_to
-local function print_to(buffer_type, silent, format, ...)
+local function print_to(buffer_type, silent, ...)
 	local print_view, buffer = get_print_view(buffer_type), get_print_buffer(buffer_type)
 	if not buffer or not silent and not print_view then -- no buffer or buffer not visible
 		if not silent and #_VIEWS > 1 then
@@ -92,10 +93,7 @@ local function print_to(buffer_type, silent, format, ...)
 		ui.goto_view(print_view)
 	end
 	local prev_line_count = buffer.line_count
-	local args = table.pack(...)
-	for i = 1, args.n do args[i] = tostring(args[i]) end
-	buffer:append_text(table.concat(args, format and '\t' or ''))
-	if format then buffer:append_text('\n') end
+	buffer:append_text(table.concat{...})
 	buffer:goto_pos(buffer.length + 1)
 	buffer:set_save_point()
 	if silent then set_tab_label(buffer) end -- events.SAVE_POINT_REACHED does not pass this buffer
@@ -107,67 +105,66 @@ local function print_to(buffer_type, silent, format, ...)
 	return buffer
 end
 
---- Prints the given value(s) to the buffer of string type *type*, along with a trailing newline,
+--- Prints the given message to the buffer of string type *type*, along with a trailing newline,
 -- and returns that buffer.
 -- Opens a new buffer for printing to if necessary. If the print buffer is already open in a
--- view, the value(s) is printed to that view. Otherwise the view is split (unless `ui.tabs`
+-- view, the message is printed to that view. Otherwise the view is split (unless `ui.tabs`
 -- is `true`) and the print buffer is displayed before being printed to.
 -- @param type String type of print buffer.
--- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
---	They will be printed as tab-separated values.
--- @usage ui.print_to(_L['[Message Buffer]'], message)
+-- @param message String message to print.
+-- @usage ui.print_to('[Typed Buffer]', message)
 -- @return print buffer
 -- @see print_silent_to
-function ui.print_to(type, ...) return print_to(assert_type(type, 'string', 1), false, true, ...) end
-
---- Silently prints the given value(s) to the buffer of string type *type*, and returns that
--- buffer.
--- Opens a new buffer for printing to if necessary.
--- @param type String type of print buffer.
--- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
---	They will be printed as tab-separated values.
--- @return print buffer
--- @see print_to
-function ui.print_silent_to(type, ...)
-	return print_to(assert_type(type, 'string', 1), true, true, ...)
+function ui.print_to(type, message)
+	if not assert_type(message, 'string/nil', 2) then message = '' end
+	return print_to(assert_type(type, 'string', 1), false, message, '\n')
 end
 
---- Prints the given value(s) to the message buffer, along with a trailing newline.
--- Opens a new buffer if one has not already been opened for printing messages.
--- @param ... Message or values to print. Lua's `tostring()` function is called for each value.
---	They will be printed as tab-separated values.
-function ui.print(...) ui.print_to(_L['[Message Buffer]'], ...) end
-
---- Silently prints the given value(s) to the message buffer, and returns that buffer.
--- @param ... Message or values to print.
+--- Silently prints the given message to the buffer of string type *type*, and returns that buffer.
+-- Opens a new buffer for printing to if necessary.
+-- @param type String type of print buffer.
+-- @param message String message to print.
 -- @return print buffer
--- @see print
-function ui.print_silent(...) return ui.print_silent_to(_L['[Message Buffer]'], ...) end
+-- @see print_to
+function ui.print_silent_to(type, message)
+	if not assert_type(message, 'string/nil', 2) then message = '' end
+	return print_to(assert_type(type, 'string', 1), true, message, '\n')
+end
 
 --- Helper function for printing to the output buffer.
 -- @see ui.output
 -- @see ui.output_silent
 local function output_to(silent, ...)
-	local buffer = print_to(_L['[Output Buffer]'], silent, false, ...)
+	local buffer = print_to(_L['[Output Buffer]'], silent, ...)
 	if buffer.lexer_language ~= 'output' then buffer:set_lexer('output') end
 	buffer:colorize(buffer:position_from_line(buffer:line_from_position(buffer.end_styled)), -1)
 	return buffer
 end
 
---- Prints the given value(s) to the output buffer, and returns that buffer.
+--- Prints the given strings to the output buffer, and returns that buffer.
 -- Opens a new buffer if one has not already been opened for printing output. The output buffer
 -- attempts to understand the error messages and warnings produced by various tools.
--- @param ... Output to print.
+-- @param ... Output strings to print.
 -- @return output buffer
 -- @see output_silent
 function ui.output(...) return output_to(false, ...) end
 
---- Silently prints the given value(s) to the output buffer, and returns that buffer.
+--- Silently prints the given strings to the output buffer, and returns that buffer.
 -- Opens a new buffer for printing to if necessary.
--- @param ... Output to print.
+-- @param ... Output strings to print.
 -- @return output buffer
 -- @see output
 function ui.output_silent(...) return output_to(true, ...) end
+
+--- Prints the given value(s) to the output buffer, along with a trailing newline.
+-- Opens a new buffer if one has not already been opened for printing output.
+-- @param ... Values to print. Lua's `tostring()` function is called for each value.
+--	They will be printed as tab-separated values.
+function ui.print(...)
+	local args = table.pack(...)
+	for i = 1, args.n do args[i] = tostring(args[i]) end
+	ui.output(table.concat(args, '\t') .. '\n')
+end
 
 --- Buffer z-order list (most recently accessed buffer on top).
 local buffers_zorder = {}

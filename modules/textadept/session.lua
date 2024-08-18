@@ -40,7 +40,7 @@ local session_file = _USERHOME .. (not CURSES and '/session' or '/session_term')
 -- @return `true` if the session file was opened and read; `nil` otherwise.
 -- @usage textadept.session.load(filename)
 function M.load(filename)
-	local dir, name = session_file:match('^(.-[/\\]?)([^/\\]+)$')
+	local dir, name = session_file:match('^(.-)[/\\]?([^/\\]+)$')
 	if not assert_type(filename, 'string/nil', 1) then
 		filename = ui.dialogs.open{title = _L['Load Session'], dir = dir, file = name}
 		if not filename then return end
@@ -107,9 +107,8 @@ function M.load(filename)
 	session_file = filename
 	return true
 end
---- Load session when no args are present.
-local function load_default_session() if M.save_on_quit then M.load(session_file) end end
-events.connect(events.ARG_NONE, load_default_session)
+-- Load session when no args are present.
+events.connect(events.ARG_NONE, function() if M.save_on_quit then M.load(session_file) end end)
 
 --- Returns value *val* serialized as a string.
 -- This is a very simple implementation suitable for session saving only.
@@ -133,7 +132,7 @@ end
 --	is prompted for one.
 -- @usage textadept.session.save(filename)
 function M.save(filename)
-	local dir, name = session_file:match('^(.-[/\\]?)([^/\\]+)$')
+	local dir, name = session_file:match('^(.-)[/\\]?([^/\\]+)$')
 	if not assert_type(filename, 'string/nil', 1) then
 		filename = ui.dialogs.save{title = _L['Save Session'], dir = dir, file = name}
 		if not filename then return end
@@ -197,7 +196,7 @@ args.register('-n', '--nosession', 0, function() M.save_on_quit = false end,
 args.register('-s', '--session', 1, function(name)
 	if not lfs.attributes(name) then name = string.format('%s/%s', _USERHOME, name) end
 	M.load(name)
-	events.disconnect(events.ARG_NONE, load_default_session)
+	return true -- prevent events.ARG_NONE
 end, 'Load session')
 
 return M

@@ -76,6 +76,12 @@ for i, option in ipairs(arg) do
 	if (option == '-u' or option == '--userhome') and arg[i + 1] then
 		_USERHOME = arg[i + 1]
 		break
+	elseif option == '-t' or option == '--test' then
+		-- Run unit tests using a temporary _USERHOME (deleting it when done).
+		local dir = os.tmpname()
+		if not WIN32 then os.remove(dir) end
+		_USERHOME = dir
+		break
 	end
 end
 local mode = lfs.attributes(_USERHOME, 'mode')
@@ -91,6 +97,7 @@ M.register('-u', '--userhome', 1, function() end, 'Sets alternate _USERHOME')
 M.register('-f', '--force', 0, function() end, 'Forces unique instance')
 M.register('-p', '--preserve', 0, function() end, 'Preserve ^Q (XON) and ^S (XOFF) flow control')
 M.register('-L', '--lua', 1, function() end, 'Runs the given file as a Lua script and exits')
+M.register('-T', '--cov', 0, function() end, 'Runs unit tests with code coverage')
 
 -- Shows all registered command line options on the command line.
 M.register('-h', '--help', 0, function()
@@ -115,22 +122,34 @@ M.register('-v', '--version', 0, function()
 	return true
 end, 'Prints Textadept version and copyright')
 
+-- After Textadept finishes initializing and processes arguments, remove some options in order
+-- to prevent another instance from quitting the first one.
+local function remove_options_that_quit()
+	for _, opt in ipairs{'-h', '--help', '-v', '--version', '-t', '--test'} do options[opt] = nil end
+end
+events.connect(events.INITIALIZED, remove_options_that_quit)
+
 -- Run unit tests.
 -- Note: have them run after the last `events.INITIALIZED` handler so everything is completely
 -- initialized (e.g. menus, macro module, etc.).
-M.register('-t', '--test', 1, function(patterns)
+M.register('-t', '--test', 1, function(tags)
+	events.disconnect(events.INITIALIZED, remove_options_that_quit) -- allow unit tests for these
+
 	events.connect(events.INITIALIZED, function()
 		local arg = {}
-		for patt in (patterns or ''):gmatch('[^,]+') do arg[#arg + 1] = patt end
-		local env = setmetatable({arg = arg}, {__index = _G})
-		assert(loadfile(_HOME .. '/test/test.lua', 't', env))()
+		for tag in (tags or ''):gmatch('[^,]+') do arg[#arg + 1] = tag end
+		assert(loadfile(_HOME .. '/test/test.lua', 't', setmetatable({arg = arg}, {__index = _G})))()
 	end)
-end, 'Runs unit tests indicated by comma-separated list of patterns (or all)')
 
--- After Textadept finishes initializing and processes arguments, remove some options in order
--- to prevent another instance from quitting the first one.
-events.connect(events.INITIALIZED, function()
-	for _, opt in ipairs{'-h', '--help', '-v', '--version'} do options[opt] = nil end
-end)
+	-- Remove temporary _USERHOME on quit.
+	events.connect(events.QUIT, function()
+		local info = debug.getinfo(4)
+		if GTK and info then return end -- ignore simulated quit event
+		if info and info.name ~= 'quit' then return end -- ignore simulated quit event
+		os.execute(string.format('%s "%s"', not WIN32 and 'rm -r' or 'rmdir /S /Q', _USERHOME))
+	end)
+
+	return true
+end, 'Runs unit tests indicated by comma-separated list of tags (or all)')
 
 return M

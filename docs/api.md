@@ -4957,6 +4957,7 @@ Arguments:
 #### `events.FIND` 
 
 Emitted to find text via the Find & Replace Pane.
+Emitted by [`ui.find.find_next()`](#ui.find.find_next) and [`ui.find.find_prev()`](#ui.find.find_prev).
 Arguments:
 
 - *text*: The text to search for.
@@ -5102,6 +5103,7 @@ Emitted by [`quit()`](#quit).
 #### `events.REPLACE` 
 
 Emitted to replace selected (found) text.
+Emitted by [`ui.find.replace()`](#ui.find.replace).
 Arguments:
 
 - *text*: The replacement text.
@@ -5110,6 +5112,7 @@ Arguments:
 #### `events.REPLACE_ALL` 
 
 Emitted to replace all occurrences of found text.
+Emitted by [`ui.find.replace_all()`](#ui.find.replace_all).
 Arguments:
 
 - *find_text*: The text to search for.
@@ -5311,7 +5314,7 @@ Parameters:
 
 Usage:
 
-- `events.connect('my_event', function(msg) ui.print(msg) end)
+- `events.connect('my_event', function() ... end)
 `
 
 <a id="events.disconnect"></a>
@@ -8715,7 +8718,7 @@ This is a low-level field. You probably want to use the higher-level
 #### `ui.tabs` 
 
 Whether or not to display the tab bar when multiple buffers are open.
-The default value is `true`.
+The default value is `true` in the GUI version, and `false` in the terminal version.
 A third option, [`ui.SHOW_ALL_TABS`](#ui.SHOW_ALL_TABS) may be used to always show the tab bar, even if only one
 buffer is open.
 
@@ -8800,13 +8803,13 @@ Usage:
 <a id="ui.output"></a>
 #### `ui.output`(...)
 
-Prints the given value(s) to the output buffer, and returns that buffer.
+Prints the given strings to the output buffer, and returns that buffer.
 Opens a new buffer if one has not already been opened for printing output. The output buffer
 attempts to understand the error messages and warnings produced by various tools.
 
 Parameters:
 
-- *...*:  Output to print.
+- *...*:  Output strings to print.
 
 Return:
 
@@ -8819,12 +8822,12 @@ See also:
 <a id="ui.output_silent"></a>
 #### `ui.output_silent`(...)
 
-Silently prints the given value(s) to the output buffer, and returns that buffer.
+Silently prints the given strings to the output buffer, and returns that buffer.
 Opens a new buffer for printing to if necessary.
 
 Parameters:
 
-- *...*:  Output to print.
+- *...*:  Output strings to print.
 
 Return:
 
@@ -8856,43 +8859,24 @@ See also:
 <a id="ui.print"></a>
 #### `ui.print`(...)
 
-Prints the given value(s) to the message buffer, along with a trailing newline.
-Opens a new buffer if one has not already been opened for printing messages.
+Prints the given value(s) to the output buffer, along with a trailing newline.
+Opens a new buffer if one has not already been opened for printing output.
 
 Parameters:
 
-- *...*:  Message or values to print. Lua's `tostring()` function is called for each value.
+- *...*:  Values to print. Lua's `tostring()` function is called for each value.
 	They will be printed as tab-separated values.
 
-<a id="ui.print_silent"></a>
-#### `ui.print_silent`(...)
-
-Silently prints the given value(s) to the message buffer, and returns that buffer.
-
-Parameters:
-
-- *...*:  Message or values to print.
-
-Return:
-
-- print buffer
-
-See also:
-
-- [`ui.print`](#ui.print)
-
 <a id="ui.print_silent_to"></a>
-#### `ui.print_silent_to`(*type*, ...)
+#### `ui.print_silent_to`(*type*, *message*)
 
-Silently prints the given value(s) to the buffer of string type *type*, and returns that
-buffer.
+Silently prints the given message to the buffer of string type *type*, and returns that buffer.
 Opens a new buffer for printing to if necessary.
 
 Parameters:
 
 - *type*:  String type of print buffer.
-- *...*:  Message or values to print. Lua's `tostring()` function is called for each value.
-	They will be printed as tab-separated values.
+- *message*:  String message to print.
 
 Return:
 
@@ -8903,23 +8887,22 @@ See also:
 - [`ui.print_to`](#ui.print_to)
 
 <a id="ui.print_to"></a>
-#### `ui.print_to`(*type*, ...)
+#### `ui.print_to`(*type*, *message*)
 
-Prints the given value(s) to the buffer of string type *type*, along with a trailing newline,
+Prints the given message to the buffer of string type *type*, along with a trailing newline,
 and returns that buffer.
 Opens a new buffer for printing to if necessary. If the print buffer is already open in a
-view, the value(s) is printed to that view. Otherwise the view is split (unless [`ui.tabs`](#ui.tabs)
+view, the message is printed to that view. Otherwise the view is split (unless [`ui.tabs`](#ui.tabs)
 is `true`) and the print buffer is displayed before being printed to.
 
 Parameters:
 
 - *type*:  String type of print buffer.
-- *...*:  Message or values to print. Lua's `tostring()` function is called for each value.
-	They will be printed as tab-separated values.
+- *message*:  String message to print.
 
 Usage:
 
-- `ui.print_to(_L['[Message Buffer]'], message)
+- `ui.print_to('[Typed Buffer]', message)
 `
 
 Return:
@@ -9390,11 +9373,13 @@ Parameters:
 #### `ui.find.find_next`()
 
 Mimics pressing the "Find Next" button.
+Emits [`events.FIND`](#events.FIND).
 
 <a id="ui.find.find_prev"></a>
 #### `ui.find.find_prev`()
 
 Mimics pressing the "Find Prev" button.
+Emits [`events.FIND`](#events.FIND).
 
 <a id="ui.find.focus"></a>
 #### `ui.find.focus`([*options*])
@@ -9420,11 +9405,14 @@ Parameters:
 #### `ui.find.replace`()
 
 Mimics pressing the "Replace" button.
+Emits [`events.REPLACE`](#events.REPLACE) followed by [`events.FIND`](#events.FIND) unless any [`events.REPLACE`](#events.REPLACE) handler returns
+`true`.
 
 <a id="ui.find.replace_all"></a>
 #### `ui.find.replace_all`()
 
 Mimics pressing the "Replace All" button.
+Emits [`events.REPLACE_ALL`](#events.REPLACE_ALL).
 
 
 ---

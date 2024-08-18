@@ -4,18 +4,53 @@
 -- @module textadept.editing
 local M = {}
 
---- Match the previous line's indentation level after inserting a new line.
--- The default value is `true`.
-M.auto_indent = true
+--- Map of lexer names to line comment strings for programming languages, used by
+-- `editing.toggle_comment()`.
+-- Keys are lexer names and values are either the language's line comment prefixes or block
+-- comment delimiters separated by a '|' character. If no comment string exists for a given
+-- language, the lexer-supplied string is used, if available.
+M.comment_string = {}
 
---- Strip trailing whitespace before saving files. (Does not apply to binary files.)
--- The default value is `false`.
-M.strip_trailing_spaces = false
+--- Map of autocompleter names to autocompletion functions.
+-- Names are typically lexer names and autocompletion functions typically autocomplete symbols.
+-- Autocompletion functions must return two values: the number of characters behind the caret
+-- that are used as the prefix of the entity to be autocompleted, and a list of completions
+-- to be shown. By default, the list of completions should be separated by space characters,
+-- but the function may change `buffer.auto_c_separator` if needed. Also, autocompletion lists
+-- are sorted automatically by default, but the function may change `buffer.auto_c_order`
+-- if it wants to control sort order.
+-- @see autocomplete
+M.autocompleters = {}
 
 --- Autocomplete the current word using words from all open buffers.
 -- If `true`, performance may be slow when many buffers are open.
 -- The default value is `false`.
 M.autocomplete_all_words = false
+
+--- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
+-- The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;", "&quot;&quot;",
+-- and "``". For certain XML-like lexers, "<>" is also auto-paired.
+-- @usage textadept.editing.auto_pairs['*'] = '*'
+-- @usage textadept.editing.auto_pairs = nil -- disable completely
+M.auto_pairs = {}
+for k, v in string.gmatch([[()[]{}''""``]], '(.)(.)') do M.auto_pairs[k] = v end
+
+--- Whether or not to type over an auto-paired complement character.
+-- The default value is `true`.
+M.typeover_auto_paired = true
+
+--- Match the previous line's indentation level after inserting a new line.
+-- The default value is `true`.
+M.auto_indent = true
+
+--- Whether or not to auto-enclose selected text when typing a punctuation character, taking
+-- `textadept.editing.auto_pairs` into account.
+-- The default value is `false`.
+M.auto_enclose = false
+
+--- Strip trailing whitespace before saving files. (Does not apply to binary files.)
+-- The default value is `false`.
+M.strip_trailing_spaces = false
 
 M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
 --- The word highlight mode.
@@ -29,15 +64,6 @@ M.HIGHLIGHT_NONE, M.HIGHLIGHT_CURRENT, M.HIGHLIGHT_SELECTED = 1, 2, 3
 --
 -- The default value is `textadept.editing.HIGHLIGHT_NONE`.
 M.highlight_words = M.HIGHLIGHT_NONE
-
---- Whether or not to auto-enclose selected text when typing a punctuation character, taking
--- `textadept.editing.auto_pairs` into account.
--- The default value is `false`.
-M.auto_enclose = false
-
---- Whether or not to type over an auto-paired complement character.
--- The default value is `true`.
-M.typeover_auto_paired = true
 
 --- The word highlight indicator number.
 M.INDIC_HIGHLIGHT = view.new_indic_number()
@@ -56,255 +82,6 @@ M.INDIC_HIGHLIGHT = view.new_indic_number()
 -- LuaFormatter off
 M.XPM_IMAGES = {not CURSES and '/* XPM */static char *class[] = {/* columns rows colors chars-per-pixel */"16 16 10 1 ","  c #000000",". c #001CD0","X c #008080","o c #0080E8","O c #00C0C0","+ c #24D0FC","@ c #00FFFF","# c #A4E8FC","$ c #C0FFFF","% c None",/* pixels */"%%%%%  %%%%%%%%%","%%%% ##  %%%%%%%","%%% ###++ %%%%%%","%% +++++.   %%%%","%% oo++.. $$  %%","%% ooo.. $$$@@ %","%% ooo. @@@@@X %","%%%   . OO@@XX %","%%% ##  OOOXXX %","%% ###++ OOXX %%","% +++++.  OX %%%","% oo++.. %  %%%%","% ooo... %%%%%%%","% ooo.. %%%%%%%%","%%  o. %%%%%%%%%","%%%%  %%%%%%%%%%"};' or '*',not CURSES and '/* XPM */static char *namespace[] = {/* columns rows colors chars-per-pixel */"16 16 7 1 ","  c #000000",". c #1D1D1D","X c #393939","o c #555555","O c #A8A8A8","+ c #AAAAAA","@ c None",/* pixels */"@@@@@@@@@@@@@@@@","@@@@+@@@@@@@@@@@","@@@.o@@@@@@@@@@@","@@@ +@@@@@@@@@@@","@@@ +@@@@@@@@@@@","@@+.@@@@@@@+@@@@","@@+ @@@@@@@o.@@@","@@@ +@@@@@@+ @@@","@@@ +@@@@@@+ @@@","@@@.X@@@@@@@.+@@","@@@@+@@@@@@@ @@@","@@@@@@@@@@@+ @@@","@@@@@@@@@@@+ @@@","@@@@@@@@@@@X.@@@","@@@@@@@@@@@+@@@@","@@@@@@@@@@@@@@@@"};' or '@',not CURSES and '/* XPM */static char *method[] = {/* columns rows colors chars-per-pixel */"16 16 5 1 ","  c #000000",". c #E0BC38","X c #F0DC5C","o c #FCFC80","O c None",/* pixels */"OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOO  OOOO","OOOOOOOOO oo  OO","OOOOOOOO ooooo O","OOOOOOO ooooo. O","OOOO  O XXoo.. O","OOO oo  XXX... O","OO ooooo XX.. OO","O ooooo.  X. OOO","O XXoo.. O  OOOO","O XXX... OOOOOOO","O XXX.. OOOOOOOO","OO  X. OOOOOOOOO","OOOO  OOOOOOOOOO"};' or '+',not CURSES and '/* XPM */static char *signal[] = {/* columns rows colors chars-per-pixel */"16 16 6 1 ","  c #000000",". c #FF0000","X c #E0BC38","o c #F0DC5C","O c #FCFC80","+ c None",/* pixels */"++++++++++++++++","++++++++++++++++","++++++++++++++++","++++++++++  ++++","+++++++++ OO  ++","++++++++ OOOOO +","+++++++ OOOOOX +","++++  + ooOOXX +","+++ OO  oooXXX +","++ OOOOO ooXX ++","+ OOOOOX  oX +++","+ ooOOXX +  ++++","+ oooXXX +++++++","+ oooXX +++++..+","++  oX ++++++..+","++++  ++++++++++"};' or '~',not CURSES and '/* XPM */static char *slot[] = {/* columns rows colors chars-per-pixel */"16 16 5 1 ","  c #000000",". c #E0BC38","X c #F0DC5C","o c #FCFC80","O c None",/* pixels */"OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOO  OOOO","OOOOOOOOO oo  OO","OOOOOOOO ooooo O","OOOOOOO ooooo. O","OOOO  O XXoo.. O","OOO oo  XXX... O","OO ooooo XX.. OO","O ooooo.  X. OOO","O XXoo.. O  OOOO","O XXX... OOOOOOO","O XXX.. OOOOO   ","OO  X. OOOOOO O ","OOOO  OOOOOOO   "};' or '-',not CURSES and '/* XPM */static char *variable[] = {/* columns rows colors chars-per-pixel */"16 16 5 1 ","  c #000000",". c #8C748C","X c #9C94A4","o c #ACB4C0","O c None",/* pixels */"OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOOOOOOOOO","OOOOOOOOO  OOOOO","OOOOOOOO oo  OOO","OOOOOOO ooooo OO","OOOOOO ooooo. OO","OOOOOO XXoo.. OO","OOOOOO XXX... OO","OOOOOO XXX.. OOO","OOOOOOO  X. OOOO","OOOOOOOOO  OOOOO","OOOOOOOOOOOOOOOO"};' or '.',not CURSES and '/* XPM */static char *struct[] = {/* columns rows colors chars-per-pixel */"16 16 14 1 ","  c #000000",". c #008000","X c #00C000","o c #00FF00","O c #808000","+ c #C0C000","@ c #FFFF00","# c #008080","$ c #00C0C0","% c #00FFFF","& c #C0FFC0","* c #FFFFC0","= c #C0FFFF","- c None",/* pixels */"-----  ---------","---- &&  -------","--- &&&oo ------","-- ooooo.   ----","-- XXoo.. ==  --","-- XXX.. ===%% -","-- XXX. %%%%%# -","---   . $$%%## -","--- **  $$$### -","-- ***@@ $$## --","- @@@@@O  $# ---","- ++@@OO -  ----","- +++OOO -------","- +++OO --------","--  +O ---------","----  ----------"};' or '}',not CURSES and '/* XPM */static char *typedef[] = {/* columns rows colors chars-per-pixel */"16 16 10 1 ","  c #000000",". c #404040","X c #6D6D6D","o c #777777","O c #949494","+ c #ACACAC","@ c #BBBBBB","# c #DBDBDB","$ c #EEEEEE","% c None",/* pixels */"%%%%%  %%%%%%%%%","%%%% ##  %%%%%%%","%%% ###++ %%%%%%","%% +++++.   %%%%","%% oo++.. $$  %%","%% ooo.. $$$@@ %","%% ooo. @@@@@X %","%%%   . OO@@XX %","%%% ##  OOOXXX %","%% ###++ OOXX %%","% +++++.  OX %%%","% oo++.. %  %%%%","% ooo... %%%%%%%","% ooo.. %%%%%%%%","%%  o. %%%%%%%%%","%%%%  %%%%%%%%%%"};' or ':',CLASS=1,NAMESPACE=2,METHOD=3,SIGNAL=4,SLOT=5,VARIABLE=6,STRUCT=7,TYPEDEF=8}
 -- LuaFormatter on
-events.connect(events.VIEW_NEW, function()
-	local view = buffer ~= ui.command_entry and view or ui.command_entry
-	for name, i in pairs(M.XPM_IMAGES) do
-		if type(name) == 'string' then view:register_image(i, M.XPM_IMAGES[i]) end
-	end
-end)
-for _ = 1, #M.XPM_IMAGES do view.new_image_type() end -- sync
-
---- Map of lexer names to line comment strings for programming languages, used by
--- `editing.toggle_comment()`.
--- Keys are lexer names and values are either the language's line comment prefixes or block
--- comment delimiters separated by a '|' character. If no comment string exists for a given
--- language, the lexer-supplied string is used, if available.
-M.comment_string = {}
-
---- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
--- The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;", "&quot;&quot;",
--- and "``". For certain XML-like lexers, "<>" is also auto-paired.
--- @usage textadept.editing.auto_pairs['*'] = '*'
--- @usage textadept.editing.auto_pairs = nil -- disable completely
-M.auto_pairs = {}
-for k, v in string.gmatch([[()[]{}''""``]], '(.)(.)') do M.auto_pairs[k] = v end
-
---- Table of brace characters to highlight.
--- The ASCII values of brace characters are keys and are assigned `true`.
--- Recognized characters are '(', ')', '[', ']', '{', '}', '<', and '>'. This table is updated
--- based on a lexer's "scintillua.angle.braces" property.
-local brace_matches = {}
-
---- Table of auto-paired characters to move over when typed.
--- The ASCII values of typeover characters are keys and are assigned `true`.
-local typeover_chars = {}
-
---- Map of autocompleter names to autocompletion functions.
--- Names are typically lexer names and autocompletion functions typically autocomplete symbols.
--- Autocompletion functions must return two values: the number of characters behind the caret
--- that are used as the prefix of the entity to be autocompleted, and a list of completions
--- to be shown. By default, the list of completions should be separated by space characters,
--- but the function may change `buffer.auto_c_separator` if needed. Also, autocompletion lists
--- are sorted automatically by default, but the function may change `buffer.auto_c_order`
--- if it wants to control sort order.
--- @see autocomplete
-M.autocompleters = {}
-
---- Update auto_pairs, brace_matches, and typeover_chars based on lexer.
-local function update_language_specific_features()
-	local angles = buffer.property['scintillua.angle.braces'] ~= ''
-	if M.auto_pairs then M.auto_pairs['<'] = angles and '>' or nil end
-	brace_matches, typeover_chars = {}, {} -- clear
-	for _, c in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[c] = true end
-	if M.auto_pairs then for _, c in pairs(M.auto_pairs) do typeover_chars[string.byte(c)] = true end end
-end
-events.connect(events.LEXER_LOADED, function()
-	update_language_specific_features()
-	local word_chars = buffer.property['scintillua.word.chars']
-	if word_chars ~= '' then buffer.word_chars = word_chars end
-end)
-events.connect(events.BUFFER_AFTER_SWITCH, update_language_specific_features)
-events.connect(events.VIEW_AFTER_SWITCH, update_language_specific_features)
-
--- Matches characters specified in auto_pairs, taking multiple selections into account.
-events.connect(events.CHAR_ADDED, function(code)
-	if not M.auto_pairs or code < 32 or code > 256 or not M.auto_pairs[string.char(code)] then return end
-	buffer:begin_undo_action()
-	for i = 1, buffer.selections do
-		local pos = buffer.selection_n_caret[i]
-		buffer:set_target_range(pos, pos)
-		buffer:replace_target(M.auto_pairs[string.char(code)])
-	end
-	buffer:end_undo_action()
-end)
-
--- Removes matched chars on backspace, taking multiple selections into account.
-events.connect(events.KEYPRESS, function(key)
-	if M.auto_pairs and key == '\b' and not ui.command_entry.active then
-		buffer:begin_undo_action()
-		for i = 1, buffer.selections do
-			local pos = buffer.selection_n_caret[i]
-			local byte, next_byte = buffer.char_at[pos - 1], buffer.char_at[pos]
-			local complement = byte >= 32 and byte <= 256 and M.auto_pairs[string.char(byte)]
-			local next_char = next_byte >= 32 and next_byte <= 256 and string.char(next_byte)
-			if complement and next_char == complement then buffer:delete_range(pos, 1) end
-		end
-		buffer:end_undo_action()
-	end
-end, 1) -- need index of 1 because default key handler halts propagation
-
--- Highlights matching braces.
-events.connect(events.UPDATE_UI, function(updated)
-	if updated & 3 == 0 then return end -- ignore scrolling
-	if brace_matches[buffer.char_at[buffer.current_pos]] then
-		local match = buffer:brace_match(buffer.current_pos, 0)
-		local f = match ~= -1 and view.brace_highlight or view.brace_bad_light
-		f(buffer, buffer.current_pos, match)
-	else
-		view:brace_bad_light(-1)
-	end
-end)
-
---- Clears highlighted word indicators.
-local function clear_highlighted_words()
-	buffer.indicator_current = M.INDIC_HIGHLIGHT
-	buffer:indicator_clear_range(1, buffer.length)
-end
-events.connect(events.KEYPRESS, function(key)
-	if key == 'esc' then clear_highlighted_words() end
-end, 1)
-
--- Highlight all instances of the current or selected word.
-events.connect(events.UPDATE_UI, function(updated)
-	if updated & buffer.UPDATE_SELECTION == 0 or ui.find.active then return end
-	local word
-	if M.highlight_words == M.HIGHLIGHT_CURRENT then
-		clear_highlighted_words()
-		local s = buffer:word_start_position(buffer.current_pos, true)
-		local e = buffer:word_end_position(buffer.current_pos, true)
-		if s == e then return end
-		word = buffer:text_range(s, e)
-	elseif M.highlight_words == M.HIGHLIGHT_SELECTED then
-		local s, e = buffer.selection_start, buffer.selection_end
-		if s ~= e then clear_highlighted_words() end
-		if not buffer:is_range_word(s, e) then return end
-		word = buffer:text_range(s, e)
-		if word:find(string.format('[^%s]', buffer.word_chars)) then return end
-	else
-		return
-	end
-	buffer.search_flags = buffer.FIND_MATCHCASE | buffer.FIND_WHOLEWORD
-	buffer:target_whole_document()
-	while buffer:search_in_target(word) ~= -1 do
-		buffer:indicator_fill_range(buffer.target_start, buffer.target_end - buffer.target_start)
-		buffer:set_target_range(buffer.target_end, buffer.length + 1)
-	end
-end)
-
--- Moves over auto-paired complement characters when typed, taking multiple selections into
--- account.
-events.connect(events.KEYPRESS, function(key)
-	if M.typeover_auto_paired and typeover_chars[string.byte(key)] and not ui.command_entry.active then
-		local handled = false
-		for i = 1, buffer.selections do
-			local s, e = buffer.selection_n_start[i], buffer.selection_n_end[i]
-			if s ~= e or buffer.char_at[s] ~= string.byte(key) then goto continue end
-			buffer.selection_n_start[i], buffer.selection_n_end[i] = s + 1, s + 1
-			handled = true
-			::continue::
-		end
-		if handled then return true end -- prevent typing
-	end
-end)
-
--- Auto-indent on return.
-events.connect(events.CHAR_ADDED, function(code)
-	if not M.auto_indent or code ~= string.byte('\n') then return end
-	local line = buffer:line_from_position(buffer.current_pos)
-	if line > 1 and buffer:get_line(line - 1):find('^[\r\n]+$') and
-		buffer:get_line(line):find('^[^\r\n]') then
-		return -- do not auto-indent when pressing enter from start of previous line
-	end
-	local i = line - 1
-	while i >= 1 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
-	if i >= 1 then
-		buffer.line_indentation[line] = buffer.line_indentation[i]
-		buffer:vc_home()
-	end
-end)
-
--- Enables and disables bracketed paste mode in curses and disables auto-pair and auto-indent
--- while pasting.
-if CURSES and not WIN32 then
-	local function enable_br_paste() io.stdout:write('\x1b[?2004h'):flush() end
-	local function disable_br_paste() io.stdout:write('\x1b[?2004l'):flush() end
-	enable_br_paste()
-	events.connect(events.SUSPEND, disable_br_paste)
-	events.connect(events.RESUME, enable_br_paste)
-	events.connect(events.QUIT, disable_br_paste)
-
-	local auto_pairs, auto_indent
-	events.connect(events.CSI, function(cmd, args)
-		if cmd ~= string.byte('~') then return end
-		if args[1] == 200 then
-			auto_pairs, M.auto_pairs = M.auto_pairs, nil
-			auto_indent, M.auto_indent = M.auto_indent, false
-		elseif args[1] == 201 then
-			M.auto_pairs, M.auto_indent = auto_pairs, auto_indent
-		end
-	end)
-end
-
--- Strips trailing whitespace ('\t' or ' ') in text files, prior to saving them.
-events.connect(events.FILE_BEFORE_SAVE, function()
-	if not M.strip_trailing_spaces or not buffer.encoding then return end
-	buffer:begin_undo_action()
-	for line = 1, buffer.line_count do
-		local s, e = buffer:position_from_line(line), buffer.line_end_position[line]
-		local i, byte = e - 1, buffer.char_at[e - 1]
-		while i >= s and (byte == 9 or byte == 32) do i, byte = i - 1, buffer.char_at[i - 1] end
-		if i < e - 1 then buffer:delete_range(i + 1, e - i - 1) end
-	end
-	buffer:end_undo_action()
-end)
-
---- Pastes the text from the clipboard, taking into account the buffer's indentation settings
--- and the indentation of the current and preceding lines.
-function M.paste_reindent()
-	-- Normalize EOLs and strip leading indentation from clipboard text.
-	local text = ui.clipboard_text
-	if not buffer.encoding then text = text:iconv('CP1252', 'UTF-8') end
-	if buffer.eol_mode == buffer.EOL_CRLF then
-		text = text:gsub('^\n', '\r\n'):gsub('([^\r])\n', '%1\r\n')
-	end
-	local lead_indent = text:match('^[ \t]*')
-	if lead_indent ~= '' then text = text:sub(#lead_indent + 1):gsub('\n' .. lead_indent, '\n') end
-	-- Change indentation to match buffer indentation settings.
-	local indent, tab_width = buffer.use_tabs and '\t' or string.rep(' ', buffer.tab_width), math.huge
-	text = text:gsub('\n([ \t]+)', function(indentation)
-		if indentation:find('^\t') then return '\n' .. indentation:gsub('\t', indent) end
-		tab_width = math.min(tab_width, #indentation)
-		local level = #indentation // tab_width
-		local spaces = string.rep(' ', math.fmod(#indentation, tab_width))
-		return string.format('\n%s%s', string.rep(indent, level), spaces)
-	end)
-	-- Re-indent according to whichever of the current and preceding lines has the higher indentation
-	-- amount. However, if the preceding line is a fold header, indent by an extra level.
-	local line = buffer:line_from_position(buffer.selection_start)
-	local i = line - 1
-	while i >= 1 and buffer:position_from_line(i) == buffer.line_end_position[i] do i = i - 1 end
-	if i < 1 or buffer.line_indentation[i] < buffer.line_indentation[line] then i = line end
-	local indentation =
-		buffer:text_range(buffer:position_from_line(i), buffer.line_indent_position[i])
-	local fold_header = i ~= line and buffer.fold_level[i] & buffer.FOLDLEVELHEADERFLAG > 0
-	if fold_header then indentation = indentation .. indent end
-	text = text:gsub('\n', '\n' .. indentation)
-	-- Paste the text and adjust first and last line indentation accordingly.
-	local start_indent = buffer.line_indentation[i]
-	if fold_header then start_indent = start_indent + buffer.tab_width end
-	local end_line = buffer:line_from_position(buffer.selection_end)
-	local end_indent = buffer.line_indentation[end_line]
-	local end_column = buffer.column[buffer.selection_end]
-	buffer:begin_undo_action()
-	buffer:replace_sel(text)
-	buffer.line_indentation[line] = start_indent
-	if text:find('\n') then
-		line = buffer:line_from_position(buffer.current_pos)
-		buffer.line_indentation[line] = end_indent
-		buffer:goto_pos(buffer:find_column(line, end_column))
-	end
-	buffer:end_undo_action()
-end
 
 --- Comments or uncomments the selected lines based on the current language.
 -- As long as any part of a line is selected, the entire line is eligible for
@@ -352,7 +129,7 @@ function M.toggle_comment()
 end
 
 --- Moves the caret to the beginning of line number *line* or the user-specified line, ensuring
--- *line* is visible.
+-- that line is visible.
 -- @param[opt] line Optional line number to go to. If `nil`, the user is prompted for one.
 function M.goto_line(line)
 	if not assert_type(line, 'number/nil', 1) then
@@ -402,15 +179,6 @@ function M.enclose(left, right, select)
 	buffer:end_undo_action()
 end
 
--- Enclose selected text in punctuation or auto-paired characters.
-events.connect(events.KEYPRESS, function(key)
-	if M.auto_enclose and not buffer.selection_empty and not ui.command_entry.active and
-		key:find('^%p$') then
-		M.enclose(key, M.auto_pairs[key] or key, true)
-		return true -- prevent typing
-	end
-end, 1)
-
 --- Selects the text between strings *left* and *right* that enclose the caret.
 -- If that range is already selected, toggles between selecting *left* and *right* as well.
 -- If *left* and *right* are not provided, they are assumed to be one of the delimiter pairs
@@ -426,26 +194,28 @@ function M.select_enclosed(left, right)
 		s, e = buffer:search_prev(0, left), buffer:search_next(0, right)
 	elseif M.auto_pairs then
 		s = buffer.selection_start
-		while s >= 1 do
-			local byte = buffer.char_at[s]
-			local match = byte >= 32 and byte <= 256 and M.auto_pairs[string.char(byte)] or
-				(byte == string.byte('>') and M.auto_pairs['<'] and '<') -- in-between > and <
+		repeat
+			-- Backtrack, looking for an auto-paired range that includes the current position.
+			local char = buffer:text_range(s, buffer:position_after(s))
+			local match = M.auto_pairs[char] or (char == '>' and M.auto_pairs['<'] and '<') -- >...<
 			if not match then goto continue end
-			left, right = string.char(byte), match
-			if buffer:brace_match(s, 0) >= buffer.selection_end - 1 then
-				e = buffer:brace_match(s, 0)
+			left, right = char, match
+			-- If the auto-paired brace range includes the current position, use it.
+			e = buffer:brace_match(s, 0)
+			if e >= buffer.selection_end - 1 then break end
+			if e ~= -1 then e = -1 end
+			-- If the auto-paired non-brace range (e.g. quotes) is in the same style as, and includes
+			-- the current position, use it.
+			if buffer.style_at[s] ~= buffer.style_at[buffer.selection_start] then goto continue end
+			buffer.search_flags = 0
+			buffer:set_target_range(s + 1, buffer.length + 1)
+			if buffer:search_in_target(match) >= buffer.selection_end - 1 then
+				e = buffer.target_end - 1
 				break
-			elseif brace_matches[byte] or buffer.style_at[s] == buffer.style_at[buffer.selection_start] then
-				buffer.search_flags = 0
-				buffer:set_target_range(s + 1, buffer.length + 1)
-				if buffer:search_in_target(match) >= buffer.selection_end - 1 then
-					e = buffer.target_end - 1
-					break
-				end
 			end
 			::continue::
 			s = s - 1
-		end
+		until s < 1
 	end
 	if s == -1 or e == -1 then return end
 	if s + #left == anchor and e == pos then s, e = s - #left, e + #right end
@@ -498,10 +268,58 @@ function M.convert_indentation()
 		else
 			new_indentation = string.rep(' ', indent)
 		end
-		if current_indentation == new_indentation then goto continue end
-		buffer:set_target_range(s, e)
-		buffer:replace_target(new_indentation)
-		::continue::
+		if current_indentation ~= new_indentation then
+			buffer:set_target_range(s, e)
+			buffer:replace_target(new_indentation)
+		end
+	end
+	buffer:end_undo_action()
+end
+
+--- Pastes the text from the clipboard, taking into account the buffer's indentation settings
+-- and the indentation of the current and preceding lines.
+function M.paste_reindent()
+	-- Normalize EOLs and strip leading indentation from clipboard text.
+	local text = ui.clipboard_text
+	if not buffer.encoding then text = text:iconv('CP1252', 'UTF-8') end
+	if buffer.eol_mode == buffer.EOL_CRLF then
+		text = text:gsub('^\n', '\r\n'):gsub('([^\r])\n', '%1\r\n')
+	end
+	local lead_indent = text:match('^[ \t]*')
+	if lead_indent ~= '' then text = text:sub(#lead_indent + 1):gsub('\n' .. lead_indent, '\n') end
+	-- Change indentation to match buffer indentation settings.
+	local indent, tab_width = buffer.use_tabs and '\t' or string.rep(' ', buffer.tab_width), math.huge
+	text = text:gsub('\n([ \t]+)', function(indentation)
+		if indentation:find('^\t') then return '\n' .. indentation:gsub('\t', indent) end
+		tab_width = math.min(tab_width, #indentation)
+		local level = #indentation // tab_width
+		local spaces = string.rep(' ', math.fmod(#indentation, tab_width))
+		return string.format('\n%s%s', string.rep(indent, level), spaces)
+	end)
+	-- Re-indent according to whichever of the current and preceding lines has the higher indentation
+	-- amount. However, if the preceding line is a fold header, indent by an extra level.
+	local line = buffer:line_from_position(buffer.selection_start)
+	local i = line - 1
+	while i >= 1 and buffer:position_from_line(i) == buffer.line_end_position[i] do i = i - 1 end
+	if i < 1 or buffer.line_indentation[i] < buffer.line_indentation[line] then i = line end
+	local indentation =
+		buffer:text_range(buffer:position_from_line(i), buffer.line_indent_position[i])
+	local fold_header = i ~= line and buffer.fold_level[i] & buffer.FOLDLEVELHEADERFLAG > 0
+	if fold_header then indentation = indentation .. indent end
+	text = text:gsub('\n', '\n' .. indentation)
+	-- Paste the text and adjust first and last line indentation accordingly.
+	local start_indent = buffer.line_indentation[i]
+	if fold_header then start_indent = start_indent + buffer.tab_width end
+	local end_line = buffer:line_from_position(buffer.selection_end)
+	local end_indent = buffer.line_indentation[end_line]
+	local end_column = buffer.column[buffer.selection_end]
+	buffer:begin_undo_action()
+	buffer:replace_sel(text)
+	buffer.line_indentation[line] = start_indent
+	if text:find('\n') then
+		line = buffer:line_from_position(buffer.current_pos)
+		buffer.line_indentation[line] = end_indent
+		buffer:goto_pos(buffer:find_column(line, end_column))
 	end
 	buffer:end_undo_action()
 end
@@ -527,7 +345,6 @@ end
 --	contain pipes.
 function M.filter_through(command)
 	assert_type(command, 'string', 1)
-	assert(not (WIN32 and CURSES), 'not implemented in this environment')
 	local s, e, top_line = buffer.selection_start, buffer.selection_end, view.first_visible_line
 	if s == e then
 		-- Use the whole buffer as input.
@@ -553,7 +370,8 @@ function M.filter_through(command)
 		for i = 1, buffer.selections do
 			inout[#inout + 1] = buffer:text_range(buffer.selection_n_start[i], buffer.selection_n_end[i])
 		end
-		inout = table.concat(inout, '\n') .. '\n'
+		local newline = not WIN32 and '\n' or '\r\n'
+		inout = table.concat(inout, newline) .. newline
 	end
 	for i = 1, #commands do
 		local p = assert(os.spawn(commands[i]:match('^%s*(.-)%s*$')))
@@ -636,5 +454,178 @@ M.autocompleters.word = function()
 	end
 	return #word_part, list
 end
+
+--- Table of brace characters to highlight.
+-- Brace characters are ASCII values assigned to `true`.
+-- Recognized characters are '(', ')', '[', ']', '{', '}', '<', and '>'. This table is updated
+-- based on a lexer's "scintillua.angle.braces" property.
+local brace_matches = {}
+
+--- Table of auto-paired characters to move over when typed.
+-- Typeover characters are keys assigned to `true`.
+local typeover_chars = {}
+
+--- Update auto_pairs, brace_matches, and typeover_chars based on lexer.
+local function update_language_specific_features()
+	brace_matches, typeover_chars = {}, {} -- clear
+	local angles = buffer.property['scintillua.angle.braces'] ~= ''
+	for code in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[code] = true end
+	if not M.auto_pairs then return end
+	M.auto_pairs['<'] = angles and '>' or nil
+	for _, char in pairs(M.auto_pairs) do typeover_chars[char] = true end
+end
+events.connect(events.LEXER_LOADED, function()
+	update_language_specific_features()
+	local word_chars = buffer.property['scintillua.word.chars']
+	if word_chars ~= '' then buffer.word_chars = word_chars end
+end)
+events.connect(events.BUFFER_AFTER_SWITCH, update_language_specific_features)
+events.connect(events.VIEW_AFTER_SWITCH, update_language_specific_features)
+
+-- Matches characters specified in auto_pairs, taking multiple selections into account.
+events.connect(events.CHAR_ADDED, function(code)
+	if not M.auto_pairs or not M.auto_pairs[utf8.char(code)] then return end
+	buffer:begin_undo_action()
+	for i = 1, buffer.selections do
+		local pos = buffer.selection_n_caret[i]
+		buffer:set_target_range(pos, pos)
+		buffer:replace_target(M.auto_pairs[utf8.char(code)])
+	end
+	buffer:end_undo_action()
+end)
+
+-- Removes matched chars on backspace, taking multiple selections into account.
+events.connect(events.KEYPRESS, function(key)
+	if not M.auto_pairs or key ~= '\b' or ui.command_entry.active then return end
+	buffer:begin_undo_action()
+	for i = 1, buffer.selections do
+		local pos = buffer.selection_n_caret[i]
+		local char = buffer:text_range(pos, buffer:position_after(pos))
+		local char_before = buffer:text_range(buffer:position_before(pos), pos)
+		if char == M.auto_pairs[char_before] then buffer:delete_range(pos, #char) end
+	end
+	buffer:end_undo_action()
+end, 1) -- need index of 1 because default key handler halts propagation
+
+-- Moves over auto-paired complement characters when typed, taking multiple selections into
+-- account.
+events.connect(events.KEYPRESS, function(key)
+	if not M.typeover_auto_paired or not typeover_chars[key] then return end
+	if not buffer.selection_empty or ui.command_entry.active then return end
+	local handled = false
+	for i = 1, buffer.selections do
+		local pos = buffer.selection_n_caret[i]
+		if buffer:text_range(pos, buffer:position_after(pos)) == key then
+			buffer.selection_n_start[i], buffer.selection_n_end[i] = pos + 1, pos + 1
+			handled = true
+		end
+	end
+	if handled then return true end -- prevent typing
+end)
+
+-- Auto-indent on return.
+events.connect(events.CHAR_ADDED, function(code)
+	if not M.auto_indent or code ~= string.byte('\n') then return end
+	local line = buffer:line_from_position(buffer.current_pos)
+	if line > 1 and buffer:get_line(line - 1):find('^[\r\n]+$') and
+		buffer:get_line(line):find('^[^\r\n]') then
+		return -- do not auto-indent when pressing enter from start of previous line
+	end
+	local i = line - 1
+	while i >= 1 and buffer:get_line(i):find('^[\r\n]+$') do i = i - 1 end
+	if i >= 1 then
+		buffer.line_indentation[line] = buffer.line_indentation[i]
+		buffer:vc_home()
+	end
+end)
+
+-- Enclose selected text in punctuation or auto-paired characters.
+events.connect(events.KEYPRESS, function(key)
+	if not M.auto_enclose or buffer.selection_empty or not key:find('^%p$') then return end
+	if ui.command_entry.active then return end
+	M.enclose(key, M.auto_pairs[key] or key, true)
+	return true -- prevent typing
+end, 1)
+
+-- Highlights matching braces.
+events.connect(events.UPDATE_UI, function(updated)
+	if updated & 3 == 0 then return end -- ignore scrolling
+	if brace_matches[buffer.char_at[buffer.current_pos]] then
+		local match = buffer:brace_match(buffer.current_pos, 0)
+		local f = match ~= -1 and view.brace_highlight or view.brace_bad_light
+		f(buffer, buffer.current_pos, match)
+		return
+	end
+	view:brace_bad_light(-1)
+end)
+
+-- Highlight all instances of the current or selected word.
+events.connect(events.UPDATE_UI, function(updated)
+	if updated & buffer.UPDATE_SELECTION == 0 or ui.find.active then return end
+	if M.highlight_words == M.HIGHLIGHT_NONE then return end
+	buffer.indicator_current = M.INDIC_HIGHLIGHT
+	buffer:indicator_clear_range(1, buffer.length)
+	if M.highlight_words == M.HIGHLIGHT_CURRENT then
+		local s = buffer:word_start_position(buffer.current_pos, true)
+		local e = buffer:word_end_position(buffer.current_pos, true)
+		buffer:set_target_range(s, e)
+	elseif M.highlight_words == M.HIGHLIGHT_SELECTED then
+		buffer:target_from_selection()
+		if not buffer:is_range_word(buffer.target_start, buffer.target_end) then return end
+		if buffer.target_text:find(string.format('[^%s]', buffer.word_chars)) then return end
+	end
+	local word = buffer.target_text
+	if word == '' then return end
+	buffer.search_flags = buffer.FIND_MATCHCASE | buffer.FIND_WHOLEWORD
+	buffer:target_whole_document()
+	while buffer:search_in_target(word) ~= -1 do
+		buffer:indicator_fill_range(buffer.target_start, buffer.target_end - buffer.target_start)
+		buffer:set_target_range(buffer.target_end, buffer.length + 1)
+	end
+end)
+
+-- Enables and disables bracketed paste mode in curses and disables auto-pair and auto-indent
+-- while pasting.
+if CURSES and not WIN32 then
+	local function enable_br_paste() io.stdout:write('\x1b[?2004h'):flush() end
+	local function disable_br_paste() io.stdout:write('\x1b[?2004l'):flush() end
+	enable_br_paste()
+	events.connect(events.SUSPEND, disable_br_paste)
+	events.connect(events.RESUME, enable_br_paste)
+	events.connect(events.QUIT, disable_br_paste)
+
+	local auto_pairs, auto_indent
+	events.connect(events.CSI, function(cmd, args)
+		if cmd ~= string.byte('~') then return end
+		if args[1] == 200 then
+			auto_pairs, M.auto_pairs = M.auto_pairs, nil
+			auto_indent, M.auto_indent = M.auto_indent, false
+		elseif args[1] == 201 then
+			M.auto_pairs, M.auto_indent = auto_pairs, auto_indent
+		end
+	end)
+end
+
+-- Strips trailing whitespace ('\t' or ' ') in text files, prior to saving them.
+events.connect(events.FILE_BEFORE_SAVE, function()
+	if not M.strip_trailing_spaces or not buffer.encoding then return end
+	buffer:begin_undo_action()
+	for line = 1, buffer.line_count do
+		local s, e = buffer:position_from_line(line), buffer.line_end_position[line]
+		local i, byte = e - 1, buffer.char_at[e - 1]
+		while i >= s and (byte == 9 or byte == 32) do i, byte = i - 1, buffer.char_at[i - 1] end
+		if i < e - 1 then buffer:delete_range(i + 1, e - i - 1) end
+	end
+	buffer:end_undo_action()
+end)
+
+-- Registers XPM images for new views.
+events.connect(events.VIEW_NEW, function()
+	local view = buffer ~= ui.command_entry and view or ui.command_entry
+	for name, i in pairs(M.XPM_IMAGES) do
+		if type(name) == 'string' then view:register_image(i, M.XPM_IMAGES[i]) end
+	end
+end)
+for _ = 1, #M.XPM_IMAGES do view.new_image_type() end -- sync
 
 return M

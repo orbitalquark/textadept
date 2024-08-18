@@ -846,7 +846,8 @@ char *read_process_output(Process *proc, char option, size_t *len, const char **
 		if (ch == '\n' && option != 'a') break;
 	}
 	luaL_pushresult(&lbuf);
-	if (n < 0 && !*len) return (lua_pop(lua, 1), *error = strerror(errno), *code = errno, NULL);
+	if (n == REPROC_EPIPE) n = 0; // EOF
+	if (n < 0 && !*len) return (lua_pop(lua, 1), *error = reproc_strerror(n), *code = n, NULL);
 	if (n == 0 && !*len && option != 'a') return (lua_pop(lua, 1), *error = NULL, NULL); // EOF
 	buf = strcpy(malloc(*len + 1), lua_tostring(lua, -1));
 	return (lua_pop(lua, 1), *error = NULL, buf); // pop buf
@@ -912,6 +913,7 @@ static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
 		if (res != TERMKEY_RES_NONE) return res;
 #endif
 		update_ui(); // monitor spawned processes and timeouts
+		if (quitting) return TERMKEY_RES_EOF;
 	}
 }
 
@@ -979,7 +981,6 @@ int main(int argc, char **argv) {
 				y, LUA_TNUMBER, x, -1))
 			// Try again with possibly another view.
 			scintilla_send_mouse(focused_view, event, button, modifiers, y, x);
-		if (quitting) break;
 	}
 	close_textadept(), endwin(), termkey_destroy(ta_tk);
 

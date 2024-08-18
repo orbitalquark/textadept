@@ -45,8 +45,9 @@ static void add_doc(sptr_t doc);
 static SciObject *new_view(sptr_t);
 static bool init_lua(int, char **);
 
-// Shows the given error in an error message dialog.
+// Shows the given error in an error message dialog, as well as printing to stderr.
 static void show_error(const char *title, const char *message) {
+	fprintf(stderr, "%s: %s\n", title, message);
 	DialogOptions opts = {title, message, "dialog-error", {"OK", NULL, NULL}};
 	lua_pop(lua, message_dialog(opts, lua)); // pop results
 }
@@ -229,10 +230,10 @@ void find_clicked(FindButton *button) {
 																								 add_to_repl_history(repl_text);
 	if (button == find_next || button == find_prev)
 		emit("find", LUA_TSTRING, find_text, LUA_TBOOLEAN, button == find_next, -1);
-	else if (button == replace)
-		emit("replace", LUA_TSTRING, repl_text, -1),
+	else if (button == replace) {
+		if (!emit("replace", LUA_TSTRING, repl_text, -1))
 			emit("find", LUA_TSTRING, find_text, LUA_TBOOLEAN, true, -1);
-	else if (button == replace_all)
+	} else if (button == replace_all)
 		emit("replace_all", LUA_TSTRING, find_text, LUA_TSTRING, repl_text, -1);
 }
 

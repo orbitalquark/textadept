@@ -76,7 +76,7 @@ end
 --	names too.  Directory names are passed with a trailing '/' or '\', depending on the
 --	current platform.
 function lfs.walk(dir, filter, n, include_dirs)
-	dir = assert_type(dir, 'string', 1):match('^(..-)[/\\]?$')
+	dir = assert_type(dir, 'string', 1):match('^..-[/\\]?$')
 	assert(lfs.attributes(dir, 'mode') == 'directory', 'directory not found: %s', dir)
 	if not assert_type(filter, 'string/table/nil', 2) then filter = lfs.default_filter end
 	assert_type(n, 'number/nil', 3)

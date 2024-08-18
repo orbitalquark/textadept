@@ -40,7 +40,7 @@ events.connect(events.MODIFIED, function(position, mod, text, length)
 	if mod & (UNDO | REDO) > 0 then return end -- ignore undo/redo
 	local line, column = buffer:line_from_position(position), buffer.column[position]
 	if buffer.selections > 1 and line ~= buffer:line_from_position(buffer.current_pos) then return end
-	M.record(nil, line, column)
+	M.record(nil, line, column, buffer._type ~= nil)
 end)
 
 -- Do not record positions during buffer switches when jumping backwards or forwards.

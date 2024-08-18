@@ -133,7 +133,7 @@ local function run_command(label, command, dir, event, commands, key, macros)
 	local id = event .. key
 	if not command_entry_f[id] then
 		command_entry_f[id] = function(command, dir, env, event, commands, key, macros)
-			if command:find('^%s*$') then return end
+			if not command or command:find('^%s*$') then return end
 			if not is_func then commands[key] = command end -- update if not originally a function
 			if macros then command = command:gsub('%%%a', macros) end
 			preferred_view = view
@@ -203,9 +203,8 @@ M.compile_commands = {actionscript='mxmlc "%f"',ada='gnatmake "%f"',ansi_c='gcc 
 -- Emits `events.COMPILE_OUTPUT`.
 -- @param[opt=buffer.filename] filename Optional path to the file to compile.
 function M.compile(filename)
-	if assert_type(filename, 'string/nil', 1) or buffer.filename then
-		compile_or_run(filename or buffer.filename, M.compile_commands)
-	end
+	if not assert_type(filename, 'string/nil', 1) and not buffer.filename then return end
+	compile_or_run(filename or buffer.filename, M.compile_commands)
 end
 
 --- Map of filenames, file extensions, and lexer names to their associated "run" shell command
@@ -232,9 +231,8 @@ M.run_commands = {actionscript=WIN32 and 'start "" "%e.swf"' or OSX and 'open "f
 -- Emits `events.RUN_OUTPUT`.
 -- @param[opt=buffer.filename] filename Optional path to the file to run.
 function M.run(filename)
-	if assert_type(filename, 'string/nil', 1) or buffer.filename then
-		compile_or_run(filename or buffer.filename, M.run_commands)
-	end
+	if not assert_type(filename, 'string/nil', 1) and not buffer.filename then return end
+	compile_or_run(filename or buffer.filename, M.run_commands)
 end
 
 --- Map of project root paths and "makefiles" to their associated "build" shell command line

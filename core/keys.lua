@@ -195,7 +195,7 @@ events.connect(events.KEYPRESS, function(key)
 	local status
 	if not M.mode then
 		status = key_command(buffer:get_lexer(true))
-		if status <= PROPAGATE and not M.mode then status = key_command() end
+		if status <= PROPAGATE then status = key_command() end
 	else
 		status = key_command(M.mode)
 	end
