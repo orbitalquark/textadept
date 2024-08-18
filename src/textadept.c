@@ -45,8 +45,9 @@ static void add_doc(sptr_t doc);
 static SciObject *new_view(sptr_t);
 static bool init_lua(int, char **);
 
-// Shows the given error in an error message dialog.
+// Shows the given error in an error message dialog, as well as printing to stderr.
 static void show_error(const char *title, const char *message) {
+	fprintf(stderr, "%s: %s\n", title, message);
 	DialogOptions opts = {title, message, "dialog-error", {"OK", NULL, NULL}};
 	lua_pop(lua, message_dialog(opts, lua)); // pop results
 }

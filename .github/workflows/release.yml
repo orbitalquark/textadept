@@ -284,24 +284,16 @@ jobs:
     if: github.event.inputs.nightly || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     needs: release
-    timeout-minutes: 3
+    timeout-minutes: 5
     steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          merge-multiple: true
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Unpack artifacts
-        shell: bash
-        run: |
-          tar xzf textadept_*.linux.tgz
-          unzip textadept_*.modules.zip
-          mv textadept-modules/* textadept/modules
-
-      - name: Checkout Textadept (for .luacov, luacov.patch)
+      - name: Checkout textadept-build dependencies
         uses: actions/checkout@v4
         with:
-          path: textadept.git
+          repository: orbitalquark/textadept-build
+          path: textadept-build
 
       - name: Checkout LuaCov
         uses: actions/checkout@v4
@@ -313,28 +305,53 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install qtbase5-dev xterm matchbox-window-manager lua5.4 \
+          sudo apt-get install qtbase5-dev libgtk-3-dev xterm matchbox-window-manager lua5.4 gcovr \
             --no-install-recommends -y
 
-          patch -d luacov -p1 < textadept.git/src/luacov.patch
+          patch -d luacov -p1 < src/luacov.patch
           sudo mkdir -p /usr/share/lua/5.4
           sudo cp -r luacov/src/luacov* /usr/share/lua/5.4
           sudo cp luacov/src/bin/luacov /usr/bin
+          rm -r luacov
+
+      - name: Build for coverage
+        shell: bash
+        run: |
+          # Move cached dependencies into build/_deps.
+          mkdir -p build/_deps && mv textadept-build/* build/_deps && rm -r textadept-build
+
+          # Build.
+          cmake -S . -B build -D NIGHTLY=1 -D PROFILE=1
+          cmake --build build --config Debug -j
+
+          # Copy lexers.
+          cp -r build/_deps/scintillua-src/lexers .
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Unpack modules
+        shell: bash
+        run: |
+          unzip textadept_*.modules.zip
+          mv textadept-modules/* modules
 
       - name: Run tests
         shell: bash
         run: |
-          cp textadept.git/.luacov textadept
-          xvfb-run -a xterm -e textadept/textadept -t -T
-          xvfb-run -a xterm -e textadept/textadept-curses -t -T
+          xvfb-run -a build/textadept -t -T || true
+          xvfb-run -a build/textadept-gtk -t -T || true
+          xvfb-run -a xterm -e build/textadept-curses -t -T
+        env:
+          TEXTADEPT_HOME: ${{ github.workspace }}
 
-      - name: Process coverage report
+      - name: Process coverage reports
         shell: bash
-        run: |
-          echo "" >> log.md # newline
-          lua textadept.git/scripts/gen_cov.lua github luacov.report.out >> log.md
+        run: lua scripts/gen_cov.lua github . >> log.md
 
-      - name: Update release
+      - name: Update release log with coverage info
         uses: ncipollo/release-action@v1
         with:
           name: nightly
