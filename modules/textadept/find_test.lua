@@ -587,9 +587,18 @@ test('ui.find.goto_file_found(false) should go to the previous file in the list'
 	ui.find.find_entry_text = find
 	ui.find.find_in_files(dir.dirname)
 
+	local last_file
+	for i = buffer.line_count, 1, -1 do
+		local line = buffer:get_line(i)
+		if line:find(find) then
+			last_file = line:match('^[^:]+')
+			break
+		end
+	end
+
 	ui.find.goto_file_found(false)
 
-	test.assert_equal(buffer.filename, dir / (subdir .. '/' .. subfile))
+	test.assert_equal(buffer.filename, dir / last_file)
 end)
 
 -- Coverage tests.

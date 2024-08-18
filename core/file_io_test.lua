@@ -669,20 +669,21 @@ test('io.quick_open should prompt for a file to open, subject to an exclusive fi
 	test.assert_equal(buffer.filename, dir / (subdir .. '/' .. subfile_lua))
 end)
 
-test('io.quick_open should prompt for a file to open, but at a maximum depth', function()
+test('io.quick_open should prompt for a file to open, but with a maximum list length', function()
 	local file = 'file.txt'
 	local subdir = 'subdir'
 	local subfile_lua = 'subfile.lua'
 	local dir<close> = test.tmpdir{['.hg'] = {}, file, [subdir] = {subfile_lua}}
 	local _<close> = test.mock(io, 'quick_open_max', 1)
-	local select_first_item = test.stub({1})
-	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
+	local cancel_open = test.stub()
+	local _<close> = test.mock(ui.dialogs, 'list', cancel_open)
 	local max_reached_ok = test.stub(1)
 	local _<close> = test.mock(ui.dialogs, 'message', max_reached_ok)
 
 	io.quick_open(dir.dirname)
 
-	test.assert_equal(buffer.filename, dir / file)
+	local dialog_opts = cancel_open.args[1]
+	test.assert_equal(#dialog_opts.items, 1)
 	test.assert_equal(max_reached_ok.called, true)
 end)
 

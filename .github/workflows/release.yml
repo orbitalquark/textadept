@@ -173,6 +173,12 @@ jobs:
             fi
           done < docs/changelog.md >> log.md
 
+      - name: Upload release log
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-release-log
+          path: log.md
+
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
@@ -257,7 +263,7 @@ jobs:
       - name: Run unit tests (Windows)
         if: runner.os == 'Windows'
         shell: cmd
-        run: start "" /WAIT cmd /c ${{ matrix.exe }} -t
+        run: start "" /WAIT cmd /c ${{ github.workspace }}/${{ matrix.exe }} -t
 
       - name: Run unit tests (macOS)
         if: runner.os == 'macOS'
