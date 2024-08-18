@@ -491,7 +491,7 @@ end)
 
 test('Lua errors should be recognized', function()
 	local function error_handler(message) events.emit(events.ERROR, debug.traceback(message)) end
-	xpcall(error, error_handler, 'internal error', 2)
+	xpcall(error, error_handler, 'this is a simulated error; ignore me', 2)
 	textadept.run.goto_error(1)
 
 	test.assert_contains(buffer.filename, 'run_test.lua')
