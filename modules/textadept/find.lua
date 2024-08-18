@@ -348,6 +348,7 @@ function M.find_in_files(dir, filter)
 	stopped = ui.dialogs.progress{
 		title = string.format('%s: %s', _L['Find in Files']:gsub('[_&]', ''), text),
 		text = show_names and utf8_filenames[i], work = function()
+			if i > #filenames then return nil end
 			local f = io.open(filenames[i], 'rb')
 			buffer:target_whole_document()
 			buffer:replace_target(f:read('a'))
@@ -374,8 +375,7 @@ function M.find_in_files(dir, filter)
 			buffer:empty_undo_buffer()
 			view:scroll_caret() -- [Files Found Buffer]
 			i = i + 1
-			if i > #filenames then return nil end
-			return i * 100 / #filenames, show_names and utf8_filenames[i] or nil
+			return (i - 1) * 100 / #filenames, show_names and utf8_filenames[i] or nil
 		end
 	}
 	buffer:close(true) -- temporary buffer
