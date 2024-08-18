@@ -237,7 +237,6 @@ test('buffer.set_encoding should handle multi- to single-byte changes and mark t
 
 test('buffer.set_encoding should handle single-byte changes without marking buffer dirty',
 	function()
-		if OSX then return end -- TODO: crashes on macOS due to system iconv error
 		local utf8_contents = '中文\n'
 		local encoding = 'CP936'
 		local cp936_contents = utf8_contents:iconv(encoding, 'UTF-8')
@@ -253,6 +252,7 @@ test('buffer.set_encoding should handle single-byte changes without marking buff
 		test.assert_equal(buffer:get_text(), utf8_contents)
 		test.assert_equal(buffer.modify, false)
 	end)
+if OSX then skip('crashes on macOS due to system iconv error') end -- TODO:
 
 test('buffer.set_encoding should handle single- to multi-byte changes and mark the buffer as dirty',
 	function()

@@ -56,7 +56,6 @@ end)
 -- Coverage tests.
 
 test('--help should show command line options and then quit', function()
-	if CURSES then return end -- not supported
 	local print = test.stub()
 	local _<close> = test.mock(_G, 'print', print)
 	local quit = test.stub()
@@ -67,9 +66,9 @@ test('--help should show command line options and then quit', function()
 	test.wait(function() return quit.called end)
 	test.assert(print.called > 1, 'help should have been printed')
 end)
+if CURSES then skip('printing to stdout is not supported') end
 
 test('--version should show version information and then quit', function()
-	if CURSES then return end -- not supported
 	local print = test.stub()
 	local _<close> = test.mock(_G, 'print', print)
 	local quit = test.stub()
@@ -80,3 +79,4 @@ test('--version should show version information and then quit', function()
 	test.wait(function() return quit.called end)
 	test.assert_equal(print.called, true)
 end)
+if CURSES then skip('printing to stdout is not supported') end

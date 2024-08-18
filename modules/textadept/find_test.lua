@@ -201,7 +201,6 @@ test('find should not highlight single-character matches (for performance)', fun
 end)
 
 test('find should allow searching incrementally with typing', function()
-	if CURSES then return end -- blocks the UI
 	buffer:append_text(find)
 	ui.find.focus{find_entry_text = '', incremental = true}
 
@@ -209,9 +208,9 @@ test('find should allow searching incrementally with typing', function()
 
 	test.assert_equal(buffer:get_sel_text(), find)
 end)
+if CURSES then skip('find & replace pane blocks the UI') end
 
 test('find should retain the incremental search anchor even for failures', function()
-	if CURSES then return end -- blocks the UI
 	buffer:append_text(find)
 	ui.find.focus{find_entry_text = '', incremental = true}
 
@@ -225,9 +224,9 @@ test('find should retain the incremental search anchor even for failures', funct
 	test.assert_equal(anchor, 1)
 	test.assert_equal(buffer:get_sel_text(), find)
 end)
+if CURSES then skip('find & replace pane blocks the UI') end
 
 test('find should move the incremental search anchor on successful Enter/find next', function()
-	if CURSES then return end -- blocks the UI
 	buffer:append_text(find .. find)
 	ui.find.focus{find_entry_text = '', incremental = true}
 
@@ -239,9 +238,9 @@ test('find should move the incremental search anchor on successful Enter/find ne
 	test.assert_equal(buffer.selection_start, buffer.length + 1 - #find)
 	test.assert_equal(buffer.selection_end, buffer.length + 1)
 end)
+if CURSES then skip('find & replace pane blocks the UI') end
 
 test('find should not move the incremental search anchor on failed Enter/find next', function()
-	if CURSES then return end -- blocks the UI
 	buffer:append_text(find .. find)
 	ui.find.focus{find_entry_text = '', incremental = true}
 	local bad_char = 'z'
@@ -252,16 +251,16 @@ test('find should not move the incremental search anchor on failed Enter/find ne
 	test.assert_equal(buffer.selection_start, 1)
 	test.assert_equal(buffer.selection_end, 1 + #find)
 end)
+if CURSES then skip('find & replace pane blocks the UI') end
 
 test('ui.find.focus with in_files should show the default filter in the replace entry', function()
-	if CURSES then return end -- blocks the UI
 	ui.find.focus{in_files = true}
 
 	test.assert_equal(ui.find.replace_entry_text, table.concat(lfs.default_filter, ','))
 end)
+if CURSES then skip('find & replace pane blocks the UI') end
 
 test('ui.find.focus without in_files should restore replace entry text', function()
-	if CURSES then return end -- blocks the UI
 	ui.find.replace_entry_text = ''
 	ui.find.focus{in_files = true}
 
@@ -270,9 +269,9 @@ test('ui.find.focus without in_files should restore replace entry text', functio
 	test.assert_equal(ui.find.in_files, false)
 	test.assert_equal(ui.find.replace_entry_text, '')
 end)
+if CURSES then skip('find & replace pane blocks the UI') end
 
 test('ui.find.focus with in_files should use a project-specific filter if possible', function()
-	if CURSES then return end -- blocks the UI
 	local file = 'file.txt'
 	local dir<close> = test.tmpdir{['.hg'] = {}, file}
 	ui.find.find_in_files_filters[dir.dirname] = '*.txt'
@@ -282,9 +281,9 @@ test('ui.find.focus with in_files should use a project-specific filter if possib
 
 	test.assert_equal(ui.find.replace_entry_text, '*.txt')
 end)
+if CURSES then skip('find & replace pane blocks the UI') end
 
 test('find should allow prompting to search in files and output results to a new buffer', function()
-	if CURSES then return end -- blocks the UI
 	local file = 'file.txt'
 	local subdir = 'subdir'
 	local subfile = 'subfile.txt'
@@ -310,6 +309,7 @@ test('find should allow prompting to search in files and output results to a new
 	local highlighted_results = test.get_indicated_text(ui.find.INDIC_FIND)
 	test.assert_equal(highlighted_results, {find, find})
 end)
+if CURSES then skip('find & replace pane blocks the UI') end
 
 test('ui.find.find_in_files should update the filter if changed', function()
 	local dir<close> = test.tmpdir({}, true)

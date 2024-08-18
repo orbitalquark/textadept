@@ -36,6 +36,9 @@ local test = setmetatable(dofile(_HOME .. '/test/helpers.lua'), {
 	end
 })
 
+--- Skips the most recently defined test.
+local function skip() tests[#tests] = tests[#tests] .. ' #skip' end
+
 --- Map of tests to retries.
 local retries = setmetatable({}, {__index = function() return 1 end})
 
@@ -55,7 +58,7 @@ local function expected_failure() expected_failures[tests[#tests]] = true end
 
 -- Test environment.
 local env = setmetatable({
-	setup = setup, teardown = teardown, test = test, retry = retry,
+	setup = setup, teardown = teardown, test = test, skip = skip, retry = retry,
 	expected_failure = expected_failure
 }, {__index = _G})
 
@@ -122,7 +125,6 @@ for _, name in ipairs(tests) do
 			break
 		elseif skip and include_tags[tag] then
 			skip = false
-			break
 		end
 	end
 	if skip then goto skip end
@@ -163,20 +165,24 @@ for _, name in ipairs(tests) do
 		expected_failures[name] = nil
 	end
 	test.log:clear()
+	::skip::
 
 	-- Write test output.
 	if ok then
 		status = 'OK'
 	elseif expected_failures[name] then
 		status = 'OK*'
+	elseif skip then
+		status = 'SKIP'
 	else
 		status = 'FAIL'
 		io.output():write(string.rep('-', 100), '\n')
 	end
-	io.output():write(status, ' ', name, '\n'):flush()
-	if not ok and errmsg then io.output():write(errmsg, '\n', string.rep('-', 100), '\n') end
+	if not skip or not next(include_tags) then
+		io.output():write(status, ' ', name, '\n'):flush()
+		if not ok and errmsg then io.output():write(errmsg, '\n', string.rep('-', 100), '\n') end
+	end
 
-	::skip::
 	-- Update statistics.
 	if ok then
 		tests_passed = tests_passed + 1

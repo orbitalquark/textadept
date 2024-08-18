@@ -441,7 +441,6 @@ if CURSES then
 end
 
 test("ui.maximized = true should change the window's maximized state", function()
-	if CURSES then return end -- not applicable
 	local _<close> = test.mock(ui, 'maximized', true)
 
 	-- For some reason, the following fails, even though the window maximized status is toggled.
@@ -449,9 +448,9 @@ test("ui.maximized = true should change the window's maximized state", function(
 	test.assert_equal(ui.maximized, true)
 end)
 if GTK then expected_failure() end
+if CURSES then skip('ui.maximized cannot be changed') end
 
 test('ui.size = {width, height} should resize the window', function()
-	if CURSES then return end -- not applicable
 	local new_size = {ui.size[1] - 50, ui.size[2] + 50}
 
 	local _<close> = test.mock(ui, 'size', new_size)
@@ -461,6 +460,7 @@ test('ui.size = {width, height} should resize the window', function()
 	test.assert_equal(ui.size, new_size)
 end)
 if GTK then expected_failure() end
+if CURSES then skip('ui.size cannot be changed') end
 
 test('ui.get_split_table should report the current split view state', function()
 	view:split(true)

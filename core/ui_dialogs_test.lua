@@ -1,7 +1,6 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
 test('ui.dialogs.progress should show progress for work done', function()
-	if OSX then return end -- TODO: this test appears to cause focus issues for command entry tests
 	local i = 0
 
 	local stopped = ui.dialogs.progress{
@@ -14,6 +13,7 @@ test('ui.dialogs.progress should show progress for work done', function()
 
 	test.assert_equal(not stopped, true)
 end)
+if OSX then skip('this test appears to cause focus issues for command entry tests') end -- TODO:
 
 test('ui.dialogs.progress should emit errors when work errors', function()
 	local event = test.stub(false) -- halt propagation to default error handler
@@ -73,7 +73,6 @@ test('ui.dialogs.open should prompt for a file to open #skip', function()
 end)
 
 test('ui.dialogs.open should allow prompting for a directory to open #skip', function()
-	if CURSES then return end -- not supported by CDK
 	local dir<close> = test.tmpdir()
 	local select_directory = test.stub(dir.dirname)
 	local _<close> = test.mock(ui.dialogs, 'open', select_directory)
@@ -82,6 +81,7 @@ test('ui.dialogs.open should allow prompting for a directory to open #skip', fun
 
 	test.assert_equal(directory, dir.dirname)
 end)
+if CURSES then skip('CDK fselect does not allow selecting directories') end
 
 test('ui.dialogs.save should prompt for a file to save #skip', function()
 	local f<close> = test.tmpfile()

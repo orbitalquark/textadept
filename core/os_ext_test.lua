@@ -136,12 +136,12 @@ test('proc.kill should kill a spawned process', function()
 end)
 
 test('os.spawn should raise an error if the command does not exist', function()
-	if WIN32 then return end -- 'cmd /c does not exist' prints to stderr and returns 1
 	local nonexistent_command = 'does-not-exist'
 	local command_does_not_exist = function() assert(os.spawn(nonexistent_command)) end
 
 	test.assert_raises(command_does_not_exist, nonexistent_command .. ':')
 end)
+if WIN32 then skip("'cmd /c does not exist' prints to stderr and returns 1") end
 
 -- Coverage tests.
 

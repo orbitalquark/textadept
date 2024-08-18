@@ -90,7 +90,6 @@ test('lfs.walk should be able to walk from the root directory', function()
 end)
 
 test('lfs.walk should be able to handle directory symlinks, even recursive ones', function()
-	if WIN32 then return end -- not supported
 	-- `lfs.walk()` should be able to handle symlinks, even recursive ones.
 	-- dir/
 	-- 	foo
@@ -109,9 +108,9 @@ test('lfs.walk should be able to handle directory symlinks, even recursive ones'
 
 	test.assert_equal(files, {dir / 'foo'})
 end)
+if WIN32 then skip('symlinks are not supported') end
 
 test('lfs.walk should be able to handle symlinks to parent dirs, even recursive ones', function()
-	if WIN32 then return end -- not supported
 	-- `lfs.walk()` should be able to handle symlinks, even recursive ones.
 	-- dir/
 	-- 	1/
@@ -136,6 +135,7 @@ test('lfs.walk should be able to handle symlinks to parent dirs, even recursive 
 	table.sort(expected_files)
 	test.assert_equal(files, expected_files)
 end)
+if WIN32 then skip('symlinks are not supported') end
 
 test('lfs.walk should raise an error if the directory does not exist', function()
 	local dir_does_not_exist = function() lfs.walk('does-not-exist') end

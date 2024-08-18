@@ -479,7 +479,6 @@ test('editing.filter_through should pipe selected text through a shell command',
 end)
 
 test('editing.filter_through should pipe multiple selections through a shell command', function()
-	if WIN32 then return end
 	local word = 'word'
 	buffer:append_text(word:gsub('^.', '%0%0') .. ' ' .. word:gsub('^.', '%0%0'))
 	textadept.editing.select_word(true)
@@ -490,6 +489,7 @@ test('editing.filter_through should pipe multiple selections through a shell com
 	test.assert_equal(buffer.selections, 2)
 	test.assert_equal(buffer:get_sel_text(), word .. word) -- Scintilla stores it this way
 end)
+if WIN32 then skip('sed does not exist') end
 
 test('editing.filter_through should pipe a rectangular selection through a shell command',
 	function()
@@ -506,13 +506,13 @@ test('editing.filter_through should pipe a rectangular selection through a shell
 	end)
 
 test('editing.filter_through should allow pipes', function()
-	if WIN32 then return end
 	buffer:append_text(test.lines{'3', '1', '5', '4', '2', '1'})
 
 	textadept.editing.filter_through('sort | uniq')
 
 	test.assert_equal(buffer:get_text(), test.lines{'1', '2', '3', '4', '5', ''})
 end)
+if WIN32 then skip('uniq does not exist') end
 
 test('editing.filter_through should not do anything if output == input', function()
 	local _<close> = test.tmpfile(test.lines{'input', ''}, true)
@@ -869,11 +869,11 @@ end)
 -- Coverage tests.
 
 test('editing.filter_through should write command errors to the statusbar', function()
-	if WIN32 then return end
 	textadept.editing.filter_through('false')
 
 	-- TODO: how to assert ui.statusbar_text was written to? Cannot mock it.
 end)
+if WIN32 then skip('false does not exist') end
 
 -- TODO: test highlight matching braces.
 

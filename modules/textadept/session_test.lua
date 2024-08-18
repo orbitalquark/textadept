@@ -91,7 +91,6 @@ test('sessions should save bookmarks', function()
 end)
 
 test('sessions should save window state', function()
-	if CURSES then return end -- not applicable
 	local sf<close> = test.tmpfile()
 	local _<close> = test.mock(ui, 'maximized', true)
 
@@ -102,9 +101,9 @@ test('sessions should save window state', function()
 	test.assert_equal(ui.maximized, true)
 end)
 if GTK then expected_failure() end -- TODO:
+if CURSES then skip('window state cannot be changed') end
 
 test('sessions should save window size', function()
-	if CURSES then return end -- not applicable
 	local sf<close> = test.tmpfile()
 	local size = {800, 600}
 	local _<close> = test.mock(ui, 'size', size)
@@ -116,6 +115,7 @@ test('sessions should save window size', function()
 	test.assert_equal(ui.size, size)
 end)
 if GTK then expected_failure() end -- TODO:
+if CURSES then skip('window size cannot be changed') end
 
 test('sessions should save view state', function()
 	local sf<close> = test.tmpfile()
