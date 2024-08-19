@@ -79,7 +79,7 @@ local print_summaries = {
 		local function new_link(anchor)
 			local link = string.format('[%d]: %s/%s', #link_list + (link_list.offset or 0) + 1, url,
 				filename)
-			if anchor then link = link .. anchor end
+			if anchor then link = link .. '#' .. anchor end
 			link_list[#link_list + 1] = link
 			return #link_list + (link_list.offset or 0)
 		end

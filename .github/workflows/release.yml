@@ -263,7 +263,7 @@ jobs:
       - name: Run unit tests (Windows)
         if: runner.os == 'Windows'
         shell: cmd
-        run: start "" /WAIT cmd /c ${{ github.workspace }}/${{ matrix.exe }} -t
+        run: start "" /d ${{ github.workspace }} /wait cmd /c ${{ matrix.exe }} -t
 
       - name: Run unit tests (macOS)
         if: runner.os == 'macOS'

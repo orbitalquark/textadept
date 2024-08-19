@@ -350,7 +350,7 @@ test('ui.command_entry.run should pass additional arguments to the run function'
 	test.assert_equal(f.args, {'initial', 1})
 end)
 
-test('ui.command_entry should emit events when its text changes', function()
+test('ui.command_entry should emit events.COMMAND_TEXT_CHANGED when its text changes', function()
 	local changed = test.stub()
 	local _<close> = test.connect(events.COMMAND_TEXT_CHANGED, changed)
 

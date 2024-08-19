@@ -379,7 +379,6 @@ test('type should type into the command entry if ui.command_entry.active is true
 end)
 
 test('type should change ui.find.find_entry_text if ui.find.active is true', function()
-	if CURSES then return end -- blocks the UI
 	ui.find.focus{find_entry_text = ''}
 	local _<close> = test.defer(ui.find.focus)
 	local text = 'text'
@@ -391,9 +390,9 @@ test('type should change ui.find.find_entry_text if ui.find.active is true', fun
 	test.assert_equal(ui.find.find_entry_text, text)
 	test.assert_equal(buffer.length, 0)
 end)
+if CURSES then skip('find & replace pane blocks the UI') end
 
 test('type should call ui.find.find_next() when typing \\n if ui.find.active is true', function()
-	if CURSES then return end -- blocks the UI
 	local find_next = test.stub()
 	local _<close> = test.mock(ui.find, 'find_next', find_next)
 	ui.find.focus()
@@ -404,6 +403,7 @@ test('type should call ui.find.find_next() when typing \\n if ui.find.active is 
 	test.assert_equal(find_next.called, true)
 	test.assert_equal(buffer.length, 0)
 end)
+if CURSES then skip('find & replace pane blocks the UI') end
 
 test('typing \\n should include \\r in CR+LF EOL mode', function()
 	local _<close> = test.mock(buffer, 'eol_mode', buffer.EOL_CRLF)
