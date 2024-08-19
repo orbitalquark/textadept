@@ -266,7 +266,10 @@ events.connect(events.VIEW_NEW, function() events.emit(events.UPDATE_UI, 3) end)
 events.connect(events.TAB_CLICKED, function(index) view:goto_buffer(_BUFFERS[index]) end)
 
 -- Closes a buffer when its tab close button is clicked.
-events.connect(events.TAB_CLOSE_CLICKED, function(index) _BUFFERS[index]:close() end)
+events.connect(events.TAB_CLOSE_CLICKED, function(index)
+	if _BUFFERS[index] ~= buffer then view:goto_buffer(_BUFFERS[index]) end
+	buffer:close()
+end)
 
 --- Sets the title of the Textadept window to the active buffer's filename and indicates whether
 -- the buffer is "clean" or "dirty".
