@@ -23,4 +23,6 @@ test('ctrl+shift+\\n should start a new line above the current one', function()
 end)
 if CURSES then skip('ctrl+shift+\\n is not defined') end
 
+-- TODO: test('ctrl+pgup/pgdn should scroll without moving the caret')
+
 -- TODO: test('ctrl+k on macOS should cut to EOL', function() end)

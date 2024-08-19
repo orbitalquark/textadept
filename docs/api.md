@@ -7603,7 +7603,7 @@ Parameters:
 #### `textadept.editing.goto_line`([*line*])
 
 Moves the caret to the beginning of line number *line* or the user-specified line, ensuring
-*line* is visible.
+that line is visible.
 
 Parameters:
 
@@ -7907,6 +7907,8 @@ Shift+Enter | ⇧↩ | None | Start a new line below the current one
 Ctrl+Shift+Enter | ⌘⇧↩ | None | Start a new line above the current one
 Ctrl+Alt+Down | ^⌘⇣ | M-Down | Scroll line down
 Ctrl+Alt+Up | ^⌘⇡ | M-Up | Scroll line up
+Alt+PgUp | ^⇞ | N/A | Scroll page up
+Alt+PgDn | ^⇟ | N/A | Scroll page down
 Menu<br/> Shift+F10^(§) | N/A | N/A | Show context menu
 Ctrl+Alt+Shift+R *c* | ^⌘⇧R *c* | M-S-R *c* | Save macro to alphanumeric register *c*
 Ctrl+Alt+R *c* | ^⌘R *c* | M-R *c* | Load and play macro from alphanumeric register *c*

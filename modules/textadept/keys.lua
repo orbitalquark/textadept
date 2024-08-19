@@ -168,6 +168,8 @@
 -- Ctrl+Shift+Enter | ⌘⇧↩ | None | Start a new line above the current one
 -- Ctrl+Alt+Down | ^⌘⇣ | M-Down | Scroll line down
 -- Ctrl+Alt+Up | ^⌘⇡ | M-Up | Scroll line up
+-- Alt+PgUp | ^⇞ | N/A | Scroll page up
+-- Alt+PgDn | ^⇟ | N/A | Scroll page down
 -- Menu<br/> Shift+F10^(§) | N/A | N/A | Show context menu
 -- Ctrl+Alt+Shift+R *c* | ^⌘⇧R *c* | M-S-R *c* | Save macro to alphanumeric register *c*
 -- Ctrl+Alt+R *c* | ^⌘R *c* | M-R *c* | Load and play macro from alphanumeric register *c*
@@ -430,7 +432,7 @@ local bindings = {
 	-- TODO: m('Tools/Snippets/Complete Trigger Word')
 	-- Other.
 	-- TODO: m('Tools/Show Style')
-
+	
 	-- Buffer.
 	[m('Buffer/Next Buffer')] = {
 		{'ctrl+\t', 'ctrl+pgdn'}, {'ctrl+\t', 'cmd+pgdn'}, WIN32 and 'ctrl+\t' or 'meta+pgdn'
@@ -483,6 +485,8 @@ local bindings = {
 	-- Other.
 	[view.line_scroll_down] = {'ctrl+alt+down', 'ctrl+cmd+down', 'meta+down'},
 	[view.line_scroll_up] = {'ctrl+alt+up', 'ctrl+cmd+up', 'meta+up'},
+	[function() view:line_scroll(0, view.lines_on_screen) end] = {'alt+pgdn', 'ctrl+pgdn', nil},
+	[function() view:line_scroll(0, -view.lines_on_screen) end] = {'alt+pgup', 'ctrl+pgup', nil},
 	[start_new_line] = {'shift+\n', 'shift+\n', nil},
 	[function() start_new_line(true) end] = {'ctrl+shift+\n', 'cmd+shift+\n', nil},
 	[show_context_menu] = {'menu', nil, nil},
@@ -492,7 +496,7 @@ local bindings = {
 	-- Unbound keys are handled by Scintilla, but when playing back a macro, this is not possible.
 	-- Define some useful default key bindings so Scintilla does not have to handle them. Note
 	-- that Scintilla still will handle some keys.
-
+	
 	-- Built-in movement commands.
 	[buffer.line_down] = {'down', {'down', 'ctrl+n'}, 'down'},
 	[buffer.line_down_extend] = {'shift+down', {'shift+down', 'ctrl+N'}, 'shift+down'},
