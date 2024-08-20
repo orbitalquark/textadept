@@ -109,7 +109,7 @@ for _, v in ipairs(find_events) do events[v:upper()] = v end
 -- addition to the statusbar message.
 -- @field _G.events.FIND_WRAPPED (string)
 
---- Map of directory paths to filters used in `ui.find.find_in_files()`.
+--- Map of directory paths to filters used when finding in files.
 -- This table is updated when the user manually specifies a filter in the "Filter" entry during
 -- an "In files" search.
 M.find_in_files_filters = {}
@@ -185,12 +185,6 @@ local incremental_orig_pos
 --	set otherwise.
 -- @return position of the found text or `-1`
 local function find(text, next, flags, no_wrap, wrapped)
-	-- Note: cannot use assert_type(), as event errors are handled silently.
-	if text == '' then return end
-	if M.in_files then
-		M.find_in_files() -- performed here
-		return
-	end
 	if not flags then flags = get_flags() end
 	if not is_ff_buf(buffer) then clear_highlighted_matches() end
 
@@ -241,70 +235,21 @@ local function find(text, next, flags, no_wrap, wrapped)
 
 	return pos
 end
-events.connect(events.FIND, find)
-events.connect(events.FIND_TEXT_CHANGED, function()
-	if not M.incremental then return end
-	return events.emit(events.FIND, M.find_entry_text, true) -- refresh
-end)
-events.connect(events.FIND_RESULT_FOUND, function(text, wrapped)
-	-- Count and optionally highlight all occurrences.
-	local count, current = 0, 1
-	buffer.search_flags = get_flags()
-	buffer:target_whole_document()
-	while buffer:search_in_target(text) ~= -1 do
-		local s, e = buffer.target_start, buffer.target_end
-		if s == e then e = e + 1 end -- prevent loops for zero-length results
-		if M.highlight_all_matches and e - s > 1 and not is_ff_buf(buffer) then
-			buffer:indicator_fill_range(s, e - s)
-		end
-		count = count + 1
-		if s == buffer.current_pos then current = count end
-		if e > buffer.length then break end
-		buffer:set_target_range(e, buffer.length + 1)
-	end
-	local message = string.format('%s %d/%d', _L['Match'], current, count)
-	if wrapped then message = string.format('%s (%s)', message, _L['Search wrapped']) end
-	ui.statusbar_text = message
-	-- For regex searches, `buffer.tag` was clobbered. It needs to be filled in again for any
-	-- subsequent replace operations that need it.
-	if ui.find.regex then
-		buffer:set_target_range(buffer.selection_start, buffer.length + 1)
-		buffer:search_in_target(text)
-	end
-end)
-events.connect(events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wrapped'] end)
 
---- Searches directory *dir* or the user-specified directory for files that match search text
--- and search options (subject to optional filter *filter*), and prints the results to a buffer
--- titled "Files Found", highlighting found text.
--- Use the `ui.find.find_entry_text`, `ui.find.match_case`, `ui.find.whole_word`, and
--- `ui.find.regex` fields to set the search text and option flags, respectively.
+--- Prompts the user for a directory to search in for files that match search text and search
+-- options, and prints the results to a buffer titled "Files Found", highlighting found text.
 -- A filter determines which files to search in, with the default filter being
--- `ui.find.find_in_files_filters[dir]` (if it exists) or `lfs.default_filter`. A filter consists
--- of glob patterns that match file and directory paths to include or exclude. Patterns are
--- inclusive by default. Exclusive patterns begin with a '!'. If no inclusive patterns are
--- given, any filename is initially considered. As a convenience, '/' also matches the Windows
--- directory separator ('[/\\]' is not needed). If *filter* is `nil`, the filter from the
--- `ui.find.find_in_files_filters` table for *dir* is used. If that filter does not exist,
--- `lfs.default_filter` is used.
--- @param[opt] dir Optional directory path to search. If `nil`, the user is prompted for one.
--- @param[optchain] filter Optional filter for files and directories to exclude. The
---	default value is `lfs.default_filter` unless a filter for *dir* is defined in
---	`ui.find.find_in_files_filters`.
-function M.find_in_files(dir, filter)
-	if not assert_type(dir, 'string/nil', 1) then
-		dir = ui.dialogs.open{title = _L['Select Directory'], only_dirs = true, dir = ff_dir()}
-		if not dir then return end
+-- `ui.find.find_in_files_filters[dir]` (if it exists) or `lfs.default_filter`.
+local function find_in_files()
+	local dir = ui.dialogs.open{title = _L['Select Directory'], only_dirs = true, dir = ff_dir()}
+	if not dir then return end
+	if M.replace_entry_text ~= repl_text then
+		-- Update stored filter.
+		local t = {}
+		for patt in M.replace_entry_text:gmatch('[^,]+') do t[#t + 1] = patt end
+		M.find_in_files_filters[dir], M.find_in_files_filters[ff_dir()] = t, t
 	end
-	if not assert_type(filter, 'string/table/nil', 2) then
-		if M.replace_entry_text ~= repl_text then
-			-- Update stored filter.
-			local t = {}
-			for patt in M.replace_entry_text:gmatch('[^,]+') do t[#t + 1] = patt end
-			M.find_in_files_filters[dir], M.find_in_files_filters[ff_dir()] = t, t
-		end
-		filter = M.find_in_files_filters[dir] or lfs.default_filter
-	end
+	local filter = M.find_in_files_filters[dir] or lfs.default_filter
 	if not CURSES and ui.find.active then
 		ui.find.in_files = false
 		orig_focus() -- attempt to hide
@@ -382,6 +327,50 @@ function M.find_in_files(dir, filter)
 	if status then print(status) end
 	print() -- blank line
 end
+
+-- Handle "Find Next" or "Find Prev" click.
+events.connect(events.FIND, function(text, next)
+	if text == '' then return end
+	if not M.in_files then
+		find(text, next)
+	else
+		find_in_files()
+	end
+end)
+
+-- Search incrementally as find text changes.
+events.connect(events.FIND_TEXT_CHANGED,
+	function() if M.incremental then return ui.find.find_next() end end)
+
+-- Count and optionally highlight all found occurrences.
+events.connect(events.FIND_RESULT_FOUND, function(text, wrapped)
+	local count, current = 0, 1
+	buffer.search_flags = get_flags()
+	buffer:target_whole_document()
+	while buffer:search_in_target(text) ~= -1 do
+		local s, e = buffer.target_start, buffer.target_end
+		if s == e then e = e + 1 end -- prevent loops for zero-length results
+		if M.highlight_all_matches and e - s > 1 and not is_ff_buf(buffer) then
+			buffer:indicator_fill_range(s, e - s)
+		end
+		count = count + 1
+		if s == buffer.current_pos then current = count end
+		if e > buffer.length then break end
+		buffer:set_target_range(e, buffer.length + 1)
+	end
+	local message = string.format('%s %d/%d', _L['Match'], current, count)
+	if wrapped then message = string.format('%s (%s)', message, _L['Search wrapped']) end
+	ui.statusbar_text = message
+	-- For regex searches, `buffer.tag` was clobbered. It needs to be filled in again for any
+	-- subsequent replace operations that need it.
+	if ui.find.regex then
+		buffer:set_target_range(buffer.selection_start, buffer.length + 1)
+		buffer:search_in_target(text)
+	end
+end)
+
+-- Notify via statusbar if a search wrapped.
+events.connect(events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wrapped'] end)
 
 local P, V, C, upper, lower = lpeg.P, lpeg.V, lpeg.C, string.upper, string.lower
 local esc = {b = '\b', f = '\f', n = '\n', r = '\r', t = '\t', v = '\v'}
@@ -530,11 +519,15 @@ function M.goto_file_found(location)
 		buffer:set_sel(buffer.current_pos + e, buffer.current_pos + s)
 	end
 end
+
+-- Jump to the find in files result when pressing Enter.
 events.connect(events.KEYPRESS, function(key)
 	if key ~= '\n' or not is_ff_buf(buffer) then return end
 	M.goto_file_found(buffer:line_from_position(buffer.current_pos))
 	return true
 end)
+
+-- Jump to the find in files result when double-clicking a line.
 events.connect(events.DOUBLE_CLICK,
 	function(_, line) if is_ff_buf(buffer) then M.goto_file_found(line) end end)
 

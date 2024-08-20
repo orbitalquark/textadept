@@ -1877,9 +1877,9 @@ list selections are always returned as numeric indices.
 
 ##### Filter Changes
 
-Filters for `lfs.walk()`, `io.quick_open()`, and `ui.find.find_in_files()` no longer use Lua
-patterns, but use typical shell glob patterns instead. This means special characters like '-'
-and '+' can be used literally and longer need to be escaped with '%'.
+Filters for `lfs.walk()` and `io.quick_open()` no longer use Lua patterns, but use typical shell
+glob patterns instead. This means special characters like '-' and '+' can be used literally
+and longer need to be escaped with '%'.
 
 ##### Language Module Changes
 

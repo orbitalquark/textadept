@@ -9230,7 +9230,7 @@ The text in the "Find" entry.
 <a id="ui.find.find_in_files_filters"></a>
 #### `ui.find.find_in_files_filters` &lt;table&gt;
 
-Map of directory paths to filters used in [`ui.find.find_in_files()`](#ui.find.find_in_files).
+Map of directory paths to filters used when finding in files.
 This table is updated when the user manually specifies a filter in the "Filter" entry during
 an "In files" search.
 
@@ -9346,30 +9346,6 @@ This is primarily used for localization.
 
 
 ### Functions defined by `ui.find`
-
-<a id="ui.find.find_in_files"></a>
-#### `ui.find.find_in_files`([*dir*[, *filter*]])
-
-Searches directory *dir* or the user-specified directory for files that match search text
-and search options (subject to optional filter *filter*), and prints the results to a buffer
-titled "Files Found", highlighting found text.
-Use the [`ui.find.find_entry_text`](#ui.find.find_entry_text), [`ui.find.match_case`](#ui.find.match_case), [`ui.find.whole_word`](#ui.find.whole_word), and
-[`ui.find.regex`](#ui.find.regex) fields to set the search text and option flags, respectively.
-A filter determines which files to search in, with the default filter being
-`ui.find.find_in_files_filters[dir]` (if it exists) or [`lfs.default_filter`](#lfs.default_filter). A filter consists
-of glob patterns that match file and directory paths to include or exclude. Patterns are
-inclusive by default. Exclusive patterns begin with a '!'. If no inclusive patterns are
-given, any filename is initially considered. As a convenience, '/' also matches the Windows
-directory separator ('[/\\]' is not needed). If *filter* is `nil`, the filter from the
-[`ui.find.find_in_files_filters`](#ui.find.find_in_files_filters) table for *dir* is used. If that filter does not exist,
-[`lfs.default_filter`](#lfs.default_filter) is used.
-
-Parameters:
-
-- *dir*:  Optional directory path to search. If `nil`, the user is prompted for one.
-- *filter*:  Optional filter for files and directories to exclude. The
-	default value is [`lfs.default_filter`](#lfs.default_filter) unless a filter for *dir* is defined in
-	[`ui.find.find_in_files_filters`](#ui.find.find_in_files_filters).
 
 <a id="ui.find.find_next"></a>
 #### `ui.find.find_next`()

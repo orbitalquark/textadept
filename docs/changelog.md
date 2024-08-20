@@ -2082,7 +2082,7 @@ Changes:
 - *post_init.lua* files for language modules are [no longer auto-loaded][]; use
   [`events.LEXER_LOADED`][] to load additional bits instead.
 - Renamed `ui.find.FILTER` to [`ui.find.find_in_files_filter`][] and added an optional argument
-  to [`ui.find.find_in_files()`][].
+  to `ui.find.find_in_files()`.
 - Renamed all [`textadept.session`][]`.[A-Z]+` options to their lower-case equivalents.
 - Removed syntax checking support, renamed `textadept.run.RUN_IN_BACKGROUND` to
   [`textadept.run.run_in_background`][], removed `textadept.run.cwd` and `textadept.run.proc`,
@@ -2106,7 +2106,6 @@ Changes:
 [no longer auto-loaded]: manual.html#language-module-handling-changes
 [`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
 [`ui.find.find_in_files_filter`]: api.html#ui.find.find_in_files_filter
-[`ui.find.find_in_files()`]: api.html#ui.find.find_in_files
 [`textadept.session`]: api.html#textadept.session
 [`textadept.run.run_in_background`]: api.html#textadept.run.run_in_background
 [`textadept.run.compile()`]: api.html#textadept.run.compile

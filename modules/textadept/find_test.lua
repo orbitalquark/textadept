@@ -294,6 +294,9 @@ test('find should allow prompting to search in files and output results to a new
 
 	ui.find.find_next()
 
+	test.assert_equal(select_directory.called, true)
+	local dialog_opts = select_directory.args[1]
+	test.assert_equal(dialog_opts.only_dirs, true)
 	test.assert_equal(buffer._type, _L['[Files Found Buffer]'])
 	test.assert_equal(buffer.current_pos, buffer.length + 1)
 
@@ -311,12 +314,22 @@ test('find should allow prompting to search in files and output results to a new
 end)
 if CURSES then skip('find & replace pane blocks the UI') end
 
+--- Performs find in files for directory *dir*, find text *find*, and optional filter *filter*.
+-- @param dir String path to the directory to search in.
+-- @param find String text to search for.
+-- @param filter Optional filter string to use when searching.
+local function find_in_files(dir, find, filter)
+	ui.find.find_entry_text = find
+	if filter then ui.find.replace_entry_text = filter end
+	local _<close> = test.mock(ui.find, 'in_files', true)
+	local select_directory = test.stub(dir)
+	local _<close> = test.mock(ui.dialogs, 'open', select_directory)
+	ui.find.find_next()
+end
+
 test('ui.find.find_in_files should update the filter if changed', function()
 	local dir<close> = test.tmpdir({}, true)
-	ui.find.find_entry_text = find -- does not matter; just needs to not be empty
-	ui.find.replace_entry_text = '*.txt'
-
-	ui.find.find_in_files(dir.dirname)
+	find_in_files(dir.dirname, find, '*.txt') -- find does not matter; just needs to not be empty
 
 	test.assert_equal(ui.find.find_in_files_filters[lfs.currentdir()], {'*.txt'})
 	test.assert_equal(ui.find.find_in_files_filters[dir.dirname], {'*.txt'})
@@ -544,8 +557,7 @@ test('ui.find.goto_file_found(true) should go to and select the next occurrence 
 	function()
 		local file = 'file.txt'
 		local dir<close> = test.tmpdir{[file] = find}
-		ui.find.find_entry_text = find
-		ui.find.find_in_files(dir.dirname)
+		find_in_files(dir.dirname, find)
 
 		ui.find.goto_file_found(true)
 
@@ -556,8 +568,7 @@ test('ui.find.goto_file_found(true) should go to and select the next occurrence 
 test('ui.find.goto_file_found should not select in binary files', function()
 	local binfile = 'binary'
 	local dir<close> = test.tmpdir{[binfile] = '\0' .. find}
-	ui.find.find_entry_text = find
-	ui.find.find_in_files(dir.dirname)
+	find_in_files(dir.dirname, find)
 
 	ui.find.goto_file_found(true)
 
@@ -569,8 +580,7 @@ test('ui.find.goto_file_found should work if neither the ff view nor buffer is v
 	local _<close> = test.mock(ui, 'tabs', true) -- for CURSES
 	local file = 'file.txt'
 	local dir<close> = test.tmpdir{[file] = find}
-	ui.find.find_entry_text = find
-	ui.find.find_in_files(dir.dirname)
+	find_in_files(dir.dirname, find)
 	view:goto_buffer(-1)
 
 	ui.find.goto_file_found(true)
@@ -584,8 +594,7 @@ test('ui.find.goto_file_found(false) should go to the previous file in the list'
 	local subdir = 'subdir'
 	local subfile = 'subfile.txt'
 	local dir<close> = test.tmpdir{[file] = find, [subdir] = {[subfile] = find}}
-	ui.find.find_entry_text = find
-	ui.find.find_in_files(dir.dirname)
+	find_in_files(dir.dirname, find)
 
 	local last_file
 	for i = buffer.line_count, 1, -1 do
@@ -629,8 +638,7 @@ test('ui.find.find_in_files should allow canceling the search', function()
 	local dir<close> = test.tmpdir()
 	local cancel_search = test.stub(true)
 	local _<close> = test.mock(ui.dialogs, 'progress', cancel_search)
-
-	ui.find.find_in_files(dir.dirname)
+	find_in_files(dir.dirname, find)
 
 	test.assert_equal(cancel_search.called, true)
 	test.assert_contains(buffer:get_text(), _L['Find in Files aborted'])
@@ -638,18 +646,16 @@ end)
 
 test('ui.find.find_in_files should indicate if nothing was found', function()
 	local dir<close> = test.tmpdir()
-	ui.find.find_entry_text = find
 
-	ui.find.find_in_files(dir.dirname)
+	find_in_files(dir.dirname, find)
 
 	test.assert_contains(buffer:get_text(), _L['No results found'])
 end)
 
 test('ui.find.find_in_files should handle binary files', function()
 	local dir<close> = test.tmpdir{binary = '\0' .. find}
-	ui.find.find_entry_text = find
 
-	ui.find.find_in_files(dir.dirname)
+	find_in_files(dir.dirname, find)
 
 	test.assert_contains(buffer:get_text(), 'binary:1:' .. _L['Binary file matches.'])
 end)
@@ -657,8 +663,7 @@ end)
 test('Enter in the files found list should jump to that file', function()
 	local file = 'file.txt'
 	local dir<close> = test.tmpdir{[file] = find}
-	ui.find.find_entry_text = find
-	ui.find.find_in_files(dir.dirname)
+	find_in_files(dir.dirname, find)
 	buffer:line_up()
 	buffer:line_up()
 
@@ -670,8 +675,7 @@ end)
 test('double-clicking in the files found list should jump to that file', function()
 	local file = 'file.txt'
 	local dir<close> = test.tmpdir{[file] = find}
-	ui.find.find_entry_text = find
-	ui.find.find_in_files(dir.dirname)
+	find_in_files(dir.dirname, find)
 	buffer:line_up()
 	buffer:line_up()
 	local line = buffer:line_from_position(buffer.current_pos)
