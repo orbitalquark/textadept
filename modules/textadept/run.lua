@@ -428,13 +428,16 @@ function M.goto_error(location)
 	if buffer.line_state[line_num] > 1 then return end -- non-error
 	buffer.annotation_style[line] = buffer:style_of_name(lexer.ERROR)
 end
+
+-- Jump to the error or warning when pressing Enter.
 events.connect(events.KEYPRESS, function(key)
 	local line_num = buffer:line_from_position(buffer.current_pos)
-	if key == '\n' and is_out_buf(buffer) and buffer.line_state[line_num] > 0 then
-		M.goto_error(line_num)
-		return true
-	end
+	if key ~= '\n' or not is_out_buf(buffer) or buffer.line_state[line_num] == 0 then return end
+	M.goto_error(line_num)
+	return true
 end)
+
+-- Jump to the error or warning when double-clicking a line.
 events.connect(events.DOUBLE_CLICK,
 	function(_, line) if is_out_buf(buffer) then M.goto_error(line) end end)
 
