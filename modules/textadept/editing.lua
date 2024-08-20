@@ -238,9 +238,12 @@ function M.select_word(all)
 end
 
 --- Selects the current line.
+-- If a current selection spans multiple lines, expands the selection to include whole lines.
 function M.select_line()
-	buffer:home()
-	buffer:line_end_extend()
+	local s = buffer:position_from_line(buffer:line_from_position(buffer.selection_start))
+	local e = buffer.line_end_position[buffer:line_from_position(buffer.selection_end)]
+	if buffer.anchor > buffer.current_pos then s, e = e, s end
+	buffer:set_sel(s, e)
 end
 
 --- Selects the current paragraph.

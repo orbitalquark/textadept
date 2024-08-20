@@ -7639,6 +7639,7 @@ Parameters:
 #### `textadept.editing.select_line`()
 
 Selects the current line.
+If a current selection spans multiple lines, expands the selection to include whole lines.
 
 <a id="textadept.editing.select_paragraph"></a>
 #### `textadept.editing.select_paragraph`()

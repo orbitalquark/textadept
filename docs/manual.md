@@ -992,7 +992,8 @@ You can create contiguous selections as follows:
   additional (multiple) selections. Undo the most recent multiple selection via `Ctrl+Alt+D`,
   `^⌘D`, or `M-D`.
 - Select the current line via `Ctrl+L` on Windows and Linux, `⌘L` on macOS, and `^L` in the
-  terminal version.
+  terminal version. If text is already selected and spans multiple lines, this action expands
+  the selection to include whole lines.
 - Double click to select a word, and triple-click to select a line.
 - Click and optionally drag within the line number margin to select whole lines.
 - Select the current paragraph via `Ctrl+Shift+P` on Windows and Linux, `⌘⇧P` on macOS,

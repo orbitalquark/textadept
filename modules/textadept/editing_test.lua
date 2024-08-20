@@ -332,6 +332,17 @@ test('editing.select_line should select the current line up to EOL', function()
 	test.assert_equal(buffer:get_sel_text(), '1')
 end)
 
+test('editing.select_line should extend multi-line selections', function()
+	local contents = test.lines{'12', '23'}
+	buffer:add_text(contents)
+	buffer:char_right()
+	buffer:line_up_extend()
+
+	textadept.editing.select_line()
+
+	test.assert_equal(buffer:get_sel_text(), contents)
+end)
+
 test('editing.select_paragraph should select the current paragraph', function()
 	buffer:append_text(test.lines{'', '2', '', '4'})
 	buffer:line_down()
