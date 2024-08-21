@@ -1645,7 +1645,6 @@ Textadept is composed of the following technologies:
 - [cdk][]: terminal UI widget toolkit
 - [libtermkey][]: terminal keyboard entry handling library
 - [Scintilla][]: core text editing component
-- [Lexilla][]: core syntax highlighting library for Scintilla
 - [Scinterm][]: curses (terminal) platform for Scintilla
 - [Scintillua][]: syntax highlighting for Scintilla using Lua lexers
 - [Lua][]: core scripting language
@@ -1659,7 +1658,6 @@ Textadept is composed of the following technologies:
 [Qt]: https://www.qt.io
 [GTK]: https://www.gtk.org
 [Scintilla]: https://scintilla.org
-[Lexilla]: https://scintilla.org/Lexilla.html
 [Scinterm]: https://orbitalquark.github.io/scinterm
 [Scintillua]: https://orbitalquark.github.io/scintillua
 [Lua]: https://www.lua.org

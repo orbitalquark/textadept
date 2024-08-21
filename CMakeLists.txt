@@ -78,14 +78,6 @@ FetchContent_Declare(scintilla
 	URL ${scintilla_url}
 	PATCH_COMMAND patch -N -p1 < ${ta}/src/scintilla.patch)
 FetchContent_MakeAvailable(scintilla)
-# Lexilla.
-set(lexilla_tgz lexilla510.tgz)
-set(lexilla_url file://${deps_dir}/${lexilla_tgz})
-if(NOT EXISTS ${deps_dir}/${lexilla_tgz})
-	set(lexilla_url https://www.scintilla.org/${lexilla_tgz})
-endif()
-FetchContent_Declare(lexilla URL ${lexilla_url})
-FetchContent_MakeAvailable(lexilla)
 # Scinterm.
 set(scinterm_zip scinterm_5.0.zip)
 set(scinterm_url file://${deps_dir}/${scinterm_zip})
@@ -249,14 +241,6 @@ if(CURSES)
 	target_link_directories(scintilla_curses PRIVATE ${CURSES_LIBRARY_DIRS})
 	target_link_libraries(scintilla_curses PUBLIC scintilla PRIVATE ${CURSES_LIBRARIES})
 endif()
-
-# Lexilla.
-add_library(lexilla STATIC)
-set(lex_dir ${lexilla_SOURCE_DIR})
-file(GLOB lex_src ${lex_dir}/lexlib/*.cxx)
-target_sources(lexilla PRIVATE ${lex_src})
-target_include_directories(lexilla PUBLIC ${lex_dir}/lexlib PRIVATE ${lex_dir}/include)
-target_link_libraries(lexilla PRIVATE scintilla)
 
 # Scintillua.
 set(scilua_dir ${scintillua_SOURCE_DIR})
