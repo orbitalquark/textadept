@@ -271,10 +271,15 @@
 -- @function get_text
 
 --- Returns the selected text.
--- Multiple selections are included in order with no delimiters. Rectangular selections are
--- included from top to bottom with end of line characters. Virtual space is not included.
+-- Multiple selections are included in order, and delimited by `buffer.copy_separator`. Rectangular
+-- selections are included from top to bottom with end of line characters. Virtual space is
+-- not included.
 -- @return string, number
 -- @function get_sel_text
+
+--- The delimiters used between multiple selections in `buffer:get_sel_text()`.
+-- The default value is `''`.
+-- @field copy_separator
 
 --- Returns the range of text between positions *start_pos* and *end_pos*.
 -- @param start_pos The start position of the range of text to get in *buffer*.
@@ -405,8 +410,14 @@
 --- Indents the text on the selected lines or types a Tab character ("\t") at the caret position.
 -- @function tab
 
+--- Indents the text on the current or selected lines.
+-- @function line_indent
+
 --- Un-indents the text on the selected lines.
 -- @function back_tab
+
+--- Un-indents the text on the current or selected lines.
+-- @function line_dedent
 
 --- Swaps the current line with the previous one.
 -- @function line_transpose
@@ -3130,7 +3141,7 @@
 --- Configure Text Zoom.
 -- @section
 
---- Increases the size of all fonts by one point, up to 20.
+--- Increases the size of all fonts by one point, up to 60.
 -- @function view:zoom_in
 
 --- Decreases the size of all fonts by one point, down to -10.
@@ -3507,6 +3518,7 @@
 -- - annotation_style_offset
 -- - annotation_styles
 -- - automatic_fold
+-- - auto_c_style
 -- - buffered_draw
 -- - call_tip_back
 -- - call_tip_fore
@@ -3563,6 +3575,7 @@
 -- - style_hotspot
 -- - style_index_at
 -- - style_size_fractional
+-- - style_stretch
 -- - style_weight
 -- - sub_style_bases
 -- - sub_styles_length
@@ -3579,6 +3592,7 @@
 -- - undo_current
 -- - undo_detach
 -- - undo_save_point
+-- - undo_sequence
 -- - undo_tentative
 -- - INDICATOR_CONTAINER
 -- - MOD_NORM
@@ -3639,6 +3653,7 @@
 -- - count_code_units
 -- - create_document
 -- - create_loader
+-- - cut_allow_line
 -- - describe_property
 -- - describe_key_word_sets
 -- - description_of_style

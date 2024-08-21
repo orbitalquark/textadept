@@ -783,12 +783,19 @@ Returns the buffer's text.
 #### `buffer:get_sel_text`()
 
 Returns the selected text.
-Multiple selections are included in order with no delimiters. Rectangular selections are
-included from top to bottom with end of line characters. Virtual space is not included.
+Multiple selections are included in order, and delimited by [`buffer.copy_separator`](#buffer.copy_separator). Rectangular
+selections are included from top to bottom with end of line characters. Virtual space is
+not included.
 
 Return:
 
 - string, number
+
+<a id="buffer.copy_separator"></a>
+#### `buffer.copy_separator` 
+
+The delimiters used between multiple selections in [`buffer:get_sel_text()`](#buffer.get_sel_text).
+The default value is `''`.
 
 <a id="buffer.text_range"></a>
 #### `buffer:text_range`(*start_pos*, *end_pos*)
@@ -1012,10 +1019,20 @@ Deletes the buffer's text.
 
 Indents the text on the selected lines or types a Tab character ("\t") at the caret position.
 
+<a id="buffer.line_indent"></a>
+#### `buffer:line_indent`()
+
+Indents the text on the current or selected lines.
+
 <a id="buffer.back_tab"></a>
 #### `buffer:back_tab`()
 
 Un-indents the text on the selected lines.
+
+<a id="buffer.line_dedent"></a>
+#### `buffer:line_dedent`()
+
+Un-indents the text on the current or selected lines.
 
 <a id="buffer.line_transpose"></a>
 #### `buffer:line_transpose`()
@@ -4272,7 +4289,7 @@ The default value is [`view.WRAPINDENT_FIXED`](#view.WRAPINDENT_FIXED).
 <a id="view.zoom_in"></a>
 #### `view:zoom_in`()
 
-Increases the size of all fonts by one point, up to 20.
+Increases the size of all fonts by one point, up to 60.
 
 <a id="view.zoom_out"></a>
 #### `view:zoom_out`()

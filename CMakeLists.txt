@@ -69,7 +69,7 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 # Scintilla.
 set(deps_dir ${CMAKE_BINARY_DIR}/_deps)
-set(scintilla_tgz scintilla550.tgz)
+set(scintilla_tgz scintilla552.tgz)
 set(scintilla_url file://${deps_dir}/${scintilla_tgz})
 if(NOT EXISTS ${deps_dir}/${scintilla_tgz})
 	set(scintilla_url https://www.scintilla.org/${scintilla_tgz})
@@ -79,7 +79,7 @@ FetchContent_Declare(scintilla
 	PATCH_COMMAND patch -N -p1 < ${ta}/src/scintilla.patch)
 FetchContent_MakeAvailable(scintilla)
 # Scinterm.
-set(scinterm_zip scinterm_5.0.zip)
+set(scinterm_zip scinterm_5.1.zip)
 set(scinterm_url file://${deps_dir}/${scinterm_zip})
 if(NIGHTLY)
 	set(scinterm_zip default.zip)
