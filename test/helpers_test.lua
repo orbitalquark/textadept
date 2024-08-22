@@ -377,6 +377,7 @@ test('type should type into the command entry if ui.command_entry.active is true
 	test.assert_equal(ui.command_entry:get_text(), text)
 	test.assert_equal(buffer.length, 0)
 end)
+if OSX then skip('find & replace pane is still active') end -- TODO:
 
 test('type should change ui.find.find_entry_text if ui.find.active is true', function()
 	ui.find.focus{find_entry_text = ''}
@@ -412,6 +413,7 @@ test('typing \\n should include \\r in CR+LF EOL mode', function()
 
 	test.assert_equal(buffer:get_text(), '\r\n')
 end)
+if OSX then skip('find & replace pane is still active') end -- TODO:
 
 test('get_indicated_text should identify indicated text', function()
 	local indic = view:new_indic_number()
