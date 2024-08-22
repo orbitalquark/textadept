@@ -138,7 +138,7 @@ static int proc_read(lua_State *L) {
 	const char *error;
 	int code;
 	char *buf = read_process_output(proc, !lua_isnumber(L, 2) ? *p : 'n', &len, &error, &code);
-	if (!buf && error) return (lua_pushnil(L), lua_pushinteger(L, code), lua_pushstring(L, error), 3);
+	if (!buf && error) return (lua_pushnil(L), lua_pushstring(L, error), lua_pushinteger(L, code), 3);
 	return (buf ? (lua_pushlstring(L, buf, len), free(buf)) : lua_pushnil(L), 1);
 }
 
