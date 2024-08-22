@@ -111,12 +111,14 @@ end)
 test('os.spawn should allow two-way communication with a spawned process', function()
 	local textadept = arg[0]
 	local f<close> = test.tmpfile('.lua', 'print(io.read())')
+	local command = string.format('"%s" -L "%s"', textadept, f.filename)
 	local input = 'input'
 
-	local p = os.spawn(string.format('"%s" -L "%s"', textadept, f.filename))
-	p:write(input .. '\n')
+	test.log('spawning ', command)
+	local p = os.spawn(command)
+	p:write(input .. (not WIN32 and '\n' or '\r\n'))
 	p:close()
-	local output = p:read('l')
+	local output = assert(p:read())
 	local eof = p:read('a')
 
 	test.assert_equal(output, input)

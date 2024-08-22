@@ -51,23 +51,26 @@ local function load_props()
 	return buffer_props, view_props
 end
 
+--- Returns Textadept file *filename* relative to _HOME, with slashes.
+local function file(filename) return ((_HOME .. '/' .. filename):gsub('\\', '/')) end
+
 -- Valid usages to ignore.
 local ignore_ids = {_G = true, M = true, _SCINTILLA = true, snippets = true}
 local ignore_exprs = {['ui.size'] = true}
 local exceptions = {
-	[_HOME .. '/core/init.lua'] = {'env.view'},
-	[_HOME .. '/core/lexer.lua'] = {'lexer.style_at', 'lexer.fold_level', 'lexer.line_from_position'},
-	[_HOME .. '/core/ui.lua'] = {'view:goto_pos'},
-	[_HOME .. '/modules/textadept/editing.lua'] = {'p:close'},
-	[_HOME .. '/modules/textadept/find.lua'] = {
+	[file('core/init.lua')] = {'env.view'},
+	[file('core/lexer.lua')] = {'lexer.style_at', 'lexer.fold_level', 'lexer.line_from_position'},
+	[file('core/ui.lua')] = {'view:goto_pos'}, --
+	[file('modules/textadept/editing.lua')] = {'p:close'}, --
+	[file('modules/textadept/find.lua')] = {
 		'ff_buffer.line_end_position', 'ff_buffer.line_count', 'ff_buffer.indicator_current',
 		'ff_buffer:indicator_fill_range'
 	}, --
-	[_HOME .. '/modules/textadept/history.lua'] = {'record.filename', 'record.column'},
-	[_HOME .. '/modules/textadept/session.lua'] = {
+	[file('modules/textadept/history.lua')] = {'record.filename', 'record.column'},
+	[file('modules/textadept/session.lua')] = {
 		'buf.filename', 'buf.anchor', 'buf.current_pos', 'split.size', 'split.buffer'
 	}, --
-	[_HOME .. '/modules/textadept/snippets.lua'] = {'snippet.new', 'placeholder.length', 'ph.length'}
+	[file('modules/textadept/snippets.lua')] = {'snippet.new', 'placeholder.length', 'ph.length'}
 }
 
 --- Looks for use of buffer and view properties, and returns a list of invalid usages.
@@ -125,12 +128,14 @@ end
 local buffer_props, view_props = load_props()
 
 local stock_files = {}
-for _, dir in ipairs{_HOME .. '/core', _HOME .. '/modules/textadept'} do
+for _, dir in ipairs{file('core'), file('modules/textadept')} do
 	for filename in lfs.walk(dir, '.lua') do
-		if not filename:find('_test.lua') then stock_files[#stock_files + 1] = filename end
+		if not filename:find('_test.lua') then
+			stock_files[#stock_files + 1] = filename:gsub('\\', '/')
+		end
 	end
 end
-stock_files[#stock_files + 1] = _HOME .. '/init.lua'
+stock_files[#stock_files + 1] = file('init.lua')
 table.sort(stock_files)
 
 -- Test each stock file.
