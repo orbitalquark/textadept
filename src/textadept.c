@@ -1076,9 +1076,8 @@ static int split_view_lua(lua_State *L) {
 			x_offset = SS(view, SCI_GETXOFFSET, 0, 0), current_pos = SS(view, SCI_GETCURRENTPOS, 0, 0),
 			anchor = SS(view, SCI_GETANCHOR, 0, 0);
 	SciObject *view2 = new_view(SS(view, SCI_GETDOCPOINTER, 0, 0));
-	split_view(view, view2, lua_toboolean(L, 2)), focus_view(view2);
-	SS(view2, SCI_SETSEL, anchor, current_pos),
-		SS(view2, SCI_LINESCROLL, first_line - SS(view2, SCI_GETFIRSTVISIBLELINE, 0, 0), 0),
+	split_view(view, view2, lua_toboolean(L, 2)), focus_view(view2), update_ui();
+	SS(view2, SCI_SETSEL, anchor, current_pos), SS(view2, SCI_SETFIRSTVISIBLELINE, first_line, 0),
 		SS(view2, SCI_SETXOFFSET, x_offset, 0);
 	return (lua_pushvalue(L, 1), lua_getglobal(L, "view"), 2); // old, new view
 }
