@@ -173,3 +173,12 @@ test('os.spawn should emit an error when an exit callback errors', function()
 	local error_message = event.args[1]
 	test.assert_contains(error_message, error_prefix .. '0')
 end)
+
+test('proc.read(n) should read n bytes', function()
+	local output = 'output'
+	local p = os.spawn('echo ' .. output)
+
+	local bytes = p:read(#output)
+
+	test.assert_equal(bytes, output)
+end)

@@ -25,4 +25,23 @@ if CURSES then skip('ctrl+shift+\\n is not defined') end
 
 -- TODO: test('ctrl+pgup/pgdn should scroll without moving the caret')
 
--- TODO: test('ctrl+k on macOS should cut to EOL', function() end)
+test('ctrl+k should cut to EOL with empty selection', function()
+	local text = 'text'
+	buffer:append_text(' ' .. text)
+	buffer:char_right()
+
+	test.type('ctrl+k')
+
+	test.assert_equal(buffer:get_text(), ' ')
+	test.assert_equal(ui.clipboard_text, text)
+end)
+if not OSX then skip('ctrl+k is not defined') end
+
+test('ctrl+k at EOL should delete EOL', function()
+	buffer:append_text(test.lines(2, true))
+
+	test.type('ctrl+k')
+
+	test.assert_equal(buffer.line_count, 1)
+end)
+if not OSX then skip('ctrl+k is not defined') end

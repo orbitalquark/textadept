@@ -513,7 +513,7 @@ test('ui.goto_view should focus a large relative view with wrapping (left)', fun
 
 	test.assert_equal(_VIEWS[view], 2)
 end)
-expected_failure()
+expected_failure() -- TODO:
 
 test('ui.goto_view should focus a large relative view with wrapping (right)', function()
 	view:split()

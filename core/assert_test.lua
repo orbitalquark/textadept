@@ -73,3 +73,13 @@ test('assert_type should raise an error on fail', function()
 	test.assert_raises(function() optional_second_boolean('', '') end,
 		"bad argument #2 to 'optional_second_boolean' (boolean/nil expected, got string")
 end)
+
+-- Coverage tests.
+
+test('assert_type should raise an error for invalid arguments', function()
+	local invalid_argument = function() assert_type(true, 1) end
+	local missing_narg = function() assert_type(true, '') end
+
+	test.assert_raises(invalid_argument, 'string expected, got number')
+	test.assert_raises(missing_narg, 'value expected, got nil')
+end)
