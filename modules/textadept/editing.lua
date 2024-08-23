@@ -472,7 +472,7 @@ local typeover_chars = {}
 local function update_language_specific_features()
 	brace_matches, typeover_chars = {}, {} -- clear
 	local angles = buffer.property['scintillua.angle.braces'] ~= ''
-	for code in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[code] = true end
+	for _, code in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[code] = true end
 	if not M.auto_pairs then return end
 	M.auto_pairs['<'] = angles and '>' or nil
 	for _, char in pairs(M.auto_pairs) do typeover_chars[char] = true end
