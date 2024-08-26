@@ -31,6 +31,7 @@ extern "C" {
 #include <QProcessEnvironment>
 #include <QSessionManager>
 #if _WIN32
+#include <QFileInfo>
 #include <QStyleFactory>
 #include <windows.h> // for GetACP
 #endif
@@ -538,11 +539,6 @@ static inline QProcess *PROCESS(Process *p) { return static_cast<struct _process
 
 bool spawn(lua_State *L, Process *proc, int /*index*/, const char *cmd, const char *cwd, int envi,
 	bool monitor_stdout, bool monitor_stderr, const char **error) {
-#if _WIN32
-	// Use "cmd.exe /c" for more versatility (e.g. spawning batch files).
-	std::string full_cmd = std::string{getenv("COMSPEC")} + " /c " + cmd;
-	cmd = full_cmd.c_str();
-#endif
 	// Construct argv from cmd and envp from envi.
 	// TODO: Qt 5.15 introduced QProcess::splitCommand().
 	// QStringList args = QProcess::splitCommand(QString{cmd}).
@@ -564,6 +560,11 @@ bool spawn(lua_State *L, Process *proc, int /*index*/, const char *cmd, const ch
 		} while (*p && *p != ' ');
 		args.append(arg.c_str());
 	}
+#if _WIN32
+	QFileInfo exe{args.first()};
+	if (!exe.exists()) // use "cmd.exe /c" for more versatility (e.g. spawning batch files)
+		args.insert(0, getenv("COMSPEC")), args.insert(1, "/c");
+#endif
 	QProcessEnvironment env;
 	if (envi)
 		for (int i = (lua_pushnil(L), 0); lua_next(L, envi); lua_pop(L, 1), i++) {
