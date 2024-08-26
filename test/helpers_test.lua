@@ -414,6 +414,16 @@ test('type should call ui.find.find_next() when typing \\n if ui.find.active is 
 end)
 if CURSES then skip('find & replace pane blocks the UI') end
 
+test('get_marked_lines should identify marked lines', function()
+	local mark = view:new_marker_number()
+	local line = 1
+	buffer:marker_add(line, mark)
+
+	local marked = test.get_marked_lines(mark)
+
+	test.assert_equal(marked, {line})
+end)
+
 test('get_indicated_text should identify indicated text', function()
 	local indic = view:new_indic_number()
 	local word = 'word'

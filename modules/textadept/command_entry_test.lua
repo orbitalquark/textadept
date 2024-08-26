@@ -108,7 +108,7 @@ test('ui.command_entry.run should consider view fields/functions as globals', fu
 end)
 
 test('ui.command_entry.run should consider ui fields/functions as globals', function()
-	local _<close> = test.mock(ui, 'tabs', true)
+	local _<close> = test.mock(ui, 'tabs', true) -- for CURSES
 	local switch_buffer = test.stub()
 	local _<close> = test.mock(ui, 'switch_buffer', switch_buffer)
 

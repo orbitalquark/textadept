@@ -404,13 +404,28 @@ function M.type(text)
 
 end
 
+--- Returns a list of all line numbers with marker number *marker* set.
+-- @param marker Marker number to get lines for.
+-- @param[opt] buffer Buffer to get markers from. The default value is the global buffer.
+-- @return line number list
+function M.get_marked_lines(marker, buffer)
+	if not buffer then buffer = _G.buffer end
+	local lines = {}
+	for i = 1, buffer.line_count do
+		if buffer:marker_get(i) & 1 << marker - 1 > 0 then lines[#lines + 1] = i end
+	end
+	return lines
+end
+
 --- Returns a list of all text segments with indicator number *indic* set.
 -- The returned list contains only strings, not position information.
 -- @param indic Indicator number to get segments for.
+-- @param[opt] buffer Buffer to get segments from. The default value is the global buffer.
 -- @return string list
-function M.get_indicated_text(indic)
+function M.get_indicated_text(indic, buffer)
+	if not buffer then buffer = _G.buffer end
 	local words = {}
-	local s = buffer:indicator_all_on_for(1) & 1 << indic - 1 == indic and 1 or
+	local s = buffer:indicator_all_on_for(1) & 1 << indic - 1 > 0 and 1 or
 		buffer:indicator_end(indic, 1)
 	while true do
 		local e = buffer:indicator_end(indic, s)

@@ -1,15 +1,10 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
---- Returns whether or not line number *line* has a bookmark on it.
--- @param line Line number to check for a bookmark on.
-local function has_bookmark(line)
-	return buffer:marker_get(line) & 1 << textadept.bookmarks.MARK_BOOKMARK - 1 > 0
-end
-
 test('bookmarks.toggle should bookmark the current line', function()
 	textadept.bookmarks.toggle()
 
-	test.assert_equal(has_bookmark(1), true)
+	local bookmarked_lines = test.get_marked_lines(textadept.bookmarks.MARK_BOOKMARK)
+	test.assert_equal(bookmarked_lines, {1})
 end)
 
 test("bookmarks.toggle should remove a line's existing bookmark", function()
@@ -17,7 +12,8 @@ test("bookmarks.toggle should remove a line's existing bookmark", function()
 
 	textadept.bookmarks.toggle()
 
-	test.assert_equal(has_bookmark(1), false)
+	local bookmarked_lines = test.get_marked_lines(textadept.bookmarks.MARK_BOOKMARK)
+	test.assert_equal(bookmarked_lines, {})
 end)
 
 test('bookmarks.clear should remove all buffer bookmarks', function()
@@ -25,7 +21,8 @@ test('bookmarks.clear should remove all buffer bookmarks', function()
 
 	textadept.bookmarks.clear()
 
-	test.assert_equal(has_bookmark(1), false)
+	local bookmarked_lines = test.get_marked_lines(textadept.bookmarks.MARK_BOOKMARK)
+	test.assert_equal(bookmarked_lines, {})
 end)
 
 test('bookmarks.goto_mark should prompt for a bookmark to go to', function()
@@ -117,5 +114,6 @@ test('bookmarks should restore upon file reload', function()
 
 	buffer:reload()
 
-	test.assert_equal(has_bookmark(bookmarked_line), true)
+	local bookmarked_lines = test.get_marked_lines(textadept.bookmarks.MARK_BOOKMARK)
+	test.assert_equal(bookmarked_lines, {bookmarked_line})
 end)

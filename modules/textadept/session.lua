@@ -8,6 +8,7 @@ local M = {}
 -- The default value is `true` unless the user passed the command line switch `-n` or `--nosession`
 -- to Textadept.
 M.save_on_quit = true
+for _, arg in ipairs(arg) do if arg == '-t' or arg == '--test' then M.save_on_quit = false end end
 
 -- Events.
 local session_events = {'session_save', 'session_load'}

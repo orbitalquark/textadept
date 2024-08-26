@@ -61,6 +61,9 @@ local env = setmetatable({
 	setup = setup, teardown = teardown, test = test, skip = skip, retry = retry,
 	expected_failure = expected_failure
 }, {__index = _G})
+for _, f in ipairs{'message', 'input', 'open', 'save', 'list'} do
+	ui.dialogs[f] = function() error(debug.traceback('ui.dialogs.' .. f .. ' not mocked', 2), 2) end
+end
 
 -- Load all tests from '*_test.lua' files in _HOME.
 local test_files = {}
@@ -69,7 +72,8 @@ for test_file in lfs.walk(_HOME, '.lua') do -- TODO: '*_test.lua'
 end
 table.sort(test_files)
 for _, test_file in ipairs(test_files) do
-	_TESTSUITE = test_file:sub(#_HOME + 2, -string.len('_test.lua') - 1):gsub('\\', '/')
+	_TESTSUITE = test_file:sub(#_HOME + 2, -string.len('_test.lua') - 1):gsub('\\', '/'):gsub(
+		'/init$', '')
 	assert(loadfile(test_file, 't', env))()
 end
 

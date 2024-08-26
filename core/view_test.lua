@@ -66,6 +66,7 @@ test('view.split should preserve buffer state', function()
 	view:split()
 
 	test.assert_equal(buffer:get_sel_text(), selected_text)
+	if QT then ui.update() end
 	test.assert_equal(view.first_visible_line, first_line)
 	test.assert_equal(view.x_offset, x_offset)
 end)
