@@ -772,9 +772,7 @@ static int add_timeout_lua(lua_State *L) {
 	luaL_argcheck(L, interval > 0, 1, "interval must be > 0"), luaL_checktype(L, 2, LUA_TFUNCTION);
 	int n = lua_gettop(L), *refs = calloc(n, sizeof(int));
 	for (int i = 2; i <= n; i++) lua_pushvalue(L, i), refs[i - 2] = luaL_ref(L, LUA_REGISTRYINDEX);
-	if (add_timeout(interval, call_timeout_function, refs)) return 0;
-	for (int i = 2; i <= n; i++) luaL_unref(L, LUA_REGISTRYINDEX, refs[i - 2]);
-	return (free(refs), luaL_error(L, "could not add timeout"));
+	return (add_timeout(interval, call_timeout_function, refs), 0);
 }
 
 // Initializes or re-initializes the Lua state and with the given command-line arguments.

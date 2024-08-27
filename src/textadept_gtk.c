@@ -495,10 +495,10 @@ static int timed_out(void *data_) {
 	return repeat;
 }
 
-bool add_timeout(double interval, bool (*f)(int *), int *refs) {
+void add_timeout(double interval, bool (*f)(int *), int *refs) {
 	TimeoutData *data = malloc(sizeof(TimeoutData));
 	data->f = f, data->refs = refs;
-	return (g_timeout_add(interval * 1000, timed_out, data), true);
+	g_timeout_add(interval * 1000, timed_out, data);
 }
 
 void update_ui() {

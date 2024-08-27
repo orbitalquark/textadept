@@ -489,12 +489,12 @@ static bool lua_processtimeouts(lua_State *L) {
 	return (lua_pop(L, 1), refresh); // pop timeouts
 }
 
-bool add_timeout(double interval, bool (*f)(int *), int *refs) {
+void add_timeout(double interval, bool (*f)(int *), int *refs) {
 	luaL_getsubtable(lua, LUA_REGISTRYINDEX, "timeouts");
 	TimeoutData *timeout = lua_newuserdata(lua, sizeof(TimeoutData));
 	timeout->s = get_seconds(), timeout->interval = interval, timeout->f = f, timeout->refs = refs;
 	lua_pushboolean(lua, 1), lua_settable(lua, -3); // t[timeout] = true
-	return (lua_pop(lua, 1), true); // pop timeouts
+	lua_pop(lua, 1); // timeouts
 }
 
 void update_ui() {

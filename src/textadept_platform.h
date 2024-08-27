@@ -240,9 +240,8 @@ char *get_clipboard_text(int *len);
 
 /** Asks the platform to run the given function after the given number of seconds.
  * The platform should continue calling `f(reference)` for as long as it returns `true`.
- * @return whether or not the platform added the requested timeout
  */
-bool add_timeout(double interval, bool (*f)(int *), int *reference);
+void add_timeout(double interval, bool (*f)(int *), int *reference);
 
 /** Asks the platform to update the UI by painting views, processing any pending events in the
  * main event queue, etc.

@@ -344,9 +344,7 @@ private:
 	QTimer *timer;
 };
 
-bool add_timeout(double interval, bool (*f)(int *), int *refs) {
-	return (new Timeout{interval, f, refs}, true);
-}
+void add_timeout(double interval, bool (*f)(int *), int *refs) { new Timeout{interval, f, refs}; }
 
 void update_ui() { QApplication::sendPostedEvents(), QApplication::processEvents(); }
 
