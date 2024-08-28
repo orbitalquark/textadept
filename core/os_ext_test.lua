@@ -109,7 +109,7 @@ test('os.spawn should invoke an exit callback even if proc.wait is called', func
 end)
 
 test('os.spawn should allow two-way communication with a spawned process', function()
-	local textadept = arg[0]
+	local textadept = lfs.abspath(arg[0])
 	local f<close> = test.tmpfile('.lua', 'print(io.read())')
 	local command = string.format('"%s" -L "%s"', textadept, f.filename)
 	local input = 'input'
