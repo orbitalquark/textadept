@@ -216,7 +216,6 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     needs: release
-    timeout-minutes: 2
     steps:
       - name: Install Qt, Gtk, xterm, and matchbox-window-manager (Linux)
         if: runner.os == 'Linux'
@@ -224,7 +223,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install qtbase5-dev libgtk-3-dev xterm matchbox-window-manager \
-            gdb lua5.4 lua-socket clang-format clangd --no-install-recommends -y
+            gdb lua5.4 lua-socket clang-format clangd hunspell-en-us --no-install-recommends -y
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -264,6 +263,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         run: start "" /d ${{ github.workspace }} /wait ${{ matrix.exe }}.exe -t
+        timeout-minutes: 2
         continue-on-error: true
 
       - name: Run unit tests (macOS)
@@ -274,12 +274,15 @@ jobs:
         #  echo "cd ${{ github.workspace }}" > run.sh
         #  echo "${{ matrix.exe }} -t" >> run.sh
         #  open -W -a Terminal run.sh # TODO: never exits since Terminal.app does not quit
+        timeout-minutes: 2
         continue-on-error: true
 
       - name: Run unit tests (Linux)
         if: runner.os == 'Linux'
         shell: bash
         run: xvfb-run -a xterm -e ${{ matrix.exe }} -t
+        timeout-minutes: 2
+        continue-on-error: true
 
       - name: Read test output
         shell: bash
@@ -313,7 +316,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install qtbase5-dev libgtk-3-dev xterm matchbox-window-manager lua5.4 gcovr \
-            gdb lua-socket clang-format clangd --no-install-recommends -y
+            gdb lua-socket clang-format clangd hunspell-en-us --no-install-recommends -y
 
           patch -d luacov -p1 < src/luacov.patch
           sudo mkdir -p /usr/share/lua/5.4

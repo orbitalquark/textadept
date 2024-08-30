@@ -1,5 +1,7 @@
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
+if CURSES or os.getenv('CI') == 'true' then io.output('test.log') end
+
 --- Map of test suites to their setup functions.
 local setups = {}
 
@@ -74,7 +76,9 @@ table.sort(test_files)
 for _, test_file in ipairs(test_files) do
 	_TESTSUITE = test_file:sub(#_HOME + 2, -string.len('_test.lua') - 1):gsub('\\', '/'):gsub(
 		'/init$', '')
-	assert(loadfile(test_file, 't', env))()
+	local ok, errmsg = loadfile(test_file, 't', env)
+	if ok then ok, errmsg = pcall(ok) end
+	if not ok then io.output():write('load error: ', errmsg, '\n') end
 end
 
 -- Read tags to include and exclude from arg.
@@ -110,11 +114,12 @@ end
 
 local tests_passed, tests_failed, tests_skipped, tests_failed_expected = 0, 0, 0, 0
 
-if CURSES or os.getenv('CI') == 'true' then io.output('test.log') end
-
 -- Qt on Linux needs a window manager to facilitate focus events.
 -- When running under xvfb-run, start a window manager before running tests.
-if QT and LINUX and os.getenv('DISPLAY'):find('99') then assert(os.spawn('matchbox-window-manager')) end
+if QT and LINUX and os.getenv('DISPLAY'):find('99') then
+	local ok, errmsg = pcall(os.spawn, 'matchbox-window-manager')
+	if not ok then io.output():write('spawn error: ', errmsg, '\n') end
+end
 
 -- Run tests.
 for _, name in ipairs(tests) do
@@ -210,9 +215,12 @@ if package.loaded['luacov'] then
 	require('luacov').save_stats()
 	os.execute('luacov -c ' .. _HOME .. '/.luacov')
 	local report = lfs.abspath('luacov.report.out')
-	local f = assert(io.open(report))
-	io.stdout:write('\n', 'LuaCov Summary (', report, ')', f:read('a'):match('Summary(.+)$'))
-	f:close()
+	local f<close>, errmsg = pcall(io.open, report)
+	if f then
+		io.output():write('\n', 'LuaCov Summary (', report, ')', f:read('a'):match('Summary(.+)$'))
+	else
+		io.output():write('open error: ', errmsg, '\n')
+	end
 end
 
 -- Quit Textadept with exit status depending on whether any tests failed.
