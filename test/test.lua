@@ -215,11 +215,12 @@ if package.loaded['luacov'] then
 	require('luacov').save_stats()
 	os.execute('luacov -c ' .. _HOME .. '/.luacov')
 	local report = lfs.abspath('luacov.report.out')
-	local f<close>, errmsg = pcall(io.open, report)
+	local ok, f = pcall(io.open, report)
 	if f then
 		io.output():write('\n', 'LuaCov Summary (', report, ')', f:read('a'):match('Summary(.+)$'))
+		f:close()
 	else
-		io.output():write('open error: ', errmsg, '\n')
+		io.output():write('open error: ', f, '\n')
 	end
 end
 
