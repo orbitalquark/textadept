@@ -2,6 +2,70 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+### 12.5 beta 2 (01 Sep 2024)
+
+Download:
+
+- [Textadept 12.5 beta 2 -- Windows][]
+- [Textadept 12.5 beta 2 -- macOS 11+][]
+- [Textadept 12.5 beta 2 -- Linux][]
+- [Textadept 12.5 beta 2 -- Modules][]
+
+Bugfixes:
+
+- Limit auto-detected indentation to between 2-8 spaces.
+- Fixed `buffer:set_encoding()` for single-byte conversions.
+- Fixed `os.spawn()` in the GTK and terminal versions with a large env table.
+- Document `-L` and `--lua` in help output.
+- Do not advance the incremental search anchor when Find Next is clicked and nothing was found.
+- Fixed error when `textadept.run.run_without_prompt` is enabled, but no command exists.
+- Do not accidentally scroll the view if no text was found.
+- Edits in typed buffers like Files Found Buffer should not be recorded in history.
+- Fixed Find in Files error when searching an empty directory.
+- Fixed incorrect buffer switching after clicking the tab close button for a non-focused buffer.
+- Fixed error return values for `os.spawn():read()`.
+- Fixed `view:split()` not preserving scroll state.
+- Scintilla: fixed flickering cursor after some mouse action sequences.
+
+Changes:
+
+- Removed `encodings` table argument from `io.open_file()`; use `buffer:set_encoding()` as needed.
+- Implemented [`timeout()`][] for the terminal version.
+- Renamed `_SCINTILLA.new_*` functions to `view.new_*`.
+- Improved `os.spawn()` in the terminal version by using the [reproc][] library.
+- `quit()` now accepts a status code to return after quitting.
+- New internal unit test framework.
+- `events.REPLACE` handlers can now return `true` to prevent subsequent emission of `events.FIND`.
+- Lua Command Entry and `ui.print()` now print to the Output Buffer (not the Message Buffer).
+- Removed `ui.print_silent()` (use `ui.print_silent_to()` instead).
+- Removed Message Buffer.
+- Changed `ui.print_to()` and `ui.print_silent_to()` to only accept a single string message.
+- Changed `ui.output()` and `ui.output_silent()` to only accept strings or numbers.
+- `textadept.editing.auto_pairs` and `textadept.editing.select_enclosed` support UTF-8 characters.
+- Scroll up/down by pages using `Alt+PgUp` and `Alt+PgDn`, respectively, on Windows and Linux,
+  and `^⇞` and `^⇟` on macOS. (N/A in the terminal version.)
+- Removed `ui.find.find_in_files()`; `ui.find.find_next()` with `ui.find.in_files` invokes it.
+- `textadept.editing.select_line()` expands a multi-line selection to include whole lines.
+- Scintilla: increase maximum zoom to +60 points.
+- Scintilla: added [`buffer.copy_separator`][].
+- Scintilla: added [`buffer:line_indent()`][] and [`buffer:line_dedent()`][] for
+  always indenting/dedenting instead of conditionally doing so with `buffer:tab()` and
+  `buffer:back_tab()`.
+- Updated to [Scintilla][] 5.5.2.
+- Updated to [Scinterm][] 5.1.
+
+[Textadept 12.5 beta 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.5_beta_2/textadept_12.5_beta_2.win.zip
+[Textadept 12.5 beta 2 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.5_beta_2/textadept_12.5_beta_2.macOS.zip
+[Textadept 12.5 beta 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.5_beta_2/textadept_12.5_beta_2.linux.tgz
+[Textadept 12.5 beta 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.5_beta_2/textadept_12.5_beta_2.modules.zip
+[`timeout()`]: api.html#timeout
+[reproc]: https://github.com/DaanDeMeyer/reproc
+[`buffer.copy_separator`]: api.html#buffer.copy_separator
+[`buffer:line_indent()`]: api.html#buffer.line_indent
+[`buffer:line_dedent()`]: api.html#buffer.line_dedent
+[Scintilla]: https://scintilla.org
+[Scinterm]: https://github.com/orbitalquark/scinterm
+
 ### 12.5 beta (01 Jul 2024)
 
 Download:
