@@ -345,10 +345,10 @@ the modified file for inclusion in a future release.
 **macOS Tip:** by default, macOS does not allow GUI applications like *Textadept.app* to see
 shell environment variables like `$PATH`. (The terminal version is unaffected.) Consequently,
 any features that utilize programs contained in `$PATH` (e.g. the programs in */usr/bin/*
-or */usr/local/bin/*) will not find those programs. In order to work around this, Textadept
-automatically invokes a user-created *~/.textadept/osx_env.sh* file when the application
-starts. This script should export all of the environment variables you need Textadept to
-see. For example:
+or */usr/local/bin/*) will not find those programs. Textadept attempts to work around this by
+silently invoking your `$SHELL` and extracting its `$PATH`. However, if this fails the editor
+tries to invoke a user-created *~/.textadept/osx_env.sh* file. This script should export all
+of the environment variables you need Textadept to see. For example:
 
 	export PATH=$PATH
 
