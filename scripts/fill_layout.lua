@@ -1,4 +1,4 @@
-#!/usr/bin/lua
+#!/usr/bin/env lua
 -- Copyright 2020-2024 Mitchell. See LICENSE.
 
 -- Filters the given file through markdown, inserts it into the template specified by stdin by

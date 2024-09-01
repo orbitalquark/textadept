@@ -3,17 +3,26 @@
 # Generates code count plots by iterating over tagged revisions and running cloc.
 # Requires cloc and gnuplot.
 
+if [ `uname` = Darwin ]; then
+	date () {
+		gdate "$@"
+	}
+	head () {
+		ghead "$@"
+	}
+fi
+
 # Output images.
-loc="`hg root`/docs/images/loc.png"
-languages="`hg root`/docs/images/languages.png"
+loc="`realpath ..`/docs/images/loc.png"
+languages="`realpath ..`/docs/images/languages.png"
 
 # Clone a temporary repository and generate code count data for gnuplot to plot.
 tmp=/tmp/count
-hg clone `hg root` $tmp && pushd $tmp || exit 1
+git clone `realpath ..` $tmp && pushd $tmp || exit 1
 plotfile=gnuplot.dat
-for rev in `hg tags | awk "{print $2}" | cut -d: -f1 | tac`; do
-	date=`hg log -r $rev | grep ^date | cut -d: -f2- | tr + - | cut -d- -f1`
-	hg update -r $rev -q
+for tag in `git tag --sort=authordate`; do
+	date=`git show $tag | grep ^Date | cut -d: -f2- | tr + - | cut -d- -f1`
+	git checkout $tag -q
 	timestamp=`date -d "$date" "+%s"`
 	if [[ -f $tmp/src/textadept_qt.cpp ]]; then
 		other_platforms="textadept_(curses|gtk)"
@@ -117,4 +126,4 @@ echo "
 gnuplot $plotcmd
 
 # Cleanup.
-popd && rm -r $tmp
+popd && rm -rf $tmp
