@@ -1,5 +1,20 @@
-# Build.
+# Build and documentation.
 build/
+*.html
 
 # Lexers.
-lexers/
+lexers
+
+# Modules.
+modules/debugger
+modules/export
+modules/file_diff
+modules/format
+modules/lsp
+modules/lua_repl
+modules/open_file_mode
+modules/scratch
+modules/spellcheck
+
+# Profiling and coverage data.
+luacov.*.out
