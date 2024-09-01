@@ -216,7 +216,7 @@ if package.loaded['luacov'] then
 	os.execute('luacov -c ' .. _HOME .. '/.luacov')
 	local report = lfs.abspath('luacov.report.out')
 	local ok, f = pcall(io.open, report)
-	if f then
+	if ok then
 		io.output():write('\n', 'LuaCov Summary (', report, ')', f:read('a'):match('Summary(.+)$'))
 		f:close()
 	else

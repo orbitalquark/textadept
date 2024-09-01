@@ -16,6 +16,24 @@ on:
         description: Optional release tag (normally auto-detected)
 
 jobs:
+  get-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: get-version
+        run: |
+          if [[ "${{ github.event.inputs.nightly }}" = true ]]; then
+            version=nightly
+          else
+            version=`grep -m1 _RELEASE core/init.lua | grep -o "[0-9.]\+[^']*" | tr ' ' '_'`
+          fi
+          echo "version=$version">> "$GITHUB_OUTPUT"
+
   build:
     strategy:
       matrix:
@@ -40,7 +58,6 @@ jobs:
 
       - name: Install Qt and Gtk (Linux)
         if: runner.os == 'Linux'
-        shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install qtbase5-dev libgtk-3-dev --no-install-recommends -y
@@ -73,15 +90,36 @@ jobs:
             build/*.tgz
             build/*.zip
 
+  modules:
+    runs-on: ubuntu-latest
+    needs: get-version
+    steps:
+      - name: Package modules
+        run: |
+          mkdir textadept-modules
+          modules="debugger export file_diff format lsp lua_repl open_file_mode scratch spellcheck"
+          for module in $modules; do
+            gh_name="`echo -n $module | sed -e 's/_/-/g;'`"
+            gh_prefix="https://github.com/orbitalquark/textadept-$gh_name"
+            wget $gh_prefix/releases/download/latest/$module.zip
+            unzip -d textadept-modules $module.zip
+          done
+          zip -r textadept_${{ needs.get-version.outputs.version }}.modules.zip textadept-modules
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-modules
+          path: '*.zip'
+
   release:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [get-version, build, modules]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup
-        shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install -y lua5.4 discount
@@ -91,18 +129,7 @@ jobs:
         with:
           merge-multiple: true
 
-      - name: Determine version
-        id: version
-        shell: bash
-        run: |
-          version="${{ github.event.inputs.tag }}"
-          if [[ -z "$version" ]]; then
-            version=`ls -1 *.zip | head -1 | sed 's/[^_]\+_\(.\+\)\.[^.]\+\.zip/\1/;'`
-          fi
-          echo "version=$version" >> $GITHUB_OUTPUT
-
       - name: Add HTML documentation
-        shell: bash
         run: |
           # Generate HTML documentation.
           rm docs/*.html
@@ -115,7 +142,7 @@ jobs:
           # Insert it into Windows and Linux archives.
           mkdir -p textadept/docs
           cp docs/*.html textadept/docs
-          version=${{ steps.version.outputs.version }}
+          version=${{ needs.get-version.outputs.version }}
           if [[ -f textadept_$version.win.zip ]]; then
             zip -r textadept_$version.win.zip textadept/docs/*.html
           fi
@@ -134,31 +161,18 @@ jobs:
             zip -r textadept_$version.macOS.zip Textadept.app/Contents/Resources/docs/*.html
           fi
 
-      - name: Package modules
-        shell: bash
-        run: |
-          mkdir textadept-modules
-          modules="debugger export file_diff format lsp lua_repl open_file_mode scratch spellcheck"
-          for module in $modules; do
-            gh_name="`echo -n $module | sed -e 's/_/-/g;'`"
-            gh_prefix="https://github.com/orbitalquark/textadept-$gh_name"
-            wget $gh_prefix/releases/download/latest/$module.zip
-            unzip -d textadept-modules $module.zip
-          done
-          zip -r textadept_${{ steps.version.outputs.version }}.modules.zip textadept-modules
-
       - name: Tag
+        if: github.ref_name == github.event.repository.default_branch
         run: |
-          git tag textadept_${{ steps.version.outputs.version }}
-          git push -f origin textadept_${{ steps.version.outputs.version }}
+          git tag textadept_${{ needs.get-version.outputs.version }}
+          git push -f origin textadept_${{ needs.get-version.outputs.version }}
 
       - name: Create release log
-        shell: bash
         run: |
           echo -n "Textadept " > log.md
-          echo -n "${{ steps.version.outputs.version }} " | tr '_' ' ' >> log.md
+          echo -n "${{ needs.get-version.outputs.version }} " | tr '_' ' ' >> log.md
           echo \(`date +"%d %b %Y"`\) >> log.md
-          if [[ ${{ steps.version.outputs.version }} = nightly ]]; then exit 0; fi
+          if [[ ${{ needs.get-version.outputs.version }} = nightly ]]; then exit 0; fi
           prefix="https://orbitalquark.github.io/textadept"
           echoing=0
           while read line; do
@@ -180,28 +194,23 @@ jobs:
           path: log.md
 
       - name: Create release
+        if: github.ref_name == github.event.repository.default_branch
         uses: ncipollo/release-action@v1
         with:
-          name: ${{ steps.version.outputs.version }}
-          tag: textadept_${{ steps.version.outputs.version }}
+          name: ${{ needs.get-version.outputs.version }}
+          tag: textadept_${{ needs.get-version.outputs.version }}
           prerelease: |
-            ${{ steps.version.outputs.version == 'nightly' ||
-              contains(steps.version.outputs.version, 'alpha') ||
-              contains(steps.version.outputs.version, 'beta') }}
+            ${{ needs.get-version.outputs.version == 'nightly' ||
+              contains(needs.get-version.outputs.version, 'alpha') ||
+              contains(needs.get-version.outputs.version, 'beta') }}
           allowUpdates: true
           bodyFile: log.md
           artifacts: textadept_*
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: artifacts-release
-          path: |
-            textadept_${{ steps.version.outputs.version }}.modules.zip
-            log.md
-
   test:
+    if: github.event.inputs.nightly || github.event_name == 'schedule'
+    needs: [build, modules]
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -215,11 +224,9 @@ jobs:
           #  exe: Textadept.app/Contents/MacOS/textadept-curses
       fail-fast: false
     runs-on: ${{ matrix.os }}
-    needs: release
     steps:
-      - name: Install Qt, Gtk, xterm, and matchbox-window-manager (Linux)
+      - name: Install Qt, Gtk, xterm, matchbox-window-manager, and module dependencies (Linux)
         if: runner.os == 'Linux'
-        shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install qtbase5-dev libgtk-3-dev xterm matchbox-window-manager \
@@ -237,24 +244,20 @@ jobs:
 
       - name: Unpack Textadept (macOS)
         if: runner.os == 'macOS'
-        shell: bash
         run: unzip textadept_*.macOS.zip
 
       - name: Unpack Textadept (Linux)
         if: runner.os == 'Linux'
-        shell: bash
         run: tar xzf textadept_*.linux.tgz
 
       - name: Unpack modules (Windows, Linux)
         if: runner.os != 'macOS'
-        shell: bash
         run: |
           unzip textadept_*.modules.zip
           mv textadept-modules/* textadept/modules
 
       - name: Unpack modules (macOS)
         if: runner.os == 'macOS'
-        shell: bash
         run: |
           unzip textadept_*modules.zip
           mv textadept-modules/* Textadept.app/Contents/Resources/modules
@@ -268,7 +271,6 @@ jobs:
 
       - name: Run unit tests (macOS)
         if: runner.os == 'macOS'
-        shell: bash
         run: ${{ matrix.exe }} -t
         #run: |
         #  echo "cd ${{ github.workspace }}" > run.sh
@@ -279,22 +281,21 @@ jobs:
 
       - name: Run unit tests (Linux)
         if: runner.os == 'Linux'
-        shell: bash
         run: xvfb-run -a xterm -e ${{ matrix.exe }} -t
+        env:
+          LANG: en_US.UTF-8
         timeout-minutes: 2
         continue-on-error: true
 
       - name: Read test output
-        shell: bash
         run: |
           cat test.log
           tail test.log | grep -q "0 failed"
 
   coverage:
     if: github.event.inputs.nightly || github.event_name == 'schedule'
+    needs: modules
     runs-on: ubuntu-latest
-    needs: release
-    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -312,7 +313,6 @@ jobs:
           path: luacov
 
       - name: Install dependencies
-        shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install qtbase5-dev libgtk-3-dev xterm matchbox-window-manager lua5.4 gcovr \
@@ -325,7 +325,6 @@ jobs:
           rm -r luacov
 
       - name: Build for coverage
-        shell: bash
         run: |
           # Move cached dependencies into build/_deps.
           mkdir -p build/_deps && mv textadept-build/* build/_deps && rm -r textadept-build
@@ -337,31 +336,54 @@ jobs:
           # Copy lexers.
           cp -r build/_deps/scintillua-src/lexers .
 
-      - name: Download artifacts
+      - name: Download modules
         uses: actions/download-artifact@v4
         with:
-          merge-multiple: true
+          name: artifacts-modules
 
       - name: Unpack modules
-        shell: bash
         run: |
           unzip textadept_*.modules.zip
           mv textadept-modules/* modules
 
       - name: Run tests
-        shell: bash
         run: |
           xvfb-run -a build/textadept -t -T || true
           xvfb-run -a build/textadept-gtk -t -T || true
           xvfb-run -a xterm -e build/textadept-curses -t -T
         env:
           TEXTADEPT_HOME: ${{ github.workspace }}
+          LANG: en_US.UTF-8
+        timeout-minutes: 5
+        continue-on-error: true
+
+      - name: Read test output
+        run: cat test.log
 
       - name: Process coverage reports
-        shell: bash
-        run: lua scripts/gen_cov.lua github . >> log.md
+        run: lua scripts/gen_cov.lua github . > coverage.md
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-coverage
+          path: coverage.md
+
+  update-release-log:
+    if: github.event.inputs.nightly || github.event_name == 'schedule'
+    needs: [release, coverage]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Append coverage table
+        run: cat coverage.md >> log.md
 
       - name: Update release log with coverage info
+        if: github.ref_name == github.event.repository.default_branch
         uses: ncipollo/release-action@v1
         with:
           name: nightly
@@ -370,3 +392,9 @@ jobs:
           allowUpdates: true
           bodyFile: log.md
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload updated release log
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-update-release-log
+          path: log.md
