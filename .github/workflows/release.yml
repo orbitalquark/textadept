@@ -12,6 +12,14 @@ on:
         description: Debug symbols
         type: boolean
         default: false
+      no-tests:
+        description: Do not run unit tests
+        type: boolean
+        default: false
+      no-coverage:
+        description: Do not run coverage job
+        type: boolean
+        default: false
       tag:
         description: Optional release tag (normally auto-detected)
 
@@ -56,11 +64,11 @@ jobs:
           version: '6.5'
           modules: 'qt5compat'
 
-      - name: Install Qt and Gtk (Linux)
+      - name: Install build dependencies like Qt and GTK (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install qtbase5-dev libgtk-3-dev --no-install-recommends -y
+          sudo apt-get install qtbase5-dev libgtk-3-dev lua5.3 discount --no-install-recommends -y
 
       - name: Build
         shell: bash
@@ -71,13 +79,15 @@ jobs:
           # Build.
           type="Release"
           if [[ ${{ github.event_name }} != schedule ]]; then
-            if [[ "${{ github.event.inputs.nightly }}" = true ]]; then nightly="-D NIGHTLY=1"; fi
-            if [[ "${{ github.event.inputs.debug }}" = true ]]; then type="Debug"; fi
+            if [[ ${{ github.event.inputs.nightly }} = true ]]; then nightly="-D NIGHTLY=1"; fi
+            if [[ ${{ github.event.inputs.debug }} = true ]]; then type="Debug"; fi
           else
             nightly="-D NIGHTLY=1"
           fi
-          cmake -S . -B build ${nightly} -D CMAKE_INSTALL_PREFIX=build/install
+          if [[ ${{ runner.os }} == Linux ]]; then generate_html="-D GENERATE_HTML=1"; fi
+          cmake -S . -B build ${nightly} ${generate_html} -D CMAKE_INSTALL_PREFIX=build/install
           cmake --build build --config ${type} -j
+          if [[ ${{ runner.os }} == Linux ]]; then cmake --build build --target html; fi
           cmake --install build --config ${type}
         env:
           VCINSTALLDIR: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC
@@ -119,11 +129,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y lua5.4 discount
-
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
@@ -131,35 +136,18 @@ jobs:
 
       - name: Add HTML documentation
         run: |
-          # Generate HTML documentation.
-          rm docs/*.html
-          pushd docs
-          for file in `ls *.md`; do
-            cat _layouts/default.html | ../scripts/fill_layout.lua $file > `basename -s .md $file`.html
-          done
-          popd
-
-          # Insert it into Windows and Linux archives.
-          mkdir -p textadept/docs
-          cp docs/*.html textadept/docs
+          # Extract HTML documentation from Linux.
           version=${{ needs.get-version.outputs.version }}
-          if [[ -f textadept_$version.win.zip ]]; then
-            zip -r textadept_$version.win.zip textadept/docs/*.html
-          fi
-          if [[ -f textadept_$version.linux.tgz ]]; then
-            mv textadept_$version.linux.tgz textadept_$version.linux.tar.gz
-            gunzip textadept_$version.linux.tar.gz
-            tar --append -f textadept_$version.linux.tar textadept/docs/*.html
-            gzip textadept_$version.linux.tar
-            mv textadept_$version.linux.tar.gz textadept_$version.linux.tgz
-          fi
+          tar xzf textadept_$version.linux.tgz --wildcards 'textadept/docs/*.html'
+
+          # Insert it into Windows archive.
+          zip -r textadept_$version.win.zip textadept/docs/*.html
 
           # Install it into macOS archive.
           mkdir -p Textadept.app/Contents/Resources/docs
-          cp docs/*.html Textadept.app/Contents/Resources/docs
-          if [[ -f textadept_$version.macOS.zip ]]; then
-            zip -r textadept_$version.macOS.zip Textadept.app/Contents/Resources/docs/*.html
-          fi
+          cp textadept/docs/*.html Textadept.app/Contents/Resources/docs
+          zip -r textadept_$version.macOS.zip Textadept.app/Contents/Resources/docs/*.html
+        continue-on-error: true
 
       - name: Tag
         if: github.ref_name == github.event.repository.default_branch
@@ -209,7 +197,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   test:
-    if: github.event.inputs.nightly || github.event_name == 'schedule'
+    if: ${{ !github.event.inputs.no-tests }}
     needs: [build, modules]
     strategy:
       matrix:
@@ -293,7 +281,7 @@ jobs:
           tail test.log | grep -q "0 failed"
 
   coverage:
-    if: github.event.inputs.nightly || github.event_name == 'schedule'
+    if: ${{ !github.event.inputs.no-tests }}
     needs: modules
     runs-on: ubuntu-latest
     steps:
@@ -370,7 +358,7 @@ jobs:
           path: coverage.md
 
   update-release-log:
-    if: github.event.inputs.nightly || github.event_name == 'schedule'
+    if: ${{ !github.event.inputs.no-coverage }}
     needs: [release, coverage]
     runs-on: ubuntu-latest
     steps:

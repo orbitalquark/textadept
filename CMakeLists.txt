@@ -527,3 +527,10 @@ elseif(APPLE)
 			Textadept.app ta
 		WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX})")
 endif()
+
+# Generate HTML.
+if(GENERATE_HTML)
+	find_program(LUA lua REQUIRED)
+	find_program(MARKDOWN markdown REQUIRED)
+	add_custom_target(html COMMAND ./gen_docs.sh WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/scripts)
+endif()

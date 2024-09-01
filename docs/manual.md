@@ -1535,6 +1535,12 @@ CMake boolean variables that affect the build:
 - `GTK2`: Unless off, builds the Gtk 2 version of Textadept. The default is auto-detected.
 - `CURSES`: Unless off, builds the Curses (terminal) version of Textadept. The default is
   auto-detected.
+- `GENERATE_HTML`: When on, creates a `html` target to build HTML documentation in the *docs/*
+  directory (e.g. `cmake --build build_dir --target html`). Requires [Lua][] and [Discount][]
+  to be installed. Defaults to off.
+
+[Lua]: https://www.lua.org
+[Discount]: https://www.pell.portland.or.us/~orc/Code/discount/
 
 ---
 ### Appendix

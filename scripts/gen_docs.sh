@@ -10,10 +10,12 @@ if [ "`uname`" = "Darwin" ]; then
 	}
 fi
 
-# Generate API documentation using LDoc.
-ldoc -c ../.config.ld --filter scripts.markdowndoc.ldoc . > ../docs/api.md
-line=`grep -m1 -n '#' ../docs/api.md | cut -d: -f1` # strip any leading LDoc stdout
-sed -i -e "1,$(( $line - 1 ))d" ../docs/api.md
+# Update API documentation, if possible. (This is unnecessary on end-user machines.)
+if which -s ldoc; then
+	ldoc -c ../.config.ld --filter scripts.markdowndoc.ldoc . > ../docs/api.md
+	line=`grep -m1 -n '#' ../docs/api.md | cut -d: -f1` # strip any leading LDoc stdout
+	sed -i -e "1,$(( $line - 1 ))d" ../docs/api.md
+fi
 
 # Generate HTML from Markdown (docs/*.html from docs/*.md)
 cd ../docs
