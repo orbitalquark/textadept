@@ -339,10 +339,10 @@ set(ta_src src/textadept.c $<$<BOOL:${WIN32}>:src/textadept.rc>)
 set(ta_compile_opts
 	$<IF:$<NOT:$<BOOL:${WIN32}>>,-pedantic -Wall -Wextra -Wno-unused-parameter
 		-Wno-missing-field-initializers,/W4>
-	$<$<BOOL:${PROFILE}>:-pg -fprofile-arcs -ftest-coverage>)
+	$<$<BOOL:${PROFILE}>:-pg --coverage>)
+set(ta_link_opts $<$<BOOL:${PROFILE}>:--coverage>)
 set(ta_link_libs scintilla lua lpeg lfs regex
-	$<$<OR:$<BOOL:${WIN32}>,$<BOOL:${APPLE}>>:iconv>
-	$<$<BOOL:${PROFILE}>:gcov>)
+	$<$<OR:$<BOOL:${WIN32}>,$<BOOL:${APPLE}>>:iconv>)
 
 # Textadept Qt.
 if(QT)
@@ -358,6 +358,7 @@ if(QT)
 	target_include_directories(textadept PRIVATE $<$<BOOL:${WIN32}>:${iconv_dir}/include>)
 	set_target_properties(textadept PROPERTIES WIN32_EXECUTABLE $<$<BOOL:${WIN32}>:ON>)
 	target_compile_options(textadept PRIVATE ${ta_compile_opts})
+	target_link_options(textadept PRIVATE ${ta_link_opts})
 	target_link_libraries(textadept PRIVATE ${ta_link_libs} textadept_qt)
 endif()
 
@@ -373,6 +374,7 @@ if(GTK3 OR GTK2)
 	add_executable(textadept-gtk)
 	target_sources(textadept-gtk PRIVATE ${ta_src})
 	target_compile_options(textadept-gtk PRIVATE ${ta_compile_opts})
+	target_link_options(textadept-gtk PRIVATE ${ta_link_opts})
 	target_link_libraries(textadept-gtk PRIVATE ${ta_link_libs} textadept_gtk)
 endif()
 
@@ -393,6 +395,7 @@ if(CURSES)
 	target_sources(textadept-curses PRIVATE ${ta_src})
 	target_include_directories(textadept-curses PRIVATE $<$<BOOL:${WIN32}>:${iconv_dir}/include>)
 	target_compile_options(textadept-curses PRIVATE ${ta_compile_opts})
+	target_link_options(textadept-curses PRIVATE ${ta_link_opts})
 	target_link_libraries(textadept-curses PRIVATE ${ta_link_libs} textadept_curses)
 endif()
 
