@@ -34,7 +34,7 @@ styles[view.STYLE_BRACELIGHT] = {fore = colors.blue, bold = true}
 styles[view.STYLE_BRACEBAD] = {fore = colors.red}
 -- styles[view.STYLE_CONTROLCHAR] = {}
 styles[view.STYLE_INDENTGUIDE] = {fore = colors.light_grey}
-styles[view.STYLE_CALLTIP] = {fore = colors.black, back = colors.light_grey}
+styles[view.STYLE_CALLTIP] = {fore = colors.black}
 styles[view.STYLE_FOLDDISPLAYTEXT] = {fore = colors.dark_grey, back = colors.light_grey}
 
 -- Tag styles.
