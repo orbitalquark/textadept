@@ -726,7 +726,11 @@ public:
 		}
 		if (inited = init_textadept(argc, argv); !inited) return;
 		setApplicationName("Textadept");
+#if !__APPLE__
 		setWindowIcon(QIcon{QString{textadept_home} + "/core/images/textadept.svg"});
+#else
+		setWindowIcon(QIcon{QString{textadept_home} + "/core/images/textadept_mac.png"});
+#endif
 		connect(this, &SingleApplication::receivedMessage, this, [](quint32, QByteArray message) {
 			ta->window()->activateWindow();
 			QDataStream in{&message, QIODevice::ReadOnly};
