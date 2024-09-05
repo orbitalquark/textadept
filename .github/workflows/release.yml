@@ -61,7 +61,7 @@ jobs:
         if: runner.os == 'Windows' || runner.os == 'macOS'
         uses: jurplel/install-qt-action@v3
         with:
-          version: '6.5'
+          version: '6.7.*'
           modules: 'qt5compat'
 
       - name: Install build dependencies like Qt and GTK (Linux)
