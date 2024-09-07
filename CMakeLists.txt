@@ -450,7 +450,8 @@ if(NOT (WIN32 OR APPLE))
 	endif()
 	install(FILES init.lua LICENSE DESTINATION ${ta_data_dir})
 	install(DIRECTORY core docs ${scilua_dir}/lexers test themes DESTINATION ${ta_data_dir})
-	install(DIRECTORY modules DESTINATION ${ta_data_dir} PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE)
+	install(DIRECTORY modules DESTINATION ${ta_data_dir} PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE
+		PATTERN "build" EXCLUDE)
 	install(FILES core/images/textadept.svg
 		DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
 	# Note: can use file(ARCHIVE_CREATE) in CMake 3.18.
@@ -468,7 +469,8 @@ elseif(WIN32)
 	install(TARGETS iconv DESTINATION ${ta_dir})
 	install(FILES init.lua LICENSE DESTINATION ${ta_dir})
 	install(DIRECTORY core docs ${scilua_dir}/lexers test themes DESTINATION ${ta_dir})
-	install(DIRECTORY modules DESTINATION ${ta_data_dir} PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE)
+	install(DIRECTORY modules DESTINATION ${ta_data_dir} PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE
+		PATTERN "build" EXCLUDE)
 	if(NOT (EXISTS ${ta_dir}/${qt_major}Core.dll OR EXISTS ${ta_dir}/${qt_major}Cored.dll))
 		install(CODE
 			"execute_process(COMMAND windeployqt --no-compiler-runtime ${ta_dir}/textadept.exe)")
@@ -517,7 +519,8 @@ elseif(APPLE)
 	install(FILES init.lua LICENSE DESTINATION ${ta_data_dir})
 	install(FILES src/Info.plist DESTINATION ${ta_data_dir}/../)
 	install(DIRECTORY core docs ${scilua_dir}/lexers test themes DESTINATION ${ta_data_dir})
-	install(DIRECTORY modules DESTINATION ${ta_data_dir} PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE)
+	install(DIRECTORY modules DESTINATION ${ta_data_dir} PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE
+		PATTERN "build" EXCLUDE)
 	install(CODE "file(RENAME ${ta_data_dir}/core/images/textadept.icns
 		${ta_data_dir}/textadept.icns)")
 	if(NOT EXISTS ${ta_data_dir}/qt.conf)
