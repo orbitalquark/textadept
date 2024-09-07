@@ -12,11 +12,11 @@ on:
         description: Debug symbols
         type: boolean
         default: false
-      no-tests:
+      no_tests:
         description: Do not run unit tests
         type: boolean
         default: false
-      no-coverage:
+      no_coverage:
         description: Do not run coverage job
         type: boolean
         default: false
@@ -197,7 +197,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   test:
-    if: ${{ !github.event.inputs.no-tests }}
+    if: ${{ !github.event.inputs.no_tests }}
     needs: [build, modules]
     strategy:
       matrix:
@@ -281,7 +281,7 @@ jobs:
           tail test.log | grep -q "0 failed"
 
   coverage:
-    if: ${{ !github.event.inputs.no-tests }}
+    if: ${{ !github.event.inputs.no_tests }}
     needs: modules
     runs-on: ubuntu-latest
     steps:
@@ -358,7 +358,7 @@ jobs:
           path: coverage.md
 
   update-release-log:
-    if: ${{ !github.event.inputs.no-coverage }}
+    if: ${{ !github.event.inputs.no_coverage }}
     needs: [release, coverage]
     runs-on: ubuntu-latest
     steps:
