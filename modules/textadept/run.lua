@@ -142,7 +142,7 @@ local function run_command(label, command, dir, event, commands, key, macros)
 			events.emit(event, string.format('> %s\n', command:iconv('UTF-8', _CHARSET)))
 			local args = {
 				command, dir, emit, emit, function(status)
-					events.emit(event, string.format('> exit status: %d\n', status))
+					events.emit(event, string.format('> exit status: %d\n\n', status))
 					ui.statusbar_text = status == 0 and _L['Command succeeded'] or _L['Command failed']
 				end
 			}
