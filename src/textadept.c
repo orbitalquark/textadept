@@ -720,7 +720,7 @@ static int move_buffer_lua(lua_State *L) {
 
 // Note: lua may be NULL, e.g. Qt session manager doing odd things on logout/restart while
 // Textadept is still running.
-bool can_quit() { return closing || !lua || !emit("quit", -1); }
+bool can_quit(void) { return closing || !lua || !emit("quit", -1); }
 
 // `_G.quit()` Lua function.
 static int quit_lua(lua_State *L) {
@@ -873,7 +873,7 @@ static bool init_lua(int argc, char **argv) {
 }
 
 // Synchronizes the tabbar after switching between Scintilla views or documents.
-static void sync_tabbar() {
+static void sync_tabbar(void) {
 	set_tab((lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS),
 		lua_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_gettable(lua, -2),
 		lua_replace(lua, -2), lua_tointeger(lua, -1) - 1)), // _BUFFERS[buffer]
@@ -1175,9 +1175,9 @@ static SciObject *new_view(sptr_t doc) {
 }
 
 // Creates and returns the first Scintilla view when the platform is ready for it.
-static SciObject *create_first_view() { return new_view(0); }
+static SciObject *create_first_view(void) { return new_view(0); }
 
-void close_textadept() {
+void close_textadept(void) {
 	if (lua) {
 		closing = true;
 		while (unsplit_view(focused_view, delete_view)) {}
@@ -1231,7 +1231,7 @@ void show_context_menu(const char *name, void *userdata) {
 	lua_pop(lua, 1); // pop menu or non-menu
 }
 
-void mode_changed() {
+void mode_changed(void) {
 	const char *mode = !is_dark_mode() ? "light" : "dark";
 	lua_pushstring(lua, mode), lua_setglobal(lua, "_THEME");
 	emit("mode_changed", LUA_TSTRING, mode, -1);

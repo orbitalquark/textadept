@@ -43,9 +43,9 @@ typedef struct {
 typedef void Process;
 
 /** Returns the upper-cased name of the platform. */
-const char *get_platform();
+const char *get_platform(void);
 /** Returns the character set used by the platform's filesystem. */
-const char *get_charset();
+const char *get_charset(void);
 
 /** Asks the platform to create the Textadept window.
  * The window contains a menubar, frame for Scintilla views, hidden find box, hidden command
@@ -63,11 +63,11 @@ const char *get_charset();
  * @param get_view Function to call when the platform is ready to accept the first Scintilla view.
  *	The platform should be ready to create tab for that view at the very least.
  */
-void new_window(SciObject *(*get_view)());
+void new_window(SciObject *(*get_view)(void));
 /** Sets the title of the Textadept window to the given text. */
 void set_title(const char *title);
 /** Returns whether or not the Textadept window is maximized. */
-bool is_maximized();
+bool is_maximized(void);
 /** Sets the maximized state of the Textadept window. */
 void set_maximized(bool maximize);
 /** Stores the current width and height of the Textadept window into the given variables. */
@@ -114,7 +114,7 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *));
 void delete_scintilla(SciObject *view);
 
 /** Returns the top-most pane that contains Scintilla views. */
-Pane *get_top_pane();
+Pane *get_top_pane(void);
 /** Returns information about the given pane.
  * @see get_pane_info_from_view
  */
@@ -132,7 +132,7 @@ void show_tabs(bool show);
  * The platform is not expected to attach anything to the tab, as Textadept does not create
  * one view per tab.
  */
-void add_tab();
+void add_tab(void);
 /** Asks the platform to switch to the tab at the given index. */
 void set_tab(int index); // 0-based
 /** Sets the text of the tab label at the given index to the given text. */
@@ -147,9 +147,9 @@ void move_tab(int from, int to); // 0-based
 void remove_tab(int index); // 0-based
 
 /** Returns the find & replace pane's find entry text. */
-const char *get_find_text();
+const char *get_find_text(void);
 /** Returns the find & replace pane's replace entry text. */
-const char *get_repl_text();
+const char *get_repl_text(void);
 /** Sets the find & replace pane's find entry text. */
 void set_find_text(const char *text);
 /** Sets the find & replace pane's replace entry text. */
@@ -183,18 +183,18 @@ void set_option_label(FindOption *option, const char *text);
  * is visible but unfocused, the platform should refocus it. Otherwise, the platform should
  * hide the pane and refocus the focused view.
  */
-void focus_find();
+void focus_find(void);
 /** Returns whether or not the find & replace pane is active. */
-bool is_find_active();
+bool is_find_active(void);
 
 /** Asks the platform to toggle the command entry between active and hidden.
  * The command entry should never be unfocused and visible.
  */
-void focus_command_entry();
+void focus_command_entry(void);
 /** Returns whether or not the command entry is active. */
-bool is_command_entry_active();
+bool is_command_entry_active(void);
 /** Returns the height of the command entry. */
-int get_command_entry_height();
+int get_command_entry_height(void);
 /** Sets the height of the command entry. The command entry must be active. */
 void set_command_entry_height(int height);
 
@@ -248,10 +248,10 @@ void add_timeout(double interval, bool (*f)(int *), int *reference);
  * This primarily called to perform asynchronous actions like polling for spawned process output
  * and invoking Lua callback functions to process it.
  */
-void update_ui();
+void update_ui(void);
 
 /** Returns whether or not dark mode is currently enabled on the platform. */
-bool is_dark_mode();
+bool is_dark_mode(void);
 
 /** Asks the platform to show a message dialog using the given options.
  * If the user presses a button, the platform should push onto the Lua stack the index (starting
@@ -345,7 +345,7 @@ bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *
 	bool monitor_stdout, bool monitor_stderr, const char **error);
 
 /** Returns the size of the platform's implemented Process struct. */
-size_t process_size();
+size_t process_size(void);
 
 /** Returns whether or not the given process is running. */
 bool is_process_running(Process *proc);
@@ -383,10 +383,10 @@ int get_process_exit_status(Process *proc);
 void cleanup_process(Process *proc);
 
 /** Asks the platform to suspend execution of Textadept, if possible. */
-void suspend();
+void suspend(void);
 
 /** Asks the platform quit the application.
  * The user has already been prompted to handle unsaved changes, etc. `can_quit()` will return
  * `true`.
  */
-void quit();
+void quit(void);

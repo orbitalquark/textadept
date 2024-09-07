@@ -21,9 +21,9 @@ static GtkListStore *find_history, *repl_history;
 static bool tab_sync;
 static int current_tab;
 
-const char *get_platform() { return "GTK"; }
+const char *get_platform(void) { return "GTK"; }
 
-const char *get_charset() {
+const char *get_charset(void) {
 	const char *charset;
 	return (g_get_charset(&charset), charset);
 }
@@ -102,7 +102,7 @@ static void find_changed(GtkEditable *_, void *__) { emit("find_text_changed", -
 static void button_clicked(GtkWidget *button, void *_) { find_clicked(button); }
 
 // Creates and returns a new button for the findbox.
-static GtkWidget *new_button() {
+static GtkWidget *new_button(void) {
 	GtkWidget *button = gtk_button_new_with_mnemonic(""); // localized via Lua
 	g_signal_connect(button, "clicked", G_CALLBACK(button_clicked), NULL);
 	gtk_widget_set_can_focus(button, false);
@@ -110,14 +110,13 @@ static GtkWidget *new_button() {
 }
 
 // Creates and returns a new checkbox option for the findbox.
-static GtkWidget *new_option() {
-	GtkWidget *option = gtk_check_button_new_with_mnemonic(""); // localized later
-	gtk_widget_set_can_focus(option, false);
-	return option;
+static GtkWidget *new_option(void) {
+	GtkWidget *option = gtk_check_button_new_with_mnemonic(""); // localized via Lua
+	return (gtk_widget_set_can_focus(option, false), option);
 }
 
 // Creates the findbox.
-static GtkWidget *new_findbox() {
+static GtkWidget *new_findbox(void) {
 	findbox = gtk_table_new(2, 6, false);
 
 	GtkWidget *find_combo = new_combo(&find_label, &find_entry, &find_history),
@@ -192,7 +191,7 @@ void new_window(SciObject *(*get_view)(void)) {
 
 void set_title(const char *title) { gtk_window_set_title(GTK_WINDOW(window), title); }
 
-bool is_maximized() {
+bool is_maximized(void) {
 	return (gdk_window_get_state(gtk_widget_get_window(window)) & GDK_WINDOW_STATE_MAXIMIZED) > 0;
 }
 
@@ -281,7 +280,7 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *view)) {
 
 void delete_scintilla(SciObject *view) { gtk_widget_destroy(view); }
 
-Pane *get_top_pane() {
+Pane *get_top_pane(void) {
 	GtkWidget *pane = focused_view;
 	while (GTK_IS_PANED(gtk_widget_get_parent(pane))) pane = gtk_widget_get_parent(pane);
 	return pane;
@@ -304,7 +303,7 @@ void set_pane_size(Pane *pane, int size) { gtk_paned_set_position(GTK_PANED(pane
 
 void show_tabs(bool show) { gtk_widget_set_visible(tabbar, show); }
 
-void add_tab() {
+void add_tab(void) {
 	GtkWidget *tab = gtk_vbox_new(false, 0); // placeholder in GtkNotebook
 	tab_sync = true;
 	int i = gtk_notebook_append_page(GTK_NOTEBOOK(tabbar), tab, NULL);
@@ -352,8 +351,8 @@ void move_tab(int from, int to) {
 
 void remove_tab(int index) { gtk_notebook_remove_page(GTK_NOTEBOOK(tabbar), index); }
 
-const char *get_find_text() { return gtk_entry_get_text(GTK_ENTRY(find_entry)); }
-const char *get_repl_text() { return gtk_entry_get_text(GTK_ENTRY(repl_entry)); }
+const char *get_find_text(void) { return gtk_entry_get_text(GTK_ENTRY(find_entry)); }
+const char *get_repl_text(void) { return gtk_entry_get_text(GTK_ENTRY(repl_entry)); }
 void set_find_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(find_entry), text); }
 void set_repl_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(repl_entry), text); }
 
@@ -388,22 +387,22 @@ void set_find_label(const char *s) { gtk_label_set_text_with_mnemonic(GTK_LABEL(
 void set_repl_label(const char *s) { gtk_label_set_text_with_mnemonic(GTK_LABEL(repl_label), s); }
 void set_button_label(FindButton *btn, const char *s) { gtk_button_set_label(GTK_BUTTON(btn), s); }
 void set_option_label(FindOption *opt, const char *s) { gtk_button_set_label(GTK_BUTTON(opt), s); }
-void focus_find() {
+void focus_find(void) {
 	if (!gtk_widget_has_focus(find_entry) && !gtk_widget_has_focus(repl_entry))
 		gtk_widget_show(findbox), gtk_widget_grab_focus(find_entry);
 	else
 		gtk_widget_grab_focus(focused_view), gtk_widget_hide(findbox);
 }
-bool is_find_active() { return gtk_widget_get_visible(findbox); }
+bool is_find_active(void) { return gtk_widget_get_visible(findbox); }
 
-void focus_command_entry() {
+void focus_command_entry(void) {
 	if (!gtk_widget_get_visible(command_entry))
 		gtk_widget_show(command_entry), gtk_widget_grab_focus(command_entry);
 	else
 		gtk_widget_grab_focus(focused_view), gtk_widget_hide(command_entry);
 }
-bool is_command_entry_active() { return gtk_widget_has_focus(command_entry); }
-int get_command_entry_height() {
+bool is_command_entry_active(void) { return gtk_widget_has_focus(command_entry); }
+int get_command_entry_height(void) {
 	GtkAllocation allocation;
 	return (gtk_widget_get_allocation(command_entry, &allocation), allocation.height);
 }
@@ -501,11 +500,11 @@ void add_timeout(double interval, bool (*f)(int *), int *refs) {
 	g_timeout_add(interval * 1000, timed_out, data);
 }
 
-void update_ui() {
+void update_ui(void) {
 	while (gtk_events_pending()) gtk_main_iteration();
 }
 
-bool is_dark_mode() {
+bool is_dark_mode(void) {
 #if GTK_CHECK_VERSION(3, 0, 0)
 	GtkStyleContext *context = gtk_style_context_new();
 	GdkRGBA fore, back;
@@ -835,7 +834,7 @@ bool spawn(lua_State *L, Process *proc_, int index, const char *cmd, const char 
 	return true;
 }
 
-size_t process_size() { return sizeof(struct Process); }
+size_t process_size(void) { return sizeof(struct Process); }
 
 bool is_process_running(Process *proc) { return PROCESS(proc)->pid; }
 
@@ -885,9 +884,9 @@ int get_process_exit_status(Process *proc) { return PROCESS(proc)->exit_status; 
 
 void cleanup_process(Process *proc) {}
 
-void suspend() {}
+void suspend(void) {}
 
-void quit() {
+void quit(void) {
 	GdkEventAny event = {GDK_DELETE, gtk_widget_get_window(window), true};
 	gdk_event_put((GdkEvent *)&event);
 }

@@ -48,9 +48,9 @@ struct Pane {
 }; // Pane implementation based on code by Chris Emerson.
 static inline struct Pane *PANE(struct Pane *pane) { return pane; }
 
-const char *get_platform() { return "CURSES"; }
+const char *get_platform(void) { return "CURSES"; }
 
-const char *get_charset() {
+const char *get_charset(void) {
 #if !_WIN32
 	const char *charset = getenv("CHARSET");
 	if (!charset || !*charset) {
@@ -104,7 +104,7 @@ void set_title(const char *title) {
 	mvaddstr(0, 0, title), refresh();
 }
 
-bool is_maximized() { return false; }
+bool is_maximized(void) { return false; }
 
 void set_maximized(bool maximize) {}
 
@@ -195,7 +195,7 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
 
 void delete_scintilla(SciObject *view) { scintilla_delete(view); }
 
-Pane *get_top_pane() { return root_pane; }
+Pane *get_top_pane(void) { return root_pane; }
 
 PaneInfo get_pane_info(Pane *pane) {
 	PaneInfo info = {PANE(pane)->type != SINGLE, PANE(pane)->type == VSPLIT, PANE(pane)->view,
@@ -214,7 +214,7 @@ void set_pane_size(Pane *pane, int size) {
 
 void show_tabs(bool show) {}
 
-void add_tab() {}
+void add_tab(void) {}
 
 void set_tab(int index) {}
 
@@ -232,8 +232,8 @@ static void copyfree(char **s, const char *value) {
 	*s = strcpy(malloc(strlen(value) + 1), value);
 }
 
-const char *get_find_text() { return find_text; }
-const char *get_repl_text() { return repl_text; }
+const char *get_find_text(void) { return find_text; }
+const char *get_repl_text(void) { return repl_text; }
 void set_find_text(const char *text) { copyfree(&find_text, text); }
 void set_repl_text(const char *text) { copyfree(&repl_text, text); }
 
@@ -270,7 +270,7 @@ void set_option_label(FindOption *option, const char *text) {
 }
 
 // Refreshes the entire screen.
-static void refresh_all() {
+static void refresh_all(void) {
 	refresh_pane(root_pane), refresh();
 	if (command_entry_active) scintilla_noutrefresh(command_entry);
 	if (!findbox) scintilla_update_cursor(!command_entry_active ? focused_view : command_entry);
@@ -320,7 +320,7 @@ static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
 	return true;
 }
 
-void focus_find() {
+void focus_find(void) {
 	if (findbox) return; // already active
 	wresize(scintilla_get_window(focused_view), LINES - 4, COLS);
 	findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0)), eraseCDKScreen(findbox);
@@ -369,16 +369,16 @@ void focus_find() {
 	wresize(scintilla_get_window(focused_view), LINES - 2, COLS);
 }
 
-bool is_find_active() { return findbox != NULL; }
+bool is_find_active(void) { return findbox != NULL; }
 
-void focus_command_entry() {
+void focus_command_entry(void) {
 	if (!(command_entry_active = !command_entry_active)) SS(command_entry, SCI_SETFOCUS, 0, 0);
 	focus_view(command_entry_active ? command_entry : focused_view);
 }
 
-bool is_command_entry_active() { return command_entry_active; }
+bool is_command_entry_active(void) { return command_entry_active; }
 
-int get_command_entry_height() { return getmaxy(scintilla_get_window(command_entry)); }
+int get_command_entry_height(void) { return getmaxy(scintilla_get_window(command_entry)); }
 
 void set_command_entry_height(int height) {
 	WINDOW *win = scintilla_get_window(command_entry);
@@ -461,7 +461,7 @@ typedef struct {
 } TimeoutData;
 
 // Returns a number of seconds for use in computing time deltas.
-static double get_seconds() {
+static double get_seconds(void) {
 #if !_WIN32
 	struct timeval time;
 	gettimeofday(&time, NULL);
@@ -497,12 +497,12 @@ void add_timeout(double interval, bool (*f)(int *), int *refs) {
 	lua_pop(lua, 1); // timeouts
 }
 
-void update_ui() {
+void update_ui(void) {
 	if (lua_processprocs(lua)) refresh_all();
 	if (lua_processtimeouts(lua)) refresh_all();
 }
 
-bool is_dark_mode() { return true; } // TODO:
+bool is_dark_mode(void) { return true; } // TODO:
 
 // Contains information about a generic dialog shell.
 // Widgets can be added to its 'screen' field.
@@ -818,7 +818,7 @@ bool spawn(lua_State *L, Process *proc, int index, const char *cmd, const char *
 	return true;
 }
 
-size_t process_size() { return sizeof(struct Process); }
+size_t process_size(void) { return sizeof(struct Process); }
 
 // Note: do not use `reproc_wait(proc, 0) == REPROC_ETIMEDOUT` because `proc:read()` calls this
 // first, and the process may exit before there's a chance to read its output.
@@ -871,13 +871,13 @@ int get_process_exit_status(Process *proc) { return reproc_wait(PROCESS(proc)->r
 
 void cleanup_process(Process *proc) { reproc_destroy(PROCESS(proc)->reproc); }
 
-void suspend() {
+void suspend(void) {
 #if !_WIN32
 	emit("suspend", -1), endwin(), termkey_stop(ta_tk), kill(0, SIGSTOP);
 #endif
 }
 
-void quit() { quitting = true; }
+void quit(void) { quitting = true; }
 
 #if !_WIN32
 // Signal for a terminal continue or resize.
