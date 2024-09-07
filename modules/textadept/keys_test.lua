@@ -35,7 +35,7 @@ test('ctrl+k should cut to EOL with empty selection', function()
 	test.assert_equal(buffer:get_text(), ' ')
 	test.assert_equal(ui.clipboard_text, text)
 end)
-if not OSX then skip('ctrl+k is not defined') end
+if not OSX or CURSES then skip('ctrl+k is not defined') end
 
 test('ctrl+k at EOL should delete EOL', function()
 	buffer:append_text(test.lines(2, true))
@@ -44,4 +44,4 @@ test('ctrl+k at EOL should delete EOL', function()
 
 	test.assert_equal(buffer.line_count, 1)
 end)
-if not OSX then skip('ctrl+k is not defined') end
+if not OSX or CURSES then skip('ctrl+k is not defined') end
