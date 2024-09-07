@@ -11,7 +11,7 @@ if [ "`uname`" = "Darwin" ]; then
 fi
 
 # Update API documentation, if possible. (This is unnecessary on end-user machines.)
-if which -s ldoc; then
+if command -v ldoc &>/dev/null; then
 	ldoc -c ../.config.ld --filter scripts.markdowndoc.ldoc . > ../docs/api.md
 	line=`grep -m1 -n '#' ../docs/api.md | cut -d: -f1` # strip any leading LDoc stdout
 	sed -i -e "1,$(( $line - 1 ))d" ../docs/api.md
