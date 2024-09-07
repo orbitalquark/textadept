@@ -89,6 +89,7 @@ jobs:
           cmake --build build --config ${type} -j
           if [[ ${{ runner.os }} == Linux ]]; then cmake --build build --target html; fi
           cmake --install build --config ${type}
+          cmake --build build --target archive
         env:
           VCINSTALLDIR: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC
 

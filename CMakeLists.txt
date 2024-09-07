@@ -455,9 +455,9 @@ if(NOT (WIN32 OR APPLE))
 	install(FILES core/images/textadept.svg
 		DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
 	# Note: can use file(ARCHIVE_CREATE) in CMake 3.18.
-	install(CODE "execute_process(
+	add_custom_target(archive
 		COMMAND ${CMAKE_COMMAND} -E tar czf ${CMAKE_BINARY_DIR}/textadept_${version}.tgz textadept
-		WORKING_DIRECTORY ${CMAKE_INSTALL_FULL_DATADIR})")
+		WORKING_DIRECTORY ${CMAKE_INSTALL_FULL_DATADIR})
 elseif(WIN32)
 	set(ta_dir ${CMAKE_INSTALL_PREFIX}/textadept)
 	if(QT)
@@ -503,9 +503,9 @@ elseif(WIN32)
 		# sorted name order so the most recent runtime files will overwrite any older ones.
 		install(FILES ${vcrun_dlls} DESTINATION ${ta_dir})
 	endif()
-	install(CODE "execute_process(
+	add_custom_target(archive
 		COMMAND 7z a ${CMAKE_BINARY_DIR}/textadept_${version}.zip textadept
-		WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX})")
+		WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX})
 elseif(APPLE)
 	set(ta_bin_dir ${CMAKE_INSTALL_PREFIX}/Textadept.app/Contents/MacOS)
 	set(ta_data_dir ${CMAKE_INSTALL_PREFIX}/Textadept.app/Contents/Resources)
@@ -528,10 +528,10 @@ elseif(APPLE)
 			-executable=${ta_bin_dir}/textadept)")
 	endif()
 	install(PROGRAMS scripts/osx/ta DESTINATION ${CMAKE_INSTALL_PREFIX})
-	install(CODE "execute_process(
+	add_custom_target(archive
 		COMMAND ${CMAKE_COMMAND} -E tar cf ${CMAKE_BINARY_DIR}/textadept_${version}.zip --format=zip
 			Textadept.app ta
-		WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX})")
+		WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX})
 endif()
 
 # Generate HTML.
