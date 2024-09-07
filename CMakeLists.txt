@@ -469,7 +469,7 @@ elseif(WIN32)
 	install(TARGETS iconv DESTINATION ${ta_dir})
 	install(FILES init.lua LICENSE DESTINATION ${ta_dir})
 	install(DIRECTORY core docs ${scilua_dir}/lexers test themes DESTINATION ${ta_dir})
-	install(DIRECTORY modules DESTINATION ${ta_data_dir} PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE
+	install(DIRECTORY modules DESTINATION ${ta_dir} PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE
 		PATTERN "build" EXCLUDE)
 	if(NOT (EXISTS ${ta_dir}/${qt_major}Core.dll OR EXISTS ${ta_dir}/${qt_major}Cored.dll))
 		install(CODE
