@@ -18,7 +18,7 @@ elif [ -f $HOME/.textadept/osx_env.sh ]; then
 	. $HOME/.textadept/osx_env.sh
 fi
 
-if which -s lua; then
+if command -v lua &>/dev/null; then
 	export LUA_PATH="`lua -e 'print(package.path)'`"
 	export LUA_CPATH="`lua -e 'print(package.cpath)'`"
 fi
