@@ -200,7 +200,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   test:
-    if: ${{ !github.event.inputs.no_tests }}
+    if: ${{ ! inputs.no_tests }}
     needs: [build, modules]
     strategy:
       matrix:
@@ -284,7 +284,7 @@ jobs:
           tail test.log | grep -q "0 failed"
 
   coverage:
-    if: ${{ !github.event.inputs.no_tests }}
+    if: ${{ ! inputs.no_coverage }}
     needs: modules
     runs-on: ubuntu-latest
     steps:
@@ -361,7 +361,7 @@ jobs:
           path: coverage.md
 
   update-release-log:
-    if: ${{ !github.event.inputs.no_coverage }}
+    if: ${{ ! inputs.no_coverage }}
     needs: [release, coverage]
     runs-on: ubuntu-latest
     steps:
