@@ -67,128 +67,42 @@ find_package(Threads REQUIRED)
 # Dependencies.
 include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
-# Scintilla.
+set(nightlies scinterm scintillua regex) # fetch latest version if NIGHTLY is true
 set(deps_dir ${CMAKE_BINARY_DIR}/_deps)
-set(scintilla_tgz scintilla552.tgz)
-set(scintilla_url file://${deps_dir}/${scintilla_tgz})
-if(NOT EXISTS ${deps_dir}/${scintilla_tgz})
-	set(scintilla_url https://www.scintilla.org/${scintilla_tgz})
-endif()
-FetchContent_Declare(scintilla
-	URL ${scintilla_url}
-	PATCH_COMMAND patch -N -p1 < ${ta}/src/scintilla.patch)
-FetchContent_MakeAvailable(scintilla)
-# Scinterm.
-set(scinterm_zip scinterm_5.1.zip)
-set(scinterm_url file://${deps_dir}/${scinterm_zip})
-if(NIGHTLY)
-	set(scinterm_zip default.zip)
-endif()
-if(NIGHTLY OR NOT EXISTS ${deps_dir}/${scinterm_zip})
-	set(scinterm_url https://github.com/orbitalquark/scinterm/archive/${scinterm_zip})
-endif()
-FetchContent_Declare(scinterm URL ${scinterm_url})
-FetchContent_MakeAvailable(scinterm)
-# Scintillua.
-set(scintillua_zip 0c9294695920daa397a67d960e003908c5979bb3.zip)
-set(scintillua_url file://${deps_dir}/${scintillua_zip})
-if(NIGHTLY)
-	set(scintillua_zip default.zip)
-endif()
-if(NIGHTLY OR NOT EXISTS ${deps_dir}/${scintillua_zip})
-	set(scintillua_url https://github.com/orbitalquark/scintillua/archive/${scintillua_zip})
-endif()
-FetchContent_Declare(scintillua URL ${scintillua_url})
-FetchContent_MakeAvailable(scintillua)
-# Lua.
-set(lua_tgz lua-5.4.7.tar.gz)
-set(lua_url file://${deps_dir}/${lua_tgz})
-if(NOT EXISTS ${deps_dir}/${lua_tgz})
-	set(lua_url https://www.lua.org/ftp/${lua_tgz})
-endif()
-FetchContent_Declare(lua URL ${lua_url} PATCH_COMMAND patch -N -p1 < ${ta}/src/lua.patch)
-FetchContent_MakeAvailable(lua)
-# LPeg.
-set(lpeg_tgz lpeg-1.1.0.tar.gz)
-set(lpeg_url file://${deps_dir}/${lpeg_tgz})
-if(NOT EXISTS ${deps_dir}/${lpeg_tgz})
-	set(lpeg_url https://www.inf.puc-rio.br/~roberto/lpeg/${lpeg_tgz})
-endif()
-FetchContent_Declare(lpeg URL ${lpeg_url})
-FetchContent_MakeAvailable(lpeg)
-# LFS.
-set(lfs_zip v1_8_0.zip)
-set(lfs_url file://${deps_dir}/${lfs_zip})
-if(NOT EXISTS ${deps_dir}/${lfs_zip})
-	set(lfs_url https://github.com/keplerproject/luafilesystem/archive/${lfs_zip})
-endif()
-FetchContent_Declare(lfs URL ${lfs_url})
-FetchContent_MakeAvailable(lfs)
-# Regex.
-set(regex_zip 1.0.zip)
-set(regex_url file://${deps_dir}/${regex_zip})
-if(NIGHTLY)
-	set(regex_zip default.zip)
-endif()
-if(NIGHTLY OR NOT EXISTS ${deps_dir}/${regex_zip})
-	set(regex_url https://github.com/orbitalquark/lua-std-regex/archive/${regex_zip})
-endif()
-FetchContent_Declare(regex URL ${regex_url})
-FetchContent_MakeAvailable(regex)
-# CDK.
-set(cdk_tgz t20200923.tar.gz)
-set(cdk_url file://${deps_dir}/${cdk_tgz})
-if(NOT EXISTS ${deps_dir}/${cdk_tgz})
-	set(cdk_url https://github.com/ThomasDickey/cdk-snapshots/archive/refs/tags/${cdk_tgz})
-endif()
-FetchContent_Declare(cdk URL ${cdk_url} PATCH_COMMAND patch -N -p1 < ${ta}/src/cdk.patch)
-FetchContent_MakeAvailable(cdk)
-# Termkey.
-set(termkey_tgz libtermkey-0.22.tar.gz)
-set(termkey_url file://${deps_dir}/${termkey_tgz})
-if(NOT EXISTS ${deps_dir}/${termkey_tgz})
-	set(termkey_url https://www.leonerd.org.uk/code/libtermkey/${termkey_tgz})
-endif()
-FetchContent_Declare(termkey
-	URL ${termkey_url} PATCH_COMMAND patch -N -p1 < ${ta}/src/termkey.patch)
-FetchContent_MakeAvailable(termkey)
-# reproc
-set(reproc_zip v14.2.5.zip)
-set(reproc_url file://${deps_dir}/${reproc_zip})
-if(NOT EXISTS ${deps_dir}/${reproc_zip})
-	set(reproc_url https://github.com/DaanDeMeyer/reproc/archive/refs/tags/${reproc_zip})
-endif()
-FetchContent_Declare(reproc URL ${reproc_url})
-FetchContent_MakeAvailable(reproc)
+function(fetch name url)
+	string(REGEX MATCH "[^/]+$" archive ${url})
+	list(FIND nightlies ${name} can_use_nightly)
+	if(NIGHTLY AND can_use_nightly GREATER -1)
+		string(REPLACE ${archive} default.zip url ${url}) # use nightly URL instead
+	elseif(EXISTS ${deps_dir}/${archive})
+		set(url file://${deps_dir}/${archive}) # use local archive instead of downloading
+	endif()
+	set(patch ${CMAKE_SOURCE_DIR}/src/${name}.patch)
+	if(EXISTS ${patch})
+		set(patch_command PATCH_COMMAND patch -N -p1 < ${patch})
+	endif()
+	FetchContent_Declare(${name} URL ${url} ${patch_command})
+	# Note: cannot FetchContent_MakeAvailable(${name}) here, as name must be a literal.
+endfunction()
+fetch(scintilla https://www.scintilla.org/scintilla552.tgz)
+fetch(scinterm https://github.com/orbitalquark/scinterm/archive/scinterm_5.1.zip)
+fetch(scintillua
+	https://github.com/orbitalquark/scintillua/archive/0c9294695920daa397a67d960e003908c5979bb3.zip)
+fetch(lua https://www.lua.org/ftp/lua-5.4.7.tar.gz)
+fetch(lpeg https://www.inf.puc-rio.br/~roberto/lpeg/lpeg-1.1.0.tar.gz)
+fetch(lfs https://github.com/keplerproject/luafilesystem/archive/v1_8_0.zip)
+fetch(regex https://github.com/orbitalquark/lua-std-regex/archive/1.0.zip)
+fetch(cdk https://github.com/ThomasDickey/cdk-snapshots/archive/refs/tags/t20200923.tar.gz)
+fetch(termkey https://www.leonerd.org.uk/code/libtermkey/libtermkey-0.22.tar.gz)
+fetch(reproc https://github.com/DaanDeMeyer/reproc/archive/refs/tags/v14.2.5.zip)
+FetchContent_MakeAvailable(scintilla scinterm scintillua lua lpeg lfs regex cdk termkey reproc)
 if(WIN32)
-	# PDCurses.
-	set(pdcurses_zip PDCurses-3.9.zip)
-	set(pdcurses_url file://${deps_dir}/${pdcurses_zip})
-	if(NOT EXISTS ${deps_dir}/${pdcurses_zip})
-		set(pdcurses_url https://prdownloads.sourceforge.net/pdcurses/${pdcurses_zip})
-	endif()
-	FetchContent_Declare(pdcurses
-		URL ${pdcurses_url}
-		PATCH_COMMAND patch -N -p1 < ${ta}/src/pdcurses.patch)
-	FetchContent_MakeAvailable(pdcurses)
-	# iconv.
-	set(iconv_tgz libiconv-1.17.tar.gz)
-	set(iconv_url file://${deps_dir}/${iconv_tgz})
-	if(NOT EXISTS ${deps_dir}/${iconv_tgz})
-		set(iconv_url https://ftp.gnu.org/pub/gnu/libiconv/${iconv_tgz})
-	endif()
-	FetchContent_Declare(iconv URL ${iconv_url} PATCH_COMMAND patch -N -p1 < ${ta}/src/iconv.patch)
-	FetchContent_MakeAvailable(iconv)
+	fetch(pdcurses https://prdownloads.sourceforge.net/pdcurses/PDCurses-3.9.zip)
+	fetch(iconv https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz)
+	FetchContent_MakeAvailable(pdcurses iconv)
 endif()
 if(QT)
-	# SingleApplication
-	set(singleapp_zip v3.4.0.zip)
-	set(singleapp_url file://${deps_dir}/${singleapp_zip})
-	if(NOT EXISTS ${deps_dir}/${singleapp_zip})
-		set(singleapp_url
-			https://github.com/itay-grudev/SingleApplication/archive/refs/tags/${singleapp_zip})
-	endif()
-	FetchContent_Declare(singleapp URL ${singleapp_url})
+	fetch(singleapp https://github.com/itay-grudev/SingleApplication/archive/refs/tags/v3.4.0.zip)
 	set(QAPPLICATION_CLASS QApplication CACHE STRING "Inheritance class for SingleApplication")
 	set(QT_DEFAULT_MAJOR_VERSION ${QT_VERSION_MAJOR})
 	FetchContent_MakeAvailable(singleapp)
@@ -197,10 +111,11 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL "Do not update deps if alrea
 
 # Scintilla core.
 add_library(scintilla STATIC)
-set(sci_dir ${scintilla_SOURCE_DIR})
-file(GLOB sci_src ${sci_dir}/src/*.cxx)
+file(GLOB sci_src ${scintilla_SOURCE_DIR}/src/*.cxx)
 target_sources(scintilla PRIVATE ${sci_src})
-target_include_directories(scintilla PUBLIC ${sci_dir}/include PRIVATE ${sci_dir}/src)
+target_include_directories(scintilla
+	PUBLIC ${scintilla_SOURCE_DIR}/include
+	PRIVATE ${scintilla_SOURCE_DIR}/src)
 target_compile_definitions(scintilla PUBLIC SCI_LEXER)
 target_compile_options(scintilla PRIVATE $<$<BOOL:${WIN32}>:/EHsc>)
 target_link_libraries(scintilla PRIVATE Threads::Threads)
@@ -208,21 +123,20 @@ target_link_libraries(scintilla PRIVATE Threads::Threads)
 # Scintilla platform.
 if(QT)
 	add_library(scintilla_qt STATIC)
-	set(sci_qt_dir ${sci_dir}/qt/ScintillaEditBase)
-	file(GLOB sci_qt_src ${sci_qt_dir}/*.cpp)
+	file(GLOB sci_qt_src ${scintilla_SOURCE_DIR}/qt/ScintillaEditBase/*.cpp)
 	target_sources(scintilla_qt PRIVATE ${sci_qt_src})
-	target_include_directories(scintilla_qt PUBLIC ${sci_qt_dir} ${sci_dir}/src)
+	target_include_directories(scintilla_qt PUBLIC ${scintilla_SOURCE_DIR}/qt/ScintillaEditBase
+		${scintilla_SOURCE_DIR}/src)
 	target_compile_definitions(scintilla_qt PUBLIC SCINTILLA_QT)
 	target_link_libraries(scintilla_qt PUBLIC scintilla PRIVATE ${qt_libraries})
 endif()
 if(GTK3 OR GTK2)
 	add_library(scintilla_gtk STATIC)
-	set(sci_gtk_dir ${sci_dir}/gtk)
-	file(GLOB sci_gtk_src ${sci_gtk_dir}/*.c ${sci_gtk_dir}/*.cxx)
+	file(GLOB sci_gtk_src ${scintilla_SOURCE_DIR}/gtk/*.c ${scintilla_SOURCE_DIR}/gtk/*.cxx)
 	target_sources(scintilla_gtk PRIVATE ${sci_gtk_src})
 	target_include_directories(scintilla_gtk
-		PUBLIC ${sci_gtk_dir}
-		PRIVATE ${sci_dir}/src ${GTK_INCLUDE_DIRS})
+		PUBLIC ${scintilla_SOURCE_DIR}/gtk
+		PRIVATE ${scintilla_SOURCE_DIR}/src ${GTK_INCLUDE_DIRS})
 	target_compile_definitions(scintilla_gtk PUBLIC GTK)
 	target_compile_options(scintilla_gtk PUBLIC -Wno-deprecated-declarations)
 	target_link_directories(scintilla_gtk PRIVATE ${GTK_LIBRARY_DIRS})
@@ -230,12 +144,11 @@ if(GTK3 OR GTK2)
 endif()
 if(CURSES)
 	add_library(scintilla_curses STATIC)
-	set(sci_curses_dir ${scinterm_SOURCE_DIR})
-	file(GLOB sci_curses_src ${sci_curses_dir}/*.cxx)
+	file(GLOB sci_curses_src ${scinterm_SOURCE_DIR}/*.cxx)
 	target_sources(scintilla_curses PRIVATE ${sci_curses_src})
 	target_include_directories(scintilla_curses
-		PUBLIC ${sci_curses_dir}
-		PRIVATE ${sci_dir}/src ${CURSES_INCLUDE_DIRS})
+		PUBLIC ${scinterm_SOURCE_DIR}
+		PRIVATE ${scintilla_SOURCE_DIR}/src ${CURSES_INCLUDE_DIRS})
 	target_compile_definitions(scintilla_curses PUBLIC CURSES)
 	target_compile_options(scintilla_curses PRIVATE $<IF:$<NOT:$<BOOL:${WIN32}>>,-pedantic -Wall,/W4>)
 	target_link_directories(scintilla_curses PRIVATE ${CURSES_LIBRARY_DIRS})
@@ -243,14 +156,13 @@ if(CURSES)
 endif()
 
 # Scintillua.
-set(scilua_dir ${scintillua_SOURCE_DIR})
+# Nothing to set up.
 
 # Lua.
 add_library(lua STATIC)
-set(lua_dir ${lua_SOURCE_DIR})
-file(GLOB lua_src ${lua_dir}/src/*.c)
+file(GLOB lua_src ${lua_SOURCE_DIR}/src/*.c)
 list(FILTER lua_src EXCLUDE REGEX "(lua|luac)\.c$")
-target_include_directories(lua PUBLIC ${lua_dir}/src)
+target_include_directories(lua PUBLIC ${lua_SOURCE_DIR}/src)
 target_sources(lua PRIVATE ${lua_src})
 target_compile_definitions(lua PRIVATE
 	$<IF:$<BOOL:${WIN32}>,LUA_BUILD_AS_DLL,$<IF:$<BOOL:${APPLE}>,LUA_USE_MACOSX,LUA_USE_LINUX>>
@@ -260,22 +172,19 @@ target_link_libraries(lua PRIVATE $<$<NOT:$<OR:$<BOOL:${WIN32}>,$<BOOL:${APPLE}>
 
 # LPeg.
 add_library(lpeg STATIC)
-set(lpeg_dir ${lpeg_SOURCE_DIR})
-file(GLOB lpeg_src ${lpeg_dir}/*.c)
+file(GLOB lpeg_src ${lpeg_SOURCE_DIR}/*.c)
 target_sources(lpeg PRIVATE ${lpeg_src})
 target_link_libraries(lpeg PRIVATE lua)
 
 # LFS.
 add_library(lfs STATIC)
-set(lfs_dir ${lfs_SOURCE_DIR})
-file(GLOB lfs_src ${lfs_dir}/src/*.c)
+file(GLOB lfs_src ${lfs_SOURCE_DIR}/src/*.c)
 target_sources(lfs PRIVATE ${lfs_src})
 target_link_libraries(lfs PRIVATE lua)
 
 # Regex.
 add_library(regex STATIC)
-set(regex_dir ${regex_SOURCE_DIR})
-file(GLOB regex_src ${regex_dir}/*.cpp)
+file(GLOB regex_src ${regex_SOURCE_DIR}/*.cpp)
 target_sources(regex PRIVATE ${regex_src})
 target_link_libraries(regex PRIVATE lua)
 
@@ -283,52 +192,49 @@ if(CURSES)
 	# PDCurses.
 	if(WIN32)
 		add_library(pdcurses STATIC)
-		set(pdcurses_dir ${pdcurses_SOURCE_DIR})
-		file(GLOB pdcurses_src ${pdcurses_dir}/pdcurses/*.c ${pdcurses_dir}/wincon/*.c)
+		file(GLOB pdcurses_src ${pdcurses_SOURCE_DIR}/pdcurses/*.c ${pdcurses_SOURCE_DIR}/wincon/*.c)
 		target_sources(pdcurses PRIVATE ${pdcurses_src})
-		target_include_directories(pdcurses PUBLIC ${pdcurses_dir} PRIVATE ${pdcurses_dir}/wincon)
+		target_include_directories(pdcurses
+			PUBLIC ${pdcurses_SOURCE_DIR}
+			PRIVATE ${pdcurses_SOURCE_DIR}/wincon)
 		target_compile_definitions(pdcurses PRIVATE PDC_WIDE PDC_FORCE_UTF8)
 	endif()
 
 	# Termkey.
 	add_library(termkey STATIC)
-	set(termkey_dir ${termkey_SOURCE_DIR})
-	set(termkey_src ${termkey_dir}/termkey.c
-		$<IF:$<BOOL:${UNIX}>,${termkey_dir}/driver-ti.c ${termkey_dir}/driver-csi.c,
-			${termkey_dir}/driver-win-pdcurses.c>)
+	set(termkey_src termkey.c $<IF:$<BOOL:${UNIX}>,driver-ti.c driver-csi.c,driver-win-pdcurses.c>)
+	list(TRANSFORM termkey_src PREPEND ${termkey_SOURCE_DIR}/)
 	target_sources(termkey PRIVATE ${termkey_src})
-	target_include_directories(termkey PUBLIC ${termkey_dir})
+	target_include_directories(termkey PUBLIC ${termkey_SOURCE_DIR})
 	target_link_directories(termkey PRIVATE ${CURSES_LIBRARY_DIRS})
 	target_link_libraries(termkey PRIVATE ${CURSES_LIBRARIES})
 
 	# CDK.
 	add_library(cdk STATIC)
-	set(cdk_dir ${cdk_SOURCE_DIR})
 	set(cdk_src binding buttonbox cdk cdk_display cdk_objs cdkscreen dialog draw entry fselect
 		itemlist label mentry popup_label scroll scroller select_file selection slider traverse version)
 	list(TRANSFORM cdk_src APPEND .c)
-	list(TRANSFORM cdk_src PREPEND ${cdk_dir}/)
+	list(TRANSFORM cdk_src PREPEND ${cdk_SOURCE_DIR}/)
 	target_sources(cdk PRIVATE ${cdk_src})
-	target_include_directories(cdk PUBLIC ${cdk_dir}/include)
+	target_include_directories(cdk PUBLIC ${cdk_SOURCE_DIR}/include)
 	target_link_directories(cdk PRIVATE ${CURSES_LIBRARY_DIRS})
 	target_link_libraries(cdk PRIVATE termkey ${CURSES_LIBRARIES})
 
 	# reproc.
-	# Note: no need to do anything because reproc uses CMake and FetchContent_MakeAvailable() set it
-	# all up!
+	# Note: no need to do anything because reproc uses CMake and FetchContent_MakeAvailable()
+	# sets it all up!
 endif()
 
 # iconv
 if(WIN32)
 	add_library(iconv SHARED)
-	set(iconv_dir ${iconv_SOURCE_DIR})
-	target_sources(iconv
-		PRIVATE ${iconv_dir}/lib/iconv.c ${iconv_dir}/lib/relocatable.c
-			${iconv_dir}/libcharset/lib/localcharset.c ${iconv_dir}/libcharset/lib/relocatable-stub.c
-			${iconv_dir}/windows/libiconv.rc)
+	set(iconv_src lib/iconv.c lib/relocatable.c libcharset/lib/localcharset.c
+		libcharset/lib/relocatable-stub.c windows/libiconv.rc)
+	list(TRANSFORM iconv_src PREPEND ${iconv_SOURCE_DIR}/)
+	target_sources(iconv PRIVATE ${iconv_src})
 	target_include_directories(iconv
-		PUBLIC ${iconv_dir}/include
-		PRIVATE ${iconv_dir}/libcharset/include)
+		PUBLIC ${iconv_SOURCE_DIR}/include
+		PRIVATE ${iconv_SOURCE_DIR}/libcharset/include)
 	target_compile_definitions(iconv PRIVATE BUILDING_LIBICONV)
 endif()
 
@@ -341,8 +247,7 @@ set(ta_compile_opts
 		-Wno-missing-field-initializers,/W4>
 	$<$<BOOL:${PROFILE}>:-pg --coverage>)
 set(ta_link_opts $<$<BOOL:${PROFILE}>:--coverage>)
-set(ta_link_libs scintilla lua lpeg lfs regex
-	$<$<OR:$<BOOL:${WIN32}>,$<BOOL:${APPLE}>>:iconv>)
+set(ta_link_libs scintilla lua lpeg lfs regex $<$<OR:$<BOOL:${WIN32}>,$<BOOL:${APPLE}>>:iconv>)
 
 # Textadept Qt.
 if(QT)
@@ -355,7 +260,7 @@ if(QT)
 
 	add_executable(textadept)
 	target_sources(textadept PRIVATE ${ta_src})
-	target_include_directories(textadept PRIVATE $<$<BOOL:${WIN32}>:${iconv_dir}/include>)
+	target_include_directories(textadept PRIVATE $<$<BOOL:${WIN32}>:${iconv_SOURCE_DIR}/include>)
 	set_target_properties(textadept PROPERTIES WIN32_EXECUTABLE $<$<BOOL:${WIN32}>:ON>)
 	target_compile_options(textadept PRIVATE ${ta_compile_opts})
 	target_link_options(textadept PRIVATE ${ta_link_opts})
@@ -384,16 +289,14 @@ if(CURSES)
 	target_sources(textadept_curses PRIVATE src/textadept_curses.c)
 	target_include_directories(textadept_curses PRIVATE ${CURSES_INCLUDE_DIRS})
 	target_compile_options(textadept_curses PRIVATE ${ta_compile_opts})
-	# Note: can use "$<$<BOOL:${LINUX}>:_GNU_SOURCE>" in CMake 3.25.
-	target_compile_definitions(textadept_curses PRIVATE
-		$<$<NOT:$<OR:$<BOOL:${WIN32}>,$<BOOL:${APPLE}>>>:_GNU_SOURCE>) # for execvpe from unistd.h
 	target_link_directories(textadept_curses PRIVATE ${CURSES_LIBRARY_DIRS})
-	target_link_libraries(textadept_curses
-		PRIVATE scintilla_curses lua termkey cdk reproc ${CURSES_LIBRARIES})
+	target_link_libraries(textadept_curses PRIVATE scintilla_curses lua termkey cdk reproc
+		${CURSES_LIBRARIES})
 
 	add_executable(textadept-curses)
 	target_sources(textadept-curses PRIVATE ${ta_src})
-	target_include_directories(textadept-curses PRIVATE $<$<BOOL:${WIN32}>:${iconv_dir}/include>)
+	target_include_directories(textadept-curses PRIVATE
+		$<$<BOOL:${WIN32}>:${iconv_SOURCE_DIR}/include>)
 	target_compile_options(textadept-curses PRIVATE ${ta_compile_opts})
 	target_link_options(textadept-curses PRIVATE ${ta_link_opts})
 	target_link_libraries(textadept-curses PRIVATE ${ta_link_libs} textadept_curses)
@@ -449,9 +352,11 @@ if(NOT (WIN32 OR APPLE))
 			${CMAKE_INSTALL_FULL_DATADIR}/applications/textadept-curses.desktop SYMBOLIC)")
 	endif()
 	install(FILES init.lua LICENSE DESTINATION ${ta_data_dir})
-	install(DIRECTORY core docs ${scilua_dir}/lexers test themes DESTINATION ${ta_data_dir})
-	install(DIRECTORY modules DESTINATION ${ta_data_dir} PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE
-		PATTERN "build" EXCLUDE)
+	install(DIRECTORY core docs ${scintillua_SOURCE_DIR}/lexers test themes
+		DESTINATION ${ta_data_dir})
+	install(DIRECTORY modules
+		DESTINATION ${ta_data_dir}
+		PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE PATTERN "build" EXCLUDE)
 	install(FILES core/images/textadept.svg
 		DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps)
 	# Note: can use file(ARCHIVE_CREATE) in CMake 3.18.
@@ -468,40 +373,16 @@ elseif(WIN32)
 	endif()
 	install(TARGETS iconv DESTINATION ${ta_dir})
 	install(FILES init.lua LICENSE DESTINATION ${ta_dir})
-	install(DIRECTORY core docs ${scilua_dir}/lexers test themes DESTINATION ${ta_dir})
-	install(DIRECTORY modules DESTINATION ${ta_dir} PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE
-		PATTERN "build" EXCLUDE)
+	install(DIRECTORY core docs ${scintillua_SOURCE_DIR}/lexers test themes DESTINATION ${ta_dir})
+	install(DIRECTORY modules
+		DESTINATION ${ta_dir}
+		PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE PATTERN "build" EXCLUDE)
 	if(NOT (EXISTS ${ta_dir}/${qt_major}Core.dll OR EXISTS ${ta_dir}/${qt_major}Cored.dll))
-		install(CODE
-			"execute_process(COMMAND windeployqt --no-compiler-runtime ${ta_dir}/textadept.exe)")
-		install(CODE
-			"file(REMOVE ${ta_dir}/d3dcompiler_47.dll ${ta_dir}/opengl32sw.dll)")
-		if(DEFINED ENV{VCINSTALLDIR})
-			execute_process(COMMAND $ENV{COMSPEC} /C dir /S $ENV{VCINSTALLDIR}\\Redist /B
-				OUTPUT_FILE ${CMAKE_BINARY_DIR}/vcrun_dlls.txt)
-			# Output is of the form:
-			# C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Redist\
-			#   MSVC\14.16.27012\x64\Microsoft.VC141.CRT\concrt140.dll
-			# C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\
-			#   MSVC\14.34.31931\x86\Microsoft.VC143.CRT\concrt140.dll
-			file(STRINGS ${CMAKE_BINARY_DIR}/vcrun_dlls.txt vcrun_dlls
-				REGEX "[0-9]\\\\x64\\\\Microsoft\.VC[0-9]+\.CRT.+\.dll$")
-		endif()
-		if(NOT DEFINED vcrun_dlls OR vcrun_dlls STREQUAL "")
-			if(NOT DEFINED ENV{VCINSTALLDIR})
-				set(vcrun_dlls "%VCINSTALLDIR% is not defined")
-			elseif(NOT EXISTS $ENV{VCINSTALLDIR})
-				set(vcrun_dlls"$ENV{VCINSTALLDIR} does not exist")
-			else()
-				set(vcrun_dlls "No VC runtime dlls were found in $ENV{VCINSTALLDIR}")
-			endif()
-			message(WARNING "${vcrun_dlls}; compiling will work, but installation will fail")
-		else()
-			message(STATUS "VC runtime DLLS to install: ${vcrun_dlls}")
-		endif()
-		# Note that there may be duplicate runtime files installed. However, `dir` shows files in
-		# sorted name order so the most recent runtime files will overwrite any older ones.
-		install(FILES ${vcrun_dlls} DESTINATION ${ta_dir})
+		install(CODE "execute_process(COMMAND ${WINDEPLOYQT_EXECUTABLE} --no-compiler-runtime
+			${ta_dir}/textadept.exe)")
+		install(CODE "file(REMOVE ${ta_dir}/d3dcompiler_47.dll ${ta_dir}/opengl32sw.dll)")
+		set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${ta_dir}) # put system libs here, not in bin/
+		include(InstallRequiredSystemLibraries)
 	endif()
 	add_custom_target(archive
 		COMMAND 7z a ${CMAKE_BINARY_DIR}/textadept_${version}.zip textadept
@@ -518,14 +399,16 @@ elseif(APPLE)
 	install(PROGRAMS scripts/osx/textadept_osx DESTINATION ${ta_bin_dir})
 	install(FILES init.lua LICENSE DESTINATION ${ta_data_dir})
 	install(FILES src/Info.plist DESTINATION ${ta_data_dir}/../)
-	install(DIRECTORY core docs ${scilua_dir}/lexers test themes DESTINATION ${ta_data_dir})
-	install(DIRECTORY modules DESTINATION ${ta_data_dir} PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE
-		PATTERN "build" EXCLUDE)
+	install(DIRECTORY core docs ${scintillua_SOURCE_DIR}/lexers test themes
+		DESTINATION ${ta_data_dir})
+	install(DIRECTORY modules
+		DESTINATION ${ta_data_dir}
+		PATTERN ".hg" EXCLUDE PATTERN ".git" EXCLUDE PATTERN "build" EXCLUDE)
 	install(CODE "file(RENAME ${ta_data_dir}/core/images/textadept.icns
 		${ta_data_dir}/textadept.icns)")
 	if(NOT EXISTS ${ta_data_dir}/qt.conf)
-		install(CODE "execute_process(COMMAND macdeployqt ${CMAKE_INSTALL_PREFIX}/Textadept.app
-			-executable=${ta_bin_dir}/textadept)")
+		install(CODE "execute_process(COMMAND ${MACDEPLOYQT_EXECUTABLE}
+			${CMAKE_INSTALL_PREFIX}/Textadept.app -executable=${ta_bin_dir}/textadept)")
 	endif()
 	install(PROGRAMS scripts/osx/ta DESTINATION ${CMAKE_INSTALL_PREFIX})
 	add_custom_target(archive
