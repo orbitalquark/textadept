@@ -35,7 +35,9 @@ jobs:
       - name: Get version
         id: get-version
         run: |
-          if [[ "${{ github.event.inputs.nightly }}" = true ]]; then
+          if [[ ${{ github.event_name }} = schedule ]]; then
+            version=nightly
+          elif [[ "${{ github.event.inputs.nightly }}" = true ]]; then
             version=nightly
           else
             version=`grep -m1 _RELEASE core/init.lua | grep -o "[0-9.]\+[^']*" | tr ' ' '_'`
