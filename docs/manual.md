@@ -342,15 +342,13 @@ directory and renaming it *locale.conf*. If you would like to translate Textadep
 language, please translate the English messages in *core/locale.conf* and send me (see README.md)
 the modified file for inclusion in a future release.
 
-**macOS Tip:** by default, macOS does not allow GUI applications like *Textadept.app* to see
-shell environment variables like `$PATH`. (The terminal version is unaffected.) Consequently,
-any features that utilize programs contained in `$PATH` (e.g. the programs in */usr/bin/*
-or */usr/local/bin/*) will not find those programs. Textadept attempts to work around this by
-silently invoking your `$SHELL` and extracting its `$PATH`. However, if this fails the editor
-tries to invoke a user-created *~/.textadept/osx_env.sh* file. This script should export all
-of the environment variables you need Textadept to see. For example:
-
-	export PATH=$PATH
+**macOS Tip:** by default, macOS only allows GUI applications like *Textadept.app*
+to run in a limited environment, with a stripped-down `$PATH`. (The terminal version is
+unaffected.) Consequently, any features that utilize programs contained outside this environment
+will not find those programs (e.g. compile/run using programs installed with Homebrew). Textadept
+attempts to work around this by silently invoking your `$SHELL` and extracting its environment
+(including its full `$PATH`). However, if this fails, you will need to supply absolute paths
+to executables.
 
 **Linux Note:** providing a single binary that runs on all Linux systems proves challenging,
 since the versions of software installed vary widely from distribution to distribution. If

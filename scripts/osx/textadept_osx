@@ -8,20 +8,5 @@ export DYLD_FRAMEWORK_PATH="$bundle/Contents/Frameworks"
 # Strip out the argument added by macOS.
 if [ x`echo "x$1" | sed "s/^x-psn_.*//"` == x ]; then shift 1; fi
 
-# When opening Textadept.app from the Dock or Finder, custom or modified environment variables
-# defined by zsh/bash are not set, particularly PATH.
-if [[ $SHELL =~ "zsh" || $SHELL =~ "bash" ]]; then
-	# Try to extract and set $PATH from the user's shell.
-	export PATH="`$SHELL -l -c env | grep ^PATH= | cut -d= -f2`"
-elif [ -f $HOME/.textadept/osx_env.sh ]; then
-	# Source '~/.textadept/osx_env.sh' to set variables like $PATH.
-	. $HOME/.textadept/osx_env.sh
-fi
-
-if command -v lua &>/dev/null; then
-	export LUA_PATH="`lua -e 'print(package.path)'`"
-	export LUA_CPATH="`lua -e 'print(package.cpath)'`"
-fi
-
 # Run Textadept.
 exec "$bundle/Contents/MacOS/textadept" "$@"
