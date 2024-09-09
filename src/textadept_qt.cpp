@@ -733,8 +733,9 @@ public:
 		// Read $PATH from shell since macOS GUI apps run in a limited environment.
 		QProcess p;
 		p.startCommand(qgetenv("SHELL") + " -l -c env"), p.waitForFinished();
-		QRegularExpression re{"^PATH=(.+)$", QRegularExpression::MultilineOption};
-		if (auto m = re.match(p.readAll()); m.hasMatch()) qputenv("PATH", m.captured(1).toLocal8Bit());
+		QRegularExpression re{"^([^=]+)=(.+)$", QRegularExpression::MultilineOption};
+		for (const auto &match : re.globalMatch(p.readAll()))
+			qputenv(match.captured(1).toLocal8Bit(), match.captured(2).toLocal8Bit());
 #endif
 		connect(this, &SingleApplication::receivedMessage, this, [](quint32, QByteArray message) {
 			ta->window()->activateWindow();
