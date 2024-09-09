@@ -213,7 +213,7 @@ io.output():write(string.format('%d failed, %d passed, %d skipped, %d expected f
 -- and `(file.max_hits or 0)`, respectively.
 if package.loaded['luacov'] then
 	require('luacov').save_stats()
-	os.spawn('luacov -c ' .. _HOME .. '/.luacov'):wait()
+	os.execute('luacov -c ' .. _HOME .. '/.luacov')
 	local report = lfs.abspath('luacov.report.out')
 	local ok, f = pcall(io.open, report)
 	if ok then

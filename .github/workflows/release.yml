@@ -258,7 +258,6 @@ jobs:
         shell: cmd
         run: start "" /d ${{ github.workspace }} /wait ${{ matrix.exe }}.exe -t
         timeout-minutes: 2
-        continue-on-error: true
 
       - name: Run unit tests (macOS)
         if: runner.os == 'macOS'
@@ -268,7 +267,6 @@ jobs:
         #  echo "${{ matrix.exe }} -t" >> run.sh
         #  open -W -a Terminal run.sh # TODO: never exits since Terminal.app does not quit
         timeout-minutes: 2
-        continue-on-error: true
 
       - name: Run unit tests (Linux)
         if: runner.os == 'Linux'
@@ -276,12 +274,10 @@ jobs:
         env:
           LANG: en_US.UTF-8
         timeout-minutes: 2
-        continue-on-error: true
 
       - name: Read test output
-        run: |
-          cat test.log
-          tail test.log | grep -q "0 failed"
+        if: success() || failure()
+        run: cat test.log
 
   coverage:
     if: ${{ ! inputs.no_coverage }}
