@@ -342,9 +342,9 @@ jobs:
           TEXTADEPT_HOME: ${{ github.workspace }}
           LANG: en_US.UTF-8
         timeout-minutes: 5
-        continue-on-error: true
 
       - name: Read test output
+        if: success() || failure()
         run: cat test.log
 
       - name: Process coverage reports
