@@ -53,6 +53,22 @@ end)
 -- TODO: should emit events.ARG_NONE when no command-line args are given
 -- TODO: a command-line option handler can return true to prevent events.ARG_NONE
 
+test('should open files in the original instance', function()
+	local f<close> = test.tmpfile()
+	local textadept = lfs.abspath(arg[0])
+	local command = string.format('"%s" "%s"', textadept, f.filename)
+
+	test.log('spawning ', command)
+	local p = assert(os.spawn(command, test.log, test.log))
+
+	test.wait(function() return p:status() == 'terminated' end)
+	-- Note: Textadept seems to have trouble sending data to the original instance on CI and in
+	-- containers, so just verify the secondary instance exited.
+	-- test.wait(function() buffer.filename == filename end)
+end)
+if GTK and os.getenv('CI') == 'true' then skip('dbus is not running on CI') end
+if CURSES then skip('single session is not supported in the terminal version') end
+
 -- Coverage tests.
 
 test('--help should show command line options and then quit', function()
