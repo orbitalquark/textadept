@@ -341,7 +341,7 @@ jobs:
       - name: Run tests
         run: |
           xvfb-run -a build/textadept -t -T || true
-          xvfb-run -a build/textadept-gtk -t -T || true
+          xvfb-run -a build/textadept-gtk -f -t -T || true
           xvfb-run -a xterm -e build/textadept-curses -t -T
         env:
           TEXTADEPT_HOME: ${{ github.workspace }}
