@@ -893,6 +893,8 @@ static void signalled(int signal) {
 }
 #endif
 
+static bool bracketed_paste;
+
 // Replacement for `termkey_waitkey()` that handles asynchronous I/O.
 static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
 	refresh_all();
@@ -900,7 +902,7 @@ static TermKeyResult textadept_waitkey(TermKey *tk, TermKeyKey *key) {
 	while (true) {
 #if !_WIN32
 		struct pollfd fd = {.fd = 0, .events = POLLIN};
-		if (poll(&fd, 1, 50) > 0) termkey_advisereadable(tk); // 50 ms
+		if (poll(&fd, 1, !bracketed_paste ? 50 : 0) > 0) termkey_advisereadable(tk); // 50 ms
 		TermKeyResult res = !force ? termkey_getkey(tk, key) : termkey_getkey_force(tk, key);
 		if (res != TERMKEY_RES_AGAIN && res != TERMKEY_RES_NONE) return res;
 		force = res == TERMKEY_RES_AGAIN;
@@ -965,6 +967,7 @@ int main(int argc, char **argv) {
 			termkey_interpret_csi(ta_tk, &key, args, &nargs, &cmd);
 			lua_newtable(lua);
 			for (size_t i = 0; i < nargs; i++) lua_pushinteger(lua, args[i]), lua_rawseti(lua, -2, i + 1);
+			bracketed_paste = cmd == '~' && args[0] == 200;
 			emit("csi", LUA_TNUMBER, cmd, LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
 		} else if (key.type == TERMKEY_TYPE_MOUSE)
 			termkey_interpret_mouse(ta_tk, &key, (TermKeyMouseEvent *)&event, &button, &y, &x), y--, x--;
