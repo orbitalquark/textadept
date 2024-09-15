@@ -195,7 +195,7 @@ test('lexer errors should style the entire buffer the default style', function()
 	local _<close> = test.mock(buffer.lexer, 'lex', raise_error)
 
 	buffer:append_text('text')
-	-- Tigger style needed.
+	-- Trigger style needed.
 	ui.update()
 	if CURSES then events.emit(events.STYLE_NEEDED, buffer.length + 1, buffer) end
 
@@ -219,4 +219,5 @@ test('view should refresh its styles when switching between buffers with differe
 		test.assert_equal(style_num, view.STYLE_DEFAULT) -- unknown
 	end)
 
--- TODO: test view/scintilla <-> lexer api (e.g. view.folding = false disables lex:fold())
+-- TODO: test view/scintilla <-> lexer api
+-- e.g. view.folding = false disables lex:fold() and view.fold_compact = true re-folds compactly

@@ -842,7 +842,7 @@ test('editing.highlight_words should not highlight non-word selections', functio
 end)
 
 if CURSES and not WIN32 then
-	test('bracketed paste should disable auto-pair and auto-indent #now', function()
+	test('bracketed paste should disable auto-pair and auto-indent', function()
 		local content = '\t()\n'
 
 		events.emit(events.CSI, string.byte('~'), {200})
