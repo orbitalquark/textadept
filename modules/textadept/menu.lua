@@ -308,7 +308,7 @@ local default_menubar = {
 		}, {
 			_L['Toggle Virtual Space'], function()
 				buffer.virtual_space_options = buffer.virtual_space_options == 0 and
-					buffer.VS_USERACCESSIBLE or 0
+					buffer.VS_RECTANGULARSELECTION | buffer.VS_USERACCESSIBLE or 0
 			end
 		}, --
 		SEPARATOR, --
