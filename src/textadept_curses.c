@@ -928,6 +928,7 @@ int main(int argc, char **argv) {
 		else if ((strcmp("-L", argv[i]) == 0 || strcmp("--lua", argv[i]) == 0) && i + 1 < argc)
 			return (init_textadept(argc, argv), exit_status); // avoid curses init
 	ta_tk = termkey_new(0, termkey_flags);
+	if (!ta_tk) return (fprintf(stderr, "could not initialize termkey: %s\n", strerror(errno)), 1);
 	setlocale(LC_CTYPE, ""); // for displaying UTF-8 characters properly
 	initscr(); // raw()/cbreak() and noecho() are taken care of in libtermkey
 	find_next = &button_labels[0], replace = &button_labels[1], find_prev = &button_labels[2],
