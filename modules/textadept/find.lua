@@ -339,8 +339,10 @@ events.connect(events.FIND, function(text, next)
 end)
 
 -- Search incrementally as find text changes.
-events.connect(events.FIND_TEXT_CHANGED,
-	function() if M.incremental then return ui.find.find_next() end end)
+-- Note: do not call ui.find.find_next() since that saves find history.
+events.connect(events.FIND_TEXT_CHANGED, function()
+	if M.incremental then events.emit(events.FIND, ui.find.find_entry_text, true) end
+end)
 
 -- Count and optionally highlight all found occurrences.
 events.connect(events.FIND_RESULT_FOUND, function(text, wrapped)
