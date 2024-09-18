@@ -1070,6 +1070,7 @@ static int goto_doc_lua(lua_State *L) {
 // `view.split()` Lua function.
 static int split_view_lua(lua_State *L) {
 	SciObject *view = luaL_checkview(L, 1);
+	if (!initing) emit("view_before_switch", -1);
 	int first_line = SS(view, SCI_GETFIRSTVISIBLELINE, 0, 0),
 			x_offset = SS(view, SCI_GETXOFFSET, 0, 0), current_pos = SS(view, SCI_GETCURRENTPOS, 0, 0),
 			anchor = SS(view, SCI_GETANCHOR, 0, 0);

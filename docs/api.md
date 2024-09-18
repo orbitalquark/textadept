@@ -4815,7 +4815,7 @@ The buffer **must not** be modified during this event.
 
 Emitted right before switching to another buffer.
 The buffer being switched from is [`buffer`](#buffer).
-Emitted by [`view:goto_buffer()`](#view.goto_buffer).
+Emitted by [`view:goto_buffer()`](#view.goto_buffer) and `buffer.new()`.
 
 <a id="events.BUFFER_DELETED"></a>
 #### `events.BUFFER_DELETED` 
@@ -5298,7 +5298,7 @@ Emitted by [`ui.goto_view()`](#ui.goto_view).
 
 Emitted right before switching to another view.
 The view being switched from is [`view`](#view).
-Emitted by [`ui.goto_view()`](#ui.goto_view).
+Emitted by [`ui.goto_view()`](#ui.goto_view) and [`view:split()`](#view.split).
 
 <a id="events.VIEW_NEW"></a>
 #### `events.VIEW_NEW` 

@@ -72,7 +72,7 @@ local M = {}
 
 --- Emitted right before switching to another buffer.
 -- The buffer being switched from is `buffer`.
--- Emitted by `view:goto_buffer()`.
+-- Emitted by `view:goto_buffer()` and `buffer.new()`.
 -- @field BUFFER_BEFORE_SWITCH
 
 --- Emitted after replacing the contents of the current buffer.
@@ -352,7 +352,7 @@ local M = {}
 
 --- Emitted right before switching to another view.
 -- The view being switched from is `view`.
--- Emitted by `ui.goto_view()`.
+-- Emitted by `ui.goto_view()` and `view:split()`.
 -- @field VIEW_BEFORE_SWITCH
 
 --- Emitted right after switching to another view.
