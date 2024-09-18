@@ -111,16 +111,6 @@ bug reports.
 - - -
 
 **Q:**
-Pressing `^O` in the terminal version on macOS does not do anything. Why?
-
-**A:**
-For whatever reason, `^O` is discarded by the terminal driver. To enable it, run `stty discard
-undef` first. You can put the command in your *~/.bashrc* or *~/.bash_profile* to make it
-permanent.
-
-- - -
-
-**Q:**
 How can I get the terminal version on macOS to show more than 8 colors?
 
 **A:**
