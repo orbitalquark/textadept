@@ -123,7 +123,7 @@ Here is a simple *~/.textadept/init.lua* for illustration:
 	-- word, and use C89-style block comments in C code.
 	textadept.editing.strip_trailing_spaces = true
 	textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_CURRENT
-	textadept.editing.comment_string.ansi_c = '/*|*/'
+	textadept.editing.comment_string.c = '/*|*/'
 
 	-- Create a key binding to the "Edit > Preferences" menu item.
 	if not OSX and not CURSES then

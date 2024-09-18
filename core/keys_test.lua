@@ -82,6 +82,26 @@ test('language-specific keys should be able to propagate to global keys', functi
 	test.assert_equal(global_command.called, true)
 end)
 
+test('keys with the same name as languages should not be key chains', function()
+	local key = 'c'
+	test.type(key)
+
+	test.assert_equal(buffer:get_text(), key)
+end)
+
+test('keys with the same name as languages should still have language-specific keys', function()
+	local lexer = 'c'
+	local key = lexer -- same
+	local language_command = test.stub()
+	local _<close> = test.mock(keys[lexer], key, language_command)
+	buffer:set_lexer(lexer)
+
+	test.type(key)
+
+	test.assert_equal(language_command.called, true)
+	test.assert_equal(buffer.length, 0)
+end)
+
 test('mode keys should have priority over language-specific and global keys', function()
 	local key_mode = 'test_mode'
 	local sequence = 'ctrl+a'

@@ -5722,9 +5722,6 @@ and modify, or inherit from that lexer, saving some time and effort. The filenam
 lexer should be the name of your programming language in lower case followed by a *.lua*
 extension. For example, a new Lua lexer has the name *lua.lua*.
 
-Note: Try to refrain from using one-character language names like "c", "d", or "r". For
-example, Scintillua uses "ansi_c", "dmd", and "rstats", respectively.
-
 #### New Lexer Template
 
 There is a *lexers/template.txt* file that contains a simple template for a new lexer. Feel
