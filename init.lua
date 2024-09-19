@@ -119,12 +119,26 @@ if not CURSES then view.idle_styling = view.IDLESTYLING_ALL end
 -- Caret and Selection Styles.
 -- view.sel_eol_filled = true
 -- if not CURSES then view.caret_line_frame = 1 end
--- view.caret_line_visible_always = true
+view.caret_line_visible_always = true
 -- view.caret_line_highlight_subline = true
 -- view.caret_period = 0
 -- view.caret_style = view.CARETSTYLE_BLOCK
 -- view.caret_width =
 -- buffer.caret_sticky = buffer.CARETSTICKY_ON
+
+-- Make `view.caret_line_visible_always` apply only to one view at a time, and only while
+-- Textadept has focus.
+local visible_always
+local function save_caret_line_visible_always()
+	visible_always, _G.view.caret_line_visible_always = _G.view.caret_line_visible_always, false
+end
+events.connect(events.VIEW_BEFORE_SWITCH, save_caret_line_visible_always)
+events.connect(events.UNFOCUS, save_caret_line_visible_always)
+local function restore_caret_line_visible_always()
+	if not _G.view.caret_line_visible_always then _G.view.caret_line_visible_always = visible_always end
+end
+events.connect(events.VIEW_AFTER_SWITCH, restore_caret_line_visible_always)
+events.connect(events.FOCUS, restore_caret_line_visible_always)
 
 -- Margins.
 -- view.margin_left =

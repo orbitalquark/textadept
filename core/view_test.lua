@@ -90,3 +90,16 @@ test('view.unsplit should remove the other views', function()
 
 	test.assert_equal(#_VIEWS, 1)
 end)
+
+test('switching between views should toggle view.caret_line_visible_always', function()
+	local _<close> = test.mock(view, 'caret_line_visible_always', true)
+
+	local old_view, new_view = view:split()
+	local should_be_false = old_view.caret_line_visible_always
+	local _<close> = test.mock(view, 'caret_line_visible_always', true)
+	ui.goto_view(-1)
+
+	test.assert_equal(should_be_false, false)
+	test.assert_equal(old_view.caret_line_visible_always, true)
+	test.assert_equal(new_view.caret_line_visible_always, false)
+end)

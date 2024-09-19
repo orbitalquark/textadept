@@ -3981,7 +3981,7 @@ The defalt value is `false`.
 #### `view.caret_line_visible_always` 
 
 Always show the caret line, even when the view is not in focus.
-The default value is `false`, showing the line only when the view is in focus.
+The default value is `true`, but only for the current view, and only while Textadept has focus.
 
 <a id="view.caret_line_layer"></a>
 #### `view.caret_line_layer` 
