@@ -146,17 +146,10 @@ test('snippets.insert should update transforms', function()
 end)
 
 test('snippets.insert should handle unvisited transforms', function()
-	textadept.snippets.insert('$0 ${2/.+/${0:/capitalize}/}')
-
-	test.assert_equal(buffer.length, 1)
-end)
-
-test('snippets.insert should handle unvisited transforms 2', function()
 	textadept.snippets.insert('$0${2/.+/${0:/capitalize}/}')
 
 	test.assert_equal(buffer.length, 0)
 end)
-expected_failure()
 
 test('snippets.insert should allow variables', function()
 	textadept.snippets.insert('$TM_LINE_NUMBER')

@@ -444,10 +444,14 @@ function snippet:add_part(part)
 	end
 end
 
+--- Returns whether or not position *pos* has text with indicator number *indic*.
+local function has_indic(pos, indic) return buffer:indicator_all_on_for(pos) & 1 << indic - 1 > 0 end
+
 --- Provides dynamic field values and methods for this snippet.
 -- @local
 function snippet:__index(k)
 	if k == 'end_pos' then
+		if has_indic(self.start_pos, INDIC_SNIPPET) then return self.start_pos end
 		local end_pos = buffer:indicator_end(INDIC_SNIPPET, self.start_pos)
 		return end_pos > self.start_pos and end_pos or self.start_pos
 	elseif k == 'placeholder_pos' then
@@ -456,8 +460,7 @@ function snippet:__index(k)
 		-- being at the beginning of the snippet. (If so, pos will point to the correct position.)
 		local pos = buffer:indicator_end(INDIC_CURRENTPLACEHOLDER, self.start_pos)
 		if pos == 1 then pos = self.start_pos end
-		return buffer:indicator_all_on_for(pos) & 1 << INDIC_CURRENTPLACEHOLDER - 1 > 0 and pos + 1 or
-			pos
+		return has_indic(pos, INDIC_CURRENTPLACEHOLDER) and pos + 1 or pos
 	end
 	return getmetatable(self)[k]
 end
@@ -570,7 +573,7 @@ end
 -- @local
 function snippet:finish(canceling)
 	local s, e = self.start_pos, self.end_pos
-	if e ~= s then buffer:delete_range(e, 1) end -- clear initial padding space
+	if has_indic(e, INDIC_SNIPPET) then buffer:delete_range(e, 1) end -- clear initial padding space
 	if not canceling then
 		buffer.indicator_current = M.INDIC_PLACEHOLDER
 		buffer:indicator_clear_range(s, e - s)
@@ -594,7 +597,7 @@ function snippet:each_placeholder(index, type)
 	return function()
 		local s = buffer:indicator_end(M.INDIC_PLACEHOLDER, i)
 		while s > 1 and s <= self.end_pos do
-			if buffer:indicator_all_on_for(i) & 1 << M.INDIC_PLACEHOLDER - 1 > 0 then
+			if has_indic(i, M.INDIC_PLACEHOLDER) then
 				-- This next indicator comes directly after the previous one; adjust start and end
 				-- positions to compensate.
 				s, i = buffer:indicator_start(M.INDIC_PLACEHOLDER, i), s
