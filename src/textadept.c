@@ -1213,15 +1213,17 @@ bool init_textadept(int argc, char **argv) {
 	if (getenv("TEXTADEPT_HOME")) strcpy(textadept_home, getenv("TEXTADEPT_HOME"));
 
 	setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
-	if (!init_lua(argc, argv)) return (close_textadept(), false); // exit_status has been set
+	bool ok = init_lua(argc, argv);
+	if (!ok) return (close_textadept(), ok); // exit_status has been set
 	command_entry = new_scintilla(notified), add_doc(0);
 	dummy_view = new_scintilla(notified), SS(dummy_view, SCI_SETMODEVENTMASK, SC_MOD_NONE, 0);
-	initing = true, new_window(create_first_view), run_file("init.lua"), initing = false;
+	initing = true, new_window(create_first_view), ok = run_file("init.lua"), initing = false;
+	if (!ok) return (close_textadept(), exit_status = 1, ok);
 	emit("buffer_new", -1), emit("view_new", -1); // first ones
 	lua_pushdoc(lua, SS(command_entry, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
 	emit("buffer_new", -1), emit("view_new", -1); // command entry
 	lua_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
-	return (emit("initialized", -1), true); // ready
+	return (emit("initialized", -1), ok); // ready
 }
 
 // Note: this function is entirely dependent on Lua to create `ui.context_menu` and
