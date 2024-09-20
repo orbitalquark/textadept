@@ -43,7 +43,7 @@ test('macro.record should record menu selections', function()
 
 	textadept.macros.play()
 
-	test.assert_equal(#_BUFFERS, 2)
+	test.assert_equal(#_BUFFERS, not OSX and 2 or 3) -- on macOS, menu clicks emit keypresses
 end)
 
 test('macro.record should record find/replace', function()

@@ -423,6 +423,19 @@ end)
 
 -- Coverage tests.
 
+test('activating menu items with shortcuts on macOS should emit events.KEYPRESS instead', function()
+	local keypress = test.stub()
+	local _<close> = test.connect(events.KEYPRESS, keypress, 1)
+
+	local OSX = OSX
+	local _<close> = test.mock(_G, 'OSX', true)
+	events.emit(events.MENU_CLICKED, 1) -- simulate cmd+n triggering File > New
+
+	test.assert_equal(keypress.called, true)
+	test.assert_equal(keypress.args, {(not OSX and 'ctrl' or 'cmd') .. '+n'})
+	test.assert_equal(#_BUFFERS, 2) -- not 3
+end)
+
 test('textadept.menu.menubar should be hideable', function()
 	textadept.menu.menubar = nil -- hide
 

@@ -534,7 +534,14 @@ proxies.tab_context_menu = proxy_menu(default_tab_context_menu, function() end)
 events.connect(events.MENU_CLICKED, function(menu_id)
 	local items = menu_id < 1000 and menu_items or contextmenu_items
 	local f = items[menu_id < 1000 and menu_id or menu_id - 1000][2]
-	assert_type(f, 'function', 'command')()
+	if not OSX or not key_shortcuts[tostring(f)] then
+		assert_type(f, 'function', 'command')()
+	else
+		-- The macOS menubar eats key shortcuts, emits menu events, and prevents keypress events.
+		-- This affects user-defined key bindings, as well as command entry key bindings.
+		-- Instead of invoking a menu item's function, emit the keypress for its shortcut.
+		events.emit(events.KEYPRESS, key_shortcuts[tostring(f)])
+	end
 end)
 
 --- Prompts the user to select a menu command to run.
