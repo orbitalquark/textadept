@@ -493,7 +493,7 @@ can automatically highlight all instances of found text in the current buffer by
 
 **Note:** Textadept does not support multi-line regex searches.
 
-**Terminal version note:** find and replace history is limited to 10 items each.
+**Terminal version note:** find and replace history is limited to 100 items each.
 
 While the pane is open in the GUI, the following key bindings apply:
 

@@ -30,7 +30,8 @@ static CDKSCREEN *findbox;
 static CDKENTRY *find_entry, *repl_entry, *focused_entry;
 static char *find_text, *repl_text, *find_label, *repl_label;
 static bool find_options[4];
-static char *button_labels[4], *option_labels[4], *find_history[10], *repl_history[10];
+#define HIST_MAX 100
+static char *button_labels[4], *option_labels[4], *find_history[HIST_MAX], *repl_history[HIST_MAX];
 static char *command_entry_label;
 static bool command_entry_active;
 static int statusbar_length[2];
@@ -239,8 +240,8 @@ void set_repl_text(const char *text) { copyfree(&repl_text, text); }
 // Adds the given text to the given store.
 static void add_to_history(char **store, const char *text) {
 	if (!text || (store[0] && strcmp(text, store[0]) == 0)) return;
-	if (store[9]) free(store[9]);
-	for (int i = 9; i > 0; i--) store[i] = store[i - 1];
+	if (store[HIST_MAX - 1]) free(store[HIST_MAX - 1]);
+	for (int i = HIST_MAX - 1; i > 0; i--) store[i] = store[i - 1];
 	store[0] = NULL, copyfree(&store[0], text);
 }
 
@@ -295,10 +296,11 @@ static int find_keypress(EObjectType _, void *object, void *data, chtype key) {
 	} else if (key == CDK_PREV || key == CDK_NEXT) {
 		char **store = entry == find_entry ? find_history : repl_history;
 		int i;
-		for (i = 9; i >= 0; i--)
+		for (i = HIST_MAX - 1; i >= 0; i--)
 			if (store[i] && strcmp(store[i], text) == 0) break;
 		key == CDK_PREV ? i++ : i--;
-		if (i >= 0 && i <= 9 && store[i]) setCDKEntryValue(entry, store[i]), drawCDKEntry(entry, false);
+		if (i >= 0 && i < HIST_MAX && store[i])
+			setCDKEntryValue(entry, store[i]), drawCDKEntry(entry, false);
 	} else if (key >= KEY_F(1) && key <= KEY_F(4)) {
 		toggle(&find_options[key - KEY_F(1)], !find_options[key - KEY_F(1)]);
 		// Redraw the optionbox.
@@ -1004,7 +1006,7 @@ int main(int argc, char **argv) {
 	free(root_pane), free(find_label), free(repl_label);
 	if (find_text) free(find_text);
 	if (repl_text) free(repl_text);
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < HIST_MAX; i++) {
 		if (find_history[i]) free(find_history[i]);
 		if (repl_history[i]) free(repl_history[i]);
 		if (i < 4) free(button_labels[i]), free(option_labels[i] - (find_options[i] ? 0 : 4));
