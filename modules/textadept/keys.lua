@@ -58,6 +58,7 @@
 -- Del | ⌦<br/> ^D | Del | Delete
 -- Alt+Del | ^⌦ | M-Del | Delete word
 -- Ctrl+A | ⌘A | ^A | Select all
+-- Ctrl+Shift+A | ⌘⇧A | M-^A | Deselect
 -- Ctrl+M | ⌘M | M-M | Match brace
 -- Ctrl+Enter | ⌘↩ | ^Enter | Complete word
 -- Ctrl+/ | ⌘/ | ^/<br/>M-/ | Toggle block comment
@@ -263,14 +264,14 @@ local M = {}
 -- Windows and Linux key bindings.
 --
 -- Unassigned keys:
--- ctrl: AEGhHiIJNQtY_(){;:'",<.>?\s
+-- ctrl:  EGhHiIJNQtY_(){;:'",<.>?\s
 -- alt: -_=+)]}\|;:/?\s\n
 -- ctrl+alt: aAbBcCDFHiIjJlLmMnNoOpPqQsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
 --
 -- macOS key bindings.
 --
 -- Unassigned keys:
--- cmd: AEGhHiIJNQtY_(){;:'"<.>?\s
+-- cmd:  EGhHiIJNQtY_(){;:'"<.>?\s
 -- ctrl: cCDgGHiIjJKLmMoOqQrRsStTuUvVwWxXyYzZ-_=+)]}\|;:/?\s\n
 -- ctrl+cmd: aAbBcCDFHiIjJlLmMnNoOpPqQsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
 --
@@ -290,7 +291,7 @@ local M = {}
 -- Unassigned keys:
 -- ctrl: t\s
 -- meta: aAbBcCDHiIjJlLMnNoOpPQUvVxXyYzZ);:?\s
--- ctrl+meta: aeghijnqy_]\^
+-- ctrl+meta:  eghijnqy_]\^
 --
 -- Note: meta+[befhstv] may be used by Linux GUI terminals for menu access.
 
@@ -348,6 +349,7 @@ local bindings = {
 	[buffer.clear] = {'del', {'del', 'ctrl+d'}, 'del'},
 	[m('Edit/Delete Word')] = {'alt+del', 'ctrl+del', 'meta+del'},
 	[buffer.select_all] = {'ctrl+a', 'cmd+a', 'ctrl+a'},
+	[m('Edit/Deselect')] = {'ctrl+A', 'cmd+A', 'ctrl+meta+a'},
 	[m('Edit/Match Brace')] = {'ctrl+m', 'cmd+m', 'meta+m'},
 	[m('Edit/Complete Word')] = {'ctrl+\n', 'cmd+\n', {'ctrl+j', 'ctrl+\n'}},
 	[textadept.editing.toggle_comment] = {'ctrl+/', 'cmd+/', {'ctrl+_', 'ctrl+@', 'meta+/'}},

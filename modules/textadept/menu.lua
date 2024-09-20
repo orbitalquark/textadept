@@ -18,6 +18,14 @@ local menu_buffer_functions = {'undo','redo','cut','copy','paste','selection_dup
 for _, f in ipairs(menu_buffer_functions) do buffer[f] = buffer[f] end
 view.zoom_in, view.zoom_out = view.zoom_in, view.zoom_out
 
+--- Restores the previous non-selected caret position.
+local function deselect()
+	if buffer.selection_empty or not buffer._deselect_pos then return end
+	buffer:set_empty_selection(buffer._deselect_pos)
+end
+events.connect(events.UPDATE_UI, function(updated)
+	if updated & 3 > 0 and buffer.selection_empty then buffer._deselect_pos = buffer.current_pos end
+end)
 --- Wrapper around `buffer:upper_case()` and `buffer:lower_case()`.
 local function change_case(upper)
 	local select, pos = buffer.selection_empty, buffer.current_pos
@@ -92,6 +100,7 @@ local default_menubar = {
 				buffer:delete_back()
 			end
 		}, {_L['Select All'], buffer.select_all}, --
+		{_L['Deselect'], deselect}, --
 		SEPARATOR, {
 			_L['Match Brace'], function()
 				local match_pos = buffer:brace_match(buffer.current_pos, 0)

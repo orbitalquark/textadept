@@ -4,6 +4,20 @@
 -- @param item String menu path (e.g. 'File/New').
 local function click(item) textadept.menu.menubar[item][2]() end
 
+test('Edit > Deselect should undo a selection', function()
+	local word = 'word'
+	buffer:append_text(word .. ' ' .. word)
+	buffer:word_right()
+	ui.update() -- emit events.UPDATE_UI
+	if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
+	local pos = buffer.current_pos
+
+	click('Edit/Select All')
+	click('Edit/Deselect')
+
+	test.assert_equal(buffer.current_pos, pos)
+end)
+
 test('Edit > Delete Word should delete the current word', function()
 	local word = 'word'
 	buffer:add_text(word .. ' ' .. word)

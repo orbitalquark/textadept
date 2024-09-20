@@ -1002,6 +1002,8 @@ You can create contiguous selections as follows:
   double-quotes, back quotes, and HTML/XML tag characters) via `Ctrl+Shift+M` on Windows and
   Linux, `⌘⇧M` on macOS, and `M-^M` in the terminal version. Repeated use of this action
   toggles the selection of the delimiters themselves.
+- Undo a selection via `Ctrl+Shift+A` on Windows and Linux, `⌘⇧A` on macOS, and `M-^A` in
+  the terminal version. (This is useful in case you accidentally press `Ctrl+A`, `⌘A`, or `^A`.)
 
 You can create multiple selections as follows:
 
