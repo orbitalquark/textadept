@@ -237,9 +237,15 @@ const char *get_repl_text(void) { return repl_text; }
 void set_find_text(const char *text) { copyfree(&find_text, text); }
 void set_repl_text(const char *text) { copyfree(&repl_text, text); }
 
-// Adds the given text to the given store.
+// Adds the given text to the given store, removing duplicates.
 static void add_to_history(char **store, const char *text) {
 	if (!text || (store[0] && strcmp(text, store[0]) == 0)) return;
+	for (int i = 1; i < HIST_MAX && store[i]; i++)
+		if (strcmp(text, store[i]) == 0) { // remove this duplicate
+			for (int j = i + 1; j < HIST_MAX; j++) store[j - 1] = store[j];
+			store[HIST_MAX - 1] = NULL;
+			break;
+		}
 	if (store[HIST_MAX - 1]) free(store[HIST_MAX - 1]);
 	for (int i = HIST_MAX - 1; i > 0; i--) store[i] = store[i - 1];
 	store[0] = NULL, copyfree(&store[0], text);

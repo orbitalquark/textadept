@@ -223,9 +223,12 @@ const char *get_repl_text() {
 }
 void set_find_text(const char *text) { ta->ui->findCombo->setCurrentText(text); }
 void set_repl_text(const char *text) { ta->ui->replaceCombo->setCurrentText(text); }
-static void add_to_history(QComboBox *combo, const char *text) {
-	if (int n = combo->count(); combo->itemText(n - 1) != text)
-		combo->addItem(text), combo->setCurrentIndex(n);
+// Adds the given text to the given combo, removing duplicates.
+static void add_to_history(QComboBox *combo, const char *text_) {
+	QString text{text_}; // copy since combo->removeItem() changes the contents of text_!
+	if (int n = combo->count(); combo->itemText(n - 1) == text) return;
+	if (int i = combo->findText(text); i != -1) combo->removeItem(i);
+	combo->addItem(text), combo->setCurrentIndex(combo->count() - 1);
 }
 void add_to_find_history(const char *text) { add_to_history(ta->ui->findCombo, text); }
 void add_to_repl_history(const char *text) { add_to_history(ta->ui->replaceCombo, text); }

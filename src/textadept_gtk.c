@@ -361,21 +361,40 @@ const char *get_repl_text(void) { return gtk_entry_get_text(GTK_ENTRY(repl_entry
 void set_find_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(find_entry), text); }
 void set_repl_text(const char *text) { gtk_entry_set_text(GTK_ENTRY(repl_entry), text); }
 
-// Adds the given text to the given list store.
+// Contains information for removing a duplicate find/replace history item.
+typedef struct {
+	GtkListStore *store;
+	const char *text;
+} FindDuplicateData;
+
+// Removes a duplicate find/replace history item.
+static int remove_duplicate(GtkTreeModel *model, GtkTreePath *_, GtkTreeIter *iter, void *data_) {
+	FindDuplicateData *data = data_;
+	char *text = NULL;
+	gtk_tree_model_get(model, iter, 0, &text, -1);
+	int found = strcmp(data->text, text) == 0;
+	if (found) gtk_list_store_remove(data->store, iter);
+	return (free(text), found);
+}
+
+// Adds the given text to the given list store, removing duplicates.
 // Note: GtkComboBoxEntry key navigation behaves contrary to command line history
 // navigation. Down cycles from newer to older, and up cycles from older to newer. In order to
 // mimic traditional command line history navigation, append to the list instead of prepending
 // to it.
 static void add_to_history(GtkListStore *store, const char *text) {
-	int n = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store), NULL);
 	GtkTreeIter iter;
-	char *last_text = NULL;
-	if (n > 0)
+	int n = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store), NULL);
+	if (n > 0) {
+		char *last_text = NULL;
 		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(store), &iter, NULL, n - 1),
 			gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 0, &last_text, -1);
-	if (!last_text || strcmp(text, last_text) != 0)
-		gtk_list_store_append(store, &iter), gtk_list_store_set(store, &iter, 0, text, -1);
-	free(last_text);
+		bool add = strcmp(text, last_text) != 0;
+		if (free(last_text), !add) return; // duplicate
+		FindDuplicateData data = {store, text};
+		gtk_tree_model_foreach(GTK_TREE_MODEL(store), remove_duplicate, &data);
+	}
+	gtk_list_store_append(store, &iter), gtk_list_store_set(store, &iter, 0, text, -1);
 }
 
 void add_to_find_history(const char *text) { add_to_history(find_history, text); }
