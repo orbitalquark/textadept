@@ -645,21 +645,22 @@ static int visible(GtkTreeModel *model, GtkTreeIter *iter, void *treeview) {
 	return matches(model, gtk_tree_view_get_search_column(treeview), key, iter, NULL) == 0;
 }
 
-// Selects the first item in the given view if an item is not already selected.
+// Selects the nth item in the given view if an item is not already selected.
 // This is needed particularly when initially showing the list with no search key and after
 // clearing the search key and refiltering.
-static void select_first_item(GtkTreeView *view) {
+static void select_nth_item(GtkTreeView *view, int n) {
 	GtkTreeSelection *selection = gtk_tree_view_get_selection(view);
 	if (gtk_tree_selection_count_selected_rows(selection) > 0) return; // already selected
 	GtkTreeIter iter;
-	if (gtk_tree_model_get_iter_first(gtk_tree_view_get_model(view), &iter))
-		gtk_tree_selection_select_iter(selection, &iter);
+	if (!gtk_tree_model_get_iter_first(gtk_tree_view_get_model(view), &iter)) return;
+	for (int i = 1; i < n; i++) gtk_tree_model_iter_next(gtk_tree_view_get_model(view), &iter);
+	gtk_tree_selection_select_iter(selection, &iter);
 }
 
 // Signal for showing and hiding list values/rows depending on the current search key.
 static void refilter(GtkEditable *_, void *view) {
 	gtk_tree_model_filter_refilter(GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(view))),
-		select_first_item(view);
+		select_nth_item(view, 1);
 }
 
 // Signal for an entry keypress.
@@ -743,7 +744,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 	if (opts.multiple) gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
 	// Set entry text here to initialize interactive search.
 	if (opts.text) gtk_entry_set_text(GTK_ENTRY(entry), opts.text);
-	select_first_item(GTK_TREE_VIEW(treeview));
+	select_nth_item(GTK_TREE_VIEW(treeview), opts.select);
 	gtk_widget_show_all(dialog); // compute and draw columns
 	int treeview_width = 0;
 	for (int i = 0; i < num_columns; i++) {

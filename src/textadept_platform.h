@@ -34,7 +34,7 @@ typedef struct {
 typedef struct {
 	const char *title, *text, *icon, *buttons[3], *dir, *file;
 	bool only_dirs, multiple, return_button;
-	int columns, search_column, items;
+	int columns, search_column, items, select;
 } DialogOptions;
 
 /** Contains information about a spawned child process.

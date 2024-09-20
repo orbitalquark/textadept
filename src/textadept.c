@@ -533,7 +533,7 @@ static DialogOptions read_opts(lua_State *L, const char *button) {
 	DialogOptions opts = {strf("title"), strf("text"), strf("icon"),
 		{strf("button1"), strf("button2"), strf("button3")}, strf("dir"), strf("file"),
 		boolf("only_dirs"), boolf("multiple"), boolf("return_button"), tablef("columns"),
-		intf("search_column"), tablef("items")};
+		intf("search_column"), tablef("items"), intf("select")};
 	if (!opts.buttons[0] && button) // localize default button, e.g. _L['OK']
 		opts.buttons[0] = (lua_getglobal(L, "_L"), lua_getfield(L, -1, button), lua_tostring(L, -1));
 	return opts;
@@ -585,8 +585,11 @@ static int list_dialog_lua(lua_State *L) {
 	if (!opts.search_column) opts.search_column = 1;
 	luaL_argcheck(
 		L, opts.search_column > 0 && opts.search_column <= num_columns, 1, "invalid 'search_column'");
+	int num_items = opts.items ? lua_rawlen(L, opts.items) : 0;
+	luaL_argcheck(L, opts.items && num_items > 0, 1, "non-empty 'items' table expected");
+	if (!opts.select) opts.select = 1;
 	luaL_argcheck(
-		L, opts.items && lua_rawlen(L, opts.items) > 0, 1, "non-empty 'items' table expected");
+		L, opts.select > 0 && opts.select <= num_items / num_columns, 1, "invalid 'select'");
 	if (!opts.buttons[1]) // add localized cancel button, _L['Cancel']
 		opts.buttons[1] = (lua_getglobal(L, "_L"), lua_getfield(L, -1, "Cancel"), lua_tostring(L, -1));
 	return list_dialog(opts, L);

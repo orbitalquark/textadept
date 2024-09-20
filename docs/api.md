@@ -9097,6 +9097,7 @@ Parameters:
  - `multiple`: Allow the user to select multiple items. The default value is `false`.
 	The terminal version does not support this option.
  - `search_column`: The column number to filter the input text against. The default value is `1`.
+ - `select`: The row number to initially select. The default value is `1`.
  - `return_button`: Also return the index of the selected button. The default value is `false`.
 
 Usage:

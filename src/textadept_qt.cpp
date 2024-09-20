@@ -496,7 +496,8 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 				filter.index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
 		});
 	if (opts.text) lineEdit->setText(opts.text);
-	selection->select(filter.index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
+	selection->select(
+		filter.index(opts.select - 1, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
 	lineEdit->installEventFilter(new KeyForwarder{treeView, &dialog});
 	auto buttonBox = new QDialogButtonBox;
 	int buttonClicked = 1; // ok/accept by default

@@ -749,7 +749,9 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 	setCDKEntryPostProcess(entry, refilter, &data);
 	if (opts.text) setCDKEntryValue(entry, (char *)opts.text);
 
-	draw_dialog(&dialog), refilter(vENTRY, entry, &data, 0), activateCDKEntry(entry, NULL);
+	draw_dialog(&dialog), refilter(vENTRY, entry, &data, 0);
+	for (int i = 1; i < opts.select; i++) injectCDKEntry(entry, KEY_DOWN);
+	activateCDKEntry(entry, NULL);
 	// Note: buttons are right-to-left.
 	int button = (entry->exitType == vNORMAL) ? box->buttonCount - box->currentButton : 0;
 	int index = getCDKScrollItems(scroll, NULL) > 0 ? getCDKScrollCurrentItem(scroll) + 1 : 0;
