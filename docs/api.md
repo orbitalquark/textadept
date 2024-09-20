@@ -3688,7 +3688,8 @@ Usage:
 #### `view.colors` &lt;table&gt;
 
 Map of color name strings to color values in `0xBBGGRR` format.
-The contents of this map is typically set by a theme.
+The contents of this map is typically set by a theme. Changing colors manually (e.g. via
+the command entry) has no effect since colors are referenced by value, not name.
 Note: for applications running within a terminal emulator, only 16 color values are recognized,
 regardless of how many colors a user's terminal actually supports. (A terminal emulator's
 settings determines how to actually display these recognized color values, which may end

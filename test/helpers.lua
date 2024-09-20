@@ -299,7 +299,7 @@ end
 
 --- Sleep for *n* seconds.
 -- @param n Number of seconds to sleep for. It may be fractional.
-local function sleep(interval) os.execute((not WIN32 and 'sleep ' or 'timeout /T ') .. interval) end
+local function sleep(n) os.execute((not WIN32 and 'sleep ' or 'timeout /T ') .. n) end
 local have_sleep = pcall(require, 'debugger')
 if have_sleep then sleep = require('debugger').socket.sleep end
 
