@@ -179,13 +179,13 @@ void new_window(SciObject *(*get_view)(void)) {
 	gtk_container_child_set(GTK_CONTAINER(paned), command_entry_box, "shrink", false, NULL);
 	gtk_box_pack_start(GTK_BOX(vbox), paned, true, true, 0);
 
-	gtk_box_pack_start(GTK_BOX(vbox), new_findbox(), false, false, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), new_findbox(), false, false, 0);
 
 	GtkWidget *hbox = gtk_hbox_new(false, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), statusbar[0] = gtk_label_new(NULL), true, true, 5);
 	gtk_misc_set_alignment(GTK_MISC(statusbar[0]), 0, 0); // left-align
 	gtk_box_pack_start(GTK_BOX(hbox), statusbar[1] = gtk_label_new(NULL), false, false, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, false, false, 1);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, false, false, 0);
 
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 
@@ -745,10 +745,13 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 						*treeview = gtk_tree_view_new_with_model(filter);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), true);
 	GtkDialog *dlg = GTK_DIALOG(dialog);
-	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dlg)), entry, false, true, 5);
+	GtkWidget *hbox = gtk_hbox_new(false, 0), *vbox = gtk_vbox_new(false, 10);
+	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dlg)), hbox, true, true, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, true, true, 10);
+	gtk_box_pack_start(GTK_BOX(vbox), entry, false, true, 0);
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), true);
 	GtkWidget *scrolled = gtk_scrolled_window_new(NULL, NULL);
-	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dlg)), scrolled, true, true, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), scrolled, true, true, 0);
 	gtk_container_add(GTK_CONTAINER(scrolled), treeview);
 	gtk_tree_model_filter_set_visible_func(GTK_TREE_MODEL_FILTER(filter), visible, treeview, NULL);
 	for (int i = 1; i <= num_columns; i++) {
