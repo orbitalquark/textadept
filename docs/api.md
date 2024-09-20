@@ -8994,6 +8994,11 @@ Usage:
 
 The height in pixels of the command entry.
 
+<a id="ui.command_entry.label"></a>
+#### `ui.command_entry.label` 
+
+The text of the command entry label. (Write-only)
+
 
 ### Functions defined by `ui.command_entry`
 

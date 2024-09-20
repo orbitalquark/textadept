@@ -9,6 +9,9 @@
 -- @module ui.command_entry
 local M = ui.command_entry
 
+--- The text of the command entry label. (Write-only)
+-- @field label
+
 --- The height in pixels of the command entry.
 -- @field height
 
@@ -235,7 +238,7 @@ function M.run(label, f, keys, lang, initial_text, ...)
 	M:select_all()
 	if initial_text then M:line_end() end
 	prev_key_mode = _G.keys.mode -- save before M.focus()
-	M.margin_width_n[1], M.margin_text[1] = M:text_width(view.STYLE_LINENUMBER, label), label
+	M.label = label
 	M.focus()
 	M:set_lexer(lang or 'text')
 	M.height = M:text_height(1)
@@ -252,7 +255,7 @@ end
 -- Configure the command entry's default properties.
 events.connect(events.INITIALIZED, function()
 	M.h_scroll_bar, M.v_scroll_bar = false, false
-	for i = 1, M.margins do M.margin_width_n[i] = i ~= 2 and 0 or (not CURSES and 4 or 1) end
+	for i = 1, M.margins do M.margin_width_n[i] = 0 end
 	M.margin_type_n[1], M.margin_style[1] = view.MARGIN_TEXT, view.STYLE_LINENUMBER
 	M.call_tip_use_style = M.tab_width * M:text_width(view.STYLE_CALLTIP, ' ')
 	M.call_tip_position = true

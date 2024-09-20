@@ -15,7 +15,8 @@
 // GTK objects.
 static GtkWidget *window, *menubar, *tabbar, *statusbar[2];
 static GtkAccelGroup *accel;
-static GtkWidget *findbox, *find_entry, *repl_entry, *find_label, *repl_label;
+static GtkWidget *command_entry_box, *command_entry_label, *findbox, *find_entry, *repl_entry,
+	*find_label, *repl_label;
 static GtkListStore *find_history, *repl_history;
 
 static bool tab_sync;
@@ -167,14 +168,18 @@ void new_window(SciObject *(*get_view)(void)) {
 	gtk_box_pack_start(GTK_BOX(vbox), tabbar, false, false, 0);
 
 	GtkWidget *paned = gtk_vpaned_new();
-	GtkWidget *vboxp = gtk_vbox_new(false, 0), *hboxp = gtk_hbox_new(false, 0);
-	gtk_box_pack_start(GTK_BOX(hboxp), get_view(), true, true, 0);
-	gtk_box_pack_start(GTK_BOX(vboxp), hboxp, true, true, 0);
-	gtk_box_pack_start(GTK_BOX(vboxp), new_findbox(), false, false, 5);
-	gtk_paned_add1(GTK_PANED(paned), vboxp);
-	gtk_paned_add2(GTK_PANED(paned), command_entry);
-	gtk_container_child_set(GTK_CONTAINER(paned), command_entry, "shrink", false, NULL);
+	GtkWidget *editors = gtk_hbox_new(false, 0);
+	gtk_box_pack_start(GTK_BOX(editors), get_view(), true, true, 0);
+	gtk_paned_add1(GTK_PANED(paned), editors);
+	command_entry_box = gtk_hbox_new(false, 0);
+	command_entry_label = gtk_label_new(""), gtk_label_set_yalign(GTK_LABEL(command_entry_label), 0);
+	gtk_box_pack_start(GTK_BOX(command_entry_box), command_entry_label, false, false, 5);
+	gtk_box_pack_start(GTK_BOX(command_entry_box), command_entry, true, true, 5);
+	gtk_paned_add2(GTK_PANED(paned), command_entry_box);
+	gtk_container_child_set(GTK_CONTAINER(paned), command_entry_box, "shrink", false, NULL);
 	gtk_box_pack_start(GTK_BOX(vbox), paned, true, true, 0);
+
+	gtk_box_pack_start(GTK_BOX(vbox), new_findbox(), false, false, 5);
 
 	GtkWidget *hbox = gtk_hbox_new(false, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), statusbar[0] = gtk_label_new(NULL), true, true, 5);
@@ -186,7 +191,7 @@ void new_window(SciObject *(*get_view)(void)) {
 
 	gtk_widget_show_all(window), gtk_widget_grab_focus(focused_view);
 	gtk_widget_hide(menubar), gtk_widget_hide(tabbar), gtk_widget_hide(findbox),
-		gtk_widget_hide(command_entry); // hide initially
+		gtk_widget_hide(command_entry_box); // hide initially
 }
 
 void set_title(const char *title) { gtk_window_set_title(GTK_WINDOW(window), title); }
@@ -396,18 +401,21 @@ void focus_find(void) {
 bool is_find_active(void) { return gtk_widget_get_visible(findbox); }
 
 void focus_command_entry(void) {
-	if (!gtk_widget_get_visible(command_entry))
-		gtk_widget_show(command_entry), gtk_widget_grab_focus(command_entry);
+	if (!gtk_widget_get_visible(command_entry_box))
+		gtk_widget_show(command_entry_box), gtk_widget_grab_focus(command_entry);
 	else
-		gtk_widget_grab_focus(focused_view), gtk_widget_hide(command_entry);
+		gtk_widget_grab_focus(focused_view), gtk_widget_hide(command_entry_box);
 }
 bool is_command_entry_active(void) { return gtk_widget_has_focus(command_entry); }
+void set_command_entry_label(const char *text) {
+	gtk_label_set_text(GTK_LABEL(command_entry_label), text);
+}
 int get_command_entry_height(void) {
 	GtkAllocation allocation;
 	return (gtk_widget_get_allocation(command_entry, &allocation), allocation.height);
 }
 void set_command_entry_height(int height) {
-	GtkWidget *paned = gtk_widget_get_parent(command_entry);
+	GtkWidget *paned = gtk_widget_get_parent(command_entry_box);
 	GtkAllocation allocation;
 	gtk_widget_get_allocation(paned, &allocation);
 	gtk_widget_set_size_request(command_entry, -1, height);

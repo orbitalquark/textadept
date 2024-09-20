@@ -31,6 +31,7 @@ static CDKENTRY *find_entry, *repl_entry, *focused_entry;
 static char *find_text, *repl_text, *find_label, *repl_label;
 static bool find_options[4];
 static char *button_labels[4], *option_labels[4], *find_history[10], *repl_history[10];
+static char *command_entry_label;
 static bool command_entry_active;
 static int statusbar_length[2];
 TermKey *ta_tk; // global for CDK use
@@ -95,8 +96,6 @@ static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
 
 void new_window(SciObject *(*get_view)(void)) {
 	root_pane = new_pane(get_view()), resize_pane(root_pane, LINES - 2, COLS, 1, 0);
-	wresize(scintilla_get_window(command_entry), 1, COLS);
-	mvwin(scintilla_get_window(command_entry), LINES - 2, 0);
 }
 
 void set_title(const char *title) {
@@ -272,7 +271,8 @@ void set_option_label(FindOption *option, const char *text) {
 // Refreshes the entire screen.
 static void refresh_all(void) {
 	refresh_pane(root_pane), refresh();
-	if (command_entry_active) scintilla_noutrefresh(command_entry);
+	if (command_entry_active)
+		mvaddstr(LINES - 2, 0, command_entry_label), refresh(), scintilla_noutrefresh(command_entry);
 	if (!findbox) scintilla_update_cursor(!command_entry_active ? focused_view : command_entry);
 }
 
@@ -371,18 +371,30 @@ void focus_find(void) {
 
 bool is_find_active(void) { return findbox != NULL; }
 
+// Resizes and repositions the command entry, taking label width into account.
+static void resize_command_entry(void) {
+	WINDOW *win = scintilla_get_window(command_entry);
+	int height = get_command_entry_height(), label_width = utf8strlen(command_entry_label);
+	wresize(win, height, COLS - label_width), mvwin(win, LINES - 1 - height, label_width);
+}
+
 void focus_command_entry(void) {
-	if (!(command_entry_active = !command_entry_active)) SS(command_entry, SCI_SETFOCUS, 0, 0);
-	focus_view(command_entry_active ? command_entry : focused_view);
+	if ((command_entry_active = !command_entry_active))
+		resize_command_entry(), focus_view(command_entry);
+	else
+		SS(command_entry, SCI_SETFOCUS, 0, 0), focus_view(focused_view);
 }
 
 bool is_command_entry_active(void) { return command_entry_active; }
+
+void set_command_entry_label(const char *text) { copyfree(&command_entry_label, text); }
 
 int get_command_entry_height(void) { return getmaxy(scintilla_get_window(command_entry)); }
 
 void set_command_entry_height(int height) {
 	WINDOW *win = scintilla_get_window(command_entry);
-	wresize(win, height, COLS), mvwin(win, LINES - 1 - height, 0);
+	int label_width = utf8strlen(command_entry_label);
+	wresize(win, height, COLS - label_width), mvwin(win, LINES - 1 - height, label_width);
 }
 
 void set_statusbar_text(int bar, const char *text) {
@@ -887,9 +899,8 @@ static void signalled(int signal) {
 	if (signal == SIGCONT) termkey_start(ta_tk);
 	struct winsize w;
 	ioctl(0, TIOCGWINSZ, &w);
-	resizeterm(w.ws_row, w.ws_col), resize_pane(root_pane, LINES - 2, COLS, 1, 0);
-	WINDOW *win = scintilla_get_window(command_entry);
-	wresize(win, 1, COLS), mvwin(win, LINES - 1 - getmaxy(win), 0);
+	resizeterm(w.ws_row, w.ws_col), resize_pane(root_pane, LINES - 2, COLS, 1, 0),
+		resize_command_entry();
 	if (signal == SIGCONT) emit("resume", -1);
 	emit("update_ui", LUA_TNUMBER, 0, -1), refresh_all();
 }
@@ -998,5 +1009,6 @@ int main(int argc, char **argv) {
 		if (repl_history[i]) free(repl_history[i]);
 		if (i < 4) free(button_labels[i]), free(option_labels[i] - (find_options[i] ? 0 : 4));
 	}
+	if (command_entry_label) free(command_entry_label);
 	return exit_status;
 }

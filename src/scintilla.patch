@@ -1,7 +1,6 @@
 Scintilla changes:
 
 * Handle leading whitespace in XPM images in order to prevent crashes.
-* Do not clear per-line-values when clearing the first line of a 1-line document.
 * Use Qt macros instead of keywords in header.
 
 diff -r 22b6bbb36280 src/XPM.cxx
@@ -17,18 +16,6 @@ diff -r 22b6bbb36280 src/XPM.cxx
  	if ((0 == memcmp(textForm, "/* X", 4)) && (0 == memcmp(textForm, "/* XPM */", 9))) {
  		// Build the lines form out of the text form
  		std::vector<const char *> linesForm = LinesFormFromTextForm(textForm);
-diff -r 123ae5de5bd2 src/CellBuffer.cxx
---- a/src/CellBuffer.cxx	Sat Aug 27 08:02:08 2022 +1000
-+++ b/src/CellBuffer.cxx	Fri Sep 09 20:25:52 2022 -0400
-@@ -1204,7 +1204,7 @@
- 
- 	Sci::Line lineRecalculateStart = Sci::invalidPosition;
- 
--	if ((position == 0) && (deleteLength == substance.Length())) {
-+	if ((position == 0) && (deleteLength == substance.Length()) && LineFromPosition(position) != LineFromPosition(position + deleteLength)) {
- 		// If whole buffer is being deleted, faster to reinitialise lines data
- 		// than to delete each line.
- 		plv->Init();
 diff -r 123ae5de5bd2 qt/ScintillaEditBase/ScintillaEditBase.h
 --- a/qt/ScintillaEditBase/ScintillaEditBase.h	Sat Aug 27 08:02:08 2022 +1000
 +++ b/qt/ScintillaEditBase/ScintillaEditBase.h	Thu Nov 24 10:30:29 2022 -0500

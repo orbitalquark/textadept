@@ -322,6 +322,11 @@ static void lua_pushdoc(lua_State *L, sptr_t doc) {
 		lua_replace(L, -2);
 }
 
+// Returns whether or not the given document is the command entry.
+static bool is_command_entry(sptr_t doc) {
+	return doc == SS(command_entry, SCI_GETDOCPOINTER, 0, 0);
+}
+
 // Returns a suitable Scintilla view that can operate on the Scintilla document on the Lua
 // stack at the given index.
 // For non-global, non-command entry documents, loads that document in `dummy_view` (unless
@@ -335,7 +340,7 @@ static SciObject *view_for_doc(lua_State *L, int index) {
 		(lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_pushdoc(L, doc), lua_gettable(L, -2)), index,
 		"this Buffer does not exist"),
 		lua_pop(L, 2); // pop buffer, _BUFFERS
-	if (doc == SS(command_entry, SCI_GETDOCPOINTER, 0, 0)) return command_entry;
+	if (is_command_entry(doc)) return command_entry;
 	if (doc == SS(dummy_view, SCI_GETDOCPOINTER, 0, 0)) return dummy_view;
 	return (SS(dummy_view, SCI_SETDOCPOINTER, 0, doc), dummy_view);
 }
@@ -480,11 +485,9 @@ static int buffer_index(lua_State *L) {
 	if (strcmp(lua_tostring(L, 2), "tab_label") == 0 &&
 		lua_todoc(L, 1) != SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
 		return luaL_argerror(L, 3, "write-only property");
-	if (strcmp(lua_tostring(L, 2), "active") == 0 &&
-		lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
+	if (strcmp(lua_tostring(L, 2), "active") == 0 && is_command_entry(lua_todoc(L, 1)))
 		return (lua_pushboolean(L, is_command_entry_active()), 1);
-	if (strcmp(lua_tostring(L, 2), "height") == 0 &&
-		lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
+	if (strcmp(lua_tostring(L, 2), "height") == 0 && is_command_entry(lua_todoc(L, 1)))
 		return (lua_pushinteger(L, get_command_entry_height()), 1);
 	return (lua_settop(L, 2), lua_rawget(L, 1), 1);
 }
@@ -514,8 +517,9 @@ static int buffer_newindex(lua_State *L) {
 														lua_gettable(L, -2), lua_tointeger(L, -1) - 1),
 							luaL_checkstring(L, 3)),
 			0);
-	if (strcmp(lua_tostring(L, 2), "height") == 0 &&
-		lua_todoc(L, 1) == SS(command_entry, SCI_GETDOCPOINTER, 0, 0))
+	if (strcmp(lua_tostring(L, 2), "label") == 0 && is_command_entry(lua_todoc(L, 1)))
+		return (set_command_entry_label(luaL_checkstring(L, 3)), 0);
+	if (strcmp(lua_tostring(L, 2), "height") == 0 && is_command_entry(lua_todoc(L, 1)))
 		return (set_command_entry_height(
 							fmax(luaL_checkinteger(L, 3), SS(command_entry, SCI_TEXTHEIGHT, 0, 0))),
 			0);

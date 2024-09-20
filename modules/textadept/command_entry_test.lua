@@ -8,9 +8,6 @@ end)
 test('ui.command_entry.run should show a Lua command entry', function()
 	ui.command_entry.run()
 
-	test.assert_equal(ui.command_entry.margin_text[1], _L['Lua command:'])
-	test.assert(ui.command_entry.margin_width_n[1] > 0, 'margin label should be visible')
-	test.assert(ui.command_entry.margin_width_n[2] > 0, 'label and text should be separated')
 	test.assert_equal(ui.command_entry.length, 0)
 	test.assert_equal(ui.command_entry.lexer_language, 'lua')
 	test.assert_equal(ui.command_entry.height, ui.command_entry:text_height(1))
@@ -357,17 +354,6 @@ test('ui.command_entry should emit events.COMMAND_TEXT_CHANGED when its text cha
 	ui.command_entry:append_text('changed')
 
 	test.assert_equal(changed.called, true)
-end)
-
-test('ui.command_entry.run should preserve margin text when the entry is blank', function()
-	local label = 'label:'
-	local f = test.stub()
-	ui.command_entry.run(label, f)
-	ui.command_entry:add_text('a')
-	ui.command_entry:delete_back() -- without a patch, Scintilla clears margin text
-
-	test.assert_equal(ui.command_entry.length, 0)
-	test.assert_equal(ui.command_entry.margin_text[1], label)
 end)
 
 -- TODO: textadept.menu.menubar['Tools/Language Server/Show Documentation'][2]()

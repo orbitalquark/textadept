@@ -56,7 +56,7 @@ static ScintillaEditBase *SCI(SciObject *sci) { return static_cast<ScintillaEdit
 
 void new_window(SciObject *(*get_view)(void)) {
 	ta = new Textadept;
-	ta->ui->editors->addWidget(SCI(get_view())), ta->ui->splitter->addWidget(SCI(command_entry));
+	ta->ui->editors->addWidget(SCI(get_view())), ta->ui->commandEntry->addWidget(SCI(command_entry));
 	ta->show();
 }
 
@@ -257,16 +257,17 @@ void focus_find() {
 bool is_find_active() { return ta->ui->findBox->isVisible(); }
 
 void focus_command_entry() {
-	if (!SCI(command_entry)->isVisible())
-		SCI(command_entry)->show(), SCI(command_entry)->setFocus();
+	if (!ta->ui->commandEntryFrame->isVisible())
+		ta->ui->commandEntryFrame->show(), SCI(command_entry)->setFocus();
 	else
-		SCI(focused_view)->setFocus(), SCI(command_entry)->hide();
+		SCI(focused_view)->setFocus(), ta->ui->commandEntryFrame->hide();
 }
 bool is_command_entry_active() { return SCI(command_entry)->hasFocus(); }
+void set_command_entry_label(const char *text) { ta->ui->commandEntryLabel->setText(text); }
 int get_command_entry_height() { return SCI(command_entry)->height(); }
 void set_command_entry_height(int height) {
 	SCI(command_entry)->setMinimumHeight(height);
-	qobject_cast<QSplitter *>(SCI(command_entry)->parent())->setSizes(QList<int>{ta->height()});
+	ta->ui->splitter->setSizes(QList<int>{ta->height()});
 }
 
 void set_statusbar_text(int bar, const char *text) {
@@ -699,7 +700,7 @@ Textadept::Textadept(QWidget *parent) : QMainWindow{parent}, ui{new Ui::Textadep
 	connect(ui->replaceAll, &QPushButton::clicked, this, clicked);
 
 	statusBar()->addPermanentWidget(docStatusBar = new QLabel);
-	ui->tabFrame->hide(), SCI(command_entry)->hide(), ui->findBox->hide();
+	ui->tabFrame->hide(), ui->commandEntryFrame->hide(), ui->findBox->hide();
 }
 
 void Textadept::closeEvent(QCloseEvent *ev) {
