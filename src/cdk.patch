@@ -15,10 +15,9 @@ already a typedef.
 
 cdk_config.h no longer defines HAVE_SETLOCALE since Textadept handles locale
 settings, no longer defines HAVE_NCURSES_H and NCURSES since Textadept supports
-multiple curses implementations (not just ncurses), conditionally enables
+multiple curses implementations (not just ncurses), and conditionally enables
 HAVE_GRP_H, HAVE_LSTAT, and HAVE_PWD_H definitions on *nix platforms since
-Windows does not have them, and explicitly undefines NCURSES_OPAQUE since newer
-versions of ncurses on macOS define it.
+Windows does not have them.
 
 cdk_util.h #defines "Beep" as "CDKBeep" on Windows platforms since Windows
 already defines Beep.
@@ -1401,7 +1400,7 @@ new file mode 100644
 index 0000000..917f5b1
 --- /dev/null
 +++ b/include/cdk_config.h
-@@ -0,0 +1,70 @@
+@@ -0,0 +1,69 @@
 +/* include/cdk_config.h.  Generated automatically by configure.  */
 +/*
 + * $Id: config.hin,v 1.2 2000/01/17 14:48:19 tom Exp $
@@ -1461,7 +1460,6 @@ index 0000000..917f5b1
 +#endif
 +#define MIXEDCASE_FILENAMES 1
 +//#define NCURSES 1
-+#define NCURSES_OPAQUE 0
 +#define PACKAGE "cdk"
 +#define STDC_HEADERS 1
 +#define SYSTEM_NAME "linux-gnu"
