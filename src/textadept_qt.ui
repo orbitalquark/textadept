@@ -71,9 +71,6 @@
          <property name="movable" stdset="0">
           <bool>true</bool>
          </property>
-         <property name="autoHide" stdset="0">
-          <bool>true</bool>
-         </property>
          <property name="usesScrollButtons" stdset="0">
           <bool>true</bool>
          </property>
