@@ -2,6 +2,62 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+### 12.5 beta 3 (01 Oct 2024)
+
+Download:
+
+- [Textadept 12.5 beta 3 -- Windows][]
+- [Textadept 12.5 beta 3 -- macOS 11+][]
+- [Textadept 12.5 beta 3 -- Linux][]
+- [Textadept 12.5 beta 3 -- Modules][]
+
+Bugfixes:
+
+- Inherit entire login shell environment (including `$PATH`) on macOS without *~/.osx_env.sh*.
+- Fixed regression in `reset()`.
+- Fixed quick open and find in files filters to not ignore directories like *.github*.
+- Fixed slow-pasting of text into the terminal version.
+- Fixed rectangular selections not extending beyond end-of-line when virtual space is enabled.
+- Fail gracefully if terminal input cannot be read in the terminal version.
+- Fixed incremental find spamming find history.
+- Fixed insertion of zero-length snippets.
+- Fixed inability to quit the terminal version if an initialization error occured.
+- Fixed rebinding keys defined in the macOS menubar.
+- Support more movement keys in the command entry on macOS.
+- Fixed lack of padding in GTK list dialogs.
+- Fixed inability to show the first buffer tab in the Qt version when using `ui.SHOW_ALL_TABS`.
+- Format: added [`format.prefix_map`][] for formatting paragraphs.
+- LSP: fixed autocompletion lists when items have spaces in them.
+- LSP: Lua language server recognizes conventional `M` identifier as the current module.
+- LSP: lazy-load Textadept API documentation for the Lua command entry.
+- LSP: do not scan Textadept's `_HOME` more than once.
+- LSP: fixed Lua language server's Textadept `_HOME` detection on macOS.
+
+Changes:
+
+- Updated macOS icon to match Big Sur icon style.
+- Updated call tip background to match default background in themes.
+- Updated to Qt 6.7 on Windows, which uses Windows 11 theme widgets.
+- Updated Brazilian Portuguese translation.
+- Renamed 'ansi_c', 'dmd', and 'rstats' lexers to 'c', 'd', and 'r', respectively.
+  - Language-specific keys have changed (e.g. use `keys.c` and `snippets.c` now).
+- Emit `events.VIEW_BEFORE_SWITCH` on `view:split()`.
+- Enable `view.caret_line_visible_always`, but only on the current view when Textadept has focus.
+- Added `select` option to `ui.dialogs.list()`.
+- Use a proper label widget for the command entry label instead of a Scintilla margin.
+- Increased terminal version Find & Replace history to 100 items.
+- Remove duplicates from Find & Replace history.
+- Added Edit > Deselect menu item and key binding.
+- Format: use Homebrew's `gfmt` for formatting paragraphs on macOS.
+- Updated to [CDK][] 5.0-20240619.
+
+[Textadept 12.5 beta 3 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.5_beta_3/textadept_12.5_beta_3.win.zip
+[Textadept 12.5 beta 3 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.5_beta_3/textadept_12.5_beta_3.macOS.zip
+[Textadept 12.5 beta 3 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.5_beta_3/textadept_12.5_beta_3.linux.tgz
+[Textadept 12.5 beta 3 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.5_beta_3/textadept_12.5_beta_3.modules.zip
+[`format.prefix_map`]: https://github.com/orbitalquark/textadept-format/?tab=readme-ov-file#formatprefix_map-table
+[CDK]: https://invisible-island.net/cdk/
+
 ### 12.5 beta 2 (01 Sep 2024)
 
 Download:
