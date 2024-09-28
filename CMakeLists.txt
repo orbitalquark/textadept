@@ -87,7 +87,7 @@ endfunction()
 fetch(scintilla https://www.scintilla.org/scintilla552.tgz)
 fetch(scinterm https://github.com/orbitalquark/scinterm/archive/scinterm_5.1.zip)
 fetch(scintillua
-	https://github.com/orbitalquark/scintillua/archive/0c9294695920daa397a67d960e003908c5979bb3.zip)
+	https://github.com/orbitalquark/scintillua/archive/c6c98d68ecc06a12cda93690af4dd16b0e46cbab.zip)
 fetch(lua https://www.lua.org/ftp/lua-5.4.7.tar.gz)
 fetch(lpeg https://www.inf.puc-rio.br/~roberto/lpeg/lpeg-1.1.0.tar.gz)
 fetch(lfs https://github.com/keplerproject/luafilesystem/archive/v1_8_0.zip)
