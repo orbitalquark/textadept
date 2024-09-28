@@ -1,4 +1,4 @@
-## Textadept 12.5 beta 2 API Documentation
+## Textadept 12.5 beta 3 API Documentation
 
 1. [_G](#_G)
 1. [_L](#_L)
@@ -7813,6 +7813,7 @@ Ctrl+Shift+D | ⌘⇧D | M-^D | Duplicate line/selection
 Del | ⌦<br/> ^D | Del | Delete
 Alt+Del | ^⌦ | M-Del | Delete word
 Ctrl+A | ⌘A | ^A | Select all
+Ctrl+Shift+A | ⌘⇧A | M-^A | Deselect
 Ctrl+M | ⌘M | M-M | Match brace
 Ctrl+Enter | ⌘↩ | ^Enter | Complete word
 Ctrl+/ | ⌘/ | ^/<br/>M-/ | Toggle block comment
