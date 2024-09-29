@@ -1,13 +1,14 @@
 Lua changes:
 
-LUA_ROOT is "/usr" instead of "/usr/local".
+* LUA_ROOT is "/usr" instead of "/usr/local".
+* LUA_PATH and LUA_CPATH do not have "./?.lua" and "./?.so" in them.
+* Windows IO supports unicode.
 
-LUA_PATH and LUA_CPATH do not have "./?.lua" and "./?.so" in them.
-
-diff -r 8a23edc91533 src/luaconf.h
---- a/src/luaconf.h	Mon Jan 12 18:57:53 2015 -0500
-+++ b/src/luaconf.h	Mon Jan 12 23:50:08 2015 -0500
-@@ -166,34 +166,32 @@
+diff --git a/src/luaconf.h b/src/luaconf.h
+index 33bb580d..9f66d58e 100644
+--- a/src/luaconf.h
++++ b/src/luaconf.h
+@@ -210,33 +210,31 @@
  #define LUA_PATH_DEFAULT  \
  		LUA_LDIR"?.lua;"  LUA_LDIR"?\\init.lua;" \
  		LUA_CDIR"?.lua;"  LUA_CDIR"?\\init.lua;" \
@@ -46,4 +47,118 @@ diff -r 8a23edc91533 src/luaconf.h
  #endif
  
  #endif			/* } */
+diff --git a/src/luaconf.h b/src/luaconf.h
+index 9f66d58e..2f87b027 100644
+--- a/src/luaconf.h
++++ b/src/luaconf.h
+@@ -792,6 +792,11 @@
+ ** without modifying the main part of the file.
+ */
  
++#if defined(lua_c) || defined(luac_c) || (defined(LUA_LIB) && \
++    (defined(lauxlib_c) || defined(liolib_c) || \
++     defined(loadlib_c) || defined(loslib_c)))
++#include "utf8_wrappers.h"
++#endif
+ 
+ 
+ 
+diff --git a/src/utf8_wrappers.c b/src/utf8_wrappers.c
+new file mode 100644
+index 00000000..e57ff07f
+--- /dev/null
++++ b/src/utf8_wrappers.c
+@@ -0,0 +1,56 @@
++/**
++ * Wrappers to provide Unicode (UTF-8) support on Windows.
++ *
++ * Copyright (c) 2018 Peter Wu <peter@lekensteyn.nl>
++ * SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
++ */
++
++#ifdef _WIN32
++#include <windows.h>    /* for MultiByteToWideChar */
++#include <wchar.h>      /* for _wrename */
++#include <stdio.h>
++#include <stdlib.h>
++#include <errno.h>
++
++// Set a high limit in case long paths are enabled.
++#define MAX_PATH_SIZE   4096
++#define MAX_MODE_SIZE   128
++// cmd.exe argument length is reportedly limited to 8192.
++#define MAX_CMD_SIZE    8192
++
++FILE *fopen_utf8(const char *pathname, const char *mode) {
++    wchar_t pathname_w[MAX_PATH_SIZE];
++    wchar_t mode_w[MAX_MODE_SIZE];
++    if (!MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, pathname, -1, pathname_w, MAX_PATH_SIZE) ||
++        !MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, mode, -1, mode_w, MAX_MODE_SIZE)) {
++        errno = EINVAL;
++        return NULL;
++    }
++    return _wfopen(pathname_w, mode_w);
++}
++
++FILE *freopen_utf8(const char *pathname, const char *mode, FILE *stream) {
++    wchar_t pathname_w[MAX_PATH_SIZE];
++    wchar_t mode_w[MAX_MODE_SIZE];
++    if (!MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, pathname, -1, pathname_w, MAX_PATH_SIZE) ||
++        !MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, mode, -1, mode_w, MAX_MODE_SIZE)) {
++        // Close stream as documented for the error case.
++        fclose(stream);
++        errno = EINVAL;
++        return NULL;
++    }
++    return _wfreopen(pathname_w, mode_w, stream);
++}
++
++FILE *popen_utf8(const char *command, const char *mode) {
++    wchar_t command_w[MAX_CMD_SIZE];
++    wchar_t mode_w[MAX_MODE_SIZE];
++    if (!MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, command, -1, command_w, MAX_CMD_SIZE) ||
++        !MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, mode, -1, mode_w, MAX_MODE_SIZE)) {
++        errno = EINVAL;
++        return NULL;
++    }
++    return _wpopen(command_w, mode_w);
++}
++
++#endif
+diff --git a/src/utf8_wrappers.h b/src/utf8_wrappers.h
+new file mode 100644
+index 00000000..66b6bc2b
+--- /dev/null
++++ b/src/utf8_wrappers.h
+@@ -0,0 +1,31 @@
++/**
++ * Wrappers to provide Unicode (UTF-8) support on Windows.
++ *
++ * Copyright (c) 2018 Peter Wu <peter@lekensteyn.nl>
++ * SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
++ */
++
++#ifdef _WIN32
++
++#if defined(loadlib_c) || defined(lauxlib_c) || defined(liolib_c) || defined(luac_c)
++#include <stdio.h>  /* for loadlib_c */
++FILE *fopen_utf8(const char *pathname, const char *mode);
++#define fopen               fopen_utf8
++#endif
++
++#ifdef lauxlib_c
++FILE *freopen_utf8(const char *pathname, const char *mode, FILE *stream);
++#define freopen             freopen_utf8
++#endif
++
++#ifdef liolib_c
++FILE *popen_utf8(const char *command, const char *mode);
++#define _popen              popen_utf8
++#endif
++
++#endif // _WIN32
++
++#if defined(lua_c) || defined(luac_c)
++int main_utf8(int argc, char *argv[]);
++#define main                main_utf8
++#endif
