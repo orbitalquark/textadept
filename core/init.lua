@@ -147,6 +147,9 @@ end, 1)
 --- Whether or not Textadept is running on Linux.
 -- @field LINUX
 
+--- Whether or not Textadept is running on BSD.
+-- @field BSD
+
 --- Whether or not Textadept is running as a GTK GUI application.
 -- @field GTK
 

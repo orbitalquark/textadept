@@ -20,6 +20,9 @@
 #include <windows.h> // for GetModuleFileName
 #elif __APPLE__
 #include <mach-o/dyld.h> // for _NSGetExecutablePath
+#elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
+#include <sys/types.h>
+#include <sys/sysctl.h>
 #endif
 
 // Variables declared in textadept.h.
@@ -1216,6 +1219,18 @@ bool init_textadept(int argc, char **argv) {
 	textadept_home = realpath(textadept_home, NULL), free(p);
 	p = strstr(textadept_home, "MacOS"), strcpy(p, "Resources\0");
 	os = "OSX";
+#elif (__FreeBSD__ || __NetBSD__ || __OpenBSD__)
+#if __FreeBSD__
+  int mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
+  size_t cb = FILENAME_MAX + 1;
+  sysctl(mib, 4, textadept_home, &cb, NULL, 0);
+#elif __NetBSD__
+  textadept_home[readlink("/proc/curproc/exe", textadept_home, FILENAME_MAX + 1)] = '\0';
+#else
+  textadept_home[readlink("/proc/curproc/file", textadept_home, FILENAME_MAX + 1)] = '\0';
+#endif
+  if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
+  os = "BSD";
 #endif
 	if (getenv("TEXTADEPT_HOME")) strcpy(textadept_home, getenv("TEXTADEPT_HOME"));
 

@@ -20,11 +20,11 @@
 -- ### Key Sequences
 --
 -- Key sequences are strings built from an ordered combination of modifier keys and the key's
--- inserted character. Modifier keys are "Control", "Shift", and "Alt" on Windows, Linux, and
+-- inserted character. Modifier keys are "Control", "Shift", and "Alt" on Windows, Linux, BSD and
 -- in the terminal version. On macOS they are "Control" (`^`), "Alt/Option" (`⌥`), "Command"
 -- (`⌘`), and "Shift" (`⇧`). These modifiers have the following string representations:
 --
--- Modifier |  Windows / Linux | macOS | Terminal
+-- Modifier |  Windows / Linux / BSD | macOS | Terminal
 -- -|-|-|-
 -- Control | `'ctrl'` | `'ctrl'` | `'ctrl'`
 -- Alt | `'alt'` | `'alt'` | `'meta'`
@@ -33,7 +33,7 @@
 --
 -- The string representation of key values less than 255 is the character that Textadept would
 -- normally insert if the "Control", "Alt", and "Command" modifiers were not held down. Therefore,
--- a combination of `Ctrl+Alt+Shift+A` has the key sequence `ctrl+alt+A` on Windows and Linux,
+-- a combination of `Ctrl+Alt+Shift+A` has the key sequence `ctrl+alt+A` on Windows, BSD and Linux,
 -- but a combination of `Ctrl+Shift+Tab` has the key sequence `ctrl+shift+\t`. On a United States
 -- English keyboard, since the combination of `Ctrl+Shift+,` has the key sequence `ctrl+<`
 -- (`Shift+,` inserts a `<`), Textadept recognizes the key binding as `Ctrl+<`. This allows

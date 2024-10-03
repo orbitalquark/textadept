@@ -8,7 +8,7 @@
 -- so that users familiar with one set of bindings can intuit a given binding on another OS or
 -- platform, minimizing the need for memorization.
 --
--- In general, bindings for macOS are the same as for Windows/Linux except the "Control" modifier
+-- In general, bindings for macOS are the same as for Windows/BSD/Linux except the "Control" modifier
 -- key on Windows/Linux is replaced by "Command" (`⌘`) and the "Alt" modifier key is replaced by
 -- "Control" (`^`). The only exception is for word- and paragraph-based movement keys, which use
 -- "Alt" (`⌥`) instead of "Command" (`⌘`).
@@ -434,7 +434,7 @@ local bindings = {
 	-- TODO: m('Tools/Snippets/Complete Trigger Word')
 	-- Other.
 	-- TODO: m('Tools/Show Style')
-	
+
 	-- Buffer.
 	[m('Buffer/Next Buffer')] = {
 		{'ctrl+\t', 'ctrl+pgdn'}, {'ctrl+\t', 'cmd+pgdn'}, WIN32 and 'ctrl+\t' or 'meta+pgdn'
@@ -498,7 +498,7 @@ local bindings = {
 	-- Unbound keys are handled by Scintilla, but when playing back a macro, this is not possible.
 	-- Define some useful default key bindings so Scintilla does not have to handle them. Note
 	-- that Scintilla still will handle some keys.
-	
+
 	-- Built-in movement commands.
 	[buffer.line_down] = {'down', {'down', 'ctrl+n'}, 'down'},
 	[buffer.line_down_extend] = {'shift+down', {'shift+down', 'ctrl+N'}, 'shift+down'},

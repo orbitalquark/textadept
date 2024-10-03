@@ -35,6 +35,7 @@ Bugfixes:
 
 Changes:
 
+- Reintroduced BSD support
 - Updated macOS icon to match Big Sur icon style.
 - Updated call tip background to match default background in themes.
 - Updated to Qt 6.7 on Windows, which uses Windows 11 theme widgets.

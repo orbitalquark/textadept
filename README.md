@@ -32,7 +32,7 @@ terminal emulator.
 ## Requirements
 
 In its bid for minimalism, Textadept depends on very little to run. On Windows and macOS,
-it has no external dependencies. On Linux, the GUI version depends only on either [Qt][] or
+it has no external dependencies. On Linux and BSD, the GUI version depends only on either [Qt][] or
 [GTK][] (cross-platform GUI toolkits), and the terminal version depends only on a wide-character
 implementation of curses like [ncurses][](w). Lua and any other third-party dependencies are
 compiled into the application itself.
@@ -65,10 +65,10 @@ resource when it comes to scripting the application.
 
 ## Compile
 
-Textadept can be built on Windows, macOS, or Linux using [CMake][]. CMake will automatically
+Textadept can be built on Windows, macOS, BSD or Linux using [CMake][]. CMake will automatically
 detect which platforms you can compile Textadept for (e.g. Qt, GTK, and/or Curses) and build
 for them. On Windows and macOS you can then use CMake to create a self-contained application
-to run from anywhere. On Linux you can either use CMake to install Textadept, or place compiled
+to run from anywhere. On Linux or BSD you can either use CMake to install Textadept, or place compiled
 binaries into Textadept's root directory and run it from there.
 
 General Requirements:

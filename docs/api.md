@@ -36,7 +36,7 @@ Extends Lua's _G table to provide extra functions and fields for Textadept.
 ### Fields defined by `_G`
 
 <a id="CURSES"></a>
-#### `CURSES` 
+#### `CURSES`
 
 Whether or not Textadept is running in a terminal.
 Curses feature incompatibilities are listed in the [Appendix][].
@@ -44,27 +44,32 @@ Curses feature incompatibilities are listed in the [Appendix][].
 [Appendix]: manual.html#terminal-version-compatibility
 
 <a id="GTK"></a>
-#### `GTK` 
+#### `GTK`
 
 Whether or not Textadept is running as a GTK GUI application.
 
 <a id="LINUX"></a>
-#### `LINUX` 
+#### `LINUX`
 
 Whether or not Textadept is running on Linux.
 
+<a id="BSD"></a>
+#### `BSD`
+
+Whether or not Textadept is running on BSD.
+
 <a id="OSX"></a>
-#### `OSX` 
+#### `OSX`
 
 Whether or not Textadept is running on macOS.
 
 <a id="QT"></a>
-#### `QT` 
+#### `QT`
 
 Whether or not Textadept is running as a Qt GUI application.
 
 <a id="WIN32"></a>
-#### `WIN32` 
+#### `WIN32`
 
 Whether or not Textadept is running on Windows.
 
@@ -86,43 +91,43 @@ See also:
 - [`buffer`](#buffer)
 
 <a id="_CHARSET"></a>
-#### `_CHARSET` 
+#### `_CHARSET`
 
 The filesystem's character encoding.
 This is used when [working with files](#io).
 
 <a id="_COPYRIGHT"></a>
-#### `_COPYRIGHT` 
+#### `_COPYRIGHT`
 
 Textadept's copyright information.
 
 <a id="_HOME"></a>
-#### `_HOME` 
+#### `_HOME`
 
 The path to Textadept's home, or installation, directory.
 
 <a id="_LEXERPATH"></a>
-#### `_LEXERPATH` 
+#### `_LEXERPATH`
 
 A ';'-separated list of directory paths that contain lexers for syntax highlighting.
 
 <a id="_RELEASE"></a>
-#### `_RELEASE` 
+#### `_RELEASE`
 
 The Textadept release version string.
 
 <a id="_THEME"></a>
-#### `_THEME` 
+#### `_THEME`
 
 Textadept's current UI mode, either "light" or "dark".
 Manually changing this field has no effect.
 
 <a id="_USERHOME"></a>
-#### `_USERHOME` 
+#### `_USERHOME`
 
 The path to the user's *~/.textadept/* directory, where all preferences and user-data is stored.
 On Windows machines *~/* is the value of the "USERHOME" environment variable (typically
-*C:\Users\username\\* or *C:\Documents and Settings\username\\*). On Linux and macOS machines
+*C:\Users\username\\* or *C:\Documents and Settings\username\\*). On Linux, BSD and macOS machines
 *~/* is the value of "$HOME" (typically */home/username/* and */Users/username/* respectively).
 
 <a id="_VIEWS"></a>
@@ -432,7 +437,7 @@ Return:
 The [buffer](#buffer) the view currently contains. (Read-only)
 
 <a id="view.size"></a>
-#### `view.size` 
+#### `view.size`
 
 The split resizer's pixel position if the view is a split one.
 
@@ -516,12 +521,12 @@ See also:
 - [`string.iconv`](#string.iconv)
 
 <a id="buffer.filename"></a>
-#### `buffer.filename` 
+#### `buffer.filename`
 
 The absolute file path associated with the buffer.
 
 <a id="buffer.modify"></a>
-#### `buffer.modify` 
+#### `buffer.modify`
 
 Whether or not the buffer has unsaved changes. (Read-only)
 
@@ -531,7 +536,7 @@ Whether or not the buffer has unsaved changes. (Read-only)
 Indicates the buffer has no unsaved changes.
 
 <a id="buffer.encoding"></a>
-#### `buffer.encoding` 
+#### `buffer.encoding`
 
 The string encoding of the file, or `nil` for binary files.
 
@@ -675,7 +680,7 @@ Moves the caret up one line.
 Moves the caret down one line.
 
 <a id="buffer.caret_sticky"></a>
-#### `buffer.caret_sticky` 
+#### `buffer.caret_sticky`
 
 The caret's preferred horizontal position when moving between lines.
 
@@ -792,7 +797,7 @@ Return:
 - string, number
 
 <a id="buffer.copy_separator"></a>
-#### `buffer.copy_separator` 
+#### `buffer.copy_separator`
 
 The delimiters used between multiple selections in [`buffer:get_sel_text()`](#buffer.get_sel_text).
 The default value is `''`.
@@ -1201,7 +1206,7 @@ See also:
 - [`ui.clipboard_text`](#ui.clipboard_text)
 
 <a id="buffer.multi_paste"></a>
-#### `buffer.multi_paste` 
+#### `buffer.multi_paste`
 
 The multiple selection paste mode.
 
@@ -1230,13 +1235,13 @@ Parameters:
 	[`buffer.current_pos`](#buffer.current_pos)).
 
 <a id="buffer.selection_start"></a>
-#### `buffer.selection_start` 
+#### `buffer.selection_start`
 
 The position of the beginning of the selected text.
 When set, becomes the anchor, but is not scrolled into view.
 
 <a id="buffer.selection_end"></a>
-#### `buffer.selection_end` 
+#### `buffer.selection_end`
 
 The position of the end of the selected text.
 When set, becomes the current position, but is not scrolled into view.
@@ -1261,12 +1266,12 @@ Parameters:
 - *pos*:  The position in *buffer* to move to.
 
 <a id="buffer.selection_empty"></a>
-#### `buffer.selection_empty` 
+#### `buffer.selection_empty`
 
 Whether or not no text is selected. (Read-only)
 
 <a id="buffer.selection_is_rectangle"></a>
-#### `buffer.selection_is_rectangle` 
+#### `buffer.selection_is_rectangle`
 
 Whether or not the selection is a rectangular selection. (Read-only)
 
@@ -1436,7 +1441,7 @@ position.
 Moves the caret to the end of the buffer, extending the selected text to the new position.
 
 <a id="buffer.move_extends_selection"></a>
-#### `buffer.move_extends_selection` 
+#### `buffer.move_extends_selection`
 
 Whether or not regular caret movement alters the selected text.
 Setting [`buffer.selection_mode`](#buffer.selection_mode) also alters this property.
@@ -1445,7 +1450,7 @@ Setting [`buffer.selection_mode`](#buffer.selection_mode) also alters this prope
 
 
 <a id="buffer.selection_mode"></a>
-#### `buffer.selection_mode` 
+#### `buffer.selection_mode`
 
 The selection mode.
 
@@ -1527,7 +1532,7 @@ See also:
 - [`textadept.editing.select_word`](#textadept.editing.select_word)
 
 <a id="buffer.main_selection"></a>
-#### `buffer.main_selection` 
+#### `buffer.main_selection`
 
 The number of the main or most recent selection.
 Only an existing selection can be made main.
@@ -1593,18 +1598,18 @@ List of positions at the end of virtual space selected in existing selections nu
 `1`, the main selection. (Read-only)
 
 <a id="buffer.selections"></a>
-#### `buffer.selections` 
+#### `buffer.selections`
 
 The number of active selections. There is always at least one selection. (Read-only)
 
 <a id="buffer.multiple_selection"></a>
-#### `buffer.multiple_selection` 
+#### `buffer.multiple_selection`
 
 Enable multiple selection.
 The default value is `true`.
 
 <a id="buffer.additional_selection_typing"></a>
-#### `buffer.additional_selection_typing` 
+#### `buffer.additional_selection_typing`
 
 Type into multiple selections.
 The default value is `true`.
@@ -1613,22 +1618,22 @@ The default value is `true`.
 
 
 <a id="buffer.rectangular_selection_anchor"></a>
-#### `buffer.rectangular_selection_anchor` 
+#### `buffer.rectangular_selection_anchor`
 
 The rectangular selection's anchor position.
 
 <a id="buffer.rectangular_selection_caret"></a>
-#### `buffer.rectangular_selection_caret` 
+#### `buffer.rectangular_selection_caret`
 
 The rectangular selection's caret position.
 
 <a id="buffer.rectangular_selection_anchor_virtual_space"></a>
-#### `buffer.rectangular_selection_anchor_virtual_space` 
+#### `buffer.rectangular_selection_anchor_virtual_space`
 
 The amount of virtual space for the rectangular selection's anchor.
 
 <a id="buffer.rectangular_selection_caret_virtual_space"></a>
-#### `buffer.rectangular_selection_caret_virtual_space` 
+#### `buffer.rectangular_selection_caret_virtual_space`
 
 The amount of virtual space for the rectangular selection's caret.
 
@@ -1680,7 +1685,7 @@ Moves the caret up one page, extending the rectangular selection to the new posi
 Moves the caret down one page, extending the rectangular selection to the new position.
 
 <a id="view.rectangular_selection_modifier"></a>
-#### `view.rectangular_selection_modifier` 
+#### `view.rectangular_selection_modifier`
 
 The modifier key used in combination with a mouse drag in order to create a rectangular
 selection.
@@ -1695,7 +1700,7 @@ selection.
 The default value is [`view.MOD_ALT`](#view.MOD_ALT).
 
 <a id="view.mouse_selection_rectangular_switch"></a>
-#### `view.mouse_selection_rectangular_switch` 
+#### `view.mouse_selection_rectangular_switch`
 
 Whether or not pressing [`view.rectangular_selection_modifier`](#view.rectangular_selection_modifier) when selecting text
 normally with the mouse turns on rectangular selection.
@@ -1766,7 +1771,7 @@ See also:
  that some buffer functions operate on, or a region of text that some buffer functions define
  as output).
 <a id="buffer.search_flags"></a>
-#### `buffer.search_flags` 
+#### `buffer.search_flags`
 
 The bit-mask of search flags used by [`buffer:search_in_target()`](#buffer.search_in_target).
 
@@ -1828,38 +1833,38 @@ See also:
 - [`buffer.replace_target`](#buffer.replace_target)
 
 <a id="buffer.target_text"></a>
-#### `buffer.target_text` 
+#### `buffer.target_text`
 
 The text in the target range. (Read-only)
 
 <a id="buffer.target_start"></a>
-#### `buffer.target_start` 
+#### `buffer.target_start`
 
 The position of the beginning of the target range.
 This is also set by a successful [`buffer:search_in_target()`](#buffer.search_in_target).
 
 <a id="buffer.target_end"></a>
-#### `buffer.target_end` 
+#### `buffer.target_end`
 
 The position of the end of the target range.
 This is also set by a successful [`buffer:search_in_target()`](#buffer.search_in_target).
 
 <a id="buffer.target_start_virtual_space"></a>
-#### `buffer.target_start_virtual_space` 
+#### `buffer.target_start_virtual_space`
 
 The position of the beginning of virtual space in the target range.
 This is set to `1` when [`buffer.target_start`](#buffer.target_start) or [`buffer.target_end`](#buffer.target_end) is set, or when
 [`buffer:set_target_range()`](#buffer.set_target_range) is called.
 
 <a id="buffer.target_end_virtual_space"></a>
-#### `buffer.target_end_virtual_space` 
+#### `buffer.target_end_virtual_space`
 
 The position of the end of virtual space in the target range.
 This is set to `1` when [`buffer.target_start`](#buffer.target_start) or [`buffer.target_end`](#buffer.target_end) is set, or when
 [`buffer:set_target_range()`](#buffer.set_target_range) is called.
 
 <a id="buffer.tag"></a>
-#### `buffer.tag` 
+#### `buffer.tag`
 
 List of capture text for capture numbers from a regular expression search. (Read-only)
 
@@ -1867,12 +1872,12 @@ List of capture text for capture numbers from a regular expression search. (Read
 
 
 <a id="buffer.anchor"></a>
-#### `buffer.anchor` 
+#### `buffer.anchor`
 
 The anchor's position.
 
 <a id="buffer.current_pos"></a>
-#### `buffer.current_pos` 
+#### `buffer.current_pos`
 
 The caret's position.
  When set, does not scroll the caret into view.
@@ -2007,19 +2012,19 @@ Return:
 
 
 <a id="buffer.line_count"></a>
-#### `buffer.line_count` 
+#### `buffer.line_count`
 
 The number of lines in the buffer. (Read-only)
 There is always at least one.
 
 <a id="view.lines_on_screen"></a>
-#### `view.lines_on_screen` 
+#### `view.lines_on_screen`
 
 The number of completely visible lines in the view. (Read-only)
 It is possible to have a partial line visible at the bottom of the view.
 
 <a id="view.first_visible_line"></a>
-#### `view.first_visible_line` 
+#### `view.first_visible_line`
 
 The line number of the line at the top of the view.
 
@@ -2106,12 +2111,12 @@ Return:
 
 
 <a id="buffer.length"></a>
-#### `buffer.length` 
+#### `buffer.length`
 
 The number of bytes in the buffer. (Read-only)
 
 <a id="buffer.text_length"></a>
-#### `buffer.text_length` 
+#### `buffer.text_length`
 
 The number of bytes in the buffer. (Read-only)
 
@@ -2170,7 +2175,7 @@ Return:
  The number of line margins is configurable, with each one displaying either line numbers,
  [marker symbols](#mark-lines-with-markers), or text.
 <a id="view.margins"></a>
-#### `view.margins` 
+#### `view.margins`
 
 The number of margins.
 The default value is `5`.
@@ -2249,7 +2254,7 @@ and back.
 Clears all text in text margins.
 
 <a id="view.margin_options"></a>
-#### `view.margin_options` 
+#### `view.margin_options`
 
 A bit-mask of margin option settings.
 
@@ -2291,13 +2296,13 @@ Parameters:
 - *color*:  The color in "0xBBGGRR" format.
 
 <a id="view.margin_left"></a>
-#### `view.margin_left` 
+#### `view.margin_left`
 
 The pixel size of the left margin of the buffer text.
 The default value is `1`.
 
 <a id="view.margin_right"></a>
-#### `view.margin_right` 
+#### `view.margin_right`
 
 The pixel size of the right margin of the buffer text.
 The default value is `1`.
@@ -2638,7 +2643,7 @@ Clears annotations from all lines.
 Clears EOL annotations from all lines.
 
 <a id="view.annotation_visible"></a>
-#### `view.annotation_visible` 
+#### `view.annotation_visible`
 
 The annotation visibility mode.
 
@@ -2654,7 +2659,7 @@ The annotation visibility mode.
 The default value is [`view.ANNOTATION_BOXED`](#view.ANNOTATION_BOXED).
 
 <a id="view.eol_annotation_visible"></a>
-#### `view.eol_annotation_visible` 
+#### `view.eol_annotation_visible`
 
 The EOL annotation visibility mode.
 
@@ -2783,7 +2788,7 @@ caret is within that indicator.
 The default values are the respective indicator styles.
 
 <a id="buffer.indicator_current"></a>
-#### `buffer.indicator_current` 
+#### `buffer.indicator_current`
 
 The indicator number in the range of `1` to `32` used by [`buffer:indicator_fill_range()`](#buffer.indicator_fill_range)
 and [`buffer:indicator_clear_range()`](#buffer.indicator_clear_range).
@@ -2897,13 +2902,13 @@ The default values are `100`, or 1 pixel.
  define a separator character, order, and identifier number before showing the list. When a
  list item is selected, an autocompletion list inserts it while a user list emits an event
 <a id="buffer.auto_c_separator"></a>
-#### `buffer.auto_c_separator` 
+#### `buffer.auto_c_separator`
 
 The byte value of the character that separates autocompletion and user list list items.
 The default value is `32` (' ').
 
 <a id="buffer.auto_c_order"></a>
-#### `buffer.auto_c_order` 
+#### `buffer.auto_c_order`
 
 The order setting for autocompletion and user lists.
 
@@ -2996,24 +3001,24 @@ Return:
 - number
 
 <a id="buffer.auto_c_current"></a>
-#### `buffer.auto_c_current` 
+#### `buffer.auto_c_current`
 
 The index of the currently selected item in an autocompletion or user list. (Read-only)
 
 <a id="buffer.auto_c_current_text"></a>
-#### `buffer.auto_c_current_text` 
+#### `buffer.auto_c_current_text`
 
 The text of the currently selected item in an autocompletion or user list. (Read-only)
 
 <a id="buffer.auto_c_choose_single"></a>
-#### `buffer.auto_c_choose_single` 
+#### `buffer.auto_c_choose_single`
 
 Automatically choose the item in a single-item autocompletion list.
 This option has no effect for a user list.
 The default value is `true`.
 
 <a id="buffer.auto_c_fill_ups"></a>
-#### `buffer.auto_c_fill_ups` 
+#### `buffer.auto_c_fill_ups`
 
 The set of characters that choose the currently selected item in an autocompletion or user
 list when the user types one of them. (Write-only)
@@ -3032,13 +3037,13 @@ Parameters:
 	by default.
 
 <a id="buffer.auto_c_auto_hide"></a>
-#### `buffer.auto_c_auto_hide` 
+#### `buffer.auto_c_auto_hide`
 
 Automatically cancel an autocompletion or user list when no entries match typed text.
 The default value is `true`.
 
 <a id="buffer.auto_c_cancel_at_start"></a>
-#### `buffer.auto_c_cancel_at_start` 
+#### `buffer.auto_c_cancel_at_start`
 
 Cancel an autocompletion list when backspacing to a position before where autocompletion
 started (instead of before the word being completed).
@@ -3046,13 +3051,13 @@ This option has no effect for a user list.
 The default value is `true`.
 
 <a id="buffer.auto_c_ignore_case"></a>
-#### `buffer.auto_c_ignore_case` 
+#### `buffer.auto_c_ignore_case`
 
 Ignore case when searching an autocompletion or user list for matches.
 The default value is `false`.
 
 <a id="buffer.auto_c_case_insensitive_behavior"></a>
-#### `buffer.auto_c_case_insensitive_behavior` 
+#### `buffer.auto_c_case_insensitive_behavior`
 
 The behavior mode for a case insensitive autocompletion or user list when
 [`buffer.auto_c_ignore_case`](#buffer.auto_c_ignore_case) is `true`.
@@ -3065,25 +3070,25 @@ The behavior mode for a case insensitive autocompletion or user list when
 	The default value is [`buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE`](#buffer.CASEINSENSITIVEBEHAVIOR_RESPECTCASE).
 
 <a id="view.auto_c_max_width"></a>
-#### `view.auto_c_max_width` 
+#### `view.auto_c_max_width`
 
 The maximum number of characters per item to show in autocompletion and user lists.
 The default value is `0`, which automatically sizes the width to fit the longest item.
 
 <a id="view.auto_c_max_height"></a>
-#### `view.auto_c_max_height` 
+#### `view.auto_c_max_height`
 
 The maximum number of items per page to show in autocompletion and user lists.
 The default value is `5`.
 
 <a id="buffer.auto_c_drop_rest_of_word"></a>
-#### `buffer.auto_c_drop_rest_of_word` 
+#### `buffer.auto_c_drop_rest_of_word`
 
 Delete any word characters immediately to the right of autocompleted text.
 The default value is `false`.
 
 <a id="buffer.auto_c_multi"></a>
-#### `buffer.auto_c_multi` 
+#### `buffer.auto_c_multi`
 
 The multiple selection autocomplete mode.
 
@@ -3123,18 +3128,18 @@ See also:
 - [`textadept.editing.XPM_IMAGES`](#textadept.editing.XPM_IMAGES)
 
 <a id="view.rgba_image_width"></a>
-#### `view.rgba_image_width` 
+#### `view.rgba_image_width`
 
 The width of the RGBA image to be defined using [`view:marker_define_rgba_image()`](#view.marker_define_rgba_image) and
 [`view:register_rgba_image()`](#view.register_rgba_image).
 
 <a id="view.rgba_image_height"></a>
-#### `view.rgba_image_height` 
+#### `view.rgba_image_height`
 
 The height of the RGBA image to be defined using [`view:marker_define_rgba_image()`](#view.marker_define_rgba_image).
 
 <a id="view.rgba_image_scale"></a>
-#### `view.rgba_image_scale` 
+#### `view.rgba_image_scale`
 
 The scale factor in percent of the RGBA image to be defined using
 [`view:marker_define_rgba_image()`](#view.marker_define_rgba_image).
@@ -3157,7 +3162,7 @@ Parameters:
 - *pixels*:  The RGBA data as described in [`view:marker_define_rgba_image()`](#view.marker_define_rgba_image).
 
 <a id="buffer.auto_c_type_separator"></a>
-#### `buffer.auto_c_type_separator` 
+#### `buffer.auto_c_type_separator`
 
 The character byte that separates autocompletion and user list items and their image types.
 Autocompletion and user list items can display both an image and text. Register images and
@@ -3224,13 +3229,13 @@ Return:
 - number
 
 <a id="view.call_tip_position"></a>
-#### `view.call_tip_position` 
+#### `view.call_tip_position`
 
 Display a call tip above the current line instead of below it.
 The default value is `false`.
 
 <a id="view.call_tip_use_style"></a>
-#### `view.call_tip_use_style` 
+#### `view.call_tip_use_style`
 
 The pixel width of tab characters in call tips.
 When non-zero, also enables the use of style number [`view.STYLE_CALLTIP`](#view.STYLE_CALLTIP) instead of
@@ -3238,12 +3243,12 @@ When non-zero, also enables the use of style number [`view.STYLE_CALLTIP`](#view
 The default value is depends on [`buffer.tab_width`](#buffer.tab_width) and the current font.
 
 <a id="view.call_tip_pos_start"></a>
-#### `view.call_tip_pos_start` 
+#### `view.call_tip_pos_start`
 
 The position at which backspacing beyond it hides a visible call tip. (Write-only)
 
 <a id="view.call_tip_fore_hlt"></a>
-#### `view.call_tip_fore_hlt` 
+#### `view.call_tip_fore_hlt`
 
 A call tip's highlighted text foreground color, in "0xBBGGRR" format. (Write-only)
 
@@ -3443,7 +3448,7 @@ List of flags per line number that indicate whether or not lines are visible for
 numbers. (Read-only)
 
 <a id="view.all_lines_visible"></a>
-#### `view.all_lines_visible` 
+#### `view.all_lines_visible`
 
 Whether or not all lines are visible. (Read-only)
 
@@ -3451,7 +3456,7 @@ Whether or not all lines are visible. (Read-only)
 
 
 <a id="view.x_offset"></a>
-#### `view.x_offset` 
+#### `view.x_offset`
 
 The horizontal scroll pixel position.
 A value of `0` is the normal position with the first text column visible at the left of
@@ -3518,7 +3523,7 @@ Scrolls to the end of the buffer without moving the caret.
  Indentation settings and end-of-line characters can be configured on a per-buffer and
  per-file basis.
 <a id="buffer.use_tabs"></a>
-#### `buffer.use_tabs` 
+#### `buffer.use_tabs`
 
 Use tabs instead of spaces in indentation.
 Changing the current setting does not convert any of the buffer's existing indentation. Use
@@ -3526,31 +3531,31 @@ Changing the current setting does not convert any of the buffer's existing inden
 The default value is `true`.
 
 <a id="buffer.tab_width"></a>
-#### `buffer.tab_width` 
+#### `buffer.tab_width`
 
 The number of space characters represented by a tab character.
 The default value is `8`.
 
 <a id="buffer.indent"></a>
-#### `buffer.indent` 
+#### `buffer.indent`
 
 The number of spaces in one level of indentation.
 The default value is `0`, which uses the value of [`buffer.tab_width`](#buffer.tab_width).
 
 <a id="buffer.tab_indents"></a>
-#### `buffer.tab_indents` 
+#### `buffer.tab_indents`
 
 Indent text when tabbing within indentation.
 The default value is `true`.
 
 <a id="buffer.back_space_un_indents"></a>
-#### `buffer.back_space_un_indents` 
+#### `buffer.back_space_un_indents`
 
 Un-indent text when backspacing within indentation.
 The default value is `true`.
 
 <a id="buffer.eol_mode"></a>
-#### `buffer.eol_mode` 
+#### `buffer.eol_mode`
 
 The current end of line mode.
 Changing the current mode does not convert any of the buffer's existing end of line
@@ -3584,21 +3589,21 @@ Parameters:
  buffer's behavior when moving between words or searching for whole words. The display of
  individual characters may be changed.
 <a id="buffer.word_chars"></a>
-#### `buffer.word_chars` 
+#### `buffer.word_chars`
 
 The string set of characters recognized as word characters.
 The default value is a string that contains alphanumeric characters, an underscore, and all
 characters greater than ASCII value 127.
 
 <a id="buffer.whitespace_chars"></a>
-#### `buffer.whitespace_chars` 
+#### `buffer.whitespace_chars`
 
 The string set of characters recognized as whitespace characters.
 Set this only after setting [`buffer.word_chars`](#buffer.word_chars).
 The default value is a string that contains all non-newline characters less than ASCII value 33.
 
 <a id="buffer.punctuation_chars"></a>
-#### `buffer.punctuation_chars` 
+#### `buffer.punctuation_chars`
 
 The string set of characters recognized as punctuation characters.
 Set this only after setting [`buffer.word_chars`](#buffer.word_chars).
@@ -3917,7 +3922,7 @@ Map of flags for UI element identifiers that indicate whether or not an element 
 translucent colors.
 
 <a id="view.selection_layer"></a>
-#### `view.selection_layer` 
+#### `view.selection_layer`
 
 The layer mode for drawing selections.
 
@@ -3934,7 +3939,7 @@ The default value is [`view.LAYER_BASE`](#view.LAYER_BASE).
 
 
 <a id="view.caret_style"></a>
-#### `view.caret_style` 
+#### `view.caret_style`
 
 The caret's visual style.
 
@@ -3951,20 +3956,20 @@ in order to draw the caret after the end of a selection, as opposed to just insi
 The default value is [`view.CARETSTYLE_LINE`](#view.CARETSTYLE_LINE).
 
 <a id="view.caret_width"></a>
-#### `view.caret_width` 
+#### `view.caret_width`
 
 The line caret's pixel width in insert mode, between `0` and `20`.
 The default value is `1`.
 
 <a id="view.caret_period"></a>
-#### `view.caret_period` 
+#### `view.caret_period`
 
 The time between caret blinks in milliseconds.
 A value of `0` stops blinking.
 The default value is `500`.
 
 <a id="view.caret_line_frame"></a>
-#### `view.caret_line_frame` 
+#### `view.caret_line_frame`
 
 The caret line's frame width in pixels.
 When non-zero, the line that contains the caret is framed instead of colored in. The
@@ -3972,20 +3977,20 @@ When non-zero, the line that contains the caret is framed instead of colored in.
 The default value is `0`.
 
 <a id="view.caret_line_highlight_subline"></a>
-#### `view.caret_line_highlight_subline` 
+#### `view.caret_line_highlight_subline`
 
 Color the background of the subline that contains the caret a different color, rather than
 the whole line.
 The defalt value is `false`.
 
 <a id="view.caret_line_visible_always"></a>
-#### `view.caret_line_visible_always` 
+#### `view.caret_line_visible_always`
 
 Always show the caret line, even when the view is not in focus.
 The default value is `true`, but only for the current view, and only while Textadept has focus.
 
 <a id="view.caret_line_layer"></a>
-#### `view.caret_line_layer` 
+#### `view.caret_line_layer`
 
 The caret line layer mode.
 
@@ -3999,19 +4004,19 @@ The caret line layer mode.
 The default value is [`view.LAYER_BASE`](#view.LAYER_BASE).
 
 <a id="view.additional_carets_visible"></a>
-#### `view.additional_carets_visible` 
+#### `view.additional_carets_visible`
 
 Display additional carets.
 The default value is `true`.
 
 <a id="view.additional_carets_blink"></a>
-#### `view.additional_carets_blink` 
+#### `view.additional_carets_blink`
 
 Allow additional carets to blink.
 The default value is `true`.
 
 <a id="buffer.virtual_space_options"></a>
-#### `buffer.virtual_space_options` 
+#### `buffer.virtual_space_options`
 
 The virtual space mode.
 
@@ -4033,7 +4038,7 @@ The virtual space mode.
 
 
 <a id="view.sel_eol_filled"></a>
-#### `view.sel_eol_filled` 
+#### `view.sel_eol_filled`
 
 Extend the selection to the view's right margin.
 The default value is `false`.
@@ -4043,7 +4048,7 @@ The default value is `false`.
 
  Normally, tab, space, and end of line characters are invisible.
 <a id="view.view_ws"></a>
-#### `view.view_ws` 
+#### `view.view_ws`
 
 The whitespace visibility mode.
 
@@ -4059,13 +4064,13 @@ The whitespace visibility mode.
 The default value is [`view.WS_INVISIBLE`](#view.WS_INVISIBLE).
 
 <a id="view.whitespace_size"></a>
-#### `view.whitespace_size` 
+#### `view.whitespace_size`
 
 The pixel size of the dots that represent space characters when whitespace is visible.
 The default value is `1`.
 
 <a id="view.tab_draw_mode"></a>
-#### `view.tab_draw_mode` 
+#### `view.tab_draw_mode`
 
 The draw mode of visible tabs.
 
@@ -4077,19 +4082,19 @@ The draw mode of visible tabs.
 The default value is [`view.TD_LONGARROW`](#view.TD_LONGARROW).
 
 <a id="view.view_eol"></a>
-#### `view.view_eol` 
+#### `view.view_eol`
 
 Display end of line characters.
 The default value is `false`.
 
 <a id="view.extra_ascent"></a>
-#### `view.extra_ascent` 
+#### `view.extra_ascent`
 
 The amount of pixel padding above lines.
 The default value is `0`.
 
 <a id="view.extra_descent"></a>
-#### `view.extra_descent` 
+#### `view.extra_descent`
 
 The amount of pixel padding below lines.
 The default is `0`.
@@ -4098,19 +4103,19 @@ The default is `0`.
 
 
 <a id="view.h_scroll_bar"></a>
-#### `view.h_scroll_bar` 
+#### `view.h_scroll_bar`
 
 Display the horizontal scroll bar.
 The default value is `true` in the GUI version and `false` in the terminal version.
 
 <a id="view.v_scroll_bar"></a>
-#### `view.v_scroll_bar` 
+#### `view.v_scroll_bar`
 
 Display the vertical scroll bar.
 The default value is `true`.
 
 <a id="view.scroll_width"></a>
-#### `view.scroll_width` 
+#### `view.scroll_width`
 
 The horizontal scrolling pixel width.
 If [`view.scroll_width_tracking`](#view.scroll_width_tracking) is `false`, the view uses this static width for horizontal
@@ -4119,7 +4124,7 @@ The default value is `1` in conjunction with [`view.scroll_width_tracking`](#vie
 value of `2000` is reasonable if [`view.scroll_width_tracking`](#view.scroll_width_tracking) is `false`.
 
 <a id="view.scroll_width_tracking"></a>
-#### `view.scroll_width_tracking` 
+#### `view.scroll_width_tracking`
 
 Grow (but never shrink) [`view.scroll_width`](#view.scroll_width) as needed to match the maximum width of a
 displayed line.
@@ -4127,7 +4132,7 @@ Enabling this may have performance implications for buffers with long lines.
 The default value is `true`.
 
 <a id="view.end_at_last_line"></a>
-#### `view.end_at_last_line` 
+#### `view.end_at_last_line`
 
 Disable scrolling past the last line.
 The default value is `true`.
@@ -4195,7 +4200,7 @@ Parameters:
 
 
 <a id="view.cursor"></a>
-#### `view.cursor` 
+#### `view.cursor`
 
 The display cursor type.
 
@@ -4216,7 +4221,7 @@ The default value is [`view.CURSORNORMAL`](#view.CURSORNORMAL).
  By default, lines that contain more characters than the view can show do not wrap into view
  and onto sub-lines.
 <a id="view.wrap_mode"></a>
-#### `view.wrap_mode` 
+#### `view.wrap_mode`
 
 Long line wrap mode.
 
@@ -4232,7 +4237,7 @@ Long line wrap mode.
 The default value is [`view.WRAP_NONE`](#view.WRAP_NONE).
 
 <a id="view.wrap_visual_flags"></a>
-#### `view.wrap_visual_flags` 
+#### `view.wrap_visual_flags`
 
 The wrapped line visual flag display mode.
 
@@ -4248,7 +4253,7 @@ The wrapped line visual flag display mode.
 The default value is [`view.WRAPVISUALFLAG_NONE`](#view.WRAPVISUALFLAG_NONE).
 
 <a id="view.wrap_visual_flags_location"></a>
-#### `view.wrap_visual_flags_location` 
+#### `view.wrap_visual_flags_location`
 
 The wrapped line visual flag location.
 
@@ -4262,14 +4267,14 @@ The wrapped line visual flag location.
 The default value is [`view.WRAPVISUALFLAGLOC_DEFAULT`](#view.WRAPVISUALFLAGLOC_DEFAULT).
 
 <a id="view.wrap_start_indent"></a>
-#### `view.wrap_start_indent` 
+#### `view.wrap_start_indent`
 
 The number of spaces of indentation to display wrapped lines with if
 [`view.wrap_indent_mode`](#view.wrap_indent_mode) is [`view.WRAPINDENT_FIXED`](#view.WRAPINDENT_FIXED).
 The default value is `0`.
 
 <a id="view.wrap_indent_mode"></a>
-#### `view.wrap_indent_mode` 
+#### `view.wrap_indent_mode`
 
 The wrapped line indent mode.
 
@@ -4298,7 +4303,7 @@ Increases the size of all fonts by one point, up to 60.
 Decreases the size of all fonts by one point, down to -10.
 
 <a id="view.zoom"></a>
-#### `view.zoom` 
+#### `view.zoom`
 
 The number of points to add to the size of all fonts.
 Negative values are allowed, down to `-10`.
@@ -4310,12 +4315,12 @@ The default value is `0`.
  While the view does not enforce a maximum line length, it allows for visual identification
  of long lines.
 <a id="view.edge_column"></a>
-#### `view.edge_column` 
+#### `view.edge_column`
 
 The column number to mark long lines at.
 
 <a id="view.edge_mode"></a>
-#### `view.edge_mode` 
+#### `view.edge_mode`
 
 The long line mark mode.
 
@@ -4351,7 +4356,7 @@ List of edge column positions per edge column number. (Read-only)
 A position of `-1` means no edge column was found.
 
 <a id="view.edge_color"></a>
-#### `view.edge_color` 
+#### `view.edge_color`
 
 The color, in "0xBBGGRR" format, of the single edge or background for long lines according to
 [`view.edge_mode`](#view.edge_mode).
@@ -4360,32 +4365,32 @@ The color, in "0xBBGGRR" format, of the single edge or background for long lines
 
 
 <a id="view.folding"></a>
-#### `view.folding` 
+#### `view.folding`
 
 Whether or not folding is enabled for the lexers that support it.
 This option is enabled by default.
 
 <a id="view.fold_compact"></a>
-#### `view.fold_compact` 
+#### `view.fold_compact`
 
 Whether or not blank lines after an ending fold point are included in that fold.
 This option is disabled by default.
 
 <a id="view.fold_on_zero_sum_lines"></a>
-#### `view.fold_on_zero_sum_lines` 
+#### `view.fold_on_zero_sum_lines`
 
 Whether or not to mark as a fold point lines that contain both an ending and starting fold
 point. For example, `} else {` would be marked as a fold point.
 This option is disabled by default. This is an alias for
 
 <a id="view.fold_by_indentation"></a>
-#### `view.fold_by_indentation` 
+#### `view.fold_by_indentation`
 
 Whether or not to fold based on indentation level if a lexer does not have a folder.
 Some lexers automatically enable this option. It is disabled by default.
 
 <a id="view.fold_flags"></a>
-#### `view.fold_flags` 
+#### `view.fold_flags`
 
 Bit-mask of folding lines to draw in the buffer. (Read-only)
 
@@ -4410,7 +4415,7 @@ The default value is [`view.FOLDFLAG_LINEAFTER_CONTRACTED`](#view.FOLDFLAG_LINEA
 [`view.FOLDFLAG_NONE`](#view.FOLDFLAG_NONE) in the terminal version.
 
 <a id="view.fold_display_text_style"></a>
-#### `view.fold_display_text_style` 
+#### `view.fold_display_text_style`
 
 The fold display text mode.
 
@@ -4476,7 +4481,7 @@ Parameters:
 
 
 <a id="view.indentation_guides"></a>
-#### `view.indentation_guides` 
+#### `view.indentation_guides`
 
 The indentation guide drawing mode.
 Indentation guides are dotted vertical lines that appear within indentation whitespace at
@@ -4497,7 +4502,7 @@ The default value is [`view.IV_LOOKBOTH`](#view.IV_LOOKBOTH) in the GUI version,
 terminal version.
 
 <a id="view.highlight_guide"></a>
-#### `view.highlight_guide` 
+#### `view.highlight_guide`
 
 The indentation guide column number to also highlight when highlighting matching braces, or
 `0` to stop indentation guide highlighting.
@@ -4538,7 +4543,7 @@ Parameters:
 	lexers. The default is `false` and returns the parent lexer.
 
 <a id="buffer.lexer_language"></a>
-#### `buffer.lexer_language` 
+#### `buffer.lexer_language`
 
 The buffer's lexer name. (Read-only)
 If the lexer is a multi-language lexer, [`buffer:get_lexer()`](#buffer.get_lexer) can obtain the lexer under
@@ -4605,7 +4610,7 @@ Parameters:
 List of style numbers per position. (Read-only)
 
 <a id="buffer.named_styles"></a>
-#### `buffer.named_styles` 
+#### `buffer.named_styles`
 
 The number of named lexer styles.
 
@@ -4639,7 +4644,7 @@ Return:
 - style number, between `1` and `256`.
 
 <a id="buffer.end_styled"></a>
-#### `buffer.end_styled` 
+#### `buffer.end_styled`
 
 The current styling position or the last correctly styled character's position. (Read-only)
 
@@ -4647,13 +4652,13 @@ The current styling position or the last correctly styled character's position. 
 
 
 <a id="buffer.tab_label"></a>
-#### `buffer.tab_label` 
+#### `buffer.tab_label`
 
 The buffer's tab label in the tab bar. (Write-only)
 Textadept sets this automatically based on the buffer's filename or type, and its save status.
 
 <a id="buffer.read_only"></a>
-#### `buffer.read_only` 
+#### `buffer.read_only`
 
 Whether or not the buffer is read-only.
 The default value is `false`.
@@ -4669,13 +4674,13 @@ Cancels the active selection mode, autocompletion or user list, call tip, etc.
 Toggles [`buffer.overtype`](#buffer.overtype).
 
 <a id="buffer.overtype"></a>
-#### `buffer.overtype` 
+#### `buffer.overtype`
 
 Enable overtype mode, where typed characters overwrite existing ones.
 The default value is `false`.
 
 <a id="view.idle_styling"></a>
-#### `view.idle_styling` 
+#### `view.idle_styling`
 
 The idle styling mode.
 This mode has no effect when [`view.wrap_mode`](#view.wrap_mode) is on.
@@ -4693,7 +4698,7 @@ This mode has no effect when [`view.wrap_mode`](#view.wrap_mode) is on.
 	The default value is [`view.IDLESTYLING_ALL`](#view.IDLESTYLING_ALL).
 
 <a id="view.mouse_dwell_time"></a>
-#### `view.mouse_dwell_time` 
+#### `view.mouse_dwell_time`
 
 The number of milliseconds the mouse must idle before generating an [`events.DWELL_START`](#events.DWELL_START) event.
 A time of [`view.TIME_FOREVER`](#view.TIME_FOREVER) will never generate one.
@@ -4732,7 +4737,7 @@ use the event framework to pass values.
 ### Fields defined by `events`
 
 <a id="events.APPLEEVENT_ODOC"></a>
-#### `events.APPLEEVENT_ODOC` 
+#### `events.APPLEEVENT_ODOC`
 
 Emitted when macOS tells Textadept to open a file.
 Arguments:
@@ -4740,22 +4745,22 @@ Arguments:
 - *uri*: The UTF-8-encoded URI to open.
 
 <a id="events.ARG_NONE"></a>
-#### `events.ARG_NONE` 
+#### `events.ARG_NONE`
 
 Emitted when no filename or directory command line arguments are passed to Textadept on startup.
 
 <a id="events.AUTO_C_CANCELED"></a>
-#### `events.AUTO_C_CANCELED` 
+#### `events.AUTO_C_CANCELED`
 
 Emitted when canceling an autocompletion or user list.
 
 <a id="events.AUTO_C_CHAR_DELETED"></a>
-#### `events.AUTO_C_CHAR_DELETED` 
+#### `events.AUTO_C_CHAR_DELETED`
 
 Emitted after deleting a character while an autocompletion or user list is active.
 
 <a id="events.AUTO_C_COMPLETED"></a>
-#### `events.AUTO_C_COMPLETED` 
+#### `events.AUTO_C_COMPLETED`
 
 Emitted after inserting an item from an autocompletion list into the buffer.
 Arguments:
@@ -4766,7 +4771,7 @@ Arguments:
 	or `0` if no character was used.
 
 <a id="events.AUTO_C_SELECTION"></a>
-#### `events.AUTO_C_SELECTION` 
+#### `events.AUTO_C_SELECTION`
 
 Emitted after selecting an item from an autocompletion list, but before inserting that item
 into the buffer.
@@ -4780,7 +4785,7 @@ Arguments:
 	or `0` if no character was used.
 
 <a id="events.AUTO_C_SELECTION_CHANGE"></a>
-#### `events.AUTO_C_SELECTION_CHANGE` 
+#### `events.AUTO_C_SELECTION_CHANGE`
 
 Emitted as items are highlighted in an autocompletion or user list.
 Arguments:
@@ -4790,21 +4795,21 @@ Arguments:
 - *position*: The position the list was displayed at.
 
 <a id="events.BUFFER_AFTER_REPLACE_TEXT"></a>
-#### `events.BUFFER_AFTER_REPLACE_TEXT` 
+#### `events.BUFFER_AFTER_REPLACE_TEXT`
 
 Emitted after replacing the contents of the current buffer.
 Note that it is not guaranteed that [`events.BUFFER_BEFORE_REPLACE_TEXT`](#events.BUFFER_BEFORE_REPLACE_TEXT) was emitted previously.
 The buffer **must not** be modified during this event.
 
 <a id="events.BUFFER_AFTER_SWITCH"></a>
-#### `events.BUFFER_AFTER_SWITCH` 
+#### `events.BUFFER_AFTER_SWITCH`
 
 Emitted right after switching to another buffer.
 The buffer being switched to is [`buffer`](#buffer).
 Emitted by [`view:goto_buffer()`](#view.goto_buffer).
 
 <a id="events.BUFFER_BEFORE_REPLACE_TEXT"></a>
-#### `events.BUFFER_BEFORE_REPLACE_TEXT` 
+#### `events.BUFFER_BEFORE_REPLACE_TEXT`
 
 Emitted before replacing the contents of the current buffer.
 Note that it is not guaranteed that [`events.BUFFER_AFTER_REPLACE_TEXT`](#events.BUFFER_AFTER_REPLACE_TEXT) will be emitted
@@ -4812,14 +4817,14 @@ shortly after this event.
 The buffer **must not** be modified during this event.
 
 <a id="events.BUFFER_BEFORE_SWITCH"></a>
-#### `events.BUFFER_BEFORE_SWITCH` 
+#### `events.BUFFER_BEFORE_SWITCH`
 
 Emitted right before switching to another buffer.
 The buffer being switched from is [`buffer`](#buffer).
 Emitted by [`view:goto_buffer()`](#view.goto_buffer) and `buffer.new()`.
 
 <a id="events.BUFFER_DELETED"></a>
-#### `events.BUFFER_DELETED` 
+#### `events.BUFFER_DELETED`
 
 Emitted after deleting a buffer.
 Emitted by [`buffer:delete()`](#buffer.delete).
@@ -4829,14 +4834,14 @@ Arguments:
 	on it, but fields like [`buffer.filename`](#buffer.filename) can be read.
 
 <a id="events.BUFFER_NEW"></a>
-#### `events.BUFFER_NEW` 
+#### `events.BUFFER_NEW`
 
 Emitted after creating a new buffer.
 The new buffer is [`buffer`](#buffer).
 Emitted on startup and by `buffer.new()`.
 
 <a id="events.BUILD_OUTPUT"></a>
-#### `events.BUILD_OUTPUT` 
+#### `events.BUILD_OUTPUT`
 
 Emitted when executing a project's build shell command.
 By default, output is printed to the output buffer. In order to override this behavior,
@@ -4846,7 +4851,7 @@ Arguments:
 - *output*: A line of string output from the command.
 
 <a id="events.CALL_TIP_CLICK"></a>
-#### `events.CALL_TIP_CLICK` 
+#### `events.CALL_TIP_CLICK`
 
 Emitted when clicking on a calltip.
 This event is not emitted by the Qt version.
@@ -4856,7 +4861,7 @@ Arguments:
 	otherwise.
 
 <a id="events.CHAR_ADDED"></a>
-#### `events.CHAR_ADDED` 
+#### `events.CHAR_ADDED`
 
 Emitted after the user types a text character into the buffer.
 Arguments:
@@ -4864,13 +4869,13 @@ Arguments:
 - *code*: The text character's character code.
 
 <a id="events.COMMAND_TEXT_CHANGED"></a>
-#### `events.COMMAND_TEXT_CHANGED` 
+#### `events.COMMAND_TEXT_CHANGED`
 
 Emitted when the text in the command entry changes.
 `ui.command_entry:get_text()` returns the current text.
 
 <a id="events.COMPILE_OUTPUT"></a>
-#### `events.COMPILE_OUTPUT` 
+#### `events.COMPILE_OUTPUT`
 
 Emitted when executing a language's compile shell command.
 By default, compiler output is printed to the output buffer. In order to override this
@@ -4880,7 +4885,7 @@ Arguments:
 - *output*: A line of string output from the command.
 
 <a id="events.CSI"></a>
-#### `events.CSI` 
+#### `events.CSI`
 
 Emitted when the terminal version receives an unrecognized CSI sequence.
 Arguments:
@@ -4891,7 +4896,7 @@ Arguments:
 - *args*: Table of numeric arguments of the CSI sequence.
 
 <a id="events.DOUBLE_CLICK"></a>
-#### `events.DOUBLE_CLICK` 
+#### `events.DOUBLE_CLICK`
 
 Emitted after double-clicking the mouse button.
 Arguments:
@@ -4905,7 +4910,7 @@ Arguments:
 	reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 
 <a id="events.DWELL_END"></a>
-#### `events.DWELL_END` 
+#### `events.DWELL_END`
 
 Emitted after [`events.DWELL_START`](#events.DWELL_START) when the user moves the mouse, presses a key, or scrolls
 the view.
@@ -4916,7 +4921,7 @@ Arguments:
 - *y*: The y-coordinate of the mouse in the view.
 
 <a id="events.DWELL_START"></a>
-#### `events.DWELL_START` 
+#### `events.DWELL_START`
 
 Emitted when the mouse is stationary for [`view.mouse_dwell_time`](#view.mouse_dwell_time) milliseconds.
 Arguments:
@@ -4926,7 +4931,7 @@ Arguments:
 - *y*: The y-coordinate of the mouse in the view.
 
 <a id="events.ERROR"></a>
-#### `events.ERROR` 
+#### `events.ERROR`
 
 Emitted when an error occurs.
 Arguments:
@@ -4934,7 +4939,7 @@ Arguments:
 - *text*: The error message text.
 
 <a id="events.FILE_AFTER_SAVE"></a>
-#### `events.FILE_AFTER_SAVE` 
+#### `events.FILE_AFTER_SAVE`
 
 Emitted right after saving a file to disk.
 Emitted by [`buffer:save()`](#buffer.save) and [`buffer:save_as()`](#buffer.save_as).
@@ -4944,7 +4949,7 @@ Arguments:
 - *saved_as*: Whether or not the file was saved under a different filename.
 
 <a id="events.FILE_BEFORE_SAVE"></a>
-#### `events.FILE_BEFORE_SAVE` 
+#### `events.FILE_BEFORE_SAVE`
 
 Emitted right before saving a file to disk.
 Emitted by [`buffer:save()`](#buffer.save).
@@ -4953,7 +4958,7 @@ Arguments:
 - *filename*: The filename of the file being saved.
 
 <a id="events.FILE_CHANGED"></a>
-#### `events.FILE_CHANGED` 
+#### `events.FILE_CHANGED`
 
 Emitted when Textadept detects that an open file was modified externally.
 When connecting to this event, connect with an index of 1 in order to override the default
@@ -4963,7 +4968,7 @@ Arguments:
 - *filename*: The filename externally modified.
 
 <a id="events.FILE_OPENED"></a>
-#### `events.FILE_OPENED` 
+#### `events.FILE_OPENED`
 
 Emitted after opening a file in a new buffer.
 Emitted by [`io.open_file()`](#io.open_file).
@@ -4972,7 +4977,7 @@ Arguments:
 - *filename*: The opened file's filename.
 
 <a id="events.FIND"></a>
-#### `events.FIND` 
+#### `events.FIND`
 
 Emitted to find text via the Find & Replace Pane.
 Emitted by [`ui.find.find_next()`](#ui.find.find_next) and [`ui.find.find_prev()`](#ui.find.find_prev).
@@ -4982,7 +4987,7 @@ Arguments:
 - *next*: Whether or not to search forward.
 
 <a id="events.FIND_RESULT_FOUND"></a>
-#### `events.FIND_RESULT_FOUND` 
+#### `events.FIND_RESULT_FOUND`
 
 Emitted when a result is found. It is selected and has been scrolled into view.
 Arguments:
@@ -4991,13 +4996,13 @@ Arguments:
 - *wrapped*: Whether or not the result found is after a text search wrapped.
 
 <a id="events.FIND_TEXT_CHANGED"></a>
-#### `events.FIND_TEXT_CHANGED` 
+#### `events.FIND_TEXT_CHANGED`
 
 Emitted when the text in the "Find" field of the Find & Replace Pane changes.
 [`ui.find.find_entry_text`](#ui.find.find_entry_text) contains the current text.
 
 <a id="events.FIND_WRAPPED"></a>
-#### `events.FIND_WRAPPED` 
+#### `events.FIND_WRAPPED`
 
 Emitted when a text search wraps (passes through the beginning of the buffer), either from
 bottom to top (when searching for a next occurrence), or from top to bottom (when searching
@@ -5006,13 +5011,13 @@ This is useful for implementing a more visual or audible notice when a search wr
 addition to the statusbar message.
 
 <a id="events.FOCUS"></a>
-#### `events.FOCUS` 
+#### `events.FOCUS`
 
 Emitted when Textadept receives focus.
 This event is never emitted when Textadept is running in the terminal.
 
 <a id="events.INDICATOR_CLICK"></a>
-#### `events.INDICATOR_CLICK` 
+#### `events.INDICATOR_CLICK`
 
 Emitted when clicking the mouse on text that has an indicator present.
 Arguments:
@@ -5025,7 +5030,7 @@ Arguments:
 	reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 
 <a id="events.INDICATOR_RELEASE"></a>
-#### `events.INDICATOR_RELEASE` 
+#### `events.INDICATOR_RELEASE`
 
 Emitted when releasing the mouse after clicking on text that has an indicator present.
 Arguments:
@@ -5038,12 +5043,12 @@ Arguments:
 	reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 
 <a id="events.INITIALIZED"></a>
-#### `events.INITIALIZED` 
+#### `events.INITIALIZED`
 
 Emitted after Textadept finishes initializing.
 
 <a id="events.KEYPRESS"></a>
-#### `events.KEYPRESS` 
+#### `events.KEYPRESS`
 
 Emitted when pressing a recognized key.
 If any handler returns `true`, the key is not handled further (e.g. inserted into the buffer).
@@ -5052,7 +5057,7 @@ Arguments:
 - *key*: The string representation of the [key sequence](#key-sequences).
 
 <a id="events.LEXER_LOADED"></a>
-#### `events.LEXER_LOADED` 
+#### `events.LEXER_LOADED`
 
 Emitted after loading a language lexer.
 This is useful for automatically loading language modules as source files are opened, or
@@ -5062,7 +5067,7 @@ Arguments:
 - *name*: The language lexer's name.
 
 <a id="events.MARGIN_CLICK"></a>
-#### `events.MARGIN_CLICK` 
+#### `events.MARGIN_CLICK`
 
 Emitted when clicking the mouse inside a sensitive margin.
 Arguments:
@@ -5076,7 +5081,7 @@ Arguments:
 	reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 
 <a id="events.MENU_CLICKED"></a>
-#### `events.MENU_CLICKED` 
+#### `events.MENU_CLICKED`
 
 Emitted after selecting a menu item.
 Arguments:
@@ -5084,7 +5089,7 @@ Arguments:
 - *menu_id*: The numeric ID of the menu item, which was defined in [`ui.menu()`](#ui.menu).
 
 <a id="events.MODE_CHANGED"></a>
-#### `events.MODE_CHANGED` 
+#### `events.MODE_CHANGED`
 
 Emitted by the GUI version when switching between light mode and dark mode.
 Arguments:
@@ -5092,7 +5097,7 @@ Arguments:
 - *mode*: Either "light" or "dark".
 
 <a id="events.MOUSE"></a>
-#### `events.MOUSE` 
+#### `events.MOUSE`
 
 Emitted by the terminal version for an unhandled mouse event.
 A handler should return `true` if it handled the event. Otherwise Textadept will try again.
@@ -5108,7 +5113,7 @@ Arguments:
 - *x*: The x-coordinate of the mouse event, starting from 1.
 
 <a id="events.QUIT"></a>
-#### `events.QUIT` 
+#### `events.QUIT`
 
 Emitted when quitting Textadept.
 When connecting to this event, connect with an index of 1 if the handler needs to run before
@@ -5118,7 +5123,7 @@ normal shutdown procedure.
 Emitted by [`quit()`](#quit).
 
 <a id="events.REPLACE"></a>
-#### `events.REPLACE` 
+#### `events.REPLACE`
 
 Emitted to replace selected (found) text.
 Emitted by [`ui.find.replace()`](#ui.find.replace).
@@ -5127,7 +5132,7 @@ Arguments:
 - *text*: The replacement text.
 
 <a id="events.REPLACE_ALL"></a>
-#### `events.REPLACE_ALL` 
+#### `events.REPLACE_ALL`
 
 Emitted to replace all occurrences of found text.
 Emitted by [`ui.find.replace_all()`](#ui.find.replace_all).
@@ -5137,7 +5142,7 @@ Arguments:
 - *repl_text*: The replacement text.
 
 <a id="events.RESET_AFTER"></a>
-#### `events.RESET_AFTER` 
+#### `events.RESET_AFTER`
 
 Emitted after resetting Textadept's Lua state.
 Emitted by [`reset()`](#reset).
@@ -5147,7 +5152,7 @@ Arguments:
 	to this same table.
 
 <a id="events.RESET_BEFORE"></a>
-#### `events.RESET_BEFORE` 
+#### `events.RESET_BEFORE`
 
 Emitted before resetting Textadept's Lua state.
 Emitted by [`reset()`](#reset).
@@ -5157,13 +5162,13 @@ Arguments:
 	will have access to this same table.
 
 <a id="events.RESUME"></a>
-#### `events.RESUME` 
+#### `events.RESUME`
 
 Emitted when resuming Textadept from a suspended state.
 This event is only emitted by the terminal version.
 
 <a id="events.RUN_OUTPUT"></a>
-#### `events.RUN_OUTPUT` 
+#### `events.RUN_OUTPUT`
 
 Emitted when executing a language's or project's run shell command.
 By default, output is printed to the output buffer. In order to override this behavior,
@@ -5173,17 +5178,17 @@ Arguments:
 - *output*: A line of string output from the command.
 
 <a id="events.SAVE_POINT_LEFT"></a>
-#### `events.SAVE_POINT_LEFT` 
+#### `events.SAVE_POINT_LEFT`
 
 Emitted after leaving a save point.
 
 <a id="events.SAVE_POINT_REACHED"></a>
-#### `events.SAVE_POINT_REACHED` 
+#### `events.SAVE_POINT_REACHED`
 
 Emitted after reaching a save point.
 
 <a id="events.SESSION_LOAD"></a>
-#### `events.SESSION_LOAD` 
+#### `events.SESSION_LOAD`
 
 Emitted when loading a session.
 Arguments:
@@ -5191,7 +5196,7 @@ Arguments:
 - *session*: Table of session data to load. All handlers will have access to this same table.
 
 <a id="events.SESSION_SAVE"></a>
-#### `events.SESSION_SAVE` 
+#### `events.SESSION_SAVE`
 
 Emitted when saving a session.
 Arguments:
@@ -5202,13 +5207,13 @@ Arguments:
 	at all, so beware.
 
 <a id="events.SUSPEND"></a>
-#### `events.SUSPEND` 
+#### `events.SUSPEND`
 
 Emitted prior to suspending Textadept.
 This event is only emitted by the terminal version.
 
 <a id="events.TAB_CLICKED"></a>
-#### `events.TAB_CLICKED` 
+#### `events.TAB_CLICKED`
 
 Emitted when the user clicks on a buffer tab.
 When connecting to this event, connect with an index of 1 if the handler needs to run before
@@ -5226,7 +5231,7 @@ Arguments:
 	reported as *both* "Control" and "Alt" due to a Scintilla limitation with GTK.
 
 <a id="events.TAB_CLOSE_CLICKED"></a>
-#### `events.TAB_CLOSE_CLICKED` 
+#### `events.TAB_CLOSE_CLICKED`
 
 Emitted when the user clicks a buffer tab's close button.
 When connecting to this event, connect with an index of 1 if the handler needs to run before
@@ -5237,7 +5242,7 @@ Arguments:
 - *index*: The numeric index of the clicked tab.
 
 <a id="events.TEST_OUTPUT"></a>
-#### `events.TEST_OUTPUT` 
+#### `events.TEST_OUTPUT`
 
 Emitted when executing a project's shell command for running tests.
 By default, output is printed to the output buffer. In order to override this behavior,
@@ -5247,13 +5252,13 @@ Arguments:
 - *output*: A line of string output from the command.
 
 <a id="events.UNFOCUS"></a>
-#### `events.UNFOCUS` 
+#### `events.UNFOCUS`
 
 Emitted when Textadept loses focus.
 This event is never emitted when Textadept is running in the terminal.
 
 <a id="events.UPDATE_UI"></a>
-#### `events.UPDATE_UI` 
+#### `events.UPDATE_UI`
 
 Emitted after the view is visually updated.
 Arguments:
@@ -5270,7 +5275,7 @@ Arguments:
 		View has scrolled horizontally.
 
 <a id="events.URI_DROPPED"></a>
-#### `events.URI_DROPPED` 
+#### `events.URI_DROPPED`
 
 Emitted after dragging and dropping a URI into a view.
 Arguments:
@@ -5278,7 +5283,7 @@ Arguments:
 - *text*: The UTF-8-encoded URI dropped.
 
 <a id="events.USER_LIST_SELECTION"></a>
-#### `events.USER_LIST_SELECTION` 
+#### `events.USER_LIST_SELECTION`
 
 Emitted after selecting an item in a user list.
 Arguments:
@@ -5288,28 +5293,28 @@ Arguments:
 - *position*: The position the list was displayed at.
 
 <a id="events.VIEW_AFTER_SWITCH"></a>
-#### `events.VIEW_AFTER_SWITCH` 
+#### `events.VIEW_AFTER_SWITCH`
 
 Emitted right after switching to another view.
 The view being switched to is [`view`](#view).
 Emitted by [`ui.goto_view()`](#ui.goto_view).
 
 <a id="events.VIEW_BEFORE_SWITCH"></a>
-#### `events.VIEW_BEFORE_SWITCH` 
+#### `events.VIEW_BEFORE_SWITCH`
 
 Emitted right before switching to another view.
 The view being switched from is [`view`](#view).
 Emitted by [`ui.goto_view()`](#ui.goto_view) and [`view:split()`](#view.split).
 
 <a id="events.VIEW_NEW"></a>
-#### `events.VIEW_NEW` 
+#### `events.VIEW_NEW`
 
 Emitted after creating a new view.
 The new view is [`view`](#view).
 Emitted on startup and by [`view:split()`](#view.split).
 
 <a id="events.ZOOM"></a>
-#### `events.ZOOM` 
+#### `events.ZOOM`
 
 Emitted after changing [`view.zoom`](#view.zoom).
 Emitted by [`view:zoom_in()`](#view.zoom_in) and [`view:zoom_out()`](#view.zoom_out).
@@ -5380,7 +5385,7 @@ Extends Lua's [`io`](#io) library with Textadept functions for working with file
 ### Fields defined by `io`
 
 <a id="io.detect_indentation"></a>
-#### `io.detect_indentation` 
+#### `io.detect_indentation`
 
 Whether or not to attempt to detect indentation settings for opened files.
 If any non-blank line starts with a tab, tabs are used. Otherwise, for the first non-blank
@@ -5411,11 +5416,11 @@ Usage:
 `
 
 <a id="io.ensure_final_newline"></a>
-#### `io.ensure_final_newline` 
+#### `io.ensure_final_newline`
 
 Whether or not to ensure there is a final newline when saving text files.
 This has no effect on binary files.
-The default value is `false` on Windows, and `true` on Linux and macOS.
+The default value is `false` on Windows, and `true` on Linux, BSD and macOS.
 
 <a id="io.quick_open_filters"></a>
 #### `io.quick_open_filters` &lt;table&gt;
@@ -5423,7 +5428,7 @@ The default value is `false` on Windows, and `true` on Linux and macOS.
 Map of directory paths to filters used by [`io.quick_open()`](#io.quick_open).
 
 <a id="io.quick_open_max"></a>
-#### `io.quick_open_max` 
+#### `io.quick_open_max`
 
 The maximum number of files listed in the quick open dialog.
 The default value is `5000`.
@@ -5565,7 +5570,7 @@ completion, but fall back to word autocompletion if the first command fails.)
 ### Key Sequences
 
 Key sequences are strings built from an ordered combination of modifier keys and the key's
-inserted character. Modifier keys are "Control", "Shift", and "Alt" on Windows, Linux, and
+inserted character. Modifier keys are "Control", "Shift", and "Alt" on Windows, Linux, BSD and
 in the terminal version. On macOS they are "Control" (`^`), "Alt/Option" (`⌥`), "Command"
 (`⌘`), and "Shift" (`⇧`). These modifiers have the following string representations:
 
@@ -5578,7 +5583,7 @@ Shift | `'shift'` | `'shift'` | `'shift'`
 
 The string representation of key values less than 255 is the character that Textadept would
 normally insert if the "Control", "Alt", and "Command" modifiers were not held down. Therefore,
-a combination of `Ctrl+Alt+Shift+A` has the key sequence `ctrl+alt+A` on Windows and Linux,
+a combination of `Ctrl+Alt+Shift+A` has the key sequence `ctrl+alt+A` on Windows, BSD and Linux,
 but a combination of `Ctrl+Shift+Tab` has the key sequence `ctrl+shift+\t`. On a United States
 English keyboard, since the combination of `Ctrl+Shift+,` has the key sequence `ctrl+<`
 (`Shift+,` inserts a `<`), Textadept recognizes the key binding as `Ctrl+<`. This allows
@@ -5638,7 +5643,7 @@ key sequence. By default, the `Esc` key cancels a key chain, but you can redefin
 ### Fields defined by `keys`
 
 <a id="keys.CLEAR"></a>
-#### `keys.CLEAR` 
+#### `keys.CLEAR`
 
 The key that clears the current key chain.
 It cannot be part of a key chain.
@@ -5661,7 +5666,7 @@ kppgup, kppgdn, kpmul, kpadd, kpsub, kpdiv, kpdec, and kp0-kp9.
 The current chain of key sequences. (Read-only.)
 
 <a id="keys.mode"></a>
-#### `keys.mode` 
+#### `keys.mode`
 
 The current key mode.
 When non-`nil`, all key bindings defined outside of `keys[mode]` are ignored.
@@ -6340,202 +6345,202 @@ and thanks to Roberto Ierusalimschy for LPeg.
 ### Fields defined by `lexer`
 
 <a id="lexer.ANNOTATION"></a>
-#### `lexer.ANNOTATION` 
+#### `lexer.ANNOTATION`
 
 The tag name for annotation elements.
 
 <a id="lexer.ATTRIBUTE"></a>
-#### `lexer.ATTRIBUTE` 
+#### `lexer.ATTRIBUTE`
 
 The tag name for function attribute elements, typically in markup.
 
 <a id="lexer.BOLD"></a>
-#### `lexer.BOLD` 
+#### `lexer.BOLD`
 
 The tag name for bold elements, typically in markup.
 
 <a id="lexer.CLASS"></a>
-#### `lexer.CLASS` 
+#### `lexer.CLASS`
 
 The tag name for class elements.
 
 <a id="lexer.CODE"></a>
-#### `lexer.CODE` 
+#### `lexer.CODE`
 
 The tag name for code elements, typically in markup.
 
 <a id="lexer.COMMENT"></a>
-#### `lexer.COMMENT` 
+#### `lexer.COMMENT`
 
 The tag name for comment elements.
 
 <a id="lexer.CONSTANT"></a>
-#### `lexer.CONSTANT` 
+#### `lexer.CONSTANT`
 
 The tag name for constant elements.
 
 <a id="lexer.CONSTANT_BUILTIN"></a>
-#### `lexer.CONSTANT_BUILTIN` 
+#### `lexer.CONSTANT_BUILTIN`
 
 The tag name for builtin constant elements.
 
 <a id="lexer.DEFAULT"></a>
-#### `lexer.DEFAULT` 
+#### `lexer.DEFAULT`
 
 The tag name for default elements.
 
 <a id="lexer.EMBEDDED"></a>
-#### `lexer.EMBEDDED` 
+#### `lexer.EMBEDDED`
 
 The tag name for embedded elements.
 
 <a id="lexer.ERROR"></a>
-#### `lexer.ERROR` 
+#### `lexer.ERROR`
 
 The tag name for error elements.
 
 <a id="lexer.FOLD_BASE"></a>
-#### `lexer.FOLD_BASE` 
+#### `lexer.FOLD_BASE`
 
 The initial (root) fold level.
 
 <a id="lexer.FOLD_BLANK"></a>
-#### `lexer.FOLD_BLANK` 
+#### `lexer.FOLD_BLANK`
 
 Flag indicating that the line is blank.
 
 <a id="lexer.FOLD_HEADER"></a>
-#### `lexer.FOLD_HEADER` 
+#### `lexer.FOLD_HEADER`
 
 Flag indicating the line is fold point.
 
 <a id="lexer.FUNCTION"></a>
-#### `lexer.FUNCTION` 
+#### `lexer.FUNCTION`
 
 The tag name for function elements.
 
 <a id="lexer.FUNCTION_BUILTIN"></a>
-#### `lexer.FUNCTION_BUILTIN` 
+#### `lexer.FUNCTION_BUILTIN`
 
 The tag name for builtin function elements.
 
 <a id="lexer.FUNCTION_METHOD"></a>
-#### `lexer.FUNCTION_METHOD` 
+#### `lexer.FUNCTION_METHOD`
 
 The tag name for function method elements.
 
 <a id="lexer.HEADING"></a>
-#### `lexer.HEADING` 
+#### `lexer.HEADING`
 
 The tag name for heading elements, typically in markup.
 
 <a id="lexer.IDENTIFIER"></a>
-#### `lexer.IDENTIFIER` 
+#### `lexer.IDENTIFIER`
 
 The tag name for identifier elements.
 
 <a id="lexer.ITALIC"></a>
-#### `lexer.ITALIC` 
+#### `lexer.ITALIC`
 
 The tag name for builtin italic elements, typically in markup.
 
 <a id="lexer.KEYWORD"></a>
-#### `lexer.KEYWORD` 
+#### `lexer.KEYWORD`
 
 The tag name for keyword elements.
 
 <a id="lexer.LABEL"></a>
-#### `lexer.LABEL` 
+#### `lexer.LABEL`
 
 The tag name for label elements.
 
 <a id="lexer.LINK"></a>
-#### `lexer.LINK` 
+#### `lexer.LINK`
 
 The tag name for link elements, typically in markup.
 
 <a id="lexer.LIST"></a>
-#### `lexer.LIST` 
+#### `lexer.LIST`
 
 The tag name for list item elements, typically in markup.
 
 <a id="lexer.NUMBER"></a>
-#### `lexer.NUMBER` 
+#### `lexer.NUMBER`
 
 The tag name for number elements.
 
 <a id="lexer.OPERATOR"></a>
-#### `lexer.OPERATOR` 
+#### `lexer.OPERATOR`
 
 The tag name for operator elements.
 
 <a id="lexer.PREPROCESSOR"></a>
-#### `lexer.PREPROCESSOR` 
+#### `lexer.PREPROCESSOR`
 
 The tag name for preprocessor elements.
 
 <a id="lexer.REFERENCE"></a>
-#### `lexer.REFERENCE` 
+#### `lexer.REFERENCE`
 
 The tag name for reference elements, typically in markup.
 
 <a id="lexer.REGEX"></a>
-#### `lexer.REGEX` 
+#### `lexer.REGEX`
 
 The tag name for regex elements.
 
 <a id="lexer.STRING"></a>
-#### `lexer.STRING` 
+#### `lexer.STRING`
 
 The tag name for string elements.
 
 <a id="lexer.TAG"></a>
-#### `lexer.TAG` 
+#### `lexer.TAG`
 
 The tag name for function tag elements, typically in markup.
 
 <a id="lexer.TYPE"></a>
-#### `lexer.TYPE` 
+#### `lexer.TYPE`
 
 The tag name for type elements.
 
 <a id="lexer.UNDERLINE"></a>
-#### `lexer.UNDERLINE` 
+#### `lexer.UNDERLINE`
 
 The tag name for underlined elements, typically in markup.
 
 <a id="lexer.VARIABLE"></a>
-#### `lexer.VARIABLE` 
+#### `lexer.VARIABLE`
 
 The tag name for variable elements.
 
 <a id="lexer.VARIABLE_BUILTIN"></a>
-#### `lexer.VARIABLE_BUILTIN` 
+#### `lexer.VARIABLE_BUILTIN`
 
 The tag name for builtin variable elements.
 
 <a id="lexer.alnum"></a>
-#### `lexer.alnum` 
+#### `lexer.alnum`
 
 A pattern that matches any alphanumeric character ('A'-'Z', 'a'-'z', '0'-'9').
 
 <a id="lexer.alpha"></a>
-#### `lexer.alpha` 
+#### `lexer.alpha`
 
 A pattern that matches any alphabetic character ('A'-'Z', 'a'-'z').
 
 <a id="lexer.any"></a>
-#### `lexer.any` 
+#### `lexer.any`
 
 A pattern that matches any single character.
 
 <a id="lexer.bin_num"></a>
-#### `lexer.bin_num` 
+#### `lexer.bin_num`
 
 A pattern that matches a binary number.
 
 <a id="lexer.dec_num"></a>
-#### `lexer.dec_num` 
+#### `lexer.dec_num`
 
 A pattern that matches a decimal number.
 
@@ -6561,12 +6566,12 @@ See also:
 - [`lexer.detect`](#lexer.detect)
 
 <a id="lexer.digit"></a>
-#### `lexer.digit` 
+#### `lexer.digit`
 
 A pattern that matches any digit ('0'-'9').
 
 <a id="lexer.float"></a>
-#### `lexer.float` 
+#### `lexer.float`
 
 A pattern that matches a floating point number.
 
@@ -6584,12 +6589,12 @@ Fold level masks are composed of an integer level combined with any of the follo
     The line is a header, or fold point.
 
 <a id="lexer.graph"></a>
-#### `lexer.graph` 
+#### `lexer.graph`
 
 A pattern that matches any graphical character ('!' to '~').
 
 <a id="lexer.hex_num"></a>
-#### `lexer.hex_num` 
+#### `lexer.hex_num`
 
 A pattern that matches a hexadecimal number.
 
@@ -6600,7 +6605,7 @@ Table of indentation amounts in character columns, for line numbers starting fro
 1. (Read-only)
 
 <a id="lexer.integer"></a>
-#### `lexer.integer` 
+#### `lexer.integer`
 
 A pattern that matches either a decimal, hexadecimal, octal, or binary number.
 
@@ -6612,28 +6617,28 @@ Line states can be used by lexers for keeping track of persistent states. For ex
 the output lexer uses this to mark lines that have warnings or errors.
 
 <a id="lexer.lower"></a>
-#### `lexer.lower` 
+#### `lexer.lower`
 
 A pattern that matches any lower case character ('a'-'z').
 
 <a id="lexer.newline"></a>
-#### `lexer.newline` 
+#### `lexer.newline`
 
 A pattern that matches a sequence of end of line characters.
 
 <a id="lexer.nonnewline"></a>
-#### `lexer.nonnewline` 
+#### `lexer.nonnewline`
 
 A pattern that matches any single, non-newline character.
 
 <a id="lexer.number"></a>
-#### `lexer.number` 
+#### `lexer.number`
 
 A pattern that matches a typical number, either a floating point, decimal, hexadecimal,
 octal, or binary number.
 
 <a id="lexer.oct_num"></a>
-#### `lexer.oct_num` 
+#### `lexer.oct_num`
 
 A pattern that matches an octal number.
 
@@ -6648,13 +6653,13 @@ Map of key-value string pairs.
 Map of key-value pairs with values interpreted as numbers, or `0` if not found. (Read-only)
 
 <a id="lexer.punct"></a>
-#### `lexer.punct` 
+#### `lexer.punct`
 
 A pattern that matches any punctuation character ('!' to '/', ':' to '@', '[' to ''', '{'
 to '~').
 
 <a id="lexer.space"></a>
-#### `lexer.space` 
+#### `lexer.space`
 
 A pattern that matches any whitespace character ('\t', '\v', '\f', '\n', '\r', space).
 
@@ -6664,18 +6669,18 @@ A pattern that matches any whitespace character ('\t', '\v', '\f', '\n', '\r', s
 Table of style names at positions in the buffer starting from 1. (Read-only)
 
 <a id="lexer.upper"></a>
-#### `lexer.upper` 
+#### `lexer.upper`
 
 A pattern that matches any upper case character ('A'-'Z').
 
 <a id="lexer.word"></a>
-#### `lexer.word` 
+#### `lexer.word`
 
 A pattern that matches a typical word. Words begin with a letter or underscore and consist
 of alphanumeric and underscore characters.
 
 <a id="lexer.xdigit"></a>
-#### `lexer.xdigit` 
+#### `lexer.xdigit`
 
 A pattern that matches any hexadecimal digit ('0'-'9', 'A'-'F', 'a'-'f').
 
@@ -6757,7 +6762,7 @@ Returns a pattern that matches a binary number, whose digits may be separated by
 
 Parameters:
 
-- *c*: 
+- *c*:
 
 <a id="lexer.dec_num_"></a>
 #### `lexer.dec_num_`(*c*)
@@ -6767,7 +6772,7 @@ Returns a pattern that matches a decimal number, whose digits may be separated b
 
 Parameters:
 
-- *c*: 
+- *c*:
 
 <a id="lexer.detect"></a>
 #### `lexer.detect`([*filename*[, *line*]])
@@ -6819,7 +6824,7 @@ character *c*.
 
 Parameters:
 
-- *c*: 
+- *c*:
 
 <a id="lexer.fold"></a>
 #### `lexer.fold`(*lexer*, *text*, *start_line*, *start_level*)
@@ -6862,7 +6867,7 @@ character *c*.
 
 Parameters:
 
-- *c*: 
+- *c*:
 
 <a id="lexer.integer_"></a>
 #### `lexer.integer_`(*c*)
@@ -6872,7 +6877,7 @@ whose digits may be separated by character *c*.
 
 Parameters:
 
-- *c*: 
+- *c*:
 
 <a id="lexer.lex"></a>
 #### `lexer.lex`(*lexer*, *text*, *init_style*)
@@ -6984,7 +6989,7 @@ octal, or binary number, and whose digits may be separated by character *c*.
 
 Parameters:
 
-- *c*: 
+- *c*:
 
 <a id="lexer.oct_num_"></a>
 #### `lexer.oct_num_`(*c*)
@@ -6993,7 +6998,7 @@ Returns a pattern that matches an octal number, whose digits may be separated by
 
 Parameters:
 
-- *c*: 
+- *c*:
 
 <a id="lexer.range"></a>
 #### `lexer.range`(*s*[, *e*=*s*[, *single_line*=*false*[, *escapes*[, *balanced*=*false*]]]])
@@ -7242,7 +7247,7 @@ Parameters:
 	the parent's cwd is used.
 - *env*:  Optional map of environment variables for the child process. When omitted,
 	Textadept's environment is used. In order to create a new environment that inherits
-	from Textadept's, you can spawn 'env' on macOS and Linux, or 'set' on Windows, and
+	from Textadept's, you can spawn 'env' on macOS, BSD and Linux, or 'set' on Windows, and
 	iterate over output matches of "key=value" pairs (one per line), assigning them to the
 	new environment table.
 - *stdout_cb*:  Optional Lua function that accepts a string parameter for a block of
@@ -7322,7 +7327,7 @@ Return:
 #### `spawn_proc:write`(...)
 
 Writes string input to the stdin of process *spawn_proc*.
-Note: On Linux when using the GTK or terminal version, if more than 65536 bytes (64K) are
+Note: On Linux or BSD, when using the GTK or terminal version, if more than 65536 bytes (64K) are
 to be written, it is possible those bytes need to be written in 65536-byte (64K) chunks,
 or the process may not receive all input. However, it is also possible that there is a limit
 on how many bytes can be written in a short period of time, perhaps 196608 bytes (192K). The
@@ -7396,7 +7401,7 @@ Bookmarks for Textadept.
 ### Fields defined by `textadept.bookmarks`
 
 <a id="textadept.bookmarks.MARK_BOOKMARK"></a>
-#### `textadept.bookmarks.MARK_BOOKMARK` 
+#### `textadept.bookmarks.MARK_BOOKMARK`
 
 The bookmark mark number.
 
@@ -7437,7 +7442,7 @@ Editing features for Textadept.
 ### Fields defined by `textadept.editing`
 
 <a id="textadept.editing.INDIC_HIGHLIGHT"></a>
-#### `textadept.editing.INDIC_HIGHLIGHT` 
+#### `textadept.editing.INDIC_HIGHLIGHT`
 
 The word highlight indicator number.
 
@@ -7458,14 +7463,14 @@ Fields:
 - `TYPEDEF`:  The image number for type definitions.
 
 <a id="textadept.editing.auto_enclose"></a>
-#### `textadept.editing.auto_enclose` 
+#### `textadept.editing.auto_enclose`
 
 Whether or not to auto-enclose selected text when typing a punctuation character, taking
 [`textadept.editing.auto_pairs`](#textadept.editing.auto_pairs) into account.
 The default value is `false`.
 
 <a id="textadept.editing.auto_indent"></a>
-#### `textadept.editing.auto_indent` 
+#### `textadept.editing.auto_indent`
 
 Match the previous line's indentation level after inserting a new line.
 The default value is `true`.
@@ -7485,7 +7490,7 @@ Usage:
 `
 
 <a id="textadept.editing.autocomplete_all_words"></a>
-#### `textadept.editing.autocomplete_all_words` 
+#### `textadept.editing.autocomplete_all_words`
 
 Autocomplete the current word using words from all open buffers.
 If `true`, performance may be slow when many buffers are open.
@@ -7525,7 +7530,7 @@ comment delimiters separated by a '|' character. If no comment string exists for
 language, the lexer-supplied string is used, if available.
 
 <a id="textadept.editing.highlight_words"></a>
-#### `textadept.editing.highlight_words` 
+#### `textadept.editing.highlight_words`
 
 The word highlight mode.
 
@@ -7539,13 +7544,13 @@ The word highlight mode.
 The default value is `textadept.editing.HIGHLIGHT_NONE`.
 
 <a id="textadept.editing.strip_trailing_spaces"></a>
-#### `textadept.editing.strip_trailing_spaces` 
+#### `textadept.editing.strip_trailing_spaces`
 
 Strip trailing whitespace before saving files. (Does not apply to binary files.)
 The default value is `false`.
 
 <a id="textadept.editing.typeover_auto_paired"></a>
-#### `textadept.editing.typeover_auto_paired` 
+#### `textadept.editing.typeover_auto_paired`
 
 Whether or not to type over an auto-paired complement character.
 The default value is `true`.
@@ -7611,7 +7616,7 @@ than an OS-specific pipe can hold may hang Textadept. On Linux, this may be 64K.
 
 Parameters:
 
-- *command*:  The Linux, macOS, or Windows shell command to filter text through. May
+- *command*:  The Linux, BSD, macOS, or Windows shell command to filter text through. May
 	contain pipes.
 
 <a id="textadept.editing.goto_line"></a>
@@ -7705,13 +7710,13 @@ buffer switch occurs, the before and after locations are also recorded.
 ### Fields defined by `textadept.history`
 
 <a id="textadept.history.maximum_history_size"></a>
-#### `textadept.history.maximum_history_size` 
+#### `textadept.history.maximum_history_size`
 
 The maximum number of history records to keep per view.
 The default value is `100`.
 
 <a id="textadept.history.minimum_line_distance"></a>
-#### `textadept.history.minimum_line_distance` 
+#### `textadept.history.minimum_line_distance`
 
 The minimum number of lines between distinct history records.
 The default value is `3`.
@@ -7763,12 +7768,12 @@ They are designed to be as consistent as possible between operating systems and 
 so that users familiar with one set of bindings can intuit a given binding on another OS or
 platform, minimizing the need for memorization.
 
-In general, bindings for macOS are the same as for Windows/Linux except the "Control" modifier
-key on Windows/Linux is replaced by "Command" (`⌘`) and the "Alt" modifier key is replaced by
+In general, bindings for macOS are the same as for Windows/BSD/Linux except the "Control" modifier
+key on Windows/BSD/Linux is replaced by "Command" (`⌘`) and the "Alt" modifier key is replaced by
 "Control" (`^`). The only exception is for word- and paragraph-based movement keys, which use
 "Alt" (`⌥`) instead of "Command" (`⌘`).
 
-In general, bindings for the terminal version are the same as for Windows/Linux except:
+In general, bindings for the terminal version are the same as for Windows/BSD/Linux except:
 
 - Most `Ctrl+Shift+`*`key`* combinations become `M-^`*`key`* since most terminals recognize
 	few, if any, `Ctrl+Shift` key sequences.
@@ -7787,7 +7792,7 @@ In general, bindings for the terminal version are the same as for Windows/Linux 
 
 ### Key Bindings
 
-Windows and Linux | macOS | Terminal | Command
+Windows, BSD and Linux | macOS | Terminal | Command
 -|-|-|-
 **File**|||
 Ctrl+N | ⌘N | ^N | New file
@@ -8133,22 +8138,22 @@ tweak [`textadept.run.build_commands`](#textadept.run.build_commands), [`textade
 ### Fields defined by `textadept.run`
 
 <a id="textadept.run.INDIC_ERROR"></a>
-#### `textadept.run.INDIC_ERROR` 
+#### `textadept.run.INDIC_ERROR`
 
 The run or compile error indicator number.
 
 <a id="textadept.run.INDIC_WARNING"></a>
-#### `textadept.run.INDIC_WARNING` 
+#### `textadept.run.INDIC_WARNING`
 
 The run or compile warning indicator number.
 
 <a id="textadept.run.MARK_ERROR"></a>
-#### `textadept.run.MARK_ERROR` 
+#### `textadept.run.MARK_ERROR`
 
 The run or compile error marker number.
 
 <a id="textadept.run.MARK_WARNING"></a>
-#### `textadept.run.MARK_WARNING` 
+#### `textadept.run.MARK_WARNING`
 
 The run or compile warning marker number.
 
@@ -8194,7 +8199,7 @@ default, the working directory is the current file's parent directory and the en
 is Textadept's environment.
 
 <a id="textadept.run.run_in_background"></a>
-#### `textadept.run.run_in_background` 
+#### `textadept.run.run_in_background`
 
 Run shell commands silently in the background.
 The default value is `false`.
@@ -8209,7 +8214,7 @@ in. By default, the working directory is the project's root directory and the en
 is Textadept's environment.
 
 <a id="textadept.run.run_without_prompt"></a>
-#### `textadept.run.run_without_prompt` 
+#### `textadept.run.run_without_prompt`
 
 Run shell commands without prompting.
 The default value is `false`.
@@ -8326,7 +8331,7 @@ Session support for Textadept.
 ### Fields defined by `textadept.session`
 
 <a id="textadept.session.save_on_quit"></a>
-#### `textadept.session.save_on_quit` 
+#### `textadept.session.save_on_quit`
 
 Save the session when quitting.
 The default value is `true` unless the user passed the command line switch `-n` or `--nosession`
@@ -8417,7 +8422,7 @@ placeholder transforms below describes this syntax in more detail.
 
 Snippets can execute shell code enclosed within '\`' characters, and insert any standard output
 (stdout) emitted by that code. Textadept omits a trailing newline if it exists. For example,
-the following snippet evaluates (on macOS and Linux) the currently selected arithmetic
+the following snippet evaluates (on macOS, BSD and Linux) the currently selected arithmetic
 expression and replaces it with the result:
 
 	snippets.eval = '`echo $(( $TM_SELECTED_TEXT ))`'
@@ -8567,12 +8572,12 @@ You can migrate your snippets using the following steps:
 ### Fields defined by `textadept.snippets`
 
 <a id="textadept.snippets.INDIC_PLACEHOLDER"></a>
-#### `textadept.snippets.INDIC_PLACEHOLDER` 
+#### `textadept.snippets.INDIC_PLACEHOLDER`
 
 The snippet placeholder indicator number.
 
 <a id="textadept.snippets.active"></a>
-#### `textadept.snippets.active` 
+#### `textadept.snippets.active`
 
 Whether or not a snippet is active.
 
@@ -8676,36 +8681,36 @@ Utilities for interacting with Textadept's user interface.
 ### Fields defined by `ui`
 
 <a id="ui.SHOW_ALL_TABS"></a>
-#### `ui.SHOW_ALL_TABS` 
+#### `ui.SHOW_ALL_TABS`
 
 Option for [`ui.tabs`](#ui.tabs) that always shows the tab bar, even if only one buffer is open.
 
 <a id="ui.buffer_list_zorder"></a>
-#### `ui.buffer_list_zorder` 
+#### `ui.buffer_list_zorder`
 
 Whether or not to list buffers by their z-order (most recently viewed to least recently
 viewed) in the switcher dialog.
 The default value is `true`.
 
 <a id="ui.buffer_statusbar_text"></a>
-#### `ui.buffer_statusbar_text` 
+#### `ui.buffer_statusbar_text`
 
 The text displayed in the buffer statusbar. (Write-only)
 
 <a id="ui.clipboard_text"></a>
-#### `ui.clipboard_text` 
+#### `ui.clipboard_text`
 
 The text on the clipboard.
 
 <a id="ui.context_menu"></a>
-#### `ui.context_menu` 
+#### `ui.context_menu`
 
 The buffer's context menu, a [`ui.menu()`](#ui.menu).
 This is a low-level field. You probably want to use the higher-level
 [`textadept.menu.context_menu`](#textadept.menu.context_menu).
 
 <a id="ui.maximized"></a>
-#### `ui.maximized` 
+#### `ui.maximized`
 
 Whether or not Textadept's window is maximized.
 This field is always `false` in the terminal version.
@@ -8722,19 +8727,19 @@ This is a low-level field. You probably want to use the higher-level [`textadept
 A table containing the width and height pixel values of Textadept's window.
 
 <a id="ui.statusbar_text"></a>
-#### `ui.statusbar_text` 
+#### `ui.statusbar_text`
 
 The text displayed in the statusbar. (Write-only)
 
 <a id="ui.tab_context_menu"></a>
-#### `ui.tab_context_menu` 
+#### `ui.tab_context_menu`
 
 The context menu for the buffer's tab, a [`ui.menu()`](#ui.menu).
 This is a low-level field. You probably want to use the higher-level
 [`textadept.menu.tab_context_menu`](#textadept.menu.tab_context_menu).
 
 <a id="ui.tabs"></a>
-#### `ui.tabs` 
+#### `ui.tabs`
 
 Whether or not to display the tab bar when multiple buffers are open.
 The default value is `true` in the GUI version, and `false` in the terminal version.
@@ -8742,7 +8747,7 @@ A third option, [`ui.SHOW_ALL_TABS`](#ui.SHOW_ALL_TABS) may be used to always sh
 buffer is open.
 
 <a id="ui.title"></a>
-#### `ui.title` 
+#### `ui.title`
 
 The title text of Textadept's window. (Write-only)
 
@@ -8974,7 +8979,7 @@ functions and fields that [`buffer`](#buffer)s and [`view`](#view)s do.
 ### Fields defined by `ui.command_entry`
 
 <a id="ui.command_entry.active"></a>
-#### `ui.command_entry.active` 
+#### `ui.command_entry.active`
 
 Whether or not the command entry is active.
 
@@ -8991,12 +8996,12 @@ Usage:
 `
 
 <a id="ui.command_entry.height"></a>
-#### `ui.command_entry.height` 
+#### `ui.command_entry.height`
 
 The height in pixels of the command entry.
 
 <a id="ui.command_entry.label"></a>
-#### `ui.command_entry.label` 
+#### `ui.command_entry.label`
 
 The text of the command entry label. (Write-only)
 
@@ -9230,23 +9235,23 @@ Textadept's Find & Replace pane.
 ### Fields defined by `ui.find`
 
 <a id="ui.find.INDIC_FIND"></a>
-#### `ui.find.INDIC_FIND` 
+#### `ui.find.INDIC_FIND`
 
 The find results highlight indicator number.
 
 <a id="ui.find.active"></a>
-#### `ui.find.active` 
+#### `ui.find.active`
 
 Whether or not the Find & Replace pane is active.
 
 <a id="ui.find.entry_font"></a>
-#### `ui.find.entry_font` 
+#### `ui.find.entry_font`
 
 The font to use in the "Find" and "Replace" entries in "name size" format. (Write-only)
 The default value is system-dependent.
 
 <a id="ui.find.find_entry_text"></a>
-#### `ui.find.find_entry_text` 
+#### `ui.find.find_entry_text`
 
 The text in the "Find" entry.
 
@@ -9258,97 +9263,97 @@ This table is updated when the user manually specifies a filter in the "Filter" 
 an "In files" search.
 
 <a id="ui.find.find_label_text"></a>
-#### `ui.find.find_label_text` 
+#### `ui.find.find_label_text`
 
 The text of the "Find" label. (Write-only)
 This is primarily used for localization.
 
 <a id="ui.find.find_next_button_text"></a>
-#### `ui.find.find_next_button_text` 
+#### `ui.find.find_next_button_text`
 
 The text of the "Find Next" button. (Write-only)
 This is primarily used for localization.
 
 <a id="ui.find.find_prev_button_text"></a>
-#### `ui.find.find_prev_button_text` 
+#### `ui.find.find_prev_button_text`
 
 The text of the "Find Prev" button. (Write-only)
 This is primarily used for localization.
 
 <a id="ui.find.highlight_all_matches"></a>
-#### `ui.find.highlight_all_matches` 
+#### `ui.find.highlight_all_matches`
 
 Whether or not to highlight all occurrences of found text in the current buffer.
 The default value is `false`.
 
 <a id="ui.find.in_files"></a>
-#### `ui.find.in_files` 
+#### `ui.find.in_files`
 
 Find search text in a directory of files.
 The default value is `false`.
 
 <a id="ui.find.in_files_label_text"></a>
-#### `ui.find.in_files_label_text` 
+#### `ui.find.in_files_label_text`
 
 The text of the "In files" label. (Write-only)
 This is primarily used for localization.
 
 <a id="ui.find.incremental"></a>
-#### `ui.find.incremental` 
+#### `ui.find.incremental`
 
 Find search text incrementally as it is typed.
 The default value is `false`.
 
 <a id="ui.find.match_case"></a>
-#### `ui.find.match_case` 
+#### `ui.find.match_case`
 
 Match search text case sensitively.
 The default value is `false`.
 
 <a id="ui.find.match_case_label_text"></a>
-#### `ui.find.match_case_label_text` 
+#### `ui.find.match_case_label_text`
 
 The text of the "Match case" label. (Write-only)
 This is primarily used for localization.
 
 <a id="ui.find.regex"></a>
-#### `ui.find.regex` 
+#### `ui.find.regex`
 
 Interpret search text as a Regular Expression.
 The default value is `false`.
 
 <a id="ui.find.regex_label_text"></a>
-#### `ui.find.regex_label_text` 
+#### `ui.find.regex_label_text`
 
 The text of the "Regex" label. (Write-only)
 This is primarily used for localization.
 
 <a id="ui.find.replace_all_button_text"></a>
-#### `ui.find.replace_all_button_text` 
+#### `ui.find.replace_all_button_text`
 
 The text of the "Replace All" button. (Write-only)
 This is primarily used for localization.
 
 <a id="ui.find.replace_button_text"></a>
-#### `ui.find.replace_button_text` 
+#### `ui.find.replace_button_text`
 
 The text of the "Replace" button. (Write-only)
 This is primarily used for localization.
 
 <a id="ui.find.replace_entry_text"></a>
-#### `ui.find.replace_entry_text` 
+#### `ui.find.replace_entry_text`
 
 The text in the "Replace" entry.
 When searching for text in a directory of files, this is the current file and directory filter.
 
 <a id="ui.find.replace_label_text"></a>
-#### `ui.find.replace_label_text` 
+#### `ui.find.replace_label_text`
 
 The text of the "Replace" label. (Write-only)
 This is primarily used for localization.
 
 <a id="ui.find.show_filenames_in_progressbar"></a>
-#### `ui.find.show_filenames_in_progressbar` 
+#### `ui.find.show_filenames_in_progressbar`
 
 Whether to show filenames in the find in files search progressbar.
 This can be useful for determining whether or not custom filters are working as expected.
@@ -9356,13 +9361,13 @@ Showing filenames can slow down searches on computers with really fast SSDs.
 The default value is `false`.
 
 <a id="ui.find.whole_word"></a>
-#### `ui.find.whole_word` 
+#### `ui.find.whole_word`
 
 Match search text only when it is surrounded by non-word characters in searches.
 The default value is `false`.
 
 <a id="ui.find.whole_word_label_text"></a>
-#### `ui.find.whole_word_label_text` 
+#### `ui.find.whole_word_label_text`
 
 The text of the "Whole word" label. (Write-only)
 This is primarily used for localization.
