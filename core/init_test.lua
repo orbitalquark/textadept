@@ -140,3 +140,4 @@ test('timeout should repeatedly call a function as long as it returns true', fun
 	test.assert(duration > expected_duration, 'should have waited %fs, but waited only %fs)',
 		expected_duration, duration)
 end)
+if BSD then skip('luasocket was not built for this platform') end
