@@ -45,7 +45,7 @@ io.detect_indentation = true
 
 --- Whether or not to ensure there is a final newline when saving text files.
 -- This has no effect on binary files.
--- The default value is `false` on Windows, and `true` on Linux and macOS.
+-- The default value is `false` on Windows, and `true` on macOS, Linux, and BSD.
 io.ensure_final_newline = not WIN32
 
 --- The maximum number of files listed in the quick open dialog.

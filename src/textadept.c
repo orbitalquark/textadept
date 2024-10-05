@@ -20,6 +20,8 @@
 #include <windows.h> // for GetModuleFileName
 #elif __APPLE__
 #include <mach-o/dyld.h> // for _NSGetExecutablePath
+#elif (__FreeBSD__ || __NetBSD__ || __DragonFly__)
+#include <sys/sysctl.h> // for sysctl
 #endif
 
 // Variables declared in textadept.h.
@@ -1216,6 +1218,20 @@ bool init_textadept(int argc, char **argv) {
 	textadept_home = realpath(textadept_home, NULL), free(p);
 	p = strstr(textadept_home, "MacOS"), strcpy(p, "Resources\0");
 	os = "OSX";
+#elif (__FreeBSD__ || __NetBSD__ || __DragonFly__)
+#if (__FreeBSD__ || __DragonFly__)
+	int mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
+#elif __NetBSD__
+	int mib[4] = {CTL_KERN, KERN_PROC_ARGS, -1, KERN_PROC_PATHNAME};
+#endif
+	size_t cb = FILENAME_MAX + 1;
+	sysctl(mib, 4, textadept_home, &cb, NULL, 0);
+	char *p = textadept_home;
+	textadept_home = realpath(textadept_home, NULL), free(p);
+	if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
+	os = "BSD";
+	// TODO: OpenBSD uses {CTL_KERN, KERN_PROC_ARGS, getpid(), KERN_PROC_ARGV}, but the result is
+	// **argv, so realpath() will not work on argv[0] without iterating over $PATH.
 #endif
 	if (getenv("TEXTADEPT_HOME")) strcpy(textadept_home, getenv("TEXTADEPT_HOME"));
 

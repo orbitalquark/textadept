@@ -35,6 +35,11 @@ Extends Lua's _G table to provide extra functions and fields for Textadept.
 
 ### Fields defined by `_G`
 
+<a id="BSD"></a>
+#### `BSD` 
+
+Whether or not Textadept is running on BSD.
+
 <a id="CURSES"></a>
 #### `CURSES` 
 
@@ -122,8 +127,9 @@ Manually changing this field has no effect.
 
 The path to the user's *~/.textadept/* directory, where all preferences and user-data is stored.
 On Windows machines *~/* is the value of the "USERHOME" environment variable (typically
-*C:\Users\username\\* or *C:\Documents and Settings\username\\*). On Linux and macOS machines
-*~/* is the value of "$HOME" (typically */home/username/* and */Users/username/* respectively).
+*C:\Users\username\\* or *C:\Documents and Settings\username\\*). On macOS and Linux/BSD
+machines *~/* is the value of "$HOME" (typically */Users/username/* and */home/username/*,
+respectively).
 
 <a id="_VIEWS"></a>
 #### `_VIEWS` &lt;table&gt;
@@ -5415,7 +5421,7 @@ Usage:
 
 Whether or not to ensure there is a final newline when saving text files.
 This has no effect on binary files.
-The default value is `false` on Windows, and `true` on Linux and macOS.
+The default value is `false` on Windows, and `true` on macOS, Linux, and BSD.
 
 <a id="io.quick_open_filters"></a>
 #### `io.quick_open_filters` &lt;table&gt;
@@ -5565,11 +5571,11 @@ completion, but fall back to word autocompletion if the first command fails.)
 ### Key Sequences
 
 Key sequences are strings built from an ordered combination of modifier keys and the key's
-inserted character. Modifier keys are "Control", "Shift", and "Alt" on Windows, Linux, and
-in the terminal version. On macOS they are "Control" (`^`), "Alt/Option" (`⌥`), "Command"
+inserted character. Modifier keys are "Control", "Shift", and "Alt" on Windows, Linux/BSD,
+and in the terminal version. On macOS they are "Control" (`^`), "Alt/Option" (`⌥`), "Command"
 (`⌘`), and "Shift" (`⇧`). These modifiers have the following string representations:
 
-Modifier |  Windows / Linux | macOS | Terminal
+Modifier |  Windows / Linux / BSD | macOS | Terminal
 -|-|-|-
 Control | `'ctrl'` | `'ctrl'` | `'ctrl'`
 Alt | `'alt'` | `'alt'` | `'meta'`
@@ -5578,7 +5584,7 @@ Shift | `'shift'` | `'shift'` | `'shift'`
 
 The string representation of key values less than 255 is the character that Textadept would
 normally insert if the "Control", "Alt", and "Command" modifiers were not held down. Therefore,
-a combination of `Ctrl+Alt+Shift+A` has the key sequence `ctrl+alt+A` on Windows and Linux,
+a combination of `Ctrl+Alt+Shift+A` has the key sequence `ctrl+alt+A` on Windows and Linux/BSD,
 but a combination of `Ctrl+Shift+Tab` has the key sequence `ctrl+shift+\t`. On a United States
 English keyboard, since the combination of `Ctrl+Shift+,` has the key sequence `ctrl+<`
 (`Shift+,` inserts a `<`), Textadept recognizes the key binding as `Ctrl+<`. This allows
@@ -7611,8 +7617,7 @@ than an OS-specific pipe can hold may hang Textadept. On Linux, this may be 64K.
 
 Parameters:
 
-- *command*:  The Linux, macOS, or Windows shell command to filter text through. May
-	contain pipes.
+- *command*:  The OS shell command to filter text through. May contain pipes.
 
 <a id="textadept.editing.goto_line"></a>
 #### `textadept.editing.goto_line`([*line*])
@@ -7763,12 +7768,12 @@ They are designed to be as consistent as possible between operating systems and 
 so that users familiar with one set of bindings can intuit a given binding on another OS or
 platform, minimizing the need for memorization.
 
-In general, bindings for macOS are the same as for Windows/Linux except the "Control" modifier
-key on Windows/Linux is replaced by "Command" (`⌘`) and the "Alt" modifier key is replaced by
-"Control" (`^`). The only exception is for word- and paragraph-based movement keys, which use
-"Alt" (`⌥`) instead of "Command" (`⌘`).
+In general, bindings for macOS are the same as for Windows/Linux/BSD except the "Control"
+modifier key on Windows/Linux/BSD is replaced by "Command" (`⌘`) and the "Alt" modifier
+key is replaced by "Control" (`^`). The only exception is for word- and paragraph-based
+movement keys, which use "Alt" (`⌥`) instead of "Command" (`⌘`).
 
-In general, bindings for the terminal version are the same as for Windows/Linux except:
+In general, bindings for the terminal version are the same as for Windows/Linux/BSD except:
 
 - Most `Ctrl+Shift+`*`key`* combinations become `M-^`*`key`* since most terminals recognize
 	few, if any, `Ctrl+Shift` key sequences.
@@ -7787,7 +7792,7 @@ In general, bindings for the terminal version are the same as for Windows/Linux 
 
 ### Key Bindings
 
-Windows and Linux | macOS | Terminal | Command
+Windows, Linux, and BSD | macOS | Terminal | Command
 -|-|-|-
 **File**|||
 Ctrl+N | ⌘N | ^N | New file

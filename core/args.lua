@@ -69,8 +69,9 @@ events.connect('command_line', function(arg) process(arg, true) end)
 ---
 -- The path to the user's *~/.textadept/* directory, where all preferences and user-data is stored.
 -- On Windows machines *~/* is the value of the "USERHOME" environment variable (typically
--- *C:\Users\username\\* or *C:\Documents and Settings\username\\*). On Linux and macOS machines
--- *~/* is the value of "$HOME" (typically */home/username/* and */Users/username/* respectively).
+-- *C:\Users\username\\* or *C:\Documents and Settings\username\\*). On macOS and Linux/BSD
+-- machines *~/* is the value of "$HOME" (typically */Users/username/* and */home/username/*,
+-- respectively).
 _G._USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE') .. '/.textadept'
 for i, option in ipairs(arg) do
 	if (option == '-u' or option == '--userhome') and arg[i + 1] then
