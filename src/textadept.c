@@ -1232,6 +1232,8 @@ bool init_textadept(int argc, char **argv) {
 	os = "BSD";
 	// TODO: OpenBSD uses {CTL_KERN, KERN_PROC_ARGS, getpid(), KERN_PROC_ARGV}, but the result is
 	// **argv, so realpath() will not work on argv[0] without iterating over $PATH.
+#else
+#error platform not supported
 #endif
 	if (getenv("TEXTADEPT_HOME")) strcpy(textadept_home, getenv("TEXTADEPT_HOME"));
 
