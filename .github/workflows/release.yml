@@ -353,7 +353,7 @@ jobs:
           sync_files: false
           run: |
             cat test.log
-            grep -q '^0 failures' test.log
+            grep -q '^0 failed' test.log
 
   coverage:
     if: ${{ ! inputs.no_coverage }}
