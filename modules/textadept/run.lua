@@ -422,7 +422,7 @@ function M.goto_error(location)
 	local sloppy = not filename:find(not WIN32 and '^/' or '^%a?:?[/\\][/\\]?')
 	ui.goto_file(filename, true, preferred_view, sloppy)
 	textadept.editing.goto_line(line)
-	if column then buffer:goto_pos(buffer:find_column(line, column)) end
+	if column then buffer:goto_pos(buffer:position_relative(buffer.current_pos, column - 1)) end
 	if not message then return end
 	buffer.annotation_text[line] = message
 	if buffer.line_state[line_num] > 1 then return end -- non-error
