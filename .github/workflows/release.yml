@@ -50,9 +50,9 @@ jobs:
         include:
           - os: ubuntu-20.04
           - os: windows-2019
-            qt: '6.7'
+            qt: '6.8'
           - os: macOS-12
-            qt: '6.5'
+            qt: '6.8'
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
