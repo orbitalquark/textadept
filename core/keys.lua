@@ -174,7 +174,7 @@ local function key_command(prefix)
 	end
 	if type(key) ~= 'function' and type(key) ~= 'table' then return INVALID end
 	if type(key) == 'table' and (not getmetatable(key) or not getmetatable(key).__call) then
-		if not prefix and key._lexer then return PROPAGATE end -- typed key matches lexer name
+		if key._lexer and prefix == M.mode then return PROPAGATE end -- typed key matches lexer name
 		ui.statusbar_text = string.format('%s %s', _L['Keychain:'], table.concat(keychain, ' '))
 		return CHAIN
 	end
