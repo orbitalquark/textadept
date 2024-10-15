@@ -282,7 +282,9 @@ jobs:
 
       - name: Read test output
         if: success() || failure()
-        run: cat test.log
+        run: |
+          cat test.log
+          grep -q '^0 failed' test.log
 
   smoke-test-bsd:
     if: ${{ ! inputs.no_tests }}
