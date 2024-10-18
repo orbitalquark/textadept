@@ -4818,7 +4818,7 @@ shortly after this event.
 The buffer **must not** be modified during this event.
 
 <a id="events.BUFFER_BEFORE_SWITCH"></a>
-#### `events.BUFFER_BEFORE_SWITCH` 
+#### `events.BUFFER_BEFORE_SWITCH`
 
 Emitted right before switching to another buffer.
 The buffer being switched from is [`buffer`](#buffer).
@@ -5066,6 +5066,14 @@ setting up language-specific editing features for source files.
 Arguments:
 
 - *name*: The language lexer's name.
+
+<a id="events.FOLDED"></a>
+#### `events.FOLDED` 
+
+Emitted after code folding is done by the lexer.
+This is useful for performing manual folding and manipulation of the folding table 
+`buffer.fold_level` after lexer is done folding the code, where the built-in facilities for
+[code folding](#code-folding) doesn't suffice.
 
 <a id="events.MARGIN_CLICK"></a>
 #### `events.MARGIN_CLICK` 

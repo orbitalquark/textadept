@@ -126,6 +126,7 @@ local function highlight(buffer, start_pos, end_pos)
 	local level = buffer.fold_level[line] & buffer.FOLDLEVELNUMBERMASK
 	local folds = buffer.lexer:fold(buffer:text_range(start_pos, end_pos), line, level)
 	for line, level in pairs(folds) do buffer.fold_level[line] = level end
+	events.emit(events.FOLDED)
 end
 
 local mutex
