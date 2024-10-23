@@ -66,7 +66,7 @@ jobs:
 
       - name: Install Qt (Windows, macOS)
         if: runner.os == 'Windows' || runner.os == 'macOS'
-        uses: jurplel/install-qt-action@v4
+        uses: jurplel/install-qt-action@master
         with:
           version: ${{ matrix.qt }}
           modules: 'qt5compat'
