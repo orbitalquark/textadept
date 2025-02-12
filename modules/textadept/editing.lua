@@ -48,10 +48,10 @@ M.auto_indent = true
 -- The default value is `false`.
 M.auto_enclose = false
 
---- Whether or not to auto-enclose punctuation character, taking
+--- Whether or not to auto-enclose punctuation characters, taking
 -- `textadept.editing.auto_enclose` into account.
--- The default value is `false`.
-M.auto_enclose_punctuation = false
+-- The default value is `true`.
+M.auto_enclose_punctuation = true
 
 --- Strip trailing whitespace before saving files. (Does not apply to binary files.)
 -- The default value is `false`.
@@ -546,12 +546,23 @@ events.connect(events.CHAR_ADDED, function(code)
 	end
 end)
 
--- When `auto_enclose` is true, enclose selected text in auto-paired characters 
+-- When `auto_enclose` is true, enclose selected text in auto-paired characters
 -- or in punctuation if `auto_enclose_punctuation` is true.
 events.connect(events.KEYPRESS, function(key)
 	if ui.command_entry.active then return end
-	if not M.auto_enclose or buffer.selection_empty or not key:find('^%p$') then return end
-   if not M.auto_enclose_punctuation and key:find('^%p$') then return end
+   -- if we are not auto_enclosing or there is no region, skip
+	if not M.auto_enclose or buffer.selection_empty then return end
+   -- if the key is in auto_pairs, always consider it
+   if not M.auto_pairs[key] then
+      -- else if the is a punctuation key
+      if  key:find('^%p$') then
+         -- if we are not enclosing punctuation, skip key
+         if not M.auto_enclose_punctuation then return end
+      else
+        -- if it is not a punctuation key, skip it
+        return
+      end
+   end
 	M.enclose(key, M.auto_pairs[key] or key, true)
 	return true -- prevent typing
 end, 1)
