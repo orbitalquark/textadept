@@ -554,14 +554,10 @@ events.connect(events.KEYPRESS, function(key)
 	if not M.auto_enclose or buffer.selection_empty then return end
    -- if the key is in auto_pairs, always consider it
    if not M.auto_pairs[key] then
-      -- else if the is a punctuation key
-      if  key:find('^%p$') then
-         -- if we are not enclosing punctuation, skip key
-         if not M.auto_enclose_punctuation then return end
-      else
-        -- if it is not a punctuation key, skip it
-        return
-      end
+      -- if the key is not a punctuation key, skip it
+      if  not key:find('^%p$') then return end
+      -- if we do not want to autoenclose punctuation, skip it
+      if  not M.auto_enclose_punctuation then return end
    end
 	M.enclose(key, M.auto_pairs[key] or key, true)
 	return true -- prevent typing
