@@ -541,10 +541,17 @@ events.connect(events.CHAR_ADDED, function(code)
 	end
 end)
 
--- Enclose selected text in punctuation or auto-paired characters.
+-- When `auto_enclose` is true, enclose selected text in auto-paired characters
+-- or in punctuation if `auto_enclose_punctuation` is true.
 events.connect(events.KEYPRESS, function(key)
-	if not M.auto_enclose or buffer.selection_empty or not key:find('^%p$') then return end
-	if ui.command_entry.active then return end
+   -- if we are not auto_enclosing or there is no region, skip
+   -- disable for the command entry dialog too
+	if not M.auto_enclose or buffer.selection_empty or	ui.command_entry.active then return end
+   -- likely on a snippet, skip
+   if textadept.snippets.active then return end
+   -- Neither auto_pair nor punctuation
+   if not M.auto_pairs[key] and not key:find('^%p$') then return end
+
 	M.enclose(key, M.auto_pairs[key] or key, true)
 	return true -- prevent typing
 end, 1)
