@@ -761,9 +761,7 @@ end)
 -- @function _G.textadept.editing.autocompleters.snippet
 textadept.editing.autocompleters.snippet = function()
 	local list, trigger, snippets = {}, find_snippet(true)
-	local sep = string.char(buffer.auto_c_type_separator)
-	local xpm = textadept.editing.XPM_IMAGES.NAMESPACE
-	for name in pairs(snippets) do list[#list + 1] = name .. sep .. xpm end
+	for name in pairs(snippets) do list[#list + 1] = name end
 	return #trigger, list
 end
 

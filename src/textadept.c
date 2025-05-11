@@ -812,6 +812,9 @@ static int add_timeout_lua(lua_State *L) {
 	return (add_timeout(interval, call_timeout_function, refs), 0);
 }
 
+// `_G.is_hidpi()` Lua function.
+static int lua_ishidpi(lua_State *L) { return (lua_pushboolean(L, is_hidpi()), 1); }
+
 // Initializes or re-initializes the Lua state and with the given command-line arguments.
 // Populates the state with global variables and functions, runs the 'core/init.lua' script,
 // and returns `true` on success.
@@ -903,6 +906,7 @@ static bool init_lua(int argc, char **argv) {
 	lua_pushcfunction(L, quit_lua), lua_setglobal(L, "quit");
 	lua_pushcfunction(L, reset), lua_setglobal(L, "reset");
 	lua_pushcfunction(L, add_timeout_lua), lua_setglobal(L, "timeout");
+	lua_pushcfunction(L, lua_ishidpi), lua_setglobal(L, "is_hidpi");
 
 	if (lua = L, !run_file("core/init.lua"))
 		return (lua_close(L), lua = NULL, exit_status = 1, false);

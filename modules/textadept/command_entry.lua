@@ -125,18 +125,19 @@ local function complete_lua()
 	if (not ok or type(result) ~= 'table') and symbol ~= '' then return end
 	local cmpls = {}
 	local patt = '^' .. part
-	local XPM = textadept.editing.XPM_IMAGES
 	local sep = string.char(M.auto_c_type_separator)
 	if not ok or symbol == 'buffer' or symbol == 'view' then
 		local sci, is_sci_func = _SCINTILLA, function(v) return type(v) == 'table' and #v == 4 end
+		local is_sci_table = function(v) return type(v) == 'table' and #v == 5 and v[4] ~= 0 end
 		local global_envs = not ok and {buffer, view, ui, _G, textadept, sci} or {sci}
 		for _, t in ipairs(global_envs) do
 			for k, v in pairs(t) do
 				if type(k) ~= 'string' or not k:find(patt) then goto continue end
 				if t == sci and op == ':' and not is_sci_func(v) then goto continue end
 				if t == sci and op == '.' and is_sci_func(v) then goto continue end
-				local xpm = (type(v) == 'function' or (t == sci and is_sci_func(v))) and XPM.METHOD or
-					XPM.VARIABLE
+				local xpm =
+					M._xpm[(type(v) == 'function' or (t == sci and is_sci_func(v))) and 'function' or
+						(t == sci and not is_sci_table(v)) and 'variable' or type(v)]
 				cmpls[#cmpls + 1] = k .. sep .. xpm
 				::continue::
 			end
@@ -144,8 +145,7 @@ local function complete_lua()
 	else
 		for k, v in pairs(result) do
 			if type(k) == 'string' and k:find(patt) and (op == '.' or type(v) == 'function') then
-				local xpm = type(v) == 'function' and XPM.METHOD or XPM.VARIABLE
-				cmpls[#cmpls + 1] = k .. sep .. xpm
+				cmpls[#cmpls + 1] = k .. sep .. M._xpm[type(v)]
 			end
 		end
 	end
@@ -223,11 +223,22 @@ function M.run(label, f, keys, lang, initial_text, ...)
 	_G.keys._command_entry, _G.keys.mode = keys, '_command_entry'
 end
 
--- Configure the command entry's default properties.
+-- LuaFormatter off
+local xpm16={table=not CURSES and '/* XPM */ static char *dummy[]={ "16 16 18 1", ". c None", "d c #262626", "e c #333333", "p c #404040", "n c #4c4c4c", "c c #595959", "h c #666666", "o c #737373", "k c #808080", "l c #8c8c8c", "g c #999999", "f c #a6a6a6", "# c #b2b2b2", "j c #bfbfbf", "m c #cccccc", "i c #d9d9d9", "a c #e6e6e6", "b c #f2f2f2", ".##############.", "#abbbbbbbbbbbba#", "#aaaaaaacde#aaa#", "faaaaaagdeecaaaf", "faaaaaaheeehaaag", "giiiijkeeeciiiig", "giiledecmaaaiiig", "giiennn#aiiiiiig", "liiccccgiiiiiiil", "liimoccck#iiiiil", "kiiiaamhpeefiiik", "kiiiiii#ohcciiik", "kiiimmmmoooliimk", "ommmmmmijkgmmmmo", "o#mmmmmmiaaimm#o", ".oooooooooooooo."};' or '#',['function']=not CURSES and '/* XPM */ static char *dummy[]={ "16 16 18 1", ". c None", "g c #1a1a1a", "f c #333333", "k c #404040", "j c #4c4c4c", "m c #595959", "h c #666666", "n c #737373", "o c #808080", "l c #8c8c8c", "i c #999999", "d c #a6a6a6", "# c #b2b2b2", "p c #bfbfbf", "e c #cccccc", "c c #d9d9d9", "a c #e6e6e6", "b c #f2f2f2", ".##############.", "#abbbbbbbbbbbba#", "#aaaacccccaaaaa#", "daaaefgggggggaad", "daaaaahffffffaad", "icccccajkkkkkcci", "iccccchkkkkkkcci", "icccclfjjjjjjcci", "lccccjjjjjhjjccl", "lccc#jmmncaojcco", "occcimmdacccocco", "occc#hlaccccacco", "oecccopecceeccco", "neeecpeeeeeeeeen", "n#eeeceeeeeeee#n", ".nhhhhhhhhhhhhn."}; ' or '*',variable=not CURSES and '/* XPM */ static char *dummy[]={ "16 16 1 1", ". c None", "................", "................", "................", "................", "................", "................", "................", "................", "................", "................", "................", "................", "................", "................", "................", "................"};' or ' '}
+local xpm32={table=not CURSES and '/* XPM */ static char *dummy[]={ "32 32 18 1", ". c None", "p c #000000", "f c #333333", "h c #404040", "e c #4c4c4c", "c c #595959", "j c #666666", "m c #737373", "i c #808080", "d c #8c8c8c", "b c #999999", "o c #a6a6a6", "n c #b2b2b2", "k c #bfbfbf", "l c #cccccc", "g c #d9d9d9", "# c #e6e6e6", "a c #f2f2f2", "................................", "................................", "...###########a###########a##...", "..############################..", "..############################..", "..################bccd########..", "..###############effffe#######..", "..#####ggg######dfhhhhfi####g#..", "..#gggggggggggg#chhhhhhc#gggg#..", "..#gggggggggggg#ehhhhhhj#gggg#..", "..#ggggggggggggkhhhhhhhdggggg#..", "..ggggggggggg#lehhhhhhm#ggggg#..", "..ggggggggicceheheiidn#ggggggg..", "..ggggggleeeeeeeiggggggggggggg..", "..ggggggjeeeeeecgggggggggggggg..", "..ggggggeeeeeeemgggggggggggggg..", "..ggggggeeeeeeemgggggggggggggg..", "..ggggggieccccccgggggggggggggg..", "..gggggggjccccccjggggggggggggg..", "..ggggggggoddicccejjjdgggggggg..", "..gggggggggggggijjjjjcjggggggg..", "..gggggggggggggljjjjjjcdgggggg..", "..lgggggggggggggjjjjjjjmgggggg..", "..llllllllllllggijjjjjjiglllll..", "..llllllllllllllojmmmmjollllll..", "..llllllllllllllgdjmmjdgllllll..", "..lllllllllllllllgkobnglllllll..", "..llllllllllllllllllllllllllll..", "..kllllllllllllllllllllllllllk..", "..hnllllggggggggggggglllglllnh..", "....pppppppppppppppppppppppp....", "................................"};' or '#',['function']=not CURSES and '/* XPM */ static char *dummy[]={ "32 32 18 1", ". c None", "p c #000000", "f c #333333", "g c #404040", "h c #4c4c4c", "j c #595959", "n c #666666", "e c #737373", "c c #808080", "m c #8c8c8c", "l c #999999", "k c #a6a6a6", "o c #b2b2b2", "b c #bfbfbf", "i c #cccccc", "d c #d9d9d9", "# c #e6e6e6", "a c #f2f2f2", "................................", "................................", "...###########a###########a##...", "..############################..", "..############################..", "..############################..", "..#######bcccccccccccccc######..", "..#####dd#efffffffffffff######..", "..#ddddddd#efggggggggggf#dddd#..", "..#dddddddd#eggggggggggf#dddd#..", "..#ddddddddd#egggggggggg#dddd#..", "..dddddddddddbgggggggggg#dddd#..", "..ddddddddddbhghhhhhhhgg#ddddd..", "..dddddddddihhhhhhhhhhhgdddddd..", "..dddddddd#jhhhhhhhhhhhgdddddd..", "..ddiiiiddkhhhhhhhhhhhhhdiiidd..", "..diiiiiidehhhhhhhjchhhhdiiiid..", "..iiiiiiibhjjjjjhlddchjhdiiiii..", "..iiiiiiimjjjjjeiiiidcjhdiiiii..", "..iiiiiiimjnnneiiiiiidchdiiiii..", "..iiiiiiimnnnciiiiiiiidcdiiiii..", "..iiiiiiimneniiiiiiiiiiddiiiii..", "..iiiiiiilneliiiiiiiiiiiiiiiii..", "..iiiiiiiieeiiiiiiiiiiiiiiiiii..", "..iiiiiiiilliiiiiiiiiiiiiiiiii..", "..iiiiiiiibbiiiiiiiiiiiiiiiiii..", "..iiiiiiiiiiiiiiiiiiiiiiiiiiii..", "..iiiiiiiiiiiiiiiiiiiiiiiiiiii..", "..biiiiiiiiiiiiiiiiiiiiiiiiiib..", "..goiiiiiiiiiiiiiiiiiiiiiiiiog..", "....pppppppppppppppppppppppp....", "................................"};' or '*',variable=not CURSES and '/* XPM */ static char *dummy[]={ "32 32 1 1", ". c None", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................", "................................"};' or ' '}
+-- LuaFormatter on
+
+-- Configure the command entry's default properties and XPM images.
 events.connect(events.INITIALIZED, function()
 	M.h_scroll_bar, M.v_scroll_bar = false, false
 	for i = 1, M.margins do M.margin_width_n[i] = 0 end
 	M.call_tip_use_style, M.call_tip_position = 4 * M:text_width(view.STYLE_CALLTIP, ' '), true
+	M._xpm = setmetatable({}, {__index = function(t) return t.variable end})
+	local image_type = 1 -- no need to use M.new_image_type() since this is a special view
+	for name, xpm in pairs(not is_hidpi() and xpm16 or xpm32) do
+		M:register_image(image_type, xpm)
+		M._xpm[name], image_type = image_type, image_type + 1
+	end
 end)
 
 -- The fields below were defined in C.

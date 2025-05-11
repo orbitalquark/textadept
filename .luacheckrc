@@ -12,8 +12,9 @@ globals = {
 	'io.get_project_root', 'io.open_file', 'io.open_recent_file', 'io.quick_open',
 	'io.quick_open_filters', 'io.quick_open_max', 'io.recent_files', 'io.save_all_files',
 	'io.track_changes', --
-	'keys', 'lexer', 'lfs', 'LINUX', 'lpeg', 'move_buffer', 'OSX', 'os.spawn', 'QT', 'quit', 'regex',
-	'reset', 'snippets', 'string.iconv', 'table.map', 'textadept', 'timeout', 'ui', 'view', 'WIN32'
+	'is_hidpi', 'keys', 'lexer', 'lfs', 'LINUX', 'lpeg', 'move_buffer', 'OSX', 'os.spawn', 'QT', 'quit',
+	'regex', 'reset', 'snippets', 'string.iconv', 'table.map', 'textadept', 'timeout', 'ui', 'view',
+	'WIN32'
 }
 include_files = {
 	'init.lua', 'core/*.lua', 'modules/textadept/*.lua', --

@@ -157,13 +157,11 @@ local function tab_complete(lua)
 	return cmpls
 end
 
-local XPMS = textadept.editing.XPM_IMAGES
-
 test('ui.command_entry.run should have tab-completion', function()
 	local completions = tab_complete('string.')
 
 	test.assert(#completions > 0, 'should have returned completions')
-	test.assert_equal(completions[1], 'byte?' .. XPMS.METHOD)
+	test.assert_equal(completions[1], 'byte?' .. ui.command_entry._xpm['function'])
 end)
 
 test('ui.command_entry.run should tab-complete global Scintilla fields/functions', function()
@@ -171,35 +169,35 @@ test('ui.command_entry.run should tab-complete global Scintilla fields/functions
 	local fields = tab_complete('caret')
 	local functions = tab_complete('auto')
 
-	test.assert_equal(constants[1], 'MARKER_MAX?' .. XPMS.VARIABLE)
-	test.assert_equal(fields[1], 'caret_fore?' .. XPMS.VARIABLE)
-	test.assert_equal(functions[1], 'auto_c_active?' .. XPMS.METHOD)
+	test.assert_equal(constants[1], 'MARKER_MAX?' .. ui.command_entry._xpm.variable)
+	test.assert_equal(fields[1], 'caret_fore?' .. ui.command_entry._xpm.variable)
+	test.assert_equal(functions[1], 'auto_c_active?' .. ui.command_entry._xpm['function'])
 end)
 
 test('ui.command_entry.run should tab-complete global view fields/functions', function()
 	local completions = tab_complete('goto')
 
-	test.assert_equal(completions[1], 'goto_buffer?' .. XPMS.METHOD)
+	test.assert_equal(completions[1], 'goto_buffer?' .. ui.command_entry._xpm['function'])
 end)
 
 test('ui.command_entry.run should tab-complete global ui fields/functions', function()
 	local fields = tab_complete('fin')
 	local functions = tab_complete('ou')
 
-	test.assert_equal(fields[1], 'find?' .. XPMS.VARIABLE)
-	test.assert_equal(functions[1], 'output?' .. XPMS.METHOD)
+	test.assert_equal(fields[1], 'find?' .. ui.command_entry._xpm.table)
+	test.assert_equal(functions[1], 'output?' .. ui.command_entry._xpm['function'])
 end)
 
 test('ui.command_entry.run should tab-complete global textadept modules', function()
 	local completions = tab_complete('ma')
 
-	test.assert_equal(completions[1], 'macros?' .. XPMS.VARIABLE)
+	test.assert_equal(completions[1], 'macros?' .. ui.command_entry._xpm.table)
 end)
 
 test("ui.command_entry.run should tab-complete only functions when using ':'", function()
 	local functions = tab_complete('buffer:auto')
 
-	test.assert_equal(functions[1], 'auto_c_active?' .. XPMS.METHOD)
+	test.assert_equal(functions[1], 'auto_c_active?' .. ui.command_entry._xpm['function'])
 end)
 
 test('ui.command_entry.run should include Scintilla field/function tab-completions in views',
@@ -207,8 +205,8 @@ test('ui.command_entry.run should include Scintilla field/function tab-completio
 		local fields = tab_complete('view.margin')
 		local functions = tab_complete('view:call')
 
-		test.assert_equal(fields[1], 'margin_back_n?' .. XPMS.VARIABLE)
-		test.assert_equal(functions[1], 'call_tip_active?' .. XPMS.METHOD)
+		test.assert_equal(fields[1], 'margin_back_n?' .. ui.command_entry._xpm.table)
+		test.assert_equal(functions[1], 'call_tip_active?' .. ui.command_entry._xpm['function'])
 	end)
 
 test('ui.command_entry.run should do nothing if tab-completion fails', function()

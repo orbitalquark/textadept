@@ -1,4 +1,4 @@
-# Textadept 12.7 beta 2 Manual
+# Textadept 12.7 nightly Manual
 
 **Contents**
 
@@ -1555,8 +1555,6 @@ Liberation Mono), and lacks some GUI features due to the terminal's constraints:
 	translucent drawing and `INDIC_ROUNDBOX` does not have rounded corners.
 - Some complex marker symbols are not drawn properly or at all.
 - No mouse cursor types.
-- Only up to 16 colors recognized, regardless of how many colors the terminal
-	supports. Unrecognized colors default to white.
 - Not all key sequences are recognized properly, such as `Shift+Arrow` for making selections.
 - No style settings like font name, font size, or italics.
 - No zoom.

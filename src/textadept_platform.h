@@ -255,6 +255,9 @@ void add_timeout(double interval, bool (*f)(int *), int *reference);
  */
 void update_ui(void);
 
+/** Returns whether or not Textadept is currently running on a HiDPI/Retina display. */
+bool is_hidpi(void);
+
 /** Returns whether or not dark mode is currently enabled on the platform. */
 bool is_dark_mode(void);
 

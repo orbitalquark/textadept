@@ -2171,7 +2171,6 @@ end)
 --- Registers an XPM image to an image type number for use in autocompletion and user lists.
 -- @param type Image type number to register the image with.
 -- @param pixmap String [pixmap data](https://scintilla.org/ScintillaDoc.html#XPM).
--- @see textadept.editing.XPM_IMAGES
 -- @function view:register_image
 
 --- The width of the RGBA image to be defined using `view:marker_define_rgba_image()` and
@@ -2546,8 +2545,8 @@ end)
 -- Alpha transparency values are numbers that range from `0` (transparent) to `0xFF` (opaque),
 -- and also includes `view.ALPHA_NOALPHA` for no transparency.
 --
--- **Terminal version note:** irrespective of how many colors the terminal actually supports,
--- Textadept only recognizes 16 colors:
+-- **Terminal version note:** if your terminal emulator does not support RGB colors, or if you
+-- would like to use your terminal's palette of up to 16 colors, you must use the following colors:
 --
 -- `0x000000` | Black | `0x404040` | Light black
 -- `0x000080` | Red | `0x0000FF` | Light red
@@ -2557,7 +2556,7 @@ end)
 -- `0x808000` | Cyan | `0xFFFF00` | Light cyan
 -- `0xC0C0C0` | White | `0xFFFFFF` | Light white
 --
--- Themes must use these colors, but your terminal emulator will map them to its own palette.
+-- Your terminal emulator will map these colors to its palette for display.
 --
 -- #### Styles
 --
@@ -2643,11 +2642,12 @@ end)
 -- A theme typically sets this map's contents. Changing colors manually (e.g. via the command
 -- entry) has no effect since colors are referenced by value, not name.
 --
--- Terminal version note: only 16 color values are recognized: 0x000000 (black), 0x000080 (red),
--- 0x008000 (green), 0x008080 (yellow), 0x800000 (blue), 0x800080 (magenta), 0x808000 (cyan),
--- white (0xC0C0C0), light 0x404040 (black), 0x0000FF (light red), 0x00FF00 (light green),
--- 0x00FFFF (light yellow), 0xFF0000 (light blue), 0xFF00FF (light magenta), 0xFFFF00 (light
--- cyan), and 0xFFFFFF (light white).
+-- Terminal version note: if your terminal emulator does not support RGB colors, or if you would
+-- like to use your terminal's palette of up to 16 colors, use the following color values:
+-- 0x000000 (black), 0x000080 (red), 0x008000 (green), 0x008080 (yellow), 0x800000 (blue),
+-- 0x800080 (magenta), 0x808000 (cyan), white (0xC0C0C0), light 0x404040 (black), 0x0000FF
+-- (light red), 0x00FF00 (light green), 0x00FFFF (light yellow), 0xFF0000 (light blue), 0xFF00FF
+-- (light magenta), 0xFFFF00 (light cyan), and 0xFFFFFF (light white).
 -- @table view.colors
 
 --- Map of style names to style definition tables.

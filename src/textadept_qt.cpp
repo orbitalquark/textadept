@@ -356,6 +356,8 @@ void add_timeout(double interval, bool (*f)(int *), int *refs) { new Timeout{int
 
 void update_ui() { QApplication::sendPostedEvents(), QApplication::processEvents(); }
 
+bool is_hidpi() { return ta->devicePixelRatio() > 1; }
+
 bool is_dark_mode() {
 	QPalette palette;
 	return palette.color(QPalette::WindowText).lightness() >

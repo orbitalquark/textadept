@@ -36,6 +36,7 @@ jobs:
             textadept
             scintillua
             scinterm
+            textadept-autoupdate
             textadept-debugger
             textadept-export
             textadept-file-diff
@@ -164,8 +165,9 @@ jobs:
       - name: Package modules
         run: |
           mkdir textadept-modules
-          modules="debugger export file_diff format lsp lua_repl open_file_mode scratch spellcheck"
-          for module in $modules; do
+          modules="autoupdate debugger export file_diff format lsp lua_repl open_file_mode scratch
+            spellcheck"
+          for module in $(echo $modules); do
             gh_name="$(echo -n $module | sed -e 's/_/-/g;')"
             gh_prefix="https://github.com/orbitalquark/textadept-$gh_name"
             wget $gh_prefix/releases/download/latest/$module.zip
@@ -318,7 +320,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         run: start "" /d ${{ github.workspace }} /wait ${{ matrix.exe }}.exe -t
-        timeout-minutes: 2
+        timeout-minutes: 3
 
       - name: Run unit tests (macOS)
         if: runner.os == 'macOS'
@@ -327,14 +329,14 @@ jobs:
         #  echo "cd ${{ github.workspace }}" > run.sh
         #  echo "${{ matrix.exe }} -t" >> run.sh
         #  open -W -a Terminal run.sh # TODO: never exits since Terminal.app does not quit
-        timeout-minutes: 2
+        timeout-minutes: 3
 
       - name: Run unit tests (Linux)
         if: runner.os == 'Linux'
         run: xvfb-run -a xterm -e ${{ matrix.exe }} -t
         env:
           LANG: en_US.UTF-8
-        timeout-minutes: 2
+        timeout-minutes: 3
 
       - name: Read test output
         if: success() || failure()
@@ -575,8 +577,9 @@ jobs:
       - name: Checkout modules
         run: |
           cd modules
-          modules="debugger export file-diff format lsp lua-repl open-file-mode scratch spellcheck"
-          for module in $modules; do
+          modules="autoupdate debugger export file-diff format lsp lua-repl open-file-mode scratch
+            spellcheck"
+          for module in $(echo $modules); do
             name="$(echo -n $module | sed -e 's/-/_/g;')"
             git clone --depth 1 https://github.com/orbitalquark/textadept-$module $name
           done

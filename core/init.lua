@@ -6,7 +6,7 @@
 for _, arg in ipairs(arg) do if arg == '-T' or arg == '--cov' then require('luacov') end end
 
 --- The Textadept release version string.
-_RELEASE = 'Textadept 12.7 beta 2'
+_RELEASE = 'Textadept 12.7 nightly'
 --- Textadept's copyright information.
 _COPYRIGHT = 'Copyright © 2007-2025 Mitchell. See LICENSE.\n' ..
 	'https://orbitalquark.github.io/textadept'
@@ -121,3 +121,6 @@ for _, mod in ipairs{'buffer', 'file_io', 'lfs_ext', 'table_ext', 'ui', 'view'} 
 --	seconds.
 -- @param[opt] ... Additional arguments to pass to *f*.
 -- @function timeout
+
+--- Returns whether or not Textadept is currently running on a HiDPI/Retina display.
+-- @function is_hidpi

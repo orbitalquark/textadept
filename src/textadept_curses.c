@@ -537,6 +537,8 @@ void update_ui(void) {
 	if (lua_processtimeouts(lua)) refresh_all();
 }
 
+bool is_hidpi(void) { return false; }
+
 bool is_dark_mode(void) { return true; } // TODO:
 
 // Contains information about a generic dialog shell.

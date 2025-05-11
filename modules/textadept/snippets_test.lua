@@ -389,9 +389,6 @@ test("editing.autocomplete('snippet') should produce triggers", function()
 	for cmpl in autocomplete.args[3]:gmatch('[^ ]+') do cmpls[#cmpls + 1] = cmpl end
 	test.assert_equal(#cmpls, 2)
 	-- TODO: Scintilla does not always sort these properly.
-	-- local xpm = textadept.editing.XPM_IMAGES.NAMESPACE
-	-- local sep = string.char(buffer.auto_c_type_separator)
-	-- test.assert_equal(autocomplete.args[3], table.concat({
-	--	trigger1 .. sep .. xpm, trigger2 .. sep .. xpm
-	-- }, string.char(buffer.auto_c_separator)))
+	-- test.assert_equal(autocomplete.args[3],
+	--	table.concat({trigger1, trigger2}, string.char(buffer.auto_c_separator)))
 end)

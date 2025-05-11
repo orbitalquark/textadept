@@ -1,4 +1,4 @@
-# Textadept 12.7 beta 2 API Documentation
+# Textadept 12.7 nightly API Documentation
 
 1. [_G](#_G)
 2. [_L](#_L)
@@ -206,6 +206,11 @@ assert_type(option.setting, 'number', 'setting') -- assert 'setting' field is a 
 ### `buffer`
 
 The current [buffer](#the-buffer-module) in the [current view](#_G.view).
+
+<a id="is_hidpi"></a>
+### `is_hidpi`()
+
+Returns whether or not Textadept is currently running on a HiDPI/Retina display.
 
 <a id="_G.keys"></a>
 ### `keys`
@@ -3197,8 +3202,6 @@ Parameters:
 - *type*:  Image type number to register the image with.
 - *pixmap*:  String [pixmap data](https://scintilla.org/ScintillaDoc.html#XPM).
 
-See also: [`textadept.editing.XPM_IMAGES`](#textadept.editing.XPM_IMAGES)
-
 <a id="view.rgba_image_width"></a>
 #### `view.rgba_image_width`
 
@@ -3735,8 +3738,8 @@ is blue. Each component ranges from `0` to `0xFF` (255).
 Alpha transparency values are numbers that range from `0` (transparent) to `0xFF` (opaque),
 and also includes `view.ALPHA_NOALPHA` for no transparency.
 
-**Terminal version note:** irrespective of how many colors the terminal actually supports,
-Textadept only recognizes 16 colors:
+**Terminal version note:** if your terminal emulator does not support RGB colors, or if you
+would like to use your terminal's palette of up to 16 colors, you must use the following colors:
 
 `0x000000` | Black | `0x404040` | Light black
 `0x000080` | Red | `0x0000FF` | Light red
@@ -3746,7 +3749,7 @@ Textadept only recognizes 16 colors:
 `0x808000` | Cyan | `0xFFFF00` | Light cyan
 `0xC0C0C0` | White | `0xFFFFFF` | Light white
 
-Themes must use these colors, but your terminal emulator will map them to its own palette.
+Your terminal emulator will map these colors to its palette for display.
 
 #### Styles
 
@@ -3845,11 +3848,12 @@ Map of color name strings to color values in "0xBBGGRR" format.
 A theme typically sets this map's contents. Changing colors manually (e.g. via the command
 entry) has no effect since colors are referenced by value, not name.
 
-Terminal version note: only 16 color values are recognized: 0x000000 (black), 0x000080 (red),
-0x008000 (green), 0x008080 (yellow), 0x800000 (blue), 0x800080 (magenta), 0x808000 (cyan),
-white (0xC0C0C0), light 0x404040 (black), 0x0000FF (light red), 0x00FF00 (light green),
-0x00FFFF (light yellow), 0xFF0000 (light blue), 0xFF00FF (light magenta), 0xFFFF00 (light
-cyan), and 0xFFFFFF (light white).
+Terminal version note: if your terminal emulator does not support RGB colors, or if you would
+like to use your terminal's palette of up to 16 colors, use the following color values:
+0x000000 (black), 0x000080 (red), 0x008000 (green), 0x008080 (yellow), 0x800000 (blue),
+0x800080 (magenta), 0x808000 (cyan), white (0xC0C0C0), light 0x404040 (black), 0x0000FF
+(light red), 0x00FF00 (light green), 0x00FFFF (light yellow), 0xFF0000 (light blue), 0xFF00FF
+(light magenta), 0xFFFF00 (light cyan), and 0xFFFFFF (light white).
 
 <a id="view.styles"></a>
 #### `view.styles`
@@ -7545,28 +7549,6 @@ Editing features for Textadept.
 ### `textadept.editing.INDIC_HIGHLIGHT`
 
 The word highlight indicator number.
-
-<a id="textadept.editing.XPM_IMAGES"></a>
-### `textadept.editing.XPM_IMAGES`
-
-Map of image names to registered image numbers.
-
-Fields:
-- `CLASS`:  The image number for classes.
-- `NAMESPACE`:  The image number for namespaces.
-- `METHOD`:  The image number for methods.
-- `SIGNAL`:  The image number for signals.
-- `SLOT`:  The image number for slots.
-- `VARIABLE`:  The image number for variables.
-- `STRUCT`:  The image number for structures.
-- `TYPEDEF`:  The image number for type definitions.
-
-Usage:
-
-```lua
-local item = string.format('%s%s%s', name, string.char(buffer.auto_c_type_separator),
-	textadept.editing.XPM_IMAGES.CLASS) -- autocompletion or user list item with image
-```
 
 <a id="textadept.editing.auto_enclose"></a>
 ### `textadept.editing.auto_enclose`

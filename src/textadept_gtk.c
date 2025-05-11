@@ -531,6 +531,14 @@ void update_ui(void) {
 	while (gtk_events_pending()) gtk_main_iteration();
 }
 
+bool is_hidpi(void) {
+#if GTK_CHECK_VERSION(3, 10, 0)
+	return gtk_widget_get_scale_factor(window) > 1;
+#else
+	return false;
+#endif
+}
+
 bool is_dark_mode(void) {
 #if GTK_CHECK_VERSION(3, 0, 0)
 	GtkStyleContext *context = gtk_style_context_new();
