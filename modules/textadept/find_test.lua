@@ -31,13 +31,14 @@ test('find should emit an event for results found', function()
 	test.assert_equal(found.args, {find, false})
 end)
 
-test('find should count how many occurrences it found #skip', function()
+test('find should count how many occurrences it found', function()
 	buffer:append_text(find .. find)
 	ui.find.find_entry_text = find
+	local _<close> = test.disable_metafield(ui, 'statusbar_text')
 
 	ui.find.find_next()
 
-	-- TODO: how to assert ui.statusbar_text was written to? Cannot mock it.
+	test.assert_contains(ui.statusbar_text, '1/2')
 end)
 
 test('find should wrap around when searching', function()
@@ -71,12 +72,13 @@ test('find should allow repeatedly searching for occurrences', function()
 	test.assert_equal(buffer.selection_end, buffer.length + 1)
 end)
 
-test('find should display a statusbar message if it could not find anything #skip', function()
+test('find should display a statusbar message if it could not find anything', function()
 	ui.find.find_entry_text = 'will not be found'
+	local _<close> = test.disable_metafield(ui, 'statusbar_text')
 
 	ui.find.find_next()
 
-	-- TODO: how to assert ui.statusbar_text was written to? Cannot mock it.
+	test.assert_equal(ui.statusbar_text, _L['No results found'])
 end)
 
 test('find should allow searching backwards and select the first match', function()
@@ -395,7 +397,9 @@ local function regex_replace(text, re, repl)
 
 	ui.find.replace()
 
-	return buffer:get_text()
+	local result = buffer:get_text()
+	events.emit(events.FIND_PANE_HIDE) -- clear find_text, found_text
+	return result
 end
 
 test('replace should unescape \\[bfnrtv] in regex replacement', function()
@@ -424,11 +428,9 @@ end)
 
 test('replace should upper-case between \\U and \\E in regex replacements', function()
 	local result = regex_replace(find .. find, find, '\\U\\0\\E')
-	-- TODO: if previous search was for 'word', find_next() incorrectly advances search pos.
 
 	test.assert_equal(result, find:upper() .. find)
 end)
-expected_failure()
 
 test('replace should lower-case between \\L and \\E in regex replacements', function()
 	local result = regex_replace(find:upper(), find, '\\L\\0\\E')
@@ -550,13 +552,14 @@ test('replace all should not match ^ more than once per line', function()
 	test.assert_equal(buffer:get_text(), find)
 end)
 
-test('replace all should count the number of replacements made #skip', function()
+test('replace all should count the number of replacements made', function()
 	buffer:append_text(find .. find)
 	ui.find.find_entry_text = find
+	local _<close> = test.disable_metafield(ui, 'statusbar_text')
 
 	ui.find.replace_all()
 
-	-- TODO: how to assert ui.statusbar_text was written to? Cannot mock it.
+	test.assert_contains(ui.statusbar_text, '2') -- replacements made
 end)
 
 test('ui.find.goto_file_found(true) should go to and select the next occurrence in the list',

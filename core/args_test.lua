@@ -50,8 +50,34 @@ test('args.register should register command line options', function()
 	test.assert_equal(z.args, {value})
 end)
 
--- TODO: should emit events.ARG_NONE when no command-line args are given
--- TODO: a command-line option handler can return true to prevent events.ARG_NONE
+test('should emit events.ARG_NONE when no command-line arguments are given', function()
+	-- Note: this test needs to emit `events.INITIALIZED` to trigger `process()` with
+	-- `events.ARG_NONE` emission enabled. `send_command_line()` uses the 'command_line'
+	-- event whose handler prevents `events.ARG_NONE`.
+	local _<close> = test.connect(events.INITIALIZED, test.stub(true), 2) -- stop after process()
+	local arg_none = test.stub()
+	local _<close> = test.connect(events.ARG_NONE, arg_none)
+
+	local _<close> = test.mock(_G, 'arg', {})
+	events.emit(events.INITIALIZED) -- invokes process()
+
+	test.assert_equal(arg_none.called, true)
+end)
+
+test('should not emit events.ARG_NONE if an option handler returns true', function()
+	-- Note: this test needs to emit `events.INITIALIZED` to trigger `process()` with
+	-- `events.ARG_NONE` emission enabled. `send_command_line()` uses the 'command_line'
+	-- event whose handler prevents `events.ARG_NONE`.
+	local _<close> = test.connect(events.INITIALIZED, test.stub(true), 2) -- stop after process()
+	args.register('-z', '--zz', 1, test.stub(true), '')
+	local arg_none = test.stub()
+	local _<close> = test.connect(events.ARG_NONE, arg_none)
+
+	local _<close> = test.mock(_G, 'arg', {'-z'})
+	events.emit(events.INITIALIZED) -- invokes process()
+
+	test.assert_equal(arg_none.called, false)
+end)
 
 test('should open files in the original instance', function()
 	local f<close> = test.tmpfile()

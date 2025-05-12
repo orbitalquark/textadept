@@ -8,18 +8,25 @@
 -- @module _L
 local M = {}
 
-local locale_file = _USERHOME .. '/locale.conf'
-if not lfs.attributes(locale_file) then
-	local lang = (os.getenv('LANG') or ''):match('^[^_.@]+') -- TODO: support territory (e.g. pt_BR)
-	if lang then locale_file = string.format('%s/core/locales/locale.%s.conf', _HOME, lang) end
+local files = {_USERHOME .. '/locale.conf'}
+local locale, lang = (os.getenv('LANG') or ''):match('^(([^_.@]+)_?[^.@]*)')
+if locale then
+	files[#files + 1] = string.format('%s/core/locales/locale.%s.conf', _HOME, locale)
+	files[#files + 1] = string.format('%s/core/locales/locale.%s.conf', _HOME, lang)
 end
-if not lfs.attributes(locale_file) then locale_file = _HOME .. '/core/locale.conf' end
-for line in io.lines(locale_file) do
-	-- Localization entries must start with a word or '['.
-	local id, str = line:match('^([%w_%[].-)%s*=%s*(.-)\r?$')
-	if not id then goto continue end
-	assert(not M[id], 'duplicate locale key: %s', id)
-	M[id] = GTK and str or str:gsub('_', QT and '&' or '')
+files[#files + 1] = _HOME .. '/core/locale.conf'
+
+for _, locale_file in ipairs(files) do
+	if not lfs.attributes(locale_file) then goto continue end
+	for line in io.lines(locale_file) do
+		-- Localization entries must start with a word or '['.
+		local id, str = line:match('^([%w_%[].-)%s*=%s*(.-)\r?$')
+		if id then
+			assert(not M[id], 'duplicate locale key: %s', id)
+			M[id] = GTK and str or str:gsub('_', QT and '&' or '')
+		end
+	end
+	break
 	::continue::
 end
 

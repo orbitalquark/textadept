@@ -184,8 +184,8 @@ end
 --	and paths instead of full ones, and it is likely that the file in question is already open.
 function ui.goto_file(filename, split, preferred_view, sloppy)
 	assert_type(filename, 'string', 1)
-	local patt = string.format('%s%s$', not sloppy and '^' or '',
-		not sloppy and filename or filename:match('[^/\\]+$')) -- TODO: escape filename properly
+	local patt = (not sloppy and filename or filename:match('[^/\\]+$')):gsub('%p', '%%%0') .. '$'
+	if not sloppy then patt = '^' .. patt end
 	if WIN32 then
 		patt = patt:gsub('%a', function(c) return string.format('[%s%s]', c:upper(), c:lower()) end)
 	end
@@ -252,8 +252,6 @@ events.connect(events.URI_DROPPED, function(utf8_uris)
 	end
 	ui.goto_view(view) -- work around any view focus synchronization issues
 end)
-events.connect(events.APPLEEVENT_ODOC,
-	function(uri) return events.emit(events.URI_DROPPED, 'file://' .. uri) end)
 
 -- Sets buffer statusbar text.
 events.connect(events.UPDATE_UI, function(updated)

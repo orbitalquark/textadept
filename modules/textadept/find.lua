@@ -100,8 +100,10 @@ function M.focus(options)
 	end
 	orig_focus()
 end
--- Restore original replacement text when canceling find in files.
+-- Clear find results when finishing a find session, and restore original replacement text when
+-- canceling find in files.
 events.connect(events.FIND_PANE_HIDE, function()
+	find_text, found_text = nil, nil
 	if M.in_files then M.in_files, M.replace_entry_text = false, repl_text end
 end)
 

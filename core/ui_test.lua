@@ -359,8 +359,6 @@ test('dropping a directory URI should do nothing', function()
 	test.assert_equal(#_BUFFERS, 1)
 end)
 
--- TODO: OSX APPLEEVENT_ODOC
-
 test('switching between buffers should save/restore buffer state', function()
 	buffer:append_text(test.lines(100))
 	buffer:set_sel(buffer:position_from_line(50), buffer.line_end_position[50])
@@ -375,6 +373,7 @@ test('switching between buffers should save/restore buffer state', function()
 	test.assert_equal(view.first_visible_line, first_line)
 	test.assert_equal(view.x_offset, x_offset)
 end)
+if GTK then retry(1) end -- GTK 2
 
 test('switching between buffers should save/restore fold state', function()
 	local _<close> = test.tmpfile('.lua', test.lines{'if true then', '\tprint()', 'end'}, true)
@@ -476,10 +475,10 @@ end
 test("ui.maximized = true should change the window's maximized state", function()
 	local _<close> = test.mock(ui, 'maximized', true)
 
-	-- For some reason, the following fails, even though the window maximized status is toggled.
-	-- `ui.update()` does not seem to help.
 	test.assert_equal(ui.maximized, true)
 end)
+-- For some reason, the following fails, even though the window maximized status is toggled.
+-- `ui.update()` does not seem to help.
 if GTK then expected_failure() end
 if CURSES then skip('ui.maximized cannot be changed') end
 
@@ -488,10 +487,10 @@ test('ui.size = {width, height} should resize the window', function()
 
 	local _<close> = test.mock(ui, 'size', new_size)
 
-	-- For some reason, reading ui.size fails, even though the window has been resized.
-	-- `ui.update()` does not seem to help.
 	test.assert_equal(ui.size, new_size)
 end)
+-- For some reason, reading ui.size fails, even though the window has been resized.
+-- `ui.update()` does not seem to help.
 if GTK then expected_failure() end
 if CURSES then skip('ui.size cannot be changed') end
 

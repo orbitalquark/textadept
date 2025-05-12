@@ -167,6 +167,7 @@ function io.open_file(filenames)
 		::next_filename::
 	end
 end
+events.connect(events.APPLEEVENT_ODOC, io.open_file)
 
 -- Documentation is in core/buffer.lua.
 local function reload(buffer)

@@ -200,7 +200,7 @@ test('lexer errors should style the entire buffer the default style', function()
 	if CURSES then events.emit(events.STYLE_NEEDED, buffer.length + 1, buffer) end
 
 	if GTK then test.wait(function() return error_handler.called end) end
-	test.assert_equal(error_handler.called, true)
+	test.assert(error_handler.called, 'error handler was not called') -- could happen more than once
 	test.assert_equal(buffer.style_at[1], view.STYLE_DEFAULT)
 	test.assert_equal(buffer.end_styled, buffer.length + 1)
 end)
@@ -219,5 +219,5 @@ test('view should refresh its styles when switching between buffers with differe
 		test.assert_equal(style_num, view.STYLE_DEFAULT) -- unknown
 	end)
 
--- TODO: test view/scintilla <-> lexer api
--- e.g. view.folding = false disables lex:fold() and view.fold_compact = true re-folds compactly
+-- TODO: test buffer/scintilla <-> lexer api
+-- e.g. buffer.folding = false disables lex:fold() and buffer.fold_compact = true re-folds compactly

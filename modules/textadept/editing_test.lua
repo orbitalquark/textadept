@@ -964,9 +964,11 @@ end)
 -- Coverage tests.
 
 test('editing.filter_through should write command errors to the statusbar', function()
+	local _<close> = test.disable_metafield(ui, 'statusbar_text')
+
 	textadept.editing.filter_through('false')
 
-	-- TODO: how to assert ui.statusbar_text was written to? Cannot mock it.
+	test.assert_contains(ui.statusbar_text, '"false"') -- returned non-zero status
 end)
 if WIN32 then skip('false does not exist') end
 

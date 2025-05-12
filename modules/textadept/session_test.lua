@@ -100,7 +100,7 @@ test('sessions should save window state', function()
 
 	test.assert_equal(ui.maximized, true)
 end)
-if GTK then expected_failure() end -- TODO:
+if GTK then expected_failure() end
 if CURSES then skip('window state cannot be changed') end
 
 test('sessions should save window size', function()
@@ -114,7 +114,7 @@ test('sessions should save window size', function()
 
 	test.assert_equal(ui.size, size)
 end)
-if GTK then expected_failure() end -- TODO:
+if GTK then expected_failure() end
 if CURSES then skip('window size cannot be changed') end
 
 test('sessions should save view state', function()
@@ -132,6 +132,26 @@ test('sessions should save view state', function()
 	test.assert_equal(_VIEWS[1].size, view1_size)
 	test.assert_equal(_VIEWS[2].size, view2_size)
 end)
+
+test('sessions should restore the view states of files opened in more than one view', function()
+	local sf<close> = test.tmpfile()
+	local _<close> = test.tmpfile(test.lines(50), true)
+	buffer:line_down_extend()
+	local selection1 = buffer:get_sel_text()
+	view:split(true)
+	buffer:goto_line(50)
+	buffer:line_down_extend()
+	local selection2 = buffer:get_sel_text()
+
+	textadept.session.save(sf.filename)
+	while view:unsplit() do end
+	textadept.session.load(sf.filename)
+
+	test.assert_equal(buffer:get_sel_text(), selection2)
+	ui.goto_view(-1)
+	test.assert_equal(buffer:get_sel_text(), selection1)
+end)
+expected_failure() -- TODO:
 
 test('sessions should save recent files', function()
 	local sf<close> = test.tmpfile()

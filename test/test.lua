@@ -42,12 +42,11 @@ local test = setmetatable(dofile(_HOME .. '/test/helpers.lua'), {
 local function skip() tests[#tests] = tests[#tests] .. ' #skip' end
 
 --- Map of tests to retries.
-local retries = setmetatable({}, {__index = function() return 1 end})
+local retries = setmetatable({}, {__index = function() return 0 end})
 
 --- If the most recently defined test fails, retry it up to *n* times.
 -- Tests that depend on external processes may fail every now and then due to I/O instabilities,
 -- particularly on CI.
--- The default is to retry once.
 local function retry(n) retries[tests[#tests]] = n end
 
 --- Map of tests expected to fail to `true`.
@@ -98,6 +97,7 @@ local function snapshot()
 		if text == '' and #_BUFFERS == 1 then return '' end -- shortcut
 		lines[#lines + 1] = string.format('buffer %d (%s):\n\t%s\n', i,
 			buffer.filename or buffer._type or _L['Untitled'], text)
+		lines[#lines + 1] = string.format('top line: %d', view.first_visible_line)
 		local pos = buffer.current_pos
 		lines[#lines + 1] = string.format('caret position: (%d:%d)', buffer:line_from_position(pos),
 			buffer.column[pos])

@@ -276,6 +276,29 @@ test('mock should allow conditionally mocking a module function', function()
 	test.assert_equal(unmocked_results, {'unmocked value'})
 end)
 
+test('disable_metafield should allow temporarily disabling a module metafield', function()
+	local newindex_called = false
+	local module = setmetatable({}, {
+		__index = {name = 'mocked'}, __newindex = function() newindex_called = true end
+	})
+	local unmocked_result, metafield_invoked
+
+	do
+		local _<close> = test.disable_metafield(module, 'name')
+		module.name = 'unmocked'
+
+		unmocked_result = module.name
+		metafield_invoked = newindex_called
+	end
+	module.name = 'still unmocked'
+	local mocked_result = module.name
+
+	test.assert_equal(unmocked_result, 'unmocked')
+	test.assert_equal(metafield_invoked, false)
+	test.assert_equal(mocked_result, 'mocked')
+	test.assert_equal(newindex_called, true)
+end)
+
 test('wait should return when a condition succeeds', function()
 	local f = test.stub()
 	local function condition()
@@ -385,6 +408,7 @@ test('type should type into the command entry if ui.command_entry.active is true
 	test.assert_equal(ui.command_entry:get_text(), text)
 	test.assert_equal(buffer.length, 0)
 end)
+if QT and LINUX and not os.getenv('CI') then skip('focus issues') end -- for some reason I need this
 if OSX then skip('find in files progress dialog interferes with focus') end -- TODO:
 
 test('type should change ui.find.find_entry_text if ui.find.active is true', function()

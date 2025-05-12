@@ -222,12 +222,13 @@ end)
 
 test('Tools > Show Keys... should show typed keys in the statusbar', function()
 	local _<close> = test.defer(function() test.type('esc') end)
+	local _<close> = test.disable_metafield(ui, 'statusbar_text')
 	click('Tools/Show Keys...')
 
 	test.type('\t')
 
 	test.assert_equal(keys.mode, '_show_keys')
-	-- TODO: how to assert ui.statusbar_text was written to? Cannot mock it.
+	test.assert_contains(ui.statusbar_text, '\\t')
 	test.assert_equal(ui.get_clipboard_text(), '\\t')
 end)
 

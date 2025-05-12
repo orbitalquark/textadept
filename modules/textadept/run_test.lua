@@ -210,7 +210,22 @@ test('run.* should allow functions to return commands and working dirs', functio
 	test.assert_contains(output, '\n' .. dir.dirname) -- match from stdout, not cd
 end)
 
--- TODO: test env
+test('run.* should allow functions to return commands, working dirs, and environments', function()
+	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
+	local f<close> = test.tmpfile()
+	local env = {key = 'value'}
+	local command_in_dir =
+		function() return 'echo ' .. (not WIN32 and '$key' or '%key%'), nil, env end
+	textadept.run.run_commands[f.filename] = command_in_dir
+	local spawn = test.stub()
+	local _<close> = test.mock(os, 'spawn', spawn)
+
+	pcall(textadept.run.run, f.filename) -- assert(os.spawn(...)) will fail, which is fine
+
+	test.assert_equal(spawn.called, true)
+	local spawn_env = spawn.args[3]
+	test.assert_equal(spawn_env, env)
+end)
 
 test('run.compile/run should allow macros in commands', function()
 	local f<close> = test.tmpfile('.txt')

@@ -724,13 +724,11 @@ if not QT then expected_failure() end
 -- Coverage tests.
 
 test('io.open_file should raise an error if it cannot open or read a file', function()
-	if LINUX then
-		local cannot_open = function() io.open_file('/etc/gshadow-') end
+	local cannot_open = function() io.open_file('/etc/gshadow-') end
 
-		test.assert_raises(cannot_open, 'cannot open /etc/gshadow-: Permission denied')
-	end
-	-- TODO: find a case where the file can be opened, but not read
+	test.assert_raises(cannot_open, 'cannot open /etc/gshadow-: Permission denied')
 end)
+if not LINUX then skip('/etc/gshadow- only exists on Linux') end
 
 test("buffer.save should remove a buffer's type once it has a filename", function()
 	local f<close> = test.tmpfile()

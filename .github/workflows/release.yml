@@ -320,7 +320,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         run: start "" /d ${{ github.workspace }} /wait ${{ matrix.exe }}.exe -t
-        timeout-minutes: 3
+        timeout-minutes: 2
 
       - name: Run unit tests (macOS)
         if: runner.os == 'macOS'
@@ -329,14 +329,14 @@ jobs:
         #  echo "cd ${{ github.workspace }}" > run.sh
         #  echo "${{ matrix.exe }} -t" >> run.sh
         #  open -W -a Terminal run.sh # TODO: never exits since Terminal.app does not quit
-        timeout-minutes: 3
+        timeout-minutes: 2
 
       - name: Run unit tests (Linux)
         if: runner.os == 'Linux'
         run: xvfb-run -a xterm -e ${{ matrix.exe }} -t
         env:
           LANG: en_US.UTF-8
-        timeout-minutes: 3
+        timeout-minutes: 2
 
       - name: Read test output
         if: success() || failure()

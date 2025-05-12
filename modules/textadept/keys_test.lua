@@ -23,7 +23,28 @@ test('ctrl+shift+\\n should start a new line above the current one', function()
 end)
 if CURSES then skip('ctrl+shift+\\n is not defined') end
 
--- TODO: test('ctrl+pgup/pgdn should scroll without moving the caret')
+test('alt+pgup should line scroll up without moving the caret', function()
+	buffer:append_text(test.lines(50))
+	buffer:document_end()
+	local top_line = view.first_visible_line
+
+	test.type(not OSX and 'alt+pgup' or 'ctrl+pgup')
+
+	test.assert(view.first_visible_line < top_line, 'view was not scrolled up')
+	test.assert_equal(buffer.current_pos, buffer.length + 1)
+end)
+skip('this test randomly fails') -- TODO: no amount of ui.update() is good enough
+if CURSES then skip('alt+pgup is not defined') end
+
+test('alt+pgdn should line scroll down without moving the caret', function()
+	buffer:append_text(test.lines(50))
+
+	test.type(not OSX and 'alt+pgdn' or 'ctrl+pgdn')
+
+	test.assert(view.first_visible_line > 0, 'view was not scrolled down')
+	test.assert_equal(buffer.current_pos, 1)
+end)
+if CURSES then skip('alt+pgdn is not defined') end
 
 test('ctrl+k should cut to EOL with empty selection', function()
 	local text = 'text'

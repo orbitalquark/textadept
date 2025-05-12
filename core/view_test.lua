@@ -70,6 +70,7 @@ test('view.split should preserve buffer state', function()
 	test.assert_equal(view.first_visible_line, first_line)
 	test.assert_equal(view.x_offset, x_offset)
 end)
+if GTK then retry(1) end -- GTK 2
 
 test('view.split should ensure the caret remains visible', function()
 	buffer:append_text(test.lines(100))

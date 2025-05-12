@@ -287,6 +287,16 @@ function M.mock(module, name, condition, mock)
 	return M.defer(function() module[name] = original_value end)
 end
 
+--- Disables a metafield for as long as the returned to-be-closed value is in scope.
+-- @param module Table module to disable a metafield in.
+-- @param name String metafield to disable.
+-- @return to-be-closed value
+-- @usage local _<close> = disable_metafield(ui, 'statusbar_text')
+function M.disable_metafield(module, name)
+	rawset(assert_type(module, 'table', 1), assert_type(name, 'string', 2), true) -- any non-nil value
+	return M.defer(function() rawset(module, name, nil) end)
+end
+
 --- Sleep for an amount of time.
 -- @param n Number of seconds to sleep for. It may be fractional.
 local function sleep(n) os.execute((not WIN32 and 'sleep ' or 'timeout /T ') .. n) end
