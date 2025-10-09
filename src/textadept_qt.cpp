@@ -758,9 +758,6 @@ public:
 		connect(this, &QApplication::aboutToQuit, this, &close_textadept);
 		// There is a bug in Qt where a tab scroll button could have focus at this time.
 		if (!SCI(focused_view)->hasFocus()) SCI(focused_view)->setFocus();
-#if _WIN32
-		setStyle(QStyleFactory::create("Fusion"));
-#endif
 	}
 	~Application() override {
 		if (inited) delete ta;
@@ -780,4 +777,9 @@ private:
 	bool inited = false;
 };
 
-int main(int argc, char *argv[]) { return Application{argc, argv}.exec(); }
+int main(int argc, char *argv[]) {
+#if _WIN32
+	QApplication::setStyle(QStyleFactory::create("Fusion"));
+#endif
+	return Application{argc, argv}.exec();
+}
