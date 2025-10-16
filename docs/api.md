@@ -305,11 +305,15 @@ The current [view](#the-view-module).
 Map of all messages used by Textadept to their localized forms.
 
 If the localized form of a given message does not exist, the non-localized message is
-returned. Use Lua's `rawget()` to check if a localization exists.
+returned. Use Lua's `rawget()` to check if a localization exists. 
+The localized form automatically adjusts "_" or "&" mnemonics between GTK and QT. For example:
+
+```lua
+-- Using "_L['Mnemonic Entry']" in the QT version will be corrected
+_L['Mnemonic Entry'] = '_Mnemonic Entry'  -- Uses GTK accellerator
+```
 
 Terminal version note: any "_" or "&" mnemonics the GUI version would use are ignored.
-
-
 
 <a id="args"></a>
 ## The `args` module
