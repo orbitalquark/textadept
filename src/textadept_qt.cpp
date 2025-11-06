@@ -314,6 +314,16 @@ void *read_menu(lua_State *L, int index) {
 		}
 		lua_pop(L, 1); // label
 	}
+	// mark submenus as popups
+	for (auto action : menu->actions()) {
+		if (action->menu()) {
+			QObject::connect(action->menu(), &QMenu::aboutToShow, menu, [action, menu] {
+				if (action->menu()->windowHandle()) {
+					action->menu()->windowHandle()->setTransientParent(menu->windowHandle());
+				}
+			});
+		}
+	}
 	return menu;
 }
 
@@ -327,6 +337,12 @@ void set_menubar(lua_State *L, int index) {
 	for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++) {
 		auto menu = static_cast<QMenu *>(lua_rawgeti(L, index, i), lua_touserdata(L, -1));
 		ta->menuBar()->addMenu(menu); // menubar does not take ownership
+		// mark top-level menus as popups
+		QObject::connect(menu, &QMenu::aboutToShow, ta->menuBar(), [menu] {
+			if (menu->windowHandle()) {
+				menu->windowHandle()->setTransientParent(ta->windowHandle());
+			}
+		});
 	}
 	ta->menuBar()->setVisible(lua_rawlen(L, index) > 0);
 }
