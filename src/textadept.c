@@ -688,6 +688,7 @@ static void sync_tabbar(void) {
 static int ui_newindex(lua_State *L) {
 	const char *key = lua_tostring(L, 2);
 	if (strcmp(key, "title") == 0) return (set_title(lua_tostring(L, 3)), 0);
+	if (strcmp(key, "statusbar") == 0) return (set_statusbar_visible(lua_toboolean(L, 3)), 0);
 	if (strcmp(key, "statusbar_text") == 0 || strcmp(key, "buffer_statusbar_text") == 0)
 		return (set_statusbar_text(*key == 's' ? 0 : 1, lua_tostring(L, 3)), 0);
 	if (strcmp(key, "menubar") == 0) {

@@ -115,6 +115,7 @@ SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, vo
 	QObject::connect(view, &ScintillaEditBase::buttonPressed, view, [](QMouseEvent *event) {
 		if (event->button() == Qt::RightButton) show_context_menu("context_menu", event);
 	});
+	view->setMinimumHeight(1), view->setMinimumWidth(1);
 	return view;
 }
 
@@ -278,6 +279,10 @@ void set_command_entry_height(int height) {
 
 void set_statusbar_text(int bar, const char *text) {
 	bar == 0 ? ta->statusBar()->showMessage(text) : ta->docStatusBar->setText(text);
+}
+
+void set_statusbar_visible(bool visible) {
+	ta->statusBar()->setVisible(visible);
 }
 
 void *read_menu(lua_State *L, int index) {

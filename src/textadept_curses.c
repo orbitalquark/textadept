@@ -35,6 +35,7 @@ static char *button_labels[4], *option_labels[4], *find_history[HIST_MAX], *repl
 static WINDOW *command_entry_label;
 static bool command_entry_active;
 static int statusbar_length[2];
+static int statusbar_size;
 TermKey *ta_tk; // global for CDK use
 
 // Lua objects.
@@ -96,7 +97,7 @@ static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
 }
 
 void new_window(SciObject *(*get_view)(void)) {
-	root_pane = new_pane(get_view()), resize_pane(root_pane, LINES - 2, COLS, 1, 0);
+	root_pane = new_pane(get_view()), resize_pane(root_pane, LINES - statusbar_size - 1, COLS, 1, 0);
 }
 
 void set_title(const char *title) {
@@ -401,7 +402,7 @@ void focus_find(void) {
 static void resize_command_entry(void) {
 	WINDOW *win = scintilla_get_window(command_entry);
 	int height = get_command_entry_height(), label_width = getmaxx(command_entry_label);
-	wresize(win, height, COLS - label_width), mvwin(win, LINES - 1 - height, label_width);
+	wresize(win, height, COLS - label_width), mvwin(win, LINES - statusbar_size - height, label_width);
 }
 
 void focus_command_entry(void) {
@@ -414,7 +415,7 @@ void focus_command_entry(void) {
 bool is_command_entry_active(void) { return command_entry_active; }
 
 void set_command_entry_label(const char *text) {
-	if (!command_entry_label) command_entry_label = newwin(1, 1, LINES - 2, 0);
+	if (!command_entry_label) command_entry_label = newwin(1, 1, LINES - statusbar_size - 1, 0);
 	wresize(command_entry_label, 1, utf8strlen(text)), mvwaddstr(command_entry_label, 0, 0, text);
 }
 
@@ -423,16 +424,25 @@ int get_command_entry_height(void) { return getmaxy(scintilla_get_window(command
 void set_command_entry_height(int height) {
 	WINDOW *win = scintilla_get_window(command_entry);
 	int label_width = getmaxx(command_entry_label);
-	wresize(win, height, COLS - label_width), mvwin(win, LINES - 1 - height, label_width);
+	wresize(win, height, COLS - label_width), mvwin(win, LINES - statusbar_size - height, label_width);
 }
 
 void set_statusbar_text(int bar, const char *text) {
+	if (!statusbar_size) return;
 	int start = bar == 0 ? 0 : statusbar_length[0];
 	int end = bar == 0 ? COLS - statusbar_length[1] : COLS;
 	for (int i = start; i < end; i++) mvaddch(LINES - 1, i, ' '); // clear
 	int len = (int)utf8strlen(text);
 	mvaddstr(LINES - 1, bar == 0 ? 0 : COLS - len, text);
 	statusbar_length[bar] = len;
+}
+
+void set_statusbar_visible(bool visible) {
+	statusbar_size = visible ? 1 : 0;
+	resize_pane(root_pane, LINES - statusbar_size - 1, COLS, 1, 0);
+	if (command_entry_label) mvwin(command_entry_label, LINES - statusbar_size - 1, 0);
+	resize_command_entry();
+	refresh();
 }
 
 void *read_menu(lua_State *L, int index) { return NULL; }
@@ -927,7 +937,7 @@ static void signalled(int signal) {
 	if (signal == SIGCONT) termkey_start(ta_tk);
 	struct winsize w;
 	ioctl(0, TIOCGWINSZ, &w);
-	resizeterm(w.ws_row, w.ws_col), resize_pane(root_pane, LINES - 2, COLS, 1, 0),
+	resizeterm(w.ws_row, w.ws_col), resize_pane(root_pane, LINES - statusbar_size - 1, COLS, 1, 0),
 		resize_command_entry();
 	if (signal == SIGCONT) emit("resume", -1);
 	emit("update_ui", LUA_TNUMBER, 0, -1), refresh_all();
@@ -975,6 +985,7 @@ int main(int argc, char **argv) {
 	find_next = &button_labels[0], replace = &button_labels[1], find_prev = &button_labels[2],
 	replace_all = &button_labels[3], match_case = &find_options[0], whole_word = &find_options[1],
 	regex = &find_options[2], in_files = &find_options[3]; // typedefed, so cannot static initialize
+	statusbar_size = 1;
 
 	if (!init_textadept(argc, argv)) return (endwin(), termkey_destroy(ta_tk), exit_status);
 

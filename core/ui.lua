@@ -412,6 +412,9 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 --- The text displayed in the buffer statusbar. (Write-only)
 -- @field buffer_statusbar_text
 
+--- Whether or not to display the statusbar. (Write-only)
+-- @field statusbar
+
 --- Whether or not Textadept's window is maximized.
 -- This field is always `false` in the terminal version.
 -- @field maximized

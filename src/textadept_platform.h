@@ -205,6 +205,8 @@ void set_command_entry_height(int height);
 
 /** Sets the content of statusbar number 0 or 1 to the given text. */
 void set_statusbar_text(int bar, const char *text);
+/** Sets statusbar visibility */
+void set_statusbar_visible(bool visible);
 
 /** Asks the platform to create and return a menu from the Lua table at the given valid index.
  *

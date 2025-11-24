@@ -13,7 +13,7 @@
 #include "ScintillaWidget.h" // must come after <gtk/gtk.h>
 
 // GTK objects.
-static GtkWidget *window, *menubar, *tabbar, *statusbar[2];
+static GtkWidget *window, *menubar, *tabbar, *statusbar[2], *status_box;
 static GtkAccelGroup *accel;
 static GtkWidget *command_entry_box, *command_entry_label, *findbox, *find_entry, *repl_entry,
 	*find_label, *repl_label;
@@ -182,11 +182,11 @@ void new_window(SciObject *(*get_view)(void)) {
 
 	gtk_box_pack_start(GTK_BOX(vbox), new_findbox(), false, false, 0);
 
-	GtkWidget *hbox = gtk_hbox_new(false, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), statusbar[0] = gtk_label_new(NULL), true, true, 5);
+	status_box = gtk_hbox_new(false, 0);
+	gtk_box_pack_start(GTK_BOX(status_box), statusbar[0] = gtk_label_new(NULL), true, true, 5);
 	gtk_misc_set_alignment(GTK_MISC(statusbar[0]), 0, 0); // left-align
-	gtk_box_pack_start(GTK_BOX(hbox), statusbar[1] = gtk_label_new(NULL), false, false, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(status_box), statusbar[1] = gtk_label_new(NULL), false, false, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), status_box, false, false, 0);
 
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 
@@ -230,6 +230,7 @@ SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, vo
 	if (notified) g_signal_connect(view, SCINTILLA_NOTIFY, G_CALLBACK(notified), NULL);
 	g_signal_connect(view, "key-press-event", G_CALLBACK(keypress), NULL);
 	g_signal_connect(view, "button-press-event", G_CALLBACK(mouse_clicked), NULL);
+	gtk_widget_set_size_request(view, 1, 1);
 	return view;
 }
 
@@ -442,7 +443,13 @@ void set_command_entry_height(int height) {
 	gtk_paned_set_position(GTK_PANED(paned), allocation.height - height);
 }
 
-void set_statusbar_text(int i, const char *s) { gtk_label_set_text(GTK_LABEL(statusbar[i]), s); }
+void set_statusbar_text(int i, const char *s) {
+	gtk_label_set_text(GTK_LABEL(statusbar[i]), s);
+}
+
+void set_statusbar_visible(bool visible) {
+	gtk_widget_set_visible(status_box, visible);
+}
 
 // Signal for a menu item click.
 static void menu_clicked(GtkWidget *_, void *id) {
