@@ -338,8 +338,14 @@ end)
 -- Handle mouse events and functionality in the terminal version.
 if CURSES then
 	if not WIN32 then
-		local function enable_mouse() io.stdout:write("\x1b[?1002h"):flush() end
-		local function disable_mouse() io.stdout:write("\x1b[?1002l"):flush() end
+		local function enable_mouse()
+			io.stdout:write("\x1b[?1002h"):flush()
+			io.stdout:write("\x1b[?1006h"):flush()
+		end
+		local function disable_mouse()
+			io.stdout:write("\x1b[?1002l"):flush()
+			io.stdout:write("\x1b[?1006l"):flush()
+		end
 		events.connect(events.INITIALIZED, enable_mouse)
 		events.connect(events.SUSPEND, disable_mouse)
 		events.connect(events.RESUME, enable_mouse)
