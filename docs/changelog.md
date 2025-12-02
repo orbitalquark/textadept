@@ -2,6 +2,45 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+## 13.0 alpha (01 Dec 2025)
+
+- [Textadept 13.0 alpha -- Windows][]
+- [Textadept 13.0 alpha -- macOS 13+][]
+- [Textadept 13.0 alpha -- Linux][]
+- [Textadept 13.0 alpha -- Linux ARM][]
+- [Textadept 13.0 alpha -- Modules][]
+
+Bugfixes:
+
+- Do not override a user-specified Qt style.
+- Fixed inability to build with GTK2 if GTK3 is also installed.
+- Fixed Qt 5 menus from appearing as separate windows on Wayland.
+- Prevent xsel output being shown on startup.
+- Fixed potential failure running build/test/run project commands.
+- Fixed terminal version mouse mode for terminals larger than 222 rows/columns.
+- LSP: do not accidentally load system Lua socket library if it exists.
+- Scintilla: ensure selection is drawn correctly when restored by undo.
+- Scintilla: fixed bug when indenting rectangular selection.
+
+Changes:
+
+- macOS binary downloads are only for Apple Silicon.
+- Made `ui.statusbar_text` and `ui.buffer_statusbar_text` readable.
+- Prevent Qt split views from collapsing when they get too small.
+- Added `ui.statusbar` for controlling statusbar visibility.
+- Scintilla: `buffer.selection_serialized` format changed.
+- Scintilla: updated to Unicode 16.
+- Updated to [Lua][] 5.5.0 (rc1).
+- Updated to [Scintilla][] 5.5.8.
+
+[Textadept 13.0 alpha -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.win.zip
+[Textadept 13.0 alpha -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.macOS.zip
+[Textadept 13.0 alpha -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.linux.tgz
+[Textadept 13.0 alpha -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.linux.arm.tgz
+[Textadept 13.0 alpha -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.modules.zip
+[Lua]: https://lua.org
+[Scintilla]: https://scintilla.org
+
 ## 12.9 (01 Oct 2025)
 
 Download:
@@ -30,7 +69,7 @@ Changes:
 - Autoupdate: renamed module from "autoupdate" to "update_notifier" to better reflect functionality.
 
 [Textadept 12.9 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.win.zip
-[Textadept 12.9 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.macOS.zip
+[Textadept 12.9 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.macOS.zip
 [Textadept 12.9 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.linux.tgz
 [Textadept 12.9 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.linux.arm.tgz
 [Textadept 12.9 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.modules.zip

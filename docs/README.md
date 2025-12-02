@@ -58,13 +58,13 @@ and a Qt runtime is distributed with Windows and macOS builds.
 You can download pre-built binaries for various platforms, as well as source code from the
 links below.
 
-Stable Release<br/>(12.9) | Beta Release<br/>(N/A) | Experimental<br/>nightly build
+Stable Release<br/>(12.9) | Unstable Release<br/>(13.0 alpha) | Experimental<br/>nightly build
 -|-|-
-[Windows][stable win] | | [Windows][nightly win]
-[macOS][stable mac] | | [macOS][nightly mac] (Apple Silicon)
-[Linux x64][stable linux] / [ARM][stable arm] | | [Linux x64][nightly linux] / [ARM][nightly arm]
-[Extra modules][stable modules] | | [Extra modules][nightly modules]
-[Source code][stable source] | | [Source code][nightly source]
+[Windows][stable win] | [Windows][unstable win] | [Windows][nightly win]
+[macOS][stable mac] | [macOS][unstable mac] (Apple Silicon) | [macOS][nightly mac] (Apple Silicon)
+[Linux x64][stable linux] / [ARM][stable arm] | [Linux x64][unstable linux] / [ARM][unstable arm] | [Linux x64][nightly linux] / [ARM][nightly arm]
+[Extra modules][stable modules] | [Extra modules][unstable modules] | [Extra modules][nightly modules]
+[Source code][stable source] | [Source code][unstable source] | [Source code][nightly source]
 
 A list of all released versions is [here][all versions] along with their release notes.
 
@@ -74,6 +74,12 @@ A list of all released versions is [here][all versions] along with their release
 [stable arm]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.linux.arm.tgz
 [stable modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.modules.zip
 [stable source]: https://github.com/orbitalquark/textadept/archive/refs/tags/textadept_12.9.zip
+[unstable win]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.win.zip
+[unstable mac]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.macOS.zip
+[unstable linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.linux.tgz
+[unstable arm]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.linux.arm.tgz
+[unstable modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.modules.zip
+[unstable source]: https://github.com/orbitalquark/textadept/archive/refs/tags/textadept_13.0_alpha.zip
 [nightly win]: https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.win.zip
 [nightly mac]: https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.macOS.zip
 [nightly linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.linux.tgz
