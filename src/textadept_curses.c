@@ -198,6 +198,29 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
 
 void delete_scintilla(SciObject *view) { scintilla_delete(view); }
 
+void get_view_dimensions(SciObject *view, int *width, int *height) {
+	struct Pane *parent = get_parent_pane(root_pane, view);
+	struct Pane *pane = (parent->child1->view == view) ? parent->child1 : parent->child2;
+	*width = pane->cols, *height = pane->rows;
+}
+
+bool set_view_dimension(SciObject *view, int size, bool width) {
+	struct Pane *parentPane = get_parent_pane(root_pane, view);
+	struct Pane *pane = (parentPane->child1->view == view) ? parentPane->child1 : parentPane->child2;
+	while (pane != root_pane) {
+		if (parentPane->type == (width ? VSPLIT : HSPLIT)) {
+			if (parentPane->child1 == pane)
+				set_pane_size(parentPane, size);
+			else
+				set_pane_size(parentPane, width ? parentPane->cols - size : parentPane -> rows - size);
+			return true;
+		}
+		pane = parentPane;
+		parentPane = get_parent_pane(root_pane, pane);
+	}
+	return false;
+}
+
 Pane *get_top_pane(void) { return root_pane; }
 
 PaneInfo get_pane_info(Pane *pane) {

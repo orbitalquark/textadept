@@ -57,6 +57,12 @@ void move_buffer(int from, int to, bool reorder_tabs);
  */
 void find_clicked(FindButton *button);
 
+/** Signal for a Scintilla view changing sizes.
+* Emits 'resize' event with a view attached
+* @param view The view that changed sizes.
+*/
+void view_resized(SciObject *view);
+
 /** Requests to show a context menu.
  * Textadept will lookup that menu and call `popup_menu()` in turn.
  * @param name The name of the context menu, either "context_menu" or "tab_context_menu".

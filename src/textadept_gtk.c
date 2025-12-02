@@ -225,11 +225,17 @@ static bool mouse_clicked(GtkWidget *w, GdkEventButton *event, void *_) {
 	return (show_context_menu("context_menu", event), true);
 }
 
+static bool resize_callback(GtkWidget *w, GtkAllocation *allocation, void *_) {
+	view_resized((SciObject *)w);
+	return false;
+}
+
 SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, void *)) {
 	SciObject *view = scintilla_new();
 	if (notified) g_signal_connect(view, SCINTILLA_NOTIFY, G_CALLBACK(notified), NULL);
 	g_signal_connect(view, "key-press-event", G_CALLBACK(keypress), NULL);
 	g_signal_connect(view, "button-press-event", G_CALLBACK(mouse_clicked), NULL);
+	g_signal_connect(view, "size-allocate", G_CALLBACK(resize_callback), NULL);
 	return view;
 }
 
@@ -283,6 +289,33 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *view)) {
 }
 
 void delete_scintilla(SciObject *view) { gtk_widget_destroy(view); }
+
+void get_view_dimensions(SciObject *view, int *width, int *height) {
+	GtkAllocation allocation;
+	gtk_widget_get_allocation((GtkWidget *)view, &allocation);
+	*width = allocation.width, *height = allocation.height;
+}
+
+bool set_view_dimension(SciObject *view, int size, bool width) {
+	GtkWidget *pane, *parentPane;
+	GtkAllocation allocation;
+	pane = (GtkWidget *)view, parentPane = gtk_widget_get_parent(pane);
+	while (GTK_IS_PANED(parentPane)) {
+	  if (gtk_orientable_get_orientation(GTK_PANED(parentPane)) == (width ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL)) {
+		// left/top pane
+		if (gtk_paned_get_child1(GTK_PANED(parentPane)) == pane)
+			gtk_paned_set_position(GTK_PANED(parentPane), size);
+		// right/bottom pane
+		else
+			gtk_widget_get_allocation(GTK_PANED(parentPane), &allocation),
+				gtk_paned_set_position(GTK_PANED(parentPane), width ? allocation.width - size : allocation.height - size);
+		return true;
+	  }
+	  pane = parentPane;
+	  parentPane = gtk_widget_get_parent(pane);
+	}
+	return false;
+}
 
 Pane *get_top_pane(void) {
 	GtkWidget *pane = focused_view;

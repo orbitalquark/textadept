@@ -1088,6 +1088,12 @@ static void add_doc(sptr_t doc) {
 	lua_pop(lua, 1); // pop _BUFFERS
 }
 
+// Wrapper function to allow a resize event to attach the view
+void view_resized(SciObject *view) {
+	lua_pushview(lua, view);
+	emit("resize", LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
+}
+
 // `view.goto_buffer()` Lua function.
 static int goto_doc_lua(lua_State *L) {
 	SciObject *view = luaL_checkview(L, 1), *prev_view = focused_view;
@@ -1157,6 +1163,11 @@ static int view_index(lua_State *L) {
 		if (*lua_tostring(L, 2) == 'p' && info.is_split) info = get_parent_pane_info(info);
 		return (info.is_split ? lua_pushinteger(L, info.size) : lua_pushnil(L), 1);
 	}
+	if (strcmp(lua_tostring(L, 2), "width") == 0 || strcmp(lua_tostring(L, 2), "height") == 0) {
+		int width, height;
+		get_view_dimensions(lua_toview(L, 1), &width, &height);
+		return (lua_pushinteger(L, (*lua_tostring(L, 2) == 'w') ? width : height), 1);
+	}
 	if (lua_getglobal(L, "_SCINTILLA"), lua_pushvalue(L, 2), lua_rawget(L, -2)) {
 		if (lua_type(L, -1) != LUA_TTABLE) return 1; // constant or function
 		// If the key is a Scintilla function (4 iface values), return a callable closure.
@@ -1177,6 +1188,13 @@ static int view_newindex(lua_State *L) {
 		PaneInfo info = get_pane_info_from_view(lua_toview(L, 1));
 		if (*lua_tostring(L, 2) == 'p' && info.is_split) info = get_parent_pane_info(info);
 		if (info.is_split) set_pane_size(info.self, fmax(luaL_checkinteger(L, 3), 0));
+		return 0;
+	}
+	if (strcmp(lua_tostring(L, 2), "width") == 0 || strcmp(lua_tostring(L, 2), "height") == 0) {
+		luaL_argcheck(L,
+			set_view_dimension(lua_toview(L, 1), fmax(luaL_checkinteger(L, 3), 0), (*lua_tostring(L, 2) == 'w')),
+			2,
+			"view is not contained in an adjustable split");
 		return 0;
 	}
 	// If the key is a Scintilla property (more than 4 iface values), call Scintilla to set its value.
