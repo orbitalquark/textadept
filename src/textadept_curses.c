@@ -91,9 +91,11 @@ static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
 		resize_pane(pane->child1, ssize, cols, y, x);
 		resize_pane(pane->child2, rows - ssize - 1, cols, y + ssize + 1, x);
 		wresize(pane->win, 1, cols), mvwin(pane->win, y + ssize, x); // split bar
-	} else
+	} else {
 		wresize(pane->win, rows, cols), mvwin(pane->win, y, x);
+	}
 	pane->rows = rows, pane->cols = cols, pane->y = y, pane->x = x;
+	if (pane->view) view_resized(pane->view);
 }
 
 void new_window(SciObject *(*get_view)(void)) {
