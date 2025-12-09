@@ -54,6 +54,19 @@ static void show_error(const char *title, const char *message) {
 	lua_pop(lua, message_dialog(opts, lua)); // pop results
 }
 
+// Pushes the given Scintilla document onto the Lua stack.
+// The document must have previously been added with `add_doc()`.
+static void lua_pushdoc(lua_State *L, sptr_t doc) {
+	lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawgetp(L, -1, (sptr_t *)doc),
+		lua_replace(L, -2);
+}
+
+// Pushes the given Scintilla view onto the Lua stack.
+// The view must have previously been added with `add_view()`.
+static void lua_pushview(lua_State *L, SciObject *view) {
+	lua_getfield(L, LUA_REGISTRYINDEX, VIEWS), lua_rawgetp(L, -1, view), lua_replace(L, -2);
+}
+
 bool emit(const char *name, ...) {
 	bool ret = false;
 	if (lua_getglobal(lua, "events") != LUA_TTABLE) return (lua_pop(lua, 1), ret); // pop non-table
@@ -71,6 +84,10 @@ bool emit(const char *name, ...) {
 			ref = va_arg(ap, int);
 			lua_rawgeti(lua, LUA_REGISTRYINDEX, ref), luaL_unref(lua, LUA_REGISTRYINDEX, ref);
 			break;
+		case LUA_TBUFFER:
+			lua_pushdoc(lua, va_arg(ap, sptr_t)); break;
+		case LUA_TVIEW:
+			lua_pushview(lua, va_arg(ap, SciObject *)); break;
 		default: lua_pushnil(lua);
 		}
 	va_end(ap);
@@ -315,12 +332,6 @@ static sptr_t lua_todoc(lua_State *L, int index) {
 	return (lua_pop(L, 1), doc); // pop doc_pointer
 }
 
-// Pushes the given Scintilla document onto the Lua stack.
-// The document must have previously been added with `add_doc()`.
-static void lua_pushdoc(lua_State *L, sptr_t doc) {
-	lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawgetp(L, -1, (sptr_t *)doc),
-		lua_replace(L, -2);
-}
 
 // Returns whether or not the given document is the command entry.
 static bool is_command_entry(sptr_t doc) {
@@ -521,7 +532,7 @@ static int buffer_newindex(lua_State *L) {
 		return (set_command_entry_label(luaL_checkstring(L, 3)), 0);
 	if (strcmp(lua_tostring(L, 2), "height") == 0 && is_command_entry(lua_todoc(L, 1)))
 		return (set_command_entry_height(
-							fmax(luaL_checkinteger(L, 3), SS(command_entry, SCI_TEXTHEIGHT, 0, 0))),
+							fmax(luaL_checkinteger(L, 3), 1)),
 			0);
 	return (lua_settop(L, 3), lua_rawset(L, 1), 0);
 }
@@ -604,12 +615,6 @@ static int get_clipboard_text_lua(lua_State *L) {
 	int len;
 	char *text = get_clipboard_text(&len);
 	return text ? (lua_pushlstring(L, text, len), free(text), 1) : (lua_pushliteral(L, ""), 1);
-}
-
-// Pushes the given Scintilla view onto the Lua stack.
-// The view must have previously been added with `add_view()`.
-static void lua_pushview(lua_State *L, SciObject *view) {
-	lua_getfield(L, LUA_REGISTRYINDEX, VIEWS), lua_rawgetp(L, -1, view), lua_replace(L, -2);
 }
 
 // Pushes onto the Lua stack the given pane, which may contain a Scintilla view or split views.
@@ -1086,12 +1091,6 @@ static void add_doc(sptr_t doc) {
 	lua_pushvalue(lua, -1), lua_rawseti(lua, -3, doc ? lua_rawlen(lua, -3) + 1 : 0);
 	lua_pushinteger(lua, doc ? lua_rawlen(lua, -2) : 0), lua_rawset(lua, -3);
 	lua_pop(lua, 1); // pop _BUFFERS
-}
-
-// Wrapper function to allow a resize event to attach the view
-void view_resized(SciObject *view) {
-	lua_pushview(lua, view);
-	emit("resize", LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
 }
 
 // `view.goto_buffer()` Lua function.

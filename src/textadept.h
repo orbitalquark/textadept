@@ -4,6 +4,11 @@
 
 #include "textadept_platform.h"
 
+// Allows views and buffers to be attached to events.
+// Ensure these don't conflict with existing definitions in lua.h.
+#define LUA_TBUFFER 14
+#define LUA_TVIEW 15
+
 // Textadept's home directory.
 extern char *textadept_home;
 
@@ -56,12 +61,6 @@ void move_buffer(int from, int to, bool reorder_tabs);
  * @param button The button clicked.
  */
 void find_clicked(FindButton *button);
-
-/** Signal for a Scintilla view changing sizes.
-* Emits 'resize' event with a view attached
-* @param view The view that changed sizes.
-*/
-void view_resized(SciObject *view);
 
 /** Requests to show a context menu.
  * Textadept will lookup that menu and call `popup_menu()` in turn.

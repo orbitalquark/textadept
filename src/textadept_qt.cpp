@@ -87,8 +87,7 @@ protected:
 
 		// Notify Textadept when a Scintilla view changes sizes
 		if (event->type() == QEvent::Resize) {
-			view_resized((SciObject *)watched);
-			return false;
+			return emit("resize", LUA_TVIEW, (SciObject *)watched, -1);
 		}
 
 		// Propagate non-keypress events as normal.

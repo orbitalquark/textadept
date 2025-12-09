@@ -95,7 +95,7 @@ static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
 		wresize(pane->win, rows, cols), mvwin(pane->win, y, x);
 	}
 	pane->rows = rows, pane->cols = cols, pane->y = y, pane->x = x;
-	if (pane->view) view_resized(pane->view);
+	if (pane->view) emit("resize", LUA_TVIEW, pane->view, -1);
 }
 
 void new_window(SciObject *(*get_view)(void)) {
