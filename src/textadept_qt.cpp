@@ -47,7 +47,10 @@ const char *get_charset() {
 	// Ask Windows for its charset encoding because QTextCodec returns "System", which is not a
 	// valid iconv encoding.
 	static char codepage[8];
-	return (sprintf(codepage, "CP%d", GetACP()), codepage);
+	sprintf(codepage, "CP%d", GetACP());
+	// CP65001 is the Windows internal code for UTF-8, but iconv doesn't understand this.
+	if (!strcmp(codepage, "CP65001")) strcpy(codepage, "UTF-8");
+	return codepage;
 #endif
 }
 
