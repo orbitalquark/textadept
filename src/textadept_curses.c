@@ -92,9 +92,11 @@ static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
 		resize_pane(pane->child1, ssize, cols, y, x);
 		resize_pane(pane->child2, rows - ssize - 1, cols, y + ssize + 1, x);
 		wresize(pane->win, 1, cols), mvwin(pane->win, y + ssize, x); // split bar
-	} else
+	} else {
 		wresize(pane->win, rows, cols), mvwin(pane->win, y, x);
+	}
 	pane->rows = rows, pane->cols = cols, pane->y = y, pane->x = x;
+	if (pane->view) emit("resize", LUA_TVIEW, pane->view, -1);
 }
 
 void new_window(SciObject *(*get_view)(void)) {
@@ -198,6 +200,29 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
 }
 
 void delete_scintilla(SciObject *view) { scintilla_delete(view); }
+
+void get_view_dimensions(SciObject *view, int *width, int *height) {
+	struct Pane *parent = get_parent_pane(root_pane, view);
+	struct Pane *pane = (parent->child1->view == view) ? parent->child1 : parent->child2;
+	*width = pane->cols, *height = pane->rows;
+}
+
+bool set_view_dimension(SciObject *view, int size, bool width) {
+	struct Pane *parentPane = get_parent_pane(root_pane, view);
+	struct Pane *pane = (parentPane->child1->view == view) ? parentPane->child1 : parentPane->child2;
+	while (pane != root_pane) {
+		if (parentPane->type == (width ? VSPLIT : HSPLIT)) {
+			if (parentPane->child1 == pane)
+				set_pane_size(parentPane, size);
+			else
+				set_pane_size(parentPane, width ? parentPane->cols - size : parentPane -> rows - size);
+			return true;
+		}
+		pane = parentPane;
+		parentPane = get_parent_pane(root_pane, pane);
+	}
+	return false;
+}
 
 Pane *get_top_pane(void) { return root_pane; }
 

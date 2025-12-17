@@ -86,6 +86,11 @@ protected:
 		if (event->type() == QEvent::FocusOut && SCI(watched) == SCI(command_entry))
 			return static_cast<QFocusEvent *>(event)->reason() == Qt::ActiveWindowFocusReason;
 
+		// Notify Textadept when a Scintilla view changes sizes
+		if (event->type() == QEvent::Resize) {
+			return emit("resize", LUA_TVIEW, (SciObject *)watched, -1);
+		}
+
 		// Propagate non-keypress events as normal.
 		if (event->type() != QEvent::KeyPress) return false;
 
@@ -173,6 +178,29 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
 }
 
 void delete_scintilla(SciObject *view) { delete SCI(view); }
+
+void get_view_dimensions(SciObject *view, int *width, int *height) {
+	auto widget = static_cast<QWidget *>(SCI(view));
+	*width = widget->size().width(), *height = widget->size().height();
+}
+
+bool set_view_dimension(SciObject *view, int size, bool width) {
+	QWidget *pane = static_cast<QWidget *>(SCI(view));
+	QSplitter *parentPane = qobject_cast<QSplitter *>(pane->parentWidget());
+	while (parentPane) {
+		if (parentPane->orientation() == (width ? Qt::Horizontal : Qt::Vertical)) {
+			int max = width ? parentPane->width() : parentPane->height();
+			if (parentPane->widget(0) == pane)
+				parentPane->setSizes(QList<int>{size, max - size - parentPane->handleWidth()});
+			else
+				parentPane->setSizes(QList<int>{max - size - parentPane->handleWidth(), size});
+			return true;
+		}
+		pane = static_cast<QWidget *>(parentPane);
+		parentPane = qobject_cast<QSplitter *>(pane->parentWidget());
+	}
+	return false;
+}
 
 Pane *get_top_pane() {
 	auto pane = static_cast<QWidget *>(focused_view);

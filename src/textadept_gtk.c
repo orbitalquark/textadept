@@ -172,12 +172,16 @@ void new_window(SciObject *(*get_view)(void)) {
 	gtk_box_pack_start(GTK_BOX(editors), get_view(), true, true, 0);
 	gtk_paned_add1(GTK_PANED(paned), editors);
 	command_entry_box = gtk_hbox_new(false, 0);
-	command_entry_label = gtk_label_new(""),
+	command_entry_label = gtk_label_new("");
+	gtk_widget_set_size_request(command_entry, -1, 0);
+	gtk_widget_set_size_request(command_entry_label, -1, 0);
 	gtk_misc_set_alignment(GTK_MISC(command_entry_label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(command_entry_box), command_entry_label, false, false, 5);
 	gtk_box_pack_start(GTK_BOX(command_entry_box), command_entry, true, true, 5);
+	gtk_widget_set_size_request(command_entry_box, -1, 0);
 	gtk_paned_add2(GTK_PANED(paned), command_entry_box);
-	gtk_container_child_set(GTK_CONTAINER(paned), command_entry_box, "shrink", false, NULL);
+	gtk_container_child_set(GTK_CONTAINER(paned), command_entry_box, "shrink", true, NULL);
+	gtk_container_child_set(GTK_CONTAINER(paned), command_entry_box, "resize", true, NULL);
 	gtk_box_pack_start(GTK_BOX(vbox), paned, true, true, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), new_findbox(), false, false, 0);
@@ -193,6 +197,7 @@ void new_window(SciObject *(*get_view)(void)) {
 	gtk_widget_show_all(window), gtk_widget_grab_focus(focused_view);
 	gtk_widget_hide(menubar), gtk_widget_hide(tabbar), gtk_widget_hide(findbox),
 		gtk_widget_hide(command_entry_box); // hide initially
+		set_command_entry_height(0);
 }
 
 void set_title(const char *title) { gtk_window_set_title(GTK_WINDOW(window), title); }
@@ -225,11 +230,16 @@ static bool mouse_clicked(GtkWidget *w, GdkEventButton *event, void *_) {
 	return (show_context_menu("context_menu", event), true);
 }
 
+static bool view_resized(GtkWidget *w, GtkAllocation *allocation, void *_) {
+	return emit("resize", LUA_TVIEW, (SciObject *)w, -1);
+}
+
 SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, void *)) {
 	SciObject *view = scintilla_new();
 	if (notified) g_signal_connect(view, SCINTILLA_NOTIFY, G_CALLBACK(notified), NULL);
 	g_signal_connect(view, "key-press-event", G_CALLBACK(keypress), NULL);
 	g_signal_connect(view, "button-press-event", G_CALLBACK(mouse_clicked), NULL);
+	g_signal_connect(view, "size-allocate", G_CALLBACK(view_resized), NULL);
 	return view;
 }
 
@@ -283,6 +293,33 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *view)) {
 }
 
 void delete_scintilla(SciObject *view) { gtk_widget_destroy(view); }
+
+void get_view_dimensions(SciObject *view, int *width, int *height) {
+	GtkAllocation allocation;
+	gtk_widget_get_allocation((GtkWidget *)view, &allocation);
+	*width = allocation.width, *height = allocation.height;
+}
+
+bool set_view_dimension(SciObject *view, int size, bool width) {
+	GtkWidget *pane, *parentPane;
+	GtkAllocation allocation;
+	pane = (GtkWidget *)view, parentPane = gtk_widget_get_parent(pane);
+	while (GTK_IS_PANED(parentPane)) {
+	  if (gtk_orientable_get_orientation(GTK_ORIENTABLE(parentPane)) == (width ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL)) {
+		// left/top pane
+		if (gtk_paned_get_child1(GTK_PANED(parentPane)) == pane)
+			gtk_paned_set_position(GTK_PANED(parentPane), size);
+		// right/bottom pane
+		else
+			gtk_widget_get_allocation(parentPane, &allocation),
+				gtk_paned_set_position(GTK_PANED(parentPane), width ? allocation.width - size : allocation.height - size);
+		return true;
+	  }
+	  pane = parentPane;
+	  parentPane = gtk_widget_get_parent(pane);
+	}
+	return false;
+}
 
 Pane *get_top_pane(void) {
 	GtkWidget *pane = focused_view;
@@ -426,7 +463,7 @@ void focus_command_entry(void) {
 	if (!gtk_widget_get_visible(command_entry_box))
 		gtk_widget_show(command_entry_box), gtk_widget_grab_focus(command_entry);
 	else
-		gtk_widget_grab_focus(focused_view), gtk_widget_hide(command_entry_box);
+		gtk_widget_grab_focus(focused_view), gtk_widget_hide(command_entry_box), set_command_entry_height(0);
 }
 bool is_command_entry_active(void) { return gtk_widget_has_focus(command_entry); }
 void set_command_entry_label(const char *text) {
@@ -434,13 +471,17 @@ void set_command_entry_label(const char *text) {
 }
 int get_command_entry_height(void) {
 	GtkAllocation allocation;
-	return (gtk_widget_get_allocation(command_entry, &allocation), allocation.height);
+	return (gtk_widget_get_allocation(command_entry_box, &allocation), allocation.height);
 }
 void set_command_entry_height(int height) {
 	GtkWidget *paned = gtk_widget_get_parent(command_entry_box);
-	GtkAllocation allocation;
+	GtkAllocation allocation, box_allocation;
 	gtk_widget_get_allocation(paned, &allocation);
-	gtk_widget_set_size_request(command_entry, -1, height);
+	gtk_widget_set_size_request(command_entry_box, -1, height);
+	gtk_widget_get_allocation(command_entry_box, &box_allocation);
+	box_allocation.height = height;
+	// not really supposed to do this but for some reason we can't force it any smaller
+	gtk_widget_size_allocate(command_entry_box, &box_allocation);
 	gtk_paned_set_position(GTK_PANED(paned), allocation.height - height);
 }
 

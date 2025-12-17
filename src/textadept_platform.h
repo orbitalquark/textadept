@@ -113,6 +113,17 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *));
  */
 void delete_scintilla(SciObject *view);
 
+/** Gets the dimensions of the requested Scintilla view.
+*/
+void get_view_dimensions(SciObject *view, int *width, int *height);
+/** Sets a dimension (width or height) of the Scintilla widget by resizing split views.
+* @param view The Scintilla view to resize.
+* @param size The value of the dimension to be set.
+* @param width True if setting the width, false if setting the height.
+* @return false if the dimension was not settable due to being top level, true otherwise.
+*/
+bool set_view_dimension(SciObject *view, int size, bool width);
+
 /** Returns the top-most pane that contains Scintilla views. */
 Pane *get_top_pane(void);
 /** Returns information about the given pane.

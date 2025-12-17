@@ -4,6 +4,11 @@
 
 #include "textadept_platform.h"
 
+// Allows views and buffers to be attached to events.
+// Ensure these don't conflict with existing definitions in lua.h.
+#define LUA_TBUFFER 14
+#define LUA_TVIEW 15
+
 // Textadept's home directory.
 extern char *textadept_home;
 
