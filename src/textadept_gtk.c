@@ -31,31 +31,31 @@ const char *get_charset(void) {
 
 // Signal for exiting Textadept.
 // Generates a 'quit' event. If that event does not return `true`, quits the application.
-static bool exiting(GtkWidget *_, GdkEventAny *__, void *___) {
-	if (!can_quit()) return true; // halt
-	return (close_textadept(), scintilla_release_resources(), gtk_main_quit(), false);
+static gboolean exiting(GtkWidget *_, GdkEventAny *__, void *___) {
+	if (!can_quit()) return TRUE; // halt
+	return (close_textadept(), scintilla_release_resources(), gtk_main_quit(), FALSE);
 }
 
 // Signal for a Textadept window focus change.
 // Generates a 'focus' event.
-static bool window_focused(GtkWidget *_, GdkEventFocus *__, void *___) {
+static gboolean window_focused(GtkWidget *_, GdkEventFocus *__, void *___) {
 	if (!is_command_entry_active()) emit("focus", -1);
-	return false;
+	return FALSE;
 }
 
 // Signal for window focus loss.
 // Generates an 'unfocus' event.
-static bool focus_lost(GtkWidget *_, GdkEvent *__, void *___) {
+static gboolean focus_lost(GtkWidget *_, GdkEvent *__, void *___) {
 	return (emit("unfocus", -1), is_command_entry_active()); // keep focus if window is losing focus
 }
 
 // Signal for a Textadept window keypress (not a Scintilla keypress).
-static bool window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
+static gboolean window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
 	if (event->keyval == GDK_KEY_Escape && gtk_widget_get_visible(findbox) &&
 		!gtk_widget_has_focus(command_entry))
 		return (gtk_widget_grab_focus(focused_view), gtk_widget_hide(findbox),
-			emit("find_pane_hide", -1), true);
-	return false;
+			emit("find_pane_hide", -1), TRUE);
+	return FALSE;
 }
 
 // Signal for switching buffer tabs.
@@ -74,12 +74,12 @@ static void tab_reordered(GtkNotebook *_, GtkWidget *__, int tab_num, void *___)
 }
 
 // Signal for a Find/Replace entry keypress.
-static bool find_keypress(GtkWidget *widget, GdkEventKey *event, void *_) {
-	if (event->keyval != GDK_KEY_Return) return false;
+static gboolean find_keypress(GtkWidget *widget, GdkEventKey *event, void *_) {
+	if (event->keyval != GDK_KEY_Return) return FALSE;
 	FindButton *button = (event->state & GDK_SHIFT_MASK) == 0 ?
 		(widget == find_entry ? find_next : replace) :
 		(widget == find_entry ? find_prev : replace_all);
-	return (find_clicked(button), true);
+	return (find_clicked(button), TRUE);
 }
 
 // Creates and returns for the findbox a new GtkComboBoxEntry, storing its GtkLabel, GtkEntry,
@@ -220,9 +220,9 @@ static int keypress(GtkWidget *_, GdkEventKey *event, void *__) {
 }
 
 // Signal for a Scintilla mouse click.
-static bool mouse_clicked(GtkWidget *w, GdkEventButton *event, void *_) {
-	if (w == command_entry || event->type != GDK_BUTTON_PRESS || event->button != 3) return false;
-	return (show_context_menu("context_menu", event), true);
+static gboolean mouse_clicked(GtkWidget *w, GdkEventButton *event, void *_) {
+	if (w == command_entry || event->type != GDK_BUTTON_PRESS || event->button != 3) return FALSE;
+	return (show_context_menu("context_menu", event), TRUE);
 }
 
 SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, void *)) {
@@ -328,7 +328,7 @@ void set_tab(int index) {
 }
 
 // Signal for a tab label mouse click.
-static bool tab_clicked(GtkWidget *label, GdkEventButton *event, void *_) {
+static gboolean tab_clicked(GtkWidget *label, GdkEventButton *event, void *_) {
 	GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
 	for (int i = 0; i < gtk_notebook_get_n_pages(notebook); i++)
 		if (label == gtk_notebook_get_tab_label(notebook, gtk_notebook_get_nth_page(notebook, i))) {
@@ -340,7 +340,7 @@ static bool tab_clicked(GtkWidget *label, GdkEventButton *event, void *_) {
 			if (event->button == 3) show_context_menu("tab_context_menu", event);
 			break;
 		}
-	return true;
+	return TRUE;
 }
 
 void set_tab_label(int index, const char *text) {
