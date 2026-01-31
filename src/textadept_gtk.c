@@ -195,6 +195,7 @@ void new_window(SciObject *(*get_view)(void)) {
 	gtk_widget_show_all(window), gtk_widget_grab_focus(focused_view);
 	gtk_widget_hide(menubar), gtk_widget_hide(tabbar), gtk_widget_hide(findbox),
 		gtk_widget_hide(command_entry_box); // hide initially
+	gtk_window_present(GTK_WINDOW(window));
 }
 
 void set_title(const char *title) { gtk_window_set_title(GTK_WINDOW(window), title); }
@@ -946,7 +947,7 @@ static int process(GApplication *_, GApplicationCommandLine *line, void *__) {
 		while (--argc) lua_pushstring(lua, argv[argc]), lua_rawseti(lua, -2, argc);
 		emit("command_line", LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
 	}
-	return (g_strfreev(argv), gtk_window_present(GTK_WINDOW(window)), 0);
+	return (g_strfreev(argv), 0);
 }
 
 // Runs Textadept.
