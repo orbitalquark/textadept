@@ -149,8 +149,8 @@
 -- None | None | None | Toggle Code Folding
 -- Ctrl+Shift+L | ⌘⇧L | M-^L | Select lexer...
 -- **View**| | |
--- Ctrl+Alt+PgDn | ^⌘⇟ | M-^PgDn<br/>M-PgUp<sup>d</sup> | Next view
--- Ctrl+Alt+PgUp | ^⌘⇞ | M-^PgUp<br/>M-PgDn<sup>d</sup> | Previous view
+-- Ctrl+Alt+PgDn | ^⌘}<br/>^⌘⇟ | M-^PgDn<br/>M-PgUp<sup>d</sup> | Next view
+-- Ctrl+Alt+PgUp | ^⌘{<br/>^⌘⇞ | M-^PgUp<br/>M-PgDn<sup>d</sup> | Previous view
 -- Ctrl+Alt+_ | ^⌘_ | M-_ | Split view horizontal
 -- Ctrl+Alt+&#124; | ^⌘&#124; | M-&#124; | Split view vertical
 -- Ctrl+Alt+W | ^⌘W | M-W | Unsplit view
@@ -279,7 +279,7 @@
 -- Unassigned keys:
 -- cmd:  EGhiIJNQtY_(;:'"<.>?\s
 -- ctrl: cCDgGHiIjJKLmMoOqQrRsStTuUvVwWxXyYzZ-_=+)]}\|;:/?\s
--- ctrl+cmd: aAbBcCDFHiIjJlLmMnNoOpPqQsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
+-- ctrl+cmd: aAbBcCDFHiIjJlLmMnNoOpPqQsSTUvVxXyYzZ()[]\;:'",<.>/?\s\t\n
 --
 -- Curses key bindings.
 --
@@ -469,9 +469,9 @@ keys.assign_platform_bindings{
 
 	-- View.
 	[m('View/Next View')] = {
-		'ctrl+alt+pgdn', 'ctrl+cmd+pgdn', WIN32 and 'meta+pgdn' or 'ctrl+meta+pgdn'
+		'ctrl+alt+pgdn', {'ctrl+cmd+}', 'ctrl+cmd+pgdn'}, WIN32 and 'meta+pgdn' or 'ctrl+meta+pgdn'
 	}, [m('View/Previous View')] = {
-		'ctrl+alt+pgup', 'ctrl+cmd+pgup', WIN32 and 'meta+pgup' or 'ctrl+meta+pgup'
+		'ctrl+alt+pgup', {'ctrl+cmd+{', 'ctrl+cmd+pgup'}, WIN32 and 'meta+pgup' or 'ctrl+meta+pgup'
 	}, [m('View/Split View Horizontal')] = {'ctrl+alt+_', 'ctrl+cmd+_', 'meta+_'},
 	[m('View/Split View Vertical')] = {'ctrl+alt+|', 'ctrl+cmd+|', 'meta+|'},
 	[m('View/Unsplit View')] = {'ctrl+alt+w', 'ctrl+cmd+w', 'meta+w'},

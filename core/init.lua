@@ -6,7 +6,7 @@
 for _, arg in ipairs(arg) do if arg == '-T' or arg == '--cov' then require('luacov') end end
 
 --- The Textadept release version string.
-_RELEASE = 'Textadept 13.0 nightly'
+_RELEASE = 'Textadept 13.0 alpha 2'
 --- Textadept's copyright information.
 _COPYRIGHT = 'Copyright © 2007-2026 Mitchell. See LICENSE.\n' ..
 	'https://orbitalquark.github.io/textadept'

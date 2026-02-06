@@ -2,6 +2,47 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+## 13.0 alpha 2 (01 Feb 2026)
+
+Please see the [migration guide][] for migrating from Textadept 12 to 13.
+
+- [Textadept 13.0 alpha 2 -- Windows][]
+- [Textadept 13.0 alpha 2 -- macOS 13+][]
+- [Textadept 13.0 alpha 2 -- Linux][]
+- [Textadept 13.0 alpha 2 -- Linux ARM][]
+- [Textadept 13.0 alpha 2 -- Modules][]
+
+Bugfixes:
+
+- Fixed bug spawning commands with single quoted argments in the Qt version.
+- Fixed inability to work with files with UTF-8 characters in them on Windows.
+- Fixed rare signaling issues (e.g. keypress in the find entry) in the GTK version.
+- Fixed potential override of terminal version light color variants.
+- Fixed terminal version box indicators potentially showing the wrong colors.
+- Spellcheck: fall back on the English dictionary if the detected language is C.
+
+Changes:
+
+- Require C17 for compiling.
+- Updated key bindings for switching between buffers on macOS.
+- Changed key binding for "View > Toggle Fold".
+- Added menu options for toggling find options.
+- Renamed `view.size` and `view.parent_size` to [`view.split_pos`][] and [`view.parent_split_pos`][],
+	respectively.
+- `ui.get_split_table()` now returns a `{width, height, split_pos}` table for view `size` fields.
+- The terminal version can draw underline indicators using `INDIC_SQUIGGLE` or  `INDIC_SQUIGGLELOW`.
+- Updated to [Lua][] 5.5.0.
+
+[migration guide]: manual.html#migrating-from-textadept-12-to-13
+[Textadept 13.0 alpha 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.win.zip
+[Textadept 13.0 alpha 2 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.macOS.zip
+[Textadept 13.0 alpha 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.linux.tgz
+[Textadept 13.0 alpha 2 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.linux.arm.tgz
+[Textadept 13.0 alpha 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.modules.zip
+[Lua]: https://lua.org
+[`view.split_pos`]: api.html#view.split_pos
+[`view.parent_split_pos`]: api.html#view.parent_split_pos
+
 ## 13.0 alpha (01 Dec 2025)
 
 - [Textadept 13.0 alpha -- Windows][]
@@ -143,7 +184,7 @@ Bugfixes:
 Changes:
 
 - Added [`lexer.line_start`][], [`lexer.line_end`][], and [`lexer.text_range()`][].
-- Added [`view.parent_size`][] for manipulating parent split sizes.
+- Added `view.parent_size` for manipulating parent split sizes.
 - Removed `textadept.editing.XPM_IMAGES`.
 - Added `is_hidpi()` for detecting HiDPI/Retina displays.
 - Autocompletion lists on HiDPI displays now use 2x image sizes.
@@ -168,7 +209,6 @@ Changes:
 [`lexer.line_start`]: api.html#lexer.line_start
 [`lexer.line_end`]: api.html#lexer.line_end
 [`lexer.text_range()`]: api.html#lexer.text_range
-[`view.parent_size`]: api.html#view.parent_size
 [autocompletion list icons]: https://github.com/orbitalquark/textadept-lsp#icon-reference
 
 ## 12.7 beta 2 (01 May 2025)
@@ -697,7 +737,7 @@ Changes:
 
 ## 12.0 (01 Aug 2023)
 
-Please see the [migration guide][] for migrating from Textadept 11 to 12.
+Please see the [11 to 12 migration guide][] for migrating from Textadept 11 to 12.
 
 Download:
 
@@ -728,7 +768,7 @@ Changes:
 - Updated to [LPeg][] 1.1.0.
 - Updated to [Scintilla][] 5.3.6.
 
-[migration guide]: manual.html#migrating-from-textadept-11-to-12
+[11 to 12 migration guide]: manual.html#migrating-from-textadept-11-to-12
 [Textadept 12.0 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0/textadept_12.0.win.zip
 [Textadept 12.0 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0/textadept_12.0.macOS.zip
 [Textadept 12.0 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0/textadept_12.0.linux.tgz

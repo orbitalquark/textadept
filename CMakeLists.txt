@@ -93,7 +93,7 @@ function(fetch name url)
 	# Note: cannot FetchContent_MakeAvailable(${name}) here, as name must be a literal.
 endfunction()
 fetch(scintilla https://www.scintilla.org/scintilla558.tgz)
-fetch(scinterm https://github.com/orbitalquark/scinterm/archive/scinterm_5.5.zip)
+fetch(scinterm https://github.com/orbitalquark/scinterm/archive/7ae7912d1252097e7b6b005aba5f23defe8bae4c.zip)
 fetch(scintillua https://github.com/orbitalquark/scintillua/archive/599e14c4dc2e8439d5c2de3eb5ab20818543eb2d.zip)
 fetch(lua https://lua.org/ftp/lua-5.5.0.tar.gz)
 fetch(lpeg https://www.inf.puc-rio.br/~roberto/lpeg/lpeg-1.1.0.tar.gz)

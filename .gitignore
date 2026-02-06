@@ -13,9 +13,9 @@ modules/debugger
 modules/export
 modules/file_diff
 modules/format
+modules/llm
 modules/lsp
 modules/lua_repl
-modules/ollama
 modules/open_file_mode
 modules/scratch
 modules/spellcheck
