@@ -947,7 +947,7 @@ static int process(GApplication *_, GApplicationCommandLine *line, void *__) {
 		while (--argc) lua_pushstring(lua, argv[argc]), lua_rawseti(lua, -2, argc);
 		emit("command_line", LUA_TTABLE, luaL_ref(lua, LUA_REGISTRYINDEX), -1);
 	}
-	return (g_strfreev(argv), 0);
+	return (g_strfreev(argv), gtk_window_present(GTK_WINDOW(window)), 0);
 }
 
 // Runs Textadept.
