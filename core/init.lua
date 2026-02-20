@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 --- Extends Lua's _G table to provide extra functions and fields for Textadept.
 -- @module _G
@@ -6,9 +6,9 @@
 for _, arg in ipairs(arg) do if arg == '-T' or arg == '--cov' then require('luacov') end end
 
 --- The Textadept release version string.
-_RELEASE = 'Textadept 12.7 nightly'
+_RELEASE = 'Textadept 13.0 alpha 2'
 --- Textadept's copyright information.
-_COPYRIGHT = 'Copyright © 2007-2025 Mitchell. See LICENSE.\n' ..
+_COPYRIGHT = 'Copyright © 2007-2026 Mitchell. See LICENSE.\n' ..
 	'https://orbitalquark.github.io/textadept'
 
 package.path = string.format('%s/core/?.lua;%s', _HOME, package.path)

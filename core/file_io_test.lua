@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 test('io.open_file should open a file and set it up for editing', function()
 	local contents = 'text'
@@ -548,17 +548,12 @@ test('buffer.close should use the global buffer', function()
 	test.assert_equal(buffer.filename, nil)
 end)
 
-test('io.open_recent_file should prompt for a recently opened file if it still exists', function()
-	local _<close> = test.mock(io, 'recent_files', {})
+test('io.open_recent_file should re-open a recent file', function()
 	local f<close> = test.tmpfile(true)
-	buffer:close()
-	do
-		local _<close> = test.tmpfile(true)
-		buffer:close()
-	end -- deletes the file
+	buffer.close()
 
-	local select_first_item = test.stub({1}, 1)
-	local _<close> = test.mock(ui.dialogs, 'list', select_first_item)
+	local select_file = test.stub({1}, 1)
+	local _<close> = test.mock(ui.dialogs, 'list', select_file)
 
 	io.open_recent_file()
 
@@ -719,7 +714,7 @@ test('buffer.delete for a hidden buffer should not affect buffers in existing vi
 	test.assert(_VIEWS[2].buffer == buffer3, 'buffer3 should still be visible')
 	test.assert(_VIEWS[3].buffer == buffer4, 'buffer4 should still be visible')
 end)
-if not QT then expected_failure() end
+expected_failure() -- TODO: ui.lua's events.BUFFER_DELETED handler assumes closed buffer was focused
 
 -- Coverage tests.
 

@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 --- Load localizations from a locale file and return them in a table.
 -- @param locale_conf String path to a local file to load.
@@ -11,23 +11,6 @@ local function load_locale(locale_conf)
 		::continue::
 	end
 	return L
-end
-
---- Loads additional localizations read from assignments in a Lua file.
--- @param filename String path to a Lua file to read localizations from.
--- @param L Table of localizations to add to.
-local function load_extra_localizations(L, filename)
-	local count, i = 0, 1
-	for line in io.lines(filename) do
-		if not line:find('_L%b[]%s*=') then goto continue end
-		for id in line:gmatch([=[_L%[['"]([^'"]+)['"]%]%s*=]=]) do
-			test.assert(not L[id], 'duplicate locale id "%s" on line %d (first seen in %s)', id, i, L[id])
-			L[id], count = string.format('%s:%d', filename:sub(#_HOME + 2), i), count + 1
-		end
-		::continue::
-		i = i + 1
-	end
-	if count > 0 then test.log(string.format('Added %d localizations.', count)) end
 end
 
 --- Looks for use of localization in the given Lua file and returns a list of missing IDs.
@@ -77,25 +60,4 @@ for _, stock_file in ipairs(stock_files) do
 
 		test.assert_equal(missing, {})
 	end)
-end
-
-local extra_files = {}
-filter = {
-	'**/*.lua', '!textadept', '!**/build', '!**/*_test.lua',
-	-- Extra modules.
-	'!**/{dkjson,mobdebug,socket}.lua', '!lsp/{ldoc,logging,pl}'
-}
-for filename in lfs.walk(_HOME .. '/modules', filter) do extra_files[#extra_files + 1] = filename end
-table.sort(extra_files)
-
--- Test each extra file.
-for _, extra_file in ipairs(extra_files) do
-	test(extra_file:sub(#_HOME + 2) .. ' should be using known locale IDs', function()
-		load_extra_localizations(L, extra_file)
-
-		local missing = check_missing_localizations(extra_file, L)
-
-		test.assert_equal(missing, {})
-	end)
-	retry(0) -- do not retry or else there will be erroneous 'duplicate locale id' errors
 end

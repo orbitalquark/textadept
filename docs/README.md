@@ -39,7 +39,7 @@ Quick links: [Download][] \| [Manual][] \| [Lua API Docs][] \| [Project Page][]
 Textadept's pre-built binaries require the following:
 
 - Windows 10+ (64-bit or ARM)
-- macOS 11+
+- macOS 13+
 - Linux: [Qt][] 5 or [GTK][] 3 for the GUI version, and [ncurses][] for the terminal version.
 
 You can [compile](#compile) Textadept from source for use with different UI library versions,
@@ -51,34 +51,35 @@ and a Qt runtime is distributed with Windows and macOS builds.
 [Qt]: https://www.qt.io/
 [GTK]: https://gtk.org
 [ncurses]: https://invisible-island.net/ncurses/ncurses.html
-[third-party dependencies]: manual.html#technologies
+[third-party dependencies]: manual.md#technologies
 
 ## Download
 
 You can download pre-built binaries for various platforms, as well as source code from the
 links below.
 
-Stable Release<br/>(12.6) | Beta Release<br/>(12.7 beta 2) | Experimental<br/>nightly build
+Stable Release<br/>(12.9) | Unstable Release<br/>(13.0 alpha 2) | Experimental<br/>nightly build
 -|-|-
-[Windows][stable win] | [Windows][beta win] | [Windows][nightly win]
-[macOS][stable mac] | [macOS][beta mac] | [macOS][nightly mac]
-[Linux x64][stable linux] | [Linux x64][beta linux] / [ARM][beta arm] | [Linux x64][nightly linux] / [ARM][nightly arm]
-[Extra modules][stable modules] | [Extra modules][beta modules] | [Extra modules][nightly modules]
-[Source code][stable source] | [Source code][beta source] | [Source code][nightly source]
+[Windows][stable win] | [Windows][unstable win] | [Windows][nightly win]
+[macOS][stable mac] | [macOS][unstable mac] (Apple Silicon) | [macOS][nightly mac] (Apple Silicon)
+[Linux x64][stable linux] / [ARM][stable arm] | [Linux x64][unstable linux] / [ARM][unstable arm] | [Linux x64][nightly linux] / [ARM][nightly arm]
+[Extra modules][stable modules] | [Extra modules][unstable modules] | [Extra modules][nightly modules]
+[Source code][stable source] | [Source code][unstable source] | [Source code][nightly source]
 
 A list of all released versions is [here][all versions] along with their release notes.
 
-[stable win]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.6/textadept_12.6.win.zip
-[stable mac]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.6/textadept_12.6.macOS.zip
-[stable linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.6/textadept_12.6.linux.tgz
-[stable modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.6/textadept_12.6.modules.zip
-[stable source]: https://github.com/orbitalquark/textadept/archive/refs/tags/textadept_12.6.zip
-[beta win]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7_beta_2/textadept_12.7_beta_2.win.zip
-[beta mac]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7_beta_2/textadept_12.7_beta_2.macOS.zip
-[beta linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7_beta_2/textadept_12.7_beta_2.linux.tgz
-[beta arm]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7_beta_2/textadept_12.7_beta_2.linux.arm.tgz
-[beta modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7_beta_2/textadept_12.7_beta_2.modules.zip
-[beta source]: https://github.com/orbitalquark/textadept/archive/refs/tags/textadept_12.7_beta_2.zip
+[stable win]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.win.zip
+[stable mac]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.macOS.zip
+[stable linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.linux.tgz
+[stable arm]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.linux.arm.tgz
+[stable modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.modules.zip
+[stable source]: https://github.com/orbitalquark/textadept/archive/refs/tags/textadept_12.9.zip
+[unstable win]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.win.zip
+[unstable mac]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.macOS.zip
+[unstable linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.linux.tgz
+[unstable arm]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.linux.arm.tgz
+[unstable modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.modules.zip
+[unstable source]: https://github.com/orbitalquark/textadept/archive/refs/tags/textadept_13.0_alpha_2.zip
 [nightly win]: https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.win.zip
 [nightly mac]: https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.macOS.zip
 [nightly linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_nightly/textadept_nightly.linux.tgz
@@ -142,15 +143,16 @@ require('spellcheck')
 
 Compiling Textadept from source requires the following:
 
-- [CMake][] 3.16+
+- [CMake][] 3.22+
 - A C and C++ compiler, such as:
-	- [GNU C compiler][] (*gcc*) 7.1+
-	- [Microsoft Visual Studio][] 2019+
+	- [GNU C compiler][] (*gcc*) 8.1+
+	- [Microsoft Visual Studio][] 2019 (16.8)+
 	- [Clang][] 13+
 - A UI toolkit (at least one of the following):
 	- [Qt][] 5.15+ development libraries for the GUI version
 	- [GTK][] 2.24+ development libraries for the GUI version
 	- [ncurses][](w) development libraries (wide character support) for the terminal version
+- Unix `patch` command
 
 Basic procedure:
 
@@ -182,7 +184,7 @@ The "[Compiling][]" section of the manual contains more information about this p
 [Qt]: https://www.qt.io
 [GTK]: https://gtk.org
 [ncurses]: https://invisible-island.net/ncurses/ncurses.html
-[Compiling]: manual.html#compiling
+[Compiling]: manual.md#compiling
 
 ## Support
 

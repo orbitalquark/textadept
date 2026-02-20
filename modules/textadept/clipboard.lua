@@ -1,4 +1,4 @@
--- Copyright 2025 Mitchell. See LICENSE.
+-- Copyright 2025-2026 Mitchell. See LICENSE.
 
 if not CURSES then return nil end
 
@@ -11,18 +11,22 @@ local M = {}
 -- The default values are:
 -- - Windows: `powershell get-clipboard`
 -- - macOS: `pbpaste`
--- - Linux/BSD: `xsel -b -o` if it exists, or `wl-paste -n` otherwise.
+-- - Linux/BSD: `xsel -b -o` if it exists, or `wl-paste -n` otherwise. A package manager likely
+--	supplies these commands. On Ubuntu for example, the `xsel` and `wl-clipboard` packages,
+--	respectively, supply these commands.
 M.paste_command = OSX and 'pbpaste' or WIN32 and 'powershell get-clipboard' or 'xsel -b -o'
-if not OSX and not WIN32 and not os.execute('xsel') then M.paste_command = 'wl-paste -n' end
+if (LINUX or BSD) and not os.execute('xsel > /dev/null 2>&1') then M.paste_command = 'wl-paste -n' end
 
 --- The command to modify the system clipboard's contents.
 -- The default values are:
 -- - Windows: `clip`
 -- - macOS: `pbcopy`
--- - Linux/BSD: `xsel -n -b -i` if it exists, or `wl-copy -f` otherwise. Note: commands should
---	not fork.
+-- - Linux/BSD: `xsel -n -b -i` if it exists, or `wl-copy -f` otherwise. A package manager
+--	likely supplies these commands. On Ubuntu for example, the `xsel` and `wl-clipboard`
+--	packages, respectively, supply these commands.
+--	Note: this command should not fork.
 M.copy_command = OSX and 'pbcopy' or WIN32 and 'clip' or 'xsel -n -b -i'
-if not OSX and not WIN32 and not os.execute('xsel') then M.paste_command = 'wl-copy -f' end
+if (LINUX or BSD) and not os.execute('xsel > /dev/null 2>&1') then M.copy_command = 'wl-copy -f' end
 
 local get_scintilla_clipboard = ui.get_clipboard_text
 -- Documentation is in core/ui.lua.

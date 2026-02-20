@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 -- Abbreviated environment and commands from Jay Gould.
 
 --- Textadept's Command Entry.
@@ -177,9 +177,8 @@ end
 -- @param[optchain] ... Additional arguments to pass to *f*.
 -- @usage ui.command_entry.run('echo:', ui.print)
 -- @usage ui.command_entry.run('$', os.spawn, 'bash', 'env', ui.print) -- spawn a process
-function M.run(label, f, keys, lang, initial_text, ...)
+function M.run(label, f, keys, lang, initial_text, ...args)
 	if _G.keys.mode == '_command_entry' then return end -- already in command entry
-	local args = table.pack(...)
 	if not label then
 		label, f, keys, lang = _L['Lua command:'], run_lua, {['\t'] = complete_lua}, 'lua'
 	else
@@ -233,6 +232,7 @@ events.connect(events.INITIALIZED, function()
 	M.h_scroll_bar, M.v_scroll_bar = false, false
 	for i = 1, M.margins do M.margin_width_n[i] = 0 end
 	M.call_tip_use_style, M.call_tip_position = 4 * M:text_width(view.STYLE_CALLTIP, ' '), true
+	if is_hidpi() then M.auto_c_image_scale = 200 end
 	M._xpm = setmetatable({}, {__index = function(t) return t.variable end})
 	local image_type = 1 -- no need to use M.new_image_type() since this is a special view
 	for name, xpm in pairs(not is_hidpi() and xpm16 or xpm32) do

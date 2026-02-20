@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2022-2025 Mitchell. See LICENSE.
+# Copyright 2022-2026 Mitchell. See LICENSE.
 
 # Counts lines of code for the each platform.
 # Requires cloc.

@@ -4,6 +4,22 @@ on:
     - cron: "0 4 * * *"
   workflow_dispatch:
     inputs:
+      windows:
+        description: Build on Windows
+        type: boolean
+        default: true
+      macOS:
+        description: Build on macOS
+        type: boolean
+        default: true
+      linux:
+        description: Build on Linux
+        type: boolean
+        default: true
+      bsd:
+        description: Build on BSD
+        type: boolean
+        default: true
       nightly:
         description: Nightly build
         type: boolean
@@ -32,11 +48,11 @@ jobs:
       - name: Check repositories for changes
         id: check
         run: |
+          new_commits=false
           repos='
             textadept
             scintillua
             scinterm
-            textadept-autoupdate
             textadept-debugger
             textadept-export
             textadept-file-diff
@@ -46,6 +62,7 @@ jobs:
             textadept-open-file-mode
             textadept-scratch
             textadept-spellcheck
+            textadept-update-notifier
           '
           for repo in $(echo $repos); do
             git clone --depth 1 https://github.com/orbitalquark/$repo
@@ -54,12 +71,13 @@ jobs:
             today=$(date +%F)
             yesterday=$(date -d yesterday +%F)
             if [[ $last_date = $yesterday || $last_date = $today ]]; then
-              echo "new-commits=true" >> "$GITHUB_OUTPUT"
-              exit
+              new_commits=true
+              break
             fi
             popd
           done
-          echo "new-commits=false" >> "$GITHUB_OUTPUT"
+          if [[ ${{ github.event_name }} = workflow_dispatch ]]; then new_commits=true; fi
+          echo "new-commits=$new_commits" >> "$GITHUB_OUTPUT"
 
   get-version:
     runs-on: ubuntu-latest
@@ -90,44 +108,43 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
+            if: ${{ inputs.linux || github.event_name == 'schedule' }}
           - os: ubuntu-22.04-arm
-          - os: windows-2019
-            qt: '6.7'
-          - os: macOS-13
-            qt: '6.5'
+            if: ${{ inputs.linux || github.event_name == 'schedule' }}
+          - os: windows-2022
+            if: ${{ inputs.windows || github.event_name == 'schedule' }}
+            qt: '6.10'
+          - os: macOS-15
+            if: ${{ inputs.macOS || github.event_name == 'schedule' }}
+            qt: '6.11'
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
+        if: matrix.if
         uses: actions/checkout@v4
 
       - name: Checkout textadept-build dependencies
+        if: matrix.if
         uses: actions/checkout@v4
         with:
           repository: orbitalquark/textadept-build
           path: textadept-build
 
       - name: Install Qt (Windows, macOS)
-        if: runner.os == 'Windows' || runner.os == 'macOS'
-        uses: jurplel/install-qt-action@v3
+        if: matrix.if && (runner.os == 'Windows' || runner.os == 'macOS')
+        uses: jurplel/install-qt-action@v4
         with:
           version: ${{ matrix.qt }}
           modules: 'qt5compat'
 
-      - name: Install build dependencies like Qt and GTK (Linux)
-        if: runner.os == 'Linux'
+      - name: Install Qt and GTK (Linux)
+        if: matrix.if && runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install qtbase5-dev libgtk-3-dev lua5.3 --no-install-recommends -y
-
-      - name: Install Ruby on Linux
-        if: runner.os == 'Linux'
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-          working-directory: docs
+          sudo apt-get install qtbase5-dev libgtk-3-dev --no-install-recommends -y
 
       - name: Build
+        if: matrix.if
         shell: bash
         run: |
           # Move cached dependencies into build/_deps.
@@ -141,16 +158,15 @@ jobs:
           else
             nightly="-D NIGHTLY=1"
           fi
-          if [[ ${{ runner.os }} = Linux ]]; then generate_html="-D GENERATE_HTML=1"; fi
-          cmake -S . -B build ${nightly} ${generate_html} -D CMAKE_INSTALL_PREFIX=build/install
+          cmake -S . -B build ${nightly} -D CMAKE_INSTALL_PREFIX=build/install
           cmake --build build --config ${type} -j
-          if [[ ! -z "${generate_html}" ]]; then cmake --build build --target html; fi
           cmake --install build --config ${type}
           cmake --build build --target archive
         env:
-          VCINSTALLDIR: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC
+          VCINSTALLDIR: C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC
 
       - name: Upload artifacts
+        if: matrix.if
         uses: actions/upload-artifact@v4
         with:
           name: artifacts-${{ matrix.os }}
@@ -165,8 +181,8 @@ jobs:
       - name: Package modules
         run: |
           mkdir textadept-modules
-          modules="autoupdate debugger export file_diff format lsp lua_repl open_file_mode scratch
-            spellcheck"
+          modules="debugger export file_diff format lsp lua_repl open_file_mode scratch spellcheck
+            update_notifier"
           for module in $(echo $modules); do
             gh_name="$(echo -n $module | sed -e 's/_/-/g;')"
             gh_prefix="https://github.com/orbitalquark/textadept-$gh_name"
@@ -181,9 +197,59 @@ jobs:
           name: artifacts-modules
           path: '*.zip'
 
+  docs:
+    runs-on: ubuntu-latest
+    needs: check-for-changes
+    if: needs.check-for-changes.outputs.new-commits == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout textadept-build dependencies
+        uses: actions/checkout@v4
+        with:
+          repository: orbitalquark/textadept-build
+          path: textadept-build
+
+      - name: Install Lua
+        run: |
+          sudo apt-get update
+          sudo apt-get install lua5.3 --no-install-recommends -y
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: docs
+
+      - name: Build
+        shell: bash
+        run: |
+          # Note: this job tests the html CMake target, so CMake configure needs to succeed.
+
+          # Move cached dependencies into build/_deps.
+          mkdir -p build/_deps && mv textadept-build/* build/_deps && rm -r textadept-build
+
+          # Build.
+          if [[ ${{ github.event_name }} != schedule ]]; then
+            if [[ "${{ github.event.inputs.nightly }}" = true ]]; then nightly="-D NIGHTLY=1"; fi
+          else
+            nightly="-D NIGHTLY=1"
+          fi
+          cmake -S . -B build ${nightly} -D GENERATE_HTML=1
+          cmake --build build --target html
+          tar czf docs.tgz docs
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-docs
+          path: docs.tgz
+
   release:
     runs-on: ubuntu-latest
-    needs: [get-version, build, modules]
+    needs: [get-version, build, modules, docs]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -195,20 +261,31 @@ jobs:
 
       - name: Add HTML documentation
         run: |
-          # Extract HTML documentation from Linux.
+          # Extract HTML documentation.
+          tar xzf docs.tgz --wildcards 'docs/*.html'
+          tar xzf docs.tgz 'docs/assets/css/style.css'
+
           version=${{ needs.get-version.outputs.version }}
-          tar xzf textadept_$version.linux.tgz --wildcards 'textadept/docs/*.html'
-          tar xzf textadept_$version.linux.tgz 'textadept/docs/assets/css/style.css'
+
+          # Insert it into Linux archives.
+          for tgz in $(ls textadept_$version.linux*.tgz); do
+            tar xzf $tgz && cp -r docs textadept && tar czf $tgz textadept && rm -r textadept
+          done
 
           # Insert it into Windows archive.
-          zip -r textadept_$version.win.zip textadept/docs
+          if [[ -f textadept_$version.win.zip ]]; then
+            mkdir textadept && cp -r docs textadept
+            zip -r textadept_$version.win.zip textadept/docs
+            rm -r textadept
+          fi
 
           # Install it into macOS archive.
-          bundle_res="Textadept.app/Contents/Resources"
-          mkdir -p $bundle_res
-          cp -r textadept/docs $bundle_res
-          zip -r textadept_$version.macOS.zip $bundle_res
-        continue-on-error: true
+          if [[ -f textadept_$version.macOS.zip ]]; then
+            bundle_res="Textadept.app/Contents/Resources"
+            mkdir -p $bundle_res
+            cp -r docs $bundle_res
+            zip -r textadept_$version.macOS.zip $bundle_res
+          fi
 
       - name: Tag
         if: github.ref_name == github.event.repository.default_branch
@@ -276,7 +353,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Qt, Gtk, xterm, matchbox-window-manager, and module dependencies (Linux)
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && (inputs.linux || github.event_name == 'schedule')
         run: |
           sudo apt-get update
           sudo apt-get install qtbase5-dev libgtk-3-dev xterm matchbox-window-manager \
@@ -288,42 +365,47 @@ jobs:
           merge-multiple: true
 
       - name: Unpack Textadept (Windows)
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && (inputs.windows || github.event_name == 'schedule')
         shell: bash
         run: unzip textadept_*.win.zip
 
       - name: Unpack Textadept (macOS)
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && (inputs.macOS || github.event_name == 'schedule')
         run: unzip textadept_*.macOS.zip
 
       - name: Unpack Textadept (Linux)
-        if: runner.os == 'Linux' && !contains(matrix.os, 'arm')
+        if: runner.os == 'Linux' && !contains(matrix.os, 'arm') &&
+          (inputs.linux || github.event_name == 'schedule')
         run: tar xzf textadept_*.linux.tgz
 
       - name: Unpack Textadept (Linux ARM)
-        if: runner.os == 'Linux' && contains(matrix.os, 'arm')
+        if: runner.os == 'Linux' && contains(matrix.os, 'arm') &&
+          (inputs.linux || github.event_name == 'schedule')
         run: tar xzf textadept_*.linux.arm.tgz
 
       - name: Unpack modules (Windows, Linux)
-        if: runner.os != 'macOS'
+        if: runner.os != 'macOS' &&
+          (inputs.windows || inputs.linux || github.event_name == 'schedule')
+        shell: bash
         run: |
           unzip textadept_*.modules.zip
+          if [[ ! -d textadept ]]; then exit 0; fi
           mv textadept-modules/* textadept/modules
 
       - name: Unpack modules (macOS)
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && (inputs.macOS || github.event_name == 'schedule')
         run: |
           unzip textadept_*modules.zip
           mv textadept-modules/* Textadept.app/Contents/Resources/modules
 
       - name: Run unit tests (Windows)
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && (inputs.windows || github.event_name == 'schedule')
         shell: cmd
         run: start "" /d ${{ github.workspace }} /wait ${{ matrix.exe }}.exe -t
         timeout-minutes: 2
 
       - name: Run unit tests (macOS)
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && (inputs.macOS || github.event_name == 'schedule')
         run: ${{ matrix.exe }} -t
         #run: |
         #  echo "cd ${{ github.workspace }}" > run.sh
@@ -332,7 +414,7 @@ jobs:
         timeout-minutes: 2
 
       - name: Run unit tests (Linux)
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && (inputs.linux || github.event_name == 'schedule')
         run: xvfb-run -a xterm -e ${{ matrix.exe }} -t
         env:
           LANG: en_US.UTF-8
@@ -340,13 +422,16 @@ jobs:
 
       - name: Read test output
         if: success() || failure()
+        shell: bash
         run: |
+          if [[ ! -f test.log ]]; then exit 0; fi
           cat test.log
           grep -q '^0 failed' test.log
 
   smoke-test-gtk2:
     needs: check-for-changes
-    if: needs.check-for-changes.outputs.new-commits == 'true' && ! inputs.no_tests
+    if: needs.check-for-changes.outputs.new-commits == 'true' && ! inputs.no_tests &&
+      (inputs.linux || github.event_name == 'schedule')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -389,7 +474,8 @@ jobs:
 
   smoke-test-bsd:
     needs: check-for-changes
-    if: needs.check-for-changes.outputs.new-commits == 'true' && ! inputs.no_tests
+    if: needs.check-for-changes.outputs.new-commits == 'true' && ! inputs.no_tests &&
+      (inputs.bsd || github.event_name == 'schedule')
     runs-on: ubuntu-latest
     env:
       TEXTADEPT_HOME: ${{ github.workspace }}
@@ -486,8 +572,10 @@ jobs:
             xsel gdb lua-socket clang-format clangd hunspell-en-us --no-install-recommends -y
 
           patch -d luacov -p1 < src/luacov.patch
-          sudo mkdir -p /usr/share/lua/5.4
+          sudo mkdir -p /usr/share/lua/5.5 # for Textadept's `require('luacov')`
+          sudo mkdir -p /usr/share/lua/5.4 # for `os.execute('luacov')`
           sudo cp -r luacov/src/luacov* /usr/share/lua/5.4
+          sudo cp -r luacov/src/luacov* /usr/share/lua/5.5
           sudo cp luacov/src/bin/luacov /usr/bin
           rm -r luacov
 
@@ -577,8 +665,8 @@ jobs:
       - name: Checkout modules
         run: |
           cd modules
-          modules="autoupdate debugger export file-diff format lsp lua-repl open-file-mode scratch
-            spellcheck"
+          modules="debugger export file-diff format lsp lua-repl open-file-mode scratch spellcheck
+            update-notifier"
           for module in $(echo $modules); do
             name="$(echo -n $module | sed -e 's/-/_/g;')"
             git clone --depth 1 https://github.com/orbitalquark/textadept-$module $name
@@ -590,4 +678,8 @@ jobs:
           sudo apt-get install lua-check --no-install-recommends -y
 
       - name: Run luacheck
-        run: luacheck .
+        run: |
+          set +e
+          output=$(luacheck . | grep -v E011) # ignore syntax errors due to Lua 5.5's vararg params
+          echo $output
+          if [[ ! -z "$output" ]]; then exit 1; fi

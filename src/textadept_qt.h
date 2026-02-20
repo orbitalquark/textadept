@@ -1,7 +1,10 @@
-// Copyright 2022-2025 Mitchell. See LICENSE.
+// Copyright 2022-2026 Mitchell. See LICENSE.
 // Qt platform for Textadept.
 
 #include "ui_textadept_qt.h"
+#if __APPLE__
+#include "textadept_qt_mac.h"
+#endif
 
 namespace Ui {
 class Textadept;

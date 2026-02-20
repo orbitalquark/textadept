@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 --- Sends command line table *arg* for processing.
 -- @param arg Table of command line arguments to process.

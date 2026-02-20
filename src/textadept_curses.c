@@ -1,4 +1,4 @@
-// Copyright 2007-2025 Mitchell. See LICENSE.
+// Copyright 2007-2026 Mitchell. See LICENSE.
 // Curses platform for Textadept.
 
 #include "textadept.h"
@@ -33,7 +33,8 @@ static bool find_options[4];
 #define HIST_MAX 100
 static char *button_labels[4], *option_labels[4], *find_history[HIST_MAX], *repl_history[HIST_MAX];
 static WINDOW *command_entry_label;
-static bool command_entry_active;
+static bool command_entry_active, statusbar;
+static char *statusbar_text[2];
 static int statusbar_length[2];
 TermKey *ta_tk; // global for CDK use
 
@@ -42,7 +43,7 @@ static bool quitting;
 
 // Implementation of a Pane.
 struct Pane {
-	int y, x, rows, cols, split_size; // dimensions
+	int y, x, rows, cols, split_pos; // dimensions
 	enum { SINGLE, VSPLIT, HSPLIT } type; // pane type
 	WINDOW *win; // either the Scintilla curses window or the split bar's window
 	SciObject *view; // Scintilla view for a non-split view
@@ -62,6 +63,7 @@ const char *get_charset(void) {
 	}
 	return charset;
 #elif _WIN32
+	if (GetACP() == 65001) return "UTF-8";
 	static char codepage[8];
 	return (sprintf(codepage, "CP%d", GetACP()), codepage);
 #endif
@@ -77,16 +79,16 @@ static Pane *new_pane(SciObject *view) {
 // Resizes and repositions the given pane.
 static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
 	if (pane->type == VSPLIT) {
-		int ssize = (int)(pane->split_size * cols / fmax(pane->cols, 1));
+		int ssize = (int)(pane->split_pos * cols / fmax(pane->cols, 1));
 		if (ssize < 1 || ssize >= cols - 1) ssize = ssize < 1 ? 1 : cols - 2;
-		pane->split_size = ssize;
+		pane->split_pos = ssize;
 		resize_pane(pane->child1, rows, ssize, y, x);
 		resize_pane(pane->child2, rows, cols - ssize - 1, y, x + ssize + 1);
 		wresize(pane->win, rows, 1), mvwin(pane->win, y, x + ssize); // split bar
 	} else if (pane->type == HSPLIT) {
-		int ssize = (int)(pane->split_size * rows / fmax(pane->rows, 1));
+		int ssize = (int)(pane->split_pos * rows / fmax(pane->rows, 1));
 		if (ssize < 1 || ssize >= rows - 1) ssize = ssize < 1 ? 1 : rows - 2;
-		pane->split_size = ssize;
+		pane->split_pos = ssize;
 		resize_pane(pane->child1, ssize, cols, y, x);
 		resize_pane(pane->child2, rows - ssize - 1, cols, y + ssize + 1, x);
 		wresize(pane->win, 1, cols), mvwin(pane->win, y + ssize, x); // split bar
@@ -96,7 +98,7 @@ static void resize_pane(struct Pane *pane, int rows, int cols, int y, int x) {
 }
 
 void new_window(SciObject *(*get_view)(void)) {
-	root_pane = new_pane(get_view()), resize_pane(root_pane, LINES - 2, COLS, 1, 0);
+	root_pane = new_pane(get_view()), resize_pane(root_pane, LINES - statusbar - 1, COLS, 1, 0);
 }
 
 void set_title(const char *title) {
@@ -153,17 +155,17 @@ void split_view(SciObject *view, SciObject *view2, bool vertical) {
 	parent->child1 = child1, parent->child2 = child2, parent->view = NULL;
 	// Resize children and create a split bar.
 	if (vertical) {
-		parent->split_size = parent->cols / 2;
-		resize_pane(child1, parent->rows, parent->split_size, parent->y, parent->x);
-		resize_pane(child2, parent->rows, parent->cols - parent->split_size - 1, parent->y,
-			parent->x + parent->split_size + 1);
-		parent->win = newwin(parent->rows, 1, parent->y, parent->x + parent->split_size);
+		parent->split_pos = parent->cols / 2;
+		resize_pane(child1, parent->rows, parent->split_pos, parent->y, parent->x);
+		resize_pane(child2, parent->rows, parent->cols - parent->split_pos - 1, parent->y,
+			parent->x + parent->split_pos + 1);
+		parent->win = newwin(parent->rows, 1, parent->y, parent->x + parent->split_pos);
 	} else {
-		parent->split_size = parent->rows / 2;
-		resize_pane(child1, parent->split_size, parent->cols, parent->y, parent->x);
-		resize_pane(child2, parent->rows - parent->split_size - 1, parent->cols,
-			parent->y + parent->split_size + 1, parent->x);
-		parent->win = newwin(1, parent->cols, parent->y + parent->split_size, parent->x);
+		parent->split_pos = parent->rows / 2;
+		resize_pane(child1, parent->split_pos, parent->cols, parent->y, parent->x);
+		resize_pane(child2, parent->rows - parent->split_pos - 1, parent->cols,
+			parent->y + parent->split_pos + 1, parent->x);
+		parent->win = newwin(1, parent->cols, parent->y + parent->split_pos, parent->x);
 	}
 	refresh_pane(parent);
 }
@@ -188,7 +190,7 @@ bool unsplit_view(SciObject *view, void (*delete_view)(SciObject *)) {
 	remove_views(child == parent->child1 ? parent->child2 : parent->child1, delete_view);
 	delwin(parent->win); // delete split bar
 	// Inherit child's properties.
-	parent->type = child->type, parent->split_size = child->split_size, parent->win = child->win,
+	parent->type = child->type, parent->split_pos = child->split_pos, parent->win = child->win,
 	parent->view = child->view, parent->child1 = child->child1, parent->child2 = child->child2;
 	free(child);
 	resize_pane(parent, parent->rows, parent->cols, parent->y, parent->x); // update
@@ -200,12 +202,16 @@ void delete_scintilla(SciObject *view) { scintilla_delete(view); }
 Pane *get_top_pane(void) { return root_pane; }
 
 PaneInfo get_pane_info(Pane *pane) {
-	PaneInfo info = {
-		pane && PANE(pane)->type != SINGLE, false, pane ? PANE(pane)->view : NULL, pane, NULL, NULL, 0};
-	if (info.is_split)
-		info.vertical = PANE(pane)->type == VSPLIT, info.view = PANE(pane)->view,
-		info.child1 = PANE(pane)->child1, info.child2 = PANE(pane)->child2,
-		info.size = PANE(pane)->split_size;
+	PaneInfo info = {pane && PANE(pane)->type != SINGLE, false, pane ? PANE(pane)->view : NULL, pane,
+		NULL, NULL, pane ? PANE(pane)->rows : 0, pane ? PANE(pane)->cols : 0, 0};
+	if (info.is_split) {
+		info.vertical = PANE(pane)->type == VSPLIT;
+		struct Pane *child1 = PANE(pane)->child1, *child2 = PANE(pane)->child2;
+		info.child1 = child1, info.child2 = child2,
+		info.width = info.vertical ? child1->cols + child2->cols + 1 : child1->cols,
+		info.height = info.vertical ? child1->rows : child1->rows + child2->rows + 1,
+		info.split_pos = PANE(pane)->split_pos;
+	}
 	return info;
 }
 
@@ -217,8 +223,8 @@ PaneInfo get_pane_info_from_view(SciObject *v) {
 	return get_pane_info(get_parent_pane(root_pane, v));
 }
 
-void set_pane_size(Pane *pane, int size) {
-	PANE(pane)->split_size = size;
+void set_pane_split_pos(Pane *pane, int pos) {
+	PANE(pane)->split_pos = pos;
 	resize_pane(PANE(pane), PANE(pane)->rows, PANE(pane)->cols, PANE(pane)->y, PANE(pane)->x);
 }
 
@@ -292,7 +298,10 @@ static void refresh_all(void) {
 		touchwin(command_entry_label), wnoutrefresh(command_entry_label),
 			scintilla_noutrefresh(command_entry);
 	refresh(); // draw to stdscr (titlebar, splits, statusbar)
-	if (!findbox) scintilla_update_cursor(!command_entry_active ? focused_view : command_entry);
+	if (!findbox)
+		scintilla_update_cursor(!command_entry_active ? focused_view : command_entry);
+	else
+		refreshCDKScreen(findbox);
 	doupdate(); // draw to all windows
 }
 
@@ -345,7 +354,7 @@ void focus_find(void) {
 	if (findbox) return; // already active
 	WINDOW *win = scintilla_get_window(focused_view);
 	wresize(win, getmaxy(win) - 2, COLS), emit("find_pane_show", -1);
-	findbox = initCDKScreen(newwin(2, 0, LINES - 3, 0)), eraseCDKScreen(findbox);
+	findbox = initCDKScreen(newwin(2, 0, LINES - statusbar - 2, 0)), eraseCDKScreen(findbox);
 	int b_width = (int)(fmax(strlen(button_labels[0]), strlen(button_labels[1])) +
 		fmax(strlen(button_labels[2]), strlen(button_labels[3])) + 3);
 	int o_width = (int)(fmax(strlen(option_labels[0]), strlen(option_labels[1])) +
@@ -398,7 +407,7 @@ void focus_find(void) {
 static void resize_command_entry(void) {
 	WINDOW *win = scintilla_get_window(command_entry);
 	int height = get_command_entry_height(), label_width = getmaxx(command_entry_label);
-	wresize(win, height, COLS - label_width), mvwin(win, LINES - 1 - height, label_width);
+	wresize(win, height, COLS - label_width), mvwin(win, LINES - statusbar - height, label_width);
 }
 
 void focus_command_entry(void) {
@@ -411,7 +420,7 @@ void focus_command_entry(void) {
 bool is_command_entry_active(void) { return command_entry_active; }
 
 void set_command_entry_label(const char *text) {
-	if (!command_entry_label) command_entry_label = newwin(1, 1, LINES - 2, 0);
+	if (!command_entry_label) command_entry_label = newwin(1, 1, LINES - statusbar - 1, 0);
 	wresize(command_entry_label, 1, utf8strlen(text)), mvwaddstr(command_entry_label, 0, 0, text);
 }
 
@@ -420,16 +429,26 @@ int get_command_entry_height(void) { return getmaxy(scintilla_get_window(command
 void set_command_entry_height(int height) {
 	WINDOW *win = scintilla_get_window(command_entry);
 	int label_width = getmaxx(command_entry_label);
-	wresize(win, height, COLS - label_width), mvwin(win, LINES - 1 - height, label_width);
+	wresize(win, height, COLS - label_width), mvwin(win, LINES - statusbar - height, label_width);
 }
+
+bool is_statusbar_visible(void) { return statusbar; }
+
+void set_statusbar_visible(bool visible) {
+	statusbar = visible;
+	if (command_entry_label) mvwin(command_entry_label, LINES - statusbar - 1, 0);
+	resize_pane(root_pane, LINES - statusbar - 1, COLS, 1, 0), resize_command_entry(), refresh_all();
+}
+
+const char *get_statusbar_text(int bar) { return statusbar_text[bar]; }
 
 void set_statusbar_text(int bar, const char *text) {
 	int start = bar == 0 ? 0 : statusbar_length[0];
 	int end = bar == 0 ? COLS - statusbar_length[1] : COLS;
-	for (int i = start; i < end; i++) mvaddch(LINES - 1, i, ' '); // clear
+	for (int i = start; i < end; i++) mvaddch(LINES - statusbar, i, ' '); // clear
 	int len = (int)utf8strlen(text);
-	mvaddstr(LINES - 1, bar == 0 ? 0 : COLS - len, text);
-	statusbar_length[bar] = len;
+	mvaddstr(LINES - statusbar, bar == 0 ? 0 : COLS - len, text);
+	copyfree(&statusbar_text[bar], text), statusbar_length[bar] = len;
 }
 
 void *read_menu(lua_State *L, int index) { return NULL; }
@@ -477,7 +496,7 @@ static void process_finished(struct Process *proc, int status) {
 static bool lua_processprocs(lua_State *L) {
 	bool refresh = false;
 	luaL_getsubtable(L, LUA_REGISTRYINDEX, "spawn_procs");
-	for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
+	for (lua_pushnil(L); lua_next(L, -2) || (lua_pop(L, 1), false); lua_pop(L, 1)) {
 		struct Process *proc = lua_touserdata(L, -2);
 		reproc_event_source event = {proc->reproc, REPROC_EVENT_OUT | REPROC_EVENT_ERR, 0};
 		reproc_poll(&event, 1, 0);
@@ -488,7 +507,7 @@ static bool lua_processprocs(lua_State *L) {
 		read_proc(proc, true), read_proc(proc, false), process_finished(proc, status), refresh = true;
 		lua_pushnil(L), lua_replace(L, -3); // key no longer exists
 	}
-	return (lua_pop(L, 1), refresh); // pop spawn_procs
+	return refresh;
 }
 
 // Contains information about an active timeout.
@@ -515,13 +534,13 @@ static double get_seconds(void) {
 static bool lua_processtimeouts(lua_State *L) {
 	bool refresh = false;
 	luaL_getsubtable(L, LUA_REGISTRYINDEX, "timeouts");
-	for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
+	for (lua_pushnil(L); lua_next(L, -2) || (lua_pop(L, 1), false); lua_pop(L, 1)) {
 		TimeoutData *timeout = lua_touserdata(L, -2);
 		if (get_seconds() - timeout->s < timeout->interval) continue;
 		if (timeout->s = get_seconds(), refresh = true, !timeout->f(timeout->refs))
 			lua_pushvalue(L, -2), lua_pushnil(L), lua_settable(L, -5); // t[timeout] = nil
 	}
-	return (lua_pop(L, 1), refresh); // pop timeouts
+	return refresh;
 }
 
 void add_timeout(double interval, bool (*f)(int *), int *refs) {
@@ -630,10 +649,11 @@ int input_dialog(DialogOptions opts, lua_State *L) {
 static int open_save(DialogOptions *opts, lua_State *L, bool open) {
 	char cwd[FILENAME_MAX];
 	getcwd(cwd, FILENAME_MAX); // save because cdk changes it
-	WINDOW *window = newwin(LINES - 2, COLS - 2, 1, 1);
+	WINDOW *window = newwin(LINES - statusbar - 1, COLS - 2, 1, 1);
 	CDKSCREEN *dialog = initCDKScreen(window);
-	CDKFSELECT *select = newCDKFselect(dialog, LEFT, TOP, LINES - 2, COLS - 2, (char *)opts->title,
-		(char *)opts->text, A_NORMAL, '_', A_REVERSE, "</B>", "</N>", "</N>", "</N>", TRUE, FALSE);
+	CDKFSELECT *select =
+		newCDKFselect(dialog, LEFT, TOP, LINES - statusbar - 1, COLS - 2, (char *)opts->title,
+			(char *)opts->text, A_NORMAL, '_', A_REVERSE, "</B>", "</N>", "</N>", "</N>", TRUE, FALSE);
 	if (opts->dir) setCDKFselectDirectory(select, (char *)opts->dir);
 	if (opts->file) {
 		char *dir = dirName((char *)opts->file);
@@ -767,7 +787,7 @@ int list_dialog(DialogOptions opts, lua_State *L) {
 		if (i >= 0) filtered_rows[i / num_columns] = row;
 	}
 
-	Dialog dialog = new_dialog(&opts, LINES - 2, COLS - 2);
+	Dialog dialog = new_dialog(&opts, LINES - statusbar - 1, COLS - 2);
 	CDKENTRY *entry = newCDKEntry(dialog.screen, LEFT, TOP, (char *)opts.title, "", A_NORMAL, '_',
 		vMIXED, 0, 0, 100, false, false);
 	CDKSCROLL *scroll = newCDKScroll(dialog.screen, LEFT, CENTER, RIGHT, -6, 0,
@@ -924,7 +944,7 @@ static void signalled(int signal) {
 	if (signal == SIGCONT) termkey_start(ta_tk);
 	struct winsize w;
 	ioctl(0, TIOCGWINSZ, &w);
-	resizeterm(w.ws_row, w.ws_col), resize_pane(root_pane, LINES - 2, COLS, 1, 0),
+	resizeterm(w.ws_row, w.ws_col), resize_pane(root_pane, LINES - statusbar - 1, COLS, 1, 0),
 		resize_command_entry();
 	if (signal == SIGCONT) emit("resume", -1);
 	emit("update_ui", LUA_TNUMBER, 0, -1), refresh_all();
@@ -972,6 +992,7 @@ int main(int argc, char **argv) {
 	find_next = &button_labels[0], replace = &button_labels[1], find_prev = &button_labels[2],
 	replace_all = &button_labels[3], match_case = &find_options[0], whole_word = &find_options[1],
 	regex = &find_options[2], in_files = &find_options[3]; // typedefed, so cannot static initialize
+	statusbar = true;
 
 	if (!init_textadept(argc, argv)) return (endwin(), termkey_destroy(ta_tk), exit_status);
 
@@ -1035,5 +1056,7 @@ int main(int argc, char **argv) {
 		if (i < 4) free(button_labels[i]), free(option_labels[i] - (find_options[i] ? 0 : 4));
 	}
 	if (command_entry_label) delwin(command_entry_label);
+	if (statusbar_text[0]) free(statusbar_text[0]);
+	if (statusbar_text[1]) free(statusbar_text[1]);
 	return exit_status;
 }

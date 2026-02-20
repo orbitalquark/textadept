@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 --- Textadept's Find & Replace pane.
 -- @module ui.find
@@ -153,8 +153,7 @@ events.connect(events.FIND, function(text, next)
 	-- If text is selected, assume it is from the current search and move the caret appropriately
 	-- for the next search.
 	buffer:set_empty_selection(next and buffer.selection_end or buffer.selection_start)
-	if not M.incremental and M.regex and find_text == text and found_text == '' and next then
-		-- TODO: Find Prev does not work and appears to be a Scintilla bug.
+	if not M.incremental and M.regex and find_text == text and found_text == '' then
 		buffer:set_empty_selection(buffer.current_pos + (next and 1 or -1))
 	end
 
@@ -228,10 +227,10 @@ events.connect(events.FIND_PANE_HIDE, function()
 end)
 
 local P, V, C, upper, lower = lpeg.P, lpeg.V, lpeg.C, string.upper, string.lower
-local esc = {b = '\b', f = '\f', n = '\n', r = '\r', t = '\t', v = '\v'}
+local esc = {b = '\b', f = '\f', n = '\n', r = '\r', t = '\t', v = '\v', ['\\'] = '\\'}
 local re_patt = lpeg.Cs(P{
 	(V('text') + V('u') + V('l') + V('U') + V('L') + V('esc'))^1,
-	text = (1 - '\\' * lpeg.S('uUlLEbfnrtv'))^1, --
+	text = (1 - '\\' * lpeg.S('uUlLEbfnrtv\\'))^1, --
 	u = '\\u' * C(1) / upper, l = '\\l' * C(1) / lower,
 	U = P('\\U') / '' * (V('text') / upper + V('u') + V('l'))^0 * V('E')^-1,
 	L = P('\\L') / '' * (V('text') / lower + V('u') + V('l'))^0 * V('E')^-1, --

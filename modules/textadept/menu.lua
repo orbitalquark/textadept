@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 -- Contributions from Robert Gieseke.
 
 --- Defines the menus used by Textadept.
@@ -137,7 +137,8 @@ end
 -- @param view The view to resize.
 -- @param grow Whether to grow or shrink the view.
 local function resize_view(view, grow)
-	if view.size then view.size = view.size + (grow and 1 or -1) * 10 * view:text_height(1) end
+	if not view.split_pos then return end
+	view.split_pos = view.split_pos + (grow and 1 or -1) * 10 * view:text_height(1)
 end
 
 --- Wrapper around `view:fold_all()`.
@@ -269,6 +270,10 @@ local default_menubar = {
 		{_L['Replace All'], ui.find.replace_all},
 		{_L['Find Incremental'], function() ui.find.focus{incremental = true} end}, --
 		SEPARATOR, --
+		{_L['Toggle Match Case'], function() ui.find.match_case = not ui.find.match_case end},
+		{_L['Toggle Whole Word'], function() ui.find.whole_word = not ui.find.whole_word end},
+		{_L['Toggle Regex'], function() ui.find.regex = not ui.find.regex end}, --
+		SEPARATOR, --
 		{_L['Find in Files'], function() ui.find.focus{in_files = true} end},
 		{_L['Go To Next File Found'], function() ui.find.goto_file_found(true) end},
 		{_L['Go To Previous File Found'], function() ui.find.goto_file_found(false) end}, --
@@ -389,10 +394,9 @@ local default_menubar = {
 			{_L['Expand All Folds'], function() fold_all(view.FOLDACTION_EXPAND) end}
 		}, SEPARATOR, {
 			_L['Toggle Wrap Mode'], function()
-				local first_visible_line = view.first_visible_line
-				local display_line = view:visible_from_doc_line(first_visible_line)
+				local display_line = view:visible_from_doc_line(view.first_visible_line)
 				view.wrap_mode = view.wrap_mode == 0 and view.WRAP_WHITESPACE or 0
-				view:line_scroll(0, first_visible_line - display_line)
+				view:scroll_vertical(display_line, 1)
 			end
 		}, {
 			_L['Toggle Margins'], function()
@@ -431,6 +435,11 @@ local default_menubar = {
 		}
 	}
 }
+if QT and OSX then
+	-- Note: do not localize "Window" since it's hardcoded until Qt supports it natively.
+	table.insert(default_menubar, #default_menubar,
+		{title = 'Window', {_L['Zoom'], function() ui.maximized = not ui.maximized end}})
+end
 
 --- The default right-click context menu.
 -- @usage table.insert(textadept.menu.context_menu, {'Label', function() ... end})

@@ -1,4 +1,4 @@
--- Copyright 2018-2025 Mitchell. See LICENSE.
+-- Copyright 2018-2026 Mitchell. See LICENSE.
 
 --- A module for recording, playing, saving, and loading keyboard macros.
 -- Menu commands are also recorded.

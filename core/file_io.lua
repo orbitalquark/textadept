@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 --- Extends Lua's `io` library with Textadept functions for working with files.
 -- @module io
@@ -347,9 +347,6 @@ end)
 --- Prompts the user to select a recently opened file to reopen.
 -- @see recent_files
 function io.open_recent_file()
-	for i = #io.recent_files, 1, -1 do
-		if not lfs.attributes(io.recent_files[i]) then table.remove(io.recent_files, i) end
-	end
 	if #io.recent_files == 0 then return end
 	local utf8_list = table.map(io.recent_files, string.iconv, 'UTF-8', _CHARSET)
 	local selected, button = ui.dialogs.list{
@@ -416,8 +413,8 @@ function io.quick_open(paths, filter)
 	for _, path in ipairs(paths) do
 		for filename in lfs.walk(path, filter) do
 			if #utf8_list >= io.quick_open_max then break end
-			if prefix then filename = filename:sub(#prefix + 1) end
-			utf8_list[#utf8_list + 1] = filename:iconv('UTF-8', _CHARSET)
+			utf8_list[#utf8_list + 1] = (prefix and filename:sub(#prefix + 1) or filename):iconv('UTF-8',
+				_CHARSET)
 		end
 	end
 	if #utf8_list == 0 then return end

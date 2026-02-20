@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 if CURSES or os.getenv('CI') == 'true' then io.output('test.log') end
 

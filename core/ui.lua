@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 --- Utilities for interacting with Textadept's user interface.
 -- @module ui
@@ -43,7 +43,7 @@ end
 -- @see ui.print_to
 -- @see ui.print_silent_to
 -- @see output_to
-local function print_to(buffer_type, silent, ...)
+local function print_to(buffer_type, silent, ...args)
 	local print_view, buffer = get_print_view(buffer_type), get_print_buffer(buffer_type)
 	if not buffer or not silent and not print_view then -- no buffer or buffer not visible
 		if not silent and #_VIEWS > 1 then
@@ -63,7 +63,7 @@ local function print_to(buffer_type, silent, ...)
 	elseif print_view and not silent then
 		ui.goto_view(print_view)
 	end
-	buffer:append_text(table.concat{...})
+	buffer:append_text(table.concat(args))
 	buffer:document_end()
 	buffer:set_save_point()
 	if silent then
@@ -130,7 +130,7 @@ function ui.output_silent(...) return output_to(true, ...) end
 -- function.
 -- @param ... Values to print. Lua's `tostring()` function is called for each value. They will
 --	be printed as tab-separated values.
-function ui.print(...) ui.output(table.concat(table.map(table.pack(...), tostring), '\t'), '\n') end
+function ui.print(...args) ui.output(table.concat(table.map(args, tostring), '\t'), '\n') end
 
 --- Buffer z-order list (most recently accessed buffer on top).
 local buffers_zorder = {}
@@ -275,6 +275,7 @@ local function save_buffer_state()
 	-- Save view state.
 	buffer._selection = buffer.selection_serialized
 	buffer._top_line = view:doc_line_from_visible(view.first_visible_line)
+	buffer._sub_line = view.first_visible_line - view:visible_from_doc_line(buffer._top_line) + 1
 	buffer._x_offset = view.x_offset
 	-- Save fold state.
 	buffer._folds = {}
@@ -292,8 +293,7 @@ local function restore_buffer_state()
 	-- Restore view state.
 	if buffer.length > 1 then buffer.selection_serialized = buffer._selection end
 	buffer:choose_caret_x()
-	local _top_line, top_line = buffer._top_line, view.first_visible_line
-	view:line_scroll(0, view:visible_from_doc_line(_top_line) - top_line)
+	view:scroll_vertical(buffer._top_line, buffer._sub_line)
 	view.x_offset = buffer._x_offset
 end
 events.connect(events.BUFFER_AFTER_SWITCH, restore_buffer_state)
@@ -323,7 +323,7 @@ events.connect(events.QUIT, function()
 			table.concat(items, '\n • ')), icon = 'dialog-question', button1 = _L['Save all'],
 		button2 = _L['Cancel'], button3 = _L['Quit without saving']
 	}
-	if button == 1 then return not io.save_all_files(true) end
+	if button == 1 then return not io.save_all_files(true) or nil end -- do not return false
 	if button ~= 3 then return true end -- prevent quit
 end)
 
@@ -338,8 +338,8 @@ end)
 -- Handle mouse events and functionality in the terminal version.
 if CURSES then
 	if not WIN32 then
-		local function enable_mouse() io.stdout:write("\x1b[?1002h"):flush() end
-		local function disable_mouse() io.stdout:write("\x1b[?1002l"):flush() end
+		local function enable_mouse() io.stdout:write("\x1b[?1002h\x1b[?1006h"):flush() end
+		local function disable_mouse() io.stdout:write("\x1b[?1002l\x1b[?1006l"):flush() end
 		events.connect(events.INITIALIZED, enable_mouse)
 		events.connect(events.SUSPEND, disable_mouse)
 		events.connect(events.RESUME, enable_mouse)
@@ -352,12 +352,12 @@ if CURSES then
 	-- @param x X terminal coordinate.
 	local function get_view(view, y, x)
 		if not view[1] and not view[2] then return view end
-		local vertical, size = view.vertical, view.size
-		if vertical and x < size or not vertical and y < size then
+		local vertical, split = view.vertical, view.size[3]
+		if vertical and x < split or not vertical and y < split then
 			return get_view(view[1], y, x)
-		elseif vertical and x > size or not vertical and y > size then
+		elseif vertical and x > split or not vertical and y > split then
 			-- Zero y or x relative to the other view based on split orientation.
-			return get_view(view[2], vertical and y or y - size - 1, vertical and x - size - 1 or x)
+			return get_view(view[2], vertical and y or y - split - 1, vertical and x - split - 1 or x)
 		else
 			return view -- in-between views; return the split itself
 		end
@@ -375,7 +375,7 @@ if CURSES then
 			else
 				resize = function(y2, x2)
 					local i = getmetatable(view[1]) == getmetatable(_G.view) and 1 or 2
-					view[i].size = view.size + (view.vertical and x2 - x or y2 - y)
+					view[i].split_pos = view.size[3] + (view.vertical and x2 - x or y2 - y)
 				end
 			end
 		elseif resize then
@@ -406,10 +406,14 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 -- `textadept.menu.tab_context_menu`.
 -- @field tab_context_menu
 
---- The text displayed in the statusbar. (Write-only)
+--- Whether or not the statusbar is visible.
+-- The default value is `true`.
+-- @field statusbar
+
+--- The text displayed in the statusbar.
 -- @field statusbar_text
 
---- The text displayed in the buffer statusbar. (Write-only)
+--- The text displayed in the buffer statusbar.
 -- @field buffer_statusbar_text
 
 --- Whether or not Textadept's window is maximized.
@@ -446,7 +450,7 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 -- @return table of split views. Each split view entry is a table with 4 fields: `1`, `2`,
 --	`vertical`, and `size`. `1` and `2` have values of either nested split view entries or
 --	the views themselves; `vertical` is a flag that indicates if the split is vertical or
---	not; and `size` is the integer position of the split resizer.
+--	not; and `size` is a table of width, height, and split position integers.
 -- @function get_split_table
 
 --- Switches focus to another view.

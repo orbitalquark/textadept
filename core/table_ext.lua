@@ -1,4 +1,4 @@
--- Copyright 2025 Mitchell. See LICENSE.
+-- Copyright 2025-2026 Mitchell. See LICENSE.
 
 --- Extends Lua's `table` library to provide more utility functions.
 -- @module table

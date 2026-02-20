@@ -1,4 +1,4 @@
-// Copyright 2022-2025 Mitchell. See LICENSE.
+// Copyright 2022-2026 Mitchell. See LICENSE.
 // Qt platform for Textadept.
 
 extern "C" {
@@ -45,7 +45,8 @@ const char *get_charset() {
 	return QTextCodec::codecForLocale()->name().data();
 #else
 	// Ask Windows for its charset encoding because QTextCodec returns "System", which is not a
-	// valid iconv encoding.
+	// valid iconv encoding. However, CP65001 (UTF-8) is not valid either.
+	if (GetACP() == 65001) return "UTF-8";
 	static char codepage[8];
 	return (sprintf(codepage, "CP%d", GetACP()), codepage);
 #endif
@@ -76,7 +77,7 @@ static int scModMask(const Qt::KeyboardModifiers &mods) {
 // Event filter for Scintilla views. This avoids the need to subclass ScintillaEditBase.
 class ScintillaEventFilter : public QObject {
 public:
-	ScintillaEventFilter(QObject *parent = nullptr) : QObject{parent} {}
+	explicit ScintillaEventFilter(QObject *parent = nullptr) : QObject{parent} {}
 
 protected:
 	bool eventFilter(QObject *watched, QEvent *event) override {
@@ -105,6 +106,7 @@ protected:
 
 SciObject *new_scintilla(void (*notified)(SciObject *, int, SCNotification *, void *)) {
 	auto view = new ScintillaEditBase;
+	view->setMinimumHeight(1), view->setMinimumWidth(1);
 	if (notified)
 		QObject::connect(
 			view, &ScintillaEditBase::notify, view, [notified, view](Scintilla::NotificationData *pscn) {
@@ -179,11 +181,13 @@ Pane *get_top_pane() {
 }
 
 PaneInfo get_pane_info(Pane *pane_) {
-	auto pane = qobject_cast<QSplitter *>(static_cast<QWidget *>(pane_));
-	PaneInfo info{pane != nullptr, false, pane_, pane_, nullptr, nullptr, 0};
+	auto pane_or_view = static_cast<QWidget *>(pane_);
+	auto pane = qobject_cast<QSplitter *>(pane_or_view);
+	PaneInfo info{pane != nullptr, false, pane_, pane_, nullptr, nullptr,
+		pane_or_view->size().width(), pane_or_view->size().height(), 0};
 	if (info.is_split)
 		info.vertical = pane->orientation() == Qt::Horizontal, info.child1 = pane->widget(0),
-		info.child2 = pane->widget(1), info.size = pane->sizes().front();
+		info.child2 = pane->widget(1), info.split_pos = pane->sizes().front();
 	return info;
 }
 
@@ -193,10 +197,10 @@ PaneInfo get_parent_pane_info(PaneInfo info) {
 
 PaneInfo get_pane_info_from_view(SciObject *view) { return get_pane_info(SCI(view)->parent()); }
 
-void set_pane_size(Pane *pane_, int size) {
+void set_pane_split_pos(Pane *pane_, int pos) {
 	auto pane = static_cast<QSplitter *>(pane_);
 	int max = pane->orientation() == Qt::Horizontal ? pane->width() : pane->height();
-	pane->setSizes(QList<int>{size, max - size - pane->handleWidth()});
+	pane->setSizes(QList<int>{pos, max - pos - pane->handleWidth()});
 }
 
 void show_tabs(bool show) { ta->ui->tabFrame->setVisible(show); }
@@ -215,7 +219,10 @@ void move_tab(int from, int to) {
 	ta->ui->tabbar->moveTab(from, to);
 }
 
-void remove_tab(int index) { ta->ui->tabbar->removeTab(index); }
+void remove_tab(int index) {
+	QSignalBlocker blocker{ta->ui->tabbar}; // prevent currentChanged
+	ta->ui->tabbar->removeTab(index);
+}
 
 const char *get_find_text() {
 	static std::string text;
@@ -276,6 +283,13 @@ void set_command_entry_height(int height) {
 	ta->ui->splitter->setSizes(QList<int>{ta->height()});
 }
 
+bool is_statusbar_visible() { return ta->statusBar()->isVisible(); }
+void set_statusbar_visible(bool visible) { ta->statusBar()->setVisible(visible); }
+const char *get_statusbar_text(int bar) {
+	static std::string text;
+	text = (bar == 0 ? ta->statusBar()->currentMessage() : ta->docStatusBar->text()).toStdString();
+	return text.c_str();
+}
 void set_statusbar_text(int bar, const char *text) {
 	bar == 0 ? ta->statusBar()->showMessage(text) : ta->docStatusBar->setText(text);
 }
@@ -289,6 +303,11 @@ void *read_menu(lua_State *L, int index) {
 		if (bool isSubmenu = lua_getfield(L, -1, "title"); lua_pop(L, 1), isSubmenu) {
 			auto submenu = static_cast<QMenu *>(read_menu(L, -1));
 			menu->addMenu(submenu); // menu does not take ownership
+			// Qt 5 on Wayland needs to mark submenus as popups.
+			QObject::connect(submenu, &QMenu::aboutToShow, menu, [submenu, menu]() {
+				if (QWindow *handle = submenu->windowHandle(); handle)
+					handle->setTransientParent(menu->windowHandle());
+			});
 			continue;
 		}
 		const char *label = (lua_rawgeti(L, -1, 1), lua_tostring(L, -1));
@@ -327,6 +346,14 @@ void set_menubar(lua_State *L, int index) {
 	for (size_t i = 1; i <= lua_rawlen(L, index); lua_pop(L, 1), i++) {
 		auto menu = static_cast<QMenu *>(lua_rawgeti(L, index, i), lua_touserdata(L, -1));
 		ta->menuBar()->addMenu(menu); // menubar does not take ownership
+#if __APPLE__
+		if (menu->title() == "Window") setWindowsMenu(menu->toNSMenu());
+#endif
+		// Qt 5 on Wayland needs to mark top-level menus as popups.
+		QObject::connect(menu, &QMenu::aboutToShow, ta->menuBar(), [menu]() {
+			if (QWindow *handle = menu->windowHandle(); handle)
+				handle->setTransientParent(ta->windowHandle());
+		});
 	}
 	ta->menuBar()->setVisible(lua_rawlen(L, index) > 0);
 }
@@ -428,17 +455,18 @@ int save_dialog(DialogOptions opts, lua_State *L) { return open_save_dialog(&opt
 // Updates the given progressbar dialog with the given percentage and text.
 static void update(double percent, const char *text, void *dialog_) {
 	auto dialog = static_cast<QProgressDialog *>(dialog_);
-	if (percent >= 0)
+	if (percent >= 0) {
 		dialog->setValue(percent);
-	else if (dialog->maximum() > 0)
+		if (dialog->maximum() == 0) dialog->setMaximum(100); // remove indeterminate status
+	} else if (dialog->maximum() > 0)
 		dialog->setMaximum(0), dialog->show(); // switch to indeterminate and show immediately
 	if (text) dialog->setLabelText(text);
 }
 
 int progress_dialog(
 	DialogOptions opts, lua_State *L, bool (*work)(void (*)(double, const char *, void *), void *)) {
-	QProgressDialog dialog{opts.title ? opts.title : "", opts.buttons[0], 0, 100};
-	dialog.setWindowModality(Qt::WindowModal), dialog.setMinimumDuration(0);
+	QProgressDialog dialog{opts.title ? opts.title : "", opts.buttons[0], 0, 100, ta};
+	dialog.setModal(true), dialog.setMinimumDuration(0);
 	while (work(update, &dialog))
 		if (QApplication::processEvents(), dialog.wasCanceled()) break;
 	return dialog.wasCanceled() ? (lua_pushboolean(L, true), 1) : 0;
@@ -449,7 +477,8 @@ int progress_dialog(
 // tree view. This allows for cursor movement from the line edit while it has focus.
 class KeyForwarder : public QObject {
 public:
-	KeyForwarder(QWidget *target, QObject *parent = nullptr) : QObject{parent}, target{target} {}
+	explicit KeyForwarder(QWidget *target, QObject *parent = nullptr)
+			: QObject{parent}, target{target} {}
 
 protected:
 	bool eventFilter(QObject *watched, QEvent *event) override {
@@ -553,7 +582,26 @@ bool spawn(lua_State *L, Process *proc, int /*index*/, const char *cmd, const ch
 	cmd = full_cmd.c_str();
 #endif
 	// Construct argv from cmd and envp from envi.
-	QStringList args = QProcess::splitCommand(QString{cmd});
+	// Note: cannot use QProcess::splitCommand() because it does not handle single quotes.
+	// It also requires non-standard triple-double-quotes for single quotes instead of '\' escapes.
+	QStringList args;
+	const char *p = cmd;
+	while (*p) {
+		while (*p == ' ') p++;
+		std::string arg;
+		do {
+			const char *s = p;
+			while (*p && *p != ' ' && *p != '"' && *p != '\'') p++;
+			arg.append(s, p - s);
+			if (*p == '"' || *p == '\'') {
+				s = p + 1;
+				for (char q = *p++; *p && (*p != q || *(p - 1) == '\\'); p++) {}
+				arg.append(s, p - s);
+				if (*p == '"' || *p == '\'') p++;
+			}
+		} while (*p && *p != ' ');
+		args.append(arg.c_str());
+	}
 	QProcessEnvironment env;
 	if (envi)
 		for (size_t i = 1; i <= lua_rawlen(L, envi); lua_pop(L, 1), i++) {
@@ -638,7 +686,7 @@ void quit() { ta->close(); }
 // is pressed, and another button when Shift+Enter is pressed.
 class FindKeypressHandler : public QObject {
 public:
-	FindKeypressHandler(QObject *parent = nullptr) : QObject{parent} {}
+	explicit FindKeypressHandler(QObject *parent = nullptr) : QObject{parent} {}
 
 protected:
 	bool eventFilter(QObject *watched, QEvent *event) override {
@@ -756,9 +804,6 @@ public:
 		connect(this, &QApplication::aboutToQuit, this, &close_textadept);
 		// There is a bug in Qt where a tab scroll button could have focus at this time.
 		if (!SCI(focused_view)->hasFocus()) SCI(focused_view)->setFocus();
-#if _WIN32
-		setStyle(QStyleFactory::create("Fusion"));
-#endif
 	}
 	~Application() override {
 		if (inited) delete ta;
@@ -778,4 +823,9 @@ private:
 	bool inited = false;
 };
 
-int main(int argc, char *argv[]) { return Application{argc, argv}.exec(); }
+int main(int argc, char *argv[]) {
+#if _WIN32
+	QApplication::setStyle(QStyleFactory::create("Fusion"));
+#endif
+	return Application{argc, argv}.exec();
+}

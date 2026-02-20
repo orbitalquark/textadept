@@ -2,6 +2,215 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+## 13.0 alpha 2 (01 Feb 2026)
+
+Please see the [migration guide][] for migrating from Textadept 12 to 13.
+
+- [Textadept 13.0 alpha 2 -- Windows][]
+- [Textadept 13.0 alpha 2 -- macOS 13+][]
+- [Textadept 13.0 alpha 2 -- Linux][]
+- [Textadept 13.0 alpha 2 -- Linux ARM][]
+- [Textadept 13.0 alpha 2 -- Modules][]
+
+Bugfixes:
+
+- Fixed bug spawning commands with single quoted argments in the Qt version.
+- Fixed inability to work with files with UTF-8 characters in them on Windows.
+- Fixed rare signaling issues (e.g. keypress in the find entry) in the GTK version.
+- Fixed potential override of terminal version light color variants.
+- Fixed terminal version box indicators potentially showing the wrong colors.
+- Spellcheck: fall back on the English dictionary if the detected language is C.
+
+Changes:
+
+- Require C17 for compiling.
+- Updated key bindings for switching between buffers on macOS.
+- Changed key binding for "View > Toggle Fold".
+- Added menu options for toggling find options.
+- Renamed `view.size` and `view.parent_size` to [`view.split_pos`][] and [`view.parent_split_pos`][],
+	respectively.
+- `ui.get_split_table()` now returns a `{width, height, split_pos}` table for view `size` fields.
+- The terminal version can draw underline indicators using `INDIC_SQUIGGLE` or  `INDIC_SQUIGGLELOW`.
+- Updated to [Lua][] 5.5.0.
+
+[migration guide]: manual.html#migrating-from-textadept-12-to-13
+[Textadept 13.0 alpha 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.win.zip
+[Textadept 13.0 alpha 2 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.macOS.zip
+[Textadept 13.0 alpha 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.linux.tgz
+[Textadept 13.0 alpha 2 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.linux.arm.tgz
+[Textadept 13.0 alpha 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.modules.zip
+[Lua]: https://lua.org
+[`view.split_pos`]: api.html#view.split_pos
+[`view.parent_split_pos`]: api.html#view.parent_split_pos
+
+## 13.0 alpha (01 Dec 2025)
+
+- [Textadept 13.0 alpha -- Windows][]
+- [Textadept 13.0 alpha -- macOS 13+][]
+- [Textadept 13.0 alpha -- Linux][]
+- [Textadept 13.0 alpha -- Linux ARM][]
+- [Textadept 13.0 alpha -- Modules][]
+
+Bugfixes:
+
+- Do not override a user-specified Qt style.
+- Fixed inability to build with GTK2 if GTK3 is also installed.
+- Fixed Qt 5 menus from appearing as separate windows on Wayland.
+- Prevent xsel output being shown on startup.
+- Fixed potential failure running build/test/run project commands.
+- Fixed terminal version mouse mode for terminals larger than 222 rows/columns.
+- LSP: do not accidentally load system Lua socket library if it exists.
+- Scintilla: ensure selection is drawn correctly when restored by undo.
+- Scintilla: fixed bug when indenting rectangular selection.
+
+Changes:
+
+- macOS binary downloads are only for Apple Silicon.
+- Made `ui.statusbar_text` and `ui.buffer_statusbar_text` readable.
+- Prevent Qt split views from collapsing when they get too small.
+- Added `ui.statusbar` for controlling statusbar visibility.
+- Scintilla: `buffer.selection_serialized` format changed.
+- Scintilla: updated to Unicode 16.
+- Updated to [Lua][] 5.5.0 (rc1).
+- Updated to [Scintilla][] 5.5.8.
+
+[Textadept 13.0 alpha -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.win.zip
+[Textadept 13.0 alpha -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.macOS.zip
+[Textadept 13.0 alpha -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.linux.tgz
+[Textadept 13.0 alpha -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.linux.arm.tgz
+[Textadept 13.0 alpha -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha/textadept_13.0_alpha.modules.zip
+[Lua]: https://lua.org
+[Scintilla]: https://scintilla.org
+
+## 12.9 (01 Oct 2025)
+
+Download:
+
+- [Textadept 12.9 -- Windows][]
+- [Textadept 12.9 -- macOS 13+][]
+- [Textadept 12.9 -- Linux][]
+- [Textadept 12.9 -- Linux ARM][]
+- [Textadept 12.9 -- Modules][]
+
+Bugfixes:
+
+- Fixed Wayland copy clipboard command in the terminal version.
+- Selecting between matching quotes should recognize when it's at the end of a string.
+- Fixed Qt progress dialog being stuck in an indeterminate state.
+- Fixed Pascal lexer numeric literals.
+- Fixed folding of HTML/XML comments and XML processing instructions.
+- Fixed incorrectly highlighting '..' range operators between numbers.
+
+Changes:
+
+- Updated Windows and macOS binaries to use Qt 6.9.
+- Added support for Janet and todo.txt.
+- Updated Python lexer to support t-strings.
+- Updated ini, Dart, and org lexers.
+- Autoupdate: renamed module from "autoupdate" to "update_notifier" to better reflect functionality.
+
+[Textadept 12.9 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.win.zip
+[Textadept 12.9 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.macOS.zip
+[Textadept 12.9 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.linux.tgz
+[Textadept 12.9 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.linux.arm.tgz
+[Textadept 12.9 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.9/textadept_12.9.modules.zip
+
+
+## 12.8 (01 Aug 2025)
+
+Download:
+
+- [Textadept 12.8 -- Windows][]
+- [Textadept 12.8 -- macOS 11+][]
+- [Textadept 12.8 -- Linux][]
+- [Textadept 12.8 -- Linux ARM][]
+- [Textadept 12.8 -- Modules][]
+
+Bugfixes:
+
+- Added missing menu mnemonic for Tools > Show Keys.
+- Fixed inability to escape escape sequences in regex replace.
+- Disable mouse and bracketed paste in terminal version after selecting "save all" when quitting.
+- Autoupdate: lack of internet connection should not cause autoupdate check error.
+- LSP: only shutdown language servers when actually quitting.
+- Scintilla: prevent wrapping between '\r\n'.
+- Scintilla: fixed crash during painting when scrollbars are changed.
+- Scintilla: fixed GTK bug where scroll position is not restored in non-wrap mode.
+
+Changes:
+
+- Added Japanese translation.
+- Support building on macOS with Homebrew Qt.
+- Only check for non-existent recent files on session load instead of on dialog open.
+- Autoupdate: added button for copying release link to clipboard instead of auto-clobbering it.
+- Open file mode: added autocompletion list icons.
+- Open file mode: emulate bash completion better, including `~` expansion.
+- Scratch: add ability to save/restore indicators, including for Files Found buffers.
+- Scintilla: added `view:scroll_vertical()` for easily scrolling to wrapped sub-lines.
+- Updated to [Lua][] 5.4.8.
+- Updated to [Scintilla][] 5.5.7.
+
+[Textadept 12.8 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.8/textadept_12.8.win.zip
+[Textadept 12.8 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.8/textadept_12.8.macOS.zip
+[Textadept 12.8 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.8/textadept_12.8.linux.tgz
+[Textadept 12.8 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.8/textadept_12.8.linux.arm.tgz
+[Textadept 12.8 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.8/textadept_12.8.modules.zip
+[Lua]: https://lua.org
+[Scintilla]: https://scintilla.org
+
+
+## 12.7 (01 Jun 2025)
+
+Download:
+
+- [Textadept 12.7 -- Windows][]
+- [Textadept 12.7 -- macOS 11+][]
+- [Textadept 12.7 -- Linux][]
+- [Textadept 12.7 -- Linux ARM][]
+- [Textadept 12.7 -- Modules][]
+
+Bugfixes:
+
+- Fixed Markdown lexer to not lex some continuation lines as code.
+- Fixed `reset()` turning off folding for newly opened buffers.
+- Locale files with territories should load now.
+- Fixed find previous advancing backwards through zero-width matches.
+- Draw whitespace with the proper color in the terminal version.
+- Better wide character support in terminal version autocompletion lists.
+- Format: format on save should ignore selected text.
+- Debugger: fixed initial view setup.
+- Spellcheck: custom Hunspell paths should not require trailing slash.
+
+Changes:
+
+- Added [`lexer.line_start`][], [`lexer.line_end`][], and [`lexer.text_range()`][].
+- Added `view.parent_size` for manipulating parent split sizes.
+- Removed `textadept.editing.XPM_IMAGES`.
+- Added `is_hidpi()` for detecting HiDPI/Retina displays.
+- Autocompletion lists on HiDPI displays now use 2x image sizes.
+- Updated Markdown lexer to allow tab-indented continuation lines.
+- Support arbitrary RGB colors in the terminal version.
+- Linux package maintainers can define `_HOME` in CMake via the `TEXTADEPT_HOME` variable.
+- Use different indicators for change history deletions.
+- Implement indent guide highlighting in the terminal version.
+- Implement fold marker highlighting in the terminal version.
+- Updated terminal version line marker glyphs.
+- Allow autocompleter functions to return a third value, the item to initially select.
+- Autoupdate: new module for checking for application updates.
+- LSP: new [autocompletion list icons][] and some terminal version "icon" changes.
+- LSP: support diagnostic tags.
+- LSP: allow preselected items in completion lists.
+
+[Textadept 12.7 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7/textadept_12.7.win.zip
+[Textadept 12.7 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7/textadept_12.7.macOS.zip
+[Textadept 12.7 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7/textadept_12.7.linux.tgz
+[Textadept 12.7 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7/textadept_12.7.linux.arm.tgz
+[Textadept 12.7 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7/textadept_12.7.modules.zip
+[`lexer.line_start`]: api.html#lexer.line_start
+[`lexer.line_end`]: api.html#lexer.line_end
+[`lexer.text_range()`]: api.html#lexer.text_range
+[autocompletion list icons]: https://github.com/orbitalquark/textadept-lsp#icon-reference
+
 ## 12.7 beta 2 (01 May 2025)
 
 Download:
@@ -69,7 +278,7 @@ Changes:
 - Scratch: save typed buffers as scratch buffers too.
 - Scratch: save modified files as scratch buffers and also save their undo histories.
 - Lua REPL: added tab-completion.
-- Updated to [Scintilla][] 5.3.6.
+- Updated to [Scintilla][] 5.5.6.
 
 [Textadept 12.7 beta 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7_beta_2/textadept_12.7_beta_2.win.zip
 [Textadept 12.7 beta 2 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7_beta_2/textadept_12.7_beta_2.macOS.zip
@@ -528,7 +737,7 @@ Changes:
 
 ## 12.0 (01 Aug 2023)
 
-Please see the [migration guide][] for migrating from Textadept 11 to 12.
+Please see the [11 to 12 migration guide][] for migrating from Textadept 11 to 12.
 
 Download:
 
@@ -559,7 +768,7 @@ Changes:
 - Updated to [LPeg][] 1.1.0.
 - Updated to [Scintilla][] 5.3.6.
 
-[migration guide]: manual.html#migrating-from-textadept-11-to-12
+[11 to 12 migration guide]: manual.html#migrating-from-textadept-11-to-12
 [Textadept 12.0 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0/textadept_12.0.win.zip
 [Textadept 12.0 -- macOS 11+]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0/textadept_12.0.macOS.zip
 [Textadept 12.0 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.0/textadept_12.0.linux.tgz

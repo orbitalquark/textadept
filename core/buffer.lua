@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 --- A Textadept buffer or view object.
 --
@@ -96,11 +96,11 @@ end)
 
 --- The split resizer's pixel position if the view is a split one.
 -- @see ui.get_split_table
--- @field view.size
+-- @field view.split_pos
 
 --- The parent split resizer's pixel position if the view's parent is a split one.
 -- @see ui.get_split_table
--- @field view.parent_size
+-- @field view.parent_split_pos
 
 --- Work with Files.
 -- **Note:** this module does not open files. `io.open_file()` does.
@@ -2198,6 +2198,13 @@ end)
 --	already been defined.
 -- @function view:register_rgba_image
 
+--- The scale factor in percent of *all* list images shown.
+-- This is useful on macOS with a retina display where each display unit is 2 pixels: use a
+-- factor of `200` so that each image pixel is displayed using a screen pixel.
+-- The default scale, `100`, will stretch each image pixel to cover 4 screen pixels on a
+-- retina display.
+-- @field view.auto_c_image_scale
+
 --- The character byte that separates autocompletion and user list items and their image types.
 -- Autocompletion and user list items can display both an image and text. Register images and
 -- their types using `view:register_image()` or `view:register_rgba_image()` before appending
@@ -2395,6 +2402,13 @@ end)
 -- @param columns Number of columns to scroll horizontally. A negative value is allowed.
 -- @param lines Number of lines to scroll vertically. A negative value is allowed.
 -- @function view:line_scroll
+
+--- Scrolls the top line of the view to be the wrapped sub-line of a displayed line number.
+-- @param display_line Display line number to use (taking wrapped, annotated, and hidden lines
+--	into account).
+-- @param subline The sub-line of *display_line* to scroll to. A value of 1 is equivalent to
+--	*display_line*. This is ignored if wrapping is off.
+-- @function view:scroll_vertical
 
 --- Scrolls the caret into view based on the policies previously defined in
 -- `view:set_x_caret_policy()` and `view:set_y_caret_policy()`.
@@ -2908,7 +2922,7 @@ end)
 -- The default value is `0`.
 -- @field view.caret_line_frame
 
---- Show the caret line on sublines rather than entire wrapped lines.
+--- Show the caret line on sub-lines rather than entire wrapped lines.
 -- The defalt value is `false`.
 -- @field view.caret_line_highlight_subline
 
@@ -3195,7 +3209,7 @@ end)
 -- - `view.WRAPVISUALFLAGLOC_END_BY_TEXT`: Draw a visual flag near text at the end of a
 --	wrapped line.
 -- - `view.WRAPVISUALFLAGLOC_START_BY_TEXT`: Draw a visual flag near text at the beginning of
---	a subline.
+--	a sub-line.
 --
 -- The default value is `view.WRAPVISUALFLAGLOC_DEFAULT`.
 -- @field view.wrap_visual_flags_location
@@ -3206,7 +3220,7 @@ end)
 --- Draw a visual flag near text at the end of a wrapped line.
 -- @field view.WRAPVISUALFLAGLOC_END_BY_TEXT
 
---- Draw a visual flag near text at the beginning of a subline.
+--- Draw a visual flag near text at the beginning of a sub-line.
 -- @field view.WRAPVISUALFLAGLOC_START_BY_TEXT
 
 --- Indent wrapped lines.

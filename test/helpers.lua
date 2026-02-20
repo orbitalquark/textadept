@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 --- Unit test helper methods.
 -- @module test
@@ -23,6 +23,11 @@ function M.assert_equal(v1, v2)
 	if v1 == v2 then return end
 	if type(v1) == 'table' and type(v2) == 'table' then
 		if #v1 == #v2 then
+			-- If these are sequences, one of them may come from a '...args' param, which has an extra 'n'
+			-- field. Do not let that cause an equality failure.
+			if rawget(v1, 'n') and not rawget(v2, 'n') or not rawget(v1, 'n') and rawget(v2, 'n') then
+				v1.n, v2.n = nil, nil
+			end
 			for k, v in pairs(v1) do if v2[k] ~= v then goto continue end end
 			for k, v in pairs(v2) do if v1[k] ~= v then goto continue end end
 			return
@@ -65,14 +70,13 @@ end
 -- @param ... Arguments to log. Tables have their contents logged (non-recursively).
 -- @function log
 M.log = setmetatable({clear = function(self) for i = 1, #self do self[i] = nil end end}, {
-	__call = function(self, ...)
-		local args = table.map({...}, function(arg)
+	__call = function(self, ...args)
+		self[#self + 1] = table.concat(table.map(args, function(arg)
 			if type(arg) ~= 'table' then return tostring(arg) end
 			local kvs = {}
 			for k, v in pairs(arg) do kvs[#kvs + 1] = tostring(k) .. ' = ' .. tostring(v) end
 			return '{' .. table.concat(kvs) .. '}'
-		end)
-		self[#self + 1] = table.concat(args)
+		end))
 	end
 })
 
@@ -94,16 +98,15 @@ end
 -- @param[opt] ... Values to return when called.
 -- @usage local f = stub()
 -- @usage assert(f.called)
-function M.stub(callback, ...)
-	local returns = {...}
+function M.stub(callback, ...returns)
 	if not is_callable(callback) then
 		table.insert(returns, 1, callback)
 		callback = nil
 	end
 	return setmetatable({called = false}, {
-		__call = function(self, ...)
+		__call = function(self, ...args)
 			self.called = type(self.called) == 'number' and self.called + 1 or self.called and 2 or true
-			self.args = {...}
+			self.args = args
 			if callback then callback(...) end
 			return table.unpack(returns)
 		end
@@ -285,16 +288,6 @@ function M.mock(module, name, condition, mock)
 	end
 
 	return M.defer(function() module[name] = original_value end)
-end
-
---- Disables a metafield for as long as the returned to-be-closed value is in scope.
--- @param module Table module to disable a metafield in.
--- @param name String metafield to disable.
--- @return to-be-closed value
--- @usage local _<close> = disable_metafield(ui, 'statusbar_text')
-function M.disable_metafield(module, name)
-	rawset(assert_type(module, 'table', 1), assert_type(name, 'string', 2), true) -- any non-nil value
-	return M.defer(function() rawset(module, name, nil) end)
 end
 
 --- Sleep for an amount of time.

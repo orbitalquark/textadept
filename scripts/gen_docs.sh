@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2022-2025 Mitchell. See LICENSE.
+# Copyright 2022-2026 Mitchell. See LICENSE.
 
 # Generates Textadept's API documentation.
 # Requires LDoc and Ruby.

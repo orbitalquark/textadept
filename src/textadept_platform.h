@@ -1,4 +1,4 @@
-// Copyright 2007-2025 Mitchell. See LICENSE.
+// Copyright 2007-2026 Mitchell. See LICENSE.
 // Interface between Textadept and platforms.
 // Textadept calls these functions to communicate with the platform.
 //
@@ -23,7 +23,7 @@ typedef struct {
 	bool is_split, vertical;
 	SciObject *view;
 	Pane *self, *child1, *child2;
-	int size;
+	int width, height, split_pos;
 } PaneInfo;
 
 /** Contains dialog options.
@@ -128,8 +128,8 @@ PaneInfo get_parent_pane_info(PaneInfo info);
  * @see get_pane_info
  */
 PaneInfo get_pane_info_from_view(SciObject *view);
-/** Sets the given pane's divider position to the given size. */
-void set_pane_size(Pane *pane, int size);
+/** Sets the given pane's split position to the given one. */
+void set_pane_split_pos(Pane *pane, int pos);
 
 /** Sets whether or not the Textadept window should show tabs for its buffers. */
 void show_tabs(bool show);
@@ -203,6 +203,12 @@ int get_command_entry_height(void);
 /** Sets the height of the command entry. The command entry must be active. */
 void set_command_entry_height(int height);
 
+/** Returns whether or not the statusbar is visible. */
+bool is_statusbar_visible(void);
+/** Sets the visibility of the statusbar. */
+void set_statusbar_visible(bool visible);
+/** Returns the text content of statusbar number 0 or 1. */
+const char *get_statusbar_text(int bar);
 /** Sets the content of statusbar number 0 or 1 to the given text. */
 void set_statusbar_text(int bar, const char *text);
 

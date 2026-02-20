@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 --- Returns the current buffer's syntax highlighting as a tag table:
 --	{'function', 9, 'whitespace', 10, ...}.

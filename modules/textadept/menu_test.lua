@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 --- Simulates clicking a menu item.
 -- @param item String menu path (e.g. 'File/New').
@@ -156,6 +156,18 @@ test('Search > Find Incremental should start incremental search', function()
 	test.assert_equal(find_focus.args[1].incremental, true)
 end)
 
+for _, option in ipairs{'Match Case', 'Whole Word', 'Regex'} do
+	test('Search > Toggle ' .. option .. ' should toggle that find option', function()
+		local option_key = option:lower():gsub(' ', '_')
+		local default = ui.find[option_key]
+		local _<close> = test.defer(function() ui.find[option_key] = default end)
+
+		click('Search/Toggle ' .. option)
+
+		test.assert_equal(ui.find[option_key], not default)
+	end)
+end
+
 test('Search > Find in Files should start searching in files', function()
 	local find_focus = test.stub()
 	local _<close> = test.mock(ui.find, 'focus', find_focus)
@@ -222,7 +234,6 @@ end)
 
 test('Tools > Show Keys... should show typed keys in the statusbar', function()
 	local _<close> = test.defer(function() test.type('esc') end)
-	local _<close> = test.disable_metafield(ui, 'statusbar_text')
 	click('Tools/Show Keys...')
 
 	test.type('\t')
@@ -339,21 +350,21 @@ end)
 test('View > Grow View should do so', function()
 	view:split()
 	ui.goto_view(-1)
-	local size = view.size
+	local split_pos = view.split_pos
 
 	click('View/Grow View')
 
-	test.assert(view.size > size, 'should have grown view')
+	test.assert(view.split_pos > split_pos, 'should have grown view')
 end)
 
 test('View > Shrink View should do so', function()
 	view:split()
 	ui.goto_view(-1)
-	local size = view.size
+	local split_pos = view.split_pos
 
 	click('View/Shrink View')
 
-	test.assert(view.size < size or size == 0, 'should have shrunk view')
+	test.assert(view.split_pos < split_pos or split_pos == 0, 'should have shrunk view')
 end)
 
 test('View > Code Folding > Toggle Current Fold should do so', function()
@@ -522,5 +533,3 @@ test('textadept.menu should still act like a table', function()
 
 	test.assert_equal(textadept.menu[key], value)
 end)
-
--- TODO: ui.popup_menu

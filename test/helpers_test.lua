@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 test('test.assert_equal should assert two values are equal', function()
 	local equal = pcall(test.assert_equal, 'foo', 'foo')
@@ -274,29 +274,6 @@ test('mock should allow conditionally mocking a module function', function()
 	test.assert_equal(mocked_results, {'mocked value'})
 	test.assert_equal(mock.args, {'mock key'})
 	test.assert_equal(unmocked_results, {'unmocked value'})
-end)
-
-test('disable_metafield should allow temporarily disabling a module metafield', function()
-	local newindex_called = false
-	local module = setmetatable({}, {
-		__index = {name = 'mocked'}, __newindex = function() newindex_called = true end
-	})
-	local unmocked_result, metafield_invoked
-
-	do
-		local _<close> = test.disable_metafield(module, 'name')
-		module.name = 'unmocked'
-
-		unmocked_result = module.name
-		metafield_invoked = newindex_called
-	end
-	module.name = 'still unmocked'
-	local mocked_result = module.name
-
-	test.assert_equal(unmocked_result, 'unmocked')
-	test.assert_equal(metafield_invoked, false)
-	test.assert_equal(mocked_result, 'mocked')
-	test.assert_equal(newindex_called, true)
 end)
 
 test('wait should return when a condition succeeds', function()

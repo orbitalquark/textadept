@@ -1,5 +1,5 @@
 #!/usr/bin/lua
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 -- Generates Lua to C interface for Scintilla by parsing Scintilla.iface and turning it into
 -- a set of data tables. Whenever Textadept is to communicate with Scintilla using a given
@@ -145,10 +145,6 @@ end
 -- Manually adjust special-case messages that do not quite follow the rules.
 functions['auto_c_show'][3] = types.int -- was interpreted as 'length'
 functions['get_cur_line'][2] = types.position -- was interpreted as 'void'
-properties['call_tip_pos_start'][1] = functions['call_tip_pos_start'][1] -- was read as a function
-for i, name in ipairs(functions) do
-	if name == 'call_tip_pos_start' then table.remove(functions, i) end
-end
 
 -- Manually adjust messages whose param or return types would be interpreted as 1-based numbers,
 -- but should not be, or vice-versa.
@@ -192,7 +188,7 @@ table.sort(events)
 
 local f = io.open('../core/iface.lua', 'wb')
 f:write([=[
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 -- Scintilla constants, functions, and properties.
 -- Do not modify anything in this module. Doing so will have unpredictable consequences.

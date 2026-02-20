@@ -1,4 +1,4 @@
-# Textadept 12.7 nightly Manual
+# Textadept 13.0 alpha 2 Manual
 
 **Contents**
 
@@ -383,9 +383,9 @@ ui.tabs = false
 
 [`ui.tabs`]: api.html#ui.tabs
 
-Cycle to the next buffer via `Ctrl+Tab` or `Ctrl+PgDn` on Windows and Linux/BSD, `^⇥` or
-`⌘⇟`on macOS, and `M-PgDn` in the terminal version. Cycle to the previous buffer via
-`Ctrl+Shift+Tab` or `Ctrl+PgUp`, `^⇧⇥` or `⌘⇞`, and `M-PgUp`.
+Cycle to the next buffer via `Ctrl+Tab` or `Ctrl+PgDn` on Windows and Linux/BSD, `^⇥` or `⌘}`
+on macOS, and `M-PgDn` in the terminal version. Cycle to the previous buffer via `Ctrl+Shift+Tab`
+or `Ctrl+PgUp`, `^⇧⇥` or `⌘{`, and `M-PgUp`.
 
 Textadept's tabs are also accessible in the form of a searchable dialog via `Ctrl+B` on Windows
 and Linux/BSD, `⌘B` on macOS, and `^B` in the terminal version. (Despite the fact that the
@@ -422,10 +422,10 @@ separates them. Right-clicking inside a view brings up a context menu.
 	`^⌘_` on macOS, and `M-_` in the terminal version.
 - Split a view vertically into side-by-side views via `Ctrl+Alt+|` on Windows and Linux/BSD,
 	`^⌘|` on macOS, and `M-|` in the terminal version.
-- Cycle to the next split view via `Ctrl+Alt+PgDn` on Windows and Linux/BSD, `^⌘⇟`
+- Cycle to the next split view via `Ctrl+Alt+PgDn` on Windows and Linux/BSD, `^⌘}` or `^⌘⇟`
 	on macOS, and `M-^PgDn` in the terminal version.
-- Cycle to the previous split view via `Ctrl+Alt+PgUp` on Windows and Linux/BSD, `^⌘⇞`
-	on macOS, and `M-^PgUp` in the terminal version.
+- Cycle to the previous split view via `Ctrl+Alt+PgUp` on Windows and Linux/BSD, `^⌘{` or
+ `^⌘⇞` on macOS, and `M-^PgUp` in the terminal version.
 - Grow or shrink a view via `Ctrl+Alt++` or `Ctrl+Alt+-`, respectively, on Windows and Linux/BSD;
 	`^⌘+` or `^⌘-`, respectively, on macOS; and `M-+` or `M--` in the terminal version.
 - Unsplit the current view by removing its complement view(s) via `Ctrl+Alt+W` on Windows and
@@ -457,8 +457,9 @@ In the GUI version:
 	respectively.
 - Perform "Replace" and "Replace All" in the "Replace" entry via `Enter` and `Shift+Enter`,
 	respectively.
-- For at least the English locale on Windows and Linux/BSD, toggle the find options using their
-	button mnemonics: `Alt+M`, `Alt+W`, `Alt+X`, `Alt+I`.
+- For at least the English locale on Windows and Linux/BSD, toggle the find options using
+	their button mnemonics: `Alt+M`, `Alt+W`, `Alt+X`, `Alt+I`. On macOS, use `⌥⌘M`,
+	`⌥⌘W`, and `⌥⌘X` instead.
 - Cycle through find/replace history via `Up` and `Down` on Windows, Linux, BSD, and the terminal
 	version; and `⇡` and `⇣` on macOS.
 - Dismiss the pane via `Esc`.
@@ -1113,7 +1114,7 @@ Many of Textadept's lexers can identify blocks of code and mark their fold point
 left-hand margin.
 
 - Toggle the visibility of a code block by clicking on its marker, or toggle the visibility
-	of the current block via `Ctrl+}` on Windows and Linux/BSD, `⌘}` on macOS, and `M-}` in the
+	of the current block via `Ctrl+)` on Windows and Linux/BSD, `⌘)` on macOS, and `M-)` in the
 	terminal version.
 - Use the "View > Code Folding" submenu to manipulate folds.
 - Turn off/on code folding for a buffer using the "Buffer > Toggle Code Folding" menu item.
@@ -1412,7 +1413,7 @@ run it from there.
 
 Textadept requires the following:
 
-- [CMake][] 3.16+
+- [CMake][] 3.22+
 - A C and C++ compiler, such as:
 	- [GNU C compiler][] (*gcc*) 7.1+
 	- [Microsoft Visual Studio][] 2019+
@@ -1421,6 +1422,9 @@ Textadept requires the following:
 	- [Qt][] 5.15+ development libraries for the GUI version
 	- [GTK][] 2.24+ development libraries for the GUI version
 	- [ncurses][](w) development libraries (wide character support) for the terminal version
+- Unix `patch` command
+
+**Windows Note:** [Git for Windows][] includes a `patch` command.
 
 **macOS Note:** [XCode][] provides Clang.
 
@@ -1436,6 +1440,7 @@ packages are all that is needed.
 [GTK]: https://www.gtk.org/download/linux.php
 [ncurses]: https://invisible-island.net/ncurses/#download_ncurses
 [XCode]: https://developer.apple.com/xcode/
+[Git for Windows]: https://gitforwindows.org/
 
 ### Compiling
 
@@ -1479,6 +1484,9 @@ CMake boolean variables that affect the build:
 - `GENERATE_HTML`: When on, creates a `html` target to build HTML documentation in the *docs/*
 	directory (e.g. `cmake --build build_dir --target html`). Requires [Lua][] and [Ruby][]
 	to be installed. Defaults to off.
+- `TEXTADEPT_HOME`: When set on Linux or BSD, uses the given location as Textadept's root
+	directory. Setting this is probably only useful for distribution managers that want to install
+	binaries separately from data files.
 
 [Lua]: https://www.lua.org
 [Ruby]: https://www.ruby-lang.org/en/
@@ -1550,9 +1558,11 @@ Liberation Mono), and lacks some GUI features due to the terminal's constraints:
 - Edge lines may be obscured by text.
 - No extra line ascent or descent.
 - No fold lines above and below lines.
+- Fold marker highlighting can only be bold, not colored.
 - No hotspot underlines on mouse hover.
 - No indicators other than `INDIC_ROUNDBOX` and `INDIC_STRAIGHTBOX`, although neither has
 	translucent drawing and `INDIC_ROUNDBOX` does not have rounded corners.
+- Indent guide highlighting can only be in white, not the brace highlight color.
 - Some complex marker symbols are not drawn properly or at all.
 - No mouse cursor types.
 - Not all key sequences are recognized properly, such as `Shift+Arrow` for making selections.
@@ -1612,256 +1622,35 @@ Textadept is composed of the following technologies:
 [SingleApplication]: https://github.com/itay-grudev/SingleApplication
 [reproc]: https://github.com/DaanDeMeyer/reproc
 
-### Migrating from Textadept 11 to 12
+### Migrating from Textadept 12 to 13
 
 #### API Changes
 
 Old API | Change | New API
 -|:-:|-
-**_G**||
-N/A | Added | [GTK](api.html#GTK), [QT](api.html#QT)
-[OSX][] | Changed | Always true on macOS, not just in the GUI version
-**_M**| Removed | N/A<sup>[a](#language-module-changes)</sup>
-**_SCINTILLA**||
-next_* | Renamed | [new_*][]
-**buffer**||
-[tab_label][] | Changed | Write-only
-property_int | Removed | N/A
-MARKNUM_FOLDER* | Renamed | view.MARKNUM_FOLDER*
-**events**||
-[KEYPRESS][] | Changed | Changed arguments
-[TAB_CLICKED][] | Changed | Changed arguments
-[MOUSE][] | Changed | Changed arguments
-**io**||
-N/A | Added | [ensure_final_newline][]<sup>b</sup>
-[quick_open()][] | Changed | Removed *opts* parameter
-**lexer**||
-N/A | Added | [names()][]
-colors | Renamed | [view.colors][]
-styles | Renamed | [view.styles][]
-fold\* | Renamed | view.fold\*
-token() | Renamed | [tag()][], and made into an instance method
-property_expanded | Removed | N/A
-starts_line() | Changed | Added *allow_indent* parameter
-last\_char\_includes() | Renamed | [after_set()][]
-[word_match()][] | Changed | Can also be used as an instance method
-N/A | Added | [set_word_list()][]
-N/A | Added | [number_()][] and friends
-[to_eol()][] | Changed | *prefix* parameter is optional
-fold\_line\_groups | Removed | N/A
-**textadept.editing**||
-INDIC_BRACEMATCH | Removed | N/A<sup>c</sup>
-brace_matches | Removed | N/A<sup>d</sup>
-[auto_pairs][] | Changed | Keys are string characters, not byte values
-typeover_chars | Changed | [typeover_auto_paired][]
-api_files | Removed | N/A
-show_documentation | Removed | N/A
-**textadept.file_types**| Removed | N/A
-extensions | Renamed | [lexer.detect_extensions][]
-patterns | Renamed | [lexer.detect_patterns][]
-select_lexer() | Replaced | `textadept.menu.menubar['Buffer/Select Lexer...'][2]`
-**textadept.macros** ||
-[play()][] | Changed | Added optional *filename* parameter
-**textadept.run**||
-error_patterns | Removed | N/A
-set_arguments() | Removed | N/A<sup>e</sup>
-N/A | Added | [run_project()][], [run_project_commands][]
-N/A | Added | [INDIC_WARNING][], [INDIC_ERROR][]
-**textadept.snippets** ||
-cancel_current | Renamed | cancel
-N/A | Added | [transform_methods][]
-N/A | Added | [variables][]
 **ui**||
-N/A | Added | [output()][]
-silent_print | Replaced | [print_silent()][], [output_silent()][]
-_print() | Renamed | [print_to()][]
-[switch_buffer()][] | Changed | Removed *zorder* parameter in favor of [buffer_list_zorder][]
-N/A | Added | [suspend()][]
-**ui.command_entry**||
-append_history() | Removed | N/A
-[run()][] | Changed | Changed parameter list
-**ui.dialogs**||
-msgbox(), ok\_msgbox(), yesno\_msgbox() | Replaced | [message()][]
-inputbox(), standard_inputbox() | Replaced | [input()][]
-secure\_inputbox(), secure\_standard\_inputbox() | Removed | N/A
-fileselect(), filesave() | Replaced | [open()][], [save()][]
-progressbar() | Replaced | [progress()][]
-filteredlist() | Replaced | [list()][]
-dropdown(), standard_dropdown() | Removed | N/A
-textbox(), optionselect(), colorselect(), fontselect() | Removed | N/A
+[get_split_table()][] | Changed | `size` field is now a {width, height, split pos} table
 **view**||
-N/A | Added | [set_styles()][]
+size | Renamed | [split_pos][]
+parent_size | Renamed | [parent_split_pos][]
 
-<sup>b</sup>No longer part of `textadept.editing.strip_trailing_spaces`<br/>
-<sup>c</sup>Use view.STYLE_BRACEBAD and view.STYLE_BRACELIGHT instead<br/>
-<sup>d</sup>Angles as brace characters is auto-detected now<br/>
-<sup>e</sup>See below how compile and run commands have changed<br/>
+[get_split_table()]: api.html#ui.get_split_table
+[split_pos]: api.html#view.split_pos
+[parent_split_pos]: api.html#view.parent_split_pos
 
-[OSX]: api.html#OSX
-[new_*]: api.html#_SCINTILLA.new_image_type
-[tab_label]: api.html#buffer.tab_label
-[KEYPRESS]: api.html#events.KEYPRESS
-[TAB_CLICKED]: api.html#events.TAB_CLICKED
-[MOUSE]: api.html#events.MOUSE
-[ensure_final_newline]: api.html#io.ensure_final_newline
-[quick_open()]: api.html#io.quick_open
-[names()]: api.html#lexer.names
-[view.colors]: api.html#view.colors
-[view.styles]: api.html#view.styles
-[tag()]: api.html#lexer.tag
-[after_set()]: api.html#lexer.after_set
-[word_match()]: api.html#lexer.word_match
-[set_word_list()]: api.html#lexer.set_word_list
-[number_()]: api.html#lexer.number_
-[to_eol()]: api.html#lexer.to_eol
-[auto_pairs]: api.html#textadept.editing.auto_pairs
-[typeover_auto_paired]: api.html#textadept.editing.typeover_auto_paired
-[lexer.detect_extensions]: api.html#lexer.detect_extensions
-[lexer.detect_patterns]: api.html#lexer.detect_patterns
-[play()]: api.html#textadept.macros.play
-[run_project()]: api.html#textadept.run.run_project
-[run_project_commands]: api.html#textadept.run.run_project_commands
-[INDIC_WARNING]: api.html#textadept.run.INDIC_WARNING
-[INDIC_ERROR]: api.html#textadept.run.INDIC_ERROR
-[transform_methods]: api.html#textadept.snippets.transform_methods
-[variables]: api.html#textadept.snippets.variables
-[output()]: api.html#ui.output
-[print_silent()]: api.html#ui.print_silent
-[output_silent()]: api.html#ui.output_silent
-[print_to()]: api.html#ui.print_to
-[switch_buffer()]: api.html#ui.switch_buffer
-[buffer_list_zorder]: api.html#ui.buffer_list_zorder
-[suspend()]: api.html#ui.suspend
-[run()]: api.html#ui.command_entry.run
-[message()]: api.html#ui.dialogs.message
-[input()]: api.html#ui.dialogs.input
-[open()]: api.html#ui.dialogs.open
-[save()]: api.html#ui.dialogs.save
-[progress()]: api.html#ui.dialogs.progress
-[list()]: api.html#ui.dialogs.list
-[set_styles()]: api.html#view.set_styles
+#### Lua 5.5 Changes
 
-#### Theme Changes
+Textadept 13 uses Lua 5.5, which has some incompatibilities compared to Textadept 12's Lua 5.4:
 
-Textadept has a new set of themes and [styles][] to set. All styles are view-specific; they
-are no longer tied to lexers. This means one view can have a light theme, and another can have
-a dark theme.
+- The word `global` is a reserved word. Do not use it as a regular name.
+- The control variable in for loops is read only. If you need to change it, declare a local
+	variable with the same name in the loop body.
+- A chain of `__call` metamethods can have at most 15 objects.
+- In an error, a `nil` as the error object is replaced by a string message.
 
-Themes can be migrated from Textadept 11 to 12 in the following way:
+You may need to update your *~/.textadept/init.lua* or any custom modules, particularly if your
+loops modify control variables.
 
-- Replace `lexer.colors` and `lexer.styles` with `view.colors` and `view.styles`.
-- Instead of using style names directly, use `view` and `lexer` constants. For example, change
-	`styles.default = {...}` to `styles[view.STYLE_DEFAULT] = {...}` and `styles.comment = {...}`
-	to `styles[lexer.COMMENT] = {...}`.
-- Lexer-specific style names do not have constants, so they can be used directly (e.g. CSS
-	`styles.property = {...}`).
-- Replace `buffer.MARKNUM_FOLDER`\* with `view.MARKNUM_FOLDER`\*.
+See [this page][] for more details on incompatibilities between Lua 5.4 and 5.5.
 
-[styles]: api.html#view.styles
-
-#### Lexer Changes
-
-Textadept's lexers use a new [convention][] and no longer contain styling information. Custom
-lexers should be migrated, and themes are responsible for styling custom tags. Also, lexers no
-longer have access to Textadept's Lua state or any buffer information. They are strictly sandboxed.
-
-[`events.LEXER_LOADED`][] will be emitted less frequently than before. For example, switching
-between buffers will no longer emit it. You may want to also connect lexer-specific event handlers
-to `events.BUFFER_AFTER_SWITCH` and `events.VIEW_AFTER_SWITCH` and check [`buffer.lexer_language`]
-from within them.
-
-[convention]: api.html#migrating-legacy-lexers
-[`events.LEXER_LOADED`]: api.html#events.LEXER_LOADED
-[`buffer.lexer_language`]: api.html#buffer.lexer_language
-
-#### Snippet Changes
-
-Textadept now supports TextMate-style [snippets][]. The legacy format is still supported,
-but those snippets should be [migrated][] as soon as possible.
-
-[snippets]: api.html#textadept.snippets
-[migrated]: api.html#migrating-legacy-snippets
-
-#### Compile, Run, Build, and Test Changes
-
-All compile, run, build, and test commands no longer fire immediately when invoked. Instead,
-candidate commands are displayed in the command entry first. Pressing `Enter` will run the
-command. This allows for in-place modifications of commands that will be remembered next time
-the command is run for a particular file/project. As a result, per-file and per-project command
-histories are now available.
-
-Also, command output uses a new "output" lexer which recognizes warnings and errors. Textadept
-no longer attempts its own warning/error detection.
-
-#### Key Bindings Changes
-
-Textadept's [key bindings][] have been redesigned to be as consistent as possible between
-operating systems and platforms.
-
-[key bindings]: api.html#textadept.keys
-
-As a result, macros recorded in Textadept 11 will likely not be compatible in Textadept 12.
-
-#### Dialog Changes
-
-Dialogs have been simplified in order to accommodate multiple platforms (currently Qt, GTK, and
-curses). In general, affirmative responses return input data rather than returning buttons and
-then input data, and negative responses return `nil`. For example, pressing `Enter` or clicking
-"Ok" in an input dialog returns the text entered rather than returning a button code (that
-needs to be interpreted) and text entered. Similarly, pressing `Escape` or clicking "Cancel"
-in an input dialog returns `nil` rather than returning a button code that needs to be interpreted.
-
-Dialogs no longer accept a *string_output* option. Buttons are always returned as numbers and
-list selections are always returned as numeric indices.
-
-#### Filter Changes
-
-Filters for `lfs.walk()` and `io.quick_open()` no longer use Lua patterns, but use typical shell
-glob patterns instead. This means special characters like '-' and '+' can be used literally
-and longer need to be escaped with '%'.
-
-#### Language Module Changes
-
-Textadept no longer automatically loads language modules. They need to be manually loaded like
-other modules. You can either do this directly on startup from your *~/.textadept/init.lua*,
-or lazy load them from an `events.LEXER_LOADED` event handler in your *~/.textadept/init.lua*:
-
-```lua
-require('lua') -- load language module on startup
-
--- Lazy-load language modules as files are opened.
-events.connect(events.LEXER_LOADED, function(name)
-	if package.searchpath(name, package.path) then require(name) end
-end)
-```
-
-If you prefer old behavior that loads all language modules into a global `_M` table, then you
-can do this:
-
-```lua
-_M = {}
-events.connect(events.LEXER_LOADED, function(name)
-	if package.searchpath(name, package.path) then _M[name] = require(name) end
-end)
-```
-
-#### Menubar Access Changes
-
-Accessing and changing menu items from top-level menus (menubar, context menu, and tab menu)
-has a new shorthand notation:
-
-```lua
-local select_word = textadept.menu.menubar['Edit/Select/Select Word'][2]
-local find = textadept.menu.menubar['Search/Find']
-find[1], find[2] = 'Custom Find', custom_find_function
-```
-
-Previously, you had to perform cumbersome one-at-a-time indexing:
-
-```lua
-local select_word = textadept.menu.menubar[_L['Edit']][_L['Select']][_L['Select Word']][2]
-local find = textadept.menu.menubar[_L['Search']][_L['Find']]
-find[1], find[2] = 'Custom Find', custom_find_function
-```
-
-Also, menu labels are auto-localized. You can use your locale's labels or Textadept's English ones.
+[this page]: https://lua.org/manual/5.5/manual.html#8

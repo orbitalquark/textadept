@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 package.path = table.concat({
 	_USERHOME .. '/modules/?.lua', _USERHOME .. '/modules/?/init.lua', _HOME .. '/modules/?.lua',
@@ -31,8 +31,7 @@ for _, mt in ipairs{buffer_mt, view_mt} do
 		local v = mt.__orig_index(t, k)
 		if type(v) == 'function' then
 			if k:find('^new_') and (k:find('_number$') or k:find('_type$')) then return v end
-			return function(...)
-				local args = {...}
+			return function(...args)
 				if type(args[1]) == 'table' then table.remove(args, 1) end -- self
 				for i = 1, #args do args[i] = repr(args[i]) end
 				table.insert(settings[mt], string.format('%s:%s(%s)', name[mt], k, table.concat(args, ',')))
@@ -195,13 +194,6 @@ if not CURSES then view.indentation_guides = view.IV_LOOKBOTH end
 view:marker_define(textadept.bookmarks.MARK_BOOKMARK, view.MARK_FULLRECT)
 view:marker_define(textadept.run.MARK_WARNING, view.MARK_FULLRECT)
 view:marker_define(textadept.run.MARK_ERROR, view.MARK_FULLRECT)
--- Change History Markers.
-if CURSES then
-	view:marker_define(view.MARKNUM_HISTORY_MODIFIED, view.MARK_FULLRECT)
-	view:marker_define(view.MARKNUM_HISTORY_SAVED, view.MARK_FULLRECT)
-	view:marker_define(view.MARKNUM_HISTORY_REVERTED_TO_MODIFIED, view.MARK_FULLRECT)
-	view:marker_define(view.MARKNUM_HISTORY_REVERTED_TO_ORIGIN, view.MARK_FULLRECT)
-end
 -- Arrow Folding Symbols.
 -- view:marker_define(view.MARKNUM_FOLDEROPEN, view.MARK_ARROWDOWN)
 -- view:marker_define(view.MARKNUM_FOLDER, view.MARK_ARROW)
@@ -245,10 +237,10 @@ view.indic_style[textadept.run.INDIC_WARNING] = view.INDIC_SQUIGGLE
 view.indic_style[textadept.run.INDIC_ERROR] = view.INDIC_SQUIGGLE
 view.indic_style[textadept.snippets.INDIC_PLACEHOLDER] = not CURSES and view.INDIC_DOTBOX or
 	view.INDIC_STRAIGHTBOX
-view.indic_style[view.INDICATOR_HISTORY_MODIFIED_INSERTION] = view.INDIC_PLAIN
-view.indic_style[view.INDICATOR_HISTORY_SAVED_INSERTION] = view.INDIC_PLAIN
-view.indic_style[view.INDICATOR_HISTORY_REVERTED_TO_MODIFIED_INSERTION] = view.INDIC_PLAIN
-view.indic_style[view.INDICATOR_HISTORY_REVERTED_TO_ORIGIN_INSERTION] = view.INDIC_PLAIN
+for _, kind in ipairs{'MODIFIED', 'SAVED', 'REVERTED_TO_MODIFIED', 'REVERTED_TO_ORIGIN'} do
+	view.indic_style[view['INDICATOR_HISTORY_' .. kind .. '_INSERTION']] = view.INDIC_PLAIN
+	view.indic_style[view['INDICATOR_HISTORY_' .. kind .. '_DELETION']] = view.INDIC_POINT_TOP
+end
 
 -- Autocompletion.
 -- buffer.auto_c_separator =
@@ -263,6 +255,7 @@ buffer.auto_c_multi = buffer.MULTIAUTOC_EACH
 -- buffer.auto_c_type_separator =
 -- view.auto_c_max_height =
 -- view.auto_c_max_width =
+if is_hidpi() then view.auto_c_image_scale = 200 end
 
 -- Call Tips.
 view.call_tip_use_style = buffer.tab_width * view:text_width(view.STYLE_CALLTIP, ' ')

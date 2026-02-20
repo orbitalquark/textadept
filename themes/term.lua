@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 -- Terminal theme for Textadept.
 
 local view, colors, styles = view, view.colors, view.styles
@@ -112,6 +112,7 @@ styles.error_indent = {back = colors.red}
 -- view.element_color[view.ELEMENT_CARET] = colors.black
 -- view.element_color[view.ELEMENT_CARET_ADDITIONAL] =
 -- view.element_color[view.ELEMENT_CARET_LINE_BACK] =
+view.element_color[view.ELEMENT_WHITE_SPACE] = colors.black
 
 -- Fold Margin.
 -- view:set_fold_margin_color(true, colors.white)
@@ -121,10 +122,10 @@ styles.error_indent = {back = colors.red}
 view.marker_back[textadept.bookmarks.MARK_BOOKMARK] = colors.blue
 view.marker_back[textadept.run.MARK_WARNING] = colors.yellow
 view.marker_back[textadept.run.MARK_ERROR] = colors.red
-view.marker_back[view.MARKNUM_HISTORY_MODIFIED] = colors.yellow
-view.marker_back[view.MARKNUM_HISTORY_SAVED] = colors.green
-view.marker_back[view.MARKNUM_HISTORY_REVERTED_TO_MODIFIED] = colors.yellow
-view.marker_back[view.MARKNUM_HISTORY_REVERTED_TO_ORIGIN] = colors.yellow
+view.marker_fore[view.MARKNUM_HISTORY_MODIFIED] = colors.yellow
+view.marker_fore[view.MARKNUM_HISTORY_SAVED] = colors.green
+view.marker_fore[view.MARKNUM_HISTORY_REVERTED_TO_MODIFIED] = colors.yellow
+view.marker_fore[view.MARKNUM_HISTORY_REVERTED_TO_ORIGIN] = colors.yellow
 
 -- Indicators.
 view.indic_fore[ui.find.INDIC_FIND] = colors.yellow

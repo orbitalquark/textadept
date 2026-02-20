@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 --- Defines key bindings for Textadept.
 -- This set of key bindings is pretty standard among other text editors, at least for basic
@@ -91,6 +91,9 @@
 -- None | None | None | Replace
 -- None | None | None | Replace all
 -- Ctrl+Alt+F | ^⌘F | M-F | Find incremental
+-- None | ⌥⌘M | None | Toggle Match Case
+-- None | ⌥⌘W | None | Toggle Whole Word
+-- None | ⌥⌘X | None | Toggle Regex
 -- Ctrl+Shift+F | ⌘⇧F | M-^F | Find in files
 -- Ctrl+Alt+G | ^⌘G | M-G | Go to next file found
 -- Ctrl+Alt+Shift+G | ^⌘⇧G | M-S-G | Go to previous file found
@@ -127,8 +130,8 @@
 -- Ctrl+Shift+H | ⌘⇧H | M-S-H | Show typed keys in statusbar
 -- None | None | None | Show style
 -- **Buffer**| | |
--- Ctrl+Tab<br/>Ctrl+PgDn | ^⇥<br/>⌘⇟ | M-PgDn<br/> ^Tab<sup>d</sup> | Next buffer
--- Ctrl+Shift+Tab<br/>Ctrl+PgUp | ^⇧⇥<br/>⌘⇞ | M-PgUp<br/>S-^Tab<sup>d</sup> | Previous buffer
+-- Ctrl+Tab<br/>Ctrl+PgDn | ⌘}<br/>^⇥ | M-PgDn<br/> ^Tab<sup>d</sup> | Next buffer
+-- Ctrl+Shift+Tab<br/>Ctrl+PgUp | ⌘{<br/>^⇧⇥ | M-PgUp<br/>S-^Tab<sup>d</sup> | Previous buffer
 -- Ctrl+B | ⌘B | ^B | Switch to buffer...
 -- None | None | None | Tab width: 2
 -- None | None | None | Tab width: 3
@@ -146,15 +149,15 @@
 -- None | None | None | Toggle Code Folding
 -- Ctrl+Shift+L | ⌘⇧L | M-^L | Select lexer...
 -- **View**| | |
--- Ctrl+Alt+PgDn | ^⌘⇟ | M-^PgDn<br/>M-PgUp<sup>d</sup> | Next view
--- Ctrl+Alt+PgUp | ^⌘⇞ | M-^PgUp<br/>M-PgDn<sup>d</sup> | Previous view
+-- Ctrl+Alt+PgDn | ^⌘}<br/>^⌘⇟ | M-^PgDn<br/>M-PgUp<sup>d</sup> | Next view
+-- Ctrl+Alt+PgUp | ^⌘{<br/>^⌘⇞ | M-^PgUp<br/>M-PgDn<sup>d</sup> | Previous view
 -- Ctrl+Alt+_ | ^⌘_ | M-_ | Split view horizontal
 -- Ctrl+Alt+&#124; | ^⌘&#124; | M-&#124; | Split view vertical
 -- Ctrl+Alt+W | ^⌘W | M-W | Unsplit view
 -- Ctrl+Alt+Shift+W | ^⌘⇧W | M-S-W | Unsplit all views
 -- Ctrl+Alt++<br/>Ctrl+Alt+= | ^⌘+<br/>^⌘= | M-+<br/>M-= | Grow view
 -- Ctrl+Alt+- | ^⌘- | M-- | Shrink view
--- Ctrl+} | ⌘} | M-} | Toggle current fold
+-- Ctrl+) | ⌘) | M-) | Toggle current fold
 -- None | None | None | Toggle Level 1 Folds
 -- None | None | None | Toggle Level 2 Folds
 -- None | None | None | Toggle Level 3 Folds
@@ -267,16 +270,16 @@
 -- Windows, Linux, and BSD key bindings.
 --
 -- Unassigned keys:
--- ctrl:  EGhiIJNQtY_(){;:'",<.>?\s
+-- ctrl:  EGhiIJNQtY_({};:'",<.>?\s
 -- alt: -_=+)]}\|;:/?\s\n
 -- ctrl+alt: aAbBcCDFHiIjJlLmMnNoOpPqQsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
 --
 -- macOS key bindings.
 --
 -- Unassigned keys:
--- cmd:  EGhiIJNQtY_(){;:'"<.>?\s
+-- cmd:  EGhiIJNQtY_(;:'"<.>?\s
 -- ctrl: cCDgGHiIjJKLmMoOqQrRsStTuUvVwWxXyYzZ-_=+)]}\|;:/?\s
--- ctrl+cmd: aAbBcCDFHiIjJlLmMnNoOpPqQsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
+-- ctrl+cmd: aAbBcCDFHiIjJlLmMnNoOpPqQsSTUvVxXyYzZ()[]\;:'",<.>/?\s\t\n
 --
 -- Curses key bindings.
 --
@@ -293,7 +296,7 @@
 --
 -- Unassigned keys:
 -- ctrl: t\s
--- meta: aAbBcCDiIjJlLMnNoOpPQUvVxXyYzZ);:?\s
+-- meta: aAbBcCDiIjJlLMnNoOpPQUvVxXyYzZ};:?\s
 -- ctrl+meta:  eghijnqy_]\^
 --
 -- Note: meta+[befhstv] may be used by Linux/BSD GUI terminals for menu access.
@@ -392,6 +395,9 @@ keys.assign_platform_bindings{
 	-- Replace is alt+r when find pane is focused in GUI.
 	-- Replace All is alt+a when find pane is focused in GUI.
 	[m('Search/Find Incremental')] = {'ctrl+alt+f', 'ctrl+cmd+f', 'meta+f'},
+	[m('Search/Toggle Match Case')] = {nil, 'alt+cmd+m', nil},
+	[m('Search/Toggle Whole Word')] = {nil, 'alt+cmd+w', nil},
+	[m('Search/Toggle Regex')] = {nil, 'alt+cmd+x', nil},
 	[m('Search/Find in Files')] = {'ctrl+F', 'cmd+F', {'ctrl+meta+f', 'ctrl+meta+F'}},
 	-- Find in Files is alt+i when find pane is focused in GUI.
 	[m('Search/Go To Next File Found')] = {'ctrl+alt+g', 'ctrl+cmd+g', 'meta+g'},
@@ -437,9 +443,9 @@ keys.assign_platform_bindings{
 	
 	-- Buffer.
 	[m('Buffer/Next Buffer')] = {
-		{'ctrl+\t', 'ctrl+pgdn'}, {'ctrl+\t', 'cmd+pgdn'}, WIN32 and 'ctrl+\t' or 'meta+pgdn'
+		{'ctrl+\t', 'ctrl+pgdn'}, {'cmd+}', 'ctrl+\t'}, WIN32 and 'ctrl+\t' or 'meta+pgdn'
 	}, [m('Buffer/Previous Buffer')] = {
-		{'ctrl+shift+\t', 'ctrl+pgup'}, {'ctrl+shift+\t', 'cmd+pgup'},
+		{'ctrl+shift+\t', 'ctrl+pgup'}, {'cmd+{', 'ctrl+shift+\t'},
 		WIN32 and 'ctrl+shift+\t' or 'meta+pgup'
 	}, [ui.switch_buffer] = {'ctrl+b', 'cmd+b', 'ctrl+b'},
 	-- Indentation.
@@ -463,9 +469,9 @@ keys.assign_platform_bindings{
 
 	-- View.
 	[m('View/Next View')] = {
-		'ctrl+alt+pgdn', 'ctrl+cmd+pgdn', WIN32 and 'meta+pgdn' or 'ctrl+meta+pgdn'
+		'ctrl+alt+pgdn', {'ctrl+cmd+}', 'ctrl+cmd+pgdn'}, WIN32 and 'meta+pgdn' or 'ctrl+meta+pgdn'
 	}, [m('View/Previous View')] = {
-		'ctrl+alt+pgup', 'ctrl+cmd+pgup', WIN32 and 'meta+pgup' or 'ctrl+meta+pgup'
+		'ctrl+alt+pgup', {'ctrl+cmd+{', 'ctrl+cmd+pgup'}, WIN32 and 'meta+pgup' or 'ctrl+meta+pgup'
 	}, [m('View/Split View Horizontal')] = {'ctrl+alt+_', 'ctrl+cmd+_', 'meta+_'},
 	[m('View/Split View Vertical')] = {'ctrl+alt+|', 'ctrl+cmd+|', 'meta+|'},
 	[m('View/Unsplit View')] = {'ctrl+alt+w', 'ctrl+cmd+w', 'meta+w'},
@@ -473,7 +479,7 @@ keys.assign_platform_bindings{
 	[m('View/Grow View')] = {
 		{'ctrl+alt++', 'ctrl+alt+='}, {'ctrl+cmd++', 'ctrl+cmd+='}, {'meta++', 'meta+='}
 	}, [m('View/Shrink View')] = {'ctrl+alt+-', 'ctrl+cmd+-', 'meta+-'},
-	[m('View/Code Folding/Toggle Current Fold')] = {'ctrl+}', 'cmd+}', 'meta+}'},
+	[m('View/Code Folding/Toggle Current Fold')] = {'ctrl+)', 'cmd+)', 'meta+)'},
 	-- TODO: m('View/Code Folding/Toggle Level 1 Folds')
 	-- TODO: m('View/Code Folding/Toggle Level 2 Folds')
 	-- TODO: m('View/Code Folding/Toggle Level 3 Folds')

@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 teardown(function()
 	ui.update()
@@ -100,11 +100,11 @@ end)
 test('ui.command_entry.run should consider view fields/functions as globals', function()
 	run('split')
 	local split = #_VIEWS > 1
-	local original_view_size = view.size
-	run('size=size//2')
+	local original_split_pos = view.split_pos
+	run('split_pos=split_pos//2')
 
 	test.assert_equal(split, true)
-	test.assert(view.size < original_view_size, 'should have resized view')
+	test.assert(view.split_pos < original_split_pos, 'should have resized view')
 end)
 
 test('ui.command_entry.run should consider ui fields/functions as globals', function()

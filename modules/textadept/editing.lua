@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 --- Editing features for Textadept.
 -- @module textadept.editing
@@ -18,6 +18,9 @@ M.comment_string = {}
 -- 1. The number of characters behind the caret that are used as the prefix of the entity to
 --	be autocompleted.
 -- 2. A table of completions to show.
+--
+-- Functions may optionally return a third result, the item to initially select. By default,
+-- the first item is selected.
 --
 -- If any completion contains a space character, the function should change
 -- `buffer.auto_c_separator`. Also, autocompletion lists are sorted automatically by default,
@@ -182,6 +185,7 @@ function M.select_enclosed(left, right)
 		s, e = buffer:search_prev(0, left), buffer:search_next(0, right)
 	elseif M.auto_pairs then
 		s = buffer.selection_start
+		local style_at = buffer.style_at
 		repeat
 			-- Backtrack, looking for an auto-paired range that includes the current position.
 			local char = buffer:text_range(s, buffer:position_after(s))
@@ -192,9 +196,12 @@ function M.select_enclosed(left, right)
 			e = buffer:brace_match(s, 0)
 			if e >= buffer.selection_end - 1 then break end
 			if e ~= -1 then e = -1 end
+			-- If the current position is at the end of an auto-paired, non-brace range (e.g. quotes),
+			-- keep backtracking.
+			if left == right and s == pos and style_at[s - 1] == style_at[pos] then goto continue end
 			-- If the auto-paired non-brace range (e.g. quotes) is in the same style as, and includes
 			-- the current position, use it.
-			if buffer.style_at[s] ~= buffer.style_at[buffer.selection_start] then goto continue end
+			if style_at[s] ~= style_at[buffer.selection_start] then goto continue end
 			buffer.search_flags = 0
 			buffer:set_target_range(s + 1, buffer.length + 1)
 			if buffer:search_in_target(match) >= buffer.selection_end - 1 then
@@ -398,13 +405,15 @@ end
 function M.autocomplete(name)
 	if not M.autocompleters[assert_type(name, 'string', 1)] then return end
 	buffer.auto_c_separator, buffer.auto_c_order = string.byte(' '), buffer.ORDER_PERFORMSORT
-	local len_entered, list = M.autocompleters[name]() -- may change separator, order
+	buffer.auto_c_type_separator = string.byte('?')
+	local len_entered, list, item = M.autocompleters[name]() -- may change separator, order
 	if not len_entered or not list or #list == 0 then return end
 	local pos = buffer.current_pos
 	buffer:auto_c_show(len_entered, table.concat(list, string.char(buffer.auto_c_separator)))
 	-- At this point, there is either (1) a list of completions shown, (2) a single completion was
 	-- automatically chosen, or (3) no completions are shown because none were valid (e.g. a language
 	-- server returned a "fuzzy" list of completions that Scintilla does not recognize as valid).
+	if buffer:auto_c_active() and item then buffer:auto_c_select(item) end
 	return buffer:auto_c_active() or buffer.auto_c_choose_single and buffer.current_pos ~= pos
 end
 

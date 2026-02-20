@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 test("buffer.text_range should implement Scintilla's SCI_GETTEXTRANGE", function()
 	local text = '123456789'

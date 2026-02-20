@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 test('view.goto_buffer should switch to a given buffer', function()
 	buffer.new()
@@ -55,6 +55,24 @@ test('view.split should split the current view in two', function()
 	test.assert_equal(_VIEWS[new], 2)
 end)
 
+test('view.split should split the current view into roughly equal halves', function()
+	view:split(true)
+	view:split()
+
+	test.wait(function()
+		local size = ui.get_split_table().size
+		local half_width, split_pos = size[1] / 2, size[3]
+		return math.abs(half_width - split_pos) / half_width < 0.1
+	end)
+	local size = ui.get_split_table()[2].size
+	local half_height, split_pos = size[2] / 2, size[3]
+	test.assert(math.abs(half_height - split_pos) / half_height <= 0.1, 'split sizes are unequal')
+end)
+if GTK then
+	local gtk2 = os.getenv('CI') == 'true' and io.popen('dpkg --list'):read('a'):find('gtk2%.0%-dev')
+	if not gtk2 then expected_failure() end -- TODO: second size[3] == 0
+end
+
 test('view.split should preserve buffer state', function()
 	buffer:append_text(test.lines(100))
 	buffer:set_sel(buffer:position_from_line(50), buffer.line_end_position[50])
@@ -85,28 +103,28 @@ test('view.split should ensure the caret remains visible', function()
 	test.assert(line >= top_line and line <= bottom_line, 'caret was not scrolled into view')
 end)
 
--- Note: view.size is tested in modules/textadept/menu_test.lua.
-test('view.parent_size should give access to parent split size', function()
+-- Note: view.split_pos is tested in modules/textadept/menu_test.lua.
+test('view.parent_split_pos should give access to parent split size', function()
 	view:split(true)
 	view:split()
 
-	test.assert(view.parent_size, 'view.parent_size is nil')
+	test.assert(view.parent_split_pos, 'view.parent_split_pos is nil')
 end)
 
-test('view.parent_size should be mutable', function()
+test('view.parent_split_pos should be mutable', function()
 	view:split(true)
 	view:split()
-	local size, offset = view.parent_size, 10
+	local size, offset = view.parent_split_pos, 10
 
-	view.parent_size = view.parent_size + offset
+	view.parent_split_pos = view.parent_split_pos + offset
 
-	test.assert_equal(view.parent_size, size + offset)
+	test.assert_equal(view.parent_split_pos, size + offset)
 end)
 
-test('view.parent_size should be nil otherwise', function()
+test('view.parent_split_pos should be nil otherwise', function()
 	view:split()
 
-	test.assert_equal(view.parent_size, nil)
+	test.assert_equal(view.parent_split_pos, nil)
 end)
 
 test('view.unsplit should remove the other view', function()

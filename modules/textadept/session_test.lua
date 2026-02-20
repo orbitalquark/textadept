@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 test('session.save should save to a given session file', function()
 	local sf<close> = test.tmpfile()
@@ -77,6 +77,24 @@ test('sessions should save open buffers and their states', function()
 	test.assert_equal(view.first_visible_line, first_visible_line)
 end)
 
+test('sessions should save folded line state', function()
+	local sf<close> = test.tmpfile()
+	local _<close> = test.tmpfile('.lua', test.lines{
+		'-- Comment', --
+		'for i = 1, 3 do', --
+		'\tprint(i)', --
+		'end'
+	}, true)
+	buffer:colorize(1, -1)
+	buffer:toggle_fold(2)
+
+	textadept.session.save(sf.filename)
+	buffer:close()
+	textadept.session.load(sf.filename)
+
+	test.assert_equal(2, view:contracted_fold_next(1))
+end)
+
 test('sessions should save bookmarks', function()
 	local sf<close> = test.tmpfile()
 	local _<close> = test.tmpfile(true)
@@ -121,16 +139,16 @@ test('sessions should save view state', function()
 	local sf<close> = test.tmpfile()
 	view:split()
 	view:split(true)
-	local view1_size = _VIEWS[1].size
-	local view2_size = _VIEWS[2].size
+	local view1_split_pos = _VIEWS[1].split_pos
+	local view2_split_pos = _VIEWS[2].split_pos
 
 	textadept.session.save(sf.filename)
 	while view:unsplit() do end
 	textadept.session.load(sf.filename)
 
 	test.assert_equal(#_VIEWS, 3)
-	test.assert_equal(_VIEWS[1].size, view1_size)
-	test.assert_equal(_VIEWS[2].size, view2_size)
+	test.assert_equal(_VIEWS[1].split_pos, view1_split_pos)
+	test.assert_equal(_VIEWS[2].split_pos, view2_split_pos)
 end)
 
 test('sessions should restore the view states of files opened in more than one view', function()
@@ -166,19 +184,20 @@ test('sessions should save recent files', function()
 	test.assert_equal(io.recent_files, {f.filename})
 end)
 
--- TODO: loading a new session will save the current session under the previous session name.
--- This leaves a temporary file on disk.
-test('session.load should not load if there are unsaved files and the user cancels #skip',
-	function()
-		local sf<close> = test.tmpfile()
-		local cancel = test.stub(2)
-		local _<close> = test.mock(ui.dialogs, 'message', cancel)
-		buffer:append_text('modified')
+test('session.load should not load if there are unsaved files and the user cancels', function()
+	local sf<close> = test.tmpfile()
+	local cancel = test.stub(2)
+	local _<close> = test.mock(ui.dialogs, 'message', cancel)
+	buffer:append_text('modified')
+	-- Note: loading a new session will save the current session under the previous session name.
+	-- Prevent this from leaving a temporary file on disk.
+	local function ignore_saving_current_session() end
+	local _<close> = test.mock(textadept.session, 'save', ignore_saving_current_session)
 
-		textadept.session.load(sf.filename)
+	textadept.session.load(sf.filename)
 
-		test.assert_equal(buffer:get_text(), 'modified')
-	end)
+	test.assert_equal(buffer:get_text(), 'modified')
+end)
 
 test('session.load should notify of non-existent session files', function()
 	local sf<close> = test.tmpfile()
@@ -195,6 +214,19 @@ test('session.load should notify of non-existent session files', function()
 	test.assert_equal(non_existent_message.called, true)
 	local dialog_opts = non_existent_message.args[1]
 	test.assert_contains(dialog_opts.text, f.filename)
+end)
+
+test('session.load should ignore non-existant recent files', function()
+	local _<close> = test.mock(io, 'recent_files', {})
+	local sf<close> = test.tmpfile()
+	local f<close> = test.tmpfile(true)
+	buffer:close()
+	textadept.session.save(sf.filename)
+	f:delete()
+
+	textadept.session.load(sf.filename)
+
+	test.assert_equal(io.recent_files, {})
 end)
 
 test('--session should load the given session', function()

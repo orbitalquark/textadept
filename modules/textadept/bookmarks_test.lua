@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 test('bookmarks.toggle should bookmark the current line', function()
 	textadept.bookmarks.toggle()

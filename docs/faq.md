@@ -26,11 +26,32 @@ Why does Textadept fail to correctly display my non-English file?
 **A:**
 Textadept failed to detect the file's encoding. You'll need to [help it][].
 
-On Windows, if you are seeing strange characters in the filename (including '?'), your file's
-name contains characters outside the system's encoding. Due to limitations in Lua and Microsoft's
-C runtime library (MSVCRT), Textadept cannot open files like those.
+On Windows, if you are seeing strange characters in the filename (including '?'), your file's name
+contains characters outside the system's encoding. You can try the following as an administrator:
+1. Open Settings
+2. Select "Time & language"
+3. Select "Administrative language settings"
+4. Click "Change system locale..."
+5. Check the "Beta: Use Unicode UTF-8 for worldwide language support" box
+6. Restart your computer
+7. Try opening the file again
 
 [help it]: manual.html#encoding
+
+- - -
+
+**Q:**
+
+On my Windows HiDPI display at fractional scaling (e.g. 125% or 150%), Textadept does not render
+text lines correctly. How do I fix it?
+
+**A:**
+
+Either use integer scaling (e.g. 200%), or instruct Windows to take over font rendering for
+the application: right-click on the Textadept executable and select "Properties"; click on the
+"Compatibility" tab and then the "Change high DPI settings" button; and check the "Override high
+DPI scaling" checkbox towards the bottom of the pop-up dialog. The next time you run Textadept,
+things should look better.
 
 - - -
 

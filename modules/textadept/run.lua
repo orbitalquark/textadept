@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 --- Execute compile, run, build, test, and project shell commands with Textadept.
 -- The editor prompts you with/for shell commands to run, prints output in real-time, and marks
@@ -159,7 +159,7 @@ local function run_command(label, command, dir, event, commands, key, macros)
 		command_entry_f[id](command, working_dir or dir, env, event, commands, key, macros, not is_func)
 	else
 		ui.command_entry.run(label, command_entry_f[id], 'bash', command, working_dir or dir, env,
-			event, commands, key, macros, not is_func)
+			event, commands, key, macros or false, not is_func)
 	end
 end
 

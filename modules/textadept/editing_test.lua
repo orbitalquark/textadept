@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 test('editing.toggle_comment should comment out the current line', function()
 	local comment_char = '#'
@@ -283,6 +283,28 @@ test("editing.select_enclosed should be able to recognize it's between XML tags"
 	test.assert_equal(buffer:get_sel_text(), test.lines{'', text, ''})
 end)
 
+test("editing.select_enclosed should be able to recognize it's at the start of a string", function()
+	local text = "'word' 'word2'"
+	buffer:append_text(text)
+	buffer:set_lexer('lua')
+
+	textadept.editing.select_enclosed()
+
+	test.assert_equal(buffer:get_sel_text(), 'word')
+end)
+
+test("editing.select_enclosed should be able to recognize it's at the end of a string", function()
+	local text = "'word' 'word2'"
+	buffer:append_text(text)
+	buffer:set_lexer('lua')
+	buffer:word_right()
+	buffer:word_right()
+
+	textadept.editing.select_enclosed()
+
+	test.assert_equal(buffer:get_sel_text(), 'word')
+end)
+
 test('editing.select_enclosed should select the delimiters when called again', function()
 	local contents = '(word)'
 	buffer:append_text(contents)
@@ -558,6 +580,17 @@ test('editing.filter_through should not do anything if output == input', functio
 	test.assert_equal(buffer.modify, false)
 end)
 
+test('editing.filter_through should handle single-quotes', function()
+	local find, replace = 'find', 'replace'
+	buffer:append_text(find)
+
+	-- Note: double-quotes were tested earlier.
+	textadept.editing.filter_through(string.format("sed 's/%s/%s/;'", find, replace))
+
+	test.assert_equal(buffer:get_text(), replace)
+end)
+if WIN32 then skip('sed does not exist') end
+
 test("editing.autocomplete('word') should show a list of word completions", function()
 	local word = 'word'
 	buffer:add_text(string.format('%s %s', word, word:sub(1, 1)))
@@ -600,6 +633,18 @@ test("editing.autocomplete('word') should allow for case-insensitive completions
 
 	local items = auto_c_show.args[3]
 	test.assert_equal(items, word:upper())
+end)
+
+test('editing.autocomplete should allow selecting an initial item', function()
+	local list = {'one', 'two', 'zero'}
+	local item = 'zero'
+	local _<close> = test.mock(textadept.editing.autocompleters, 'select',
+		function() return 0, list, item end)
+
+	textadept.editing.autocomplete('select')
+
+	test.assert_equal(buffer:auto_c_active(), true)
+	test.assert_equal(buffer.auto_c_current_text, item)
 end)
 
 test('editing.autocomplete should return true even if an item was auto-selected', function()
@@ -964,15 +1009,15 @@ end)
 -- Coverage tests.
 
 test('editing.filter_through should write command errors to the statusbar', function()
-	local _<close> = test.disable_metafield(ui, 'statusbar_text')
-
 	textadept.editing.filter_through('false')
 
 	test.assert_contains(ui.statusbar_text, '"false"') -- returned non-zero status
 end)
 if WIN32 then skip('false does not exist') end
 
--- TODO: test highlight matching braces.
+-- Note: cannot test highlight matching braces because neither buffer.style_at nor
+-- buffer:indicator_all_on_for() returns view.STYLE_BRACELIGHT and non-zero, respectively.
+-- Scintilla performs highlighting opaquely.
 
 test('most languages should not auto-pair <>', function()
 	test.assert_equal(textadept.editing.auto_pairs['<'], nil)

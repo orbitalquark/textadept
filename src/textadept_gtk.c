@@ -1,4 +1,4 @@
-// Copyright 2007-2025 Mitchell. See LICENSE.
+// Copyright 2007-2026 Mitchell. See LICENSE.
 // GTK platform for Textadept.
 
 #include "textadept.h"
@@ -13,7 +13,7 @@
 #include "ScintillaWidget.h" // must come after <gtk/gtk.h>
 
 // GTK objects.
-static GtkWidget *window, *menubar, *tabbar, *statusbar[2];
+static GtkWidget *window, *menubar, *tabbar, *statusbar_box, *statusbar[2];
 static GtkAccelGroup *accel;
 static GtkWidget *command_entry_box, *command_entry_label, *findbox, *find_entry, *repl_entry,
 	*find_label, *repl_label;
@@ -31,26 +31,28 @@ const char *get_charset(void) {
 
 // Signal for exiting Textadept.
 // Generates a 'quit' event. If that event does not return `true`, quits the application.
-static bool exiting(GtkWidget *_, GdkEventAny *__, void *___) {
+// Note: this and all other boolean signal functions cannot use bool return types, but must
+// use int (gboolean). Using bool can result in difficult-to-diagnose runtime issues.
+static int exiting(GtkWidget *_, GdkEventAny *__, void *___) {
 	if (!can_quit()) return true; // halt
 	return (close_textadept(), scintilla_release_resources(), gtk_main_quit(), false);
 }
 
 // Signal for a Textadept window focus change.
 // Generates a 'focus' event.
-static bool window_focused(GtkWidget *_, GdkEventFocus *__, void *___) {
+static int window_focused(GtkWidget *_, GdkEventFocus *__, void *___) {
 	if (!is_command_entry_active()) emit("focus", -1);
 	return false;
 }
 
 // Signal for window focus loss.
 // Generates an 'unfocus' event.
-static bool focus_lost(GtkWidget *_, GdkEvent *__, void *___) {
+static int focus_lost(GtkWidget *_, GdkEvent *__, void *___) {
 	return (emit("unfocus", -1), is_command_entry_active()); // keep focus if window is losing focus
 }
 
 // Signal for a Textadept window keypress (not a Scintilla keypress).
-static bool window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
+static int window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
 	if (event->keyval == GDK_KEY_Escape && gtk_widget_get_visible(findbox) &&
 		!gtk_widget_has_focus(command_entry))
 		return (gtk_widget_grab_focus(focused_view), gtk_widget_hide(findbox),
@@ -74,7 +76,7 @@ static void tab_reordered(GtkNotebook *_, GtkWidget *__, int tab_num, void *___)
 }
 
 // Signal for a Find/Replace entry keypress.
-static bool find_keypress(GtkWidget *widget, GdkEventKey *event, void *_) {
+static int find_keypress(GtkWidget *widget, GdkEventKey *event, void *_) {
 	if (event->keyval != GDK_KEY_Return) return false;
 	FindButton *button = (event->state & GDK_SHIFT_MASK) == 0 ?
 		(widget == find_entry ? find_next : replace) :
@@ -182,11 +184,11 @@ void new_window(SciObject *(*get_view)(void)) {
 
 	gtk_box_pack_start(GTK_BOX(vbox), new_findbox(), false, false, 0);
 
-	GtkWidget *hbox = gtk_hbox_new(false, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), statusbar[0] = gtk_label_new(NULL), true, true, 5);
+	statusbar_box = gtk_hbox_new(false, 0);
+	gtk_box_pack_start(GTK_BOX(statusbar_box), statusbar[0] = gtk_label_new(NULL), true, true, 5);
 	gtk_misc_set_alignment(GTK_MISC(statusbar[0]), 0, 0); // left-align
-	gtk_box_pack_start(GTK_BOX(hbox), statusbar[1] = gtk_label_new(NULL), false, false, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, false, false, 0);
+	gtk_box_pack_start(GTK_BOX(statusbar_box), statusbar[1] = gtk_label_new(NULL), false, false, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), statusbar_box, false, false, 0);
 
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 
@@ -210,7 +212,6 @@ void get_size(int *width, int *height) { gtk_window_get_size(GTK_WINDOW(window),
 void set_size(int width, int height) { gtk_window_resize(GTK_WINDOW(window), width, height); }
 
 // Signal for a Scintilla keypress.
-// Note: cannot use bool return value due to modern i686-w64-mingw32-gcc issue.
 static int keypress(GtkWidget *_, GdkEventKey *event, void *__) {
 	int modifiers = (event->state & GDK_SHIFT_MASK ? SCMOD_SHIFT : 0) |
 		(event->state & GDK_CONTROL_MASK ? SCMOD_CTRL : 0) |
@@ -220,7 +221,7 @@ static int keypress(GtkWidget *_, GdkEventKey *event, void *__) {
 }
 
 // Signal for a Scintilla mouse click.
-static bool mouse_clicked(GtkWidget *w, GdkEventButton *event, void *_) {
+static int mouse_clicked(GtkWidget *w, GdkEventButton *event, void *_) {
 	if (w == command_entry || event->type != GDK_BUTTON_PRESS || event->button != 3) return false;
 	return (show_context_menu("context_menu", event), true);
 }
@@ -291,13 +292,15 @@ Pane *get_top_pane(void) {
 }
 
 PaneInfo get_pane_info(Pane *pane) {
-	PaneInfo info = {GTK_IS_PANED(pane), false, pane, pane, NULL, NULL, 0};
+	GtkAllocation alloc;
+	gtk_widget_get_allocation(GTK_WIDGET(pane), &alloc);
+	PaneInfo info = {GTK_IS_PANED(pane), false, pane, pane, NULL, NULL, alloc.width, alloc.height, 0};
 	if (info.is_split)
 		info.vertical =
 			gtk_orientable_get_orientation(GTK_ORIENTABLE(pane)) == GTK_ORIENTATION_HORIZONTAL,
 		info.child1 = gtk_paned_get_child1(GTK_PANED(pane)),
 		info.child2 = gtk_paned_get_child2(GTK_PANED(pane)),
-		info.size = gtk_paned_get_position(GTK_PANED(pane));
+		info.split_pos = gtk_paned_get_position(GTK_PANED(pane));
 	return info;
 }
 
@@ -307,7 +310,7 @@ PaneInfo get_parent_pane_info(PaneInfo info) {
 
 PaneInfo get_pane_info_from_view(SciObject *v) { return get_pane_info(gtk_widget_get_parent(v)); }
 
-void set_pane_size(Pane *pane, int size) { gtk_paned_set_position(GTK_PANED(pane), size); }
+void set_pane_split_pos(Pane *pane, int pos) { gtk_paned_set_position(GTK_PANED(pane), pos); }
 
 void show_tabs(bool show) { gtk_widget_set_visible(tabbar, show); }
 
@@ -326,7 +329,7 @@ void set_tab(int index) {
 }
 
 // Signal for a tab label mouse click.
-static bool tab_clicked(GtkWidget *label, GdkEventButton *event, void *_) {
+static int tab_clicked(GtkWidget *label, GdkEventButton *event, void *_) {
 	GtkNotebook *notebook = GTK_NOTEBOOK(tabbar);
 	for (int i = 0; i < gtk_notebook_get_n_pages(notebook); i++)
 		if (label == gtk_notebook_get_tab_label(notebook, gtk_notebook_get_nth_page(notebook, i))) {
@@ -442,6 +445,9 @@ void set_command_entry_height(int height) {
 	gtk_paned_set_position(GTK_PANED(paned), allocation.height - height);
 }
 
+bool is_statusbar_visible(void) { return gtk_widget_get_visible(statusbar_box); }
+void set_statusbar_visible(bool visible) { gtk_widget_set_visible(statusbar_box, visible); }
+const char *get_statusbar_text(int i) { return gtk_label_get_text(GTK_LABEL(statusbar[i])); }
 void set_statusbar_text(int i, const char *s) { gtk_label_set_text(GTK_LABEL(statusbar[i]), s); }
 
 // Signal for a menu item click.

@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 test('ui.print_to should print to a typed buffer in the current view if ui.tabs is enabled',
 	function()
@@ -323,6 +323,17 @@ test("clicking a buffer's tab should switch to that buffer", function()
 	test.assert_equal(_BUFFERS[buffer], 1)
 end)
 
+test("closing a buffer should not result in clicking on another tab", function()
+	local tab_clicked = test.stub()
+	local _<close> = test.connect(events.TAB_CLICKED, tab_clicked)
+
+	buffer.new()
+	view:goto_buffer(-1)
+	buffer:close()
+
+	test.assert(not tab_clicked.called, 'events.TAB_CLICKED was emitted')
+end)
+
 test("clicking a buffer's tab close button should close that buffer", function()
 	buffer.new()
 	local contents = 'text'
@@ -463,14 +474,31 @@ if CURSES then
 	test('clicking and dragging on a splitter bar should resize split view', function()
 		view:split(true)
 		view:split()
-		_VIEWS[1].size = 1
+		_VIEWS[1].split_pos = 1
 
 		events.emit(events.MOUSE, view.MOUSE_PRESS, 1, 0, 2, 1) -- simulate clock
 		events.emit(events.MOUSE, view.MOUSE_DRAG, 1, 0, 2, 2) -- simulate drag
 
-		test.assert_equal(_VIEWS[1].size, 2)
+		test.assert_equal(_VIEWS[1].split_pos, 2)
 	end)
 end
+
+test('ui.statusbar = false should hide the statusbar', function()
+	local _<close> = test.mock(ui, 'statusbar', false)
+
+	test.assert_equal(ui.statusbar, false)
+end)
+
+test('ui.statusbar_text should be readable', function()
+	local text = 'text'
+	ui.statusbar_text = text
+
+	test.assert_equal(ui.statusbar_text, text)
+end)
+
+test('ui.buffer_statusbar_text should be readable', function()
+	test.assert(#ui.buffer_statusbar_text > 0, 'ui.buffer_statusbar_text is not readable')
+end)
 
 test("ui.maximized = true should change the window's maximized state", function()
 	local _<close> = test.mock(ui, 'maximized', true)
@@ -501,16 +529,20 @@ test('ui.get_split_table should report the current split view state', function()
 	local splits = ui.get_split_table()
 
 	test.assert_equal(splits.vertical, true)
-	test.assert(splits.size > 0, 'should be a non-zero size')
+	test.assert(splits.size[1] > 0, 'should be a non-zero width')
+	test.assert(splits.size[2] > 0, 'should be a non-zero height')
+	test.assert(splits.size[3] > 0, 'should be a non-zero position')
 	test.assert_equal(_VIEWS[1], splits[1])
 	test.assert_equal(splits[2].vertical, false)
-	test.assert(splits[2].size > 0, 'should be a non-zero size')
+	test.assert(splits[2].size[1] > 0, 'should be a non-zero width')
+	test.assert(splits[2].size[2] > 0, 'should be a non-zero height')
+	test.assert(splits[2].size[3] > 0, 'should be a non-zero position')
 	test.assert_equal(_VIEWS[2], splits[2][1])
 	test.assert_equal(_VIEWS[3], splits[2][2])
 end)
 if GTK then
 	local gtk2 = os.getenv('CI') == 'true' and io.popen('dpkg --list'):read('a'):find('gtk2%.0%-dev')
-	if not gtk2 then expected_failure() end -- TODO: splits[2].size == 0
+	if not gtk2 then expected_failure() end -- TODO: splits[2].size[3] == 0
 end
 
 test('ui.goto_view should focus a given view', function()
@@ -559,3 +591,5 @@ test('ui.goto_view should focus a large relative view with wrapping (right)', fu
 
 	test.assert_equal(_VIEWS[view], 2)
 end)
+
+-- TODO: ui.popup_menu

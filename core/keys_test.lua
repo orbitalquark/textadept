@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 test('keys should contain sequences bound to commands', function()
 	local sequence1 = 'ctrl+a'

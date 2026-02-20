@@ -1,4 +1,4 @@
-// Copyright 2007-2025 Mitchell. See LICENSE.
+// Copyright 2007-2026 Mitchell. See LICENSE.
 
 #include "textadept.h"
 
@@ -77,8 +77,7 @@ bool emit(const char *name, ...) {
 	if (lua_pcall(lua, n, 1, 0) != LUA_OK)
 		// An error occurred within `events.emit()` itself, not an event handler.
 		return (show_error("Error", lua_tostring(lua, -1)), lua_pop(lua, 2), ret); // pop error, events
-	ret = lua_toboolean(lua, -1);
-	return (lua_pop(lua, 2), ret); // pop result, events
+	return (ret = lua_toboolean(lua, -1), lua_pop(lua, 2), ret); // pop result, events
 }
 
 // `string.iconv()` Lua function.
@@ -171,11 +170,16 @@ static int proc_kill(lua_State *L) {
 // `proc:__gc()` Lua metamethod.
 static int proc_gc(lua_State *L) { return (cleanup_process(luaL_checkudata(L, 1, "ta_spawn")), 0); }
 
+// Registry of Lua functions for the `proc` metatable.
+static luaL_Reg proc_f[] = {{"status", proc_status}, {"wait", proc_wait}, {"read", proc_read},
+	{"write", proc_write}, {"close", proc_close}, {"kill", proc_kill}, {"__gc", proc_gc},
+	{NULL, NULL}};
+
 // Returns whether or not the value at the given index is callable (i.e. it is either a function
 // or a table with a `__call` metafield).
-static int lua_iscallable(lua_State *L, int index) {
+static bool lua_iscallable(lua_State *L, int index) {
 	if (lua_isfunction(L, index)) return true;
-	return luaL_getmetafield(L, index, "__call") ? (lua_pop(L, 1), 1) : 0;
+	return luaL_getmetafield(L, index, "__call") ? (lua_pop(L, 1), true) : false;
 }
 
 // `os.spawn()` Lua function.
@@ -187,14 +191,13 @@ static int spawn_lua(lua_State *L) {
 	int envi = lua_istable(L, narg) && !lua_iscallable(L, narg) ? narg++ : 0;
 	if (envi) {
 		lua_newtable(L);
-		for (lua_pushnil(L); lua_next(L, envi); lua_pop(L, 1)) {
+		for (lua_pushnil(L); lua_next(L, envi) || (lua_replace(L, envi), false); lua_pop(L, 1)) {
 			if (!lua_isstring(L, -2) || !lua_isstring(L, -1)) continue;
 			if (lua_type(L, -2) == LUA_TSTRING)
 				lua_pushvalue(L, -2), lua_pushliteral(L, "="), lua_pushvalue(L, -3), lua_concat(L, 3),
 					lua_replace(L, -2); // v = k .. '=' .. v
 			lua_pushvalue(L, -1), lua_rawseti(L, -4, lua_rawlen(L, -4) + 1); // env[#env + 1] = v
 		}
-		lua_replace(L, envi);
 	}
 
 	// Create process object to be returned and link callback functions from optional function params.
@@ -210,19 +213,175 @@ static int spawn_lua(lua_State *L) {
 	bool ok = spawn(L, proc, top, cmd, cwd, envi, monitor_stdout, monitor_stderr, &error);
 	if (lua_settop(L, top), !ok)
 		return (lua_pushnil(L), lua_pushfstring(L, "%s: %s", lua_tostring(L, 1), error), 2);
-	if (luaL_newmetatable(L, "ta_spawn")) {
-		lua_pushcfunction(L, proc_status), lua_setfield(L, -2, "status");
-		lua_pushcfunction(L, proc_wait), lua_setfield(L, -2, "wait");
-		lua_pushcfunction(L, proc_read), lua_setfield(L, -2, "read");
-		lua_pushcfunction(L, proc_write), lua_setfield(L, -2, "write");
-		lua_pushcfunction(L, proc_close), lua_setfield(L, -2, "close");
-		lua_pushcfunction(L, proc_kill), lua_setfield(L, -2, "kill");
-		lua_pushcfunction(L, proc_gc), lua_setfield(L, -2, "__gc");
-		lua_pushvalue(L, -1), lua_setfield(L, -2, "__index");
-	}
+	if (luaL_newmetatable(L, "ta_spawn"))
+		luaL_setfuncs(L, proc_f, 0), // mt = {...}
+			lua_pushvalue(L, -1), lua_setfield(L, -2, "__index"); // mt.__index = mt
 	lua_setmetatable(L, -2);
 	lua_pushvalue(L, -1), lua_rawsetp(L, LUA_REGISTRYINDEX, proc); // t[proc] = proc; prevent GC
 	return 1;
+}
+
+// `ui.get_clipboard_text()` Lua function.
+static int get_clipboard_text_lua(lua_State *L) {
+	int len;
+	char *text = get_clipboard_text(&len);
+	return text ? (lua_pushlstring(L, text, len), free(text), 1) : (lua_pushliteral(L, ""), 1);
+}
+
+// Pushes the given Scintilla view onto the Lua stack.
+// The view must have previously been added with `add_view()`.
+static void lua_pushview(lua_State *L, SciObject *view) {
+	lua_getfield(L, LUA_REGISTRYINDEX, VIEWS), lua_rawgetp(L, -1, view), lua_replace(L, -2);
+}
+
+// Pushes onto the Lua stack the given pane, which may contain a Scintilla view or split views.
+static void lua_pushsplit(lua_State *L, Pane *pane) {
+	PaneInfo info = get_pane_info(pane);
+	if (info.is_split) {
+		lua_newtable(L); // {child1, child2, vertical = vertical, size = {width, height, split_pos}}
+		lua_pushsplit(L, info.child1), lua_rawseti(L, -2, 1);
+		lua_pushsplit(L, info.child2), lua_rawseti(L, -2, 2);
+		lua_pushboolean(L, info.vertical), lua_setfield(L, -2, "vertical");
+		lua_createtable(L, 3, 0), lua_pushnumber(L, info.width), lua_rawseti(L, -2, 1),
+			lua_pushnumber(L, info.height), lua_rawseti(L, -2, 2), lua_pushnumber(L, info.split_pos),
+			lua_rawseti(L, -2, 3), lua_setfield(L, -2, "size");
+	} else
+		lua_pushview(L, info.view);
+}
+
+// `ui.get_split_table()` Lua function.
+static int get_split_table(lua_State *L) { return (lua_pushsplit(L, get_top_pane()), 1); }
+
+// Returns whether or not the value on the Lua stack at the given index has a metatable with
+// the given name.
+static bool is_type(lua_State *L, int index, const char *tname) {
+	if (!lua_getmetatable(L, index)) return false;
+	bool has_metatable = (luaL_getmetatable(L, tname), lua_rawequal(L, -1, -2));
+	return (lua_pop(L, 2), has_metatable); // pop metatable, metatable
+}
+
+// Returns the Scintilla view on the Lua stack at the given acceptable index.
+static SciObject *lua_toview(lua_State *L, int index) {
+	SciObject *view = (lua_getfield(L, index, "widget_pointer"), lua_touserdata(L, -1));
+	return (lua_pop(L, 1), view); // pop widget_pointer
+}
+
+// Checks whether the given function argument is a Scintilla view and returns it.
+static SciObject *luaL_checkview(lua_State *L, int arg) {
+	return (luaL_argcheck(L, is_type(L, arg, "ta_view"), arg, "View expected"), lua_toview(L, arg));
+}
+
+// `ui.goto_view()` Lua function.
+static int goto_view(lua_State *L) {
+	if (!lua_isnumber(L, 1)) return (focus_view(luaL_checkview(L, 1)), 0);
+	lua_getfield(L, LUA_REGISTRYINDEX, VIEWS);
+	// i = _VIEWS[view], i = (i + n) % #_VIEWS, _VIEWS[i]
+	int i = (lua_pushview(L, focused_view), lua_gettable(L, -2), lua_tointeger(L, -1));
+	if ((i = (i + lua_tointeger(L, 1)) % lua_rawlen(L, -2)) == 0) i = lua_rawlen(L, -2);
+	return (lua_rawgeti(L, -2, i), focus_view(lua_toview(L, -1)), 0);
+}
+
+// `ui.menu()` Lua function.
+static int menu(lua_State *L) {
+	return (lua_pushlightuserdata(L, (luaL_checktype(L, 1, LUA_TTABLE), read_menu(L, 1))), 1);
+}
+
+// `ui.popup_menu()` Lua function.
+static int popup_menu_lua(lua_State *L) {
+	luaL_argcheck(L, lua_type(L, 1) == LUA_TLIGHTUSERDATA, 1, "menu expected");
+	return (popup_menu(lua_touserdata(L, 1), NULL), 0);
+}
+
+// `ui.update()` Lua function.
+static int update_ui_lua(lua_State *L) { return (update_ui(), 0); }
+
+// `ui.suspend()` Lua function.
+static int suspend_lua(lua_State *L) { return (suspend(), 0); }
+
+// Registry of Lua functions for the `ui` table.
+static luaL_Reg ui_f[] = {{"get_clipboard_text", get_clipboard_text_lua},
+	{"get_split_table", get_split_table}, {"goto_view", goto_view}, {"menu", menu},
+	{"popup_menu", popup_menu_lua}, {"update", update_ui_lua}, {"suspend", suspend_lua},
+	{NULL, NULL}};
+
+// `ui.__index` Lua metamethod.
+static int ui_index(lua_State *L) {
+	const char *key = lua_tostring(L, 2);
+	if (strcmp(key, "maximized") == 0) return (lua_pushboolean(L, is_maximized()), 1);
+	if (strcmp(key, "size") == 0) {
+		int width, height;
+		get_size(&width, &height);
+		return (lua_createtable(L, 2, 0), lua_pushinteger(L, width), lua_rawseti(L, -2, 1),
+			lua_pushinteger(L, height), lua_rawseti(L, -2, 2), 1); // {[1] = width, [2] = height}
+	}
+	if (strcmp(key, "statusbar_text") == 0 || strcmp(key, "buffer_statusbar_text") == 0)
+		return (lua_pushstring(L, get_statusbar_text(*key == 's' ? 0 : 1)), 1);
+	if (strcmp(key, "statusbar") == 0) return (lua_pushboolean(L, is_statusbar_visible()), 1);
+	if (strcmp(key, "tabs") == 0)
+		return (tabs <= 1 ? lua_pushboolean(L, tabs) : lua_pushinteger(L, tabs), 1);
+	return (lua_rawget(L, 1), 1);
+}
+
+#define lua_pushdoc(L, X) _Generic((X), sptr_t: _lua_pushdoc1, SciObject *: _lua_pushdoc2)(L, X)
+
+// Pushes the given Scintilla document onto the Lua stack.
+// The document must have previously been added with `add_doc()`.
+static void _lua_pushdoc1(lua_State *L, sptr_t doc) {
+	lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawgetp(L, -1, (sptr_t *)doc),
+		lua_replace(L, -2);
+}
+
+// Returns the given view's document.
+static sptr_t get_doc(SciObject *view) { return SS(view, SCI_GETDOCPOINTER, 0, 0); }
+
+// Pushes the given Scintilla view's document onto the Lua stack.
+static void _lua_pushdoc2(lua_State *L, SciObject *view) { _lua_pushdoc1(L, get_doc(view)); }
+
+// Synchronizes the tabbar after switching between Scintilla views or documents.
+static void sync_tabbar(void) {
+	if (!tabs) return;
+	set_tab((lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS), lua_pushdoc(lua, focused_view),
+		lua_gettable(lua, -2), lua_replace(lua, -2), lua_tointeger(lua, -1) - 1)), // _BUFFERS[buffer]
+		lua_pop(lua, 1); // pop index
+}
+
+// `ui.__newindex` Lua metatable.
+static int ui_newindex(lua_State *L) {
+	const char *key = lua_tostring(L, 2);
+	if (strcmp(key, "title") == 0) return (set_title(lua_tostring(L, 3)), 0);
+	if (strcmp(key, "statusbar_text") == 0 || strcmp(key, "buffer_statusbar_text") == 0)
+		return (set_statusbar_text(*key == 's' ? 0 : 1, lua_tostring(L, 3)), 0);
+	if (strcmp(key, "menubar") == 0) {
+		luaL_argcheck(L, lua_istable(L, 3), 3, "table of menus expected");
+		for (size_t i = 1; i <= lua_rawlen(L, 3); lua_pop(L, 1), i++)
+			luaL_argcheck(L, lua_rawgeti(L, 3, i) == LUA_TLIGHTUSERDATA, 3, "table of menus expected");
+		return (set_menubar(L, 3), 0);
+	}
+	if (strcmp(key, "maximized") == 0) return (set_maximized(lua_toboolean(L, 3)), 0);
+	if (strcmp(key, "size") == 0) {
+		luaL_argcheck(
+			L, lua_istable(L, 3) && lua_rawlen(L, 3) == 2, 3, "{width, height} table expected");
+		int width = get_int_field(L, 3, 1), height = get_int_field(L, 3, 2);
+		luaL_argcheck(L, width > 0 && height > 0, 3, "width and height must be greater than zero");
+		return (set_size(width, height), 0);
+	}
+	if (strcmp(key, "tabs") == 0) {
+		int show = !lua_isinteger(L, 3) ? lua_toboolean(L, 3) : lua_tointeger(L, 3);
+		int n = (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawlen(L, -1));
+		if (tabs && !show) {
+			show_tabs((tabs = show)); // prevent platform tab changed events
+			for (int i = 0; i < n; i++) remove_tab(0);
+			return 0;
+		} else if (!tabs && show)
+			for (int i = 1; i <= n; lua_pop(L, 1), i++) {
+				const char *label = (lua_geti(L, -1, i), lua_getfield(L, -1, "_tab_label"),
+					lua_replace(L, -2), lua_tostring(L, -1)); // _BUFFERS[buffer]._tab_label; popped on loop
+				add_tab(), set_tab_label(i - 1, label);
+			}
+		return (show_tabs((tabs = show) && (n > 1 || tabs > 1)), sync_tabbar(), 0);
+	}
+	if (strcmp(key, "statusbar") == 0) return (set_statusbar_visible(lua_toboolean(L, 3)), 0);
+	return (lua_rawset(L, 1), 0);
 }
 
 void find_clicked(FindButton *button) {
@@ -253,6 +412,11 @@ static int click_replace_all(lua_State *L) { return (find_clicked(replace_all), 
 
 // `find.focus()` Lua function.
 static int focus_find_lua(lua_State *L) { return (focus_find(), 0); }
+
+// Registry of Lua functions for the `ui.find` table.
+static luaL_Reg ui_find_f[] = {{"find_next", click_find_next}, {"find_prev", click_find_prev},
+	{"replace", click_replace}, {"replace_all", click_replace_all}, {"focus", focus_find_lua},
+	{NULL, NULL}};
 
 // `find.__index` Lua metamethod.
 static int find_index(lua_State *L) {
@@ -302,13 +466,8 @@ static int find_newindex(lua_State *L) {
 // `command_entry.focus()` Lua function.
 static int focus_command_entry_lua(lua_State *L) { return (focus_command_entry(), 0); }
 
-// Returns whether or not the value on the Lua stack at the given index has a metatable with
-// the given name.
-static bool is_type(lua_State *L, int index, const char *tname) {
-	if (!lua_getmetatable(L, index)) return false;
-	bool has_metatable = (luaL_getmetatable(L, tname), lua_rawequal(L, -1, -2));
-	return (lua_pop(L, 2), has_metatable); // pop metatable, metatable
-}
+// Registry of Lua functions for the `ui.command_entry` table.
+static luaL_Reg ui_command_entry_f[] = {{"focus", focus_command_entry_lua}, {NULL, NULL}};
 
 // Returns the Scintilla document on the Lua stack at the given acceptable index.
 static sptr_t lua_todoc(lua_State *L, int index) {
@@ -316,17 +475,8 @@ static sptr_t lua_todoc(lua_State *L, int index) {
 	return (lua_pop(L, 1), doc); // pop doc_pointer
 }
 
-// Pushes the given Scintilla document onto the Lua stack.
-// The document must have previously been added with `add_doc()`.
-static void lua_pushdoc(lua_State *L, sptr_t doc) {
-	lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawgetp(L, -1, (sptr_t *)doc),
-		lua_replace(L, -2);
-}
-
 // Returns whether or not the given document is the command entry.
-static bool is_command_entry(sptr_t doc) {
-	return doc == SS(command_entry, SCI_GETDOCPOINTER, 0, 0);
-}
+static bool is_command_entry(sptr_t doc) { return doc == get_doc(command_entry); }
 
 // Returns a suitable Scintilla view that can operate on the Scintilla document on the Lua
 // stack at the given index.
@@ -336,20 +486,14 @@ static bool is_command_entry(sptr_t doc) {
 static SciObject *view_for_doc(lua_State *L, int index) {
 	luaL_argcheck(L, is_type(L, index, "ta_buffer"), index, "Buffer expected");
 	sptr_t doc = lua_todoc(L, index);
-	if (doc == SS(focused_view, SCI_GETDOCPOINTER, 0, 0)) return focused_view;
+	if (doc == get_doc(focused_view)) return focused_view;
 	luaL_argcheck(L,
 		(lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_pushdoc(L, doc), lua_gettable(L, -2)), index,
 		"this Buffer does not exist"),
 		lua_pop(L, 2); // pop buffer, _BUFFERS
 	if (is_command_entry(doc)) return command_entry;
-	if (doc == SS(dummy_view, SCI_GETDOCPOINTER, 0, 0)) return dummy_view;
+	if (doc == get_doc(dummy_view)) return dummy_view;
 	return (SS(dummy_view, SCI_SETDOCPOINTER, 0, doc), dummy_view);
-}
-
-// Returns the Scintilla view on the Lua stack at the given acceptable index.
-static SciObject *lua_toview(lua_State *L, int index) {
-	SciObject *view = (lua_getfield(L, index, "widget_pointer"), lua_touserdata(L, -1));
-	return (lua_pop(L, 1), view); // pop widget_pointer
 }
 
 // Checks whether the given function argument is of the given Scintilla parameter type and
@@ -426,9 +570,8 @@ static int call_scintilla_lua(lua_State *L) {
 // Creates the metatable with the given __index and __newindex functions if necessary.
 static void set_metatable(
 	lua_State *L, int index, const char *name, lua_CFunction __index, lua_CFunction __newindex) {
-	if (luaL_newmetatable(L, name))
-		lua_pushcfunction(L, __index), lua_setfield(L, -2, "__index"), lua_pushcfunction(L, __newindex),
-			lua_setfield(L, -2, "__newindex");
+	luaL_Reg f[] = {{"__index", __index}, {"__newindex", __newindex}, {NULL, NULL}};
+	if (luaL_newmetatable(L, name)) luaL_setfuncs(L, f, 0);
 	lua_setmetatable(L, index > 0 ? index : index - 1);
 }
 
@@ -600,128 +743,10 @@ static int list_dialog_lua(lua_State *L) {
 	return list_dialog(opts, L);
 }
 
-// `ui.get_clipboard_text()` Lua function.
-static int get_clipboard_text_lua(lua_State *L) {
-	int len;
-	char *text = get_clipboard_text(&len);
-	return text ? (lua_pushlstring(L, text, len), free(text), 1) : (lua_pushliteral(L, ""), 1);
-}
-
-// Pushes the given Scintilla view onto the Lua stack.
-// The view must have previously been added with `add_view()`.
-static void lua_pushview(lua_State *L, SciObject *view) {
-	lua_getfield(L, LUA_REGISTRYINDEX, VIEWS), lua_rawgetp(L, -1, view), lua_replace(L, -2);
-}
-
-// Pushes onto the Lua stack the given pane, which may contain a Scintilla view or split views.
-static void lua_pushsplit(lua_State *L, Pane *pane) {
-	PaneInfo info = get_pane_info(pane);
-	if (info.is_split) {
-		lua_newtable(L);
-		lua_pushsplit(L, info.child1), lua_rawseti(L, -2, 1);
-		lua_pushsplit(L, info.child2), lua_rawseti(L, -2, 2);
-		lua_pushboolean(L, info.vertical), lua_setfield(L, -2, "vertical");
-		lua_pushinteger(L, info.size), lua_setfield(L, -2, "size");
-	} else
-		lua_pushview(L, info.view);
-}
-
-// `ui.get_split_table()` Lua function.
-static int get_split_table(lua_State *L) { return (lua_pushsplit(L, get_top_pane()), 1); }
-
-// Checks whether the given function argument is a Scintilla view and returns it.
-static SciObject *luaL_checkview(lua_State *L, int arg) {
-	return (luaL_argcheck(L, is_type(L, arg, "ta_view"), arg, "View expected"), lua_toview(L, arg));
-}
-
-// `ui.goto_view()` Lua function.
-static int goto_view(lua_State *L) {
-	if (!lua_isnumber(L, 1)) return (focus_view(luaL_checkview(L, 1)), 0);
-	lua_getfield(L, LUA_REGISTRYINDEX, VIEWS);
-	// i = _VIEWS[view], i = (i + n) % #_VIEWS, _VIEWS[i]
-	int i = (lua_pushview(L, focused_view), lua_gettable(L, -2), lua_tointeger(L, -1));
-	if ((i = (i + lua_tointeger(L, 1)) % lua_rawlen(L, -2)) == 0) i = lua_rawlen(L, -2);
-	return (lua_rawgeti(L, -2, i), focus_view(lua_toview(L, -1)), 0);
-}
-
-// `ui.menu()` Lua function.
-static int menu(lua_State *L) {
-	return (lua_pushlightuserdata(L, (luaL_checktype(L, 1, LUA_TTABLE), read_menu(L, 1))), 1);
-}
-
-// `ui.popup_menu()` Lua function.
-static int popup_menu_lua(lua_State *L) {
-	luaL_argcheck(L, lua_type(L, 1) == LUA_TLIGHTUSERDATA, 1, "menu expected");
-	return (popup_menu(lua_touserdata(L, 1), NULL), 0);
-}
-
-// `ui.update()` Lua function.
-static int update_ui_lua(lua_State *L) { return (update_ui(), 0); }
-
-// `ui.suspend()` Lua function.
-static int suspend_lua(lua_State *L) { return (suspend(), 0); }
-
-// `ui.__index` Lua metamethod.
-static int ui_index(lua_State *L) {
-	const char *key = lua_tostring(L, 2);
-	if (strcmp(key, "maximized") == 0) return (lua_pushboolean(L, is_maximized()), 1);
-	if (strcmp(key, "size") == 0) {
-		int width, height;
-		get_size(&width, &height);
-		return (lua_createtable(L, 2, 0), lua_pushinteger(L, width), lua_rawseti(L, -2, 1),
-			lua_pushinteger(L, height), lua_rawseti(L, -2, 2), 1); // {[1] = width, [2] = height}
-	}
-	if (strcmp(key, "tabs") == 0)
-		return (tabs <= 1 ? lua_pushboolean(L, tabs) : lua_pushinteger(L, tabs), 1);
-	return (lua_rawget(L, 1), 1);
-}
-
-// Synchronizes the tabbar after switching between Scintilla views or documents.
-static void sync_tabbar(void) {
-	if (!tabs) return;
-	set_tab((lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS),
-		lua_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_gettable(lua, -2),
-		lua_replace(lua, -2), lua_tointeger(lua, -1) - 1)), // _BUFFERS[buffer]
-		lua_pop(lua, 1); // pop index
-}
-
-// `ui.__newindex` Lua metatable.
-static int ui_newindex(lua_State *L) {
-	const char *key = lua_tostring(L, 2);
-	if (strcmp(key, "title") == 0) return (set_title(lua_tostring(L, 3)), 0);
-	if (strcmp(key, "statusbar_text") == 0 || strcmp(key, "buffer_statusbar_text") == 0)
-		return (set_statusbar_text(*key == 's' ? 0 : 1, lua_tostring(L, 3)), 0);
-	if (strcmp(key, "menubar") == 0) {
-		luaL_argcheck(L, lua_istable(L, 3), 3, "table of menus expected");
-		for (size_t i = 1; i <= lua_rawlen(L, 3); lua_pop(L, 1), i++)
-			luaL_argcheck(L, lua_rawgeti(L, 3, i) == LUA_TLIGHTUSERDATA, 3, "table of menus expected");
-		return (set_menubar(L, 3), 0);
-	}
-	if (strcmp(key, "maximized") == 0) return (set_maximized(lua_toboolean(L, 3)), 0);
-	if (strcmp(key, "size") == 0) {
-		luaL_argcheck(
-			L, lua_istable(L, 3) && lua_rawlen(L, 3) == 2, 3, "{width, height} table expected");
-		int width = get_int_field(L, 3, 1), height = get_int_field(L, 3, 2);
-		luaL_argcheck(L, width > 0 && height > 0, 3, "width and height must be greater than zero");
-		return (set_size(width, height), 0);
-	}
-	if (strcmp(key, "tabs") == 0) {
-		int show = !lua_isinteger(L, 3) ? lua_toboolean(L, 3) : lua_tointeger(L, 3);
-		int n = (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawlen(L, -1));
-		if (tabs && !show) {
-			show_tabs((tabs = show)); // prevent platform tab changed events
-			for (int i = 0; i < n; i++) remove_tab(0);
-			return 0;
-		} else if (!tabs && show)
-			for (int i = 1; i <= n; i++) {
-				const char *label = (lua_geti(L, -1, i), lua_getfield(L, -1, "_tab_label"),
-					lua_replace(L, -2), lua_tostring(L, -1)); // _BUFFERS[buffer]._tab_label
-				add_tab(), set_tab_label(i - 1, label), lua_pop(L, 1); // pop label
-			}
-		return (show_tabs((tabs = show) && (n > 1 || tabs > 1)), sync_tabbar(), 0);
-	}
-	return (lua_rawset(L, 1), 0);
-}
+// Registry of Lua functions for the `ui.dialogs` table.
+static luaL_Reg ui_dialogs_f[] = {{"message", message_dialog_lua}, {"input", input_dialog_lua},
+	{"open", open_dialog_lua}, {"save", save_dialog_lua}, {"progress", progress_dialog_lua},
+	{"list", list_dialog_lua}, {NULL, NULL}};
 
 void move_buffer(int from, int to, bool reorder_tabs) {
 	lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS);
@@ -731,9 +756,9 @@ void move_buffer(int from, int to, bool reorder_tabs) {
 		lua_getfield(lua, -1, "remove"), lua_replace(lua, -2), lua_pushvalue(lua, -5),
 		lua_pushinteger(lua, from), lua_call(lua, 2, 1), lua_call(lua, 3, 0);
 	// for i = 1, #_BUFFERS do _BUFFERS[_BUFFERS[i]] = i end
-	for (size_t i = 1; i <= lua_rawlen(lua, -1); i++)
+	for (size_t i = 1; i <= lua_rawlen(lua, -1) || (lua_pop(lua, 1), false); i++)
 		lua_rawgeti(lua, -1, i), lua_pushinteger(lua, i), lua_rawset(lua, -3);
-	if (lua_pop(lua, 1), tabs && reorder_tabs) move_tab(from - 1, to - 1); // pop _BUFFERS
+	if (tabs && reorder_tabs) move_tab(from - 1, to - 1);
 }
 
 // `_G.move_buffer` Lua function.
@@ -772,7 +797,7 @@ static int reset(lua_State *L) {
 		(lua_rawgeti(L, LUA_REGISTRYINDEX, persist_ref), luaL_ref(L, LUA_REGISTRYINDEX)), -1);
 	init_lua(0, NULL);
 	lua_pushview(L, focused_view), lua_setglobal(L, "view");
-	lua_pushdoc(L, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(L, "buffer");
+	lua_pushdoc(L, focused_view), lua_setglobal(L, "buffer");
 	lua_pushnil(L), lua_setglobal(L, "arg");
 	run_file("init.lua"), emit("initialized", -1);
 	// Cycle through buffers and views, simulating "buffer_new" and "view_new" events to
@@ -793,6 +818,7 @@ static int reset(lua_State *L) {
 // Platforms should repeatedly call this function when the timeout interval has passed for as
 // long as it returns true.
 static bool call_timeout_function(int *refs) {
+	if (!lua) return false; // quitting
 	int nargs = 0;
 	lua_rawgeti(lua, LUA_REGISTRYINDEX, refs[0]); // function
 	while (refs[++nargs]) lua_rawgeti(lua, LUA_REGISTRYINDEX, refs[nargs]);
@@ -861,37 +887,22 @@ static bool init_lua(int argc, char **argv) {
 	lua_getglobal(L, "os"), lua_pushcfunction(L, spawn_lua), lua_setfield(L, -2, "spawn"),
 		lua_pop(L, 1); // os.spawn
 
-	lua_newtable(L), lua_newtable(L); // ui, ui.find
-	lua_pushcfunction(L, click_find_next), lua_setfield(L, -2, "find_next");
-	lua_pushcfunction(L, click_find_prev), lua_setfield(L, -2, "find_prev");
-	lua_pushcfunction(L, click_replace), lua_setfield(L, -2, "replace");
-	lua_pushcfunction(L, click_replace_all), lua_setfield(L, -2, "replace_all");
-	lua_pushcfunction(L, focus_find_lua), lua_setfield(L, -2, "focus");
-	set_metatable(L, -1, "ta_find", find_index, find_newindex), lua_setfield(L, -2, "find");
-	if (!lua) {
-		lua_newtable(L); // ui.command_entry
-		lua_pushcfunction(L, focus_command_entry_lua), lua_setfield(L, -2, "focus");
-		set_metatable(L, -1, "ta_buffer", buffer_index, buffer_newindex);
-	} else
+	// ui = setmetatable({...}, {__index = ui_index, __newindex = ui_newindex})
+	luaL_newlib(L, ui_f), set_metatable(L, -1, "ta_ui", ui_index, ui_newindex);
+	// ui.find = setmetatable({...}, {__index = find_index, __newindex = find_newindex})
+	luaL_newlib(L, ui_find_f), set_metatable(L, -1, "ta_find", find_index, find_newindex),
+		lua_setfield(L, -2, "find");
+	// ui.command_entry = setmetatable({...}, {__index = buffer_index, __newindex = buffer_newindex})
+	if (!lua)
+		luaL_newlib(L, ui_command_entry_f),
+			set_metatable(L, -1, "ta_buffer", buffer_index, buffer_newindex);
+	else
 		lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawgeti(L, -1, 0),
 			lua_replace(L, -2); // _BUFFERS[0] is the command_entry
 	lua_setfield(L, -2, "command_entry");
-	lua_newtable(L); // ui.dialogs
-	lua_pushcfunction(L, message_dialog_lua), lua_setfield(L, -2, "message");
-	lua_pushcfunction(L, input_dialog_lua), lua_setfield(L, -2, "input");
-	lua_pushcfunction(L, open_dialog_lua), lua_setfield(L, -2, "open");
-	lua_pushcfunction(L, save_dialog_lua), lua_setfield(L, -2, "save");
-	lua_pushcfunction(L, progress_dialog_lua), lua_setfield(L, -2, "progress");
-	lua_pushcfunction(L, list_dialog_lua), lua_setfield(L, -2, "list");
-	lua_setfield(L, -2, "dialogs");
-	lua_pushcfunction(L, get_clipboard_text_lua), lua_setfield(L, -2, "get_clipboard_text");
-	lua_pushcfunction(L, get_split_table), lua_setfield(L, -2, "get_split_table");
-	lua_pushcfunction(L, goto_view), lua_setfield(L, -2, "goto_view");
-	lua_pushcfunction(L, menu), lua_setfield(L, -2, "menu");
-	lua_pushcfunction(L, popup_menu_lua), lua_setfield(L, -2, "popup_menu");
-	lua_pushcfunction(L, update_ui_lua), lua_setfield(L, -2, "update");
-	lua_pushcfunction(L, suspend_lua), lua_setfield(L, -2, "suspend");
-	set_metatable(L, -1, "ta_ui", ui_index, ui_newindex), lua_setglobal(L, "ui");
+	// ui.dialogs = {...}
+	luaL_newlib(L, ui_dialogs_f), lua_setfield(L, -2, "dialogs");
+	lua_setglobal(L, "ui");
 
 	// _G
 	lua_getfield(L, LUA_REGISTRYINDEX, ARG), lua_setglobal(L, "arg");
@@ -918,14 +929,14 @@ static bool init_lua(int argc, char **argv) {
 static void view_focused(SciObject *view) {
 	if (!initing && !closing) emit("view_before_switch", -1);
 	lua_pushview(lua, focused_view = view), lua_setglobal(lua, "view"), sync_tabbar();
-	lua_pushdoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
+	lua_pushdoc(lua, view), lua_setglobal(lua, "buffer");
 	if (!initing && !closing) emit("view_after_switch", -1);
 }
 
 // Emits the given Scintilla notification to Lua.
 static void emit_notification(SCNotification *n) {
 	if (n->nmhdr.code == SCN_KEY) return; // platforms are handling key events; avoid duplicates
-	lua_newtable(lua);
+	lua_createtable(lua, 0, 14);
 	lua_pushinteger(lua, n->nmhdr.code), lua_setfield(lua, -2, "code");
 	lua_pushinteger(lua, n->position + 1), lua_setfield(lua, -2, "position");
 	lua_pushinteger(lua, n->ch), lua_setfield(lua, -2, "ch");
@@ -958,7 +969,7 @@ static void emit_notification(SCNotification *n) {
 static void notified(SciObject *view, int _, SCNotification *n, void *__) {
 	if (n->nmhdr.code == SCN_STYLENEEDED)
 		emit("style_needed", LUA_TNUMBER, n->position + 1, LUA_TTABLE,
-			(lua_pushdoc(lua, SS(view, SCI_GETDOCPOINTER, 0, 0)), luaL_ref(lua, LUA_REGISTRYINDEX)), -1);
+			(lua_pushdoc(lua, view), luaL_ref(lua, LUA_REGISTRYINDEX)), -1);
 	else if (view == command_entry) {
 		if (n->nmhdr.code == SCN_MODIFIED &&
 			(n->modificationType & (SC_MOD_INSERTTEXT | SC_MOD_DELETETEXT)))
@@ -979,8 +990,7 @@ static void goto_doc(lua_State *L, SciObject *view, int n, bool relative) {
 	lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS);
 	if (relative) {
 		// i = _BUFFERS[buffer], i = (i + n) % #_BUFFERS, _BUFFERS[i]
-		int i = (lua_pushdoc(L, SS(view, SCI_GETDOCPOINTER, 0, 0)), lua_gettable(L, -2),
-			lua_tointeger(L, -1));
+		int i = (lua_pushdoc(L, view), lua_gettable(L, -2), lua_tointeger(L, -1));
 		if (lua_pop(L, 1), (i = (i + n) % lua_rawlen(L, -1)) == 0) i = lua_rawlen(L, -1); // pop index
 		lua_rawgeti(L, -1, i), lua_replace(L, -2);
 	} else
@@ -1013,11 +1023,11 @@ static void new_buffer(sptr_t doc) {
 static void remove_doc(sptr_t doc) {
 	lua_getfield(lua, LUA_REGISTRYINDEX, VIEWS);
 	// for i = 1, #_VIEWS do if _VIEWS[i].buffer == buffer then view:goto_buffer(-1) end
-	for (size_t i = 1; i <= lua_rawlen(lua, -1); lua_pop(lua, 1), i++)
-		if (doc == SS((lua_rawgeti(lua, -1, i), lua_toview(lua, -1)), SCI_GETDOCPOINTER, 0, 0))
-			goto_doc(lua, lua_toview(lua, -1), -1, true); // popped on loop
-	if (doc == SS(dummy_view, SCI_GETDOCPOINTER, 0, 0)) SS(dummy_view, SCI_SETDOCPOINTER, 0, 0);
-	lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS), lua_replace(lua, -2); // replaces _VIEWS
+	for (size_t i = 1; i <= lua_rawlen(lua, -1) || (lua_pop(lua, 1), false); lua_pop(lua, 1), i++)
+		if (doc == get_doc((lua_rawgeti(lua, -1, i), lua_toview(lua, -1)))) // popped on loop
+			goto_doc(lua, lua_toview(lua, -1), -1, true);
+	if (doc == get_doc(dummy_view)) SS(dummy_view, SCI_SETDOCPOINTER, 0, 0);
+	lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS);
 	for (size_t i = 1; i <= lua_rawlen(lua, -1); lua_pop(lua, 1), i++)
 		if (doc == (lua_rawgeti(lua, -1, i), lua_todoc(lua, -1))) { // popped on loop
 			// _BUFFERS[buffer] = nil, _BUFFERS[buffer.doc_pointer] = nil, table.remove(_BUFFERS, i)
@@ -1046,7 +1056,7 @@ static void delete_buffer(sptr_t doc) {
 static int delete_buffer_lua(lua_State *L) {
 	SciObject *view = view_for_doc(L, 1);
 	luaL_argcheck(L, view != command_entry, 1, "cannot delete command entry");
-	sptr_t doc = SS(view, SCI_GETDOCPOINTER, 0, 0);
+	sptr_t doc = get_doc(view);
 	// if #_BUFFERS == 1 then buffer.new() end
 	if (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawlen(L, -1) == 1) new_buffer(0);
 	if (view == focused_view) goto_doc(L, focused_view, -1, true);
@@ -1063,20 +1073,23 @@ static int new_buffer_lua(lua_State *L) {
 	return (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawgeti(L, -1, lua_rawlen(L, -1)), 1);
 }
 
+// Registry of Lua functions for `buffer` tables.
+static luaL_Reg buffer_f[] = {{"delete", delete_buffer_lua}, {"new", new_buffer_lua}, {NULL, NULL}};
+
 // Adds the given Scintilla document along with a metatable to the 'buffers' Lua registry table.
 // If the document is 0, adds the command entry's document at a constant index (0).
 static void add_doc(sptr_t doc) {
 	lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS);
 	if (doc) {
-		lua_newtable(lua); // buffer = {}
-		lua_pushlightuserdata(lua, (sptr_t *)doc), lua_setfield(lua, -2, "doc_pointer");
-		lua_pushcfunction(lua, delete_buffer_lua), lua_setfield(lua, -2, "delete");
-		lua_pushcfunction(lua, new_buffer_lua), lua_setfield(lua, -2, "new");
-		set_metatable(lua, -1, "ta_buffer", buffer_index, buffer_newindex);
+		// setmetatable({..., doc_pointer = doc},
+		//   {__index = buffer_index, __newindex = buffer_newindex})
+		luaL_newlib(lua, buffer_f), set_metatable(lua, -1, "ta_buffer", buffer_index, buffer_newindex);
+		lua_pushliteral(lua, "doc_pointer"), lua_pushlightuserdata(lua, (sptr_t *)doc),
+			lua_rawset(lua, -3);
 	} else
 		lua_getglobal(lua, "ui"), lua_getfield(lua, -1, "command_entry"), lua_replace(lua, -2),
 			lua_pushstring(lua, "doc_pointer"),
-			lua_pushlightuserdata(lua, (sptr_t *)SS(command_entry, SCI_GETDOCPOINTER, 0, 0)),
+			lua_pushlightuserdata(lua, (sptr_t *)get_doc(command_entry)),
 			lua_rawset(lua, -3); // ui.command_entry.doc_pointer = doc
 	// t[buffer.doc_pointer] = buffer, t[doc and #t + 1 or 0] = buffer, t[buffer] = doc and #t or 0
 	lua_getfield(lua, -1, "doc_pointer"), lua_pushvalue(lua, -2), lua_rawset(lua, -4);
@@ -1110,7 +1123,7 @@ static int split_view_lua(lua_State *L) {
 	int first_line = SS(view, SCI_GETFIRSTVISIBLELINE, 0, 0),
 			x_offset = SS(view, SCI_GETXOFFSET, 0, 0), current_pos = SS(view, SCI_GETCURRENTPOS, 0, 0),
 			anchor = SS(view, SCI_GETANCHOR, 0, 0);
-	SciObject *view2 = new_view(SS(view, SCI_GETDOCPOINTER, 0, 0));
+	SciObject *view2 = new_view(get_doc(view));
 	split_view(view, view2, lua_toboolean(L, 2)), focus_view(view2), update_ui();
 	SS(view2, SCI_SETSEL, anchor, current_pos), SS(view2, SCI_SETFIRSTVISIBLELINE, first_line, 0),
 		SS(view2, SCI_SETXOFFSET, x_offset, 0);
@@ -1145,14 +1158,18 @@ static int unsplit_view_lua(lua_State *L) {
 	return (lua_pushboolean(L, unsplit_view(luaL_checkview(L, 1), delete_view)), 1);
 }
 
+// Registry of Lua functions for `view` tables.
+static luaL_Reg view_f[] = {{"goto_buffer", goto_doc_lua}, {"split", split_view_lua},
+	{"unsplit", unsplit_view_lua}, {NULL, NULL}};
+
 // `view.__index` metamethod.
 static int view_index(lua_State *L) {
-	if (strcmp(lua_tostring(L, 2), "buffer") == 0)
-		return (lua_pushdoc(L, SS(lua_toview(L, 1), SCI_GETDOCPOINTER, 0, 0)), 1);
-	if (strcmp(lua_tostring(L, 2), "size") == 0 || strcmp(lua_tostring(L, 2), "parent_size") == 0) {
+	const char *key = lua_tostring(L, 2);
+	if (strcmp(key, "buffer") == 0) return (lua_pushdoc(L, lua_toview(L, 1)), 1);
+	if (strcmp(key, "split_pos") == 0 || strcmp(key, "parent_split_pos") == 0) {
 		PaneInfo info = get_pane_info_from_view(lua_toview(L, 1));
-		if (*lua_tostring(L, 2) == 'p' && info.is_split) info = get_parent_pane_info(info);
-		return (info.is_split ? lua_pushinteger(L, info.size) : lua_pushnil(L), 1);
+		if (*key == 'p' && info.is_split) info = get_parent_pane_info(info);
+		return (info.is_split ? lua_pushinteger(L, info.split_pos) : lua_pushnil(L), 1);
 	}
 	if (lua_getglobal(L, "_SCINTILLA"), lua_pushvalue(L, 2), lua_rawget(L, -2)) {
 		if (lua_type(L, -1) != LUA_TTABLE) return 1; // constant or function
@@ -1168,12 +1185,12 @@ static int view_index(lua_State *L) {
 
 // `view.__newindex` metamethod.
 static int view_newindex(lua_State *L) {
-	if (strcmp(lua_tostring(L, 2), "buffer") == 0)
-		return (luaL_argerror(L, 2, "read-only property"), 0);
-	if (strcmp(lua_tostring(L, 2), "size") == 0 || strcmp(lua_tostring(L, 2), "parent_size") == 0) {
+	const char *key = lua_tostring(L, 2);
+	if (strcmp(key, "buffer") == 0) return (luaL_argerror(L, 2, "read-only property"), 0);
+	if (strcmp(key, "split_pos") == 0 || strcmp(key, "parent_split_pos") == 0) {
 		PaneInfo info = get_pane_info_from_view(lua_toview(L, 1));
-		if (*lua_tostring(L, 2) == 'p' && info.is_split) info = get_parent_pane_info(info);
-		if (info.is_split) set_pane_size(info.self, fmax(luaL_checkinteger(L, 3), 0));
+		if (*key == 'p' && info.is_split) info = get_parent_pane_info(info);
+		if (info.is_split) set_pane_split_pos(info.self, fmax(luaL_checkinteger(L, 3), 0));
 		return 0;
 	}
 	// If the key is a Scintilla property (more than 4 iface values), call Scintilla to set its value.
@@ -1186,12 +1203,9 @@ static int view_newindex(lua_State *L) {
 // Adds the given Scintilla view with a metatable to the 'views' Lua registry table.
 static void add_view(SciObject *view) {
 	lua_getfield(lua, LUA_REGISTRYINDEX, VIEWS);
-	lua_newtable(lua); // view = {}
-	lua_pushlightuserdata(lua, view), lua_setfield(lua, -2, "widget_pointer");
-	lua_pushcfunction(lua, goto_doc_lua), lua_setfield(lua, -2, "goto_buffer");
-	lua_pushcfunction(lua, split_view_lua), lua_setfield(lua, -2, "split");
-	lua_pushcfunction(lua, unsplit_view_lua), lua_setfield(lua, -2, "unsplit");
-	set_metatable(lua, -1, "ta_view", view_index, view_newindex);
+	// setmetatable({..., widget_pointer = view}, {__index = view_index, __newindex = view_newindex})
+	luaL_newlib(lua, view_f), set_metatable(lua, -1, "ta_view", view_index, view_newindex);
+	lua_pushliteral(lua, "widget_pointer"), lua_pushlightuserdata(lua, view), lua_rawset(lua, -3);
 	// _VIEWS[view.widget_pointer] = view, _VIEWS[#_VIEWS + 1] = view, _VIEWS[view] = #_VIEWS
 	lua_pushvalue(lua, -1), lua_rawsetp(lua, -3, view);
 	lua_pushvalue(lua, -1), lua_rawseti(lua, -3, lua_rawlen(lua, -3) + 1);
@@ -1209,7 +1223,7 @@ static SciObject *new_view(sptr_t doc) {
 	add_view(view), lua_pushview(lua, view), lua_setglobal(lua, "view");
 	if (doc) SS(view, SCI_SETDOCPOINTER, 0, doc);
 	focus_view(view), focused_view = view;
-	if (!doc) new_buffer(SS(view, SCI_GETDOCPOINTER, 0, 0));
+	if (!doc) new_buffer(get_doc(view));
 	if (!initing) emit("view_new", -1);
 	return view;
 }
@@ -1223,9 +1237,10 @@ void close_textadept(void) {
 		while (unsplit_view(focused_view, delete_view)) {}
 		// for i = #_BUFFERS, 1, -1 do _BUFFERS[i]:delete() end
 		lua_getfield(lua, LUA_REGISTRYINDEX, BUFFERS);
-		for (int i = lua_rawlen(lua, -1); i > 0; lua_pop(lua, 1), i--)
+		for (int i = lua_rawlen(lua, -1); i > 0 || (lua_pop(lua, 1), false); lua_pop(lua, 1), i--)
 			lua_rawgeti(lua, -1, i), delete_buffer(lua_todoc(lua, -1)); // popped on loop
 		delete_scintilla(focused_view), delete_scintilla(command_entry), delete_scintilla(dummy_view);
+		if (lua_gettop(lua)) fprintf(stderr, "error: Lua stack has unpopped elements\n");
 		lua_close(lua), lua = NULL;
 	}
 	if (textadept_home) free(textadept_home), textadept_home = NULL;
@@ -1266,6 +1281,9 @@ bool init_textadept(int argc, char **argv) {
 #else
 #error platform not supported
 #endif
+#ifdef TEXTADEPT_HOME
+	textadept_home = strcpy(textadept_home, TEXTADEPT_HOME);
+#endif
 	if (getenv("TEXTADEPT_HOME")) strcpy(textadept_home, getenv("TEXTADEPT_HOME"));
 
 	setlocale(LC_COLLATE, "C"), setlocale(LC_NUMERIC, "C"); // for Lua
@@ -1276,9 +1294,9 @@ bool init_textadept(int argc, char **argv) {
 	initing = true, new_window(create_first_view), ok = run_file("init.lua"), initing = false;
 	if (!ok) return (close_textadept(), exit_status = 1, ok);
 	emit("buffer_new", -1), emit("view_new", -1); // first ones
-	lua_pushdoc(lua, SS(command_entry, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
+	lua_pushdoc(lua, command_entry), lua_setglobal(lua, "buffer");
 	emit("buffer_new", -1), emit("view_new", -1); // command entry
-	lua_pushdoc(lua, SS(focused_view, SCI_GETDOCPOINTER, 0, 0)), lua_setglobal(lua, "buffer");
+	lua_pushdoc(lua, focused_view), lua_setglobal(lua, "buffer");
 	return (emit("initialized", -1), ok); // ready
 }
 

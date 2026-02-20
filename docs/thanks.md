@@ -8,6 +8,7 @@ amazing editor that it is today.
 - Ahed Eid
 - Alex Bepple
 - Ana Balan
+- Andrew Geng
 - Anton Verbitski
 - Benjamin Barenblat
 - Bill Meahan
@@ -16,14 +17,17 @@ amazing editor that it is today.
 - Carl Sturtivant
 - Chris Emerson
 - Christof Böckler
+- coolvitto
 - Daniel Wutke
 - Franck Guadagnini
+- Fwirt
 - Gabriel Dubatti
 - Georger Araújo
 - Gilles Grégoire
 - Giovanni Salmeri
 - Heck Fy
 - Ivan Baidakou
+- Jamie Drinkell
 - Jay Gould
 - Jeff Stone
 - John Benediktsson

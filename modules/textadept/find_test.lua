@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 -- Test find and replace text.
 local find = 'word'
@@ -34,7 +34,6 @@ end)
 test('find should count how many occurrences it found', function()
 	buffer:append_text(find .. find)
 	ui.find.find_entry_text = find
-	local _<close> = test.disable_metafield(ui, 'statusbar_text')
 
 	ui.find.find_next()
 
@@ -74,7 +73,6 @@ end)
 
 test('find should display a statusbar message if it could not find anything', function()
 	ui.find.find_entry_text = 'will not be found'
-	local _<close> = test.disable_metafield(ui, 'statusbar_text')
 
 	ui.find.find_next()
 
@@ -143,7 +141,7 @@ end)
 
 test('find should handle and advance through zero-width matches', function()
 	local _<close> = test.mock(ui.find, 'regex', true)
-	buffer:append_text(test.lines{'', ''})
+	buffer:append_text(test.lines(2))
 	ui.find.find_entry_text = '^'
 
 	ui.find.find_next()
@@ -157,14 +155,17 @@ end)
 
 test('find should allow advancing backwards through zero-width matches', function()
 	local _<close> = test.mock(ui.find, 'regex', true)
-	buffer:add_text(test.lines{'', ''})
+	buffer:add_text(test.lines(2))
 	ui.find.find_entry_text = '$'
 
 	ui.find.find_prev()
+	local first_match_line = buffer:line_from_position(buffer.current_pos)
+	ui.find.find_prev()
+	local second_match_line = buffer:line_from_position(buffer.current_pos)
 
-	test.assert_equal(buffer:position_from_line(buffer.current_pos), 1)
+	test.assert_equal(first_match_line, 2)
+	test.assert_equal(second_match_line, 1)
 end)
-expected_failure() -- TODO: Scintilla bug?
 
 test('find should highlight results if ui.find.highlight_all_matches is enabled', function()
 	local _<close> = test.mock(ui.find, 'highlight_all_matches', true)
@@ -373,7 +374,7 @@ test('replace should select the next occurrence after replacing', function()
 	test.assert_equal(buffer:get_sel_text(), find)
 end)
 
-test('replace should not unescape \\[bfnrtv] in normal replacement', function()
+test('replace should not unescape \\[bfnrtv\\] in normal replacement', function()
 	buffer:append_text(find)
 	ui.find.find_entry_text = find
 	ui.find.replace_entry_text = '\\t'
@@ -402,10 +403,10 @@ local function regex_replace(text, re, repl)
 	return result
 end
 
-test('replace should unescape \\[bfnrtv] in regex replacement', function()
-	local result = regex_replace(find, find, '\\t')
+test('replace should unescape \\[bfnrtv\\] in regex replacement', function()
+	local result = regex_replace(find, find, [[\t\\t]])
 
-	test.assert_equal(result, '\t')
+	test.assert_equal(result, '\t\\t')
 end)
 
 test('replace should unescape \\d with its captured text in regex replacements', function()
@@ -555,7 +556,6 @@ end)
 test('replace all should count the number of replacements made', function()
 	buffer:append_text(find .. find)
 	ui.find.find_entry_text = find
-	local _<close> = test.disable_metafield(ui, 'statusbar_text')
 
 	ui.find.replace_all()
 

@@ -1,4 +1,4 @@
--- Copyright 2020-2025 Mitchell. See LICENSE.
+-- Copyright 2020-2026 Mitchell. See LICENSE.
 
 test('buffer.delete should emit events.BUFFER_DELETED', function()
 	local f<close> = test.tmpfile(true)
@@ -72,7 +72,7 @@ local exceptions = {
 	}, --
 	[file('modules/textadept/history.lua')] = {'record.filename', 'record.column'},
 	[file('modules/textadept/session.lua')] = {
-		'buf.filename', 'buf.anchor', 'buf.current_pos', 'split.size', 'split.buffer'
+		'buf.filename', 'buf.anchor', 'buf.current_pos', 'split.buffer'
 	}, --
 	[file('modules/textadept/snippets.lua')] = {'snippet.new', 'placeholder.length', 'ph.length'}
 }

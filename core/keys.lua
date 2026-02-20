@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 --- Manages key bindings in Textadept.
 --
@@ -157,6 +157,8 @@ events.connect(events.KEY, function(code, mods)
 	local key = code >= 32 and code < 256 and string.char(code) or M.KEYSYMS[code]
 	-- Qt always reports upper-case key codes.
 	if key and QT and not shift and code < 256 then key = key:lower() end
+	-- Except on macOS for some reason, Qt reports '⌘{' and '⌘}' (and only those) as '⇧⌘[' and '⇧⌘]'.
+	if OSX and QT and cmd and shift and key:find('^[%[%]]$') then key = key == '[' and '{' or '}' end
 	-- Since printable characters are uppercased, disable shift.
 	if shift and code >= 32 and code < 256 then shift = false end
 	-- For composed keys on macOS, ignore alt.

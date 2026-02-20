@@ -1,4 +1,4 @@
--- Copyright 2007-2025 Mitchell. See LICENSE.
+-- Copyright 2007-2026 Mitchell. See LICENSE.
 
 --- Snippets for Textadept.
 --
@@ -632,8 +632,7 @@ function snippet:transform(placeholder)
 		buffer:text_range(self.placeholder_pos, buffer.selection_end) or
 		tostring(self.variables[placeholder.variable])
 	if not regex.match(text, placeholder.regex) then return placeholder.repl[1]['else'] or '' end
-	return regex.gsub(text, string.format('(%s)', placeholder.regex), function(...)
-		local captures = {...}
+	return regex.gsub(text, string.format('(%s)', placeholder.regex), function(...captures)
 		local repl = table.map(placeholder.repl, function(part)
 			if type(part) ~= 'table' then return part end
 			local capture = captures[part.index + 1] -- $0 is captures[1]

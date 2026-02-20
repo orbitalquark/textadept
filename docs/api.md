@@ -1,4 +1,4 @@
-# Textadept 12.7 nightly API Documentation
+# Textadept 13.0 alpha 2 API Documentation
 
 1. [_G](#_G)
 2. [_L](#_L)
@@ -480,15 +480,15 @@ Returns: whether or not the view was unsplit.
 The [buffer](#the-buffer-module) the view currently contains.
 (Read-only)
 
-<a id="view.size"></a>
-#### `view.size`
+<a id="view.split_pos"></a>
+#### `view.split_pos`
 
 The split resizer's pixel position if the view is a split one.
 
 See also: [`ui.get_split_table`](#ui.get_split_table)
 
-<a id="view.parent_size"></a>
-#### `view.parent_size`
+<a id="view.parent_split_pos"></a>
+#### `view.parent_split_pos`
 
 The parent split resizer's pixel position if the view's parent is a split one.
 
@@ -3238,6 +3238,16 @@ Parameters:
 	The image dimensions, [`view.rgba_image_width`](#view.rgba_image_width) and [`view.rgba_image_height`](#view.rgba_image_height), must have
 	already been defined.
 
+<a id="view.auto_c_image_scale"></a>
+#### `view.auto_c_image_scale`
+
+The scale factor in percent of *all* list images shown.
+
+This is useful on macOS with a retina display where each display unit is 2 pixels: use a
+factor of `200` so that each image pixel is displayed using a screen pixel.
+The default scale, `100`, will stretch each image pixel to cover 4 screen pixels on a
+retina display.
+
 <a id="buffer.auto_c_type_separator"></a>
 #### `buffer.auto_c_type_separator`
 
@@ -3535,6 +3545,17 @@ Scrolls the buffer by columns and lines.
 Parameters:
 - *columns*:  Number of columns to scroll horizontally. A negative value is allowed.
 - *lines*:  Number of lines to scroll vertically. A negative value is allowed.
+
+<a id="view.scroll_vertical"></a>
+#### `view:scroll_vertical`(*display_line*, *subline*)
+
+Scrolls the top line of the view to be the wrapped sub-line of a displayed line number.
+
+Parameters:
+- *display_line*:  Display line number to use (taking wrapped, annotated, and hidden lines
+	into account).
+- *subline*:  The sub-line of *display_line* to scroll to. A value of 1 is equivalent to
+	*display_line*. This is ignored if wrapping is off.
 
 <a id="view.scroll_caret"></a>
 #### `view:scroll_caret`()
@@ -4096,7 +4117,7 @@ The default value is `0`.
 <a id="view.caret_line_highlight_subline"></a>
 #### `view.caret_line_highlight_subline`
 
-Show the caret line on sublines rather than entire wrapped lines.
+Show the caret line on sub-lines rather than entire wrapped lines.
 
 The defalt value is `false`.
 
@@ -4360,7 +4381,7 @@ Where to mark wrapped lines.
 - `view.WRAPVISUALFLAGLOC_END_BY_TEXT`: Draw a visual flag near text at the end of a
 	wrapped line.
 - `view.WRAPVISUALFLAGLOC_START_BY_TEXT`: Draw a visual flag near text at the beginning of
-	a subline.
+	a sub-line.
 
 The default value is `view.WRAPVISUALFLAGLOC_DEFAULT`.
 
@@ -7525,8 +7546,10 @@ The command to modify the system clipboard's contents.
 The default values are:
 - Windows: `clip`
 - macOS: `pbcopy`
-- Linux/BSD: `xsel -n -b -i` if it exists, or `wl-copy -f` otherwise. Note: commands should
-	not fork.
+- Linux/BSD: `xsel -n -b -i` if it exists, or `wl-copy -f` otherwise. A package manager
+	likely supplies these commands. On Ubuntu for example, the `xsel` and `wl-clipboard`
+	packages, respectively, supply these commands.
+	Note: this command should not fork.
 
 <a id="textadept.clipboard.paste_command"></a>
 ### `textadept.clipboard.paste_command`
@@ -7536,7 +7559,9 @@ The command to retrieve the system clipboard's contents.
 The default values are:
 - Windows: `powershell get-clipboard`
 - macOS: `pbpaste`
-- Linux/BSD: `xsel -b -o` if it exists, or `wl-paste -n` otherwise.
+- Linux/BSD: `xsel -b -o` if it exists, or `wl-paste -n` otherwise. A package manager likely
+	supplies these commands. On Ubuntu for example, the `xsel` and `wl-clipboard` packages,
+	respectively, supply these commands.
 
 
 
@@ -7614,6 +7639,9 @@ Autocompletion functions must return two values:
 1. The number of characters behind the caret that are used as the prefix of the entity to
 	be autocompleted.
 2. A table of completions to show.
+
+Functions may optionally return a third result, the item to initially select. By default,
+the first item is selected.
 
 If any completion contains a space character, the function should change
 [`buffer.auto_c_separator`](#buffer.auto_c_separator). Also, autocompletion lists are sorted automatically by default,
@@ -7938,6 +7966,9 @@ None | None | None | Find previous
 None | None | None | Replace
 None | None | None | Replace all
 Ctrl+Alt+F | ^⌘F | M-F | Find incremental
+None | ⌥⌘M | None | Toggle Match Case
+None | ⌥⌘W | None | Toggle Whole Word
+None | ⌥⌘X | None | Toggle Regex
 Ctrl+Shift+F | ⌘⇧F | M-^F | Find in files
 Ctrl+Alt+G | ^⌘G | M-G | Go to next file found
 Ctrl+Alt+Shift+G | ^⌘⇧G | M-S-G | Go to previous file found
@@ -7974,8 +8005,8 @@ None | None | None | Complete trigger word
 Ctrl+Shift+H | ⌘⇧H | M-S-H | Show typed keys in statusbar
 None | None | None | Show style
 **Buffer**| | |
-Ctrl+Tab<br/>Ctrl+PgDn | ^⇥<br/>⌘⇟ | M-PgDn<br/> ^Tab<sup>d</sup> | Next buffer
-Ctrl+Shift+Tab<br/>Ctrl+PgUp | ^⇧⇥<br/>⌘⇞ | M-PgUp<br/>S-^Tab<sup>d</sup> | Previous buffer
+Ctrl+Tab<br/>Ctrl+PgDn | ⌘}<br/>^⇥ | M-PgDn<br/> ^Tab<sup>d</sup> | Next buffer
+Ctrl+Shift+Tab<br/>Ctrl+PgUp | ⌘{<br/>^⇧⇥ | M-PgUp<br/>S-^Tab<sup>d</sup> | Previous buffer
 Ctrl+B | ⌘B | ^B | Switch to buffer...
 None | None | None | Tab width: 2
 None | None | None | Tab width: 3
@@ -7993,15 +8024,15 @@ None | None | None | Toggle Tab Bar
 None | None | None | Toggle Code Folding
 Ctrl+Shift+L | ⌘⇧L | M-^L | Select lexer...
 **View**| | |
-Ctrl+Alt+PgDn | ^⌘⇟ | M-^PgDn<br/>M-PgUp<sup>d</sup> | Next view
-Ctrl+Alt+PgUp | ^⌘⇞ | M-^PgUp<br/>M-PgDn<sup>d</sup> | Previous view
+Ctrl+Alt+PgDn | ^⌘}<br/>^⌘⇟ | M-^PgDn<br/>M-PgUp<sup>d</sup> | Next view
+Ctrl+Alt+PgUp | ^⌘{<br/>^⌘⇞ | M-^PgUp<br/>M-PgDn<sup>d</sup> | Previous view
 Ctrl+Alt+_ | ^⌘_ | M-_ | Split view horizontal
 Ctrl+Alt+&#124; | ^⌘&#124; | M-&#124; | Split view vertical
 Ctrl+Alt+W | ^⌘W | M-W | Unsplit view
 Ctrl+Alt+Shift+W | ^⌘⇧W | M-S-W | Unsplit all views
 Ctrl+Alt++<br/>Ctrl+Alt+= | ^⌘+<br/>^⌘= | M-+<br/>M-= | Grow view
 Ctrl+Alt+- | ^⌘- | M-- | Shrink view
-Ctrl+} | ⌘} | M-} | Toggle current fold
+Ctrl+) | ⌘) | M-) | Toggle current fold
 None | None | None | Toggle Level 1 Folds
 None | None | None | Toggle Level 2 Folds
 None | None | None | Toggle Level 3 Folds
@@ -8792,7 +8823,6 @@ The default value is `true`.
 ### `ui.buffer_statusbar_text`
 
 The text displayed in the buffer statusbar.
-(Write-only)
 
 <a id="ui.context_menu"></a>
 ### `ui.context_menu`
@@ -8825,7 +8855,7 @@ This is primarily used in session saving.
 Returns:  table of split views. Each split view entry is a table with 4 fields: `1`, `2`,
 	`vertical`, and `size`. `1` and `2` have values of either nested split view entries or
 	the views themselves; `vertical` is a flag that indicates if the split is vertical or
-	not; and `size` is the integer position of the split resizer.
+	not; and `size` is a table of width, height, and split position integers.
 
 <a id="ui.goto_file"></a>
 ### `ui.goto_file`(*filename*[, *split*=false[, *preferred_view*[, *sloppy*=false]]])
@@ -8995,11 +9025,17 @@ Usage:
 ui.size = {1000, 625} -- resize window
 ```
 
+<a id="ui.statusbar"></a>
+### `ui.statusbar`
+
+Whether or not the statusbar is visible.
+
+The default value is `true`.
+
 <a id="ui.statusbar_text"></a>
 ### `ui.statusbar_text`
 
 The text displayed in the statusbar.
-(Write-only)
 
 <a id="ui.suspend"></a>
 ### `ui.suspend`()
@@ -9147,8 +9183,7 @@ Parameters:
 	- `button1`: String label for the primary (accept) button. The default value is `_L['OK']`.
 	- `button2`: String label for the secondary (reject) button. The default value is
 		`_L['Cancel']`.
-	- `button3`: String label for the tertiary button. This option requires `button2`
-		to be set. It is not available in the Qt version.
+	- `button3`: String label for the tertiary button. It is not available in the Qt version.
 	- `return_button`: Also return the index of the selected button.
 
 Returns: string input text[, selected button index]; or `nil` if the user canceled the dialog
@@ -9179,7 +9214,7 @@ Parameters:
 	- `button1`: String label of the primary (accept) button. The default value is `_L['OK']`.
 	- `button2`: String label of the secondary (reject) button. The default value is
 		`_L['Cancel']`.
-	- `button3`: String label of the tertiary button. This option requires `button2` to be set.
+	- `button3`: String label of the tertiary button.
 	- `multiple`: Allow the user to select multiple items. The terminal version does not
 		support this option.
 	- `search_column`: Column number to filter the input text against. The default value is `1`.
