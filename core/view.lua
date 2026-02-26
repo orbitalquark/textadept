@@ -60,6 +60,31 @@ local function set_theme(view, name, env)
 	view:set_styles()
 end
 
+local function select_theme(view)
+    local themes = {}
+    for _, dir in ipairs{_USERHOME .. '/themes', _HOME .. '/themes'} do  
+        if lfs.attributes(dir, 'mode') == 'directory' then
+            for file in lfs.dir(dir) do
+                local name = file:match('^(.+)%.lua$')
+                if name then themes[#themes + 1] = name end
+            end
+        end
+    end
+    table.sort(themes)
+    -- Remove duplicates.
+    local i = 1
+    while i < #themes do 
+        if themes[i] == themes[i + 1] then
+            table.remove(themes, i + 1)
+        else
+            i = i + 1
+        end
+    end
+    local i = ui.dialogs.list{title = _L['Select Theme'], items = themes}
+    if i then view:set_theme(themes[i]) end
+end
+
+
 --- Metatable for `view.styles`, whose documentation is in core/buffer.lua.
 local styles_mt = {
 	__index = function(t, k) return type(k) == 'string' and t[k:match('^(.+)[_%.]')] or rawget(t, k) end,
@@ -71,5 +96,5 @@ local styles_mt = {
 events.connect(events.VIEW_NEW, function()
 	local view = buffer ~= ui.command_entry and view or ui.command_entry
 	view.colors, view.styles = {}, setmetatable({}, styles_mt)
-	view.set_styles, view.set_theme = set_styles, set_theme
+	view.set_styles, view.set_theme, view.select_theme = set_styles, set_theme, select_theme
 end, 1)

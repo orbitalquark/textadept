@@ -422,6 +422,8 @@ local default_menubar = {
 					buffer.VS_RECTANGULARSELECTION | buffer.VS_USERACCESSIBLE or 0
 			end
 		}, SEPARATOR, --
+		{_L['Select theme'], function() view:select_theme() end},
+		SEPARATOR,
 		{_L['Zoom In'], view.zoom_in}, --
 		{_L['Zoom Out'], view.zoom_out}, --
 		{_L['Reset Zoom'], function() view.zoom = 0 end}
