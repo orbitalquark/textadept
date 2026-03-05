@@ -132,7 +132,8 @@ local function run_command_helper(command, dir, env, event, commands, key, macro
 	local args = {
 		command, dir, emit, emit, function(status)
 			events.emit(event, string.format('> exit status: %d\n\n', status))
-			ui.statusbar_text = status == 0 and _L['Command succeeded'] or _L['Command failed']
+			ui.statusbar_text = status == 0 and _L['Command succeeded'] or
+				(status == 9 and _L['Command stopped']) or _L['Command failed']
 		end
 	}
 	if env then table.insert(args, 3, env) end

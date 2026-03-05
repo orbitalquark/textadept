@@ -194,6 +194,7 @@ test('run.run should run a run command for the current file', function()
 	test.assert_contains(output, '> ' .. command)
 	test.assert_contains(output, '\n' .. stdout) -- match from stdout, not command
 	test.assert_contains(output, '> exit status: 0')
+	test.assert_equal(ui.statusbar_text, _L['Command succeeded'])
 end)
 
 test('run.* should allow functions to return commands and working dirs', function()
@@ -320,6 +321,7 @@ test('run.stop should stop the currently running process', function()
 	test.wait(function() return buffer:get_text():find('> exit status:') end)
 	local status = buffer:get_text():match('> exit status: (%d+)')
 	test.assert(status ~= '0', 'should have killed process')
+	test.assert_equal(ui.statusbar_text, _L['Command stopped'])
 end)
 
 test('run.stop should prompt when there are multiple running processes', function()
