@@ -686,6 +686,28 @@ test('editing.auto_pairs should have atomic undo', function()
 	test.assert_equal(buffer:get_text(), test.lines{'(', '('})
 end)
 
+test('editing.auto_pairs should support language-specific pairs', function()
+	local _<close> = test.mock(textadept.editing.auto_pairs, 'markdown', {['*'] = '*'})
+
+	test.type('*')
+	local text_text = buffer:get_text()
+	test.type('\b')
+	buffer:set_lexer('markdown')
+	test.type('*')
+	local md_text = buffer:get_text()
+
+	test.assert_equal(text_text, '*')
+	test.assert_equal(md_text, '**')
+end)
+
+test('editing.auto_pairs should ignore global pairs if language-specific ones exist', function()
+	local _<close> = test.mock(textadept.editing.auto_pairs, 'text', {})
+
+	test.type("'")
+
+	test.assert_equal(buffer:get_text(), "'")
+end)
+
 test('editing.auto_pairs should remove both chars after backspace', function()
 	test.type('(')
 

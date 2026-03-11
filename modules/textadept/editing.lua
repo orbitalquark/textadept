@@ -34,9 +34,11 @@ M.autocompleters = {}
 M.autocomplete_all_words = false
 
 --- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
+-- Also maps lexer names to tables of auto-paired characters for language-specific pairing.
 -- The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;", "&quot;&quot;",
 -- and "``". For certain XML-like lexers, "<>" is also auto-paired.
 -- @usage textadept.editing.auto_pairs['*'] = '*'
+-- @usage textadept.editing.auto_pairs.text = {} -- disable for plain text files
 -- @usage textadept.editing.auto_pairs = nil -- disable completely
 M.auto_pairs = {}
 for k, v in string.gmatch([[()[]{}''""``]], '(.)(.)') do M.auto_pairs[k] = v end
@@ -184,12 +186,13 @@ function M.select_enclosed(left, right)
 		buffer:search_anchor()
 		s, e = buffer:search_prev(0, left), buffer:search_next(0, right)
 	elseif M.auto_pairs then
+		local auto_pairs = M.auto_pairs[buffer:get_lexer(true)] or M.auto_pairs
 		s = buffer.selection_start
 		local style_at = buffer.style_at
 		repeat
 			-- Backtrack, looking for an auto-paired range that includes the current position.
 			local char = buffer:text_range(s, buffer:position_after(s))
-			local match = M.auto_pairs[char] or (char == '>' and M.auto_pairs['<'] and '<') -- >...<
+			local match = auto_pairs[char] or (char == '>' and auto_pairs['<'] and '<') -- >...<
 			if not match then goto continue end
 			left, right = char, match
 			-- If the auto-paired brace range includes the current position, use it.
@@ -461,7 +464,7 @@ local function update_language_specific_features()
 	for _, code in utf8.codes(angles and '()[]{}<>' or '()[]{}') do brace_matches[code] = true end
 	if not M.auto_pairs then return end
 	M.auto_pairs['<'] = angles and '>' or nil
-	for _, char in pairs(M.auto_pairs) do typeover_chars[char] = true end
+	for _, c in pairs(M.auto_pairs) do if type(c) == 'string' then typeover_chars[c] = true end end
 end
 events.connect(events.LEXER_LOADED, function()
 	update_language_specific_features()
@@ -473,12 +476,14 @@ events.connect(events.VIEW_AFTER_SWITCH, update_language_specific_features)
 
 -- Matches characters specified in auto_pairs, taking multiple selections into account.
 events.connect(events.CHAR_ADDED, function(code)
-	if not M.auto_pairs or not M.auto_pairs[utf8.char(code)] then return end
+	if not M.auto_pairs then return end
+	local auto_pairs = M.auto_pairs[buffer:get_lexer(true)] or M.auto_pairs
+	if not auto_pairs[utf8.char(code)] then return end
 	buffer:begin_undo_action()
 	for i = 1, buffer.selections do
 		local pos = buffer.selection_n_caret[i]
 		buffer:set_target_range(pos, pos)
-		buffer:replace_target(M.auto_pairs[utf8.char(code)])
+		buffer:replace_target(auto_pairs[utf8.char(code)])
 	end
 	buffer:end_undo_action()
 end)
@@ -486,12 +491,13 @@ end)
 -- Removes matched chars on backspace, taking multiple selections into account.
 events.connect(events.KEYPRESS, function(key)
 	if not M.auto_pairs or key ~= '\b' or ui.command_entry.active then return end
+	local auto_pairs = M.auto_pairs[buffer:get_lexer(true)] or M.auto_pairs
 	buffer:begin_undo_action()
 	for i = 1, buffer.selections do
 		local pos = buffer.selection_n_caret[i]
 		local char = buffer:text_range(pos, buffer:position_after(pos))
 		local char_before = buffer:text_range(buffer:position_before(pos), pos)
-		if char == M.auto_pairs[char_before] then buffer:delete_range(pos, #char) end
+		if char == auto_pairs[char_before] then buffer:delete_range(pos, #char) end
 	end
 	buffer:end_undo_action()
 end, 1) -- need index of 1 because default key handler halts propagation
@@ -546,8 +552,9 @@ end)
 events.connect(events.KEYPRESS, function(key)
 	if not M.auto_enclose or buffer.selection_empty or not key:find('^%p$') then return end
 	if ui.command_entry.active then return end
-	if textadept.snippets.active and not M.auto_pairs[key] then return end -- likely placeholder
-	M.enclose(key, M.auto_pairs[key] or key, true)
+	local auto_pairs = M.auto_pairs[buffer:get_lexer(true)] or M.auto_pairs or {}
+	if textadept.snippets.active and not auto_pairs[key] then return end -- likely placeholder
+	M.enclose(key, auto_pairs[key] or key, true)
 	return true -- prevent typing
 end, 1)
 
