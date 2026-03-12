@@ -321,7 +321,7 @@ test('run.stop should stop the currently running process', function()
 	test.wait(function() return buffer:get_text():find('> exit status:') end)
 	local status = buffer:get_text():match('> exit status: (%d+)')
 	test.assert(status ~= '0', 'should have killed process')
-	test.assert_equal(ui.statusbar_text, _L['Command stopped'])
+	test.assert_equal(ui.statusbar_text, _L['Command stopped or failed'])
 end)
 
 test('run.stop should prompt when there are multiple running processes', function()
