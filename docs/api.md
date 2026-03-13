@@ -7943,7 +7943,7 @@ Ctrl+&#124; | ⌘&#124; | ^&#124;<br/>^\ | Filter text through
 Ctrl+Shift+M | ⌘⇧M | M-^M | Select between delimiters
 Ctrl+D | ⌘D | ^D | Select word
 Ctrl+Alt+D | ^⌘D | M-D | Deselect word
-Ctrl+L | ⌘L | ^L | Select line
+Ctrl+Shift+L | ⌘⇧L | M-^L | Select line
 Ctrl+Shift+P | ⌘⇧P | M-^P | Select paragraph
 Ctrl+Shift+U<sup>c</sup><br/>Ctrl+Alt+Shift+U | ⌘⇧U | M-^U | Upper case selection
 Ctrl+U | ⌘U | ^U | Lower case selection
@@ -7963,10 +7963,10 @@ None | None | None | Clear navigation history
 None | ⌘, | None | Preferences
 **Search**| | |
 Ctrl+F | ⌘F | ^F | Find
-None | None | None | Find next
-None | None | None | Find previous
-None | None | None | Replace
-None | None | None | Replace all
+Ctrl+G<br/>F3 | ⌘G | ^G | Find next
+Ctrl+Shift+G <br/>Shift+F3 | ⌘⇧G | M-^G | Find previous
+Ctrl+Alt+P | ^⌘P | M-P | Replace
+Ctrl+Alt+Shift+P | ^⌘⇧P | M-S-P | Replace all
 Ctrl+Alt+F | ^⌘F | M-F | Find incremental
 None | ⌥⌘M | None | Toggle Match Case
 None | ⌥⌘W | None | Toggle Whole Word
@@ -8024,7 +8024,7 @@ None | None | None | CP-1252 encoding
 None | None | None | UTF-16 encoding
 None | None | None | Toggle Tab Bar
 None | None | None | Toggle Code Folding
-Ctrl+Shift+L | ⌘⇧L | M-^L | Select lexer...
+Ctrl+Alt+L | ^⌘L | M-L | Select lexer...
 **View**| | |
 Ctrl+Alt+PgDn | ^⌘}<br/>^⌘⇟ | M-^PgDn<br/>M-PgUp<sup>d</sup> | Next view
 Ctrl+Alt+PgUp | ^⌘{<br/>^⌘⇞ | M-^PgUp<br/>M-PgDn<sup>d</sup> | Previous view

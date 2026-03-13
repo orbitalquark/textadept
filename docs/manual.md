@@ -498,6 +498,17 @@ ui.find.highlight_all_matches = true
 
 [`ui.find.highlight_all_matches`]: api.html#ui.find.highlight_all_matches
 
+While the find & replace pane is closed, you can still perform its actions:
+
+- Perform "Find Next" via `Ctrl+G` or `F3` on Windows and Linux/BSD, `⌘G` on macOS, and `^G`
+	in the terminal version.
+- Perform "Find Prev" via `Ctrl+Shift+G` or `Shift+F3` on Windows and Linux/BSD, `⌘⇧G`
+	on macOS, and `M-^G` in the terminal version.
+- Perform "Replace" via `Ctrl+Alt+P` on Windows and Linux/BSD, `^⌘P` on macOS, and `M-P`
+	in the terminal version.
+- Perform "Replace All" via `Ctrl+Alt+Shift+P` on Windows and Linux/BSD, `^⌘⇧P` on macOS,
+	and `M-S-P` in the terminal version.
+
 #### Find in Files
 
 Textadept can search for text within multiple files and directories via `Ctrl+Shift+F` on
@@ -731,8 +742,8 @@ directory, and add an extension and/or pattern for it.
 **Tip:** placing lexers in your user data directory avoids the possibility of you overwriting
 them when you update Textadept.
 
-You can manually change a buffer's lexer via `Ctrl+Shift+L` on Windows and Linux/ BSD, `⌘⇧L`
-on macOS, and `M-^L` in the terminal version. Typing part of a lexer name in the dialog filters
+You can manually change a buffer's lexer via `Ctrl+Alt+L` on Windows and Linux/ BSD, `^⌘L`
+on macOS, and `M-L` in the terminal version. Typing part of a lexer name in the dialog filters
 the list, with spaces being wildcards. The arrow keys move the selection up and down. Pressing
 `Enter`, selecting `OK`, or double-clicking on a lexer assigns it to the current buffer. (The
 terminal version requires pressing `Enter`.)
@@ -928,9 +939,9 @@ You can create contiguous selections as follows:
 	terminal version. Repeated use of this action selects subsequent occurrences of that word as
 	additional (multiple) selections. Undo the most recent multiple selection via `Ctrl+Alt+D`,
 	`^⌘D`, or `M-D`.
-- Select the current line via `Ctrl+L` on Windows and Linux/BSD, `⌘L` on macOS, and `^L` in the
-	terminal version. If text is already selected and spans multiple lines, this action expands
-	the selection to include whole lines.
+- Select the current line via `Ctrl+Shift+L` on Windows and Linux/BSD, `⌘⇧L` on macOS, and
+	`M-^L` in the terminal version. If text is already selected and spans multiple lines,
+	this action expands the selection to include whole lines.
 - Double click to select a word, and triple-click to select a line.
 - Click and optionally drag within the line number margin to select whole lines.
 - Select the current paragraph via `Ctrl+Shift+P` on Windows and Linux/BSD, `⌘⇧P` on macOS,
@@ -1024,8 +1035,8 @@ terminal version.
 
 ### Go To Line
 
-Jump to a specific line in the current buffer via `Ctrl+G` on Windows and Linux/BSD, `⌘G`
-on macOS, and `^G` in the terminal version. Enter the line number to go to in the prompt,
+Jump to a specific line in the current buffer via `Ctrl+L` on Windows and Linux/BSD, `⌘L`
+on macOS, and `^L` in the terminal version. Enter the line number to go to in the prompt,
 and press `Enter` or click `OK`.
 
 ### Bookmarks
@@ -1637,6 +1648,16 @@ parent_size | Renamed | [parent_split_pos][]
 [get_split_table()]: api.html#ui.get_split_table
 [split_pos]: api.html#view.split_pos
 [parent_split_pos]: api.html#view.parent_split_pos
+
+#### Key Binding Changes
+
+- Go to Line has changed from `Ctrl+G` on Windows and Linux/BSD, `⌘G` on macOS, and `^G`
+	in the terminal version, to `Ctrl+L`, `⌘L`, and `^L`, respectively.
+- Select Line has changed from `Ctrl+L` on Windows and Linux/BSD, `⌘L` on macOS, and `^L`
+	in the terminal version, to `Ctrl+Shift+L`, `⌘⇧L`, and `M-^L`, respectively.
+- Select Lexer has changed from `Ctrl+Shift+L` on Windows and Linux/BSD, `⌘⇧L` on macOS,
+	and `M-^L` in the terminal version, to `Ctrl+Alt+L`, `^⌘L`, and `M-L`, respectively.
+
 
 #### Lua 5.5 Changes
 
