@@ -219,11 +219,13 @@ end)
 -- Notify via statusbar if a search wrapped.
 events.connect(events.FIND_WRAPPED, function() ui.statusbar_text = _L['Search wrapped'] end)
 
--- Ensure the caret is scrolled into view after finishing an incremental find.
--- This is really only needed when no match was ultimately found, but partial matches scrolled
--- the caret out of view.
+-- Ensure the caret is scrolled into view after finishing an incremental find, and that
+-- incremental find is disabled for subsequent "Find Next" or "Find Prev" operations.
+-- Scrolling the caret is really only needed when no match was ultimately found, but partial
+-- matches scrolled the caret out of view.
 events.connect(events.FIND_PANE_HIDE, function()
 	if M.incremental and incremental_orig_pos then view:scroll_caret() end
+	M.incremental = false
 end)
 
 local P, V, C, upper, lower = lpeg.P, lpeg.V, lpeg.C, string.upper, string.lower
