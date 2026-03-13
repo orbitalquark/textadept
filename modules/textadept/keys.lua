@@ -553,7 +553,7 @@ keys.assign_platform_bindings{
 	[buffer.del_word_right] = {'ctrl+del', 'cmd+del', 'ctrl+del'},
 	[buffer.del_line_right] = {'ctrl+shift+del', 'cmd+shift+del', 'ctrl+shift+del'},
 	[buffer.delete_back] = {'\b', {'\b', 'ctrl+h'}, {'\b', 'ctrl+h'}},
-	[buffer.del_word_left] = {'ctrl+\b', 'cmd+\b', nil},
+	[buffer.del_word_left] = {'ctrl+\b', {'cmd+\b', 'alt+\b'}, nil},
 	[buffer.del_line_left] = {'ctrl+shift+\b', 'cmd+shift+\b', nil},
 	-- Custom editing commands.
 	[function()
