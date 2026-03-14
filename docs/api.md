@@ -1,4 +1,4 @@
-# Textadept 13.0 alpha 2 API Documentation
+# Textadept 13.0 nightly API Documentation
 
 1. [_G](#_G)
 2. [_L](#_L)
