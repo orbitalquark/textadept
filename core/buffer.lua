@@ -3779,6 +3779,7 @@ end)
 -- - describe_property
 -- - describe_key_word_sets
 -- - description_of_style
+-- - drag_drop_enabled
 -- - encoded_from_utf8
 -- - expand_children
 -- - find_indicator_flash
