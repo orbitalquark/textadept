@@ -1613,7 +1613,7 @@ Textadept is composed of the following technologies:
 - [LuaFileSystem][]: Lua library for accessing the host filesystem
 - [Lua-std-regex][]: Lua library for regular expressions
 - [iconv][]: library for converting text to and from Unicode
-- [SingleApplication][]: single-instance application support for Qt
+- [QtSingleApplication][]: single-instance application support for Qt
 - [reproc][]: process spawning library for the terminal version
 
 [Qt]: https://www.qt.io
@@ -1630,7 +1630,7 @@ Textadept is composed of the following technologies:
 [cdk]: https://invisible-island.net/cdk
 [libtermkey]: http://www.leonerd.org.uk/code/libtermkey
 [iconv]: https://www.gnu.org/software/libiconv
-[SingleApplication]: https://github.com/itay-grudev/SingleApplication
+[QtSingleApplication]: https://github.com/qtproject/qt-solutions
 [reproc]: https://github.com/DaanDeMeyer/reproc
 
 ### Migrating from Textadept 12 to 13

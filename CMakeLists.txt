@@ -48,11 +48,11 @@ endif()
 if(QT)
 	set(qt_major Qt${QT_VERSION_MAJOR})
 	if(QT_VERSION_MAJOR GREATER 5)
-		find_package(${qt_major} COMPONENTS Widgets Core5Compat REQUIRED)
-		set(qt_libraries ${qt_major}::Widgets ${qt_major}::Core5Compat)
+		find_package(${qt_major} COMPONENTS Widgets Core5Compat Network REQUIRED)
+		set(qt_libraries ${qt_major}::Widgets ${qt_major}::Core5Compat ${qt_major}::Network)
 	else()
-		find_package(${qt_major} COMPONENTS Widgets REQUIRED)
-		set(qt_libraries ${qt_major}::Widgets)
+		find_package(${qt_major} COMPONENTS Widgets Network REQUIRED)
+		set(qt_libraries ${qt_major}::Widgets ${qt_major}::Network)
 	endif()
 endif()
 set(CMAKE_AUTOMOC ${QT})
@@ -115,10 +115,9 @@ if(WIN32)
 	FetchContent_MakeAvailable(pdcurses iconv)
 endif()
 if(QT)
-	fetch(singleapp https://github.com/itay-grudev/SingleApplication/archive/refs/tags/v3.5.3.zip)
-	set(QAPPLICATION_CLASS QApplication CACHE STRING "Inheritance class for SingleApplication")
-	set(QT_DEFAULT_MAJOR_VERSION ${QT_VERSION_MAJOR})
-	FetchContent_MakeAvailable(singleapp)
+	fetch(qtsingleapplication
+		https://github.com/qtproject/qt-solutions/archive/777e95ba69952f11eaec0adfb0cb987fabcdecb3.zip)
+	FetchContent_MakeAvailable(qtsingleapplication)
 endif()
 if(CURSES)
 	set(REPROC_INSTALL OFF)
@@ -250,6 +249,18 @@ if(WIN32)
 	target_compile_definitions(iconv PRIVATE BUILDING_LIBICONV)
 endif()
 
+# qtsingleapplication
+if(QT)
+	set(qtsingleapplication_src qtlocalpeer.cpp qtlockedfile.cpp
+		qtlockedfile_$<IF:$<BOOL:${UNIX}>,unix,win>.cpp qtsingleapplication.cpp)
+	list(TRANSFORM qtsingleapplication_src
+		PREPEND ${qtsingleapplication_SOURCE_DIR}/qtsingleapplication/src/)
+	add_library(qtsingleapplication STATIC ${qtsingleapplication_src})
+	target_include_directories(qtsingleapplication
+		PUBLIC ${qtsingleapplication_SOURCE_DIR}/qtsingleapplication/src)
+	target_link_libraries(qtsingleapplication PRIVATE ${qt_libraries})
+endif()
+
 set(CMAKE_ENABLE_EXPORTS ON) # allow external Lua modules to link to exe
 
 # Textadept core.
@@ -268,8 +279,7 @@ if(QT)
 		src/textadept_qt.cpp src/textadept_qt.ui $<$<BOOL:${APPLE}>:src/textadept_qt_mac.mm>)
 	target_compile_definitions(textadept_qt PRIVATE QT_NO_KEYWORDS)
 	target_compile_options(textadept_qt PRIVATE ${ta_compile_opts})
-	target_link_libraries(textadept_qt PRIVATE scintilla_qt lua ${qt_libraries}
-		SingleApplication::SingleApplication)
+	target_link_libraries(textadept_qt PRIVATE scintilla_qt lua qtsingleapplication ${qt_libraries})
 
 	add_executable(textadept ${ta_src})
 	target_include_directories(textadept PRIVATE $<$<BOOL:${WIN32}>:${iconv_SOURCE_DIR}/include>)

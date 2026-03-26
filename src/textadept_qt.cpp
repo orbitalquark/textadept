@@ -10,7 +10,7 @@ extern "C" {
 #include "textadept_qt.h"
 
 #include "ScintillaEditBase.h"
-#include "singleapplication.h"
+#include "qtsingleapplication.h"
 
 #include <QWindow>
 #include <QCloseEvent>
@@ -752,17 +752,17 @@ void Textadept::keyPressEvent(QKeyEvent *ev) {
 }
 
 // The Textadept application.
-class Application : public SingleApplication {
+class Application : public QtSingleApplication {
 public:
-	Application(int &argc, char **argv) : SingleApplication{argc, argv, true} {
+	Application(int &argc, char **argv) : QtSingleApplication{argc, argv} {
 		const std::vector<const char *> args{"-f", "--force", "-L", "--lua"};
 		bool force =
 			std::any_of(args.begin(), args.end(), [](const char *s) { return arguments().contains(s); });
-		if (isSecondary() && !force) {
+		if (isRunning() && !force) {
 			QByteArray bytes;
 			QDataStream out{&bytes, QIODevice::WriteOnly};
 			out << QDir::currentPath() << arguments();
-			sendMessage(bytes);
+			sendMessage(bytes.toBase64());
 			return;
 		}
 		if (inited = init_textadept(argc, argv); !inited) return;
@@ -778,9 +778,10 @@ public:
 		for (const auto &match : re.globalMatch(p.readAll()))
 			qputenv(match.captured(1).toLocal8Bit(), match.captured(2).toLocal8Bit());
 #endif
-		connect(this, &SingleApplication::receivedMessage, this, [](quint32, QByteArray message) {
+		connect(this, &QtSingleApplication::messageReceived, this, [](QString message) {
 			ta->window()->activateWindow();
-			QDataStream in{&message, QIODevice::ReadOnly};
+			QByteArray bytes{QByteArray::fromBase64(message.toUtf8())}; // toUtf8 is fine for base64 text
+			QDataStream in{&bytes, QIODevice::ReadOnly};
 			QString cwd;
 			QStringList args;
 			in >> cwd >> args;
