@@ -80,7 +80,7 @@ like to quickly get up to speed, or need a refresher, the [Lua Quick Reference][
 Textadept's pre-built binaries require the following:
 
 - Windows 10+ (64-bit or ARM)
-- macOS 11+
+- macOS 13+
 - Linux: [Qt][] 5 or [GTK][] 3 for the GUI version, and [ncurses][] for the terminal version.
 
 You can [compile](#compiling) Textadept from source for use with different UI library versions,
@@ -145,6 +145,11 @@ terminal, etc.
 **Linux Note:** it is not possible to provide a single Textadept binary that runs correctly
 on all systems. If the editor will not start on your machine, you must [compile](#compiling)
 it manually.
+
+**macOS Note:** if you get a notice that Textadept "is damaged and can't be opened," you will
+need to remove the quarantine attribute from the app by running the following command in your
+terminal: `xattr -d com.apple.quarantine /path/to/Textadept.app`. Recent versions of macOS have
+been getting more and more strict about what apps it considers to be "safe".
 
 For better platform integration:
 

@@ -111,6 +111,10 @@ Windows | *textadept.exe* | *textadept-curses.exe*
 macOS | *Textadept.app* <br/>*ta* (shell script)| *Textadept.app/Contents/MacOS/textadept-curses*
 Linux | *textadept* (Qt version)<br/> *textadept-gtk* (GTK version) | *textadept-curses*
 
+**macOS Note:** if you get a notice that Textadept "is damaged and can't be opened," you will
+need to remove the quarantine attribute from the app by running the following command in your
+terminal: `xattr -d com.apple.quarantine /path/to/Textadept.app`.
+
 The "Help > Show Manual" menu item, or the `F1` keyboard shortcut opens Textadept's comprehensive
 user manual. There is also an [online version][manual]. The manual covers all of Textadept's
 main features, including installation, usage, configuration, theming, scripting, and compiling
