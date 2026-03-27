@@ -359,9 +359,9 @@ void set_menubar(lua_State *L, int index) {
 }
 
 char *get_clipboard_text(int *len) {
-	const QString &text = QGuiApplication::clipboard()->text();
+	const std::string &text = QGuiApplication::clipboard()->text().toStdString();
 	*len = text.size();
-	return static_cast<char *>(memcpy(malloc(*len), text.toStdString().c_str(), *len));
+	return static_cast<char *>(memcpy(malloc(*len), text.c_str(), *len));
 }
 
 // An active timeout that cleans up after itself.
