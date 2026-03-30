@@ -60,6 +60,7 @@ M.auto_indent = true
 M.auto_enclose = false
 
 --- Strip trailing whitespace before saving non-binary files.
+-- Diff/patch files are also ignored.
 -- The default value is `false`.
 M.strip_trailing_spaces = false
 
@@ -620,6 +621,7 @@ end
 -- Strips trailing whitespace ('\t' or ' ') in text files, prior to saving them.
 events.connect(events.FILE_BEFORE_SAVE, function()
 	if not M.strip_trailing_spaces or not buffer.encoding then return end
+	if buffer.lexer_language == 'diff' then return end -- trailing whitespace is significant
 	buffer:begin_undo_action()
 	for line = 1, buffer.line_count do
 		local s, e = buffer:position_from_line(line), buffer.line_end_position[line]

@@ -1028,6 +1028,16 @@ test('buffer.save should never strip trailing spaces for binary files', function
 	test.assert_equal(buffer:get_text(), binary_contents)
 end)
 
+test('buffer.save should never strip trailing spaces for diff/patch files', function()
+	local _<close> = test.mock(textadept.editing, 'strip_trailing_spaces', true)
+	local diff_contents = test.lines{'--- a', '+++ b', '@@ -1,1 +1,1 @@', '-remove ', '+add ', ''}
+	local _<close> = test.tmpfile('.patch', diff_contents, true)
+
+	buffer:save()
+
+	test.assert_equal(buffer:get_text(), diff_contents)
+end)
+
 -- Coverage tests.
 
 test('editing.filter_through should write command errors to the statusbar', function()

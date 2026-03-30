@@ -7770,6 +7770,7 @@ See also: [`buffer.word_chars`](#buffer.word_chars)
 
 Strip trailing whitespace before saving non-binary files.
 
+Diff/patch files are also ignored.
 The default value is `false`.
 
 <a id="textadept.editing.toggle_comment"></a>
