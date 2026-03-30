@@ -313,6 +313,7 @@ events.connect(events.FIND, function(text)
 	if text == '' or not M.in_files then return end
 	local dir = ui.dialogs.open{title = _L['Select Directory'], only_dirs = true, dir = ff_dir()}
 	if not dir then return end
+	if QT and dir ~= '/' and not dir:find('^%a:\\$') then dir = dir:gsub('[/\\]+$', '') end
 
 	if M.replace_entry_text ~= repl_text then
 		-- Update stored filter.
