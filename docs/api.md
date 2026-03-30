@@ -1,4 +1,4 @@
-# Textadept 13.0 nightly API Documentation
+# Textadept 13.0 beta API Documentation
 
 1. [_G](#_G)
 2. [_L](#_L)
@@ -6876,6 +6876,40 @@ a particular character.
 
 Parameters:
 - *c*:  Digit separator character.
+
+<a id="lexer.ignore_extensions"></a>
+### `lexer.ignore_extensions`
+
+Map of file extensions (without the '.' prefix) to strip from filenames during detection to
+`true`.
+
+Fields:
+- `orig`: 
+- `back`: 
+- `old`: 
+- `new`: 
+
+Usage:
+
+```lua
+lexer.ignore_extensions.backup = true
+```
+
+<a id="lexer.ignore_patterns"></a>
+### `lexer.ignore_patterns`
+
+List of filename parts to strip from filenames during detection.
+
+Filename parts are expressed as Lua patterns.
+
+Fields:
+- `~+$`: 
+
+Usage:
+
+```lua
+table.insert(lexer.ignore_patterns, '%.%d+$') -- ignore digit extensions
+```
 
 <a id="lexer.indent_amount"></a>
 ### `lexer.indent_amount`
