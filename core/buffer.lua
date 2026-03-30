@@ -404,12 +404,6 @@ end)
 -- @return length of replacement text
 -- @function replace_target
 
---- Replaces the text in the target range without modifying any selections or scrolling the view,
--- and tries to minimize change history if `io.track_changes` is `true`.
--- @param text String text to replace the target range with.
--- @return length of replacement text
--- @function replace_target_minimal
-
 --- Delete Text.
 -- @section
 
@@ -1400,16 +1394,6 @@ end)
 -- `view.MARKNUM_FOLDERMIDTAIL` | The last line of an expanded fold within an expanded fold
 -- `view.MARKNUM_FOLDEREND` | The first line of a collapsed fold within an expanded fold
 --
--- There are 4 pre-defined marker numbers used for showing how a buffer line differs from its
--- file's saved state if `io.track_changes` is `true`.
---
--- Marker Number | Description
--- -|-
--- `view.MARKNUM_HISTORY_MODIFIED` | Line was changed and has not yet been saved
--- `view.MARKNUM_HISTORY_SAVED` | Line was changed and saved
--- `view.MARKNUM_HISTORY_REVERTED_TO_MODIFIED` | Line was changed, saved, then partially reverted
--- `view.MARKNUM_HISTORY_REVERTED_TO_ORIGIN` | Line was changed, saved, then fully reverted
---
 -- [XPM image]: https://scintilla.org/ScintillaDoc.html#XPM
 -- [RGBA image]: https://scintilla.org/ScintillaDoc.html#RGBA
 -- @section
@@ -1509,14 +1493,6 @@ end)
 --- @field view.MARKNUM_FOLDERSUB
 
 --- @field view.MARKNUM_FOLDERTAIL
-
---- @field view.MARKNUM_HISTORY_REVERTED_TO_ORIGIN
-
---- @field view.MARKNUM_HISTORY_SAVED
-
---- @field view.MARKNUM_HISTORY_MODIFIED
-
---- @field view.MARKNUM_HISTORY_REVERTED_TO_MODIFIED
 
 --- @field view.MARKER_MAX
 
@@ -1791,21 +1767,6 @@ end)
 -- <sup>b</sup>`view.indic_alpha` and `view.indic_outline_alpha` set the fill and outline
 -- transparency, respectively. Their default values are `30`, and `50`, respectively.
 --
--- There are 8 pre-defined indicators used for showing how buffer text differs from its file's
--- saved state if `io.track_changes` is `true`. These indicators are in addition to the 32
--- available for general use.
---
--- Indicator number | Description
--- -|-
--- `INDICATOR_HISTORY_MODIFIED_INSERTION` | Text was inserted and has not yet been saved
--- `INDICATOR_HISTORY_MODIFIED_DELETION` | Text was deleted but not yet saved
--- `INDICATOR_HISTORY_SAVED_INSERTION` | Text was inserted and saved
--- `INDICATOR_HISTORY_SAVED_DELETION` | Text was deleted and saved
--- `INDICATOR_HISTORY_REVERTED_TO_MODIFIED_INSERTION` | Text was inserted, saved, and semi-reverted
--- `INDICATOR_HISTORY_REVERTED_TO_MODIFIED_DELETION` | Text was deleted, saved, and semi-reverted
--- `INDICATOR_HISTORY_REVERTED_TO_ORIGIN_INSERTION` | Text was inserted, saved, and fully reverted
--- `INDICATOR_HISTORY_REVERTED_TO_ORIGIN_DELETION` | Text was deleted, saved, and fully reverted
---
 -- @section
 
 --- Returns a unique indicator number for use with custom indicators.
@@ -1894,22 +1855,6 @@ end)
 
 --- An underline of small 'T' shapes.
 -- @field view.INDIC_TT
-
---- @field view.INDICATOR_HISTORY_REVERTED_TO_ORIGIN_INSERTION
-
---- @field view.INDICATOR_HISTORY_REVERTED_TO_ORIGIN_DELETION
-
---- @field view.INDICATOR_HISTORY_SAVED_INSERTION
-
---- @field view.INDICATOR_HISTORY_SAVED_DELETION
-
---- @field view.INDICATOR_HISTORY_MODIFIED_INSERTION
-
---- @field view.INDICATOR_HISTORY_MODIFIED_DELETION
-
---- @field view.INDICATOR_HISTORY_REVERTED_TO_MODIFIED_INSERTION
-
---- @field view.INDICATOR_HISTORY_REVERTED_TO_MODIFIED_DELETION
 
 --- @field view.INDICATOR_MAX
 
@@ -3585,29 +3530,6 @@ end)
 
 --- @field view.TIME_FOREVER
 
---- A bit-mask of options for showing change history.
--- This is a low-level field. You probably want to use the higher-level `io.track_changes` instead.
---
--- - `view.CHANGE_HISTORY_DISABLED`: Do not show change history.
--- - `view.CHANGE_HISTORY_ENABLED`: Track change history.
--- - `view.CHANGE_HISTORY_MARKERS`: Display changes in the margin with markers.
--- - `view.CHANGE_HISTORY_INDICATORS`: Display changes in the buffer with indicators.
---
--- The default value is `view.CHANGE_HISTORY_DISABLED`.
--- @field view.change_history
-
---- Do not show change history.
--- @field view.CHANGE_HISTORY_DISABLED
-
---- Track change history.
--- @field view.CHANGE_HISTORY_ENABLED
-
---- Display changes in the margin with markers.
--- @field view.CHANGE_HISTORY_MARKERS
-
---- Display changes in the buffer with indicators.
--- @field view.CHANGE_HISTORY_INDICATORS
-
 --- Buffer contents, styling, or markers have changed.
 -- @field UPDATE_CONTENT
 
@@ -3649,6 +3571,7 @@ end)
 -- - call_tip_back
 -- - call_tip_fore
 -- - caret_line_visible
+-- - change_history
 -- - character_category_optimization
 -- - character_pointer
 -- - code_page
@@ -3822,6 +3745,7 @@ end)
 -- - release_all_extended_styles
 -- - release_document
 -- - release_line_character_index
+-- - replace_target_minimal
 -- - sel_alpha
 -- - selection_from_point
 -- - set_font_locale

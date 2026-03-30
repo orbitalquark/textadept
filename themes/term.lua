@@ -122,10 +122,6 @@ view.element_color[view.ELEMENT_WHITE_SPACE] = colors.black
 view.marker_back[textadept.bookmarks.MARK_BOOKMARK] = colors.blue
 view.marker_back[textadept.run.MARK_WARNING] = colors.yellow
 view.marker_back[textadept.run.MARK_ERROR] = colors.red
-view.marker_fore[view.MARKNUM_HISTORY_MODIFIED] = colors.yellow
-view.marker_fore[view.MARKNUM_HISTORY_SAVED] = colors.green
-view.marker_fore[view.MARKNUM_HISTORY_REVERTED_TO_MODIFIED] = colors.yellow
-view.marker_fore[view.MARKNUM_HISTORY_REVERTED_TO_ORIGIN] = colors.yellow
 
 -- Indicators.
 view.indic_fore[ui.find.INDIC_FIND] = colors.yellow

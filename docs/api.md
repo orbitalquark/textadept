@@ -972,17 +972,6 @@ Parameters:
 
 Returns: length of replacement text
 
-<a id="buffer.replace_target_minimal"></a>
-#### `buffer:replace_target_minimal`(*text*)
-
-Replaces the text in the target range without modifying any selections or scrolling the view,
-and tries to minimize change history if [`io.track_changes`](#io.track_changes) is `true`.
-
-Parameters:
-- *text*:  String text to replace the target range with.
-
-Returns: length of replacement text
-
 ### Delete Text
 
 <a id="buffer.clear"></a>
@@ -2401,16 +2390,6 @@ Marker Number | Description
 `view.MARKNUM_FOLDERMIDTAIL` | The last line of an expanded fold within an expanded fold
 `view.MARKNUM_FOLDEREND` | The first line of a collapsed fold within an expanded fold
 
-There are 4 pre-defined marker numbers used for showing how a buffer line differs from its
-file's saved state if [`io.track_changes`](#io.track_changes) is `true`.
-
-Marker Number | Description
--|-
-`view.MARKNUM_HISTORY_MODIFIED` | Line was changed and has not yet been saved
-`view.MARKNUM_HISTORY_SAVED` | Line was changed and saved
-`view.MARKNUM_HISTORY_REVERTED_TO_MODIFIED` | Line was changed, saved, then partially reverted
-`view.MARKNUM_HISTORY_REVERTED_TO_ORIGIN` | Line was changed, saved, then fully reverted
-
 [XPM image]: https://scintilla.org/ScintillaDoc.html#XPM
 [RGBA image]: https://scintilla.org/ScintillaDoc.html#RGBA
 
@@ -2804,21 +2783,6 @@ Indicator style | Description
 starting with the top-left pixel. Their default values are `30`, and `50`, respectively.<br/>
 <sup>b</sup>[`view.indic_alpha`](#view.indic_alpha) and [`view.indic_outline_alpha`](#view.indic_outline_alpha) set the fill and outline
 transparency, respectively. Their default values are `30`, and `50`, respectively.
-
-There are 8 pre-defined indicators used for showing how buffer text differs from its file's
-saved state if [`io.track_changes`](#io.track_changes) is `true`. These indicators are in addition to the 32
-available for general use.
-
-Indicator number | Description
--|-
-`INDICATOR_HISTORY_MODIFIED_INSERTION` | Text was inserted and has not yet been saved
-`INDICATOR_HISTORY_MODIFIED_DELETION` | Text was deleted but not yet saved
-`INDICATOR_HISTORY_SAVED_INSERTION` | Text was inserted and saved
-`INDICATOR_HISTORY_SAVED_DELETION` | Text was deleted and saved
-`INDICATOR_HISTORY_REVERTED_TO_MODIFIED_INSERTION` | Text was inserted, saved, and semi-reverted
-`INDICATOR_HISTORY_REVERTED_TO_MODIFIED_DELETION` | Text was deleted, saved, and semi-reverted
-`INDICATOR_HISTORY_REVERTED_TO_ORIGIN_INSERTION` | Text was inserted, saved, and fully reverted
-`INDICATOR_HISTORY_REVERTED_TO_ORIGIN_DELETION` | Text was deleted, saved, and fully reverted
 
 
 <a id="view.new_indic_number"></a>
@@ -4782,20 +4746,6 @@ The number of milliseconds the mouse must idle before generating an [`events.DWE
 
 A time of `view.TIME_FOREVER` will never generate one.
 
-<a id="view.change_history"></a>
-#### `view.change_history`
-
-A bit-mask of options for showing change history.
-
-This is a low-level field. You probably want to use the higher-level [`io.track_changes`](#io.track_changes) instead.
-
-- `view.CHANGE_HISTORY_DISABLED`: Do not show change history.
-- `view.CHANGE_HISTORY_ENABLED`: Track change history.
-- `view.CHANGE_HISTORY_MARKERS`: Display changes in the margin with markers.
-- `view.CHANGE_HISTORY_INDICATORS`: Display changes in the buffer with indicators.
-
-The default value is `view.CHANGE_HISTORY_DISABLED`.
-
 <a id="buffer.delete"></a>
 #### `buffer:delete`()
 
@@ -5693,18 +5643,6 @@ Parameters:
 	the user cancels saving any untitled buffer, the remaining unsaved files stay unsaved.
 
 Returns: `true` if all savable files were saved; `nil` otherwise.
-
-<a id="io.track_changes"></a>
-### `io.track_changes`
-
-Track file changes using line markers and buffer indicators.
-
-Changes shown are with respect to the file on disk, not the file's version control state
-(if it has one).
-
-The terminal version only shows line markers.
-
-The default value is `false`.
 
 
 
