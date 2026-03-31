@@ -193,6 +193,12 @@ end
 -- Saves session on quit.
 events.connect(events.QUIT, function() if M.save_on_quit then M.save(session_file) end end, 1)
 
+-- Disable session save on quit if a startup error occurs.
+-- This prevents clobbering the previous session.
+local function disable() M.save_on_quit = false end
+events.connect(events.ERROR, disable)
+events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, disable) end)
+
 -- Does not save session on quit.
 args.register('-n', '--nosession', 0, function() M.save_on_quit = false end, 'Disable sessions')
 -- Loads a session on startup.

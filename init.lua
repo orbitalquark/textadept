@@ -294,7 +294,7 @@ local user_init = _USERHOME .. '/init.lua'
 if lfs.attributes(user_init) then
 	local ok, errmsg = pcall(dofile, user_init)
 	if not ok then
-		events.connect(events.INITIALIZED, function() events.emit(events.ERROR, errmsg) end)
+		events.connect(events.INITIALIZED, function() events.emit(events.ERROR, errmsg) end, 1)
 	end
 end
 

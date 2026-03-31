@@ -4994,8 +4994,18 @@ Arguments:
 
 Emitted when an error occurs.
 
+You can listen for startup errors by connecting a handler to this event, and then disconnecting
+that handler inside an [`events.INITIALIZED`](#events.INITIALIZED) handler.
 Arguments:
 - *text*: The error message text.
+
+Usage:
+
+```lua
+local function disable() --[[ disable module functionality ]] end
+events.connect(events.ERROR, disable)
+events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, disable))
+```
 
 <a id="events.FILE_AFTER_SAVE"></a>
 ### `events.FILE_AFTER_SAVE`

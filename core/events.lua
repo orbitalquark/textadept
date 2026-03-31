@@ -229,8 +229,13 @@ return M
 -- @field DWELL_START
 
 --- Emitted when an error occurs.
+-- You can listen for startup errors by connecting a handler to this event, and then disconnecting
+-- that handler inside an `events.INITIALIZED` handler.
 -- Arguments:
 -- - *text*: The error message text.
+-- @usage local function disable() --[[ disable module functionality ]] end
+--	events.connect(events.ERROR, disable)
+--	events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, disable))
 -- @field ERROR
 
 --- Emitted when Textadept shows the find & replace pane.
