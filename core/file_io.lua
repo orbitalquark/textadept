@@ -168,7 +168,7 @@ local function reload(buffer)
 	local text = f:read('a')
 	if buffer.encoding then text = text:iconv('UTF-8', buffer.encoding) end
 	buffer:target_whole_document()
-	buffer:replace_target(text)
+	buffer:replace_target_minimal(text) -- minimize effect on history navigation
 	buffer:set_save_point()
 	buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
 end
