@@ -36,7 +36,7 @@ M.autocomplete_all_words = false
 --- Map of auto-paired characters like parentheses, brackets, braces, and quotes.
 -- Also maps lexer names to tables of auto-paired characters for language-specific pairing.
 -- The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;", "&quot;&quot;",
--- and "``". For certain XML-like lexers, "<>" is also auto-paired.
+-- and "&#96;&#96;". For certain XML-like lexers, "<>" is also auto-paired.
 -- @usage textadept.editing.auto_pairs['*'] = '*'
 -- @usage textadept.editing.auto_pairs.text = {} -- disable for plain text files
 -- @usage textadept.editing.auto_pairs = nil -- disable completely
