@@ -428,8 +428,9 @@ allow for sensible object-oriented scripting with an editing component that comb
 model and view model into one entity. It is not perfect and my not make complete sense at times.
 
 That said, this buffer and view API is largely interchangeable: `view.field` and
-`view:function()` are often equivalent to `buffer.field` and `buffer:function()`, respectively,
-and vice-versa.
+`view:function()` are often equivalent to `buffer.field` and `buffer:function()`,
+respectively. However the converse is only true when [`buffer`](#buffer) is equivalent to the current
+view's buffer (i.e. `buffer == view.buffer`).
 
 Only one buffer and one view at a time is considered "current" (i.e. has focus). While
 Textadept allows you to work with non-current buffers, you should only work with [`buffer`](#buffer)
@@ -438,6 +439,11 @@ select all text in the current buffer, but `buf:select_all()` where `buf ~= buff
 not make a visible selection, even if `buf` is visible in another view. Despite this,
 `buf:replace_sel('')` will still clear that buffer since it previously selected all text.
 (Basically, you can make "background" edits of non-current buffers in an object-oriented way.)
+
+There is no prohibition on working on non-current views. If you called 'v:select_all()',
+where `v ~= view`, that will visually select all text in that view. Just be aware there is
+no distinction between buffer and view operations in that case, and all operations apply to
+that view and/or its buffer.
 
 [Scintilla]: https://scintilla.org/ScintillaDoc.html
 
