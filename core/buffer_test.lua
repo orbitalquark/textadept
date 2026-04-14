@@ -58,7 +58,8 @@ local function file(filename) return ((_HOME .. '/' .. filename):gsub('\\', '/')
 local ignore_ids = {_G = true, M = true, _SCINTILLA = true, snippets = true}
 local ignore_exprs = {['ui.size'] = true}
 local exceptions = {
-	[file('core/buffer.lua')] = {'buf:select_all', 'buf:replace_sel'}, [file('core/lexer.lua')] = {
+	[file('core/buffer.lua')] = {'buf:select_all', 'buf:replace_sel', 'v:select_all'},
+	[file('core/lexer.lua')] = {
 		'lexer.style_at', 'lexer.fold_level', 'lexer.line_from_position', 'lexer.line_end',
 		'lexer.text_range'
 	}, [file('core/lfs_ext.lua')] = {'filter_object.new'}, --
