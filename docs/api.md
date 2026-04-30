@@ -4176,6 +4176,7 @@ How visible tabs are drawn.
 
 - `view.TD_LONGARROW`: Draw tabs as arrows that stretch up to tabstops.
 - `view.TD_STRIKEOUT`: Draw tabs as horizontal lines that stretch up to tabstops.
+- `view.TD_CONTROLCHAR`: Draw tabs like other control characters.
 
 The default value is `view.TD_LONGARROW`.
 
