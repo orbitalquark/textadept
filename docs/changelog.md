@@ -2,9 +2,41 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
-## 13.0 beta (01 Apr 2026)
+## 13.0 beta 2 (01 May 2026)
 
 Please see the [migration guide][] for migrating from Textadept 12 to 13.
+
+- [Textadept 13.0 beta 2 -- Windows][]
+- [Textadept 13.0 beta 2 -- macOS 13+][]
+- [Textadept 13.0 beta 2 -- Linux][]
+- [Textadept 13.0 beta 2 -- Linux ARM][]
+- [Textadept 13.0 beta 2 -- Modules][]
+
+Bugfixes:
+
+- Fixed rendering of bright colors in 8-color terminals.
+- Scintilla: fixed `buffer:convert_eols()` regression that may not convert whole file.
+
+Changes:
+
+- Added support for Swift.
+- Updated PKGBUILD, Perl, and RouterOS lexers.
+- Updated to [Scintilla][] 5.6.2.
+
+[migration guide]: manual.html#migrating-from-textadept-12-to-13
+[Textadept 13.0 beta 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.win.zip
+[Textadept 13.0 beta 2 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.macOS.zip
+[Textadept 13.0 beta 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.linux.tgz
+[Textadept 13.0 beta 2 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.linux.arm.tgz
+[Textadept 13.0 beta 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.modules.zip
+[auto-paired]: api.html#textadept.editing.auto_pairs
+[`lexer.ignore_extensions`]: api.html#lexer.ignore_extensions
+[`lexer.ignore_patterns`]: api.html#lexer.ignore_patterns
+[`config_file_contains()`]: https://github.com/orbitalquark/textadept-format/?tab=readme-ov-file#formatconfig_file_containsfilename-text
+[`config_file_exists()`]: https://github.com/orbitalquark/textadept-format/?tab=readme-ov-file#formatconfig_file_existsfilename
+[Scintilla]: https://scintilla.org
+
+## 13.0 beta (01 Apr 2026)
 
 - [Textadept 13.0 beta -- Windows][]
 - [Textadept 13.0 beta -- macOS 13+][]
@@ -46,7 +78,6 @@ Changes:
 - Format: added [`config_file_contains()`][] and [`config_file_exists()`][] convenience functions.
 - Updated to [Scintilla][] 5.6.0.
 
-[migration guide]: manual.html#migrating-from-textadept-12-to-13
 [Textadept 13.0 beta -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta/textadept_13.0_beta.win.zip
 [Textadept 13.0 beta -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta/textadept_13.0_beta.macOS.zip
 [Textadept 13.0 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta/textadept_13.0_beta.linux.tgz
