@@ -21,6 +21,8 @@ Changes:
 
 - Added support for Swift.
 - Updated PKGBUILD, Perl, and RouterOS lexers.
+- Format: handle non-existant format commands gracefully.
+- Scratch: disable this module if a startup error occurs.
 - Updated to [Scintilla][] 5.6.2.
 
 [migration guide]: manual.html#migrating-from-textadept-12-to-13
@@ -29,11 +31,6 @@ Changes:
 [Textadept 13.0 beta 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.linux.tgz
 [Textadept 13.0 beta 2 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.linux.arm.tgz
 [Textadept 13.0 beta 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.modules.zip
-[auto-paired]: api.html#textadept.editing.auto_pairs
-[`lexer.ignore_extensions`]: api.html#lexer.ignore_extensions
-[`lexer.ignore_patterns`]: api.html#lexer.ignore_patterns
-[`config_file_contains()`]: https://github.com/orbitalquark/textadept-format/?tab=readme-ov-file#formatconfig_file_containsfilename-text
-[`config_file_exists()`]: https://github.com/orbitalquark/textadept-format/?tab=readme-ov-file#formatconfig_file_existsfilename
 [Scintilla]: https://scintilla.org
 
 ## 13.0 beta (01 Apr 2026)
