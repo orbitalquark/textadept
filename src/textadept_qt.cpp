@@ -42,7 +42,8 @@ const char *get_platform() { return "QT"; }
 
 const char *get_charset() {
 #if !_WIN32
-	return QTextCodec::codecForLocale()->name().data();
+	static std::string charset;
+	return (charset = QTextCodec::codecForLocale()->name().toStdString(), charset.c_str());
 #else
 	// Ask Windows for its charset encoding because QTextCodec returns "System", which is not a
 	// valid iconv encoding. However, CP65001 (UTF-8) is not valid either.
