@@ -1,5 +1,18 @@
 -- Copyright 2020-2026 Mitchell. See LICENSE.
 
+test('view.set_theme should set the theme for a view, leaving others alone', function()
+	local _<close> = test.tmpfile('.lua', true)
+	view:split(true)
+	local _<close> = test.tmpfile('.c', true)
+
+	_VIEWS[1]:set_theme('dark')
+	_VIEWS[2]:set_theme('light')
+
+	local view1_style = _VIEWS[1].style_fore[view.STYLE_DEFAULT]
+	local view2_style = _VIEWS[2].style_fore[view.STYLE_DEFAULT]
+	test.assert(view1_style ~= view2_style, 'views should have different styles')
+end)
+
 test('view.goto_buffer should switch to a given buffer', function()
 	buffer.new()
 
