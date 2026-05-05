@@ -291,13 +291,14 @@ local function restore_buffer_state()
 	-- Restore fold state.
 	for _, line in ipairs(buffer._folds) do view:toggle_fold(line) end
 	-- Restore view state.
-	if buffer.length > 1 then buffer.selection_serialized = buffer._selection end
+	buffer.selection_serialized = buffer._selection
 	buffer:choose_caret_x()
 	view:scroll_vertical(buffer._top_line, buffer._sub_line)
 	view.x_offset = buffer._x_offset
 end
 events.connect(events.BUFFER_AFTER_SWITCH, restore_buffer_state)
-events.connect(events.BUFFER_AFTER_REPLACE_TEXT, restore_buffer_state)
+events.connect(events.BUFFER_AFTER_REPLACE_TEXT,
+	function() if buffer.line_count > 1 then restore_buffer_state() end end)
 
 --- Updates titlebar and statusbar.
 local function update_bars()
