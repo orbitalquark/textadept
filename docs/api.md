@@ -34,40 +34,38 @@
 
 Extends Lua's _G table to provide extra functions and fields for Textadept.
 
-<a id="BSD"></a>
-### `BSD`
+<a id="OS"></a>
+### `OS`
 
-Whether or not Textadept is running on BSD.
+The operating system Textadept is running on.
 
-<a id="CURSES"></a>
-### `CURSES`
+One of:
+- 'windows'
+- 'macos'
+- 'linux'
+- 'bsd'
 
-Whether or not Textadept is running in a terminal.
+Usage:
 
-<a id="GTK"></a>
-### `GTK`
+```lua
+if OS == 'windows' then ... end
+```
 
-Whether or not Textadept is running as a GTK GUI application.
+<a id="UI"></a>
+### `UI`
 
-<a id="LINUX"></a>
-### `LINUX`
+The user interface Textadept is running on.
 
-Whether or not Textadept is running on Linux.
+One of:
+- 'qt'
+- 'gtk'
+- 'terminal'
 
-<a id="OSX"></a>
-### `OSX`
+Usage:
 
-Whether or not Textadept is running on macOS.
-
-<a id="QT"></a>
-### `QT`
-
-Whether or not Textadept is running as a Qt GUI application.
-
-<a id="WIN32"></a>
-### `WIN32`
-
-Whether or not Textadept is running on Windows.
+```lua
+if UI == 'terminal' then ... end
+```
 
 <a id="_BUFFERS"></a>
 ### `_BUFFERS`
@@ -7871,9 +7869,9 @@ Defines key bindings for Textadept.
 This set of key bindings is pretty standard among other text editors, at least for basic
 editing commands and movements.
 
-These bindings are designed to be as consistent as possible between operating systems and platforms
-so that users familiar with one set of bindings can intuit a given binding on another OS or
-platform, minimizing the need for memorization.
+These bindings are designed to be as consistent as possible between operating systems and
+user interfaces so that users familiar with one set of bindings can intuit a given binding
+on another OS or UI, minimizing the need for memorization.
 
 In general, bindings for macOS are the same as for Windows/Linux/BSD except the "Control"
 modifier key on Windows/Linux/BSD is replaced by "Command" (⌘) and the "Alt" modifier key

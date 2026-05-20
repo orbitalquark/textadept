@@ -5,13 +5,18 @@ package.path = table.concat({
 	_HOME .. '/modules/?/init.lua', package.path
 }, ';');
 package.cpath = table.concat({
-	string.format('%s/modules/?.%s', _USERHOME, not WIN32 and 'so' or 'dll'),
-	string.format('%s/modules/?.%s', _HOME, not WIN32 and 'so' or 'dll'), package.cpath
+	string.format('%s/modules/?.%s', _USERHOME, OS ~= 'windows' and 'so' or 'dll'),
+	string.format('%s/modules/?.%s', _HOME, OS ~= 'windows' and 'so' or 'dll'), package.cpath
 }, ';')
 
 events.emit('pre_init') -- allow core modules to operate on the first buffer and view
 
 textadept = require('textadept')
+
+-- Temporary backward-compatibility.
+-- LuaFormatter off
+for k,v in pairs{windows='WIN32',macos='OSX',linux='LINUX',bsd='BSD',terminal='CURSES',gtk='GTK',qt='QT'} do if OS==k or UI==k then _G[v]=true end end
+-- LuaFormatter on
 
 -- The remainder of this file defines default buffer and view properties and applies them
 -- to subsequent buffers and views. Normally, a setting like `buffer.use_tabs = false` only
@@ -74,7 +79,7 @@ end)
 
 local buffer, view = buffer, view
 
-if CURSES then view:set_theme('term') end
+if UI == 'terminal' then view:set_theme('term') end
 
 -- Multiple Selection and Virtual Space.
 buffer.multiple_selection, buffer.additional_selection_typing = true, true
@@ -112,11 +117,11 @@ view.scroll_width_tracking = true
 -- view.view_eol = true
 
 -- Styling.
-if not CURSES then view.idle_styling = view.IDLESTYLING_ALL end
+if UI ~= 'terminal' then view.idle_styling = view.IDLESTYLING_ALL end
 
 -- Caret and Selection Styles.
 -- view.sel_eol_filled = true
--- if not CURSES then view.caret_line_frame = 1 end
+-- if UI ~= 'terminal' then view.caret_line_frame = 1 end
 view.caret_line_visible_always = true
 -- view.caret_line_highlight_subline = true
 -- view.caret_period = 0
@@ -146,7 +151,7 @@ local function resize_line_number_margin(shrinkable)
 	-- This needs to be evaluated dynamically since themes/styles can change.
 	local view = _G.view -- luacheck: no redefined
 	local width = math.max(4, #tostring(_G.buffer.line_count)) *
-		view:text_width(view.STYLE_LINENUMBER, '9') + (not CURSES and 4 or 0)
+		view:text_width(view.STYLE_LINENUMBER, '9') + (UI ~= 'terminal' and 4 or 0)
 	view.margin_width_n[1] = not shrinkable and math.max(view.margin_width_n[1], width) or width
 end
 events.connect(events.BUFFER_NEW, resize_line_number_margin)
@@ -155,9 +160,9 @@ events.connect(events.FILE_OPENED, resize_line_number_margin)
 events.connect(events.RESET_AFTER, resize_line_number_margin)
 events.connect(events.ZOOM, function() resize_line_number_margin(true) end)
 -- Marker Margin.
-view.margin_width_n[2] = not CURSES and 4 or 1
+view.margin_width_n[2] = UI ~= 'terminal' and 4 or 1
 -- Fold Margin.
-view.margin_width_n[3] = not CURSES and 12 or 1
+view.margin_width_n[3] = UI ~= 'terminal' and 12 or 1
 view.margin_mask_n[3] = view.MASK_FOLDERS
 local function update_fold_margin()
 	_G.view._fold_margin_width = math.max(_G.view.margin_width_n[3], _G.view._fold_margin_width or 0)
@@ -173,11 +178,12 @@ for i = 2, view.margins do
 end
 
 -- Annotations.
-view.annotation_visible = not CURSES and view.ANNOTATION_BOXED or view.ANNOTATION_STANDARD
-view.eol_annotation_visible = not CURSES and view.EOLANNOTATION_BOXED or view.EOLANNOTATION_STANDARD
+view.annotation_visible = UI ~= 'terminal' and view.ANNOTATION_BOXED or view.ANNOTATION_STANDARD
+view.eol_annotation_visible = UI ~= 'terminal' and view.EOLANNOTATION_BOXED or
+	view.EOLANNOTATION_STANDARD
 
 -- Other.
--- view.buffered_draw = not GTK
+-- view.buffered_draw = UI ~= 'gtk'
 -- buffer.word_chars =
 -- buffer.whitespace_chars =
 -- buffer.punctuation_chars =
@@ -188,7 +194,7 @@ view.eol_annotation_visible = not CURSES and view.EOLANNOTATION_BOXED or view.EO
 -- buffer.indent = 2
 -- buffer.tab_indents = false
 buffer.back_space_un_indents = true
-if not CURSES then view.indentation_guides = view.IV_LOOKBOTH end
+if UI ~= 'terminal' then view.indentation_guides = view.IV_LOOKBOTH end
 
 -- Margin Markers.
 view:marker_define(textadept.bookmarks.MARK_BOOKMARK, view.MARK_FULLRECT)
@@ -230,12 +236,12 @@ view:marker_define(view.MARKNUM_FOLDERMIDTAIL, view.MARK_TCORNER)
 
 -- Indicators.
 view.indic_style[ui.find.INDIC_FIND] = view.INDIC_ROUNDBOX
-view.indic_under[ui.find.INDIC_FIND] = not CURSES
+view.indic_under[ui.find.INDIC_FIND] = UI ~= 'terminal'
 view.indic_style[textadept.editing.INDIC_HIGHLIGHT] = view.INDIC_ROUNDBOX
-view.indic_under[textadept.editing.INDIC_HIGHLIGHT] = not CURSES
+view.indic_under[textadept.editing.INDIC_HIGHLIGHT] = UI ~= 'terminal'
 view.indic_style[textadept.run.INDIC_WARNING] = view.INDIC_SQUIGGLE
 view.indic_style[textadept.run.INDIC_ERROR] = view.INDIC_SQUIGGLE
-view.indic_style[textadept.snippets.INDIC_PLACEHOLDER] = not CURSES and view.INDIC_DOTBOX or
+view.indic_style[textadept.snippets.INDIC_PLACEHOLDER] = UI ~= 'terminal' and view.INDIC_DOTBOX or
 	view.INDIC_STRAIGHTBOX
 
 -- Autocompletion.
@@ -267,9 +273,9 @@ events.connect(events.RESET_BEFORE, function()
 	for k in pairs(_G.buffer) do if k:find('^fold') then _G.buffer[k] = nil end end
 end)
 view.automatic_fold = view.AUTOMATICFOLD_SHOW | view.AUTOMATICFOLD_CLICK | view.AUTOMATICFOLD_CHANGE
--- view.fold_flags = not CURSES and view.FOLDFLAG_LINEAFTER_CONTRACTED or 0
+-- view.fold_flags = UI ~= 'terminal' and view.FOLDFLAG_LINEAFTER_CONTRACTED or 0
 view.fold_display_text_style = view.FOLDDISPLAYTEXT_BOXED
-view:set_default_fold_display_text(not CURSES and ' ... ' or '[...]')
+view:set_default_fold_display_text(UI ~= 'terminal' and ' ... ' or '[...]')
 
 -- Line Wrapping.
 -- view.wrap_mode = view.WRAP_WHITESPACE
@@ -280,14 +286,14 @@ view:set_default_fold_display_text(not CURSES and ' ... ' or '[...]')
 view.layout_threads = 1000 -- will be reduced to system specs
 
 -- Long Lines.
--- view.edge_mode = not CURSES and view.EDGE_LINE or view.EDGE_BACKGROUND
+-- view.edge_mode = UI ~= 'terminal' and view.EDGE_LINE or view.EDGE_BACKGROUND
 -- view.edge_column = 80
 
 -- Accessibility.
 -- view.accessibility = view.ACCESSIBILITY_DISABLED
 
 -- Notifications.
-if QT and WIN32 then view.mouse_dwell_time = 500 end -- only different here for some reason
+if OS == 'windows' and UI == 'qt' then view.mouse_dwell_time = 500 end -- only different here
 
 -- Load user init file, which may also define default buffer settings.
 local user_init = _USERHOME .. '/init.lua'

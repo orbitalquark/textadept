@@ -35,26 +35,22 @@ for _, mod in ipairs{'buffer', 'file_io', 'lfs_ext', 'table_ext', 'ui', 'view'} 
 -- @see string.iconv
 -- @field _CHARSET
 
---- Whether or not Textadept is running on Windows.
--- @field WIN32
+--- The operating system Textadept is running on.
+-- One of:
+-- - 'windows'
+-- - 'macos'
+-- - 'linux'
+-- - 'bsd'
+-- @usage if OS == 'windows' then ... end
+-- @field OS
 
---- Whether or not Textadept is running on macOS.
--- @field OSX
-
---- Whether or not Textadept is running on Linux.
--- @field LINUX
-
---- Whether or not Textadept is running on BSD.
--- @field BSD
-
---- Whether or not Textadept is running as a GTK GUI application.
--- @field GTK
-
---- Whether or not Textadept is running as a Qt GUI application.
--- @field QT
-
---- Whether or not Textadept is running in a terminal.
--- @field CURSES
+--- The user interface Textadept is running on.
+-- One of:
+-- - 'qt'
+-- - 'gtk'
+-- - 'terminal'
+-- @usage if UI == 'terminal' then ... end
+-- @field UI
 
 --- Textadept's current UI mode, either "light" or "dark".
 -- Manually changing this field has no effect. It is used internally to set a theme on startup

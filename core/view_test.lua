@@ -81,7 +81,7 @@ test('view.split should split the current view into roughly equal halves', funct
 	local half_height, split_pos = size[2] / 2, size[3]
 	test.assert(math.abs(half_height - split_pos) / half_height <= 0.1, 'split sizes are unequal')
 end)
-if GTK then
+if UI == 'gtk' then
 	local gtk2 = os.getenv('CI') == 'true' and io.popen('dpkg --list'):read('a'):find('gtk2%.0%-dev')
 	if not gtk2 then expected_failure() end -- TODO: second size[3] == 0
 end
@@ -97,11 +97,11 @@ test('view.split should preserve buffer state', function()
 	view:split(true) -- vertical split preserves scroll position
 
 	test.assert_equal(buffer:get_sel_text(), selected_text)
-	if QT then ui.update() end
+	if UI == 'qt' then ui.update() end
 	test.assert_equal(view.first_visible_line, first_line)
 	test.assert_equal(view.x_offset, x_offset)
 end)
-if GTK then retry(1) end -- GTK 2
+if UI == 'gtk' then retry(1) end -- GTK 2
 
 test('view.split should ensure the caret remains visible', function()
 	buffer:append_text(test.lines(100))
@@ -109,7 +109,7 @@ test('view.split should ensure the caret remains visible', function()
 
 	view:split() -- horizontal split should scroll caret into view as necessary
 
-	if QT then ui.update() end
+	if UI == 'qt' then ui.update() end
 	local top_line = view.first_visible_line
 	local bottom_line = top_line + view.lines_on_screen
 	local line = buffer:line_from_position(buffer.current_pos)
@@ -181,4 +181,4 @@ test('events.MODE_CHANGED should trigger view.set_theme', function()
 
 	test.assert_equal(set_theme.called, true)
 end)
-if CURSES then skip('the terminal version does not emit this event') end
+if UI == 'terminal' then skip('the terminal version does not emit this event') end

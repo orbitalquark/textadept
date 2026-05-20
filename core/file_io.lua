@@ -46,7 +46,7 @@ io.detect_indentation = true
 -- This has no effect on binary files.
 --
 -- The default value is `false` on Windows, and `true` on macOS, Linux, and BSD.
-io.ensure_final_newline = not WIN32
+io.ensure_final_newline = OS ~= 'windows'
 
 --- The maximum number of files listed in the quick open list.
 -- The default value is `5000`.
@@ -388,7 +388,7 @@ function io.quick_open(paths, filter)
 	if type(paths) == 'string' then paths = {paths} end
 
 	local utf8_list = {}
-	local prefix = #paths == 1 and paths[1] .. (not WIN32 and '/' or '\\')
+	local prefix = #paths == 1 and paths[1] .. (OS ~= 'windows' and '/' or '\\')
 	for _, path in ipairs(paths) do
 		for filename in lfs.walk(path, filter) do
 			if #utf8_list >= io.quick_open_max then break end

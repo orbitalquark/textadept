@@ -1,8 +1,8 @@
 // Copyright 2007-2026 Mitchell. See LICENSE.
-// Interface between platforms and Textadept.
-// Platforms use this interface to communicate with Textadept.
+// Interface between a user interface (UI) and Textadept.
+// UIs use this interface to communicate with Textadept.
 
-#include "textadept_platform.h"
+#include "textadept_ui.h"
 
 // Textadept's home directory.
 extern char *textadept_home;
@@ -14,17 +14,17 @@ extern SciObject *focused_view, *command_entry;
 extern FindButton *find_next, *find_prev, *replace, *replace_all;
 extern FindOption *match_case, *whole_word, *regex, *in_files;
 
-// Textadept's Lua state. Platforms should generally refrain from modifying it, but access may
-// be occasionally needed.
+// Textadept's Lua state. UIs should generally refrain from modifying it, but access may be
+// occasionally needed.
 extern lua_State *lua;
 
-// Textadept's exit status. Platforms should return it from their main() functions.
+// Textadept's exit status. UIs should return it from their main() functions.
 extern int exit_status;
 
 /** Initializes Textadept.
- * Initializes Lua, asks the Platform to create the main application window, and runs Lua
- * startup scripts. Platforms should typically call this after their own initialization and
- * before starting the main event loop.
+ * Initializes Lua, asks the UI to create the main application window, and runs Lua startup
+ * scripts. UIs should typically call this after their own initialization and before starting
+ * the main event loop.
  * Any startup errors are presented in a dialog. Emits an 'initialized' event on success.
  * @param argc The number of command line arguments.
  * @param argv List of command line argument strings.
@@ -46,8 +46,8 @@ bool emit(const char *name, ...);
  * shifting other buffers as necessary.
  * @param from 1-based index of the buffer to move.
  * @param to 1-based index to move the buffer to.
- * @reorder_tabs Whether or not to reorder platform tabs. This is `false` when responding to
- *	a platform reordering event and `true` when calling from Lua.
+ * @reorder_tabs Whether or not to reorder UI tabs. This is `false` when responding to a UI
+ *	reordering event and `true` when calling from Lua.
  */
 void move_buffer(int from, int to, bool reorder_tabs);
 
@@ -81,17 +81,17 @@ void process_output(Process *proc, const char *s, size_t len, bool is_stdout);
  */
 void process_exited(Process *proc, int code);
 
-/** Asks Textadept if the platform can quit.
+/** Asks Textadept if the UI can quit.
  * If the return value is `false`, something is preventing Textadept from quitting (e.g. unsaved
- * changes) and the platform should not quit yet.
+ * changes) and the UI should not quit yet.
  * @return true or false depending on whether Textadept is ready to quit
  */
 bool can_quit(void);
 
 /** Closes Textadept.
  * Unsplits panes, closes buffers, deletes Scintilla views, and closes Lua. During this process,
- * Textadept may still call `SS()`, so platforms should take care to call this while Scintilla
- * is still available (perhaps just before exiting the main event loop).
+ * Textadept may still call `SS()`, so UIs should take care to call this while Scintilla is
+ * still available (perhaps just before exiting the main event loop).
  * This does not need to be called if `init_textadept()` failed.
  */
 void close_textadept(void);

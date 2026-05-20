@@ -365,7 +365,7 @@ function M.filter_through(command)
 		for i = 1, buffer.selections do
 			inout[#inout + 1] = buffer:text_range(buffer.selection_n_start[i], buffer.selection_n_end[i])
 		end
-		local newline = not WIN32 and '\n' or '\r\n'
+		local newline = OS ~= 'windows' and '\n' or '\r\n'
 		inout = table.concat(inout, newline) .. newline
 	end
 	for i = 1, #commands do
@@ -598,7 +598,7 @@ end)
 
 -- Enables and disables bracketed paste mode in curses and disables auto-pair and auto-indent
 -- while pasting.
-if CURSES and not WIN32 then
+if UI == 'terminal' and OS ~= 'windows' then
 	local function enable_br_paste() io.stdout:write('\x1b[?2004h'):flush() end
 	local function disable_br_paste() io.stdout:write('\x1b[?2004l'):flush() end
 	events.connect(events.INITIALIZED, enable_br_paste)

@@ -1,5 +1,5 @@
 // Copyright 2022-2026 Mitchell. See LICENSE.
-// Qt platform for Textadept.
+// Qt user interface for Textadept.
 
 extern "C" {
 #include "textadept.h"
@@ -38,7 +38,7 @@ extern "C" {
 // Qt objects.
 static Textadept *ta;
 
-const char *get_platform() { return "QT"; }
+const char *get_ui() { return "qt"; }
 
 const char *get_charset() {
 #if !_WIN32

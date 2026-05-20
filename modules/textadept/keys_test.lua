@@ -8,7 +8,7 @@ test('shift+\\n should start a new line below the current one', function()
 	test.assert_equal(buffer:get_text(), test.lines{'1', ''})
 	test.assert_equal(buffer:line_from_position(buffer.current_pos), 2)
 end)
-if CURSES then skip('shift+\\n is not defined') end
+if UI == 'terminal' then skip('shift+\\n is not defined') end
 
 test('ctrl+shift+\\n should start a new line above the current one', function()
 	local start_new_line = keys['shift+\n']
@@ -21,30 +21,30 @@ test('ctrl+shift+\\n should start a new line above the current one', function()
 	test.assert_equal(buffer:get_text(), test.lines{'', '2'})
 	test.assert_equal(buffer.current_pos, 1)
 end)
-if CURSES then skip('ctrl+shift+\\n is not defined') end
+if UI == 'terminal' then skip('ctrl+shift+\\n is not defined') end
 
 test('alt+pgup should line scroll up without moving the caret', function()
 	buffer:append_text(test.lines(50))
 	buffer:document_end()
 	local top_line = view.first_visible_line
 
-	test.type(not OSX and 'alt+pgup' or 'ctrl+pgup')
+	test.type(OS ~= 'macos' and 'alt+pgup' or 'ctrl+pgup')
 
 	test.assert(view.first_visible_line < top_line, 'view was not scrolled up')
 	test.assert_equal(buffer.current_pos, buffer.length + 1)
 end)
 skip('this test randomly fails') -- TODO: no amount of ui.update() is good enough
-if CURSES then skip('alt+pgup is not defined') end
+if UI == 'terminal' then skip('alt+pgup is not defined') end
 
 test('alt+pgdn should line scroll down without moving the caret', function()
 	buffer:append_text(test.lines(50))
 
-	test.type(not OSX and 'alt+pgdn' or 'ctrl+pgdn')
+	test.type(OS ~= 'macos' and 'alt+pgdn' or 'ctrl+pgdn')
 
 	test.assert(view.first_visible_line > 0, 'view was not scrolled down')
 	test.assert_equal(buffer.current_pos, 1)
 end)
-if CURSES then skip('alt+pgdn is not defined') end
+if UI == 'terminal' then skip('alt+pgdn is not defined') end
 
 test('ctrl+k should cut to EOL with empty selection', function()
 	local text = 'text'
@@ -56,7 +56,7 @@ test('ctrl+k should cut to EOL with empty selection', function()
 	test.assert_equal(buffer:get_text(), ' ')
 	test.assert_equal(ui.get_clipboard_text(), text)
 end)
-if not OSX or CURSES then skip('ctrl+k is not defined') end
+if OS ~= 'macos' or UI == 'terminal' then skip('ctrl+k is not defined') end
 
 test('ctrl+k at EOL should delete EOL', function()
 	buffer:append_text(test.lines(2, true))
@@ -65,4 +65,4 @@ test('ctrl+k at EOL should delete EOL', function()
 
 	test.assert_equal(buffer.line_count, 1)
 end)
-if not OSX or CURSES then skip('ctrl+k is not defined') end
+if OS ~= 'macos' or UI == 'terminal' then skip('ctrl+k is not defined') end

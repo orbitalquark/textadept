@@ -161,8 +161,8 @@ end
 
 --- Opens a URL in the user's default web browser.
 local function open_page(url)
-	local cmd = (WIN32 and 'start ""') or (OSX and 'open') or 'xdg-open'
-	os.spawn(string.format('%s "%s"', cmd, not OSX and url or 'file://' .. url))
+	local cmd = OS == 'windows' and 'start ""' or OS == 'macos' and 'open' or 'xdg-open'
+	os.spawn(string.format('%s "%s"', cmd, OS ~= 'macos' and url or 'file://' .. url))
 end
 
 --- The default main menubar.
@@ -435,7 +435,7 @@ local default_menubar = {
 		}
 	}
 }
-if QT and OSX then
+if UI == 'qt' and OS == 'macos' then
 	-- Note: do not localize "Window" since it's hardcoded until Qt supports it natively.
 	table.insert(default_menubar, #default_menubar,
 		{title = 'Window', {_L['Zoom'], function() ui.maximized = not ui.maximized end}})
@@ -477,7 +477,7 @@ local default_tab_context_menu = {
 local proxies = {}
 
 local SHIFT, CTRL, ALT, META = view.MOD_SHIFT, view.MOD_CTRL, view.MOD_ALT, view.MOD_META
-local ignore = {[0xFE20] = true, [0x01000002] = true}
+local gui_key, ignore = UI == 'gtk' and 0xFE20 or 0x1000000, {[0xFE20] = true, [0x01000002] = true}
 --- Returns for a key sequence the integer keycode and modifier mask used to create a menu
 -- item accelerator.
 -- Keycodes are either ASCII bytes or codes from `keys.KEYSYMS`. Modifiers are a combination of
@@ -494,7 +494,7 @@ local function get_menu_accel(key_seq)
 	local code = string.byte(key)
 	if #key == 1 and code >= 32 then return code, mask end
 	for c, s in pairs(keys.KEYSYMS) do
-		if s == key and c >= (not QT and 0xFE20 or 0x01000000) and not ignore[c] then return c, mask end
+		if s == key and c >= gui_key and not ignore[c] then return c, mask end
 	end
 	return code, mask
 end
@@ -620,7 +620,7 @@ proxies.tab_context_menu = proxy_menu(default_tab_context_menu)
 events.connect(events.MENU_CLICKED, function(menu_id)
 	local items = menu_id < 1000 and menu_items or contextmenu_items
 	local f = items[menu_id < 1000 and menu_id or menu_id - 1000][2]
-	if not OSX or not key_shortcuts[f] then
+	if OS ~= 'macos' or not key_shortcuts[f] then
 		assert_type(f, 'function', 'command')()
 		-- On macOS, `events.MENU_CLICKED` will also emit `events.KEYPRESS` if there is a key
 		-- shortcut (see below). This would result in recording the command twice during macro

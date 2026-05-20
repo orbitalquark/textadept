@@ -122,7 +122,7 @@ test('run.* should mark recognized errors', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local _<close> = test.mock(os, 'spawn', mock_spawn)
 	local f<close> = test.tmpfile('file.txt:1: error!')
-	local command = (not WIN32 and 'cat ' or 'type ') .. f.filename
+	local command = (OS ~= 'windows' and 'cat ' or 'type ') .. f.filename
 	textadept.run.compile_commands[f.filename] = command
 
 	textadept.run.compile(f.filename)
@@ -200,7 +200,7 @@ end)
 test('run.* should allow functions to return commands and working dirs', function()
 	local dir<close> = test.tmpdir()
 	local f<close> = test.tmpfile()
-	local command = not WIN32 and 'pwd' or 'cd'
+	local command = OS ~= 'windows' and 'pwd' or 'cd'
 	local command_in_dir = function() return command, dir.dirname end
 	textadept.run.run_commands[f.filename] = command_in_dir
 
@@ -215,8 +215,9 @@ test('run.* should allow functions to return commands, working dirs, and environ
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local f<close> = test.tmpfile()
 	local env = {key = 'value'}
-	local command_in_dir =
-		function() return 'echo ' .. (not WIN32 and '$key' or '%key%'), nil, env end
+	local command_in_dir = function()
+		return 'echo ' .. (OS ~= 'windows' and '$key' or '%key%'), nil, env
+	end
 	textadept.run.run_commands[f.filename] = command_in_dir
 	local spawn = test.stub()
 	local _<close> = test.mock(os, 'spawn', spawn)
@@ -312,7 +313,7 @@ end)
 test('run.stop should stop the currently running process', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local f<close> = test.tmpfile()
-	local command = not WIN32 and 'sleep 1' or 'timeout 1'
+	local command = OS ~= 'windows' and 'sleep 1' or 'timeout 1'
 	textadept.run.run_commands[f.filename] = command
 	textadept.run.run(f.filename)
 
@@ -327,7 +328,7 @@ end)
 test('run.stop should prompt when there are multiple running processes', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
 	local f<close> = test.tmpfile()
-	local command = not WIN32 and 'sleep 1' or 'timeout 1'
+	local command = OS ~= 'windows' and 'sleep 1' or 'timeout 1'
 	textadept.run.run_commands[f.filename] = command
 	textadept.run.run(f.filename)
 	textadept.run.run(f.filename)
@@ -366,7 +367,7 @@ test('run.goto_error(true) should go to the next error/warning found', function(
 		f.filename .. ':2: warning: warning!', --
 		''
 	})
-	local command = not WIN32 and 'cat' or 'type'
+	local command = OS ~= 'windows' and 'cat' or 'type'
 	textadept.run.run_commands[f.filename] = command .. ' "%f"'
 	textadept.run.run()
 
@@ -380,7 +381,7 @@ test('run.goto_error(true) should go to the next error/warning found', function(
 	test.assert_equal(first_line, 1)
 	test.assert_equal(second_line, 2)
 end)
-if WIN32 then expected_failure() end -- TODO: output lexer does not recognize absolute c:\ paths
+if OS == 'windows' then expected_failure() end -- TODO: output lexer does not recognize absolute c:\ paths
 
 test('run.goto_error should work with relative file names', function()
 	local _<close> = test.mock(textadept.run, 'run_without_prompt', true)
@@ -388,7 +389,7 @@ test('run.goto_error should work with relative file names', function()
 	local f<close> = test.tmpfile()
 	local basename = f.filename:match('[^/\\]+$')
 	f:write(basename, ':1: error!', '\n')
-	local command = not WIN32 and 'cat' or 'type'
+	local command = OS ~= 'windows' and 'cat' or 'type'
 	textadept.run.run_commands[f.filename] = command .. ' "%f"'
 	textadept.run.run(f.filename)
 
@@ -403,7 +404,7 @@ test('run.goto_error should allow going to columns if available', function()
 	local f<close> = test.tmpfile()
 	local basename = f.filename:match('[^/\\]+$')
 	f:write(basename, ':1:2: error!', '\n')
-	local command = not WIN32 and 'cat' or 'type'
+	local command = OS ~= 'windows' and 'cat' or 'type'
 	textadept.run.run_commands[f.filename] = command .. ' "%f"'
 	textadept.run.run(f.filename)
 
@@ -419,7 +420,7 @@ test('run.goto_error should show an annotation with the error message', function
 	local basename = f.filename:match('[^/\\]+$')
 	local errmsg = 'error!'
 	f:write(basename, ':1: ', errmsg, '\n')
-	local command = not WIN32 and 'cat' or 'type'
+	local command = OS ~= 'windows' and 'cat' or 'type'
 	textadept.run.run_commands[f.filename] = command .. ' "%f"'
 	textadept.run.run(f.filename)
 
@@ -434,7 +435,7 @@ test('run.goto_error should work if neither the output view nor buffer is visibl
 	local f<close> = test.tmpfile()
 	local basename = f.filename:match('[^/\\]+$')
 	f:write(basename, ':1: error!', '\n')
-	local command = not WIN32 and 'cat' or 'type'
+	local command = OS ~= 'windows' and 'cat' or 'type'
 	textadept.run.run_commands[f.filename] = command .. ' "%f"'
 	textadept.run.run(f.filename)
 	view:goto_buffer(-1)
@@ -454,7 +455,7 @@ test('run.goto_error(false) should go to the previous error/warning found', func
 		basename .. ':2: warning: warning!', --
 		''
 	})
-	local command = not WIN32 and 'cat' or 'type'
+	local command = OS ~= 'windows' and 'cat' or 'type'
 	textadept.run.run_commands[f.filename] = command .. ' "%f"'
 	textadept.run.run()
 
@@ -477,7 +478,7 @@ test('Enter in an output buffer error should jump to that error', function()
 	local f<close> = test.tmpfile()
 	local basename = f.filename:match('[^/\\]+$')
 	f:write(basename, ':1: error!', '\n')
-	local command = not WIN32 and 'cat' or 'type'
+	local command = OS ~= 'windows' and 'cat' or 'type'
 	textadept.run.run_commands[f.filename] = command .. ' "%f"'
 	textadept.run.run(f.filename)
 	for _ = 1, 3 do buffer:line_up() end
@@ -493,7 +494,7 @@ test('double-clicking an error in the output buffer should jump to it', function
 	local f<close> = test.tmpfile()
 	local basename = f.filename:match('[^/\\]+$')
 	f:write(basename, ':1: error!', '\n')
-	local command = not WIN32 and 'cat' or 'type'
+	local command = OS ~= 'windows' and 'cat' or 'type'
 	textadept.run.run_commands[f.filename] = command .. ' "%f"'
 	textadept.run.run(f.filename)
 	for _ = 1, 3 do buffer:line_up() end

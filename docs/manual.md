@@ -263,7 +263,7 @@ Here is a sample *~/.textadept/init.lua* for illustration:
 
 ```lua
 -- Adjust the default theme's font and size.
-if not CURSES then
+if UI ~= 'terminal' then
 	view:set_theme('light', {font = 'Monospace', size = 12})
 end
 
@@ -279,7 +279,7 @@ textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_CURRENT
 textadept.editing.comment_string.c = '/*|*/'
 
 -- Create a key binding to the "Edit > Preferences" menu item.
-if not OSX and not CURSES then
+if OS ~= 'macos' and UI ~= 'terminal' then
 	keys['ctrl+,'] = textadept.menu.menubar['Edit/Preferences'][2]
 end
 
@@ -1337,7 +1337,7 @@ You can set Textadept's theme using [`view:set_theme()`][]. You can also tweak a
 on a per-language basis. For example, in your *~/.textadept/init.lua*:
 
 ```lua
-if not CURSES then
+if UI ~= 'terminal' then
 	view:set_theme('light', {font = 'Monospace', size = 12})
 	-- You can alternatively use the following to keep the default theme:
 	-- view:set_theme{font = 'Monospace', size = 12}
@@ -1644,12 +1644,22 @@ Textadept is composed of the following technologies:
 
 Old API | Change | New API
 -|:-:|-
+**_G**||
+WIN32 | Replaced | [OS][] == 'windows'
+OSX | Replaced | [OS][] == 'macos'
+Linux | Replaced | [OS][] == 'linux'
+BSD | Replaced | [OS][] == 'bsd'
+QT | Replaced | [UI][] == 'qt'
+GTK | Replaced | [UI][] == 'gtk'
+CURSES | Replaced | [UI][] == 'terminal'
 **ui**||
 [get_split_table()][] | Changed | `size` field is now a {width, height, split pos} table
 **view**||
 size | Renamed | [split_pos][]
 parent_size | Renamed | [parent_split_pos][]
 
+[OS]: api.html#OS
+[UI]: api.html#UI
 [get_split_table()]: api.html#ui.get_split_table
 [split_pos]: api.html#view.split_pos
 [parent_split_pos]: api.html#view.parent_split_pos

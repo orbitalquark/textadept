@@ -4,9 +4,9 @@
 -- This set of key bindings is pretty standard among other text editors, at least for basic
 -- editing commands and movements.
 --
--- These bindings are designed to be as consistent as possible between operating systems and platforms
--- so that users familiar with one set of bindings can intuit a given binding on another OS or
--- platform, minimizing the need for memorization.
+-- These bindings are designed to be as consistent as possible between operating systems and
+-- user interfaces so that users familiar with one set of bindings can intuit a given binding
+-- on another OS or UI, minimizing the need for memorization.
 --
 -- In general, bindings for macOS are the same as for Windows/Linux/BSD except the "Control"
 -- modifier key on Windows/Linux/BSD is replaced by "Command" (⌘) and the "Alt" modifier key
@@ -443,10 +443,10 @@ keys.assign_platform_bindings{
 	
 	-- Buffer.
 	[m('Buffer/Next Buffer')] = {
-		{'ctrl+\t', 'ctrl+pgdn'}, {'cmd+}', 'ctrl+\t'}, WIN32 and 'ctrl+\t' or 'meta+pgdn'
+		{'ctrl+\t', 'ctrl+pgdn'}, {'cmd+}', 'ctrl+\t'}, OS == 'windows' and 'ctrl+\t' or 'meta+pgdn'
 	}, [m('Buffer/Previous Buffer')] = {
 		{'ctrl+shift+\t', 'ctrl+pgup'}, {'cmd+{', 'ctrl+shift+\t'},
-		WIN32 and 'ctrl+shift+\t' or 'meta+pgup'
+		OS == 'windows' and 'ctrl+shift+\t' or 'meta+pgup'
 	}, [ui.switch_buffer] = {'ctrl+b', 'cmd+b', 'ctrl+b'},
 	-- Indentation.
 	-- TODO: m('Buffer/Indentation/Tab width: 2')
@@ -469,9 +469,11 @@ keys.assign_platform_bindings{
 
 	-- View.
 	[m('View/Next View')] = {
-		'ctrl+alt+pgdn', {'ctrl+cmd+}', 'ctrl+cmd+pgdn'}, WIN32 and 'meta+pgdn' or 'ctrl+meta+pgdn'
+		'ctrl+alt+pgdn', {'ctrl+cmd+}', 'ctrl+cmd+pgdn'},
+		OS == 'windows' and 'meta+pgdn' or 'ctrl+meta+pgdn'
 	}, [m('View/Previous View')] = {
-		'ctrl+alt+pgup', {'ctrl+cmd+{', 'ctrl+cmd+pgup'}, WIN32 and 'meta+pgup' or 'ctrl+meta+pgup'
+		'ctrl+alt+pgup', {'ctrl+cmd+{', 'ctrl+cmd+pgup'},
+		OS == 'windows' and 'meta+pgup' or 'ctrl+meta+pgup'
 	}, [m('View/Split View Horizontal')] = {'ctrl+alt+_', 'ctrl+cmd+_', 'meta+_'},
 	[m('View/Split View Vertical')] = {'ctrl+alt+|', 'ctrl+cmd+|', 'meta+|'},
 	[m('View/Unsplit View')] = {'ctrl+alt+w', 'ctrl+cmd+w', 'meta+w'},
@@ -505,7 +507,7 @@ keys.assign_platform_bindings{
 	[start_new_line] = {'shift+\n', 'shift+\n', nil},
 	[function() start_new_line(true) end] = {'ctrl+shift+\n', 'cmd+shift+\n', nil},
 	[function() ui.popup_menu(ui.context_menu) end] = {
-		{'menu', (WIN32 or GTK) and 'shift+f10' or nil}, 'ctrl+\n', nil
+		{'menu', (OS == 'windows' or UI == 'gtk') and 'shift+f10' or nil}, 'ctrl+\n', nil
 	}, [macro_register(textadept.macros.save)] = {'ctrl+alt+R', 'ctrl+cmd+R', 'meta+R'},
 	[macro_register(textadept.macros.play)] = {'ctrl+alt+r', 'ctrl+cmd+r', 'meta+r'},
 

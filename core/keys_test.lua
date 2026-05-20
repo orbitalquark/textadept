@@ -148,13 +148,13 @@ test('key sequences should come in via events.KEY and emit events.KEYPRESS', fun
 	events.emit(events.KEY, string.byte('A'), view.MOD_CTRL | view.MOD_SHIFT)
 
 	test.assert_equal(key.called, true)
-	test.assert_equal(key.args, {(not OSX or CURSES) and 'ctrl+A' or 'cmd+A'})
+	test.assert_equal(key.args, {(OS ~= 'macos' or UI == 'terminal') and 'ctrl+A' or 'cmd+A'})
 end)
 
 test('symbolic keys should come from keys.KEYSYMS', function()
 	local key = test.stub()
 	local _<close> = test.connect(events.KEYPRESS, key, 1)
-	local up_keysym = QT and 0x01000013 or GTK and 0xFF52 or 301
+	local up_keysym = UI == 'qt' and 0x01000013 or UI == 'gtk' and 0xFF52 or 301
 
 	events.emit(events.KEY, up_keysym, 0)
 

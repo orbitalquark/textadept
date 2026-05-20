@@ -547,7 +547,7 @@ test('editing.filter_through should pipe multiple selections through a shell com
 	test.assert_equal(buffer.selections, 2)
 	test.assert_equal(buffer:get_sel_text(), word .. word) -- Scintilla stores it this way
 end)
-if WIN32 then skip('sed does not exist') end
+if OS == 'windows' then skip('sed does not exist') end
 
 test('editing.filter_through should pipe a rectangular selection through a shell command',
 	function()
@@ -570,7 +570,7 @@ test('editing.filter_through should allow pipes', function()
 
 	test.assert_equal(buffer:get_text(), test.lines{'1', '2', '3', '4', '5', ''})
 end)
-if WIN32 then skip('uniq does not exist') end
+if OS == 'windows' then skip('uniq does not exist') end
 
 test('editing.filter_through should not do anything if output == input', function()
 	local _<close> = test.tmpfile(test.lines{'input', ''}, true)
@@ -589,7 +589,7 @@ test('editing.filter_through should handle single-quotes', function()
 
 	test.assert_equal(buffer:get_text(), replace)
 end)
-if WIN32 then skip('sed does not exist') end
+if OS == 'windows' then skip('sed does not exist') end
 
 test("editing.autocomplete('word') should show a list of word completions", function()
 	local word = 'word'
@@ -906,7 +906,7 @@ end)
 --- Gives Scintilla a chance to process any cursor/selection changes and emit SCN_UPDATEUI.
 local function process_selection_update()
 	ui.update()
-	if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
+	if UI == 'terminal' then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
 end
 
 --- Returns a list of words highlighted by editing.INDIC_HIGHLIGHT.
@@ -992,7 +992,7 @@ test('editing.highlight_words should not highlight non-word selections', functio
 	test.assert_equal(non_word_highlights, {})
 end)
 
-if CURSES and not WIN32 then
+if UI == 'terminal' and OS ~= 'windows' then
 	test('bracketed paste should disable auto-pair and auto-indent', function()
 		local content = '\t()\n'
 
@@ -1045,7 +1045,7 @@ test('editing.filter_through should write command errors to the statusbar', func
 
 	test.assert_contains(ui.statusbar_text, '"false"') -- returned non-zero status
 end)
-if WIN32 then skip('false does not exist') end
+if OS == 'windows' then skip('false does not exist') end
 
 -- Note: cannot test highlight matching braces because neither buffer.style_at nor
 -- buffer:indicator_all_on_for() returns view.STYLE_BRACELIGHT and non-zero, respectively.

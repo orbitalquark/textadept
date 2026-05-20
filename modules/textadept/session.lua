@@ -30,7 +30,7 @@ for _, v in ipairs{'session_save', 'session_load'} do events[v:upper()] = v end
 
 -- This comment is needed for LDoc to process the previous field.
 
-local session_file = _USERHOME .. (not CURSES and '/session' or '/session_term')
+local session_file = _USERHOME .. (UI ~= 'terminal' and '/session' or '/session_term')
 
 --- Loads a session file.
 -- Textadept restores split views, opened buffers, cursor information, recent files, and bookmarks.

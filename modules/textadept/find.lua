@@ -12,14 +12,14 @@ events.connect(events.FIND_PANE_HIDE, function() M.active = false end)
 -- Default Find & Replace pane labels.
 M.find_label_text = _L['Find:']:gsub('&', '')
 M.replace_label_text = _L['Replace:']:gsub('&', '')
-M.find_next_button_text = not CURSES and _L['Find Next'] or _L['[Next]']
-M.find_prev_button_text = not CURSES and _L['Find Prev'] or _L['[Prev]']
-M.replace_button_text = not CURSES and _L['Replace'] or _L['[Replace]']
-M.replace_all_button_text = not CURSES and _L['Replace All'] or _L['[All]']
-M.match_case_label_text = not CURSES and _L['Match case'] or _L['Case(F1)']
-M.whole_word_label_text = not CURSES and _L['Whole word'] or _L['Word(F2)']
-M.regex_label_text = not CURSES and _L['Regex'] or _L['Regex(F3)']
-M.in_files_label_text = not CURSES and _L['In files'] or _L['Files(F4)']
+M.find_next_button_text = UI ~= 'terminal' and _L['Find Next'] or _L['[Next]']
+M.find_prev_button_text = UI ~= 'terminal' and _L['Find Prev'] or _L['[Prev]']
+M.replace_button_text = UI ~= 'terminal' and _L['Replace'] or _L['[Replace]']
+M.replace_all_button_text = UI ~= 'terminal' and _L['Replace All'] or _L['[All]']
+M.match_case_label_text = UI ~= 'terminal' and _L['Match case'] or _L['Case(F1)']
+M.whole_word_label_text = UI ~= 'terminal' and _L['Whole word'] or _L['Word(F2)']
+M.regex_label_text = UI ~= 'terminal' and _L['Regex'] or _L['Regex(F3)']
+M.in_files_label_text = UI ~= 'terminal' and _L['In files'] or _L['Files(F4)']
 
 --- Highlight all occurrences of found text in the current buffer.
 -- The default value is `false`.
@@ -313,7 +313,7 @@ events.connect(events.FIND, function(text)
 	if text == '' or not M.in_files then return end
 	local dir = ui.dialogs.open{title = _L['Select Directory'], only_dirs = true, dir = ff_dir()}
 	if not dir then return end
-	if QT and dir ~= '/' and not dir:find('^%a:\\$') then dir = dir:gsub('[/\\]+$', '') end
+	if UI == 'qt' and dir ~= '/' and not dir:find('^%a:\\$') then dir = dir:gsub('[/\\]+$', '') end
 
 	if M.replace_entry_text ~= repl_text then
 		-- Update stored filter.
@@ -324,7 +324,7 @@ events.connect(events.FIND, function(text)
 		M.find_in_files_filters[dir], M.find_in_files_filters[ff_dir()] = t, t
 	end
 	local filter = M.find_in_files_filters[dir] or ''
-	if not CURSES and M.active then orig_focus() end -- hide automatically
+	if UI ~= 'terminal' and M.active then orig_focus() end -- hide automatically
 
 	if buffer._type ~= _L['[Files Found Buffer]'] then preferred_view = view end
 
@@ -451,7 +451,7 @@ function M.goto_file_found(location)
 	local utf8_filename, pos
 	utf8_filename, line_num, pos = buffer:get_cur_line():match('^(.+):(%d+):()')
 	if not utf8_filename then return end
-	utf8_filename = utf8_dir .. (not WIN32 and '/' or '\\') .. utf8_filename
+	utf8_filename = utf8_dir .. (OS ~= 'windows' and '/' or '\\') .. utf8_filename
 	line_num = tonumber(line_num)
 	textadept.editing.select_line()
 	pos = buffer.selection_start + pos - 1 -- absolute pos of result text on line

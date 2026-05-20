@@ -15,10 +15,10 @@ test('ui.command_entry.run should show a Lua command entry', function()
 	local diff = math.abs(actual_height - expected_height)
 	test.assert(diff <= 1, '%d ~= %d', actual_height, expected_height)
 	test.assert(keys.mode, 'should be in a command entry key mode')
-	if QT then test.wait(function() return ui.command_entry.active end) end
+	if UI == 'qt' then test.wait(function() return ui.command_entry.active end) end
 	test.assert_equal(ui.command_entry.active, true)
 end)
-if GTK then retry(1) end -- GTK 2
+if UI == 'gtk' then retry(1) end -- GTK 2
 
 test('ui.command_entry.run should not have issues being called again while active', function()
 	ui.command_entry.run()
@@ -108,7 +108,7 @@ test('ui.command_entry.run should consider view fields/functions as globals', fu
 end)
 
 test('ui.command_entry.run should consider ui fields/functions as globals', function()
-	local _<close> = test.mock(ui, 'tabs', true) -- for CURSES
+	local _<close> = test.mock(ui, 'tabs', true) -- for terminal version
 	local switch_buffer = test.stub()
 	local _<close> = test.mock(ui, 'switch_buffer', switch_buffer)
 

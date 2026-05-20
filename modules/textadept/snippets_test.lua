@@ -123,7 +123,7 @@ test('snippets should allow variable transforms', function()
 end)
 
 test('snippets should allow shell code', function()
-	local date_cmd = not WIN32 and 'date' or 'date /T'
+	local date_cmd = OS ~= 'windows' and 'date' or 'date /T'
 	local p<close> = io.popen(date_cmd)
 	local date = p:read()
 
@@ -134,7 +134,7 @@ end)
 retry(1) -- date can sometimes be off by one second
 
 test('snippets should allow variables in shell code', function()
-	local variable = not WIN32 and '$TM_LINE_INDEX' or '%TM_LINE_INDEX%'
+	local variable = OS ~= 'windows' and '$TM_LINE_INDEX' or '%TM_LINE_INDEX%'
 
 	textadept.snippets.insert('`echo ' .. variable .. '`')
 

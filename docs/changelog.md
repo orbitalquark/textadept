@@ -3094,7 +3094,7 @@ Changes:
 - Support bracketed paste in the terminal version.
 - Allow handling of unknown [CSI events][].
 - Added mouse support for buffers and eliminated many [terminal version incompatibilities][].
-- Added [`_G.LINUX`][] and `_G.BSD` platform flags for the sake of completeness.
+- Added `_G.LINUX` and `_G.BSD` platform flags for the sake of completeness.
 - [Rectangular selections][] with the mouse on Linux use the `Alt` modifier key instead of `Super`.
 - Display the current working directory in fileselect dialogs.
 - Added [`_SCINTILLA.next_image_type()`][] for registering images.
@@ -3107,7 +3107,6 @@ Changes:
 [`ui.command_entry.editing_keys`]: api.html#ui.command_entry.editing_keys
 [CSI events]: api.html#events.CSI
 [terminal version incompatibilities]: manual.html#terminal-version-compatibility
-[`_G.LINUX`]: api.html#LINUX
 [Rectangular selections]: manual.html#rectangular-selection
 [`_SCINTILLA.next_image_type()`]: api.html#view.new_image_type
 
@@ -4536,7 +4535,7 @@ Changes:
 - Scintilla: added [`buffer:contracted_fold_next()`][] for retrieving fold states.
 - Scintilla: added `buffer:vertical_centre_caret()`.
 - Updated to [Scintilla][] 2.22.
-- Renamed `_G.MAC` to [`_G.OSX`][].
+- Renamed `_G.MAC` to `_G.OSX`.
 
 [Switch Buffers]: manual.html#buffers
 [`_m.textadept.snapopen.open()`]: api.html#io.quick_open
@@ -4545,7 +4544,6 @@ Changes:
 [find API]: api.html#ui.find.find_in_files
 [`buffer:contracted_fold_next()`]: api.html#buffer.contracted_fold_next
 [Scintilla]: https://scintilla.org
-[`_G.OSX`]: api.html#OSX
 
 ## 3.3 (01 Oct 2010)
 

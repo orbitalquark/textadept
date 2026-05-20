@@ -6,7 +6,7 @@ local ui = ui
 
 --- Option for `ui.tabs` that always shows the tab bar, even if only one buffer is open.
 ui.SHOW_ALL_TABS = 2 -- ui.tabs options must be greater than 1
-if CURSES then ui.tabs = false end -- not supported right now
+if UI == 'terminal' then ui.tabs = false end -- not supported right now
 
 --- List buffers by their z-order (most recently viewed to least recently viewed) in the switcher
 -- dialog, instead of listing buffers in their left-to-right tab order.
@@ -186,7 +186,7 @@ function ui.goto_file(filename, split, preferred_view, sloppy)
 	assert_type(filename, 'string', 1)
 	local patt = (not sloppy and filename or filename:match('[^/\\]+$')):gsub('%p', '%%%0') .. '$'
 	if not sloppy then patt = '^' .. patt end
-	if WIN32 then
+	if OS == 'windows' then
 		patt = patt:gsub('%a', function(c) return string.format('[%s%s]', c:upper(), c:lower()) end)
 	end
 	if #_VIEWS == 1 and split and not (view.buffer.filename or ''):find(patt) then
@@ -246,7 +246,7 @@ events.connect(events.URI_DROPPED, function(utf8_uris)
 		local path = utf8_path:gsub('%%(%x%x)', function(hex) return string.char(tonumber(hex, 16)) end)
 			:iconv(_CHARSET, 'UTF-8')
 		-- On Windows, ignore a leading '/', but not '//' (network path).
-		if WIN32 and not path:match('^//') then path = path:sub(2, -1) end
+		if OS == 'windows' and not path:match('^//') then path = path:sub(2, -1) end
 		local mode = lfs.attributes(path, 'mode')
 		if mode and mode ~= 'directory' then io.open_file(path) end
 	end
@@ -256,7 +256,7 @@ end)
 -- Sets buffer statusbar text.
 events.connect(events.UPDATE_UI, function(updated)
 	if not updated or updated & CONTENT_OR_SELECTION == 0 then return end
-	local text = not CURSES and '%s %d/%d    %s %d    %s    %s    %s    %s' or
+	local text = UI ~= 'terminal' and '%s %d/%d    %s %d    %s    %s    %s    %s' or
 		'%s %d/%d  %s %d  %s  %s  %s  %s'
 	local pos = buffer.current_pos
 	local line, max = buffer:line_from_position(pos), buffer.line_count
@@ -337,8 +337,8 @@ events.connect(events.BUFFER_DELETED, function()
 end)
 
 -- Handle mouse events and functionality in the terminal version.
-if CURSES then
-	if not WIN32 then
+if UI == 'terminal' then
+	if OS ~= 'windows' then
 		local function enable_mouse() io.stdout:write("\x1b[?1002h\x1b[?1006h"):flush() end
 		local function disable_mouse() io.stdout:write("\x1b[?1002l\x1b[?1006l"):flush() end
 		events.connect(events.INITIALIZED, enable_mouse)

@@ -143,7 +143,7 @@ M.CLEAR = 'esc'
 -- @table KEYSYMS
 
 -- LuaFormatter off
-M.KEYSYMS = {--[[From Scintilla.h for CURSES]][7]='esc',[8]='\b',[9]='\t',[13]='\n',--[[From curses.h]][263]='\b',[343]='\n',--[[From Scintilla.h for CURSES]][300]='down',[301]='up',[302]='left',[303]='right',[304]='home',[305]='end',[306]='pgup',[307]='pgdn',[308]='del',[309]='ins',--[[From <gdk/gdkkeysyms.h>]][0xFE20]='\t'--[[backtab; will be 'shift'ed]],[0xFF08]='\b',[0xFF09]='\t',[0xFF0D]='\n',[0xFF1B]='esc',[0xFFFF]='del',[0xFF50]='home',[0xFF51]='left',[0xFF52]='up',[0xFF53]='right',[0xFF54]='down',[0xFF55]='pgup',[0xFF56]='pgdn',[0xFF57]='end',[0xFF63]='ins',[0xFF67]='menu',[0xFF8D]='kpenter',[0xFF95]='kphome',[0xFF9C]='kpend',[0xFF96]='kpleft',[0xFF97]='kpup',[0xFF98]='kpright',[0xFF99]='kpdown',[0xFF9A]='kppgup',[0xFF9B]='kppgdn',[0xFFAA]='kpmul',[0xFFAB]='kpadd',[0xFFAD]='kpsub',[0xFFAF]='kpdiv',[0xFFAE]='kpdec',[0xFFB0]='kp0',[0xFFB1]='kp1',[0xFFB2]='kp2',[0xFFB3]='kp3',[0xFFB4]='kp4',[0xFFB5]='kp5',[0xFFB6]='kp6',[0xFFB7]='kp7',[0xFFB8]='kp8',[0xFFB9]='kp9',[0xFFBE]='f1',[0xFFBF]='f2',[0xFFC0]='f3',[0xFFC1]='f4',[0xFFC2]='f5',[0xFFC3]='f6',[0xFFC4]='f7',[0xFFC5]='f8',[0xFFC6]='f9',[0xFFC7]='f10',[0xFFC8]='f11',[0xFFC9]='f12',--[[From Qt]][0x01000000]='esc',[0x01000001]='\t',[0x01000002]='\t'--[[backtab; will be 'shift'ed]],[0x01000003]='\b',[0x01000004]='\n',[0x01000005]='kpenter',[0x01000006]='ins',[0x01000007]='del',[0x01000010]='home',[0x01000011]='end',[0x01000012]='left',[0x01000013]='up',[0x01000014]='right',[0x01000015]='down',[0x01000016]='pgup',[0x01000017]='pgdn',[0x01000030]='f1',[0x01000031]='f2',[0x01000032]='f3',[0x01000033]='f4',[0x01000034]='f5',[0x01000035]='f6',[0x01000036]='f7',[0x01000037]='f8',[0x01000038]='f9',[0x01000039]='f10',[0x0100003a]='f11',[0x0100003b]='f12',[0x01000055]='menu'}
+M.KEYSYMS = {--[[From Scintilla.h for UI == 'terminal']][7]='esc',[8]='\b',[9]='\t',[13]='\n',--[[From curses.h]][263]='\b',[343]='\n',--[[From Scintilla.h for UI == 'terminal']][300]='down',[301]='up',[302]='left',[303]='right',[304]='home',[305]='end',[306]='pgup',[307]='pgdn',[308]='del',[309]='ins',--[[From <gdk/gdkkeysyms.h>]][0xFE20]='\t'--[[backtab; will be 'shift'ed]],[0xFF08]='\b',[0xFF09]='\t',[0xFF0D]='\n',[0xFF1B]='esc',[0xFFFF]='del',[0xFF50]='home',[0xFF51]='left',[0xFF52]='up',[0xFF53]='right',[0xFF54]='down',[0xFF55]='pgup',[0xFF56]='pgdn',[0xFF57]='end',[0xFF63]='ins',[0xFF67]='menu',[0xFF8D]='kpenter',[0xFF95]='kphome',[0xFF9C]='kpend',[0xFF96]='kpleft',[0xFF97]='kpup',[0xFF98]='kpright',[0xFF99]='kpdown',[0xFF9A]='kppgup',[0xFF9B]='kppgdn',[0xFFAA]='kpmul',[0xFFAB]='kpadd',[0xFFAD]='kpsub',[0xFFAF]='kpdiv',[0xFFAE]='kpdec',[0xFFB0]='kp0',[0xFFB1]='kp1',[0xFFB2]='kp2',[0xFFB3]='kp3',[0xFFB4]='kp4',[0xFFB5]='kp5',[0xFFB6]='kp6',[0xFFB7]='kp7',[0xFFB8]='kp8',[0xFFB9]='kp9',[0xFFBE]='f1',[0xFFBF]='f2',[0xFFC0]='f3',[0xFFC1]='f4',[0xFFC2]='f5',[0xFFC3]='f6',[0xFFC4]='f7',[0xFFC5]='f8',[0xFFC6]='f9',[0xFFC7]='f10',[0xFFC8]='f11',[0xFFC9]='f12',--[[From Qt]][0x01000000]='esc',[0x01000001]='\t',[0x01000002]='\t'--[[backtab; will be 'shift'ed]],[0x01000003]='\b',[0x01000004]='\n',[0x01000005]='kpenter',[0x01000006]='ins',[0x01000007]='del',[0x01000010]='home',[0x01000011]='end',[0x01000012]='left',[0x01000013]='up',[0x01000014]='right',[0x01000015]='down',[0x01000016]='pgup',[0x01000017]='pgdn',[0x01000030]='f1',[0x01000031]='f2',[0x01000032]='f3',[0x01000033]='f4',[0x01000034]='f5',[0x01000035]='f6',[0x01000036]='f7',[0x01000037]='f8',[0x01000038]='f9',[0x01000039]='f10',[0x0100003a]='f11',[0x0100003b]='f12',[0x01000055]='menu'}
 local qt_ignore, gtk_ignore = {[0x1000020]=true,[0x1000021]=true,[0x1000022]=true,[0x1000023]=true}, {[0xFFE1]=true,[0xFFE2]=true,[0xFFE3]=true,[0xFFE4]=true,[0xFFE9]=true,[0xFFEA]=true,[0xFFEB]=true,[0xFFEC]=true}
 -- LuaFormatter on
 
@@ -151,23 +151,26 @@ local SHIFT, CTRL, ALT, META = _SCINTILLA.MOD_SHIFT, _SCINTILLA.MOD_CTRL, _SCINT
 	_SCINTILLA.MOD_META
 -- Converts raw key events into key sequences and emits `events.KEYPRESS`.
 events.connect(events.KEY, function(code, mods)
-	if QT and qt_ignore[code] or GTK and gtk_ignore[code] then return end -- e.g. lone modifier key
+	-- Qt and GTK sometimes emit keys that should not be emitted, like lone modifier keys.
+	if UI == 'qt' and qt_ignore[code] or UI == 'gtk' and gtk_ignore[code] then return end
 	local shift, ctrl, alt, cmd = mods & SHIFT > 0, mods & CTRL > 0, mods & ALT > 0, mods & META > 0
-	if OSX and not CURSES then ctrl, cmd = cmd, ctrl end -- swap
+	if OS == 'macos' and UI ~= 'terminal' then ctrl, cmd = cmd, ctrl end -- swap
 	local key = code >= 32 and code < 256 and string.char(code) or M.KEYSYMS[code]
 	-- Qt always reports upper-case key codes.
-	if key and QT and not shift and code < 256 then key = key:lower() end
+	if key and UI == 'qt' and not shift and code < 256 then key = key:lower() end
 	-- Except on macOS for some reason, Qt reports '⌘{' and '⌘}' (and only those) as '⇧⌘[' and '⇧⌘]'.
-	if OSX and QT and cmd and shift and key:find('^[%[%]]$') then key = key == '[' and '{' or '}' end
+	if OS == 'macos' and UI == 'qt' and cmd and shift and key:find('^[%[%]]$') then
+		key = key == '[' and '{' or '}'
+	end
 	-- Since printable characters are uppercased, disable shift.
 	if shift and code >= 32 and code < 256 then shift = false end
 	-- For composed keys on macOS, ignore alt.
-	if (OSX and not CURSES) and alt and code < 256 then alt = false end
+	if OS == 'macos' and UI ~= 'terminal' and alt and code < 256 then alt = false end
 	-- Report unrecognized codes in hex.
 	if not key then key = string.format('0x%X', code) end
 	-- Emit the keypress.
 	return events.emit(events.KEYPRESS, string.format('%s%s%s%s%s', ctrl and 'ctrl+' or '', alt and
-		(not CURSES and 'alt+' or 'meta+') or '', cmd and OSX and 'cmd+' or '',
+		(UI ~= 'terminal' and 'alt+' or 'meta+') or '', cmd and OS == 'macos' and 'cmd+' or '',
 		shift and 'shift+' or '', key))
 end)
 
@@ -235,7 +238,7 @@ events.connect(events.KEYPRESS, function(key)
 	-- PROPAGATE otherwise.
 end)
 
-local platform = CURSES and 3 or OSX and 2 or 1
+local platform = UI == 'terminal' and 3 or OS == 'macos' and 2 or 1
 --- Assigns key bindings for the current platform based on a map of commands to lists of their
 -- platform-specific key sequences.
 -- @param[opt=keys] keys Table to assign key bindings in.

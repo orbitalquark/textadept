@@ -1,6 +1,6 @@
 -- Copyright 2020-2026 Mitchell. See LICENSE.
 
-if CURSES or os.getenv('CI') == 'true' then io.output('test.log') end
+if UI == 'terminal' or os.getenv('CI') == 'true' then io.output('test.log') end
 
 --- Map of test suites to their setup functions.
 local setups = {}
@@ -115,7 +115,7 @@ local failure_messages = {}
 
 -- Qt on Linux needs a window manager to facilitate focus events.
 -- When running under xvfb-run, start a window manager before running tests.
-if QT and LINUX and os.getenv('DISPLAY'):find('99') then
+if UI == 'qt' and OS == 'linux' and os.getenv('DISPLAY'):find('99') then
 	local ok, errmsg = pcall(os.spawn, 'matchbox-window-manager')
 	if not ok then io.output():write('spawn error: ', errmsg, '\n') end
 end

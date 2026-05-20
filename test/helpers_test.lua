@@ -385,8 +385,8 @@ test('type should type into the command entry if ui.command_entry.active is true
 	test.assert_equal(ui.command_entry:get_text(), text)
 	test.assert_equal(buffer.length, 0)
 end)
-if QT and LINUX and not os.getenv('CI') then skip('focus issues') end -- for some reason I need this
-if OSX then skip('find in files progress dialog interferes with focus') end -- TODO:
+if UI == 'qt' and OS == 'linux' and not os.getenv('CI') then skip('focus issues') end -- for some reason I need this
+if OS == 'macos' then skip('find in files progress dialog interferes with focus') end -- TODO:
 
 test('type should change ui.find.find_entry_text if ui.find.active is true', function()
 	ui.find.focus{find_entry_text = ''}
@@ -400,7 +400,7 @@ test('type should change ui.find.find_entry_text if ui.find.active is true', fun
 	test.assert_equal(ui.find.find_entry_text, text)
 	test.assert_equal(buffer.length, 0)
 end)
-if CURSES then skip('find & replace pane blocks the UI') end
+if UI == 'terminal' then skip('find & replace pane blocks the UI') end
 
 test('type should call ui.find.find_next() when typing \\n if ui.find.active is true', function()
 	local find_next = test.stub()
@@ -413,7 +413,7 @@ test('type should call ui.find.find_next() when typing \\n if ui.find.active is 
 	test.assert_equal(find_next.called, true)
 	test.assert_equal(buffer.length, 0)
 end)
-if CURSES then skip('find & replace pane blocks the UI') end
+if UI == 'terminal' then skip('find & replace pane blocks the UI') end
 
 test('get_marked_lines should identify marked lines', function()
 	local mark = view:new_marker_number()

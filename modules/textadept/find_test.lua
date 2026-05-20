@@ -211,7 +211,7 @@ test('find should allow searching incrementally with typing', function()
 
 	test.assert_equal(buffer:get_sel_text(), find)
 end)
-if CURSES then skip('find & replace pane blocks the UI') end
+if UI == 'terminal' then skip('find & replace pane blocks the UI') end
 
 test('find should retain the incremental search anchor even for failures', function()
 	buffer:append_text(find)
@@ -227,7 +227,7 @@ test('find should retain the incremental search anchor even for failures', funct
 	test.assert_equal(anchor, 1)
 	test.assert_equal(buffer:get_sel_text(), find)
 end)
-if CURSES then skip('find & replace pane blocks the UI') end
+if UI == 'terminal' then skip('find & replace pane blocks the UI') end
 
 test('find should move the incremental search anchor on successful Enter/find next', function()
 	buffer:append_text(find .. find)
@@ -241,7 +241,7 @@ test('find should move the incremental search anchor on successful Enter/find ne
 	test.assert_equal(buffer.selection_start, buffer.length + 1 - #find)
 	test.assert_equal(buffer.selection_end, buffer.length + 1)
 end)
-if CURSES then skip('find & replace pane blocks the UI') end
+if UI == 'terminal' then skip('find & replace pane blocks the UI') end
 
 test('find should not move the incremental search anchor on failed Enter/find next', function()
 	buffer:append_text(find .. find)
@@ -254,7 +254,7 @@ test('find should not move the incremental search anchor on failed Enter/find ne
 	test.assert_equal(buffer.selection_start, 1)
 	test.assert_equal(buffer.selection_end, 1 + #find)
 end)
-if CURSES then skip('find & replace pane blocks the UI') end
+if UI == 'terminal' then skip('find & replace pane blocks the UI') end
 
 test('ui.find.focus with in_files should show the default filter in the replace entry', function()
 	local _<close> = test.mock(ui.find, 'replace_entry_text', replace)
@@ -262,7 +262,7 @@ test('ui.find.focus with in_files should show the default filter in the replace 
 
 	test.assert_equal(ui.find.replace_entry_text, '') -- lfs.default_filter will be appended to this
 end)
-if CURSES then skip('find & replace pane blocks the UI') end
+if UI == 'terminal' then skip('find & replace pane blocks the UI') end
 
 test('ui.find.focus without in_files should restore replace entry text', function()
 	ui.find.replace_entry_text = ''
@@ -273,7 +273,7 @@ test('ui.find.focus without in_files should restore replace entry text', functio
 	test.assert_equal(ui.find.in_files, false)
 	test.assert_equal(ui.find.replace_entry_text, '')
 end)
-if CURSES then skip('find & replace pane blocks the UI') end
+if UI == 'terminal' then skip('find & replace pane blocks the UI') end
 
 test('ui.find.focus with in_files should use a project-specific filter if possible', function()
 	local file = 'file.txt'
@@ -285,7 +285,7 @@ test('ui.find.focus with in_files should use a project-specific filter if possib
 
 	test.assert_equal(ui.find.replace_entry_text, '*.txt')
 end)
-if CURSES then skip('find & replace pane blocks the UI') end
+if UI == 'terminal' then skip('find & replace pane blocks the UI') end
 
 test('find should allow prompting to search in files and output results to a new buffer', function()
 	local file = 'file.txt'
@@ -316,7 +316,7 @@ test('find should allow prompting to search in files and output results to a new
 	local highlighted_results = test.get_indicated_text(ui.find.INDIC_FIND)
 	test.assert_equal(highlighted_results, {find, find})
 end)
-if CURSES then skip('find & replace pane blocks the UI') end
+if UI == 'terminal' then skip('find & replace pane blocks the UI') end
 
 --- Performs find in files.
 -- @param dir String path to the directory to search in.
@@ -586,7 +586,7 @@ test('ui.find.goto_file_found should not select in binary files', function()
 end)
 
 test('ui.find.goto_file_found should work if neither the ff view nor buffer is visible', function()
-	local _<close> = test.mock(ui, 'tabs', true) -- for CURSES
+	local _<close> = test.mock(ui, 'tabs', true) -- for terminal version
 	local file = 'file.txt'
 	local dir<close> = test.tmpdir{[file] = find}
 	find_in_files(dir.dirname, find)

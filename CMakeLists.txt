@@ -11,7 +11,7 @@ if(APPLE)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 11 CACHE STRING "")
 endif()
 
-# Determine available platforms.
+# Determine available user interfaces (UI).
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets)
 if(Qt${QT_VERSION_MAJOR}_FOUND)
@@ -41,10 +41,10 @@ if(CURSES_FOUND OR WIN32)
 	option(CURSES "Build Textadept using Curses" ON)
 endif()
 if(NOT (QT OR GTK3 OR GTK2 OR CURSES))
-	message(FATAL_ERROR "No suitable platform found.")
+	message(FATAL_ERROR "No suitable UI found.")
 endif()
 
-# Setup platform requirements.
+# Setup UI requirements.
 if(QT)
 	set(qt_major Qt${QT_VERSION_MAJOR})
 	if(QT_VERSION_MAJOR GREATER 5)

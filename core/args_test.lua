@@ -92,8 +92,8 @@ test('should open files in the original instance', function()
 	-- containers, so just verify the secondary instance exited.
 	-- test.wait(function() buffer.filename == filename end)
 end)
-if GTK and os.getenv('CI') == 'true' then skip('dbus is not running on CI') end
-if CURSES then skip('single session is not supported in the terminal version') end
+if UI == 'gtk' and os.getenv('CI') == 'true' then skip('dbus is not running on CI') end
+if UI == 'terminal' then skip('single session is not supported in the terminal version') end
 
 -- Coverage tests.
 
@@ -108,7 +108,7 @@ test('--help should show command line options and then quit', function()
 	test.wait(function() return quit.called end)
 	test.assert(print.called > 1, 'help should have been printed')
 end)
-if CURSES then skip('printing to stdout is not supported') end
+if UI == 'terminal' then skip('printing to stdout is not supported') end
 
 test('--version should show version information and then quit', function()
 	local print = test.stub()
@@ -121,4 +121,4 @@ test('--version should show version information and then quit', function()
 	test.wait(function() return quit.called end)
 	test.assert_equal(print.called, true)
 end)
-if CURSES then skip('printing to stdout is not supported') end
+if UI == 'terminal' then skip('printing to stdout is not supported') end

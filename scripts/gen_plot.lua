@@ -29,12 +29,12 @@ local function count(tag)
 	counts[#counts + 1], counts[time] = time, {}
 	local sum_code, sum_comments, sum_blanks = 0, 0, 0
 
-	local other_platforms = 'textadept_(curses|gtk)'
-	if not lfs.attributes(dir .. '/src/textadept_qt.cpp') then other_platforms = 'textadept_curses' end
+	local other_uis = 'textadept_(curses|gtk)'
+	if not lfs.attributes(dir .. '/src/textadept_qt.cpp') then other_uis = 'textadept_curses' end
 	local cmd = string.format([[
 		cloc --force-lang=C,h --include-lang=C,Lua,make,C++,CMake --quiet --csv \
 		--exclude-dir=doc,docs,scripts,themes,test,.github \
-		--not-match-f="adeptsensedoc|tadoc|%s|_test" .]], other_platforms)
+		--not-match-f="adeptsensedoc|tadoc|%s|_test" .]], other_uis)
 	for line in io.popen(cmd):lines() do
 		local fields = {}
 		for field in line:gmatch('[^,]+') do fields[#fields + 1] = field end

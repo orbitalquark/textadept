@@ -1,5 +1,5 @@
 // Copyright 2007-2026 Mitchell. See LICENSE.
-// Curses platform for Textadept.
+// Curses user interface for Textadept.
 
 #include "textadept.h"
 
@@ -51,7 +51,7 @@ struct Pane {
 }; // Pane implementation based on code by Chris Emerson.
 static inline struct Pane *PANE(struct Pane *pane) { return pane; }
 
-const char *get_platform(void) { return "CURSES"; }
+const char *get_ui(void) { return "terminal"; }
 
 const char *get_charset(void) {
 #if !_WIN32

@@ -118,8 +118,8 @@ test('sessions should save window state', function()
 
 	test.assert_equal(ui.maximized, true)
 end)
-if GTK then expected_failure() end
-if CURSES then skip('window state cannot be changed') end
+if UI == 'gtk' then expected_failure() end
+if UI == 'terminal' then skip('window state cannot be changed') end
 
 test('sessions should save window size', function()
 	local sf<close> = test.tmpfile()
@@ -132,8 +132,8 @@ test('sessions should save window size', function()
 
 	test.assert_equal(ui.size, size)
 end)
-if GTK then expected_failure() end
-if CURSES then skip('window size cannot be changed') end
+if UI == 'gtk' then expected_failure() end
+if UI == 'terminal' then skip('window size cannot be changed') end
 
 test('sessions should save view state', function()
 	local sf<close> = test.tmpfile()

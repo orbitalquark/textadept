@@ -1,5 +1,5 @@
 // Copyright 2007-2026 Mitchell. See LICENSE.
-// GTK platform for Textadept.
+// GTK user interface for Textadept.
 
 #include "textadept.h"
 
@@ -22,7 +22,7 @@ static GtkListStore *find_history, *repl_history;
 static bool tab_sync;
 static int current_tab;
 
-const char *get_platform(void) { return "GTK"; }
+const char *get_ui(void) { return "gtk"; }
 
 const char *get_charset(void) {
 	const char *charset;

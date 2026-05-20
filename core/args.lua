@@ -74,7 +74,7 @@ events.connect('command_line', function(arg) process(arg, true) end)
 -- On Windows machines *~/* is the value of the "USERHOME" environment variable (typically
 -- *C:\Users\username\\*). On macOS and Linux/BSD machines *~/* is the value of "$HOME"
 -- (typically */Users/username/* and */home/username/*, respectively).
-_G._USERHOME = os.getenv(not WIN32 and 'HOME' or 'USERPROFILE') .. '/.textadept'
+_G._USERHOME = os.getenv(OS ~= 'windows' and 'HOME' or 'USERPROFILE') .. '/.textadept'
 for i, option in ipairs(arg) do
 	if (option == '-u' or option == '--userhome') and arg[i + 1] then
 		_USERHOME = arg[i + 1]
@@ -82,7 +82,7 @@ for i, option in ipairs(arg) do
 	elseif option == '-t' or option == '--test' then
 		-- Run unit tests using a temporary _USERHOME, which will ultimately be deleted.
 		_USERHOME = os.tmpname()
-		if not WIN32 then os.remove(_USERHOME) end -- created as a file on *nix
+		if OS ~= 'windows' then os.remove(_USERHOME) end -- created as a file on *nix
 		break
 	end
 end
@@ -103,7 +103,7 @@ M.register('-T', '--cov', 0, function() end, 'Runs unit tests with code coverage
 
 -- Shows all registered command line options on the command line.
 M.register('-h', '--help', 0, function()
-	if CURSES then return end -- not supported
+	if UI == 'terminal' then return end -- not supported
 	print('Usage: textadept [args] [filenames]')
 	local list = {}
 	for name in pairs(options) do list[#list + 1] = name end
@@ -118,7 +118,7 @@ end, 'Shows this')
 
 -- Shows Textadept version and copyright on the command line.
 M.register('-v', '--version', 0, function()
-	if CURSES then return end -- not supported
+	if UI == 'terminal' then return end -- not supported
 	print(_RELEASE .. '\n' .. _COPYRIGHT)
 	timeout(0.01, quit, 0, false)
 	return true
@@ -146,9 +146,9 @@ M.register('-t', '--test', 1, function(tags)
 	-- Remove temporary _USERHOME on quit.
 	events.connect(events.QUIT, function()
 		local info = debug.getinfo(4)
-		if GTK and info then return end -- ignore simulated quit event
+		if UI == 'gtk' and info then return end -- ignore simulated quit event
 		if info and info.name ~= 'quit' then return end -- ignore simulated quit event
-		os.execute(string.format('%s "%s"', not WIN32 and 'rm -r' or 'rmdir /S /Q', _USERHOME))
+		os.execute(string.format('%s "%s"', OS ~= 'windows' and 'rm -r' or 'rmdir /S /Q', _USERHOME))
 	end)
 
 	return true
