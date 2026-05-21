@@ -496,7 +496,7 @@ local function get_menu_accel(key_seq)
 	for c, s in pairs(keys.KEYSYMS) do
 		if s == key and c >= gui_key and not ignore[c] then return c, mask end
 	end
-	return code, mask
+	return code, mask -- fallback
 end
 
 --- Creates a menu suitable for `ui.menu()` from the menu table format.
