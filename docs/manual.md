@@ -1645,18 +1645,24 @@ Textadept is composed of the following technologies:
 Old API | Change | New API
 -|:-:|-
 **_G**||
-WIN32 | Replaced | [OS][] == 'windows'
-OSX | Replaced | [OS][] == 'macos'
-Linux | Replaced | [OS][] == 'linux'
-BSD | Replaced | [OS][] == 'bsd'
-QT | Replaced | [UI][] == 'qt'
-GTK | Replaced | [UI][] == 'gtk'
-CURSES | Replaced | [UI][] == 'terminal'
+WIN32 | Replaced | [OS][] == 'windows' <sup>a</sup>
+OSX | Replaced | [OS][] == 'macos' <sup>a</sup>
+Linux | Replaced | [OS][] == 'linux' <sup>a</sup>
+BSD | Replaced | [OS][] == 'bsd' <sup>a</sup>
+QT | Replaced | [UI][] == 'qt' <sup>a</sup>
+GTK | Replaced | [UI][] == 'gtk' <sup>a</sup>
+CURSES | Replaced | [UI][] == 'terminal' <sup>a</sup>
 **ui**||
 [get_split_table()][] | Changed | `size` field is now a {width, height, split pos} table
 **view**||
 size | Renamed | [split_pos][]
 parent_size | Renamed | [parent_split_pos][]
+
+<sup>a</sup>If you want to keep using the booleans, put the following at the top of your
+*~/.textadept/init.lua*: 
+```lua
+for k, v in pairs{windows='WIN32',macos='OSX',linux='LINUX',bsd='BSD',qt='QT',gtk='GTK',terminal='CURSES'} do _G[v] = OS == k or UI == k end
+```
 
 [OS]: api.html#OS
 [UI]: api.html#UI
