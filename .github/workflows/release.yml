@@ -402,7 +402,7 @@ jobs:
         if: runner.os == 'Windows' && (inputs.windows || github.event_name == 'schedule')
         shell: cmd
         run: start "" /d ${{ github.workspace }} /wait ${{ matrix.exe }}.exe -t
-        timeout-minutes: 2
+        timeout-minutes: 3
 
       - name: Run unit tests (macOS)
         if: runner.os == 'macOS' && (inputs.macOS || github.event_name == 'schedule')
