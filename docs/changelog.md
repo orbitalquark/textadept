@@ -2,9 +2,39 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
-## 13.0 beta 2 (01 May 2026)
+## 13.0 beta 3 (01 Jun 2026)
 
 Please see the [migration guide][] for migrating from Textadept 12 to 13.
+
+- [Textadept 13.0 beta 3 -- Windows][]
+- [Textadept 13.0 beta 3 -- macOS 13+][]
+- [Textadept 13.0 beta 3 -- Linux][]
+- [Textadept 13.0 beta 3 -- Linux ARM][]
+- [Textadept 13.0 beta 3 -- Modules][]
+
+Bugfixes:
+
+- Fixed invalid memory reads in the Qt version.
+- Fix potential crash with input in an empty buffer.
+
+Changes:
+
+- Replaced OS/platform booleans with [`OS`][] and [`UI`][] strings.
+- Improved markup lexer (HTML, Markdown, XML, Yaml) performance when scanning plain text.
+- Improved Markdown lexer performance detecting code blocks.
+- Added [`lexer.word_utf8`][].
+
+[migration guide]: manual.html#migrating-from-textadept-12-to-13
+[Textadept 13.0 beta 3 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.win.zip
+[Textadept 13.0 beta 3 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.macOS.zip
+[Textadept 13.0 beta 3 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.linux.tgz
+[Textadept 13.0 beta 3 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.linux.arm.tgz
+[Textadept 13.0 beta 3 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.modules.zip
+[`OS`]: api.html#OS
+[`UI`]: api.html#UI
+[`lexer.word_utf8`]: api.html#lexer.word_utf8
+
+## 13.0 beta 2 (01 May 2026)
 
 - [Textadept 13.0 beta 2 -- Windows][]
 - [Textadept 13.0 beta 2 -- macOS 13+][]
@@ -25,7 +55,6 @@ Changes:
 - Scratch: disable this module if a startup error occurs.
 - Updated to [Scintilla][] 5.6.2.
 
-[migration guide]: manual.html#migrating-from-textadept-12-to-13
 [Textadept 13.0 beta 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.win.zip
 [Textadept 13.0 beta 2 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.macOS.zip
 [Textadept 13.0 beta 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.linux.tgz
