@@ -248,8 +248,8 @@ static void copyfree(char **s, const char *value) {
 	*s = strcpy(malloc(strlen(value) + 1), value);
 }
 
-const char *get_find_text(void) { return find_text; }
-const char *get_repl_text(void) { return repl_text; }
+const char *get_find_text(void) { return find_text ? find_text : ""; }
+const char *get_repl_text(void) { return repl_text ? repl_text : ""; }
 void set_find_text(const char *text) { copyfree(&find_text, text); }
 void set_repl_text(const char *text) { copyfree(&repl_text, text); }
 
