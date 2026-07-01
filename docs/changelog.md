@@ -26,6 +26,7 @@ Changes:
 - Scintilla: restore selection and scroll positions for undo/redo in additional views.
 - Scintilla: improve performance of rectangular paste with many spaces.
 - Scintilla: fix failures displaying calltips and autocompletion lists in Qt version on Wayland.
+- Updated to [Scintilla][] 5.6.3.
 
 [migration guide]: manual.html#migrating-from-textadept-12-to-13
 [Textadept 13.0 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.win.zip
@@ -33,6 +34,7 @@ Changes:
 [Textadept 13.0 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.linux.tgz
 [Textadept 13.0 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.linux.arm.tgz
 [Textadept 13.0 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.modules.zip
+[Scintilla]: https://scintilla.org
 
 ## 13.0 beta 3 (01 Jun 2026)
 
