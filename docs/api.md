@@ -8506,8 +8506,10 @@ See also: [`events.SESSION_SAVE`](#events.SESSION_SAVE)
 
 Save the session when quitting.
 
-The default value is `true` unless the user passed the command line switch `-n` or `--nosession`
-to Textadept.
+The default value is `true` unless one of the following conditions is true:
+	- The user passed the command line switch `-n` or `--nosession` to Textadept.
+	- The user passed a filename or directory to Textadept on startup.
+	- An error occurred on startup.
 
 
 
