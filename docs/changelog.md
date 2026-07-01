@@ -2,9 +2,39 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
-## 13.0 beta 3 (01 Jun 2026)
+## 13.0 (01 Jul 2026)
 
 Please see the [migration guide][] for migrating from Textadept 12 to 13.
+
+- [Textadept 13.0 -- Windows][]
+- [Textadept 13.0 -- macOS 13+][]
+- [Textadept 13.0 -- Linux][]
+- [Textadept 13.0 -- Linux ARM][]
+- [Textadept 13.0 -- Modules][]
+
+Bugfixes:
+
+- Fixed terminal version error invoking find/replace with uninitialized find/replace text.
+
+Changes:
+
+- Improved syntax highlighting performance in markup languages like HTML, Markdown, XML, and YAML.
+- Improve Markdown lexer performance detecting code blocks.
+- Improve heredoc syntax highlighting in the languages that support them (Bash, Perl, Ruby, etc.).
+- Added support for Odin.
+- Updated C lexet to add more C99 identifiers.
+- Scintilla: restore selection and scroll positions for undo/redo in additional views.
+- Scintilla: improve performance of rectangular paste with many spaces.
+- Scintilla: fix failures displaying calltips and autocompletion lists in Qt version on Wayland.
+
+[migration guide]: manual.html#migrating-from-textadept-12-to-13
+[Textadept 13.0 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.win.zip
+[Textadept 13.0 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.macOS.zip
+[Textadept 13.0 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.linux.tgz
+[Textadept 13.0 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.linux.arm.tgz
+[Textadept 13.0 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.modules.zip
+
+## 13.0 beta 3 (01 Jun 2026)
 
 - [Textadept 13.0 beta 3 -- Windows][]
 - [Textadept 13.0 beta 3 -- macOS 13+][]
@@ -24,7 +54,6 @@ Changes:
 - Improved Markdown lexer performance detecting code blocks.
 - Added [`lexer.word_utf8`][].
 
-[migration guide]: manual.html#migrating-from-textadept-12-to-13
 [Textadept 13.0 beta 3 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.win.zip
 [Textadept 13.0 beta 3 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.macOS.zip
 [Textadept 13.0 beta 3 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.linux.tgz
