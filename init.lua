@@ -56,7 +56,7 @@ for _, mt in ipairs{buffer_mt, view_mt} do
 	end
 	mt.__newindex = function(t, k, v)
 		table.insert(settings[mt], string.format('%s[%s]=%s', name[mt], repr(k), repr(v)))
-		mt.__orig_newindex(t, k, v)
+		if not k:find('^fold') then mt.__orig_newindex(t, k, v) end -- unknown keys invoke rawset
 	end
 end
 
