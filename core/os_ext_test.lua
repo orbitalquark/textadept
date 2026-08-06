@@ -184,3 +184,16 @@ test('proc.read(n) should read n bytes', function()
 
 	test.assert_equal(bytes, output)
 end)
+
+-- Coverage tests.
+
+test('--lua - command line arguments should read from stdin', function()
+	local textadept = lfs.abspath(arg[0])
+	local command = string.format('"%s" --lua -', textadept)
+
+	local p = os.spawn(command)
+	p:write('print(_VERSION)')
+	p:close()
+
+	test.assert_equal(assert(p:read()), _VERSION)
+end)

@@ -187,7 +187,7 @@ Option | Description
 `-f`, `--force` | Forces unique instance
 `-h`, `--help` | Shows this<sup>a</sup>
 `-l <line>`, `--line <line>` | Jumps to a line in the previously opened file
-`-L <script>`, `--lua <script>` | Runs the given file as a Lua script and exits
+`-L <script>`, `--lua <script>` | Runs the given file (`-` for stdin) as a Lua script and exits
 `-n`, `--nosession` | No state saving/restoring functionality
 `-p`, `--preserve` | Preserve ^Q and ^S flow control sequences<sup>b</sup>
 `-s <name>`, `--session <name>` | Loads the given session on startup<sup>c</sup>

@@ -877,7 +877,12 @@ static bool init_lua(int argc, char **argv) {
 				lua_getfield(L, LUA_REGISTRYINDEX, ARG), lua_pushinteger(L, 0),
 				lua_pushinteger(L, luaL_len(L, -2) + n), lua_pushinteger(L, -n), lua_call(L, 4, 1),
 				lua_setglobal(L, "arg");
-			bool ok = luaL_dofile(L, argv[i + 1]) == LUA_OK;
+			// ok, f = loadfile() or loadstring(io.read('a'))
+			bool ok = (strcmp(argv[i + 1], "-") != 0 ?
+										luaL_loadfile(L, argv[i + 1]) :
+										(lua_getglobal(L, "io"), lua_getfield(L, -1, "read"), lua_pushstring(L, "a"),
+											lua_call(L, 1, 1), luaL_loadstring(L, lua_tostring(L, -1)))) == LUA_OK;
+			if (ok) ok = lua_pcall(L, 0, 0, 0) == LUA_OK; // f()
 			if (!ok) fprintf(stderr, "%s\n", lua_tostring(L, -1));
 			return (lua_close(L), lua = NULL, exit_status = ok ? 0 : 1, false);
 		}
