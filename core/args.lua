@@ -119,7 +119,7 @@ end, 'Shows this')
 -- Shows Textadept version and copyright on the command line.
 M.register('-v', '--version', 0, function()
 	if UI == 'terminal' then return end -- not supported
-	print(_RELEASE .. '\n' .. _COPYRIGHT)
+	print(_RELEASE .. '\n' .. _COPYRIGHT .. '\n' .. _VERSION)
 	timeout(0.01, quit, 0, false)
 	return true
 end, 'Prints Textadept version and copyright')
