@@ -362,7 +362,7 @@ keys.assign_platform_bindings{
 		'ctrl+M', 'cmd+M', {'ctrl+meta+m', 'meta+\n', 'ctrl+shift+\n'}
 	}, [textadept.editing.select_word] = {'ctrl+d', 'cmd+d', 'ctrl+d'},
 	[m('Edit/Select/Deselect Word')] = {'ctrl+alt+d', 'ctrl+cmd+d', 'meta+d'},
-	[textadept.editing.select_line] = {'ctrl+shift+l', 'cmd+shift+l', 'ctrl+alt+l'},
+	[textadept.editing.select_line] = {'ctrl+L', 'cmd+shift+l', 'ctrl+alt+l'},
 	[textadept.editing.select_paragraph] = {'ctrl+P', 'cmd+P', 'ctrl+meta+p'},
 	-- Selection.
 	[m('Edit/Selection/Upper Case Selection')] = {{'ctrl+U', 'ctrl+alt+U'}, 'cmd+U', 'ctrl+meta+u'},
