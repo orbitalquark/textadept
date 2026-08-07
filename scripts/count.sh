@@ -1,10 +1,10 @@
 #!/bin/bash
 # Copyright 2022-2026 Mitchell. See LICENSE.
 
-# Counts lines of code for the each platform.
+# Counts lines of code for the each user interface.
 # Requires cloc.
 
-files="core modules/textadept src/textadept.c src/textadept.h src/textadept_platform.h \
+files="core modules/textadept src/textadept.c src/textadept.h src/textadept_ui.h \
 	CMakeLists.txt init.lua"
 opts="--exclude-lang=SVG --force-lang=C,h --not-match-f=_test --quiet"
 

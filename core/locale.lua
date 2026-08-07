@@ -23,7 +23,7 @@ for _, locale_file in ipairs(files) do
 		local id, str = line:match('^([%w_%[].-)%s*=%s*(.-)\r?$')
 		if id then
 			assert(not M[id], 'duplicate locale key: %s', id)
-			M[id] = GTK and str or str:gsub('_', QT and '&' or '')
+			M[id] = UI == 'gtk' and str or str:gsub('_', UI == 'qt' and '&' or '')
 		end
 	end
 	break
@@ -32,5 +32,5 @@ end
 
 return setmetatable(M, {
 	__index = function(_, k) return k end,
-	__newindex = QT and function(t, k, v) rawset(t, k, v:gsub('_', '&')) end or nil
+	__newindex = UI == 'qt' and function(t, k, v) rawset(t, k, v:gsub('_', '&')) end or nil
 })

@@ -145,8 +145,8 @@ lfs.default_filter = {--[[Extensions]]'!**/*.{a,bmp,bz2,class,dll,exe,gif,gz,jar
 local function walk(dir, filter, n, include_dirs, root, seen, level)
 	if not root then root = dir:gsub('[/\\]+$', '') end
 	if not seen then seen = {} end
-	local sep = not WIN32 and '/' or '\\'
-	seen[not WIN32 and dir or dir:gsub('/', sep)] = true
+	local sep = OS ~= 'windows' and '/' or '\\'
+	seen[OS ~= 'windows' and dir or dir:gsub('/', sep)] = true
 	for basename in lfs.dir(dir) do
 		if basename:find('^%.%.?$') then goto continue end -- ignore . and ..
 		local filename = dir .. (dir ~= '/' and '/' or '') .. basename
@@ -154,7 +154,7 @@ local function walk(dir, filter, n, include_dirs, root, seen, level)
 		if mode ~= 'directory' and mode ~= 'file' then goto continue end -- ignore non-dirs, non-files
 		local relative = filename:sub(#root + 2)
 		if not filter:match(relative, mode == 'directory') then goto continue end -- ignore filtered out
-		local os_filename = not WIN32 and filename or filename:gsub('/', sep)
+		local os_filename = OS ~= 'windows' and filename or filename:gsub('/', sep)
 		if mode == 'file' then
 			coroutine.yield(os_filename)
 		elseif mode == 'directory' then
@@ -195,10 +195,12 @@ end
 --	value is Textadept's current working directory.
 function lfs.abspath(filename, prefix)
 	assert_type(filename, 'string', 1)
-	if WIN32 then filename = filename:gsub('/', '\\'):gsub('^%l:[/\\]', string.upper) end
-	if not filename:find(not WIN32 and '^/' or '^%a:[/\\]') and not (WIN32 and filename:find('^\\\\')) then
+	if OS == 'windows' then filename = filename:gsub('/', '\\'):gsub('^%l:[/\\]', string.upper) end
+	local is_relative_path = not filename:find(OS ~= 'windows' and '^/' or '^%a:[/\\]')
+	if OS == 'windows' and filename:find('^\\\\') then is_relative_path = false end -- network drive
+	if is_relative_path then
 		if not assert_type(prefix, 'string/nil', 2) then prefix = lfs.currentdir() end
-		filename = prefix .. (not WIN32 and '/' or '\\') .. filename
+		filename = prefix .. (OS ~= 'windows' and '/' or '\\') .. filename
 	end
 	filename = filename:gsub('%f[^/\\]%.[/\\]', '') -- clean up './'
 	local n

@@ -46,16 +46,7 @@ io.detect_indentation = true
 -- This has no effect on binary files.
 --
 -- The default value is `false` on Windows, and `true` on macOS, Linux, and BSD.
-io.ensure_final_newline = not WIN32
-
---- Track file changes using line markers and buffer indicators.
--- Changes shown are with respect to the file on disk, not the file's version control state
--- (if it has one).
---
--- The terminal version only shows line markers.
---
--- The default value is `false`.
-io.track_changes = false
+io.ensure_final_newline = OS ~= 'windows'
 
 --- The maximum number of files listed in the quick open list.
 -- The default value is `5000`.
@@ -177,7 +168,7 @@ local function reload(buffer)
 	local text = f:read('a')
 	if buffer.encoding then text = text:iconv('UTF-8', buffer.encoding) end
 	buffer:target_whole_document()
-	buffer:replace_target_minimal(text)
+	buffer:replace_target_minimal(text) -- minimize effect on history navigation
 	buffer:set_save_point()
 	buffer.mod_time = lfs.attributes(buffer.filename, 'modification')
 end
@@ -199,7 +190,7 @@ local function set_encoding(buffer, encoding)
 	end
 	if encoding then text = text:iconv('UTF-8', encoding) end
 	buffer:target_whole_document()
-	buffer:replace_target(text) -- replace_target_minimal will likely not detect changes
+	buffer:replace_target(text)
 	buffer:goto_pos(pos)
 	view.first_visible_line = first_visible_line
 	buffer.encoding, buffer.code_page = encoding, encoding and buffer.CP_UTF8 or 0
@@ -300,18 +291,6 @@ events.connect(events.FILE_CHANGED, function(filename)
 	if button == 1 then buffer:reload() end
 end)
 
--- Enables or disables showing change history for the current buffer.
-local function set_change_history()
-	view.change_history = (io.track_changes and buffer.filename and view.CHANGE_HISTORY_ENABLED or
-		view.CHANGE_HISTORY_DISABLED) | view.CHANGE_HISTORY_MARKERS |
-		(not CURSES and view.CHANGE_HISTORY_INDICATORS or 0)
-end
-events.connect(events.FILE_OPENED, set_change_history)
-events.connect(events.BUFFER_AFTER_SWITCH, set_change_history)
-events.connect(events.VIEW_AFTER_SWITCH, set_change_history)
-events.connect(events.BUFFER_NEW, set_change_history)
-events.connect(events.VIEW_NEW, set_change_history)
-
 --- Helper function for closing all buffers, but returns true if the user cancels the operation.
 local function close_all() for _ = 1, #_BUFFERS do if not buffer:close() then return true end end end
 
@@ -409,7 +388,7 @@ function io.quick_open(paths, filter)
 	if type(paths) == 'string' then paths = {paths} end
 
 	local utf8_list = {}
-	local prefix = #paths == 1 and paths[1] .. (not WIN32 and '/' or '\\')
+	local prefix = #paths == 1 and paths[1] .. (OS ~= 'windows' and '/' or '\\')
 	for _, path in ipairs(paths) do
 		for filename in lfs.walk(path, filter) do
 			if #utf8_list >= io.quick_open_max then break end

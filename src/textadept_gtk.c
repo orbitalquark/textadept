@@ -1,5 +1,5 @@
 // Copyright 2007-2026 Mitchell. See LICENSE.
-// GTK platform for Textadept.
+// GTK user interface for Textadept.
 
 #include "textadept.h"
 
@@ -22,7 +22,7 @@ static GtkListStore *find_history, *repl_history;
 static bool tab_sync;
 static int current_tab;
 
-const char *get_platform(void) { return "GTK"; }
+const char *get_ui(void) { return "gtk"; }
 
 const char *get_charset(void) {
 	const char *charset;
@@ -65,9 +65,9 @@ static int window_keypress(GtkWidget *_, GdkEventKey *event, void *__) {
 // buffer.
 // Generates a 'tab_clicked' event.
 static void tab_changed(GtkNotebook *_, GtkWidget *__, int tab_num, void *___) {
-	if (!gtk_widget_get_visible(tabbar)) return; // adding or removing tabs should not trigger this
 	current_tab = tab_num;
-	if (!tab_sync) emit("tab_clicked", LUA_TNUMBER, tab_num + 1, LUA_TNUMBER, 1, LUA_TNUMBER, 0, -1);
+	if (gtk_widget_get_visible(tabbar) && !tab_sync)
+		emit("tab_clicked", LUA_TNUMBER, tab_num + 1, LUA_TNUMBER, 1, LUA_TNUMBER, 0, -1);
 }
 
 // Signal for reordering tabs.

@@ -9,7 +9,7 @@ local function copy(text)
 	if not proc then return end
 	proc:write(text)
 	proc:close()
-	if WIN32 or OSX then
+	if OS == 'windows' or OS == 'macos' then
 		proc:wait()
 		return
 	end
@@ -19,7 +19,7 @@ local function copy(text)
 end
 
 teardown(function()
-	if proc and not WIN32 and not OSX then proc:kill() end
+	if proc and OS ~= 'windows' and OS ~= 'macos' then proc:kill() end
 	proc = nil
 end)
 
@@ -29,8 +29,8 @@ test('ui.get_clipboard_text should use the system clipboard', function()
 
 	test.assert_equal(ui.get_clipboard_text(), text)
 end)
-if not CURSES then skip('the GUI version uses the system clipboard') end
-if BSD and os.getenv('CI') == 'true' then skip('X is not running on CI') end
+if UI ~= 'terminal' then skip('the GUI version uses the system clipboard') end
+if OS == 'bsd' and os.getenv('CI') == 'true' then skip('X is not running on CI') end
 
 test('ui.get_clipboard_text should fall back on using its own internal clipboard', function()
 	copy('system' .. math.random())
@@ -40,7 +40,7 @@ test('ui.get_clipboard_text should fall back on using its own internal clipboard
 
 	test.assert_equal(ui.get_clipboard_text(true), text)
 end)
-if not CURSES then skip('the GUI version uses the system clipboard') end
+if UI ~= 'terminal' then skip('the GUI version uses the system clipboard') end
 
 test('buffer.copy_text should use the system clipboard', function()
 	local text = 'text' .. math.random()
@@ -48,8 +48,8 @@ test('buffer.copy_text should use the system clipboard', function()
 
 	test.assert_equal(ui.get_clipboard_text(), text)
 end)
-if not CURSES then skip('the GUI version uses the system clipboard') end
-if BSD and os.getenv('CI') == 'true' then skip('X is not running on CI') end
+if UI ~= 'terminal' then skip('the GUI version uses the system clipboard') end
+if OS == 'bsd' and os.getenv('CI') == 'true' then skip('X is not running on CI') end
 
 test('buffer.paste should use the system clipboard', function()
 	local text = 'text' .. math.random()
@@ -59,5 +59,5 @@ test('buffer.paste should use the system clipboard', function()
 
 	test.assert_equal(buffer:get_text(), text)
 end)
-if not CURSES then skip('the GUI version uses the system clipboard') end
-if BSD and os.getenv('CI') == 'true' then skip('X is not running on CI') end
+if UI ~= 'terminal' then skip('the GUI version uses the system clipboard') end
+if OS == 'bsd' and os.getenv('CI') == 'true' then skip('X is not running on CI') end

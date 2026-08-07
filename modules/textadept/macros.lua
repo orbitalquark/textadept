@@ -6,7 +6,7 @@
 -- @module textadept.macros
 local M = {}
 
-local macro_path = _USERHOME .. (not WIN32 and '/' or '\\') .. 'macros'
+local macro_path = _USERHOME .. (OS ~= 'windows' and '/' or '\\') .. 'macros'
 local recording, macro
 
 --- List of commands bound to keys to ignore during macro recording, as the command(s) ultimately
@@ -29,7 +29,7 @@ local event_recorders = {
 		for i = 1, #ignore do if keys[key] == ignore[i] then return end end
 		macro[#macro + 1] = {events.KEYPRESS, key}
 	end, --
-	[not OSX and events.MENU_CLICKED or 'menu_clicked_no_shortcut'] = event_recorder(
+	[OS ~= 'macos' and events.MENU_CLICKED or 'menu_clicked_no_shortcut'] = event_recorder(
 		events.MENU_CLICKED), --
 	[events.CHAR_ADDED] = event_recorder(events.CHAR_ADDED),
 	[events.FIND] = event_recorder(events.FIND), --

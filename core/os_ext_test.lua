@@ -8,7 +8,7 @@ test("os.spawn should act like Lua's io.popen", function()
 end)
 
 test('os.spawn should spawn from the current working directory', function()
-	local pwd = not WIN32 and 'pwd' or 'cd'
+	local pwd = OS ~= 'windows' and 'pwd' or 'cd'
 	local dir<close> = test.tmpdir(true)
 
 	local cwd = os.spawn(pwd):read('a')
@@ -17,7 +17,7 @@ test('os.spawn should spawn from the current working directory', function()
 end)
 
 test('os.spawn should allow spawning from a given working directory', function()
-	local pwd = not WIN32 and 'pwd' or 'cd'
+	local pwd = OS ~= 'windows' and 'pwd' or 'cd'
 	local dir<close> = test.tmpdir()
 
 	local cwd = os.spawn(pwd, dir.dirname):read('a')
@@ -26,7 +26,7 @@ test('os.spawn should allow spawning from a given working directory', function()
 end)
 
 test('os.spawn should inherit from the current environment', function()
-	local env = not WIN32 and 'env' or 'set'
+	local env = OS ~= 'windows' and 'env' or 'set'
 
 	local output = os.spawn(env):read() or ''
 
@@ -34,7 +34,7 @@ test('os.spawn should inherit from the current environment', function()
 end)
 
 test('os.spawn should allow setting an environment from a map', function()
-	local env_command = not WIN32 and 'env' or 'set'
+	local env_command = OS ~= 'windows' and 'env' or 'set'
 	local env = {NAME = 'value'}
 
 	local output = os.spawn(env_command, env):read('a')
@@ -43,7 +43,7 @@ test('os.spawn should allow setting an environment from a map', function()
 end)
 
 test('os.spawn should allow setting an environment from a list', function()
-	local env_command = not WIN32 and 'env' or 'set'
+	local env_command = OS ~= 'windows' and 'env' or 'set'
 	local env = {'NAME=value'}
 
 	local output = os.spawn(env_command, env):read('a')
@@ -52,9 +52,11 @@ test('os.spawn should allow setting an environment from a list', function()
 end)
 
 test('os.spawn environment should ignore non-environment assignments', function()
-	local env_command = not WIN32 and 'env' or 'set'
+	local env_command = OS ~= 'windows' and 'env' or 'set'
 	local env = {[true] = false}
-	if WIN32 and CURSES then env.PATH = os.getenv('PATH') end -- needed to find env_command
+	if OS == 'windows' and UI == 'terminal' then
+		env.PATH = os.getenv('PATH') -- needed to find env_command
+	end
 
 	local output = os.spawn(env_command, env):read('a')
 
@@ -70,7 +72,7 @@ test('os.spawn should report stdout, stderr, and exit status using callbacks', f
 	local p = os.spawn('echo ' .. output, stdout, stderr, exit)
 
 	test.wait(function() return stdout.called end)
-	if QT then p:wait() end
+	if UI == 'qt' then p:wait() end
 	test.assert_equal(stdout.called, true)
 	test.assert_equal(stdout.args, {test.lines{output, ''}})
 	test.assert_equal(stderr.called, false)
@@ -116,7 +118,7 @@ test('os.spawn should allow two-way communication with a spawned process', funct
 
 	test.log('spawning ', command)
 	local p = os.spawn(command)
-	p:write(input .. (not WIN32 and '\n' or '\r\n'))
+	p:write(input .. (OS ~= 'windows' and '\n' or '\r\n'))
 	p:close()
 	local output = assert(p:read())
 	local eof = p:read('a')
@@ -126,7 +128,7 @@ test('os.spawn should allow two-way communication with a spawned process', funct
 end)
 
 test('proc.kill should kill a spawned process', function()
-	local sleep = not WIN32 and 'sleep 1' or 'timeout /T 1'
+	local sleep = OS ~= 'windows' and 'sleep 1' or 'timeout /T 1'
 	local p = os.spawn(sleep)
 
 	p:kill()
@@ -143,7 +145,7 @@ test('os.spawn should raise an error if the command does not exist', function()
 
 	test.assert_raises(command_does_not_exist, nonexistent_command .. ':')
 end)
-if WIN32 then skip("'cmd /c does not exist' prints to stderr and returns 1") end
+if OS == 'windows' then skip("'cmd /c does not exist' prints to stderr and returns 1") end
 
 -- Coverage tests.
 
@@ -181,4 +183,17 @@ test('proc.read(n) should read n bytes', function()
 	local bytes = p:read(#output)
 
 	test.assert_equal(bytes, output)
+end)
+
+-- Coverage tests.
+
+test('--lua - command line arguments should read from stdin', function()
+	local textadept = lfs.abspath(arg[0])
+	local command = string.format('"%s" --lua -', textadept)
+
+	local p = os.spawn(command)
+	p:write('print(_VERSION)')
+	p:close()
+
+	test.assert_equal(assert(p:read()), _VERSION)
 end)

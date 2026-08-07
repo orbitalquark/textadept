@@ -1,0 +1,54 @@
+--- a/qtsingleapplication/src/qtlocalpeer.h.orig	2026-03-26 13:02:28
++++ b/qtsingleapplication/src/qtlocalpeer.h	2026-03-26 13:03:23
+@@ -31,7 +31,7 @@
+     QString id;
+     QString socketName;
+     QLocalServer* server;
+-    QtLP_Private::QtLockedFile lockFile;
++    QtLockedFile lockFile;
+ 
+ private:
+     static const char* ack;
+--- a/qtsingleapplication/src/qtlocalpeer.cpp.orig	2026-03-26 13:02:39
++++ b/qtsingleapplication/src/qtlocalpeer.cpp	2026-03-26 13:04:03
+@@ -20,14 +20,12 @@
+ #include <unistd.h>
+ #endif
+ 
+-namespace QtLP_Private {
+ #include "qtlockedfile.cpp"
+ #if defined(Q_OS_WIN)
+ #include "qtlockedfile_win.cpp"
+ #else
+ #include "qtlockedfile_unix.cpp"
+ #endif
+-}
+ 
+ const char* QtLocalPeer::ack = "ack";
+ 
+@@ -79,7 +77,7 @@
+     if (lockFile.isLocked())
+         return false;
+ 
+-    if (!lockFile.lock(QtLP_Private::QtLockedFile::WriteLock, false))
++    if (!lockFile.lock(QtLockedFile::WriteLock, false))
+         return true;
+ 
+     bool res = server->listen(socketName);
+--- a/qtsingleapplication/src/qtlockedfile.h.orig	2026-03-26 13:02:17
++++ b/qtsingleapplication/src/qtlockedfile.h	2026-03-26 13:03:05
+@@ -25,8 +25,6 @@
+ #  define QT_QTLOCKEDFILE_EXPORT
+ #endif
+ 
+-namespace QtLP_Private {
+-
+ class QT_QTLOCKEDFILE_EXPORT QtLockedFile : public QFile
+ {
+ public:
+@@ -56,5 +54,4 @@
+ #endif
+     LockMode m_lock_mode;
+ };
+-}
+ #endif

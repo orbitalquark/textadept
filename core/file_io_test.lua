@@ -252,7 +252,7 @@ test('buffer.set_encoding should handle single-byte changes without marking buff
 		test.assert_equal(buffer:get_text(), utf8_contents)
 		test.assert_equal(buffer.modify, false)
 	end)
-if OSX then skip('crashes on macOS due to system iconv error') end -- TODO:
+if OS == 'macos' then expected_failure('macOS system iconv converts to ???') end
 
 test('buffer.set_encoding should handle single- to multi-byte changes and mark the buffer as dirty',
 	function()
@@ -723,7 +723,7 @@ test('io.open_file should raise an error if it cannot open or read a file', func
 
 	test.assert_raises(cannot_open, 'cannot open /etc/gshadow-: Permission denied')
 end)
-if not LINUX then skip('/etc/gshadow- only exists on Linux') end
+if OS ~= 'linux' then skip('/etc/gshadow- only exists on Linux') end
 
 test("buffer.save should remove a buffer's type once it has a filename", function()
 	local f<close> = test.tmpfile()

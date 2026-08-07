@@ -1,5 +1,5 @@
 // Copyright 2007-2026 Mitchell. See LICENSE.
-// Curses platform for Textadept.
+// Curses user interface for Textadept.
 
 #include "textadept.h"
 
@@ -51,7 +51,7 @@ struct Pane {
 }; // Pane implementation based on code by Chris Emerson.
 static inline struct Pane *PANE(struct Pane *pane) { return pane; }
 
-const char *get_platform(void) { return "CURSES"; }
+const char *get_ui(void) { return "terminal"; }
 
 const char *get_charset(void) {
 #if !_WIN32
@@ -248,8 +248,8 @@ static void copyfree(char **s, const char *value) {
 	*s = strcpy(malloc(strlen(value) + 1), value);
 }
 
-const char *get_find_text(void) { return find_text; }
-const char *get_repl_text(void) { return repl_text; }
+const char *get_find_text(void) { return find_text ? find_text : ""; }
+const char *get_repl_text(void) { return repl_text ? repl_text : ""; }
 void set_find_text(const char *text) { copyfree(&find_text, text); }
 void set_repl_text(const char *text) { copyfree(&repl_text, text); }
 

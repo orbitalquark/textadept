@@ -5,11 +5,13 @@
 local M = {}
 
 --- Save the session when quitting.
--- The default value is `true` unless the user passed the command line switch `-n` or `--nosession`
--- to Textadept.
-M.save_on_quit = true
+-- The default value is `true` unless one of the following conditions is true:
+--	- The user passed the command line switch `-n` or `--nosession` to Textadept.
+--	- The user passed a filename or directory to Textadept on startup.
+--	- An error occurred on startup.
+M.save_on_quit = nil
 if arg then
-	for _, arg in ipairs(arg) do if arg == '-t' or arg == '--test' then M.save_on_quit = false end end
+	for _, v in ipairs(arg) do if v == '-t' or v == '--test' then M.save_on_quit = false end end
 end
 
 -- Events.
@@ -30,7 +32,7 @@ for _, v in ipairs{'session_save', 'session_load'} do events[v:upper()] = v end
 
 -- This comment is needed for LDoc to process the previous field.
 
-local session_file = _USERHOME .. (not CURSES and '/session' or '/session_term')
+local session_file = _USERHOME .. (UI ~= 'terminal' and '/session' or '/session_term')
 
 --- Loads a session file.
 -- Textadept restores split views, opened buffers, cursor information, recent files, and bookmarks.
@@ -109,7 +111,10 @@ function M.load(filename)
 	}
 end
 -- Load session when no args are present.
-events.connect(events.ARG_NONE, function() if M.save_on_quit then M.load(session_file) end end)
+events.connect(events.ARG_NONE, function()
+	if M.save_on_quit == nil then M.save_on_quit = true end
+	if M.save_on_quit then M.load(session_file) end
+end)
 
 --- Returns a value serialized as a string.
 -- This is a very simple implementation suitable for session saving only.
@@ -193,8 +198,19 @@ end
 -- Saves session on quit.
 events.connect(events.QUIT, function() if M.save_on_quit then M.save(session_file) end end, 1)
 
+-- Helper function for disabling session save on quit under certain circumstances.
+local function disable() M.save_on_quit = false end
+
+-- Disable session save on quit if a startup error occurs.
+-- This prevents clobbering the previous session.
+events.connect(events.ERROR, disable)
+events.connect(events.INITIALIZED, function()
+	events.disconnect(events.ERROR, disable)
+	if M.save_on_quit == nil then disable() end -- explicitly mark false if not events.ARG_NONE
+end)
+
 -- Does not save session on quit.
-args.register('-n', '--nosession', 0, function() M.save_on_quit = false end, 'Disable sessions')
+args.register('-n', '--nosession', 0, disable, 'Disable sessions')
 -- Loads a session on startup.
 args.register('-s', '--session', 1, function(name)
 	if not lfs.attributes(name) then name = string.format('%s/%s', _USERHOME, name) end

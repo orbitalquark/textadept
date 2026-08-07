@@ -424,9 +424,10 @@ function snippet:add_part(part)
 	elseif part.shell then
 		-- Linux and macOS need a shell to expand environment variables in, so execute
 		-- the shell code in a script.
-		local tmpfile = not WIN32 and os.tmpname()
+		local tmpfile = OS ~= 'windows' and os.tmpname()
 		if tmpfile then io.open(tmpfile, 'w'):write(part.shell):close() end
-		local cmd, env_cmd = not WIN32 and 'sh ' .. tmpfile or part.shell, not WIN32 and 'env' or 'set'
+		local cmd = OS ~= 'windows' and 'sh ' .. tmpfile or part.shell
+		local env_cmd = OS ~= 'windows' and 'env' or 'set'
 		local env = {}
 		for k, v in os.spawn(env_cmd):read('a'):gmatch('([^=]+)=([^\r\n]*)\r?\n') do env[k] = v end
 		for k, v in pairs(self.variables) do env[k] = v end

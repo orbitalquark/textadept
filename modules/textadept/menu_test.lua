@@ -9,7 +9,7 @@ test('Edit > Deselect should undo a selection', function()
 	buffer:append_text(word .. ' ' .. word)
 	buffer:word_right()
 	ui.update() -- emit events.UPDATE_UI
-	if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
+	if UI == 'terminal' then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
 	local pos = buffer.current_pos
 
 	click('Edit/Select All')
@@ -508,12 +508,12 @@ test('activating menu items with shortcuts on macOS should emit events.KEYPRESS 
 	local keypress = test.stub()
 	local _<close> = test.connect(events.KEYPRESS, keypress, 1)
 
-	local OSX = OSX
-	local _<close> = test.mock(_G, 'OSX', true)
+	local OS = OS
+	local _<close> = test.mock(_G, 'OS', 'macos')
 	events.emit(events.MENU_CLICKED, 1) -- simulate cmd+n triggering File > New
 
 	test.assert_equal(keypress.called, 2) -- CLEAR and then ctrl/cmd+n
-	test.assert_equal(keypress.args, {(not OSX and 'ctrl' or 'cmd') .. '+n'})
+	test.assert_equal(keypress.args, {(OS ~= 'macos' and 'ctrl' or 'cmd') .. '+n'})
 	test.assert_equal(#_BUFFERS, 2) -- not 3
 end)
 

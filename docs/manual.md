@@ -1,4 +1,4 @@
-# Textadept 13.0 alpha 2 Manual
+# Textadept 13.0 Manual
 
 **Contents**
 
@@ -80,7 +80,7 @@ like to quickly get up to speed, or need a refresher, the [Lua Quick Reference][
 Textadept's pre-built binaries require the following:
 
 - Windows 10+ (64-bit or ARM)
-- macOS 11+
+- macOS 13+
 - Linux: [Qt][] 5 or [GTK][] 3 for the GUI version, and [ncurses][] for the terminal version.
 
 You can [compile](#compiling) Textadept from source for use with different UI library versions,
@@ -146,6 +146,11 @@ terminal, etc.
 on all systems. If the editor will not start on your machine, you must [compile](#compiling)
 it manually.
 
+**macOS Note:** if you get a notice that Textadept "is damaged and can't be opened," you will
+need to remove the quarantine attribute from the app by running the following command in your
+terminal: `xattr -d com.apple.quarantine /path/to/Textadept.app`. Recent versions of macOS have
+been getting more and more strict about what apps it considers to be "safe".
+
 For better platform integration:
 
 - Windows: create shortcuts to the executables on the Windows Desktop, Start
@@ -182,7 +187,7 @@ Option | Description
 `-f`, `--force` | Forces unique instance
 `-h`, `--help` | Shows this<sup>a</sup>
 `-l <line>`, `--line <line>` | Jumps to a line in the previously opened file
-`-L <script>`, `--lua <script>` | Runs the given file as a Lua script and exits
+`-L <script>`, `--lua <script>` | Runs the given file (`-` for stdin) as a Lua script and exits
 `-n`, `--nosession` | No state saving/restoring functionality
 `-p`, `--preserve` | Preserve ^Q and ^S flow control sequences<sup>b</sup>
 `-s <name>`, `--session <name>` | Loads the given session on startup<sup>c</sup>
@@ -258,7 +263,7 @@ Here is a sample *~/.textadept/init.lua* for illustration:
 
 ```lua
 -- Adjust the default theme's font and size.
-if not CURSES then
+if UI ~= 'terminal' then
 	view:set_theme('light', {font = 'Monospace', size = 12})
 end
 
@@ -274,7 +279,7 @@ textadept.editing.highlight_words = textadept.editing.HIGHLIGHT_CURRENT
 textadept.editing.comment_string.c = '/*|*/'
 
 -- Create a key binding to the "Edit > Preferences" menu item.
-if not OSX and not CURSES then
+if OS ~= 'macos' and UI ~= 'terminal' then
 	keys['ctrl+,'] = textadept.menu.menubar['Edit/Preferences'][2]
 end
 
@@ -497,6 +502,17 @@ ui.find.highlight_all_matches = true
 ```
 
 [`ui.find.highlight_all_matches`]: api.html#ui.find.highlight_all_matches
+
+While the find & replace pane is closed, you can still perform its actions:
+
+- Perform "Find Next" via `Ctrl+G` or `F3` on Windows and Linux/BSD, `⌘G` on macOS, and `^G`
+	in the terminal version.
+- Perform "Find Prev" via `Ctrl+Shift+G` or `Shift+F3` on Windows and Linux/BSD, `⌘⇧G`
+	on macOS, and `M-^G` in the terminal version.
+- Perform "Replace" via `Ctrl+Alt+P` on Windows and Linux/BSD, `^⌘P` on macOS, and `M-P`
+	in the terminal version.
+- Perform "Replace All" via `Ctrl+Alt+Shift+P` on Windows and Linux/BSD, `^⌘⇧P` on macOS,
+	and `M-S-P` in the terminal version.
 
 #### Find in Files
 
@@ -731,8 +747,8 @@ directory, and add an extension and/or pattern for it.
 **Tip:** placing lexers in your user data directory avoids the possibility of you overwriting
 them when you update Textadept.
 
-You can manually change a buffer's lexer via `Ctrl+Shift+L` on Windows and Linux/ BSD, `⌘⇧L`
-on macOS, and `M-^L` in the terminal version. Typing part of a lexer name in the dialog filters
+You can manually change a buffer's lexer via `Ctrl+Alt+L` on Windows and Linux/ BSD, `^⌘L`
+on macOS, and `M-L` in the terminal version. Typing part of a lexer name in the dialog filters
 the list, with spaces being wildcards. The arrow keys move the selection up and down. Pressing
 `Enter`, selecting `OK`, or double-clicking on a lexer assigns it to the current buffer. (The
 terminal version requires pressing `Enter`.)
@@ -928,9 +944,9 @@ You can create contiguous selections as follows:
 	terminal version. Repeated use of this action selects subsequent occurrences of that word as
 	additional (multiple) selections. Undo the most recent multiple selection via `Ctrl+Alt+D`,
 	`^⌘D`, or `M-D`.
-- Select the current line via `Ctrl+L` on Windows and Linux/BSD, `⌘L` on macOS, and `^L` in the
-	terminal version. If text is already selected and spans multiple lines, this action expands
-	the selection to include whole lines.
+- Select the current line via `Ctrl+Shift+L` on Windows and Linux/BSD, `⌘⇧L` on macOS, and
+	`M-^L` in the terminal version. If text is already selected and spans multiple lines,
+	this action expands the selection to include whole lines.
 - Double click to select a word, and triple-click to select a line.
 - Click and optionally drag within the line number margin to select whole lines.
 - Select the current paragraph via `Ctrl+Shift+P` on Windows and Linux/BSD, `⌘⇧P` on macOS,
@@ -1024,8 +1040,8 @@ terminal version.
 
 ### Go To Line
 
-Jump to a specific line in the current buffer via `Ctrl+G` on Windows and Linux/BSD, `⌘G`
-on macOS, and `^G` in the terminal version. Enter the line number to go to in the prompt,
+Jump to a specific line in the current buffer via `Ctrl+L` on Windows and Linux/BSD, `⌘L`
+on macOS, and `^L` in the terminal version. Enter the line number to go to in the prompt,
 and press `Enter` or click `OK`.
 
 ### Bookmarks
@@ -1321,7 +1337,7 @@ You can set Textadept's theme using [`view:set_theme()`][]. You can also tweak a
 on a per-language basis. For example, in your *~/.textadept/init.lua*:
 
 ```lua
-if not CURSES then
+if UI ~= 'terminal' then
 	view:set_theme('light', {font = 'Monospace', size = 12})
 	-- You can alternatively use the following to keep the default theme:
 	-- view:set_theme{font = 'Monospace', size = 12}
@@ -1602,7 +1618,7 @@ Textadept is composed of the following technologies:
 - [LuaFileSystem][]: Lua library for accessing the host filesystem
 - [Lua-std-regex][]: Lua library for regular expressions
 - [iconv][]: library for converting text to and from Unicode
-- [SingleApplication][]: single-instance application support for Qt
+- [QtSingleApplication][]: single-instance application support for Qt
 - [reproc][]: process spawning library for the terminal version
 
 [Qt]: https://www.qt.io
@@ -1619,7 +1635,7 @@ Textadept is composed of the following technologies:
 [cdk]: https://invisible-island.net/cdk
 [libtermkey]: http://www.leonerd.org.uk/code/libtermkey
 [iconv]: https://www.gnu.org/software/libiconv
-[SingleApplication]: https://github.com/itay-grudev/SingleApplication
+[QtSingleApplication]: https://github.com/qtproject/qt-solutions
 [reproc]: https://github.com/DaanDeMeyer/reproc
 
 ### Migrating from Textadept 12 to 13
@@ -1628,15 +1644,41 @@ Textadept is composed of the following technologies:
 
 Old API | Change | New API
 -|:-:|-
+**_G**||
+WIN32 | Replaced | [OS][] == 'windows' <sup>a</sup>
+OSX | Replaced | [OS][] == 'macos' <sup>a</sup>
+Linux | Replaced | [OS][] == 'linux' <sup>a</sup>
+BSD | Replaced | [OS][] == 'bsd' <sup>a</sup>
+QT | Replaced | [UI][] == 'qt' <sup>a</sup>
+GTK | Replaced | [UI][] == 'gtk' <sup>a</sup>
+CURSES | Replaced | [UI][] == 'terminal' <sup>a</sup>
 **ui**||
 [get_split_table()][] | Changed | `size` field is now a {width, height, split pos} table
 **view**||
 size | Renamed | [split_pos][]
 parent_size | Renamed | [parent_split_pos][]
 
+<sup>a</sup>If you want to keep using the booleans, put the following at the top of your
+*~/.textadept/init.lua*: 
+```lua
+for k, v in pairs{windows='WIN32',macos='OSX',linux='LINUX',bsd='BSD',qt='QT',gtk='GTK',terminal='CURSES'} do _G[v] = OS == k or UI == k end
+```
+
+[OS]: api.html#OS
+[UI]: api.html#UI
 [get_split_table()]: api.html#ui.get_split_table
 [split_pos]: api.html#view.split_pos
 [parent_split_pos]: api.html#view.parent_split_pos
+
+#### Key Binding Changes
+
+- Go to Line has changed from `Ctrl+G` on Windows and Linux/BSD, `⌘G` on macOS, and `^G`
+	in the terminal version, to `Ctrl+L`, `⌘L`, and `^L`, respectively.
+- Select Line has changed from `Ctrl+L` on Windows and Linux/BSD, `⌘L` on macOS, and `^L`
+	in the terminal version, to `Ctrl+Shift+L`, `⌘⇧L`, and `M-^L`, respectively.
+- Select Lexer has changed from `Ctrl+Shift+L` on Windows and Linux/BSD, `⌘⇧L` on macOS,
+	and `M-^L` in the terminal version, to `Ctrl+Alt+L`, `^⌘L`, and `M-L`, respectively.
+
 
 #### Lua 5.5 Changes
 

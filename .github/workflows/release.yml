@@ -87,7 +87,7 @@ jobs:
       version: ${{ steps.get-version.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Get version
         id: get-version
@@ -121,11 +121,11 @@ jobs:
     steps:
       - name: Checkout
         if: matrix.if
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout textadept-build dependencies
         if: matrix.if
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: orbitalquark/textadept-build
           path: textadept-build
@@ -167,7 +167,7 @@ jobs:
 
       - name: Upload artifacts
         if: matrix.if
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: artifacts-${{ matrix.os }}
           path: |
@@ -192,7 +192,7 @@ jobs:
           zip -r textadept_${{ needs.get-version.outputs.version }}.modules.zip textadept-modules
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: artifacts-modules
           path: '*.zip'
@@ -203,10 +203,10 @@ jobs:
     if: needs.check-for-changes.outputs.new-commits == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout textadept-build dependencies
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: orbitalquark/textadept-build
           path: textadept-build
@@ -242,7 +242,7 @@ jobs:
           tar czf docs.tgz docs
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: artifacts-docs
           path: docs.tgz
@@ -252,10 +252,10 @@ jobs:
     needs: [get-version, build, modules, docs]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           merge-multiple: true
 
@@ -314,7 +314,7 @@ jobs:
           done < docs/changelog.md >> log.md
 
       - name: Upload release log
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: artifacts-release-log
           path: log.md
@@ -360,7 +360,7 @@ jobs:
             xsel gdb lua5.4 lua-socket clang-format clangd hunspell-en-us --no-install-recommends -y
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           merge-multiple: true
 
@@ -402,7 +402,7 @@ jobs:
         if: runner.os == 'Windows' && (inputs.windows || github.event_name == 'schedule')
         shell: cmd
         run: start "" /d ${{ github.workspace }} /wait ${{ matrix.exe }}.exe -t
-        timeout-minutes: 2
+        timeout-minutes: 3
 
       - name: Run unit tests (macOS)
         if: runner.os == 'macOS' && (inputs.macOS || github.event_name == 'schedule')
@@ -435,10 +435,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout textadept-build dependencies
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: orbitalquark/textadept-build
           path: textadept-build
@@ -481,10 +481,10 @@ jobs:
       TEXTADEPT_HOME: ${{ github.workspace }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout textadept-build dependencies
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: orbitalquark/textadept-build
           path: textadept-build
@@ -551,16 +551,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout textadept-build dependencies
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: orbitalquark/textadept-build
           path: textadept-build
 
       - name: Checkout LuaCov
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: lunarmodules/luacov
           path: luacov
@@ -592,7 +592,7 @@ jobs:
           cp -r build/_deps/scintillua-src/lexers .
 
       - name: Download modules
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: artifacts-modules
 
@@ -619,7 +619,7 @@ jobs:
         run: lua scripts/gen_cov.lua github . > coverage.md
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: artifacts-coverage
           path: coverage.md
@@ -630,7 +630,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           merge-multiple: true
 
@@ -649,7 +649,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload updated release log
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: artifacts-update-release-log
           path: log.md
@@ -660,7 +660,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout modules
         run: |

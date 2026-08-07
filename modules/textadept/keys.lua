@@ -4,9 +4,9 @@
 -- This set of key bindings is pretty standard among other text editors, at least for basic
 -- editing commands and movements.
 --
--- These bindings are designed to be as consistent as possible between operating systems and platforms
--- so that users familiar with one set of bindings can intuit a given binding on another OS or
--- platform, minimizing the need for memorization.
+-- These bindings are designed to be as consistent as possible between operating systems and
+-- user interfaces so that users familiar with one set of bindings can intuit a given binding
+-- on another OS or UI, minimizing the need for memorization.
 --
 -- In general, bindings for macOS are the same as for Windows/Linux/BSD except the "Control"
 -- modifier key on Windows/Linux/BSD is replaced by "Command" (⌘) and the "Alt" modifier key
@@ -66,7 +66,7 @@
 -- Ctrl+Shift+M | ⌘⇧M | M-^M | Select between delimiters
 -- Ctrl+D | ⌘D | ^D | Select word
 -- Ctrl+Alt+D | ^⌘D | M-D | Deselect word
--- Ctrl+L | ⌘L | ^L | Select line
+-- Ctrl+Shift+L | ⌘⇧L | M-^L | Select line
 -- Ctrl+Shift+P | ⌘⇧P | M-^P | Select paragraph
 -- Ctrl+Shift+U<sup>c</sup><br/>Ctrl+Alt+Shift+U | ⌘⇧U | M-^U | Upper case selection
 -- Ctrl+U | ⌘U | ^U | Lower case selection
@@ -86,10 +86,10 @@
 -- None | ⌘, | None | Preferences
 -- **Search**| | |
 -- Ctrl+F | ⌘F | ^F | Find
--- None | None | None | Find next
--- None | None | None | Find previous
--- None | None | None | Replace
--- None | None | None | Replace all
+-- Ctrl+G<br/>F3 | ⌘G | ^G | Find next
+-- Ctrl+Shift+G <br/>Shift+F3 | ⌘⇧G | M-^G | Find previous
+-- Ctrl+Alt+P | ^⌘P | M-P | Replace
+-- Ctrl+Alt+Shift+P | ^⌘⇧P | M-S-P | Replace all
 -- Ctrl+Alt+F | ^⌘F | M-F | Find incremental
 -- None | ⌥⌘M | None | Toggle Match Case
 -- None | ⌥⌘W | None | Toggle Whole Word
@@ -147,7 +147,7 @@
 -- None | None | None | UTF-16 encoding
 -- None | None | None | Toggle Tab Bar
 -- None | None | None | Toggle Code Folding
--- Ctrl+Shift+L | ⌘⇧L | M-^L | Select lexer...
+-- Ctrl+Alt+L | ^⌘L | M-L | Select lexer...
 -- **View**| | |
 -- Ctrl+Alt+PgDn | ^⌘}<br/>^⌘⇟ | M-^PgDn<br/>M-PgUp<sup>d</sup> | Next view
 -- Ctrl+Alt+PgUp | ^⌘{<br/>^⌘⇞ | M-^PgUp<br/>M-PgDn<sup>d</sup> | Previous view
@@ -270,16 +270,16 @@
 -- Windows, Linux, and BSD key bindings.
 --
 -- Unassigned keys:
--- ctrl:  EGhiIJNQtY_({};:'",<.>?\s
+-- ctrl:  EhiIJNQtY_({};:'",<.>?\s
 -- alt: -_=+)]}\|;:/?\s\n
--- ctrl+alt: aAbBcCDFHiIjJlLmMnNoOpPqQsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
+-- ctrl+alt: aAbBcCDFHiIjJLmMnNoOqQsSTUvVxXyYzZ()[]{}\;:'",<.>/?\s\t\n
 --
 -- macOS key bindings.
 --
 -- Unassigned keys:
--- cmd:  EGhiIJNQtY_(;:'"<.>?\s
+-- cmd:  EhiIJNQtY_(;:'"<.>?\s
 -- ctrl: cCDgGHiIjJKLmMoOqQrRsStTuUvVwWxXyYzZ-_=+)]}\|;:/?\s
--- ctrl+cmd: aAbBcCDFHiIjJlLmMnNoOpPqQsSTUvVxXyYzZ()[]\;:'",<.>/?\s\t\n
+-- ctrl+cmd: aAbBcCDFHiIjJLmMnNoOqQsSTUvVxXyYzZ()[]\;:'",<.>/?\s\t\n
 --
 -- Curses key bindings.
 --
@@ -296,8 +296,8 @@
 --
 -- Unassigned keys:
 -- ctrl: t\s
--- meta: aAbBcCDiIjJlLMnNoOpPQUvVxXyYzZ};:?\s
--- ctrl+meta:  eghijnqy_]\^
+-- meta: aAbBcCDiIjJLMnNoOQUvVxXyYzZ};:?\s
+-- ctrl+meta:  ehijnqy_]\^
 --
 -- Note: meta+[befhstv] may be used by Linux/BSD GUI terminals for menu access.
 
@@ -362,7 +362,7 @@ keys.assign_platform_bindings{
 		'ctrl+M', 'cmd+M', {'ctrl+meta+m', 'meta+\n', 'ctrl+shift+\n'}
 	}, [textadept.editing.select_word] = {'ctrl+d', 'cmd+d', 'ctrl+d'},
 	[m('Edit/Select/Deselect Word')] = {'ctrl+alt+d', 'ctrl+cmd+d', 'meta+d'},
-	[textadept.editing.select_line] = {'ctrl+l', 'cmd+l', 'ctrl+l'},
+	[textadept.editing.select_line] = {'ctrl+shift+l', 'cmd+shift+l', 'ctrl+alt+l'},
 	[textadept.editing.select_paragraph] = {'ctrl+P', 'cmd+P', 'ctrl+meta+p'},
 	-- Selection.
 	[m('Edit/Selection/Upper Case Selection')] = {{'ctrl+U', 'ctrl+alt+U'}, 'cmd+U', 'ctrl+meta+u'},
@@ -386,10 +386,10 @@ keys.assign_platform_bindings{
 
 	-- Search.
 	[ui.find.focus] = {'ctrl+f', 'cmd+f', 'ctrl+f'},
-	-- TODO: ui.find.find_next
-	-- TODO: ui.find.find_prev
-	-- TODO: ui.find.replace
-	-- TODO: ui.find.replace_all
+	[ui.find.find_next] = {{'ctrl+g', 'f3'}, 'cmd+g', 'ctrl+g'},
+	[ui.find.find_prev] = {{'ctrl+G', 'shift+f3'}, 'cmd+G', 'ctrl+meta+g'},
+	[ui.find.replace] = {'ctrl+alt+p', 'ctrl+cmd+p', 'meta+p'},
+	[ui.find.replace_all] = {'ctrl+alt+P', 'ctrl+cmd+P', 'meta+P'},
 	-- Find Next is alt+n when find pane is focused in GUI.
 	-- Find Prev is alt+p when find pane is focused in GUI.
 	-- Replace is alt+r when find pane is focused in GUI.
@@ -402,7 +402,7 @@ keys.assign_platform_bindings{
 	-- Find in Files is alt+i when find pane is focused in GUI.
 	[m('Search/Go To Next File Found')] = {'ctrl+alt+g', 'ctrl+cmd+g', 'meta+g'},
 	[m('Search/Go To Previous File Found')] = {'ctrl+alt+G', 'ctrl+cmd+G', 'meta+G'},
-	[textadept.editing.goto_line] = {'ctrl+g', 'cmd+g', 'ctrl+g'},
+	[textadept.editing.goto_line] = {'ctrl+l', 'cmd+l', 'ctrl+l'},
 
 	-- Tools.
 	[ui.command_entry.run] = {'ctrl+e', 'cmd+e', 'ctrl+e'},
@@ -443,10 +443,10 @@ keys.assign_platform_bindings{
 	
 	-- Buffer.
 	[m('Buffer/Next Buffer')] = {
-		{'ctrl+\t', 'ctrl+pgdn'}, {'cmd+}', 'ctrl+\t'}, WIN32 and 'ctrl+\t' or 'meta+pgdn'
+		{'ctrl+\t', 'ctrl+pgdn'}, {'cmd+}', 'ctrl+\t'}, OS == 'windows' and 'ctrl+\t' or 'meta+pgdn'
 	}, [m('Buffer/Previous Buffer')] = {
 		{'ctrl+shift+\t', 'ctrl+pgup'}, {'cmd+{', 'ctrl+shift+\t'},
-		WIN32 and 'ctrl+shift+\t' or 'meta+pgup'
+		OS == 'windows' and 'ctrl+shift+\t' or 'meta+pgup'
 	}, [ui.switch_buffer] = {'ctrl+b', 'cmd+b', 'ctrl+b'},
 	-- Indentation.
 	-- TODO: m('Buffer/Indentation/Tab width: 2')
@@ -465,13 +465,15 @@ keys.assign_platform_bindings{
 	-- TODO: m('Buffer/Encoding/UTF-16 Encoding')
 	-- TODO: m('Buffer/Toggle Tab Bar')
 	-- TODO: m('Buffer/Toggle Code Folding')
-	[m('Buffer/Select Lexer...')] = {'ctrl+L', 'cmd+L', 'ctrl+meta+l'},
+	[m('Buffer/Select Lexer...')] = {'ctrl+alt+L', 'ctrl+cmd+l', 'meta+l'},
 
 	-- View.
 	[m('View/Next View')] = {
-		'ctrl+alt+pgdn', {'ctrl+cmd+}', 'ctrl+cmd+pgdn'}, WIN32 and 'meta+pgdn' or 'ctrl+meta+pgdn'
+		'ctrl+alt+pgdn', {'ctrl+cmd+}', 'ctrl+cmd+pgdn'},
+		OS == 'windows' and 'meta+pgdn' or 'ctrl+meta+pgdn'
 	}, [m('View/Previous View')] = {
-		'ctrl+alt+pgup', {'ctrl+cmd+{', 'ctrl+cmd+pgup'}, WIN32 and 'meta+pgup' or 'ctrl+meta+pgup'
+		'ctrl+alt+pgup', {'ctrl+cmd+{', 'ctrl+cmd+pgup'},
+		OS == 'windows' and 'meta+pgup' or 'ctrl+meta+pgup'
 	}, [m('View/Split View Horizontal')] = {'ctrl+alt+_', 'ctrl+cmd+_', 'meta+_'},
 	[m('View/Split View Vertical')] = {'ctrl+alt+|', 'ctrl+cmd+|', 'meta+|'},
 	[m('View/Unsplit View')] = {'ctrl+alt+w', 'ctrl+cmd+w', 'meta+w'},
@@ -505,7 +507,7 @@ keys.assign_platform_bindings{
 	[start_new_line] = {'shift+\n', 'shift+\n', nil},
 	[function() start_new_line(true) end] = {'ctrl+shift+\n', 'cmd+shift+\n', nil},
 	[function() ui.popup_menu(ui.context_menu) end] = {
-		{'menu', (WIN32 or GTK) and 'shift+f10' or nil}, 'ctrl+\n', nil
+		{'menu', (OS == 'windows' or UI == 'gtk') and 'shift+f10' or nil}, 'ctrl+\n', nil
 	}, [macro_register(textadept.macros.save)] = {'ctrl+alt+R', 'ctrl+cmd+R', 'meta+R'},
 	[macro_register(textadept.macros.play)] = {'ctrl+alt+r', 'ctrl+cmd+r', 'meta+r'},
 
@@ -553,7 +555,7 @@ keys.assign_platform_bindings{
 	[buffer.del_word_right] = {'ctrl+del', 'cmd+del', 'ctrl+del'},
 	[buffer.del_line_right] = {'ctrl+shift+del', 'cmd+shift+del', 'ctrl+shift+del'},
 	[buffer.delete_back] = {'\b', {'\b', 'ctrl+h'}, {'\b', 'ctrl+h'}},
-	[buffer.del_word_left] = {'ctrl+\b', 'cmd+\b', nil},
+	[buffer.del_word_left] = {'ctrl+\b', {'cmd+\b', 'alt+\b'}, nil},
 	[buffer.del_line_left] = {'ctrl+shift+\b', 'cmd+shift+\b', nil},
 	-- Custom editing commands.
 	[function()

@@ -1,5 +1,5 @@
 // Copyright 2022-2026 Mitchell. See LICENSE.
-// Qt platform for Textadept.
+// Qt user interface for Textadept.
 
 #include "ui_textadept_qt.h"
 #if __APPLE__

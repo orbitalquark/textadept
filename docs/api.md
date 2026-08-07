@@ -1,4 +1,4 @@
-# Textadept 13.0 alpha 2 API Documentation
+# Textadept 13.0 API Documentation
 
 1. [_G](#_G)
 2. [_L](#_L)
@@ -34,40 +34,38 @@
 
 Extends Lua's _G table to provide extra functions and fields for Textadept.
 
-<a id="BSD"></a>
-### `BSD`
+<a id="OS"></a>
+### `OS`
 
-Whether or not Textadept is running on BSD.
+The operating system Textadept is running on.
 
-<a id="CURSES"></a>
-### `CURSES`
+One of:
+- 'windows'
+- 'macos'
+- 'linux'
+- 'bsd'
 
-Whether or not Textadept is running in a terminal.
+Usage:
 
-<a id="GTK"></a>
-### `GTK`
+```lua
+if OS == 'windows' then ... end
+```
 
-Whether or not Textadept is running as a GTK GUI application.
+<a id="UI"></a>
+### `UI`
 
-<a id="LINUX"></a>
-### `LINUX`
+The user interface Textadept is running on.
 
-Whether or not Textadept is running on Linux.
+One of:
+- 'qt'
+- 'gtk'
+- 'terminal'
 
-<a id="OSX"></a>
-### `OSX`
+Usage:
 
-Whether or not Textadept is running on macOS.
-
-<a id="QT"></a>
-### `QT`
-
-Whether or not Textadept is running as a Qt GUI application.
-
-<a id="WIN32"></a>
-### `WIN32`
-
-Whether or not Textadept is running on Windows.
+```lua
+if UI == 'terminal' then ... end
+```
 
 <a id="_BUFFERS"></a>
 ### `_BUFFERS`
@@ -428,8 +426,9 @@ allow for sensible object-oriented scripting with an editing component that comb
 model and view model into one entity. It is not perfect and my not make complete sense at times.
 
 That said, this buffer and view API is largely interchangeable: `view.field` and
-`view:function()` are often equivalent to `buffer.field` and `buffer:function()`, respectively,
-and vice-versa.
+`view:function()` are often equivalent to `buffer.field` and `buffer:function()`,
+respectively. However the converse is only true when [`buffer`](#buffer) is equivalent to the current
+view's buffer (i.e. `buffer == view.buffer`).
 
 Only one buffer and one view at a time is considered "current" (i.e. has focus). While
 Textadept allows you to work with non-current buffers, you should only work with [`buffer`](#buffer)
@@ -438,6 +437,11 @@ select all text in the current buffer, but `buf:select_all()` where `buf ~= buff
 not make a visible selection, even if `buf` is visible in another view. Despite this,
 `buf:replace_sel('')` will still clear that buffer since it previously selected all text.
 (Basically, you can make "background" edits of non-current buffers in an object-oriented way.)
+
+There is no prohibition on working on non-current views. If you called 'v:select_all()',
+where `v ~= view`, that will visually select all text in that view. Just be aware there is
+no distinction between buffer and view operations in that case, and all operations apply to
+that view and/or its buffer.
 
 [Scintilla]: https://scintilla.org/ScintillaDoc.html
 
@@ -966,17 +970,6 @@ Defines the target range as the main selection.
 Replaces the text in the target range without modifying any selections or scrolling the view.
 
 Setting the target and calling this function with an empty string is another way to delete text.
-
-Parameters:
-- *text*:  String text to replace the target range with.
-
-Returns: length of replacement text
-
-<a id="buffer.replace_target_minimal"></a>
-#### `buffer:replace_target_minimal`(*text*)
-
-Replaces the text in the target range without modifying any selections or scrolling the view,
-and tries to minimize change history if [`io.track_changes`](#io.track_changes) is `true`.
 
 Parameters:
 - *text*:  String text to replace the target range with.
@@ -2401,16 +2394,6 @@ Marker Number | Description
 `view.MARKNUM_FOLDERMIDTAIL` | The last line of an expanded fold within an expanded fold
 `view.MARKNUM_FOLDEREND` | The first line of a collapsed fold within an expanded fold
 
-There are 4 pre-defined marker numbers used for showing how a buffer line differs from its
-file's saved state if [`io.track_changes`](#io.track_changes) is `true`.
-
-Marker Number | Description
--|-
-`view.MARKNUM_HISTORY_MODIFIED` | Line was changed and has not yet been saved
-`view.MARKNUM_HISTORY_SAVED` | Line was changed and saved
-`view.MARKNUM_HISTORY_REVERTED_TO_MODIFIED` | Line was changed, saved, then partially reverted
-`view.MARKNUM_HISTORY_REVERTED_TO_ORIGIN` | Line was changed, saved, then fully reverted
-
 [XPM image]: https://scintilla.org/ScintillaDoc.html#XPM
 [RGBA image]: https://scintilla.org/ScintillaDoc.html#RGBA
 
@@ -2804,21 +2787,6 @@ Indicator style | Description
 starting with the top-left pixel. Their default values are `30`, and `50`, respectively.<br/>
 <sup>b</sup>[`view.indic_alpha`](#view.indic_alpha) and [`view.indic_outline_alpha`](#view.indic_outline_alpha) set the fill and outline
 transparency, respectively. Their default values are `30`, and `50`, respectively.
-
-There are 8 pre-defined indicators used for showing how buffer text differs from its file's
-saved state if [`io.track_changes`](#io.track_changes) is `true`. These indicators are in addition to the 32
-available for general use.
-
-Indicator number | Description
--|-
-`INDICATOR_HISTORY_MODIFIED_INSERTION` | Text was inserted and has not yet been saved
-`INDICATOR_HISTORY_MODIFIED_DELETION` | Text was deleted but not yet saved
-`INDICATOR_HISTORY_SAVED_INSERTION` | Text was inserted and saved
-`INDICATOR_HISTORY_SAVED_DELETION` | Text was deleted and saved
-`INDICATOR_HISTORY_REVERTED_TO_MODIFIED_INSERTION` | Text was inserted, saved, and semi-reverted
-`INDICATOR_HISTORY_REVERTED_TO_MODIFIED_DELETION` | Text was deleted, saved, and semi-reverted
-`INDICATOR_HISTORY_REVERTED_TO_ORIGIN_INSERTION` | Text was inserted, saved, and fully reverted
-`INDICATOR_HISTORY_REVERTED_TO_ORIGIN_DELETION` | Text was deleted, saved, and fully reverted
 
 
 <a id="view.new_indic_number"></a>
@@ -4206,6 +4174,7 @@ How visible tabs are drawn.
 
 - `view.TD_LONGARROW`: Draw tabs as arrows that stretch up to tabstops.
 - `view.TD_STRIKEOUT`: Draw tabs as horizontal lines that stretch up to tabstops.
+- `view.TD_CONTROLCHAR`: Draw tabs like other control characters.
 
 The default value is `view.TD_LONGARROW`.
 
@@ -4782,20 +4751,6 @@ The number of milliseconds the mouse must idle before generating an [`events.DWE
 
 A time of `view.TIME_FOREVER` will never generate one.
 
-<a id="view.change_history"></a>
-#### `view.change_history`
-
-A bit-mask of options for showing change history.
-
-This is a low-level field. You probably want to use the higher-level [`io.track_changes`](#io.track_changes) instead.
-
-- `view.CHANGE_HISTORY_DISABLED`: Do not show change history.
-- `view.CHANGE_HISTORY_ENABLED`: Track change history.
-- `view.CHANGE_HISTORY_MARKERS`: Display changes in the margin with markers.
-- `view.CHANGE_HISTORY_INDICATORS`: Display changes in the buffer with indicators.
-
-The default value is `view.CHANGE_HISTORY_DISABLED`.
-
 <a id="buffer.delete"></a>
 #### `buffer:delete`()
 
@@ -5044,8 +4999,18 @@ Arguments:
 
 Emitted when an error occurs.
 
+You can listen for startup errors by connecting a handler to this event, and then disconnecting
+that handler inside an [`events.INITIALIZED`](#events.INITIALIZED) handler.
 Arguments:
 - *text*: The error message text.
+
+Usage:
+
+```lua
+local function disable() --[[ disable module functionality ]] end
+events.connect(events.ERROR, disable)
+events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, disable))
+```
 
 <a id="events.FILE_AFTER_SAVE"></a>
 ### `events.FILE_AFTER_SAVE`
@@ -5693,18 +5658,6 @@ Parameters:
 	the user cancels saving any untitled buffer, the remaining unsaved files stay unsaved.
 
 Returns: `true` if all savable files were saved; `nil` otherwise.
-
-<a id="io.track_changes"></a>
-### `io.track_changes`
-
-Track file changes using line markers and buffer indicators.
-
-Changes shown are with respect to the file on disk, not the file's version control state
-(if it has one).
-
-The terminal version only shows line markers.
-
-The default value is `false`.
 
 
 
@@ -6877,6 +6830,40 @@ a particular character.
 Parameters:
 - *c*:  Digit separator character.
 
+<a id="lexer.ignore_extensions"></a>
+### `lexer.ignore_extensions`
+
+Map of file extensions (without the '.' prefix) to strip from filenames during detection to
+`true`.
+
+Fields:
+- `orig`: 
+- `back`: 
+- `old`: 
+- `new`: 
+
+Usage:
+
+```lua
+lexer.ignore_extensions.backup = true
+```
+
+<a id="lexer.ignore_patterns"></a>
+### `lexer.ignore_patterns`
+
+List of filename parts to strip from filenames during detection.
+
+Filename parts are expressed as Lua patterns.
+
+Fields:
+- `~+$`: 
+
+Usage:
+
+```lua
+table.insert(lexer.ignore_patterns, '%.%d+$') -- ignore digit extensions
+```
+
 <a id="lexer.indent_amount"></a>
 ### `lexer.indent_amount`
 
@@ -7235,6 +7222,13 @@ local keyword = lex:tag(lexer.KEYWORD, lexer.word_match({'foo-bar', 'foo-baz',
    'bar-foo', 'bar-baz', 'baz-foo', 'baz-bar'}, true))
 local keyword = lex:tag(lexer.KEYWORD, lexer.word_match('foo bar baz'))
 ```
+
+<a id="lexer.word_utf8"></a>
+### `lexer.word_utf8`
+
+A pattern that matches a typical UTF-8 word.
+UTF-8 words begin with a letter, underscore,
+or UTF-8 character, and consist of alphanumeric, underscore, and UTF-8 characters.
 
 <a id="lexer.xdigit"></a>
 ### `lexer.xdigit`
@@ -7598,13 +7592,15 @@ The default value is `true`.
 
 Map of auto-paired characters like parentheses, brackets, braces, and quotes.
 
+Also maps lexer names to tables of auto-paired characters for language-specific pairing.
 The default auto-paired characters are "()", "[]", "{}", "&apos;&apos;", "&quot;&quot;",
-and "``". For certain XML-like lexers, "<>" is also auto-paired.
+and "&#96;&#96;". For certain XML-like lexers, "<>" is also auto-paired.
 
 Usage:
 
 ```lua
 textadept.editing.auto_pairs['*'] = '*'
+textadept.editing.auto_pairs.text = {} -- disable for plain text files
 textadept.editing.auto_pairs = nil -- disable completely
 ```
 
@@ -7796,6 +7792,7 @@ See also: [`buffer.word_chars`](#buffer.word_chars)
 
 Strip trailing whitespace before saving non-binary files.
 
+Diff/patch files are also ignored.
 The default value is `false`.
 
 <a id="textadept.editing.toggle_comment"></a>
@@ -7879,9 +7876,9 @@ Defines key bindings for Textadept.
 This set of key bindings is pretty standard among other text editors, at least for basic
 editing commands and movements.
 
-These bindings are designed to be as consistent as possible between operating systems and platforms
-so that users familiar with one set of bindings can intuit a given binding on another OS or
-platform, minimizing the need for memorization.
+These bindings are designed to be as consistent as possible between operating systems and
+user interfaces so that users familiar with one set of bindings can intuit a given binding
+on another OS or UI, minimizing the need for memorization.
 
 In general, bindings for macOS are the same as for Windows/Linux/BSD except the "Control"
 modifier key on Windows/Linux/BSD is replaced by "Command" (⌘) and the "Alt" modifier key
@@ -7941,7 +7938,7 @@ Ctrl+&#124; | ⌘&#124; | ^&#124;<br/>^\ | Filter text through
 Ctrl+Shift+M | ⌘⇧M | M-^M | Select between delimiters
 Ctrl+D | ⌘D | ^D | Select word
 Ctrl+Alt+D | ^⌘D | M-D | Deselect word
-Ctrl+L | ⌘L | ^L | Select line
+Ctrl+Shift+L | ⌘⇧L | M-^L | Select line
 Ctrl+Shift+P | ⌘⇧P | M-^P | Select paragraph
 Ctrl+Shift+U<sup>c</sup><br/>Ctrl+Alt+Shift+U | ⌘⇧U | M-^U | Upper case selection
 Ctrl+U | ⌘U | ^U | Lower case selection
@@ -7961,10 +7958,10 @@ None | None | None | Clear navigation history
 None | ⌘, | None | Preferences
 **Search**| | |
 Ctrl+F | ⌘F | ^F | Find
-None | None | None | Find next
-None | None | None | Find previous
-None | None | None | Replace
-None | None | None | Replace all
+Ctrl+G<br/>F3 | ⌘G | ^G | Find next
+Ctrl+Shift+G <br/>Shift+F3 | ⌘⇧G | M-^G | Find previous
+Ctrl+Alt+P | ^⌘P | M-P | Replace
+Ctrl+Alt+Shift+P | ^⌘⇧P | M-S-P | Replace all
 Ctrl+Alt+F | ^⌘F | M-F | Find incremental
 None | ⌥⌘M | None | Toggle Match Case
 None | ⌥⌘W | None | Toggle Whole Word
@@ -8022,7 +8019,7 @@ None | None | None | CP-1252 encoding
 None | None | None | UTF-16 encoding
 None | None | None | Toggle Tab Bar
 None | None | None | Toggle Code Folding
-Ctrl+Shift+L | ⌘⇧L | M-^L | Select lexer...
+Ctrl+Alt+L | ^⌘L | M-L | Select lexer...
 **View**| | |
 Ctrl+Alt+PgDn | ^⌘}<br/>^⌘⇟ | M-^PgDn<br/>M-PgUp<sup>d</sup> | Next view
 Ctrl+Alt+PgUp | ^⌘{<br/>^⌘⇞ | M-^PgUp<br/>M-PgDn<sup>d</sup> | Previous view
@@ -8509,8 +8506,10 @@ See also: [`events.SESSION_SAVE`](#events.SESSION_SAVE)
 
 Save the session when quitting.
 
-The default value is `true` unless the user passed the command line switch `-n` or `--nosession`
-to Textadept.
+The default value is `true` unless one of the following conditions is true:
+	- The user passed the command line switch `-n` or `--nosession` to Textadept.
+	- The user passed a filename or directory to Textadept on startup.
+	- An error occurred on startup.
 
 
 

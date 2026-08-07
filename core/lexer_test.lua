@@ -48,7 +48,7 @@ test('syntax highlighting should support incremental highlighting', function()
 	buffer.line_indentation[3] = buffer.tab_width -- indent line 3
 	-- Trigger style needed.
 	ui.update()
-	if CURSES then events.emit(events.STYLE_NEEDED, buffer.length + 1, buffer) end
+	if UI == 'terminal' then events.emit(events.STYLE_NEEDED, buffer.length + 1, buffer) end
 
 	test.wait(function() return style_needed.called end)
 
@@ -197,9 +197,9 @@ test('lexer errors should style the entire buffer the default style', function()
 	buffer:append_text('text')
 	-- Trigger style needed.
 	ui.update()
-	if CURSES then events.emit(events.STYLE_NEEDED, buffer.length + 1, buffer) end
+	if UI == 'terminal' then events.emit(events.STYLE_NEEDED, buffer.length + 1, buffer) end
 
-	if GTK then test.wait(function() return error_handler.called end) end
+	if UI == 'gtk' then test.wait(function() return error_handler.called end) end
 	test.assert(error_handler.called, 'error handler was not called') -- could happen more than once
 	test.assert_equal(buffer.style_at[1], view.STYLE_DEFAULT)
 	test.assert_equal(buffer.end_styled, buffer.length + 1)

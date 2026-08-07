@@ -1,5 +1,5 @@
 // Copyright 2022-2026 Mitchell. See LICENSE.
-// Qt platform for Textadept.
+// Qt user interface for Textadept.
 
 extern "C" {
 #include "textadept.h"
@@ -10,7 +10,7 @@ extern "C" {
 #include "textadept_qt.h"
 
 #include "ScintillaEditBase.h"
-#include "singleapplication.h"
+#include "qtsingleapplication.h"
 
 #include <QWindow>
 #include <QCloseEvent>
@@ -38,11 +38,12 @@ extern "C" {
 // Qt objects.
 static Textadept *ta;
 
-const char *get_platform() { return "QT"; }
+const char *get_ui() { return "qt"; }
 
 const char *get_charset() {
 #if !_WIN32
-	return QTextCodec::codecForLocale()->name().data();
+	static std::string charset;
+	return (charset = QTextCodec::codecForLocale()->name().toStdString(), charset.c_str());
 #else
 	// Ask Windows for its charset encoding because QTextCodec returns "System", which is not a
 	// valid iconv encoding. However, CP65001 (UTF-8) is not valid either.
@@ -359,9 +360,9 @@ void set_menubar(lua_State *L, int index) {
 }
 
 char *get_clipboard_text(int *len) {
-	const QString &text = QGuiApplication::clipboard()->text();
+	const std::string &text = QGuiApplication::clipboard()->text().toStdString();
 	*len = text.size();
-	return static_cast<char *>(memcpy(malloc(*len), text.toStdString().c_str(), *len));
+	return static_cast<char *>(memcpy(malloc(*len), text.c_str(), *len));
 }
 
 // An active timeout that cleans up after itself.
@@ -752,17 +753,17 @@ void Textadept::keyPressEvent(QKeyEvent *ev) {
 }
 
 // The Textadept application.
-class Application : public SingleApplication {
+class Application : public QtSingleApplication {
 public:
-	Application(int &argc, char **argv) : SingleApplication{argc, argv, true} {
+	Application(int &argc, char **argv) : QtSingleApplication{argc, argv} {
 		const std::vector<const char *> args{"-f", "--force", "-L", "--lua"};
 		bool force =
 			std::any_of(args.begin(), args.end(), [](const char *s) { return arguments().contains(s); });
-		if (isSecondary() && !force) {
+		if (isRunning() && !force) {
 			QByteArray bytes;
 			QDataStream out{&bytes, QIODevice::WriteOnly};
 			out << QDir::currentPath() << arguments();
-			sendMessage(bytes);
+			sendMessage(bytes.toBase64());
 			return;
 		}
 		if (inited = init_textadept(argc, argv); !inited) return;
@@ -778,9 +779,10 @@ public:
 		for (const auto &match : re.globalMatch(p.readAll()))
 			qputenv(match.captured(1).toLocal8Bit(), match.captured(2).toLocal8Bit());
 #endif
-		connect(this, &SingleApplication::receivedMessage, this, [](quint32, QByteArray message) {
+		connect(this, &QtSingleApplication::messageReceived, this, [](QString message) {
 			ta->window()->activateWindow();
-			QDataStream in{&message, QIODevice::ReadOnly};
+			QByteArray bytes{QByteArray::fromBase64(message.toUtf8())}; // toUtf8 is fine for base64 text
+			QDataStream in{&bytes, QIODevice::ReadOnly};
 			QString cwd;
 			QStringList args;
 			in >> cwd >> args;

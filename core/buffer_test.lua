@@ -1,5 +1,65 @@
 -- Copyright 2020-2026 Mitchell. See LICENSE.
 
+test("buffer.text_range should implement Scintilla's SCI_GETTEXTRANGE", function()
+	local text = '123456789'
+	buffer:append_text(text)
+
+	local sub_range = buffer:text_range(4, 7) -- 456
+	local full_range = buffer:text_range(1, buffer.length + 1) -- 123456789
+	local clamp_start_range = buffer:text_range(-1, 4) -- 123
+	local clamp_end_range = buffer:text_range(7, 11) -- 789
+
+	test.assert_equal(sub_range, text:sub(4, 6))
+	test.assert_equal(full_range, text)
+	test.assert_equal(clamp_start_range, text:sub(1, 3))
+	test.assert_equal(clamp_end_range, text:sub(7))
+end)
+
+test('buffer.text_range should not modify buffer.target_range', function()
+	local text = '123456789'
+	buffer:append_text(text)
+	buffer:set_target_range(4, 7) -- 456
+	local target_text = buffer.target_text
+
+	buffer:text_range(1, 4) -- 123
+
+	test.assert_equal(buffer.target_text, target_text)
+end)
+
+test('replacing buffer text should emit events.BUFFER_{BEFORE,AFTER}_REPLACE_TEXT', function()
+	buffer:append_text('text')
+	local before_replace = test.stub()
+	local after_replace = test.stub()
+	local _<close> = test.connect(events.BUFFER_BEFORE_REPLACE_TEXT, before_replace)
+	local _<close> = test.connect(events.BUFFER_AFTER_REPLACE_TEXT, after_replace)
+
+	buffer:set_text('replacement')
+
+	test.assert_equal(before_replace.called, true)
+	test.assert_equal(after_replace.called, true)
+end)
+
+for _, method in ipairs{'undo', 'redo'} do
+	test('multi-line ' .. method .. ' should emit an event after updating UI', function()
+		buffer:append_text('text')
+		buffer:set_text(test.lines{'multi-line', 'text'})
+		if method == 'redo' then buffer:undo() end
+		local after_replace = test.stub()
+		local _<close> = test.connect(events.BUFFER_AFTER_REPLACE_TEXT, after_replace)
+
+		buffer[method](buffer)
+		local overwritten_by_scintilla = after_replace.called
+		ui.update() -- invokes events.UPDATE_UI
+		if UI == 'terminal' then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
+		local overwrites_scintilla = after_replace.called
+
+		-- Scintilla would overwrite any changes by handlers if those handlers were called too soon.
+		-- Instead, they should be called later to overwrite any Scintilla changes.
+		test.assert_equal(overwritten_by_scintilla, false)
+		test.assert_equal(overwrites_scintilla, true)
+	end)
+end
+
 test('buffer.delete should emit events.BUFFER_DELETED', function()
 	local f<close> = test.tmpfile(true)
 	local deleted = test.stub()
@@ -58,7 +118,8 @@ local function file(filename) return ((_HOME .. '/' .. filename):gsub('\\', '/')
 local ignore_ids = {_G = true, M = true, _SCINTILLA = true, snippets = true}
 local ignore_exprs = {['ui.size'] = true}
 local exceptions = {
-	[file('core/buffer.lua')] = {'buf:select_all', 'buf:replace_sel'}, [file('core/lexer.lua')] = {
+	[file('core/buffer.lua')] = {'buf:select_all', 'buf:replace_sel', 'v:select_all'},
+	[file('core/lexer.lua')] = {
 		'lexer.style_at', 'lexer.fold_level', 'lexer.line_from_position', 'lexer.line_end',
 		'lexer.text_range'
 	}, [file('core/lfs_ext.lua')] = {'filter_object.new'}, --

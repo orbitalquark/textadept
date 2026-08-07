@@ -2,9 +2,152 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
-## 13.0 alpha 2 (01 Feb 2026)
+## 13.0 (01 Jul 2026)
 
 Please see the [migration guide][] for migrating from Textadept 12 to 13.
+
+- [Textadept 13.0 -- Windows][]
+- [Textadept 13.0 -- macOS 13+][]
+- [Textadept 13.0 -- Linux][]
+- [Textadept 13.0 -- Linux ARM][]
+- [Textadept 13.0 -- Modules][]
+
+Bugfixes:
+
+- Fixed terminal version error invoking find/replace with uninitialized find/replace text.
+
+Changes:
+
+- Improved syntax highlighting performance in markup languages like HTML, Markdown, XML, and YAML.
+- Improve Markdown lexer performance detecting code blocks.
+- Improve heredoc syntax highlighting in the languages that support them (Bash, Perl, Ruby, etc.).
+- Added support for Odin.
+- Updated C lexet to add more C99 identifiers.
+- Scintilla: restore selection and scroll positions for undo/redo in additional views.
+- Scintilla: improve performance of rectangular paste with many spaces.
+- Scintilla: fix failures displaying calltips and autocompletion lists in Qt version on Wayland.
+- Updated to [Scintilla][] 5.6.3.
+
+[migration guide]: manual.html#migrating-from-textadept-12-to-13
+[Textadept 13.0 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.win.zip
+[Textadept 13.0 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.macOS.zip
+[Textadept 13.0 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.linux.tgz
+[Textadept 13.0 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.linux.arm.tgz
+[Textadept 13.0 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0/textadept_13.0.modules.zip
+[Scintilla]: https://scintilla.org
+
+## 13.0 beta 3 (01 Jun 2026)
+
+- [Textadept 13.0 beta 3 -- Windows][]
+- [Textadept 13.0 beta 3 -- macOS 13+][]
+- [Textadept 13.0 beta 3 -- Linux][]
+- [Textadept 13.0 beta 3 -- Linux ARM][]
+- [Textadept 13.0 beta 3 -- Modules][]
+
+Bugfixes:
+
+- Fixed invalid memory reads in the Qt version.
+- Fix potential crash with input in an empty buffer.
+
+Changes:
+
+- Replaced OS/platform booleans with [`OS`][] and [`UI`][] strings.
+- Improved markup lexer (HTML, Markdown, XML, Yaml) performance when scanning plain text.
+- Improved Markdown lexer performance detecting code blocks.
+- Added [`lexer.word_utf8`][].
+
+[Textadept 13.0 beta 3 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.win.zip
+[Textadept 13.0 beta 3 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.macOS.zip
+[Textadept 13.0 beta 3 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.linux.tgz
+[Textadept 13.0 beta 3 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.linux.arm.tgz
+[Textadept 13.0 beta 3 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_3/textadept_13.0_beta_3.modules.zip
+[`OS`]: api.html#OS
+[`UI`]: api.html#UI
+[`lexer.word_utf8`]: api.html#lexer.word_utf8
+
+## 13.0 beta 2 (01 May 2026)
+
+- [Textadept 13.0 beta 2 -- Windows][]
+- [Textadept 13.0 beta 2 -- macOS 13+][]
+- [Textadept 13.0 beta 2 -- Linux][]
+- [Textadept 13.0 beta 2 -- Linux ARM][]
+- [Textadept 13.0 beta 2 -- Modules][]
+
+Bugfixes:
+
+- Fixed rendering of bright colors in 8-color terminals.
+- Scintilla: fixed `buffer:convert_eols()` regression that may not convert whole file.
+
+Changes:
+
+- Added support for Swift.
+- Updated PKGBUILD, Perl, and RouterOS lexers.
+- Format: handle non-existant format commands gracefully.
+- Scratch: disable this module if a startup error occurs.
+- Updated to [Scintilla][] 5.6.2.
+
+[Textadept 13.0 beta 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.win.zip
+[Textadept 13.0 beta 2 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.macOS.zip
+[Textadept 13.0 beta 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.linux.tgz
+[Textadept 13.0 beta 2 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.linux.arm.tgz
+[Textadept 13.0 beta 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta_2/textadept_13.0_beta_2.modules.zip
+[Scintilla]: https://scintilla.org
+
+## 13.0 beta (01 Apr 2026)
+
+- [Textadept 13.0 beta -- Windows][]
+- [Textadept 13.0 beta -- macOS 13+][]
+- [Textadept 13.0 beta -- Linux][]
+- [Textadept 13.0 beta -- Linux ARM][]
+- [Textadept 13.0 beta -- Modules][]
+
+Bugfixes:
+
+- Fixed code signing issues on macOS that prevent Textadept from running.
+- Qt version: fixed occasional bug restoring buffer state after closing a buffer.
+- Prevent crashes caused by timeouts firing while quitting.
+- Fixed statusbar notification for manually stopped compile/run/build/test commands.
+- Fixed Alt+Backspace on macOS.
+- Fixed "Find Next" and "Find Prev" bug after finishing incremental find.
+- Fixed occasional inability to start Textadept again after quitting on macOS.
+- Prevent clobbering the previous session if a startup error occurs.
+- Qt version: fixed `ui.get_clipboard_text()` with multi-byte characters.
+- LSP: changed some conflicting macOS key bindings.
+- Spellcheck: do not attempt to load the 'C' language.
+- Scintilla: fixed `buffer.selection_n_start` and `buffer.selection_n_end` to behave more sensibly.
+- Scintilla: fixed lexing after undo at end of buffer.
+
+Changes:
+
+- The terminal version requires a wide-character implementation of ncurses.
+- Updated to Qt 6.10 on Windows and Qt 6.11 on macOS.
+- Added simpler key bindings for switching between views on macOS.
+- Added native "Window" menu on macOS to hook into window tiling, etc.
+- Save fold state in sessions.
+- Support language-specific [auto-paired][] characters.
+- Changed some default key bindings (see migration guide).
+- Removed `io.track_changes`.
+- `textadept.editing.strip_trailing_spaces` ignores diff/patch files.
+- Updated Lua, LaTeX, Perl, and Go lexers.
+- Added [`lexer.ignore_extensions`][] and [`lexer.ignore_patterns`][] for ignoring trailing
+	filename suffixes.
+- Added support for Arduino.
+- Format: added [`config_file_contains()`][] and [`config_file_exists()`][] convenience functions.
+- Updated to [Scintilla][] 5.6.0.
+
+[Textadept 13.0 beta -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta/textadept_13.0_beta.win.zip
+[Textadept 13.0 beta -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta/textadept_13.0_beta.macOS.zip
+[Textadept 13.0 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta/textadept_13.0_beta.linux.tgz
+[Textadept 13.0 beta -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta/textadept_13.0_beta.linux.arm.tgz
+[Textadept 13.0 beta -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_beta/textadept_13.0_beta.modules.zip
+[auto-paired]: api.html#textadept.editing.auto_pairs
+[`lexer.ignore_extensions`]: api.html#lexer.ignore_extensions
+[`lexer.ignore_patterns`]: api.html#lexer.ignore_patterns
+[`config_file_contains()`]: https://github.com/orbitalquark/textadept-format/?tab=readme-ov-file#formatconfig_file_containsfilename-text
+[`config_file_exists()`]: https://github.com/orbitalquark/textadept-format/?tab=readme-ov-file#formatconfig_file_existsfilename
+[Scintilla]: https://scintilla.org
+
+## 13.0 alpha 2 (01 Feb 2026)
 
 - [Textadept 13.0 alpha 2 -- Windows][]
 - [Textadept 13.0 alpha 2 -- macOS 13+][]
@@ -33,7 +176,6 @@ Changes:
 - The terminal version can draw underline indicators using `INDIC_SQUIGGLE` or  `INDIC_SQUIGGLELOW`.
 - Updated to [Lua][] 5.5.0.
 
-[migration guide]: manual.html#migrating-from-textadept-12-to-13
 [Textadept 13.0 alpha 2 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.win.zip
 [Textadept 13.0 alpha 2 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.macOS.zip
 [Textadept 13.0 alpha 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.0_alpha_2/textadept_13.0_alpha_2.linux.tgz
@@ -245,7 +387,7 @@ Bugfixes:
 Changes:
 
 - Increase minimum required Qt from 5.12 to 5.15.
-- Added [`io.track_changes`][] for showing change history.
+- Added `io.track_changes` for showing change history.
 - Enabled undo selection history via `buffer.undo_selection_history`.
 - Greatly improve startup time when restoring a large session, particularly on macOS.
 - Added [`textadept.clipboard`][] module for interacting with the system clipboard from the
@@ -285,7 +427,6 @@ Changes:
 [Textadept 12.7 beta 2 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7_beta_2/textadept_12.7_beta_2.linux.tgz
 [Textadept 12.7 beta 2 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7_beta_2/textadept_12.7_beta_2.linux.arm.tgz
 [Textadept 12.7 beta 2 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_12.7_beta_2/textadept_12.7_beta_2.modules.zip
-[`io.track_changes`]: api.html#io.track_changes
 [`textadept.clipboard`]: api.html#textadept.clipboard
 [`ui.get_clipboard_text()`]: api.html#ui.get_clipboard_text
 [`keys.assign_platform_bindings()`]: api.html#keys.assign_platform_bindings
@@ -3013,7 +3154,7 @@ Changes:
 - Support bracketed paste in the terminal version.
 - Allow handling of unknown [CSI events][].
 - Added mouse support for buffers and eliminated many [terminal version incompatibilities][].
-- Added [`_G.LINUX`][] and `_G.BSD` platform flags for the sake of completeness.
+- Added `_G.LINUX` and `_G.BSD` platform flags for the sake of completeness.
 - [Rectangular selections][] with the mouse on Linux use the `Alt` modifier key instead of `Super`.
 - Display the current working directory in fileselect dialogs.
 - Added [`_SCINTILLA.next_image_type()`][] for registering images.
@@ -3026,7 +3167,6 @@ Changes:
 [`ui.command_entry.editing_keys`]: api.html#ui.command_entry.editing_keys
 [CSI events]: api.html#events.CSI
 [terminal version incompatibilities]: manual.html#terminal-version-compatibility
-[`_G.LINUX`]: api.html#LINUX
 [Rectangular selections]: manual.html#rectangular-selection
 [`_SCINTILLA.next_image_type()`]: api.html#view.new_image_type
 
@@ -4455,7 +4595,7 @@ Changes:
 - Scintilla: added [`buffer:contracted_fold_next()`][] for retrieving fold states.
 - Scintilla: added `buffer:vertical_centre_caret()`.
 - Updated to [Scintilla][] 2.22.
-- Renamed `_G.MAC` to [`_G.OSX`][].
+- Renamed `_G.MAC` to `_G.OSX`.
 
 [Switch Buffers]: manual.html#buffers
 [`_m.textadept.snapopen.open()`]: api.html#io.quick_open
@@ -4464,7 +4604,6 @@ Changes:
 [find API]: api.html#ui.find.find_in_files
 [`buffer:contracted_fold_next()`]: api.html#buffer.contracted_fold_next
 [Scintilla]: https://scintilla.org
-[`_G.OSX`]: api.html#OSX
 
 ## 3.3 (01 Oct 2010)
 

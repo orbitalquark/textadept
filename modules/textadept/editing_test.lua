@@ -547,7 +547,7 @@ test('editing.filter_through should pipe multiple selections through a shell com
 	test.assert_equal(buffer.selections, 2)
 	test.assert_equal(buffer:get_sel_text(), word .. word) -- Scintilla stores it this way
 end)
-if WIN32 then skip('sed does not exist') end
+if OS == 'windows' then skip('sed does not exist') end
 
 test('editing.filter_through should pipe a rectangular selection through a shell command',
 	function()
@@ -570,7 +570,7 @@ test('editing.filter_through should allow pipes', function()
 
 	test.assert_equal(buffer:get_text(), test.lines{'1', '2', '3', '4', '5', ''})
 end)
-if WIN32 then skip('uniq does not exist') end
+if OS == 'windows' then skip('uniq does not exist') end
 
 test('editing.filter_through should not do anything if output == input', function()
 	local _<close> = test.tmpfile(test.lines{'input', ''}, true)
@@ -589,7 +589,7 @@ test('editing.filter_through should handle single-quotes', function()
 
 	test.assert_equal(buffer:get_text(), replace)
 end)
-if WIN32 then skip('sed does not exist') end
+if OS == 'windows' then skip('sed does not exist') end
 
 test("editing.autocomplete('word') should show a list of word completions", function()
 	local word = 'word'
@@ -684,6 +684,28 @@ test('editing.auto_pairs should have atomic undo', function()
 	buffer:undo()
 
 	test.assert_equal(buffer:get_text(), test.lines{'(', '('})
+end)
+
+test('editing.auto_pairs should support language-specific pairs', function()
+	local _<close> = test.mock(textadept.editing.auto_pairs, 'markdown', {['*'] = '*'})
+
+	test.type('*')
+	local text_text = buffer:get_text()
+	test.type('\b')
+	buffer:set_lexer('markdown')
+	test.type('*')
+	local md_text = buffer:get_text()
+
+	test.assert_equal(text_text, '*')
+	test.assert_equal(md_text, '**')
+end)
+
+test('editing.auto_pairs should ignore global pairs if language-specific ones exist', function()
+	local _<close> = test.mock(textadept.editing.auto_pairs, 'text', {})
+
+	test.type("'")
+
+	test.assert_equal(buffer:get_text(), "'")
 end)
 
 test('editing.auto_pairs should remove both chars after backspace', function()
@@ -884,7 +906,7 @@ end)
 --- Gives Scintilla a chance to process any cursor/selection changes and emit SCN_UPDATEUI.
 local function process_selection_update()
 	ui.update()
-	if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
+	if UI == 'terminal' then events.emit(events.UPDATE_UI, buffer.UPDATE_SELECTION) end
 end
 
 --- Returns a list of words highlighted by editing.INDIC_HIGHLIGHT.
@@ -970,7 +992,7 @@ test('editing.highlight_words should not highlight non-word selections', functio
 	test.assert_equal(non_word_highlights, {})
 end)
 
-if CURSES and not WIN32 then
+if UI == 'terminal' and OS ~= 'windows' then
 	test('bracketed paste should disable auto-pair and auto-indent', function()
 		local content = '\t()\n'
 
@@ -1006,6 +1028,16 @@ test('buffer.save should never strip trailing spaces for binary files', function
 	test.assert_equal(buffer:get_text(), binary_contents)
 end)
 
+test('buffer.save should never strip trailing spaces for diff/patch files', function()
+	local _<close> = test.mock(textadept.editing, 'strip_trailing_spaces', true)
+	local diff_contents = test.lines{'--- a', '+++ b', '@@ -1,1 +1,1 @@', '-remove ', '+add ', ''}
+	local _<close> = test.tmpfile('.patch', diff_contents, true)
+
+	buffer:save()
+
+	test.assert_equal(buffer:get_text(), diff_contents)
+end)
+
 -- Coverage tests.
 
 test('editing.filter_through should write command errors to the statusbar', function()
@@ -1013,7 +1045,7 @@ test('editing.filter_through should write command errors to the statusbar', func
 
 	test.assert_contains(ui.statusbar_text, '"false"') -- returned non-zero status
 end)
-if WIN32 then skip('false does not exist') end
+if OS == 'windows' then skip('false does not exist') end
 
 -- Note: cannot test highlight matching braces because neither buffer.style_at nor
 -- buffer:indicator_all_on_for() returns view.STYLE_BRACELIGHT and non-zero, respectively.

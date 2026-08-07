@@ -94,7 +94,7 @@ test('ui.print_silent_to should scroll any views showing the print buffer', func
 
 	ui.print_silent_to(type, test.lines(100))
 
-	if GTK then ui.update() end
+	if UI == 'gtk' then ui.update() end
 	local print_view = _VIEWS[1]
 	test.assert(print_view.first_visible_line > 1, 'should have scrolled view')
 end)
@@ -305,10 +305,10 @@ test('ui.goto_file should switch to an already opened file, and in a preferred s
 		test.assert_equal(_VIEWS[view], 2)
 	end)
 
-test('ui.goto_file should match filenames case-insensitively on WIN32', function()
+test('ui.goto_file should match filenames case-insensitively on Windows', function()
 	local f<close> = test.tmpfile(true)
 	buffer.new()
-	local _<close> = test.mock(_G, 'WIN32', true)
+	local _<close> = test.mock(_G, 'OS', 'windows')
 
 	ui.goto_file(f.filename:upper())
 
@@ -352,9 +352,9 @@ test('dropping a file URI should open it', function()
 	local contents = 'dropped'
 	local dir<close> = test.tmpdir{[file] = contents}
 	local filename = dir / file_uriencoded
-	if WIN32 then filename = '\\' .. filename end -- \C:\path\to\file
+	if OS == 'windows' then filename = '\\' .. filename end -- \C:\path\to\file
 	local uri = 'file://' .. filename
-	if WIN32 then uri = uri:gsub('\\', '/') end -- file:///C:/path/to/file
+	if OS == 'windows' then uri = uri:gsub('\\', '/') end -- file:///C:/path/to/file
 	test.log('dropping ', uri)
 
 	events.emit(events.URI_DROPPED, uri) -- simulate
@@ -384,7 +384,7 @@ test('switching between buffers should save/restore buffer state', function()
 	test.assert_equal(view.first_visible_line, first_line)
 	test.assert_equal(view.x_offset, x_offset)
 end)
-if GTK then retry(1) end -- GTK 2
+if UI == 'gtk' then retry(1) end -- GTK 2
 
 test('switching between buffers should save/restore fold state', function()
 	local _<close> = test.tmpfile('.lua', test.lines{'if true then', '\tprint()', 'end'}, true)
@@ -457,7 +457,7 @@ test('closing a buffer and switching back a previous one should preserve state',
 	test.assert_equal(buffer:line_from_position(buffer.current_pos), 2)
 end)
 
-if CURSES then
+if UI == 'terminal' then
 	test('clicking in a view should focus it', function()
 		view:split(true)
 
@@ -507,8 +507,8 @@ test("ui.maximized = true should change the window's maximized state", function(
 end)
 -- For some reason, the following fails, even though the window maximized status is toggled.
 -- `ui.update()` does not seem to help.
-if GTK then expected_failure() end
-if CURSES then skip('ui.maximized cannot be changed') end
+if UI == 'gtk' then expected_failure() end
+if UI == 'terminal' then skip('ui.maximized cannot be changed') end
 
 test('ui.size = {width, height} should resize the window', function()
 	local new_size = {ui.size[1] - 50, ui.size[2] + 50}
@@ -519,8 +519,8 @@ test('ui.size = {width, height} should resize the window', function()
 end)
 -- For some reason, reading ui.size fails, even though the window has been resized.
 -- `ui.update()` does not seem to help.
-if GTK then expected_failure() end
-if CURSES then skip('ui.size cannot be changed') end
+if UI == 'gtk' then expected_failure() end
+if UI == 'terminal' then skip('ui.size cannot be changed') end
 
 test('ui.get_split_table should report the current split view state', function()
 	view:split(true)
@@ -540,7 +540,7 @@ test('ui.get_split_table should report the current split view state', function()
 	test.assert_equal(_VIEWS[2], splits[2][1])
 	test.assert_equal(_VIEWS[3], splits[2][2])
 end)
-if GTK then
+if UI == 'gtk' then
 	local gtk2 = os.getenv('CI') == 'true' and io.popen('dpkg --list'):read('a'):find('gtk2%.0%-dev')
 	if not gtk2 then expected_failure() end -- TODO: splits[2].size[3] == 0
 end

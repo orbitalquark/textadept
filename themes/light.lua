@@ -24,8 +24,8 @@ colors.purple = 0x990099
 colors.magenta = 0x6600CC
 
 -- Default font.
-if not font then font = WIN32 and 'Consolas' or OSX and 'Monaco' or 'Monospace' end
-if not size then size = not OSX and 10 or 12 end
+if not font then font = OS == 'windows' and 'Consolas' or OS == 'macos' and 'Monaco' or 'Monospace' end
+if not size then size = OS ~= 'macos' and 10 or 12 end
 
 -- Predefined styles.
 styles[view.STYLE_DEFAULT] = {font = font, size = size, fore = colors.black, back = colors.white}
@@ -135,14 +135,6 @@ view.marker_back[textadept.bookmarks.MARK_BOOKMARK] = colors.blue
 view.marker_back[textadept.run.MARK_WARNING] = colors.yellow
 -- view.marker_fore[textadept.run.MARK_ERROR] = colors.white
 view.marker_back[textadept.run.MARK_ERROR] = colors.red
-view.marker_fore[view.MARKNUM_HISTORY_MODIFIED] = colors.yellow
-view.marker_back[view.MARKNUM_HISTORY_MODIFIED] = colors.yellow
-view.marker_fore[view.MARKNUM_HISTORY_SAVED] = colors.green
-view.marker_back[view.MARKNUM_HISTORY_SAVED] = colors.green
-view.marker_fore[view.MARKNUM_HISTORY_REVERTED_TO_MODIFIED] = colors.yellow
-view.marker_back[view.MARKNUM_HISTORY_REVERTED_TO_MODIFIED] = colors.yellow
-view.marker_fore[view.MARKNUM_HISTORY_REVERTED_TO_ORIGIN] = colors.yellow
-view.marker_back[view.MARKNUM_HISTORY_REVERTED_TO_ORIGIN] = colors.yellow
 for i = view.MARKNUM_FOLDEREND, view.MARKNUM_FOLDEROPEN do -- fold margin
 	view.marker_fore[i] = colors.white
 	view.marker_back[i] = colors.dark_grey
@@ -157,14 +149,6 @@ view.indic_alpha[textadept.editing.INDIC_HIGHLIGHT] = 0x80
 view.indic_fore[textadept.snippets.INDIC_PLACEHOLDER] = colors.black
 view.indic_fore[textadept.run.INDIC_WARNING] = colors.yellow
 view.indic_fore[textadept.run.INDIC_ERROR] = colors.red
-view.indic_fore[view.INDICATOR_HISTORY_MODIFIED_INSERTION] = colors.green
-view.indic_fore[view.INDICATOR_HISTORY_MODIFIED_DELETION] = colors.red
-view.indic_fore[view.INDICATOR_HISTORY_SAVED_INSERTION] = colors.green
-view.indic_fore[view.INDICATOR_HISTORY_SAVED_DELETION] = colors.red
-view.indic_fore[view.INDICATOR_HISTORY_REVERTED_TO_MODIFIED_INSERTION] = colors.green
-view.indic_fore[view.INDICATOR_HISTORY_REVERTED_TO_MODIFIED_DELETION] = colors.red
-view.indic_fore[view.INDICATOR_HISTORY_REVERTED_TO_ORIGIN_INSERTION] = colors.green
-view.indic_fore[view.INDICATOR_HISTORY_REVERTED_TO_ORIGIN_DELETION] = colors.red
 
 -- Call tips.
 view.call_tip_fore_hlt = colors.blue

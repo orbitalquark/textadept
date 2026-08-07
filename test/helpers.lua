@@ -166,16 +166,18 @@ function M.tmpfile(ext, contents, open)
 	end
 
 	local filename = os.tmpname()
-	if WIN32 and not ext and filename:find('%.') then ext = '.txt' end -- avoid unexpected detections
+	if OS == 'windows' and not ext and filename:find('%.') then
+		ext = '.txt' -- avoid unexpected detections
+	end
 	if ext then
-		if not WIN32 then os.remove(filename) end
+		if OS ~= 'windows' then os.remove(filename) end
 		filename = filename .. ext
 		io.open(filename, 'w'):close()
 	end
-	if OSX then filename = '/private' .. filename end
+	if OS == 'macos' then filename = '/private' .. filename end
 
 	local f = tmpfile.new(filename)
-	if contents or WIN32 then f:write(contents or '') end
+	if contents or OS == 'windows' then f:write(contents or '') end
 
 	if open then io.open_file(f.filename) end
 
@@ -222,7 +224,7 @@ function tmpdir:__div(path) return lfs.abspath(path, self.dirname) end
 --- Deletes this temporary directory and all contents from disk.
 function tmpdir:__close()
 	if self.oldwd then lfs.chdir(self.oldwd) end
-	os.execute((not WIN32 and 'rm -r ' or 'rmdir /S /Q ') .. self.dirname)
+	os.execute((OS ~= 'windows' and 'rm -r ' or 'rmdir /S /Q ') .. self.dirname)
 end
 
 --- Creates a temporary directory.
@@ -233,8 +235,8 @@ end
 -- @usage local dir<close> = tmpdir{foo = {'bar.lua'}, 'baz.txt'}
 function M.tmpdir(structure, chdir)
 	local dirname = os.tmpname()
-	if not WIN32 then os.remove(dirname) end
-	if OSX then dirname = '/private' .. dirname end
+	if OS ~= 'windows' then os.remove(dirname) end
+	if OS == 'macos' then dirname = '/private' .. dirname end
 
 	if type(structure) == 'boolean' then structure, chdir = nil, structure end
 	mkdir(dirname, assert_type(structure, 'table/nil', 1) or {})
@@ -292,7 +294,7 @@ end
 
 --- Sleep for an amount of time.
 -- @param n Number of seconds to sleep for. It may be fractional.
-local function sleep(n) os.execute((not WIN32 and 'sleep ' or 'timeout /T ') .. n) end
+local function sleep(n) os.execute((OS ~= 'windows' and 'sleep ' or 'timeout /T ') .. n) end
 local have_sleep = pcall(require, 'debugger')
 if have_sleep then sleep = require('debugger').socket.sleep end
 
@@ -304,8 +306,10 @@ if have_sleep then sleep = require('debugger').socket.sleep end
 -- @usage wait(function() return f.called end)
 function M.wait(condition, timeout)
 	assert_type(condition, 'function', 1)
-	if not assert_type(timeout, 'number/nil', 2) then timeout = (have_sleep or not WIN32) and 1 or 2 end
-	local interval = (have_sleep or not WIN32) and 0.1 or 1
+	if not assert_type(timeout, 'number/nil', 2) then
+		timeout = (have_sleep or OS ~= 'windows') and 1 or 2
+	end
+	local interval = (have_sleep or OS ~= 'windows') and 0.1 or 1
 	for i = 1, timeout // interval do
 		sleep(interval)
 		ui.update()
@@ -363,7 +367,7 @@ function M.type(text)
 					ui.find.find_entry_text = ui.find.find_entry_text .. char
 				end
 				M.log('ui.find.find_entry_text = ', ui.find.find_entry_text)
-				if CURSES then events.emit(events.FIND_TEXT_CHANGED) end
+				if UI == 'terminal' then events.emit(events.FIND_TEXT_CHANGED) end
 			end
 			goto continue
 		end
@@ -390,7 +394,9 @@ function M.type(text)
 
 		::continue::
 		ui.update() -- emit events.UPDATE_UI
-		if CURSES then events.emit(events.UPDATE_UI, buffer.UPDATE_CONTENT | buffer.UPDATE_SELECTION) end
+		if UI == 'terminal' then
+			events.emit(events.UPDATE_UI, buffer.UPDATE_CONTENT | buffer.UPDATE_SELECTION)
+		end
 	end
 
 end

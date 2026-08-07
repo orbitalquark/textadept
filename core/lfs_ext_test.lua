@@ -56,7 +56,7 @@ test('lfs.walk should not recurse for a *', function()
 	for filename in lfs.walk(dir.dirname, '*', nil, true) do files[#files + 1] = filename end
 
 	table.sort(files)
-	test.assert_equal(files, {dir / file, dir / subdir .. (not WIN32 and '/' or '\\')})
+	test.assert_equal(files, {dir / file, dir / subdir .. (OS ~= 'windows' and '/' or '\\')})
 end)
 
 test('lfs.walk should recurse as long as one glob starts with "**"', function()
@@ -177,7 +177,7 @@ test('lfs.walk should stop after reaching a maximum depth', function()
 end)
 
 test('lfs.walk should be able to walk from the root directory', function()
-	local filename = lfs.walk(not WIN32 and '/' or 'C:\\', nil, 0, true)()
+	local filename = lfs.walk(OS ~= 'windows' and '/' or 'C:\\', nil, 0, true)()
 
 	test.assert(not filename:find('lfs_ext.lua:'), 'should not error')
 end)
@@ -201,7 +201,7 @@ test('lfs.walk should be able to handle directory symlinks, even recursive ones'
 
 	test.assert_equal(files, {dir / 'foo'})
 end)
-if WIN32 then skip('symlinks are not supported') end
+if OS == 'windows' then skip('symlinks are not supported') end
 
 test('lfs.walk should be able to handle symlinks to parent dirs, even recursive ones', function()
 	-- `lfs.walk()` should be able to handle symlinks, even recursive ones.
@@ -228,7 +228,7 @@ test('lfs.walk should be able to handle symlinks to parent dirs, even recursive 
 	table.sort(expected_files)
 	test.assert_equal(files, expected_files)
 end)
-if WIN32 then skip('symlinks are not supported') end
+if OS == 'windows' then skip('symlinks are not supported') end
 
 test('lfs.walk should raise an error if the directory does not exist', function()
 	local dir_does_not_exist = function() lfs.walk('does-not-exist') end
@@ -269,11 +269,11 @@ test('lfs.abspath should resolve ../', function()
 
 	local path = lfs.abspath(subdir .. '/../' .. subdir .. '/../', dir.dirname)
 
-	test.assert_equal(path, dir.dirname .. (not WIN32 and '/' or '\\'))
+	test.assert_equal(path, dir.dirname .. (OS ~= 'windows' and '/' or '\\'))
 end)
 
 test('lfs.abspath should canonicalize paths on Windows', function()
-	local _<close> = test.mock(_G, 'WIN32', true)
+	local _<close> = test.mock(_G, 'OS', 'windows')
 	local drive = 'c:'
 	local subdir = 'subdir'
 	local file = 'file.txt'
@@ -284,7 +284,7 @@ test('lfs.abspath should canonicalize paths on Windows', function()
 end)
 
 test('lfs.abspath should not produce relative paths to Windows shared drives', function()
-	local _<close> = test.mock(_G, 'WIN32', true)
+	local _<close> = test.mock(_G, 'OS', 'windows')
 	local shared_dir = '\\\\shared\\dir'
 
 	local path = lfs.abspath(shared_dir)

@@ -18,11 +18,12 @@ local types = { -- note: anything after stringresult does not matter
 	formatrangefull = 15
 }
 local ignores = { -- constants to ignore
-	'^INDIC[012S]_', '^INVALID_POSITION', '^KEYWORDSET_MAX', '^SC_AC_', '^SC_DOCUMENTOPTION_',
-	'^SC_CACHE_', '^SC_CHARSET_', '^SC_ELEMENT_LIST', '^SC_EFF_', '^SC_FONT_SIZE_MULTIPLIER',
-	'^SC_INDIC', '^SC_LINE_END_TYPE_', '^SC_PHASES_', '^SC_POPUP_', '^SC_PRINT_', '^SC_STATUS_',
-	'^SC_SUPPORTS_', '^SC_TECHNOLOGY_', '^SC_TYPE_', '^SC_WEIGHT_', '^SCE_', '^SCEN_',
-	'^SCFIND_POSIX', '^SCI_', '^SCK_', '^SCLEX_', '^UNDO_MAY_COALESCE'
+	'^INDIC[012S]_', '^INDICATOR_HISTORY_', '^INVALID_POSITION', '^KEYWORDSET_MAX', '^SC_AC_',
+	'^SC_DOCUMENTOPTION_', '^SC_CACHE_', '^SC_CHANGE_HISTORY_', '^SC_CHARSET_', '^SC_ELEMENT_LIST',
+	'^SC_EFF_', '^SC_FONT_SIZE_MULTIPLIER', '^SC_INDIC', '^SC_LINE_END_TYPE_', '^SC_MARKNUM_HISTORY_',
+	'^SC_PHASES_', '^SC_POPUP_', '^SC_PRINT_', '^SC_STATUS_', '^SC_SUPPORTS_', '^SC_TECHNOLOGY_',
+	'^SC_TYPE_', '^SC_WEIGHT_', '^SCE_', '^SCEN_', '^SCFIND_POSIX', '^SCI_', '^SCK_', '^SCLEX_',
+	'^UNDO_MAY_COALESCE'
 }
 local increments = { -- constants to increment by one
 	'^MARKER_MAX', '^MARKNUM_', '^MAX_MARGIN', '^STYLE_', '^INDICATOR_'

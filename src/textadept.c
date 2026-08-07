@@ -187,7 +187,7 @@ static int spawn_lua(lua_State *L) {
 	int narg = 1, top = lua_gettop(L);
 	const char *cmd = luaL_checkstring(L, narg++),
 						 *cwd = lua_isstring(L, narg) ? lua_tostring(L, narg++) : NULL;
-	// Replace optional environment table with a pure "key=value" list for platform processing.
+	// Replace optional environment table with a pure "key=value" list for UI processing.
 	int envi = lua_istable(L, narg) && !lua_iscallable(L, narg) ? narg++ : 0;
 	if (envi) {
 		lua_newtable(L);
@@ -369,7 +369,7 @@ static int ui_newindex(lua_State *L) {
 		int show = !lua_isinteger(L, 3) ? lua_toboolean(L, 3) : lua_tointeger(L, 3);
 		int n = (lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_rawlen(L, -1));
 		if (tabs && !show) {
-			show_tabs((tabs = show)); // prevent platform tab changed events
+			show_tabs((tabs = show)); // prevent UI tab changed events
 			for (int i = 0; i < n; i++) remove_tab(0);
 			return 0;
 		} else if (!tabs && show)
@@ -706,8 +706,8 @@ static int save_dialog_lua(lua_State *L) { return save_dialog(read_opts(L, NULL)
 
 // Calls the work function passed to `ui.dialogs.progress()`, passes intermediate progress to
 // the given callback function, and returns true if there is still work to be done.
-// This function is passed to the platform-defined `progress_dialog()` function. The platform
-// should repeatedly call this function for as long as it returns true.
+// This function is passed to the UI-defined `progress_dialog()` function. The UI should
+// repeatedly call this function for as long as it returns true.
 static bool do_work(void (*update)(double, const char *, void *), void *userdata) {
 	lua_getfield(lua, LUA_REGISTRYINDEX, "ta_update");
 	bool ok = lua_pcall(lua, 0, 2, 0) == LUA_OK, repeat = ok && lua_isnumber(lua, -2);
@@ -815,8 +815,8 @@ static int reset(lua_State *L) {
 }
 
 // Calls the given timeout function passed to `_G.timeout()`.
-// Platforms should repeatedly call this function when the timeout interval has passed for as
-// long as it returns true.
+// UIs should repeatedly call this function when the timeout interval has passed for as long
+// as it returns true.
 static bool call_timeout_function(int *refs) {
 	if (!lua) return false; // quitting
 	int nargs = 0;
@@ -877,7 +877,12 @@ static bool init_lua(int argc, char **argv) {
 				lua_getfield(L, LUA_REGISTRYINDEX, ARG), lua_pushinteger(L, 0),
 				lua_pushinteger(L, luaL_len(L, -2) + n), lua_pushinteger(L, -n), lua_call(L, 4, 1),
 				lua_setglobal(L, "arg");
-			bool ok = luaL_dofile(L, argv[i + 1]) == LUA_OK;
+			// ok, f = loadfile() or loadstring(io.read('a'))
+			bool ok = (strcmp(argv[i + 1], "-") != 0 ?
+										luaL_loadfile(L, argv[i + 1]) :
+										(lua_getglobal(L, "io"), lua_getfield(L, -1, "read"), lua_pushstring(L, "a"),
+											lua_call(L, 1, 1), luaL_loadstring(L, lua_tostring(L, -1)))) == LUA_OK;
+			if (ok) ok = lua_pcall(L, 0, 0, 0) == LUA_OK; // f()
 			if (!ok) fprintf(stderr, "%s\n", lua_tostring(L, -1));
 			return (lua_close(L), lua = NULL, exit_status = ok ? 0 : 1, false);
 		}
@@ -909,8 +914,8 @@ static bool init_lua(int argc, char **argv) {
 	lua_getfield(L, LUA_REGISTRYINDEX, BUFFERS), lua_setglobal(L, "_BUFFERS");
 	lua_getfield(L, LUA_REGISTRYINDEX, VIEWS), lua_setglobal(L, "_VIEWS");
 	lua_pushstring(L, textadept_home), lua_setglobal(L, "_HOME");
-	lua_pushboolean(L, true), lua_setglobal(L, os);
-	lua_pushboolean(L, true), lua_setglobal(L, get_platform());
+	lua_pushstring(L, os), lua_setglobal(L, "OS");
+	lua_pushstring(L, get_ui()), lua_setglobal(L, "UI");
 	lua_pushstring(L, get_charset()), lua_setglobal(L, "_CHARSET");
 	lua_pushstring(L, !is_dark_mode() ? "light" : "dark"), lua_setglobal(L, "_THEME");
 	lua_pushcfunction(L, move_buffer_lua), lua_setglobal(L, "move_buffer");
@@ -935,7 +940,7 @@ static void view_focused(SciObject *view) {
 
 // Emits the given Scintilla notification to Lua.
 static void emit_notification(SCNotification *n) {
-	if (n->nmhdr.code == SCN_KEY) return; // platforms are handling key events; avoid duplicates
+	if (n->nmhdr.code == SCN_KEY) return; // UIs are handling key events; avoid duplicates
 	lua_createtable(lua, 0, 14);
 	lua_pushinteger(lua, n->nmhdr.code), lua_setfield(lua, -2, "code");
 	lua_pushinteger(lua, n->position + 1), lua_setfield(lua, -2, "position");
@@ -1228,7 +1233,7 @@ static SciObject *new_view(sptr_t doc) {
 	return view;
 }
 
-// Creates and returns the first Scintilla view when the platform is ready for it.
+// Creates and returns the first Scintilla view when the UI is ready for it.
 static SciObject *create_first_view(void) { return new_view(0); }
 
 void close_textadept(void) {
@@ -1252,18 +1257,18 @@ bool init_textadept(int argc, char **argv) {
 #if __linux__
 	textadept_home[readlink("/proc/self/exe", textadept_home, FILENAME_MAX + 1)] = '\0';
 	if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
-	os = "LINUX";
+	os = "linux";
 #elif _WIN32
 	GetModuleFileName(NULL, textadept_home, FILENAME_MAX + 1);
 	if ((last_slash = strrchr(textadept_home, '\\'))) *last_slash = '\0';
-	os = "WIN32";
+	os = "windows";
 #elif __APPLE__
 	uint32_t size = FILENAME_MAX + 1;
 	_NSGetExecutablePath(textadept_home, &size);
 	char *p = textadept_home;
 	textadept_home = realpath(textadept_home, NULL), free(p);
 	p = strstr(textadept_home, "MacOS"), strcpy(p, "Resources\0");
-	os = "OSX";
+	os = "macos";
 #elif (__FreeBSD__ || __NetBSD__ || __DragonFly__)
 #if (__FreeBSD__ || __DragonFly__)
 	int mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
@@ -1275,7 +1280,7 @@ bool init_textadept(int argc, char **argv) {
 	char *p = textadept_home;
 	textadept_home = realpath(textadept_home, NULL), free(p);
 	if ((last_slash = strrchr(textadept_home, '/'))) *last_slash = '\0';
-	os = "BSD";
+	os = "bsd";
 	// TODO: OpenBSD uses {CTL_KERN, KERN_PROC_ARGS, getpid(), KERN_PROC_ARGV}, but the result is
 	// **argv, so realpath() will not work on argv[0] without iterating over $PATH.
 #else

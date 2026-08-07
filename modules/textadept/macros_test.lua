@@ -100,7 +100,7 @@ test('macros.save should prompt for a filename if none was given', function()
 	local file_exists = lfs.attributes(f.filename, 'mode') == 'file'
 	test.assert(file_exists, 'should have saved macro')
 	local dialog_opts = select_filename.args[1]
-	test.assert_equal(dialog_opts.dir, _USERHOME .. (not WIN32 and '/' or '\\') .. 'macros')
+	test.assert_equal(dialog_opts.dir, _USERHOME .. (OS ~= 'windows' and '/' or '\\') .. 'macros')
 end)
 
 test('macros.load should load (not run) macro from a given filename', function()
@@ -123,7 +123,7 @@ test('macros.load should prompt for a filename if none was given', function()
 
 	test.assert_equal(select_filename.called, true)
 	local dialog_opts = select_filename.args[1]
-	test.assert_equal(dialog_opts.dir, _USERHOME .. (not WIN32 and '/' or '\\') .. 'macros')
+	test.assert_equal(dialog_opts.dir, _USERHOME .. (OS ~= 'windows' and '/' or '\\') .. 'macros')
 end)
 
 test('macros.load should store previous macro in register 0', function()
