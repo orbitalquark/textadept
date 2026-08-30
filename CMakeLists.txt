@@ -99,7 +99,7 @@ function(fetch name url hash)
 	endif()
 	# Note: cannot FetchContent_MakeAvailable(${name}) here, as name must be a literal.
 endfunction()
-fetch(scintilla https://www.scintilla.org/scintilla563.tgz f64339c504960c5a95510e6c3306ab5e95f23abaf8aed82897e57bff78e74616)
+fetch(scintilla https://www.scintilla.org/scintilla566.tgz b6b08598c68fac90990d010c1142494d707530602b5320753274d045c2b02189)
 fetch(scinterm https://github.com/orbitalquark/scinterm/archive/scinterm_6.0.zip af65b064ed1486b715d91a6c7d6e290d01c74ba618b87cef21823f170ebda06e)
 fetch(scintillua https://github.com/orbitalquark/scintillua/archive/b9986ecad77b1ea73d75bf1e82e6e0fd3b4958b1.zip 9ca802b0e06a24f410df9545d02802fff9eff2b5aa7254bc6e51173ed38feae6)
 fetch(lua https://lua.org/ftp/lua-5.5.1.tar.gz 1c4b4068d67061f2a2231ad2b5422e77acea1487ea9890f6320af614f4373dce)

@@ -5419,6 +5419,12 @@ Arguments:
 		The view has scrolled vertically.
 	+ `view.UPDATE_H_SCROLL`
 		The view has scrolled horizontally.
+	+ `buffer.UPDATE_TEXT`
+		The buffer's text content has changed.
+	+ `buffer.UPDATE_LINE_COUNT`
+		The buffer's line count has changed.
+
+- *position*: The position at the start of text changes if `buffer.UPDATE_TEXT` is in *updated*.
 
 <a id="events.URI_DROPPED"></a>
 ### `events.URI_DROPPED`

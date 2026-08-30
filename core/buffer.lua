@@ -3546,6 +3546,12 @@ end)
 --- View has scrolled horizontally.
 -- @field view.UPDATE_H_SCROLL
 
+--- Buffer text has changed.
+-- @field UPDATE_TEXT
+
+--- Buffer line count has changed.
+-- @field UPDATE_LINE_COUNT
+
 --- @field view.UPDATE_NONE
 
 --- View has scrolled vertically.
