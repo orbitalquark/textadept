@@ -160,9 +160,10 @@ events.connect(events.FILE_OPENED, resize_line_number_margin)
 events.connect(events.RESET_AFTER, resize_line_number_margin)
 events.connect(events.ZOOM, function() resize_line_number_margin(true) end)
 -- Marker Margin.
-view.margin_width_n[2] = UI ~= 'terminal' and 4 or 1
+local scale_factor = OS == 'macos' and is_hidpi() and 2 or 1 -- TODO: platform fractional scaling
+view.margin_width_n[2] = UI ~= 'terminal' and 4 * scale_factor or 1
 -- Fold Margin.
-view.margin_width_n[3] = UI ~= 'terminal' and 12 or 1
+view.margin_width_n[3] = UI ~= 'terminal' and 12 * scale_factor or 1
 view.margin_mask_n[3] = view.MASK_FOLDERS
 local function update_fold_margin()
 	_G.view._fold_margin_width = math.max(_G.view.margin_width_n[3], _G.view._fold_margin_width or 0)
@@ -184,6 +185,7 @@ view.eol_annotation_visible = UI ~= 'terminal' and view.EOLANNOTATION_BOXED or
 
 -- Other.
 -- view.buffered_draw = UI ~= 'gtk'
+if scale_factor ~= 1 then view.scale_technique = view.SCALE_TECHNIQUE_PIXEL_ALIGNED end
 -- buffer.word_chars =
 -- buffer.whitespace_chars =
 -- buffer.punctuation_chars =
@@ -233,6 +235,9 @@ view:marker_define(view.MARKNUM_FOLDEREND, view.MARK_BOXPLUSCONNECTED)
 view:marker_define(view.MARKNUM_FOLDEROPENMID, view.MARK_BOXMINUSCONNECTED)
 view:marker_define(view.MARKNUM_FOLDERMIDTAIL, view.MARK_TCORNER)
 -- view:marker_enable_highlight(true)
+for i = view.MARKNUM_FOLDEREND, view.MARKNUM_FOLDEROPEN do
+	view.marker_stroke_width[i] = 100 * scale_factor
+end
 
 -- Indicators.
 view.indic_style[ui.find.INDIC_FIND] = view.INDIC_ROUNDBOX
@@ -243,6 +248,7 @@ view.indic_style[textadept.run.INDIC_WARNING] = view.INDIC_SQUIGGLE
 view.indic_style[textadept.run.INDIC_ERROR] = view.INDIC_SQUIGGLE
 view.indic_style[textadept.snippets.INDIC_PLACEHOLDER] = UI ~= 'terminal' and view.INDIC_DOTBOX or
 	view.INDIC_STRAIGHTBOX
+for i = 1, view.INDICATOR_MAX do view.indic_stroke_width[i] = 100 * scale_factor end
 
 -- Autocompletion.
 -- buffer.auto_c_separator =
@@ -257,7 +263,7 @@ buffer.auto_c_multi = buffer.MULTIAUTOC_EACH
 -- buffer.auto_c_type_separator =
 -- view.auto_c_max_height =
 -- view.auto_c_max_width =
-if is_hidpi() then view.auto_c_image_scale = 200 end
+view.auto_c_image_scale = 100 * scale_factor
 
 -- Call Tips.
 view.call_tip_use_style = buffer.tab_width * view:text_width(view.STYLE_CALLTIP, ' ')

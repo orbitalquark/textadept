@@ -54,7 +54,7 @@ for line in io.lines('../build/_deps/scintilla-src/include/Scintilla.iface') do
 	if line:find('^val ') then
 		local name, value = line:match(const_patt)
 		for i = 1, #ignores do if name:find(ignores[i]) then goto continue end end
-		name = to_en_us(name:gsub('^SC_', ''):gsub('^SC([^N]%u+)', '%1'))
+		name = to_en_us(name:gsub('^SC_', ''):gsub('^SC([^NA]%u+)', '%1')) -- keep SCN_* and SCALE_*
 		if name == 'FIND_REGEXP' then
 			value = tostring(tonumber(value) + 2^23) -- add SCFIND_CXX11REGEX
 			value = value:gsub('%.0$', '') -- Lua 5.3+ may append this
@@ -137,7 +137,7 @@ for line in io.lines('../build/_deps/scintilla-src/include/Scintilla.iface') do
 			if prop[1] == 0 then prop[3] = types[wtype ~= '' and ltype == '' and wtype or ltype] end
 			prop[4] = types[ltype ~= '' and wtype or ltype]
 		end
-	elseif line:find('cat Provisional') then
+	elseif line:find('cat Deprecated') then
 		break
 	end
 	::continue::
