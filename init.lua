@@ -13,11 +13,6 @@ events.emit('pre_init') -- allow core modules to operate on the first buffer and
 
 textadept = require('textadept')
 
--- Temporary backward-compatibility.
--- LuaFormatter off
-local bools,usages={WIN32='windows',OSX='macos',LINUX='linux',BSD='bsd',CURSES='terminal',GTK='gtk',QT='qt'},{}setmetatable(_G,{__index=function(t,k)if not bools[k]then return nil end local info=debug.getinfo(2,'Sl')local usage=string.format("%s:%s: '%s' is deprecated and should be replaced by an OS or UI comparison\n",info.source:sub(2),info.currentline,k)if usages then usages[#usages+1]=usage else ui.output_silent(usage)end return OS==bools[k] or UI==bools[k]end})events.connect(events.INITIALIZED,function()if #usages>0 then ui.output(table.concat(usages))end usages=nil end)
--- LuaFormatter on
-
 -- The remainder of this file defines default buffer and view properties and applies them
 -- to subsequent buffers and views. Normally, a setting like `buffer.use_tabs = false` only
 -- applies to the current (initial) buffer. However, temporarily tap into buffer and view's

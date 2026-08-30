@@ -79,8 +79,6 @@ M.highlight_words = M.HIGHLIGHT_NONE
 --- The word highlight indicator number.
 M.INDIC_HIGHLIGHT = view.new_indic_number()
 
-M.XPM_IMAGES = setmetatable({}, {__index = function() return 0 end}) -- compatibility
-
 --- Comments or uncomments source lines based on `textadept.editing.comment_string`.
 -- If no lines are selected, the current line is toggled. Otherwise, the selected lines are
 -- toggled. As long as any part of a line is selected, that entire line is eligible for toggling.
