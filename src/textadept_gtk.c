@@ -537,11 +537,11 @@ void update_ui(void) {
 	while (gtk_events_pending()) gtk_main_iteration();
 }
 
-bool is_hidpi(void) {
+float scale_factor(void) {
 #if GTK_CHECK_VERSION(3, 10, 0)
-	return gtk_widget_get_scale_factor(window) > 1;
+	return gtk_widget_get_scale_factor(window);
 #else
-	return false;
+	return 1;
 #endif
 }
 

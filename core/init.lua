@@ -118,5 +118,7 @@ for _, mod in ipairs{'buffer', 'file_io', 'lfs_ext', 'table_ext', 'ui', 'view'} 
 -- @param[opt] ... Additional arguments to pass to *f*.
 -- @function timeout
 
---- Returns whether or not Textadept is currently running on a HiDPI/Retina display.
+--- Returns whether or not Textadept is currently running on a HiDPI/Retina display, as well as
+-- the ratio between device pixels and UI toolkit coordinates (typically 1 for normal displays,
+-- and 2 for HiDPI/Retina displays).
 -- @function is_hidpi

@@ -75,6 +75,7 @@ end)
 local buffer, view = buffer, view
 
 if UI == 'terminal' then view:set_theme('term') end
+local scale_factor = UI == 'qt' and select(2, is_hidpi()) or 1 -- Scintilla only supports this on Qt
 
 -- Multiple Selection and Virtual Space.
 buffer.multiple_selection, buffer.additional_selection_typing = true, true
@@ -121,7 +122,7 @@ view.caret_line_visible_always = true
 -- view.caret_line_highlight_subline = true
 -- view.caret_period = 0
 -- view.caret_style = view.CARETSTYLE_BLOCK
--- view.caret_width =
+if UI ~= 'terminal' then view.caret_width = math.floor(1 * scale_factor) end
 -- buffer.caret_sticky = buffer.CARETSTICKY_ON
 
 -- Make `view.caret_line_visible_always` apply only to one view at a time, and only while
@@ -155,10 +156,9 @@ events.connect(events.FILE_OPENED, resize_line_number_margin)
 events.connect(events.RESET_AFTER, resize_line_number_margin)
 events.connect(events.ZOOM, function() resize_line_number_margin(true) end)
 -- Marker Margin.
-local scale_factor = OS == 'macos' and is_hidpi() and 2 or 1 -- TODO: platform fractional scaling
-view.margin_width_n[2] = UI ~= 'terminal' and 4 * scale_factor or 1
+view.margin_width_n[2] = UI ~= 'terminal' and math.floor(4 * scale_factor) or 1
 -- Fold Margin.
-view.margin_width_n[3] = UI ~= 'terminal' and 12 * scale_factor or 1
+view.margin_width_n[3] = UI ~= 'terminal' and math.floor(12 * scale_factor) or 1
 view.margin_mask_n[3] = view.MASK_FOLDERS
 local function update_fold_margin()
 	_G.view._fold_margin_width = math.max(_G.view.margin_width_n[3], _G.view._fold_margin_width or 0)
@@ -231,7 +231,7 @@ view:marker_define(view.MARKNUM_FOLDEROPENMID, view.MARK_BOXMINUSCONNECTED)
 view:marker_define(view.MARKNUM_FOLDERMIDTAIL, view.MARK_TCORNER)
 -- view:marker_enable_highlight(true)
 for i = view.MARKNUM_FOLDEREND, view.MARKNUM_FOLDEROPEN do
-	view.marker_stroke_width[i] = 100 * scale_factor
+	view.marker_stroke_width[i] = math.floor(100 * scale_factor)
 end
 
 -- Indicators.
@@ -243,7 +243,7 @@ view.indic_style[textadept.run.INDIC_WARNING] = view.INDIC_SQUIGGLE
 view.indic_style[textadept.run.INDIC_ERROR] = view.INDIC_SQUIGGLE
 view.indic_style[textadept.snippets.INDIC_PLACEHOLDER] = UI ~= 'terminal' and view.INDIC_DOTBOX or
 	view.INDIC_STRAIGHTBOX
-for i = 1, view.INDICATOR_MAX do view.indic_stroke_width[i] = 100 * scale_factor end
+for i = 1, view.INDICATOR_MAX do view.indic_stroke_width[i] = math.floor(100 * scale_factor) end
 
 -- Autocompletion.
 -- buffer.auto_c_separator =
@@ -258,7 +258,7 @@ buffer.auto_c_multi = buffer.MULTIAUTOC_EACH
 -- buffer.auto_c_type_separator =
 -- view.auto_c_max_height =
 -- view.auto_c_max_width =
-view.auto_c_image_scale = 100 * scale_factor
+view.auto_c_image_scale = math.floor(100 * scale_factor)
 
 -- Call Tips.
 view.call_tip_use_style = buffer.tab_width * view:text_width(view.STYLE_CALLTIP, ' ')

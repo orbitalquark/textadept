@@ -556,7 +556,7 @@ void update_ui(void) {
 	if (lua_processtimeouts(lua)) refresh_all();
 }
 
-bool is_hidpi(void) { return false; }
+float scale_factor(void) { return 1; }
 
 bool is_dark_mode(void) { return true; } // TODO:
 

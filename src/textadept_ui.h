@@ -261,8 +261,10 @@ void add_timeout(double interval, bool (*f)(int *), int *reference);
  */
 void update_ui(void);
 
-/** Returns whether or not Textadept is currently running on a HiDPI/Retina display. */
-bool is_hidpi(void);
+/** Returns the ratio between device pixels and GUI toolkit coordinates.
+ * This is usually 1 on normal displays and 2 on HiDPI/Retina displays.
+ */
+float scale_factor(void);
 
 /** Returns whether or not dark mode is currently enabled on the UI. */
 bool is_dark_mode(void);
