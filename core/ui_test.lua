@@ -510,7 +510,7 @@ end)
 if UI == 'gtk' then expected_failure() end
 if UI == 'terminal' then skip('ui.maximized cannot be changed') end
 
-if PLATFORM == 'macos' and not os.getenv('CI') then
+if OS == 'macos' and not os.getenv('CI') then
 	test('ui.scale should be 2 on macOS', function() test.assert_equal(ui.scale, 2) end)
 end
 
