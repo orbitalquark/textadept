@@ -205,13 +205,6 @@ assert_type(option.setting, 'number', 'setting') -- assert 'setting' field is a 
 
 The current [buffer](#the-buffer-module) in the [current view](#_G.view).
 
-<a id="is_hidpi"></a>
-### `is_hidpi`()
-
-Returns whether or not Textadept is currently running on a HiDPI/Retina display, as well as
-the ratio between device pixels and UI toolkit coordinates (typically 1 for normal displays,
-and 2 for HiDPI/Retina displays).
-
 <a id="_G.keys"></a>
 ### `keys`
 
@@ -9020,6 +9013,13 @@ Usage:
 ```lua
 ui.print_to('[Typed Buffer]', message)
 ```
+
+<a id="ui.scale"></a>
+### `ui.scale`
+
+The ratio between device pixels and UI toolkit coordinates.
+(Read-only)
+This value is typically `1` for normal displays, and `2` for HiDPI/Retina displays.
 
 <a id="ui.size"></a>
 ### `ui.size`

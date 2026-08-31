@@ -308,6 +308,7 @@ static luaL_Reg ui_f[] = {{"get_clipboard_text", get_clipboard_text_lua},
 static int ui_index(lua_State *L) {
 	const char *key = lua_tostring(L, 2);
 	if (strcmp(key, "maximized") == 0) return (lua_pushboolean(L, is_maximized()), 1);
+	if (strcmp(key, "scale") == 0) return (lua_pushnumber(L, scale_factor()), 1);
 	if (strcmp(key, "size") == 0) {
 		int width, height;
 		get_size(&width, &height);
@@ -348,16 +349,17 @@ static void sync_tabbar(void) {
 // `ui.__newindex` Lua metatable.
 static int ui_newindex(lua_State *L) {
 	const char *key = lua_tostring(L, 2);
-	if (strcmp(key, "title") == 0) return (set_title(lua_tostring(L, 3)), 0);
-	if (strcmp(key, "statusbar_text") == 0 || strcmp(key, "buffer_statusbar_text") == 0)
-		return (set_statusbar_text(*key == 's' ? 0 : 1, lua_tostring(L, 3)), 0);
+	if (strcmp(key, "maximized") == 0) return (set_maximized(lua_toboolean(L, 3)), 0);
 	if (strcmp(key, "menubar") == 0) {
 		luaL_argcheck(L, lua_istable(L, 3), 3, "table of menus expected");
 		for (size_t i = 1; i <= lua_rawlen(L, 3); lua_pop(L, 1), i++)
 			luaL_argcheck(L, lua_rawgeti(L, 3, i) == LUA_TLIGHTUSERDATA, 3, "table of menus expected");
 		return (set_menubar(L, 3), 0);
 	}
-	if (strcmp(key, "maximized") == 0) return (set_maximized(lua_toboolean(L, 3)), 0);
+	if (strcmp(key, "scale") == 0) return (luaL_argerror(L, 2, "read-only property"), 0);
+	if (strcmp(key, "statusbar_text") == 0 || strcmp(key, "buffer_statusbar_text") == 0)
+		return (set_statusbar_text(*key == 's' ? 0 : 1, lua_tostring(L, 3)), 0);
+	if (strcmp(key, "statusbar") == 0) return (set_statusbar_visible(lua_toboolean(L, 3)), 0);
 	if (strcmp(key, "size") == 0) {
 		luaL_argcheck(
 			L, lua_istable(L, 3) && lua_rawlen(L, 3) == 2, 3, "{width, height} table expected");
@@ -380,7 +382,7 @@ static int ui_newindex(lua_State *L) {
 			}
 		return (show_tabs((tabs = show) && (n > 1 || tabs > 1)), sync_tabbar(), 0);
 	}
-	if (strcmp(key, "statusbar") == 0) return (set_statusbar_visible(lua_toboolean(L, 3)), 0);
+	if (strcmp(key, "title") == 0) return (set_title(lua_tostring(L, 3)), 0);
 	return (lua_rawset(L, 1), 0);
 }
 
@@ -838,12 +840,6 @@ static int add_timeout_lua(lua_State *L) {
 	return (add_timeout(interval, call_timeout_function, refs), 0);
 }
 
-// `_G.is_hidpi()` Lua function.
-static int lua_ishidpi(lua_State *L) {
-	float scale = scale_factor();
-	return (lua_pushboolean(L, scale > 1), lua_pushnumber(L, scale), 2);
-}
-
 // Initializes or re-initializes the Lua state and with the given command-line arguments.
 // Populates the state with global variables and functions, runs the 'core/init.lua' script,
 // and returns `true` on success.
@@ -925,7 +921,6 @@ static bool init_lua(int argc, char **argv) {
 	lua_pushcfunction(L, quit_lua), lua_setglobal(L, "quit");
 	lua_pushcfunction(L, reset), lua_setglobal(L, "reset");
 	lua_pushcfunction(L, add_timeout_lua), lua_setglobal(L, "timeout");
-	lua_pushcfunction(L, lua_ishidpi), lua_setglobal(L, "is_hidpi");
 
 	if (lua = L, !run_file("core/init.lua"))
 		return (lua_close(L), lua = NULL, exit_status = 1, false);

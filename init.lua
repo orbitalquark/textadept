@@ -13,6 +13,8 @@ events.emit('pre_init') -- allow core modules to operate on the first buffer and
 
 textadept = require('textadept')
 
+function is_hidpi() return ui.scale > 1 end -- temporary backward-compatibility
+
 -- The remainder of this file defines default buffer and view properties and applies them
 -- to subsequent buffers and views. Normally, a setting like `buffer.use_tabs = false` only
 -- applies to the current (initial) buffer. However, temporarily tap into buffer and view's
@@ -75,7 +77,7 @@ end)
 local buffer, view = buffer, view
 
 if UI == 'terminal' then view:set_theme('term') end
-local scale_factor = UI == 'qt' and select(2, is_hidpi()) or 1 -- Scintilla only supports this on Qt
+local scale_factor = UI == 'qt' and ui.scale or 1 -- Scintilla only supports this on Qt
 
 -- Multiple Selection and Virtual Space.
 buffer.multiple_selection, buffer.additional_selection_typing = true, true

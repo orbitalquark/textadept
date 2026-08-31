@@ -510,6 +510,18 @@ end)
 if UI == 'gtk' then expected_failure() end
 if UI == 'terminal' then skip('ui.maximized cannot be changed') end
 
+if PLATFORM == 'macos' and not os.getenv('CI') then
+	test('ui.scale should be 2 on macOS', function() test.assert_equal(ui.scale, 2) end)
+end
+
+if UI == 'terminal' then
+	test('ui.scale should be 1 in the terminal version', function() test.assert_equal(ui.scale, 1) end)
+end
+
+test('ui.scale should be read-only', function()
+	test.assert_raises(function() ui.scale = 1.5 end, 'read-only property')
+end)
+
 test('ui.size = {width, height} should resize the window', function()
 	local new_size = {ui.size[1] - 50, ui.size[2] + 50}
 

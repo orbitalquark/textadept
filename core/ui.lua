@@ -427,6 +427,10 @@ events.connect(events.INITIALIZED, function() events.disconnect(events.ERROR, te
 -- buffer is open.
 -- @field tabs
 
+--- The ratio between device pixels and UI toolkit coordinates. (Read-only)
+-- This value is typically `1` for normal displays, and `2` for HiDPI/Retina displays.
+-- @field scale
+
 -- The tables below were defined in C.
 
 --- A table of menus defining a menubar. (Write-only).
