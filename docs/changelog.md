@@ -2,6 +2,44 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+## 13.1 beta (01 Sep 2026)
+
+- [Textadept 13.1 beta -- Windows][]
+- [Textadept 13.1 beta -- macOS 13+][]
+- [Textadept 13.1 beta -- Linux][]
+- [Textadept 13.1 beta -- Linux ARM][]
+- [Textadept 13.1 beta -- Modules][]
+
+Bugfixes:
+
+- Prevent default session from being clobbered when Textadept receives a filename or directory
+	on the command line.
+- Fix `buffer.fold*` settings from being ignored in *~/.textadept/init.lua*.
+- Fixed potential for desynchronized tabs on startup in the GTK version.
+- Fixed key bindings for "Select Line".
+- LSP: fix some Lua language server startup issues.
+
+Changes:
+
+- When building from source, CMake verifies checksums for downloaded dependencies.
+- Recognize '-' as stdin when using Textadept as a standalone Lua interpreter via `-L` or `--lua`.
+- `events.UPDATE_UI` now has `buffer.UPDATE_TEXT` and `buffer.UPDATE_LINE_COUNT` bits for when
+	buffer text and line count changes, respectively.
+- Replaced `is_hidpi()` with [`ui.scale`][].
+- Support fractional scaling on Qt.
+- LSP: Lua language server removes images from LDoc markdown.
+- Updated to [Scintilla][] 5.6.6.
+- Updated to [Lua][] 5.5.1.
+
+[Textadept 13.1 beta -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.1_beta/textadept_13.1_beta.win.zip
+[Textadept 13.1 beta -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.1_beta/textadept_13.1_beta.macOS.zip
+[Textadept 13.1 beta -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.1_beta/textadept_13.1_beta.linux.tgz
+[Textadept 13.1 beta -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.1_beta/textadept_13.1_beta.linux.arm.tgz
+[Textadept 13.1 beta -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.1_beta/textadept_13.1_beta.modules.zip
+[`ui.scale`]: api.html#ui.scale
+[Scintilla]: https://scintilla.org
+[Lua]: https://lua.org
+
 ## 13.0 (01 Jul 2026)
 
 Please see the [migration guide][] for migrating from Textadept 12 to 13.
