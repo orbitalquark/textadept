@@ -1,9 +1,9 @@
-## Thanks
+# Thanks
 
-Thank you everyone for your contributions and feedback. They have helped make Textadept the
-amazing editor that it is today.
+Thank you everyone for your contributions and feedback. They have helped make
+Textadept the amazing editor that it is today.
 
-### Code and Documentation Contributors
+## Code and Documentation Contributors
 
 - Ahed Eid
 - Alex Bepple
@@ -53,4 +53,5 @@ amazing editor that it is today.
 - Vais Salikhov
 - Vladimir Lomov
 
-If I have left off your name, please contact me (see README.md). I am very sorry about that.
+If I have left off your name, please contact me (see README.md). I am very
+sorry about that.

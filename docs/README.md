@@ -2,13 +2,13 @@
 
 Textadept is a fast, minimalist, and remarkably extensible cross-platform text editor for programmers.
 
-Quick links: [Download][] \| [Manual][] \| [Lua API Docs][] \| [Project Page][]
+Quick links: [Download][] | [Manual][] | [Lua API Docs][] | [Project Page][]
 
-<a href="assets/images/windows.png"><img src="assets/images/windows.png" alt="windows" width="400" style="vertical-align: top;"/></a>
-<a href="assets/images/macos.png"><img src="assets/images/macos.png" alt="macos" width="400" style="vertical-align: top;"/></a>
+![Windows](assets/images/windows.png)
+![macOS](assets/images/macos.png)
 
-<a href="assets/images/linux.png"><img src="assets/images/linux.png" alt="linux" width="400" style="vertical-align: top;"/></a>
-<a href="assets/images/terminal.png"><img src="assets/images/terminal.png" alt="terminal" width="400" style="vertical-align: top;"/></a>
+![Linux](assets/images/linux.png)
+![Terminal](assets/images/terminal.png)
 
 [Download]: #download
 [Manual]: manual.md
@@ -30,7 +30,7 @@ Quick links: [Download][] \| [Manual][] \| [Lua API Docs][] \| [Project Page][]
 - Almost every aspect of the editor can be scripted, extended, and customized with Lua.
 - Does not connect to the internet -- *it's just a text editor!*
 
-<a href="assets/images/textadept.png"><img src="assets/images/textadept.png" alt="textadept"/></a>
+![Textadept](assets/images/textadept.png)
 
 [Lua]: https://lua.org
 
@@ -48,9 +48,6 @@ such as Qt 6 and GTK 2.24.
 **Note:** Lua and other [third-party dependencies][] are compiled into the application itself,
 and a Qt runtime is distributed with Windows and macOS builds.
 
-[Qt]: https://www.qt.io/
-[GTK]: https://gtk.org
-[ncurses]: https://invisible-island.net/ncurses/ncurses.html
 [third-party dependencies]: manual.md#technologies
 
 ## Download
@@ -58,15 +55,15 @@ and a Qt runtime is distributed with Windows and macOS builds.
 You can download pre-built binaries for various platforms, as well as source code from the
 links below.
 
-Stable Release<br/>(13.0) | Unstable Release<br/>(13.1 beta) | Experimental<br/>nightly build
--|-|-
-[Windows][stable win] | [Windows][unstable win] | [Windows][nightly win]
-[macOS][stable mac] | [macOS][unstable mac] | [macOS][nightly mac]
-[Linux x64][stable linux] / [ARM][stable arm] | [Linux x64][unstable linux] / [Linux ARM][unstable arm] | [Linux x64][nightly linux] / [ARM][nightly arm]
-[Extra modules][stable modules] | [Extra modules][unstable modules] | [Extra modules][nightly modules]
-[Source code][stable source] | [Source code][unstable source] | [Source code][nightly source]
+| Stable Release (13.0) | Unstable Release (13.1 beta) | Experimental nightly build |
+| - | - | - |
+| [Windows][stable win] | [Windows][unstable win] | [Windows][nightly win] |
+| [macOS][stable mac] | [macOS][unstable mac] | [macOS][nightly mac] |
+| [Linux x64][stable linux] / [ARM][stable arm] | [Linux x64][unstable linux] / [Linux ARM][unstable arm] | [Linux x64][nightly linux] / [ARM][nightly arm] |
+| [Extra modules][stable modules] | [Extra modules][unstable modules] | [Extra modules][nightly modules] |
+| [Source code][stable source] | [Source code][unstable source] | [Source code][nightly source] |
 
-A list of all released versions is [here][all versions] along with their release notes.
+See the [release notes and version list][all versions].
 
 **macOS Note:** all pre-built binaries are for Apple Silicon only.
 
@@ -100,33 +97,30 @@ functionality are available as optional modules in the "Extra modules" links abo
 - [Scratch buffers](https://github.com/orbitalquark/textadept-scratch)
 - [Spell checking](https://github.com/orbitalquark/textadept-spellcheck)
 
-<a href="assets/images/lsp.png"><img src="assets/images/lsp.png" alt="lsp" width="325"/></a>
-<a href="assets/images/diff.png"><img src="assets/images/diff.png" alt="diff" width="450"/></a>
+![LSP](assets/images/lsp.png)
+![Diff](assets/images/diff.png)
 
 ## Install and Use
 
 Simply unpack the pre-built binary archive anywhere you have permission to and run one of the following executables:
 
-Platform | GUI version | Terminal version
--|-|-
-Windows | *textadept.exe* | *textadept-curses.exe*
-macOS | *Textadept.app* <br/>*ta* (shell script)| *Textadept.app/Contents/MacOS/textadept-curses*
-Linux | *textadept* (Qt version)<br/> *textadept-gtk* (GTK version) | *textadept-curses*
+| Platform | GUI version | Terminal version |
+| - | - | - |
+| Windows | *textadept.exe* | *textadept-curses.exe* |
+| macOS | *Textadept.app* / *ta* (shell script) | *Textadept.app/Contents/MacOS/textadept-curses* |
+| Linux | *textadept* (Qt version) / *textadept-gtk* (GTK version) | *textadept-curses* |
 
 **macOS Note:** if you get a notice that Textadept "is damaged and can't be opened," you will
 need to remove the quarantine attribute from the app by running the following command in your
 terminal: `xattr -d com.apple.quarantine /path/to/Textadept.app`.
 
 The "Help > Show Manual" menu item, or the `F1` keyboard shortcut opens Textadept's comprehensive
-user manual. There is also an [online version][manual]. The manual covers all of Textadept's
+user manual. There is also an [online version](manual.md). The manual covers all of Textadept's
 main features, including installation, usage, configuration, theming, scripting, and compiling
 from source.
 
 The "Help > Show LuaDoc" menu item, or the `Shift+F1` keyboard shortcut opens Textadept's extensive
-API reference for users interested in scripting the editor. There is also an [online version][api].
-
-[manual]: manual.md
-[api]: api.md
+API reference for users interested in scripting the editor. There is also an [API documentation](api.md).
 
 If you downloaded the optional set of modules, unpack it into the *.textadept/* directory in
 your home folder (keeping the top-level *modules/* directory intact). You could instead unpack
@@ -143,7 +137,7 @@ require('file_diff')
 require('spellcheck')
 ```
 
-<a href="assets/images/settings.png"><img src="assets/images/settings.png" alt="preferences" width="400"/></a>
+![Preferences](assets/images/settings.png)
 
 ## Compile
 
@@ -151,21 +145,21 @@ Compiling Textadept from source requires the following:
 
 - [CMake][] 3.22+
 - A C and C++ compiler, such as:
-	- [GNU C compiler][] (*gcc*) 8.1+
-	- [Microsoft Visual Studio][] 2019 (16.8)+
-	- [Clang][] 13+
+  - [GNU C compiler][] (*gcc*) 8.1+
+  - [Microsoft Visual Studio][] 2019 (16.8)+
+  - [Clang][] 13+
 - A UI toolkit (at least one of the following):
-	- [Qt][] 5.15+ development libraries for the GUI version
-	- [GTK][] 2.24+ development libraries for the GUI version
-	- [ncurses][](w) development libraries (wide character support) for the terminal version
+  - [Qt][] 5.15+ development libraries for the GUI version
+  - [GTK][] 2.24+ development libraries for the GUI version
+  - [ncurses][](w) development libraries (wide character support) for the terminal version
 - Unix `patch` command
 
 Basic procedure:
 
 1. Configure CMake by pointing it to Textadept's source directory (where *CMakeLists.txt* is),
-	specify a directory to build in, and optionally specify a directory to install to. CMake will
-	determine what UI toolkits are available and fetch third-party build dependencies.
-	<br/><a href="assets/images/compile.png"><img src="assets/images/compile.png" alt="cmake" width="400"/></a>
+   specify a directory to build in, and optionally specify a directory to install to. CMake will
+   determine what UI toolkits are available and fetch third-party build dependencies.
+   ![CMake](assets/images/compile.png)
 2. Build Textadept.
 3. Either copy the built binaries to Textadept's source directory or use CMake to install it.
 
@@ -173,7 +167,7 @@ For example:
 
 ```bash
 cmake -S . -B build_dir -D CMAKE_BUILD_TYPE=RelWithDebInfo \
-	-D CMAKE_INSTALL_PREFIX=build_dir/install
+  -D CMAKE_INSTALL_PREFIX=build_dir/install
 cmake --build build_dir -j # compiled binaries are in build_dir/
 cmake --install build_dir # self-contained installation is in build_dir/install/
 ```
@@ -207,4 +201,4 @@ Textadept is an open-source project, released under the MIT License.
 
 You can contact me personally at code att foicica.com.
 
-<a href="assets/images/loc.png"><img src="assets/images/loc.png" alt="lines of code"/></a>
+![Lines of code](assets/images/loc.png)

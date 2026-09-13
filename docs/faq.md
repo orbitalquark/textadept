@@ -1,4 +1,4 @@
-## FAQ
+# FAQ
 
 **Q:**
 Why does Textadept fail to run on Linux? Why does the terminal version behave oddly or crash?
@@ -28,6 +28,7 @@ Textadept failed to detect the file's encoding. You'll need to [help it][].
 
 On Windows, if you are seeing strange characters in the filename (including '?'), your file's name
 contains characters outside the system's encoding. You can try the following as an administrator:
+
 1. Open Settings
 2. Select "Time & language"
 3. Select "Administrative language settings"
@@ -91,5 +92,5 @@ This largely depends on your operating system and terminal emulator settings. Fo
 Where can I find a complete list of key bindings for Textadept?
 
 **A:**
-[Here](api.html#textadept.keys).
+See the [Textadept key bindings reference](api.html#textadept.keys).
 

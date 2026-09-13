@@ -33,8 +33,7 @@ the editor is extremely light on resources and very responsive.
 This manual uses the following typographical conventions:
 
 - *Italic*: Used for filenames.
-- `Constant width`: Used for environment variables, command line arguments, shell code, key
-	bindings, and Lua code, including functions, tables, and variables.
+- `Constant width`: Used for environment variables, command line arguments, shell code, key bindings, and Lua code, including functions, tables, and variables.
 
 Key bindings use the following modifier key representations:
 
@@ -47,25 +46,21 @@ Shift | `Shift` | `⇧` | `S-`
 
 This manual uses the following terminology:
 
-- *buffer*: An object that contains editable text. Some other applications call this object a
-	document or file.
-- *view*: An object that displays a single buffer. Some other applications call this object
-	a window.
-- *caret*: The visual that represents the text insertion point. It is usually a blinking
-	line. Some other applications call this object a cursor.
+- *buffer*: An object that contains editable text. Some other applications call this object a document or file.
+- *view*: An object that displays a single buffer. Some other applications call this object a window.
+- *caret*: The visual that represents the text insertion point. It is usually a blinking line. Some other applications call this object a cursor.
 - *module*: A package of Lua code that provides functionality for Textadept.
-- *lexer*: A Lua module that highlights the syntax of source code written in a particular
-	programming language. Textadept refers to a programming language by its lexer's name.
+- *lexer*: A Lua module that highlights the syntax of source code written in a particular programming language. Textadept refers to a programming language by its lexer's name.
 - *~/.textadept/*: Platform-specific directory where Textadept stores all settings and user data.
 
-	Platform | Directory
-	-|-
-	Windows | *C:\\Users\\username\\.textadept\\*
-	macOS | */Users/username/.textadept/*
-	Linux | */home/username/.textadept/*
-	BSD | */home/username/.textadept/*
+Platform | Directory
+-|-
+Windows | *C:\\Users\\username\\.textadept\\*
+macOS | */Users/username/.textadept/*
+Linux | */home/username/.textadept/*
+BSD | */home/username/.textadept/*
 
-	(Substitute *username* for your actual user name.)
+(Substitute *username* for your actual user name.)
 
 Finally, this manual assumes you are familiar enough with the [Lua][] programming language that
 you can understand the simple code samples spread throughout the manual's contents. If you would
@@ -156,28 +151,13 @@ For better platform integration:
 - Windows: create shortcuts to the executables on the Windows Desktop, Start
 Menu, Quick Launch toolbar, etc.
 - macOS: pin the app to your dock.
-- Linux: use Textadept's *src/textadept.desktop*, *src/textadept-gtk.desktop*, and
-	*src/textadept-curses.desktop* files by picking one of the following:
+- Linux: use Textadept's *src/textadept.desktop*, *src/textadept-gtk.desktop*, and *src/textadept-curses.desktop* files by picking one of the following:
 
-	1. Create a symbolic link to the executables from somewhere in your `$PATH`
-	  (e.g. */usr/local/bin/*) and then copy those desktop files to a Freedesktop.org-specified
-	  applications directory on your system (e.g. */usr/local/share/applications* or
-	  *~/.local/share/applications/*).
-	2. Edit those desktop files with the absolute path to the Textadept executables and then copy
-	  those desktop files to an applications directory.
-	3. Edit those desktop files with the absolute path to the Textadept executables and then
-	  double-click the desktop file you want to run.
+1. Create a symbolic link to the executables from somewhere in your `$PATH` (e.g. */usr/local/bin/*) and then copy those desktop files to a Freedesktop.org-specified applications directory on your system (e.g. */usr/local/share/applications* or *~/.local/share/applications/*).
+2. Edit those desktop files with the absolute path to the Textadept executables and then copy those desktop files to an applications directory.
+3. Edit those desktop files with the absolute path to the Textadept executables and then double-click the desktop file you want to run. Picking 1 or 2 shows Textadept in your desktop environment's menu system (GNOME, KDE, XFCE, etc.). You can properly set Textadept's icon by either copying Textadept's *core/images/textadept.svg* to a Freedesktop.org-specified "hicolor" theme directory (e.g. */usr/share/icons/hicolor/scalable/apps* or *~/.local/share/icons/hicolor/scalable/apps*), or by editing Textadept's desktop files to set "Icon" to the absolute path to *core/images/textadept.svg*.
 
-	Picking 1 or 2 shows Textadept in your desktop environment's menu system (GNOME, KDE, XFCE,
-	etc.).
-
-	You can properly set Textadept's icon by either copying Textadept's
-	*core/images/textadept.svg* to a Freedesktop.org-specified "hicolor" theme directory
-	(e.g. */usr/share/icons/hicolor/scalable/apps* or *~/.local/share/icons/hicolor/scalable/apps*),
-	or by editing Textadept's desktop files to set "Icon" to the absolute path to
-	*core/images/textadept.svg*.
-
-	**Note:** if you compiled Textadept, using CMake to install it will do all this for you.
+**Note:** if you compiled Textadept, using CMake to install it will do all this for you.
 
 Textadept accepts the following command line arguments:
 
