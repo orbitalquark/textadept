@@ -2,6 +2,44 @@
 
 [Atom Feed](https://github.com/orbitalquark/textadept/releases.atom)
 
+## 13.1 (01 Nov 2026)
+
+- [Textadept 13.1 -- Windows][]
+- [Textadept 13.1 -- macOS 13+][]
+- [Textadept 13.1 -- Linux][]
+- [Textadept 13.1 -- Linux ARM][]
+- [Textadept 13.1 -- Modules][]
+
+Bugfixes:
+
+- Fixed bash heredoc highlighting.
+- `lexer.word_utf8` should be able to match single-letter words.
+- Fixed lexer detection of whole names with extensions and suffixes to ignore.
+- Scintilla: fixed syntax highlighting inside a character after deleting the last buffer character.
+- Scintilla: fixed `view:vertical_center_caret()` to not scroll past view end.
+- Scintilla: `buffer.column` and `buffer:find_column()` treat unicode line ends like ASCII line
+	ends.
+- Scintilla: fixed potential crash with change history undo.
+
+Changes:
+
+- Updated C lexer to add wchar types.
+- Updated Prolog and Logtalk lexer keywords.
+- Added support for Cangjie and AsciiDoc.
+- Updated Ruby lexer.
+- Speed up some lexers like Markdown by caching line start positions.
+- Scintilla: reduce memory usage and improve speed.
+- Scintilla: updated to Unicode 17.
+- Updated to [Scintilla][] 5.6.8.
+
+[Textadept 13.1 -- Windows]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.1/textadept_13.1.win.zip
+[Textadept 13.1 -- macOS 13+]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.1/textadept_13.1.macOS.zip
+[Textadept 13.1 -- Linux]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.1/textadept_13.1.linux.tgz
+[Textadept 13.1 -- Linux ARM]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.1/textadept_13.1.linux.arm.tgz
+[Textadept 13.1 -- Modules]: https://github.com/orbitalquark/textadept/releases/download/textadept_13.1/textadept_13.1.modules.zip
+[Scintilla]: https://scintilla.org
+[Lua]: https://lua.org
+
 ## 13.1 beta (01 Sep 2026)
 
 - [Textadept 13.1 beta -- Windows][]
