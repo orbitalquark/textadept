@@ -1,11 +1,25 @@
 Scintilla changes:
 
+* Fix XPM images in Scintilla 5.6.8. (Committed upstream.)
 * Handle leading whitespace in XPM images in order to prevent crashes.
 * Use Qt macros instead of keywords in header.
 
 diff -r 22b6bbb36280 src/XPM.cxx
 --- a/src/XPM.cxx	Sat Sep 05 07:55:08 2020 +1000
 +++ b/src/XPM.cxx	Fri Oct 02 20:32:13 2020 -0400
+@@ -67,9 +67,9 @@
+ }
+ 
+ ColourRGBA ColourFromHex(const char *val) noexcept {
+-	const unsigned int r = ValueOfHex((val[0]) * 16) + ValueOfHex(val[1]);
+-	const unsigned int g = ValueOfHex((val[2]) * 16) + ValueOfHex(val[3]);
+-	const unsigned int b = ValueOfHex((val[4]) * 16) + ValueOfHex(val[5]);
++	const unsigned int r = (ValueOfHex(val[0]) * 16) + ValueOfHex(val[1]);
++	const unsigned int g = (ValueOfHex(val[2]) * 16) + ValueOfHex(val[3]);
++	const unsigned int b = (ValueOfHex(val[4]) * 16) + ValueOfHex(val[5]);
+ 	return {r, g, b};
+ }
+ 
 @@ -92,7 +92,10 @@
  void XPM::Init(const char *textForm) {
  	// Test done is two parts to avoid possibility of overstepping the memory
