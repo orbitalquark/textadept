@@ -771,7 +771,6 @@ public:
 #if !__APPLE__
 		setWindowIcon(QIcon{QString{textadept_home} + "/core/images/textadept.svg"});
 #else
-		setWindowIcon(QIcon{QString{textadept_home} + "/core/images/textadept_mac.png"});
 		// Read $PATH from shell since macOS GUI apps run in a limited environment.
 		QProcess p;
 		p.startCommand(qgetenv("SHELL") + " -l -c env"), p.waitForFinished();
