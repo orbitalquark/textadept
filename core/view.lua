@@ -62,7 +62,10 @@ end
 
 --- Metatable for `view.styles`, whose documentation is in core/buffer.lua.
 local styles_mt = {
-	__index = function(t, k) return type(k) == 'string' and t[k:match('^(.+)[_%.]')] or rawget(t, k) end,
+	__index = function(t, k)
+		if type(k) == 'string' then k = k:gsub('%.', '_') end
+		return type(k) == 'string' and t[k:match('^(.+)_')] or rawget(t, k)
+	end, --
 	__newindex = function(t, k, v)
 		rawset(t, type(k) == 'string' and k:gsub('%.', '_') or k, style_obj(assert_type(v, 'table', 3)))
 	end
