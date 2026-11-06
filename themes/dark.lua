@@ -90,7 +90,8 @@ styles.command_section = styles[lexer.HEADING]
 styles.environment = styles[lexer.TYPE]
 styles.environment_math = styles[lexer.NUMBER]
 -- Makefile.
--- styles.target = {}
+styles.target_special = styles[lexer.CONSTANT_BUILTIN]
+styles.target = styles[lexer.LABEL]
 -- Markdown.
 -- styles.hr = {}
 -- Output.
